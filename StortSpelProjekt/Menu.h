@@ -9,7 +9,7 @@ public:
 	Menu();
 	~Menu();
 	// Inherited via State
-	virtual void update() override;
-	virtual void draw() override;
+	virtual GAMESTATE Update() override;
+	virtual void Render() override;
 };
 

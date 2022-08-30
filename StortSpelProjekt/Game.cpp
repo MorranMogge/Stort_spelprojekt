@@ -8,10 +8,12 @@ Game::~Game()
 {
 }
 
-void Game::update()
+GAMESTATE Game::Update()
 {
+	std::cout << "This is the Game State!\n";
+	return NOCHANGE;
 }
 
-void Game::draw()
+void Game::Render()
 {
 }

@@ -8,10 +8,12 @@ Menu::~Menu()
 {
 }
 
-void Menu::update()
+GAMESTATE Menu::Update()
 {
+	std::cout << "This is the Menu State!\n";
+	return NOCHANGE;
 }
 
-void Menu::draw()
+void Menu::Render()
 {
 }

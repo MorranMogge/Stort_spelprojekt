@@ -2,8 +2,15 @@
 
 #include <SFML/Network.hpp>
 
+
 int main()
 {
+	std::string s = "empty";
+	// Group the variables to send into a packet
+	sf::Packet packet;
+	sf::Packet receivedPacket;
+
+
 	sf::IpAddress ip = sf::IpAddress::getLocalAddress();
 	std::cout << ip.toString() << "\n";
 	sf::TcpSocket socket;
@@ -20,19 +27,35 @@ int main()
 		sf::TcpListener listener;
 		listener.listen(2001);
 		listener.accept(socket);
+
+		s = "wassup test s";
+		packet << s;
+
+
 		text += "Server";
-		socket.send(text.c_str(), text.length() + 1);
+		socket.send(packet);
 	}
 	else if (connectionType == "c")
 	{
 		socket.setBlocking(false);
 		socket.connect(ip, 2001);
 		text += "Client";
-		socket.send(text.c_str(), text.length() + 1);
+
+		s = "wassup test cawafw";
+		packet << s;
+
+		socket.send(packet);
 	}
 
-	socket.receive(buffer, sizeof(buffer), recieved);
-	std::cout << buffer << std::endl;
+
+	std::string s2;
+
+	socket.receive(receivedPacket);
+	if (receivedPacket >> s2)
+	{
+		// Data extracted successfully...
+		std::cout << s2;
+	}
 
     getchar();
     return 0;

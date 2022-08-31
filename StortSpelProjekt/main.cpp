@@ -5,14 +5,7 @@
 #include "D3D11Helper.h"
 #include "MemoryLeackChecker.h"
 
-#include "imGUI\imconfig.h"
-#include "imGUI\imgui.h"
-#include "imGUI\imgui_impl_dx11.h"
-#include "imGUI\imgui_internal.h"
-#include "imGUI\imstb_rectpack.h"
-#include "imGUI\imstb_textedit.h"
-#include "imGUI\imstb_truetype.h"
-#include "imGUI\imgui_impl_win32.h"
+#include "ImGuiFunctions.h"
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace, _In_ LPWSTR lpCmdLine, _In_ int nCmdShhow)
@@ -56,6 +49,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	MSG msg = {};
 
+	float clearColour[4]{ 0,0,0,0 };
+	setupImGui(clearColour);
+
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
 
@@ -85,6 +81,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 		}
 	
 		currentState->Render();
+		
+		immediateContext->ClearRenderTargetView(rtv, clearColour);
+		immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+		immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		immediateContext->RSSetViewports(1, &viewport);
+		drawInterface();
+
+		swapChain->Present(0, 0);
 	}
 
 	#pragma region Deallocation

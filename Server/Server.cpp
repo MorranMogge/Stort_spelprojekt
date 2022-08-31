@@ -20,6 +20,8 @@ int main()
 	size_t recieved;
 	std::string text = "Connect to: ";
 
+	std::string receivedstring;
+
 	std::cout << "Enter (s) for Server, Enter (c) for client: " << std::endl;
 	std::getline(std::cin, connectionType);
 	if (connectionType == "s")
@@ -27,35 +29,43 @@ int main()
 		sf::TcpListener listener;
 		listener.listen(2001);
 		listener.accept(socket);
+		while (true)
+		{
+			std::getline(std::cin, s);
+			packet << s;
 
-		s = "wassup test s";
-		packet << s;
 
+			text += "Server";
+			socket.send(packet);
 
-		text += "Server";
-		socket.send(packet);
+			socket.receive(receivedPacket);
+			if (receivedPacket >> receivedstring)
+			{
+				// Data extracted successfully...
+				std::cout << receivedstring;
+			}
+		}
 	}
 	else if (connectionType == "c")
 	{
 		socket.setBlocking(false);
 		socket.connect(ip, 2001);
 		text += "Client";
+		while (true)
+		{
+			std::getline(std::cin, s);
+			packet << s;
 
-		s = "wassup test cawafw";
-		packet << s;
-
-		socket.send(packet);
+			socket.send(packet);
+			socket.receive(receivedPacket);
+			if (receivedPacket >> receivedstring)
+			{
+				// Data extracted successfully...
+				std::cout << receivedstring;
+			}
+		}
 	}
 
-
-	std::string s2;
-
-	socket.receive(receivedPacket);
-	if (receivedPacket >> s2)
-	{
-		// Data extracted successfully...
-		std::cout << s2;
-	}
 
     getchar();
     return 0;

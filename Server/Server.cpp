@@ -42,7 +42,10 @@ int main()
 			if (receivedPacket >> receivedstring)
 			{
 				// Data extracted successfully...
-				std::cout << receivedstring;
+				std::cout << receivedstring << std::endl;
+				receivedstring.clear();
+				packet.clear();
+				receivedPacket.clear();
 			}
 		}
 	}
@@ -61,7 +64,10 @@ int main()
 			if (receivedPacket >> receivedstring)
 			{
 				// Data extracted successfully...
-				std::cout << receivedstring;
+				std::cout << receivedstring << std::endl;
+				receivedstring.clear();
+				packet.clear();
+				receivedPacket.clear();
 			}
 		}
 	}

@@ -24,26 +24,18 @@ int main()
 
 	std::cout << "Starting server!\n";
 
-	std::getline(std::cin, connectionType);
 	sf::TcpListener listener;
 	listener.listen(2001);
+	std::cout << "listening\n";
+
 	listener.accept(socket);
+	std::cout << "Accepted client write a message: ";
 	while (true)
 	{
 		std::getline(std::cin, s);
 		packet << s;
 
 		socket.send(packet);
-
-		socket.receive(receivedPacket);
-		if (receivedPacket >> receivedstring)
-		{
-			// Data extracted successfully...
-			std::cout << receivedstring << std::endl;
-			receivedstring.clear();
-			packet.clear();
-			receivedPacket.clear();
-		}
 	}
 	/*if (connectionType == "s")
 	{

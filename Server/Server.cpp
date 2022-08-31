@@ -22,9 +22,30 @@ int main()
 
 	std::string receivedstring;
 
-	std::cout << "Enter (s) for Server, Enter (c) for client: " << std::endl;
+	std::cout << "Starting server!\n";
+
 	std::getline(std::cin, connectionType);
-	if (connectionType == "s")
+	sf::TcpListener listener;
+	listener.listen(2001);
+	listener.accept(socket);
+	while (true)
+	{
+		std::getline(std::cin, s);
+		packet << s;
+
+		socket.send(packet);
+
+		socket.receive(receivedPacket);
+		if (receivedPacket >> receivedstring)
+		{
+			// Data extracted successfully...
+			std::cout << receivedstring << std::endl;
+			receivedstring.clear();
+			packet.clear();
+			receivedPacket.clear();
+		}
+	}
+	/*if (connectionType == "s")
 	{
 		sf::TcpListener listener;
 		listener.listen(2001);
@@ -68,7 +89,7 @@ int main()
 				receivedPacket.clear();
 			}
 		}
-	}
+	}*/
 
 
     getchar();

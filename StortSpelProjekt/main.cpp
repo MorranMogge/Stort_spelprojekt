@@ -1,5 +1,9 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 
+#include "ServerTest.h"
+#include <string>
+#include <iostream>
 
 #include "Game.h"
 #include "Menu.h"
@@ -9,10 +13,60 @@
 
 #include "ImGuiFunctions.h"
 
+void serverTest()
+{
+	//sf::UdpSocket socket;
+	//socket.setBlocking(false);
+	////binds socket to a port
+	//unsigned short port = 54000;
+	//if (socket.bind(port) != sf::Socket::Done)
+	//{
+	//	ErrorLog::Log("Couldnt bind to a port\n");
+	//}
+
+	//sf::IpAddress ip = sf::IpAddress::getLocalAddress();
+	//char data[100] = "wiw";
+
+	//if (socket.send(data, 100, ip, port) != sf::Socket::Done)
+	//{
+	//	// error...
+	//}
+	sf::IpAddress ip = sf::IpAddress::getLocalAddress();
+	sf::TcpSocket socket;
+	std::string connectionType, mode;
+
+	char buffer[2000];
+	size_t recieved;
+	std::string text = "Connect to: ";
+
+	std::cout << "Enter (s) for Server, Enter (c) for client: " << std::endl;
+	std::getline(std::cin, connectionType);
+	//connectionType = "s";
+	if (connectionType == "s")
+	{
+		sf::TcpListener listener;
+		listener.listen(2000);
+		listener.accept(socket);
+		text += "Server";
+		socket.send(text.c_str(), text.length() + 1);
+	}
+	else if (connectionType == "c")
+	{
+		socket.connect(ip, 2000);
+		text += "Client";
+		socket.send(text.c_str(), text.length() + 1);
+	}
+
+	socket.receive(buffer, sizeof(buffer), recieved);
+	(void)getchar();
+	std::cout << buffer << std::endl;
+}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace, _In_ LPWSTR lpCmdLine, _In_ int nCmdShhow)
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	serverTest();
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -53,6 +107,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	float clearColour[4]{ 0,0,0,0 };
 	setupImGui(clearColour);
+
+
+
 
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{

@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Client.h" />
     <ClInclude Include="D3D11Helper.h" />
     <ClInclude Include="ErrorLog.h" />
     <ClInclude Include="Game.h" />
@@ -153,11 +154,12 @@
     <ClInclude Include="ImGui\imstb_truetype.h" />
     <ClInclude Include="MemoryLeackChecker.h" />
     <ClInclude Include="Menu.h" />
-    <ClInclude Include="ServerTest.h" />
+    <ClInclude Include="PackageTypes.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="WindowHelper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Client.cpp" />
     <ClCompile Include="D3D11Helper.cpp" />
     <ClCompile Include="ErrorLog.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -171,7 +173,6 @@
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="ServerTest.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="WindowHelper.cpp" />
   </ItemGroup>

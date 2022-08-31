@@ -1,10 +1,10 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 
-#include "ServerTest.h"
 #include <string>
 #include <iostream>
 
+#include "Client.h"
 #include "Game.h"
 #include "Menu.h"
 #include "WindowHelper.h"
@@ -25,6 +25,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	UINT WIDTH = 1080;
 	UINT HEIGHT = 720;
 	HWND window;
+
+	Client client("192.168.43.251", 2001);
 
 	if (!SetupWindow(hInstance, WIDTH, HEIGHT, nCmdShhow, window))
 	{
@@ -58,8 +60,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	float clearColour[4]{ 0,0,0,0 };
 	setupImGui(clearColour);
 
-
-
+	
+	std::string tempMsg = client.receive();
 
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
@@ -95,7 +97,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 		immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 		immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		immediateContext->RSSetViewports(1, &viewport);
-		drawInterface();
+		drawInterface(tempMsg);
 
 		swapChain->Present(0, 0);
 	}

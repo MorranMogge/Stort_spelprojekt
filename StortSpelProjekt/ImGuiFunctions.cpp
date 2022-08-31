@@ -1,6 +1,6 @@
 #include "ImGuiFunctions.h"
 
-void drawInterface()
+void drawInterface(std::string message)
 {
 
 	ImGui_ImplDX11_NewFrame();
@@ -10,7 +10,7 @@ void drawInterface()
 		bool begun = ImGui::Begin("Stranded engineers");
 		if (begun)
 		{
-			ImGui::Text("Testing ImGui!");
+			ImGui::Text(message.c_str());
 		}
 		ImGui::End();
 	}

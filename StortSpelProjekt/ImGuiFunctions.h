@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include "imGUI\imconfig.h"
 #include "imGUI\imgui.h"
 #include "imGUI\imgui_impl_dx11.h"
@@ -9,5 +11,5 @@
 #include "imGUI\imstb_truetype.h"
 #include "imGUI\imgui_impl_win32.h"
 
-void drawInterface();
+void drawInterface(std::string message);
 void setupImGui(float bgColour[]);

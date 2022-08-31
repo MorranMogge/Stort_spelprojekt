@@ -34,8 +34,6 @@ int main()
 			std::getline(std::cin, s);
 			packet << s;
 
-
-			text += "Server";
 			socket.send(packet);
 
 			socket.receive(receivedPacket);
@@ -53,7 +51,7 @@ int main()
 	{
 		socket.setBlocking(false);
 		socket.connect(ip, 2001);
-		text += "Client";
+
 		while (true)
 		{
 			std::getline(std::cin, s);

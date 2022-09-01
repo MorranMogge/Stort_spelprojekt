@@ -36,6 +36,7 @@ int main()
 		packet << s;
 
 		socket.send(packet);
+		packet.clear();
 	}
 	/*if (connectionType == "s")
 	{

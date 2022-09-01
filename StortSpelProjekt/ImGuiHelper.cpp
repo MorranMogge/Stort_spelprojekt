@@ -33,14 +33,15 @@ void ImGuiHelper::drawInterface(std::string message)
 		if (ImGui::Button("Connect to server"))
 		{
 			client->connectToServer();
+			client->setupThread();
 		}
 
-		if (ImGui::Button("receive Msg from server"))
+		if (ImGui::Button("join Thread"))
 		{
-			receivedMsg = client->receive();
+			client->joinThread();
 		}
 
-		ImGui::Text(receivedMsg.c_str());
+		ImGui::Text(client->receive().c_str());
 
 		ImGui::End();
 	}

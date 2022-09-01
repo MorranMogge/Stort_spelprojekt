@@ -61,8 +61,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	ImGuiHelper imGuiHelper(client);
 	imGuiHelper.setupImGui(clearColour);
-
-	
 	
 
 	while (msg.message != WM_QUIT && stateInfo != EXIT)

@@ -11,7 +11,7 @@
 #include "D3D11Helper.h"
 #include "MemoryLeackChecker.h"
 
-#include "ImGuiFunctions.h"
+#include "ImGuiHelper.h"
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace, _In_ LPWSTR lpCmdLine, _In_ int nCmdShhow)
@@ -26,7 +26,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	UINT HEIGHT = 720;
 	HWND window;
 
-	Client client("192.168.43.251", 2001);
+	Client* client = new Client("192.168.43.251", 2001);
 
 	if (!SetupWindow(hInstance, WIDTH, HEIGHT, nCmdShhow, window))
 	{
@@ -58,10 +58,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	MSG msg = {};
 
 	float clearColour[4]{ 0,0,0,0 };
-	setupImGui(clearColour);
+
+	ImGuiHelper imGuiHelper(client);
+	imGuiHelper.setupImGui(clearColour);
 
 	
-	std::string tempMsg = client.receive();
+	
 
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
@@ -97,13 +99,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 		immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 		immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		immediateContext->RSSetViewports(1, &viewport);
-		drawInterface(tempMsg);
+		imGuiHelper.drawInterface("test");
 
 		swapChain->Present(0, 0);
 	}
 
 	#pragma region Deallocation
 	delete currentState;
+	delete client;
 
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();

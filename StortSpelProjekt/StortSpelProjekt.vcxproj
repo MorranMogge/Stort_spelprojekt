@@ -143,7 +143,7 @@
     <ClInclude Include="D3D11Helper.h" />
     <ClInclude Include="ErrorLog.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="ImGuiFunctions.h" />
+    <ClInclude Include="ImGuiHelper.h" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
     <ClInclude Include="ImGui\imgui_impl_dx11.h" />
@@ -163,7 +163,7 @@
     <ClCompile Include="D3D11Helper.cpp" />
     <ClCompile Include="ErrorLog.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="ImGuiFunctions.cpp" />
+    <ClCompile Include="ImGuiHelper.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />
     <ClCompile Include="ImGui\imgui_draw.cpp" />

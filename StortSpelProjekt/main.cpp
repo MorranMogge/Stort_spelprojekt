@@ -104,6 +104,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	#pragma region Deallocation
 	delete currentState;
+	
 	delete client;
 
 	ImGui_ImplDX11_Shutdown();

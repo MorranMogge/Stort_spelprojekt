@@ -36,11 +36,6 @@ void ImGuiHelper::drawInterface(std::string message)
 			client->setupThread();
 		}
 
-		if (ImGui::Button("join Thread"))
-		{
-			client->joinThread();
-		}
-
 		ImGui::Text(client->receive().c_str());
 
 		ImGui::End();

@@ -29,6 +29,8 @@ Client::Client(std::string ipAddress, int port)
 
 Client::~Client()
 {
+	data.endThread = true;
+	clientThread->join();
 	if (clientThread != nullptr) delete clientThread;
 }
 

@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include <SFML/Network.hpp>
-
+#include <chrono>
 
 int main()
 {
@@ -9,7 +9,7 @@ int main()
 	// Group the variables to send into a packet
 	sf::Packet packet;
 	sf::Packet receivedPacket;
-
+	float frequency = 30.f;
 
 	sf::IpAddress ip = sf::IpAddress::getLocalAddress();
 	std::cout << ip.toString() << "\n";
@@ -30,13 +30,24 @@ int main()
 
 	listener.accept(socket);
 	std::cout << "Accepted client write a message: ";
+
+	std::chrono::time_point<std::chrono::system_clock> start;
+	start = std::chrono::system_clock::now();
+
+	int counter = 0;
 	while (true)
 	{
-		std::getline(std::cin, s);
-		packet << s;
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > 1.0f / frequency)
+		{
+			std::getline(std::cin, s);
+			//s = std::to_string(counter++);
+			packet << s;
 
-		socket.send(packet);
-		packet.clear();
+			socket.send(packet);
+			packet.clear();
+			start = std::chrono::system_clock::now();
+		}
+		
 	}
 	/*if (connectionType == "s")
 	{

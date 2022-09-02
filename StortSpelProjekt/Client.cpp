@@ -3,13 +3,12 @@
 void clientFunction(void* param)
 {
 	ThreadInfo* data = (ThreadInfo*)param;
-	int counter = 0;
 	std::string temp;
 	sf::Packet receivedPacket;
 	while (!data->endThread)
 	{
-		data->socket.receive(receivedPacket);
-		if (receivedPacket >> temp)
+		data->socket.receive(receivedPacket); //Receives the packet
+		if (receivedPacket >> temp)	//Checks whether or not the packet contains data
 		{
 			data->receivedstring = temp;
 		}
@@ -19,6 +18,8 @@ void clientFunction(void* param)
 
 Client::Client()
 {
+	this->ip = sf::IpAddress::getLocalAddress().toString();
+	this->port = 2001;
 }
 
 Client::Client(std::string ipAddress, int port)
@@ -29,9 +30,12 @@ Client::Client(std::string ipAddress, int port)
 
 Client::~Client()
 {
-	data.endThread = true;
-	clientThread->join();
-	if (clientThread != nullptr) delete clientThread;
+	if (clientThread != nullptr)
+	{
+		data.endThread = true;
+		clientThread->join();
+		delete clientThread;
+	}
 }
 
 void Client::connectToServer(std::string ipAddress, int port)

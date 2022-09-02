@@ -26,7 +26,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	UINT HEIGHT = 720;
 	HWND window;
 
-	Client* client = new Client("192.168.43.251", 2001);
+	Client* client = new Client();
 
 	if (!SetupWindow(hInstance, WIDTH, HEIGHT, nCmdShhow, window))
 	{

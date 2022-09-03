@@ -16,6 +16,27 @@
     <Filter Include="ImGui">
       <UniqueIdentifier>{e4a144e3-680b-4584-8aca-166ee2450e11}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{aabda874-42a6-42b2-b4cf-64dd5b01fca2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\VS">
+      <UniqueIdentifier>{f1470197-b752-4f14-84be-d26512fc5ed7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\PS">
+      <UniqueIdentifier>{8b4e3d33-4919-4ddd-b5c9-583949ac258b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\HS">
+      <UniqueIdentifier>{9541d862-1c41-4a8f-acd7-7fc4b35184a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\GS">
+      <UniqueIdentifier>{e7bad2ef-e140-41e0-ac3b-b538810a5e86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\DS">
+      <UniqueIdentifier>{646317e5-bc2b-4395-991e-5354b9830541}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\CS">
+      <UniqueIdentifier>{4fd66eff-7045-4273-8d11-914046154790}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="State.h">
@@ -72,6 +93,24 @@
     <ClInclude Include="PackageTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GPU.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="State.cpp">
@@ -122,5 +161,15 @@
     <ClCompile Include="Client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="StortSpelProjekt.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

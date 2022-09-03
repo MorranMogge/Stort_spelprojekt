@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 
+#include "Console.h"
 #include "Client.h"
 #include "Game.h"
 #include "Menu.h"
@@ -18,11 +19,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
+	SoundCollection::Load();
+
+	Console::Activate(); // activate console for cout and cin, to destroy console call "Console::Destroy();" 
+	std::cout << "test print \n"; //test print
+
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+	ImGui::GetIO().IniFilename = nullptr;
 
-	UINT WIDTH = 1080;
+	UINT WIDTH = 1280;
 	UINT HEIGHT = 720;
 	HWND window;
 
@@ -61,8 +68,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	ImGuiHelper imGuiHelper(client);
 	imGuiHelper.setupImGui(clearColour);
-	
 
+	
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
 
@@ -71,6 +78,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+		Sound::Update();
 
 		stateInfo = currentState->Update();
 
@@ -110,6 +118,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+
+	if (Console::IsOpen)
+		Console::Destroy();
 
 	device->Release();
 	immediateContext->Release();

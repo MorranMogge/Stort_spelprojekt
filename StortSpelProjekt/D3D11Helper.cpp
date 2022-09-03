@@ -1,11 +1,12 @@
 #include "D3D11Helper.h"
+#include "GPU.h"
 
 bool CreateInterfaces(UINT width, UINT height, HWND window, ID3D11Device*& device, ID3D11DeviceContext*& immediateContext, IDXGISwapChain*& swapChain)
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 
-	swapChainDesc.BufferDesc.Width = width;
-	swapChainDesc.BufferDesc.Height = height;
+	swapChainDesc.BufferDesc.Width = 0;
+	swapChainDesc.BufferDesc.Height = 0;
 	swapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
 	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -17,10 +18,10 @@ bool CreateInterfaces(UINT width, UINT height, HWND window, ID3D11Device*& devic
 	swapChainDesc.SampleDesc.Quality = 0;
 
 	swapChainDesc.BufferUsage = DXGI_USAGE_UNORDERED_ACCESS | DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.BufferCount = 1;
+	swapChainDesc.BufferCount = 2;
 	swapChainDesc.OutputWindow = window;
 	swapChainDesc.Windowed = true;
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	swapChainDesc.Flags = 0;
 
 	UINT flags = 0;
@@ -29,9 +30,15 @@ bool CreateInterfaces(UINT width, UINT height, HWND window, ID3D11Device*& devic
 		flags = D3D11_CREATE_DEVICE_DEBUG;
 	}
 
-	D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
+	D3D_FEATURE_LEVEL featureLevels[] = {
+		D3D_FEATURE_LEVEL::D3D_FEATURE_LEVEL_11_1,
+		D3D_FEATURE_LEVEL::D3D_FEATURE_LEVEL_11_0 };
 
-	HRESULT hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, flags, featureLevels, 1, D3D11_SDK_VERSION, &swapChainDesc, &swapChain, &device, nullptr, &immediateContext);
+	HRESULT hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, flags, featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &swapChainDesc, &swapChain, &device, nullptr, &immediateContext);
+
+	GPU::device = device;
+	GPU::immediateContext = immediateContext;
+	GPU::swapChain = swapChain;
 
 	return !FAILED(hr);
 }

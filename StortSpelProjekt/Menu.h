@@ -1,9 +1,14 @@
 #pragma once
 #include "State.h"
 
+#include "Input.h"
+#include "SoundCollection.h"
+
 class Menu : public State
 {
 private:
+
+
 
 public:
 	Menu();

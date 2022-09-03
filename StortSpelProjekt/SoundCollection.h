@@ -10,7 +10,7 @@ public:
 
 	static void Load()
 	{
-		testSound.load(L"../Sounds/piano2.wav");
+		testSound.load(L"../Sounds/itemAudio.wav");
 	}
 
 };

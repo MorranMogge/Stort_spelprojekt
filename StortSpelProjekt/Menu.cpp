@@ -15,19 +15,34 @@ Menu::~Menu()
 
 GAMESTATE Menu::Update()
 {
-	if (Input::KeyPress(KeyCode::W)) //return true ONCE key press
+	//return true ONCE key press
+	if (Input::KeyPress(KeyCode::W))
 	{
 		std::cout << "W pressed \n";
 	}
 
-	if (Input::KeyDown(KeyCode::S)) //return true as long as key holding down
+	//return true as long as key holding down
+	if (Input::KeyDown(KeyCode::S))
 	{
 		std::cout << "S key is holding down \n";
 	}
 
-	if (Input::KeyUp(KeyCode::A)) //return true ONCE key release 
+	//return true ONCE key release 
+	if (Input::KeyUp(KeyCode::A))
 	{
 		std::cout << "A key released \n";
+	}
+
+	// destroy console window
+	if (Input::KeyPress(KeyCode::Q))
+	{
+		Console::Destroy();
+	}
+
+	// exit game
+	if (Input::KeyPress(KeyCode::ESC)) 
+	{
+		return GAMESTATE::EXIT;
 	}
 
 	return NOCHANGE;

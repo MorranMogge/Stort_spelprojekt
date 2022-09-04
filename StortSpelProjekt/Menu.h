@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "SoundCollection.h"
 #include "GuiHandler.h"
+#include "Console.h"
 
 class Menu : public State
 {

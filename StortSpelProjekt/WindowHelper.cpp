@@ -1,5 +1,6 @@
 #include "WindowHelper.h"
 #include <iostream>
+#include "GPU.h"
 #include "resource.h"
 #include "imGUI\imconfig.h"
 #include "imGUI\imgui.h"
@@ -77,6 +78,8 @@ bool SetupWindow(HINSTANCE instance, UINT& width, UINT& height, int nCmdShow, HW
 		rect = info.rcClient;
 		width = rect.right - rect.left;
 		height = rect.bottom - rect.top;
+		GPU::windowWidth = width;
+		GPU::windowHeight = height;
 	}
 
 	ShowWindow(window, nCmdShow);

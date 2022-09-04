@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "Console.h"
+#include "SoundCollection.h"
 #include "Client.h"
 #include "Game.h"
 #include "Menu.h"
@@ -69,6 +70,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	ImGuiHelper imGuiHelper(client);
 	imGuiHelper.setupImGui(clearColour);
+
+	GuiHandler ui;
 	
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
@@ -99,13 +102,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			}
 		}
 		
+		currentState->Render();
 
-		immediateContext->ClearRenderTargetView(rtv, clearColour);
+		//immediateContext->ClearRenderTargetView(rtv, clearColour);
 		immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 		immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		immediateContext->RSSetViewports(1, &viewport);
 
-		currentState->Render();
+		ui.Draw();
 		imGuiHelper.drawInterface("test");
 
 		swapChain->Present(0, 0);

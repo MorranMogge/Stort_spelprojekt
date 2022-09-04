@@ -8,7 +8,17 @@ GUIText::GUIText()
     
 }
 
-GUIText::GUIText(const Vector2& position, float layer)
+GUIText::GUIText(const float x, const float y, const float layer)
+{
+    m_Position = Vector2(x, y);
+    m_Scale = Vector2(1, 1);
+    m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
+    m_Alpha = 1.0f;
+    m_Rotation = 0.0f;
+    m_Layer = layer;
+}
+
+GUIText::GUIText(const Vector2& position, const float layer)
 {
     m_Position = position;
     m_Scale = Vector2(1, 1);
@@ -16,22 +26,6 @@ GUIText::GUIText(const Vector2& position, float layer)
     m_Alpha = 1.0f;
     m_Rotation = 0.0f;
     m_Layer = layer;
-}
-//GUIText::GUIText(const Vector3& position)
-//{
-//    m_Position = position;
-//    m_Scale = Vector2(1, 1);
-//    m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
-//    m_Alpha = 1.0f;
-//    m_Rotation = 0.0f;
-//}
-
-GUIText::~GUIText()
-{
-    if (spriteFont != nullptr)
-        delete spriteFont;
-    if (m_pResource != nullptr)
-        m_pResource->Release();
 }
 
 void GUIText::setText(const wchar_t* text)
@@ -46,7 +40,7 @@ void GUIText::Load(ID3D11Device* device, const wchar_t* file)
     //DirectX::CreateDDSTextureFromFile(device, file, &m_pResource, &m_pTexture);
     //Utility::GetTextureDimentions(m_pResource, &m_Width, &m_Height);
 
-    spriteFont = new DirectX::SpriteFont(device, file);
+    spriteFont = std::make_unique<DirectX::SpriteFont>(device, file);
 
     //spriteFont->MeasureDrawBounds(m_text.c_str(), m_Position);
     
@@ -63,11 +57,6 @@ const DirectX::SimpleMath::Vector2& GUIText::GetPosition() const
     return m_Position;
 }
 
-//const DirectX::SimpleMath::Vector3& GUIText::GetPosition() const
-//{
-//    return m_Position;
-//}
-
 const DirectX::SimpleMath::Vector2& GUIText::GetOrigin() const
 {
     return m_Origin;
@@ -83,12 +72,12 @@ const DirectX::SimpleMath::Color& GUIText::GetTint() const
     return m_Tint;
 }
 
-const float& GUIText::GetAlpha() const
+const float GUIText::GetAlpha() const
 {
     return m_Alpha;
 }
 
-const float& GUIText::GetRotation() const
+const float GUIText::GetRotation() const
 {
     return m_Rotation;
 }
@@ -107,11 +96,6 @@ void GUIText::SetPosition(const DirectX::SimpleMath::Vector2& position)
 {
     m_Position = position;
 }
-
-//void GUIText::SetPosition(const DirectX::SimpleMath::Vector3& position)
-//{
-//    m_Position = position;
-//}
 
 
 void GUIText::SetOrigin(const DirectX::SimpleMath::Vector2& origin)
@@ -139,9 +123,7 @@ void GUIText::SetRotation(const float rotation)
     m_Rotation = rotation;
 }
 
-void GUIText::Draw(DirectX::SpriteBatch* spriteBatch)
+void GUIText::Draw()
 {
-    //spriteBatch->Begin();
-    spriteFont->DrawString(spriteBatch, m_text.c_str(), m_Position, m_Tint, m_Rotation, m_Origin, m_Scale, DirectX::SpriteEffects_None, m_Layer); //(.get returns the pointer from the uniqepointer ,text to display, position)
-    //spriteBatch->End();
+    spriteFont->DrawString(GUI::spriteBatch.get(), m_text.c_str(), m_Position, m_Tint, m_Rotation, m_Origin, m_Scale, DirectX::SpriteEffects_None, m_Layer);
 }

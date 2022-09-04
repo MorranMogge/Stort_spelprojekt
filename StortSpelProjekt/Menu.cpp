@@ -2,8 +2,9 @@
 
 Menu::Menu()
 {
-	SoundCollection::testSound.play();
+	std::cout << "Menu constructor \n";
 
+	SoundCollection::testSound.play();
 
 }
 
@@ -19,12 +20,12 @@ GAMESTATE Menu::Update()
 		std::cout << "W pressed \n";
 	}
 
-	if (Input::KeyDown(KeyCode::S)) //return true ONCE key release
+	if (Input::KeyDown(KeyCode::S)) //return true as long as key holding down
 	{
-		std::cout << "S key is down \n";
+		std::cout << "S key is holding down \n";
 	}
 
-	if (Input::KeyUp(KeyCode::A)) //return true as long as key holding down
+	if (Input::KeyUp(KeyCode::A)) //return true ONCE key release 
 	{
 		std::cout << "A key released \n";
 	}
@@ -34,5 +35,5 @@ GAMESTATE Menu::Update()
 
 void Menu::Render()
 {
-
+	ui.Draw();
 }

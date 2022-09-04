@@ -12,7 +12,9 @@ enum GAMESTATE
 class State
 {
 public:
+
 	State();
+	virtual ~State() {};
 
 	//virtual ~State() = 0;
 	virtual GAMESTATE Update() = 0;

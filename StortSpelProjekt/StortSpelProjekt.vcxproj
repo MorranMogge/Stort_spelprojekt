@@ -119,6 +119,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)SFML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -150,7 +151,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DXUtil.h" />
     <ClInclude Include="GPU.h" />
+    <ClInclude Include="GuiHandler.h" />
+    <ClInclude Include="GUIObject.h" />
+    <ClInclude Include="GUISprite.h" />
+    <ClInclude Include="GUIText.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundCollection.h" />
     <ClInclude Include="Client.h" />
@@ -178,8 +184,12 @@
   <ItemGroup>
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="D3D11Helper.cpp" />
+    <ClCompile Include="DXUtil.cpp" />
     <ClCompile Include="ErrorLog.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GuiHandler.cpp" />
+    <ClCompile Include="GUISprite.cpp" />
+    <ClCompile Include="GUIText.cpp" />
     <ClCompile Include="ImGuiHelper.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />

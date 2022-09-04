@@ -11,6 +11,7 @@
 #include "WindowHelper.h"
 #include "D3D11Helper.h"
 #include "MemoryLeackChecker.h"
+#include "GuiHandler.h"
 
 #include "ImGuiHelper.h"
 
@@ -69,6 +70,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGuiHelper imGuiHelper(client);
 	imGuiHelper.setupImGui(clearColour);
 
+	immediateContext->RSSetViewports(1u, &viewport);
+	GuiHandler::Init();
 	
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
@@ -98,13 +101,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 				break;
 			}
 		}
-	
+		
 		currentState->Render();
 		
 		immediateContext->ClearRenderTargetView(rtv, clearColour);
 		immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 		immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		immediateContext->RSSetViewports(1, &viewport);
+		GuiHandler::Update();
 		imGuiHelper.drawInterface("test");
 
 		swapChain->Present(0, 0);

@@ -19,5 +19,6 @@ public:
 	//virtual ~State() = 0;
 	virtual GAMESTATE Update() = 0;
 	virtual void Render() = 0;
+	virtual void DrawUI() {};
 };
 

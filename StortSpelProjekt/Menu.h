@@ -17,6 +17,8 @@ class Menu : public State
 {
 private:
 
+	GuiHandler ui;
+
 #pragma region Meshes
 
 	std::vector<Mesh> meshes_Static;
@@ -139,5 +141,6 @@ public:
 	// Inherited via State
 	virtual GAMESTATE Update() override;
 	virtual void Render() override;
+	virtual void DrawUI() override;
 };
 

@@ -463,3 +463,8 @@ void Menu::Render()
 	GeometryPass();
 
 }
+
+void Menu::DrawUI()
+{
+	ui.Draw();
+}

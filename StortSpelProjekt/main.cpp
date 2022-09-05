@@ -71,8 +71,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGuiHelper imGuiHelper(client);
 	imGuiHelper.setupImGui(clearColour);
 
-	GuiHandler ui;
-	
+
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
 
@@ -109,7 +108,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 		immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		immediateContext->RSSetViewports(1, &viewport);
 
-		ui.Draw();
+		currentState->DrawUI();
 		imGuiHelper.drawInterface("test");
 
 		swapChain->Present(0, 0);

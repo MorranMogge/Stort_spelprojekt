@@ -219,14 +219,14 @@ public:
 
 		static MatrixS worldS;
 
-		worldS.matrix = 
-			DirectX::XMFLOAT4X4{
-				1, 0, 0, position.x,
-				0, 1, 0, position.y,
-				0, 0, 1, position.z,
-				0, 0, 0, 1
-			};
-		//XMStoreFloat4x4(&worldS.matrix, { ((XMMatrixRotationZ(this->rotation.z * XM_PI) * XMMatrixRotationY(this->rotation.y * XM_PI) * XMMatrixRotationX(this->rotation.x * XM_PI)) * XMMatrixTranslation(this->position.x, this->position.y, this->position.z) * XMMatrixScaling(1.0f, 1.0f, 1.0f)) });
+		//worldS.matrix = 
+		//	DirectX::XMFLOAT4X4{
+		//		1, 0, 0, position.x,
+		//		0, 1, 0, position.y,
+		//		0, 0, 1, position.z,
+		//		0, 0, 0, 1
+		//	};
+		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ ((XMMatrixRotationZ(this->rotation.z * XM_PI) * XMMatrixRotationY(this->rotation.y * XM_PI) * XMMatrixRotationX(this->rotation.x * XM_PI)) * XMMatrixTranslation(this->position.x, this->position.y, this->position.z) * XMMatrixScaling(1.0f, 1.0f, 1.0f)) }) );
 
 		worldCB.Update(&worldS, sizeof(MatrixS));
 

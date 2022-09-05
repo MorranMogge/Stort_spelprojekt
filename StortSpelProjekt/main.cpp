@@ -15,7 +15,9 @@
 #include "GuiHandler.h"
 
 #include "ImGuiHelper.h"
-
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace, _In_ LPWSTR lpCmdLine, _In_ int nCmdShhow)
 {
@@ -36,6 +38,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	HWND window;
 
 	Client* client = new Client();
+
+	Assimp::Importer importer;
 
 	if (!SetupWindow(hInstance, WIDTH, HEIGHT, nCmdShhow, window))
 	{

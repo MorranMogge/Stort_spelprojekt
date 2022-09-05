@@ -4,6 +4,8 @@
 #include <string>
 #include <iostream>
 
+#include <reactphysics3d\reactphysics3d.h>
+
 #include "Console.h"
 #include "SoundCollection.h"
 #include "Client.h"
@@ -25,6 +27,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	Console::Activate(); // activate console for cout and cin, to destroy console call "Console::Destroy();" 
 	std::cout << "test print \n"; //test print
+
+	reactphysics3d::PhysicsCommon com;
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();

@@ -179,6 +179,7 @@
     <ClInclude Include="RenderTargetView.h" />
     <ClInclude Include="SamplerState.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="ShaderResourceView.h" />
     <ClInclude Include="ShaderResourceTexture.h" />
     <ClInclude Include="Sound.h" />
@@ -234,6 +235,7 @@
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="WindowHelper.cpp" />

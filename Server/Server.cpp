@@ -1,7 +1,72 @@
 #include <iostream>
+#include <iostream>
+#include "../StortSpelProjekt/PackageTypes.h"
 
 #include <SFML/Network.hpp>
 #include <chrono>
+#include <thread>
+#include <vector>
+
+struct userData
+{
+	sf::IpAddress ipAdress;
+	std::string userName;
+};
+
+struct serverData
+{
+	bool endServer = false;
+	sf::UdpSocket socket;
+	std::vector< userData> users;
+	unsigned short port;
+	sf::Packet packet;
+};
+
+//example
+/*
+struct MyStruct
+{
+	float       number;
+	sf::Int8    integer;
+	std::string str;
+};
+
+
+sf::Packet& operator <<(sf::Packet& packet, const MyStruct& m)
+{
+	return packet << m.number << m.integer << m.str;
+}
+
+sf::Packet& operator >>(sf::Packet& packet, MyStruct& m)
+{
+	return packet >> m.number >> m.integer >> m.str;
+}
+*/
+void handleReceivedData(void* param)
+{
+	serverData* data = (serverData*)param;
+	sf::Packet packet;
+	sf::IpAddress remoteAddress;
+
+	while (!data->endServer)
+	{
+		if (data->socket.receive(packet, remoteAddress, data->port))
+		{
+			for (int i = 0; i < data->users.size(); i++)
+			{
+				if (data->users[i].ipAdress == remoteAddress)
+				{
+					std::cout << "received data from address: " << remoteAddress.toString() << std::endl;
+
+					data->packet = packet;
+					packet.clear();
+				}
+			}
+		}
+	}
+
+}
+
 
 int main()
 {
@@ -13,24 +78,17 @@ int main()
 
 	sf::IpAddress ip = sf::IpAddress::getLocalAddress();
 	std::cout << ip.toString() << "\n";
-	sf::TcpSocket socket;
+
+	sf::UdpSocket socket;
 	std::string connectionType, mode;
 
-	char buffer[2000];
-	size_t recieved;
-	std::string text = "Connect to: ";
+	serverData* serverData;
 
-	std::string receivedstring;
+	std::cout << "Starting handleReceiveData thread!\n";
+	std::thread* serverThread = new std::thread(handleReceivedData, &serverData);
 
 	std::cout << "Starting server!\n";
-
-	sf::TcpListener listener;
-	listener.listen(2001);
-	std::cout << "listening\n";
-
-	listener.accept(socket);
-	std::cout << "Accepted client write a message: ";
-
+	
 	std::chrono::time_point<std::chrono::system_clock> start;
 	start = std::chrono::system_clock::now();
 
@@ -43,7 +101,7 @@ int main()
 			//s = std::to_string(counter++);
 			packet << s;
 
-			socket.send(packet);
+			
 			packet.clear();
 			start = std::chrono::system_clock::now();
 		}

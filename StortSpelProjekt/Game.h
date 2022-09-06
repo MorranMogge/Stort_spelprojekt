@@ -11,4 +11,3 @@ public:
 	virtual GAMESTATE Update() override;
 	virtual void Render() override;
 };
-

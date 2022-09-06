@@ -160,6 +160,7 @@
     <ClInclude Include="DepthStencilView.h" />
     <ClInclude Include="DomainShader.h" />
     <ClInclude Include="DXUtil.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GeometryShader.h" />
     <ClInclude Include="GPU.h" />
     <ClInclude Include="GuiHandler.h" />
@@ -221,6 +222,7 @@
     <ClCompile Include="DXUtil.cpp" />
     <ClCompile Include="ErrorLog.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GuiHandler.cpp" />
     <ClCompile Include="GUISprite.cpp" />
     <ClCompile Include="GUIText.cpp" />

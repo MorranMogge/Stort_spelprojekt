@@ -261,6 +261,9 @@
     <ClInclude Include="RenderTargetView.h">
       <Filter>Header Files\DirectX</Filter>
     </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="State.cpp">
@@ -325,6 +328,9 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Header Files\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

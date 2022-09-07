@@ -73,6 +73,11 @@ void GameObject::setRot(DirectX::XMFLOAT3 rot)
 	this->rotation = rot;
 }
 
+void GameObject::setScale(DirectX::XMFLOAT3 scale)
+{
+	this->mesh->scale = scale;
+}
+
 DirectX::XMFLOAT3 GameObject::getPos() const
 {
 	return this->position;

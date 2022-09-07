@@ -169,6 +169,8 @@
     <ClInclude Include="GUIText.h" />
     <ClInclude Include="HullShader.h" />
     <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="LightHandler.h" />
     <ClInclude Include="MaterialLibrary.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MTL.h" />
@@ -234,6 +236,8 @@
     <ClCompile Include="ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LightHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="State.cpp" />

@@ -4,6 +4,7 @@
 #include "SoundCollection.h"
 #include "Topology.h"
 #include "Shader.h"
+#include "GameObject.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -175,6 +176,7 @@ Menu::Menu()
 	Shader::LoadAll(); // load all shader
 
 #pragma region Mesh_Static
+	GameObject objects("../Meshes/gob", DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(1, 1, 1));
 
 	// load obj file
 	std::vector<OBJ>objs_Static{

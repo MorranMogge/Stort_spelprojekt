@@ -263,6 +263,7 @@
     </ClInclude>
     <ClInclude Include="ShaderLoader.h">
     <ClInclude Include="Camera.h">
+    <ClInclude Include="GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -332,6 +333,7 @@
     </ClCompile>
     <ClCompile Include="ShaderLoader.cpp">
     <ClCompile Include="Camera.cpp">
+    <ClCompile Include="GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

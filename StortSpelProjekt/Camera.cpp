@@ -1,4 +1,5 @@
 #include "Camera.h"
+using namespace DirectX;
 
 void Camera::updateCamera(ID3D11DeviceContext* immediateContext)
 {

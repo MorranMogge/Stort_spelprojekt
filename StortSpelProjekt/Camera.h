@@ -2,8 +2,6 @@
 #include <directxmath.h>
 #include <d3d11.h>
 
-using namespace DirectX;
-
 class Camera
 {
 private:

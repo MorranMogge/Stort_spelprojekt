@@ -14,6 +14,7 @@ class Client
 {
 private:
 	ThreadInfo data;
+	sf::UdpSocket sendSocket;
 	sf::Packet sendPacket;
 	sf::Packet receivedPacket;
 	
@@ -33,5 +34,7 @@ public:
 	void setIpAndPort(std::string ipAddress, int port);
 	bool setupThread();
 	std::string receive();
-
+	void sendToServer(std::string stringToSend);
+	int getport()const;
+	std::string getipAdress()const;
 };

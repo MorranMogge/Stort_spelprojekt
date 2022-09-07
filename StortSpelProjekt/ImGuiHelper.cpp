@@ -24,16 +24,25 @@ void ImGuiHelper::drawInterface(std::string message)
 		{
 			
 		}
+
+		ImGui::Text("port: %d", client->getport());
+
 		char buf[255]{};
 		std::string ip;
 		if (ImGui::InputText("ipAdress", buf, sizeof(buf)))
 		{
 			client->setIpAndPort(buf, 2001);
 		}
-		if (ImGui::Button("Connect to server"))
+		if (ImGui::Button("start receive thread"))
 		{
 			client->connectToServer();
 			client->setupThread();
+		}
+
+		char sendbuf[255]{};
+		if (ImGui::InputText("send text to server", sendbuf, sizeof(sendbuf)))
+		{
+			client->sendToServer(sendbuf);
 		}
 
 		ImGui::Text(client->receive().c_str());

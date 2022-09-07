@@ -25,7 +25,7 @@ Client::Client()
 Client::Client(std::string ipAddress, int port)
 {
 	sf::IpAddress ip = sf::IpAddress(ipAddress);
-
+	this->ip = ipAddress;
 }
 
 Client::~Client()
@@ -40,12 +40,12 @@ Client::~Client()
 
 void Client::connectToServer(std::string ipAddress, int port)
 {
-	data.socket.connect(ipAddress, port);
+	//data.socket.connect(ipAddress, port);
 }
 
 void Client::connectToServer()
 {
-	data.socket.connect(this->ip, this->port);
+	//data.socket.connect(this->ip, this->port);
 	data.socket.setBlocking(false);
 }
 
@@ -70,4 +70,30 @@ bool Client::setupThread()
 std::string Client::receive()
 {
 	return data.receivedstring;
+}
+
+void Client::sendToServer(std::string stringToSend)
+{
+	sendPacket << stringToSend;
+	
+	if (sendSocket.send(sendPacket, this->ip, port) != sf::Socket::Done)
+	{
+		//failed to send data to server
+		std::cout << "sent data to server\n";
+	}
+	else
+	{
+		std::cout << "failed to send data to server\n";
+	}
+	sendPacket.clear();
+}
+
+int Client::getport() const
+{
+	return this->port;
+}
+
+std::string Client::getipAdress() const
+{
+	return this->ip;
 }

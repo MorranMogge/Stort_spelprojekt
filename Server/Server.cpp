@@ -50,13 +50,17 @@ void handleReceivedData(void* param)
 
 	while (!data->endServer)
 	{
-		if (data->socket.receive(packet, remoteAddress, data->port))
+		if (data->socket.receive(packet, data->users[0].ipAdress, data->port))
 		{
 			for (int i = 0; i < data->users.size(); i++)
 			{
 				if (data->users[i].ipAdress == remoteAddress)
 				{
+					std::string receivedString;
 					std::cout << "received data from address: " << remoteAddress.toString() << std::endl;
+					
+					packet >> receivedString;
+					std::cout << "Received string from client" << receivedString << std::endl;
 
 					data->packet = packet;
 					packet.clear();
@@ -76,18 +80,33 @@ int main()
 	sf::Packet receivedPacket;
 	float frequency = 30.f;
 
-	sf::IpAddress ip = sf::IpAddress::getLocalAddress();
-	std::cout << ip.toString() << "\n";
+	
 
-	sf::UdpSocket socket;
+	//sf::UdpSocket socket;
 	std::string connectionType, mode;
 
-	serverData* serverData;
+	serverData data;
+	userData tempUser;
+	tempUser.ipAdress = "192.168.43.251";
+	tempUser.userName = "mike hawk";
 
-	std::cout << "Starting handleReceiveData thread!\n";
-	std::thread* serverThread = new std::thread(handleReceivedData, &serverData);
+	sf::IpAddress ip = sf::IpAddress::getLocalAddress();
 
-	std::cout << "Starting server!\n";
+	data.users.push_back(tempUser);
+	data.port = 2001;
+
+	std::cout << ip.toString() << "\n" << "port: " << data.port << std::endl;
+	//serverData* serverData;
+	//std::cout << "Starting handleReceiveData thread!\n";
+	//std::thread* serverThread = new std::thread(handleReceivedData, &serverData);
+
+	if (data.socket.bind(data.port) != sf::Socket::Done)
+	{
+		std::cout << "Failed to bind UDP servern\n";
+		return -1;
+	}
+
+	std::cout << "Successfully bound socket\n";
 	
 	std::chrono::time_point<std::chrono::system_clock> start;
 	start = std::chrono::system_clock::now();
@@ -95,15 +114,33 @@ int main()
 	int counter = 0;
 	while (true)
 	{
-		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > 1.0f / frequency)
-		{
-			std::getline(std::cin, s);
-			//s = std::to_string(counter++);
-			packet << s;
+		//if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > 1.0f / frequency)
+		//{
+		//	std::getline(std::cin, s);
+		//	//s = std::to_string(counter++);
+		//	packet << s;
 
+		//	
+		//	packet.clear();
+		//	start = std::chrono::system_clock::now();
+		//}
+
+		if (data.socket.receive(packet, data.users[0].ipAdress, data.port) != sf::Socket::Done)
+		{
+
+			std::cout << "done ";
 			
+		}
+		else
+		{
+			std::string receivedString;
+			std::cout << "received data from address: " << data.users[0].ipAdress.toString() << std::endl;
+
+			packet >> receivedString;
+			std::cout << "Received string from client" << receivedString << std::endl;
+
+			data.packet = packet;
 			packet.clear();
-			start = std::chrono::system_clock::now();
 		}
 		
 	}
@@ -154,7 +191,7 @@ int main()
 	}*/
 
 
-    getchar();
+    (void*)getchar();
     return 0;
 }
 

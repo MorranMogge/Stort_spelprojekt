@@ -26,6 +26,7 @@ Client::Client(std::string ipAddress, int port)
 {
 	sf::IpAddress ip = sf::IpAddress(ipAddress);
 	this->ip = ipAddress;
+	this->tmp = "empty";
 }
 
 Client::~Client()
@@ -61,6 +62,11 @@ void Client::setIpAndPort(std::string ipAddress, int port)
 	this->port = port;
 }
 
+void Client::setIdentifier(std::string id)
+{
+
+}
+
 bool Client::setupThread()
 {
 	clientThread = new std::thread(clientFunction, &this->data);
@@ -72,13 +78,15 @@ std::string Client::receive()
 	return data.receivedstring;
 }
 
+//used for sending string
 void Client::sendToServer(std::string stringToSend)
 {
 	sendPacket << stringToSend;
+
 	
-	if (sendSocket.send(sendPacket, this->ip, port) != sf::Socket::Done)
+	if (sendSocket.send(sendPacket, this->ip, port) == sf::Socket::Done)
 	{
-		//failed to send data to server
+		//sent
 		std::cout << "sent data to server\n";
 	}
 	else
@@ -86,6 +94,40 @@ void Client::sendToServer(std::string stringToSend)
 		std::cout << "failed to send data to server\n";
 	}
 	sendPacket.clear();
+}
+
+//used for sending already saved MSG
+void Client::sendToServer()
+{
+	sendPacket << this->tmp;
+
+
+	if (sendSocket.send(sendPacket, this->ip, port) == sf::Socket::Done)
+	{
+		//sent
+		std::cout << "sent data to server\n";
+	}
+	else
+	{
+		std::cout << "failed to send data to server\n";
+	}
+	sendPacket.clear();
+}
+
+
+void Client::saveText(std::string text)
+{
+	id = text;
+}
+
+void Client::saveMsg(std::string text)
+{
+	this->tmp = text;
+}
+
+void Client::tempwrite()
+{
+	std::cout << id << std::endl;
 }
 
 int Client::getport() const

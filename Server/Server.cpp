@@ -7,6 +7,12 @@
 #include <thread>
 #include <vector>
 
+struct acceptMePacketData
+{
+	std::string identifier;
+	std::string s;
+};
+
 struct userData
 {
 	sf::IpAddress ipAdress;
@@ -60,7 +66,7 @@ void handleReceivedData(void* param)
 					std::cout << "received data from address: " << remoteAddress.toString() << std::endl;
 					
 					packet >> receivedString;
-					std::cout << "Received string from client" << receivedString << std::endl;
+					std::cout << "Received string from client: " << receivedString << std::endl;
 
 					data->packet = packet;
 					packet.clear();
@@ -74,6 +80,7 @@ void handleReceivedData(void* param)
 
 int main()
 {
+	std::string identifier;
 	std::string s = "empty";
 	// Group the variables to send into a packet
 	sf::Packet packet;
@@ -125,13 +132,7 @@ int main()
 		//	start = std::chrono::system_clock::now();
 		//}
 
-		if (data.socket.receive(packet, data.users[0].ipAdress, data.port) != sf::Socket::Done)
-		{
-
-			std::cout << "done ";
-			
-		}
-		else
+		if (data.socket.receive(packet, data.users[0].ipAdress, data.port) == sf::Socket::Done)
 		{
 			std::string receivedString;
 			std::cout << "received data from address: " << data.users[0].ipAdress.toString() << std::endl;
@@ -141,6 +142,10 @@ int main()
 
 			data.packet = packet;
 			packet.clear();
+		}
+		else
+		{
+			std::cout << "failure\n";
 		}
 		
 	}

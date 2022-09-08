@@ -22,6 +22,7 @@ private:
 	int port;
 
 	std::string tmp;
+	std::string id;
 
 	std::thread* clientThread;
 public:
@@ -32,9 +33,17 @@ public:
 	void connectToServer();
 	void joinThread();
 	void setIpAndPort(std::string ipAddress, int port);
+	void setIdentifier(std::string id);
+
 	bool setupThread();
 	std::string receive();
 	void sendToServer(std::string stringToSend);
+	void sendToServer();
+
+	void saveText(std::string text);
+	void saveMsg(std::string text);
+	void tempwrite();
+
 	int getport()const;
 	std::string getipAdress()const;
 };

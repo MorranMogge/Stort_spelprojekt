@@ -39,11 +39,24 @@ void ImGuiHelper::drawInterface(std::string message)
 			client->setupThread();
 		}
 
+		char idBuf[255]{};// used to save identifier string for client
+		if (ImGui::InputText("identifier", idBuf, sizeof(idBuf)))
+		{
+			client->saveText(idBuf);
+		}
+
 		char sendbuf[255]{};
 		if (ImGui::InputText("send text to server", sendbuf, sizeof(sendbuf)))
 		{
-			client->sendToServer(sendbuf);
+			//client->sendToServer(sendbuf);
+			client->saveMsg(sendbuf);
 		}
+
+		if (ImGui::Button("send msg"))
+		{
+			client->sendToServer();
+		}
+
 
 		ImGui::Text(client->receive().c_str());
 

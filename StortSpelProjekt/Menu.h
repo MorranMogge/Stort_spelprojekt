@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX
 #include "State.h"
 #include "GuiHandler.h"
 #include "Mesh.h"
@@ -13,6 +14,12 @@
 #include "ViewPort.h"
 #include "RenderTargetView.h"
 
+
+
+
+//Ny
+#include "ModelManager.h"
+
 class Menu : public State
 {
 private:
@@ -20,6 +27,9 @@ private:
 	GuiHandler ui;
 
 #pragma region Meshes
+
+	ModelManager manager;
+	std::vector<Mesh2*> testMeshes;
 
 	std::vector<Mesh> meshes_Static;
 	std::vector<Mesh> meshes_Dynamic;

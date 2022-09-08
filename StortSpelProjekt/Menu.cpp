@@ -176,33 +176,40 @@ Menu::Menu()
 
 #pragma region Mesh_Static
 
+	manager.loadMeshData("../Meshes/Blaster_Low_WithOutline.fbx");
+
+
+
+	this->testMeshes = manager.getMeshes();
+
+	std::cout << testMeshes.size() << "\n";
 	// load obj file
-	std::vector<OBJ>objs_Static{
+	/*std::vector<OBJ>objs_Static{
 		OBJ("../Meshes/gob"),
 		OBJ("../Meshes/pinto"),
-	};
+	};*/
 
 	// foreach obj in objs_static variable
-	for (auto& obj : objs_Static) 
-	{
-		meshes_Static.emplace_back(obj); // create mesh from obj
+	//for (auto& obj : objs_Static) 
+	//{
+	//	meshes_Static.emplace_back(obj); // create mesh from obj
 
-		// load obj material
-		for (auto& mat : obj.mtl.materials)
-		{
-			MaterialLibrary::LoadMaterial(mat);
-		}
+	//	// load obj material
+	//	for (auto& mat : obj.mtl.materials)
+	//	{
+	//		MaterialLibrary::LoadMaterial(mat);
+	//	}
 
-	}
-	
-	// set position
-	meshes_Static[1].position = { -20, 0, 0 };
+	//}
+	//
+	//// set position
+	//meshes_Static[1].position = { -20, 0, 0 };
 
-	// re-calculate bounding box
-	for (auto& mesh : meshes_Static)
-	{
-		mesh.CalcBound();
-	}
+	//// re-calculate bounding box
+	//for (auto& mesh : meshes_Static)
+	//{
+	//	mesh.CalcBound();
+	//}
 
 #pragma endregion
 
@@ -210,7 +217,7 @@ Menu::Menu()
 
 	// load obj file
 	std::vector<OBJ>objs_Dynamic{
-		OBJ("../Meshes/pinto"),
+		/*OBJ("../Meshes/pinto"),*/
 	};
 
 	// foreach obj in objs_Dynamic variable
@@ -227,6 +234,11 @@ Menu::Menu()
 	}
 
 #pragma endregion
+
+	for (int i = 0; i < testMeshes.size(); i++)
+	{
+		testMeshes[i]->Draw(GPU::immediateContext);
+	}
 
 #pragma region MainCamera
 
@@ -438,7 +450,7 @@ GAMESTATE Menu::Update()
 
 #pragma region Movements
 
-	constexpr float speed = 0.3f;
+	/*constexpr float speed = 0.3f;
 	static bool forward = false;
 	float zpos = meshes_Dynamic[0].position.z;
 
@@ -448,7 +460,7 @@ GAMESTATE Menu::Update()
 		forward = true;
 
 	forward ? zpos += speed : zpos -= speed;
-	meshes_Dynamic[0].position = { -10, 0, zpos };
+	meshes_Dynamic[0].position = { -10, 0, zpos };*/
 
 #pragma endregion
 
@@ -457,6 +469,7 @@ GAMESTATE Menu::Update()
 
 void Menu::Render()
 {
+	
 	UpdateConstanBuffer();
 
 	ShadowPass();

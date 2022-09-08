@@ -39,10 +39,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	Client* client = new Client();
 
-	Assimp::Importer importer;
+	/*Assimp::Importer importer;
 
 	const aiScene* pScene = importer.ReadFile("model/", aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
-		aiProcess_ConvertToLeftHanded | aiProcess_PreTransformVertices);
+		aiProcess_ConvertToLeftHanded | aiProcess_PreTransformVertices);*/
 
 
 	if (!SetupWindow(hInstance, WIDTH, HEIGHT, nCmdShhow, window))

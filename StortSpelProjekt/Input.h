@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX
 #include <unordered_map>
 #include <windows.h>
 #include <WinUser.h>

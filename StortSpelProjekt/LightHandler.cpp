@@ -28,19 +28,14 @@ bool CreateLtBuffer(ID3D11Device* device, Microsoft::WRL::ComPtr<ID3D11Buffer>& 
 		structVector.push_back(lightArray);
 	}
 
-	D3D11_BUFFER_DESC cBuffDesc = { 0 };
-	cBuffDesc.ByteWidth = sizeof(LightStruct) * structVector.size();			//size of buffer //*nr of elements
-	cBuffDesc.Usage = D3D11_USAGE_DYNAMIC;										//sets interaction with gpu and cpu
-	cBuffDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;							//Specifies the type of buffer
-	cBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;							//Specifies cpu acess
-	cBuffDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;				//Misc flags
-	cBuffDesc.StructureByteStride = sizeof(LightStruct);						//Size of each element in structure
-	D3D11_SUBRESOURCE_DATA cBufData = { 0 };									//holds matrix data
-	cBufData.pSysMem = structVector.data();										//pointer to data
 
 
-	//Create light buffer
-	HRESULT hr = device->CreateBuffer(&cBuffDesc, &cBufData, lightBuffer.GetAddressOf());
+	StructuredBuffer<LightStruct>testStruct;
+	for (int i = 0; i < lights.size(); i++)
+	{
+		testStruct.addData(structVector.at(i), device);
+	}
+	testStruct.applyData();
 
 
 	//ShaderResource view 
@@ -51,7 +46,7 @@ bool CreateLtBuffer(ID3D11Device* device, Microsoft::WRL::ComPtr<ID3D11Buffer>& 
 	shaderResourceViewDesc.Buffer.NumElements = structVector.size();
 
 	//create shader resource view 
-	device->CreateShaderResourceView(lightBuffer.Get(), &shaderResourceViewDesc, lightBuffView.GetAddressOf());
+	HRESULT hr = device->CreateShaderResourceView(lightBuffer.Get(), &shaderResourceViewDesc, lightBuffView.GetAddressOf());
 	return !FAILED(hr);
 }
 
@@ -78,7 +73,7 @@ void LightHandler::finalizeLights(ID3D11Device* device, ID3D11DeviceContext* imm
 	//lägg till info från light i buffers 
 	int nrOfLights = this->lights.size();
 
-	//Create depth stencil, textureArr, depthViewArr & shader resource view
+	////Create depth stencil, textureArr, depthViewArr & shader resource view
 	//if (!CreateDepthStencil(device, this->shadowWidth, this->shadowHeight, this->depthTextures, this->depthViews, this->shaderView, nrOfLights))
 	//{
 	//	std::cerr << "error creating Dstencil/Srv!" << std::endl;

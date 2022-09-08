@@ -5,6 +5,8 @@
 #include "Topology.h"
 #include "Shader.h"
 #include "GameObject.h"
+#include "LightHandler.h"
+#include "GPU.h"
 
 
 using namespace DirectX::SimpleMath;
@@ -12,6 +14,16 @@ using namespace DirectX::SimpleMath;
 void Menu::UpdateConstanBuffer()
 {
 #pragma region Mesh
+
+	LightHandler testHandler(GPU::windowWidth, GPU::windowHeight);
+	testHandler.addLight(DirectX::XMFLOAT3(0, 20, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), DirectX::XMFLOAT3(0, 1, 0));
+	testHandler.finalizeLights(GPU::device, GPU::immediateContext);
+
+
+	//ConstantBufferNew<MyStruct>testStruct;
+	//testStruct.Initialize(,);
+	//testStruct.getData().testf = 1.0f;
+	//testStruct.applyData();
 
 	for (int i = 0; i < meshes_Static.size(); i++)
 	{

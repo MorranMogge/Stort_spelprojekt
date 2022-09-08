@@ -176,7 +176,7 @@ Menu::Menu()
 
 #pragma region Mesh_Static
 
-	manager.loadMeshData("../Meshes/Blaster_Low_WithOutline.fbx");
+	manager.loadMeshData("../Meshes/goblin.fbx");
 
 
 

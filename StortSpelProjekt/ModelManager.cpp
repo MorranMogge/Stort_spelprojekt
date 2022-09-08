@@ -100,7 +100,7 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 
 	if (pScene == nullptr)
 	{
-		ErrorLog::Log("Cant read FTX-File!");
+		ErrorLog::Log("Cant read FBX-File!");
 		return false;
 	}
 

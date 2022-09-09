@@ -267,6 +267,9 @@
     <ClInclude Include="mesh2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ModelDataContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="State.cpp">
@@ -336,6 +339,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mesh2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelDataContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

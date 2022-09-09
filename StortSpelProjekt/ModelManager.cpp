@@ -5,6 +5,49 @@
 
 #include <iostream>
 
+bool ModelManager::makeSRV(ID3D11ShaderResourceView*& srv, std::string filePath)
+{
+	ID3D11Texture2D* texture;
+
+	D3D11_TEXTURE2D_DESC desc = {};
+	int width, height, channels;
+	unsigned char* image = stbi_load(filePath.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+	if (!image)
+	{
+		stbi_image_free(image);
+		return false;
+	}
+	desc.Width = width;
+	desc.Height = height;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.MiscFlags = 0;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_IMMUTABLE;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA data = {};
+	data.pSysMem = image;
+	data.SysMemPitch = width * 4; //RBGA - RGBA - ...
+
+	HRESULT hr = device->CreateTexture2D(&desc, &data, &texture);
+	stbi_image_free(image);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+	hr = device->CreateShaderResourceView(texture, NULL, &srv);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+	texture->Release();
+	return true;
+}
+
 void ModelManager::processNodes(aiNode* node, const aiScene* scene)
 {
 	for (UINT i = 0; i < node->mNumMeshes; i++)
@@ -87,9 +130,9 @@ Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 	
 }
 
-ModelManager::ModelManager()
+ModelManager::ModelManager(ID3D11Device* device)
 {
-
+	this->device = device;
 }
 
 bool ModelManager::loadMeshData(const std::string& filePath)
@@ -106,6 +149,34 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 
 	processNodes(pScene->mRootNode, pScene);
 	return true;
+
+	if (pScene->HasMaterials())
+	{
+		for (unsigned int i = 0; i < pScene->mNumMaterials; i++)
+		{
+			const aiMaterial* pMaterial = pScene->mMaterials[i];
+			if (pMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+			{
+				aiString Path;
+				//har vi texturen?
+				if (this->bank.hasItem(Path.data))
+				{
+					continue;
+				};
+
+				if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+				{
+					ID3D11ShaderResourceView* tempSRV = {};
+					std::string FullPath = "../Meshes/";
+					FullPath.append(Path.data);
+					//make srv
+					this->makeSRV(tempSRV, Path.data);
+					//give to bank
+					this->bank.addSrv(Path.data, tempSRV);
+				}
+			}
+		}
+	}
 }
 
 std::vector<Mesh2*> ModelManager::getMeshes() const

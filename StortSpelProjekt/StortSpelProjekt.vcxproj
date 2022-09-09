@@ -171,6 +171,7 @@
     <ClInclude Include="MaterialLibrary.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="mesh2.h" />
+    <ClInclude Include="ModelDataContainer.h" />
     <ClInclude Include="ModelManager.h" />
     <ClInclude Include="MTL.h" />
     <ClInclude Include="OBJ.h" />
@@ -237,6 +238,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="mesh2.cpp" />
+    <ClCompile Include="ModelDataContainer.cpp" />
     <ClCompile Include="ModelManager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>

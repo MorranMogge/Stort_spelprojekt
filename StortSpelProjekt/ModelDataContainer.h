@@ -9,7 +9,7 @@
 class MDC
 {
 public:
-	MDC(ID3D11Device* device);
+	MDC();
 	~MDC();
 
 	bool hasItem(const std::string key);
@@ -22,7 +22,6 @@ public:
 	void addIndexBuffer(std::string key, ID3D11Buffer* indexBuf);
 
 private:
-	ID3D11Device* device;
 
 	std::map<std::string, ID3D11ShaderResourceView*> srvMap;
 	std::map<std::string, ID3D11ShaderResourceView*>::iterator srvIt;

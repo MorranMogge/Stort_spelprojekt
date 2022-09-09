@@ -1,8 +1,7 @@
 #include "ModelDataContainer.h"
 
-MDC::MDC(ID3D11Device* device)
+MDC::MDC()
 {
-	this->device = device;
 }
 
 MDC::~MDC()

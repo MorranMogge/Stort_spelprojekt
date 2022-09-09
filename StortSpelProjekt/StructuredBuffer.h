@@ -54,7 +54,7 @@ StructuredBuffer<T>::StructuredBuffer()
 }
 
 template<class T>
-bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
+bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext)//Kolla bytewidth *0
 {
 	this->deviceContext = deviceContext;
 

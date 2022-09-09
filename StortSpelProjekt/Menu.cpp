@@ -15,7 +15,7 @@ void Menu::UpdateConstanBuffer()
 {
 #pragma region Mesh
 
-	LightHandler testHandler(GPU::windowWidth, GPU::windowHeight);
+	LightHandler testHandler;
 	testHandler.addLight(DirectX::XMFLOAT3(0, 20, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), DirectX::XMFLOAT3(0, 1, 0));
 	testHandler.finalizeLights(GPU::device, GPU::immediateContext);
 

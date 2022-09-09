@@ -2,8 +2,10 @@
 #include "Light.h"
 #include <wrl.h>
 #include <vector>
+#include <iostream>
 #include "ConstantBufferNew.h"
 #include "StructuredBuffer.h"
+#include "GPU.h"
 
 
 
@@ -15,9 +17,9 @@ private:
 
 	//Shadow
 
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shadowSrv;					//Srv Shadow texture for lights		//Bind to shader to sample from shadow map
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthTextures;						//Depth texture-array for lights
-	std::vector<Microsoft::WRL::ComPtr<ID3D11DepthStencilView>> depthViews;		//Depth stencil for lights			//Bind to render to
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shadowSrv;					//Shader view ShadowTx for lights	//Bind to shader to sample from shadow map
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthTextures;						//Array of Depth textures
+	std::vector < Microsoft::WRL::ComPtr<ID3D11DepthStencilView>> depthViews;	//Depth stencil for lights			//Bind to render to
 	UINT shadowHeight;															//Width shadowmap
 	UINT shadowWidth;															//Height shadowmap
 
@@ -27,7 +29,9 @@ private:
 	std::vector<Light> lights;													//Vector of light objects
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> structuredBufferSrv;		//View for structured buffer
 	std::vector<Microsoft::WRL::ComPtr<ID3D11Buffer>> viewBuffers;				//View/proj matrix for each light
+	Microsoft::WRL::ComPtr<ID3D11Buffer> structuredlightBuffer;					//Holds Light data 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> numLightBuffer;						//Holds nr of lights
+	int LightCap = 10;
 
 	//Mesh
 
@@ -35,7 +39,7 @@ private:
 	
 public:
 
-	LightHandler(UINT winWidth,UINT winHeight);
+	LightHandler();
 	void addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, DirectX::XMFLOAT3 UpDir, int type = 0, float coneAngle = 0.5f);
 	void finalizeLights(ID3D11Device* device, ID3D11DeviceContext* immediateContext);
 	//bool updateLights(ID3D11DeviceContext* immediateContext, int ltIndex, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, float lightIntensity);

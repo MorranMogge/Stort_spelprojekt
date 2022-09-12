@@ -1,4 +1,5 @@
 #include "Camera.h"
+using namespace DirectX;
 
 void Camera::updateCamera(ID3D11DeviceContext* immediateContext)
 {
@@ -17,7 +18,7 @@ void Camera::updateCamera(ID3D11DeviceContext* immediateContext)
 Camera::Camera(ID3D11DeviceContext* immediateContext, ID3D11Device* device)
 {
 	viewMatrix = XMMatrixLookAtLH(cameraPos, lookAtPos, upVector);
-	projMatrix = DirectX::XMMatrixPerspectiveFovLH(0.8f, 1280 / 720, 0.1f, 100.0f);
+	projMatrix = DirectX::XMMatrixPerspectiveFovLH(0.8f, 1080 / 720, 0.1f, 800.0f);
 	viewProj = viewMatrix * projMatrix;
 	viewProj = XMMatrixTranspose(viewProj);
 
@@ -47,31 +48,31 @@ void Camera::moveCamera(ID3D11DeviceContext* immediateContext, float dt)
 
 	if (GetAsyncKeyState('W'))
 	{
-		forwardVec = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
-		cameraPos += forwardVec * 20 * dt;
-		lookAtPos += forwardVec * 20 * dt;
+		forwardVec = DEFAULT_FORWARD;
+		cameraPos += forwardVec * 10 * dt;
+		lookAtPos += forwardVec * 10 * dt;
 		updateCamera(immediateContext);
 	}
 
 	else if (GetAsyncKeyState('S'))
 	{
-		forwardVec = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
-		cameraPos -= forwardVec * 20 * dt;
-		lookAtPos -= forwardVec * 20 * dt;
+		forwardVec = DEFAULT_FORWARD;
+		cameraPos -= forwardVec * 10 * dt;
+		lookAtPos -= forwardVec * 10 * dt;
 		updateCamera(immediateContext);
 	}
 
 	if (GetAsyncKeyState('D'))
 	{
-		rightVec = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
-		cameraPos += rightVec * 20 * dt;
-		lookAtPos += rightVec * 20 * dt;
+		rightVec = DEFAULT_RIGHT;
+		cameraPos += rightVec * 10 * dt;
+		lookAtPos += rightVec * 10 * dt;
 		updateCamera(immediateContext);
 	}
 
 	else if (GetAsyncKeyState('A'))
 	{
-		rightVec = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
+		rightVec = DEFAULT_RIGHT;
 		cameraPos -= rightVec * 10 * dt;
 		lookAtPos -= rightVec * 10 * dt;
 		updateCamera(immediateContext);

@@ -30,7 +30,8 @@ public:
 
 		//D3D11_UNORDERED_ACCESS_VIEW_DESC todo = {};
 		//use that resource to create render target view on that resource
-		GPU::device->CreateUnorderedAccessView(backBufferTex2D, nullptr, data.GetAddressOf());//pass the renderTargetView
+		GPU::device->CreateUnorderedAccessView(backBufferTex2D, nullptr, data.GetAddressOf());//pass the 
+
 
 		backBufferTex2D->Release();
 	}

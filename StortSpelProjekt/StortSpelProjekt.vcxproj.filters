@@ -1,291 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="ImGui">
-      <UniqueIdentifier>{e4a144e3-680b-4584-8aca-166ee2450e11}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{aabda874-42a6-42b2-b4cf-64dd5b01fca2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\VS">
-      <UniqueIdentifier>{f1470197-b752-4f14-84be-d26512fc5ed7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\PS">
-      <UniqueIdentifier>{8b4e3d33-4919-4ddd-b5c9-583949ac258b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\HS">
-      <UniqueIdentifier>{9541d862-1c41-4a8f-acd7-7fc4b35184a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\GS">
-      <UniqueIdentifier>{e7bad2ef-e140-41e0-ac3b-b538810a5e86}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\DS">
-      <UniqueIdentifier>{646317e5-bc2b-4395-991e-5354b9830541}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\CS">
-      <UniqueIdentifier>{4fd66eff-7045-4273-8d11-914046154790}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sound">
-      <UniqueIdentifier>{e007bbae-14b5-4add-821b-93e1a804bfb3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Buffer">
-      <UniqueIdentifier>{cb78674c-396f-44f5-9df1-3406c5987f83}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\DirectX">
-      <UniqueIdentifier>{529a38cd-aee7-401b-a4ab-9b05c56f4a52}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine">
-      <UniqueIdentifier>{22f39777-9a0b-4a5b-b45b-215683682410}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\File">
-      <UniqueIdentifier>{72582cbd-e5a8-44c8-b605-40254e05dbdc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Material">
-      <UniqueIdentifier>{959f9553-5ca6-477f-ab33-8a02ac2254ed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Mesh">
-      <UniqueIdentifier>{f32dbd14-78d2-4219-9aeb-b615258bed6d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Texture">
-      <UniqueIdentifier>{4a4f6e31-5ac9-4774-847c-0b8a9d93cae2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Sprite">
-      <UniqueIdentifier>{d1e37f50-e7f6-412d-8675-fd2ce35eb087}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Shader">
-      <UniqueIdentifier>{78831706-5d04-4426-9613-4145208d0097}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Camera">
-      <UniqueIdentifier>{6b5e6852-bcfa-49ca-99c6-0d24b5223d0a}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="State.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Menu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ErrorLog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imconfig.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imgui.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imgui_impl_dx11.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imgui_impl_win32.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imgui_internal.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imstb_rectpack.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imstb_textedit.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGui\imstb_truetype.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="MemoryLeackChecker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11Helper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGuiHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Client.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PackageTypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DXUtil.h">
-      <Filter>Header Files\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="GPU.h">
-      <Filter>Header Files\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="GuiHandler.h">
-      <Filter>Header Files\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="GUIObject.h">
-      <Filter>Header Files\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="GUISprite.h">
-      <Filter>Header Files\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="GUIText.h">
-      <Filter>Header Files\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="HullShader.h">
-      <Filter>Header Files\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="GeometryShader.h">
-      <Filter>Header Files\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Buffer.h">
-      <Filter>Header Files\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexShader.h">
-      <Filter>Header Files\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="ConstantBuffer.h">
-      <Filter>Header Files\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="ComputeShader.h">
-      <Filter>Header Files\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="BlendState.h">
-      <Filter>Header Files\DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="SamplerState.h">
-      <Filter>Header Files\DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="PixelShader.h">
-      <Filter>Header Files\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBuffer.h">
-      <Filter>Header Files\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="IndexBuffer.h">
-      <Filter>Header Files\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="Bound.h">
-      <Filter>Header Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderResourceView.h">
-      <Filter>Header Files\DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Header Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="RasterizerState.h">
-      <Filter>Header Files\DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="Sound.h">
-      <Filter>Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundCollection.h">
-      <Filter>Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="Console.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderResourceTexture.h">
-      <Filter>Header Files\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>Header Files\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image_resize.h">
-      <Filter>Header Files\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image_write.h">
-      <Filter>Header Files\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="MaterialLibrary.h">
-      <Filter>Header Files\Material</Filter>
-    </ClInclude>
-    <ClInclude Include="MTL.h">
-      <Filter>Header Files\File</Filter>
-    </ClInclude>
-    <ClInclude Include="OBJ.h">
-      <Filter>Header Files\File</Filter>
-    </ClInclude>
-    <ClInclude Include="PerspectiveCamera.h">
-      <Filter>Header Files\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="OrthoGraphicCamera.h">
-      <Filter>Header Files\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="DepthStencilState.h">
-      <Filter>Header Files\DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="DepthStencilView.h">
-      <Filter>Header Files\DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="DomainShader.h">
-      <Filter>Header Files\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="UnorderedAccessView.h">
-      <Filter>Header Files\DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="Topology.h">
-      <Filter>Header Files\DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="ViewPort.h">
-      <Filter>Header Files\DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderTargetView.h">
-      <Filter>Header Files\DirectX</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderLoader.h">
-    <ClInclude Include="Camera.h">
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="State.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Menu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WindowHelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ErrorLog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="D3D11Helper.cpp" />
+    <ClCompile Include="ErrorLog.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GuiHandler.cpp" />
+    <ClCompile Include="GUISprite.cpp" />
+    <ClCompile Include="GUIText.cpp" />
+    <ClCompile Include="ImGuiHelper.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="State.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="WindowHelper.cpp" />
     <ClCompile Include="ImGui\imgui.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
@@ -307,102 +35,105 @@
     <ClCompile Include="ImGui\imgui_widgets.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="D3D11Helper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGuiHelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Client.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DXUtil.cpp">
-      <Filter>Header Files\Sprite</Filter>
-    </ClCompile>
-    <ClCompile Include="GuiHandler.cpp">
-      <Filter>Header Files\Sprite</Filter>
-    </ClCompile>
-    <ClCompile Include="GUISprite.cpp">
-      <Filter>Header Files\Sprite</Filter>
-    </ClCompile>
-    <ClCompile Include="GUIText.cpp">
-      <Filter>Header Files\Sprite</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Header Files\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderLoader.cpp">
-    <ClCompile Include="Camera.cpp">
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClCompile Include="BasicRenderer.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="ShaderLoader.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="DXUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="StortSpelProjekt.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
+    <ClInclude Include="Bound.h" />
+    <ClInclude Include="Buffer.h" />
+    <ClInclude Include="ConstantBuffer.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GPU.h" />
+    <ClInclude Include="GuiHandler.h" />
+    <ClInclude Include="GUIObject.h" />
+    <ClInclude Include="GUISprite.h" />
+    <ClInclude Include="GUIText.h" />
+    <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="MaterialLibrary.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MTL.h" />
+    <ClInclude Include="OBJ.h" />
+    <ClInclude Include="RasterizerState.h" />
+    <ClInclude Include="RenderTargetView.h" />
+    <ClInclude Include="SamplerState.h" />
+    <ClInclude Include="ShaderResourceView.h" />
+    <ClInclude Include="ShaderResourceTexture.h" />
+    <ClInclude Include="Sound.h" />
+    <ClInclude Include="SoundCollection.h" />
+    <ClInclude Include="Client.h" />
+    <ClInclude Include="Console.h" />
+    <ClInclude Include="D3D11Helper.h" />
+    <ClInclude Include="ErrorLog.h" />
+    <ClInclude Include="ImGuiHelper.h" />
+    <ClInclude Include="ImGui\imconfig.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="MemoryLeackChecker.h" />
+    <ClInclude Include="Menu.h" />
+    <ClInclude Include="PackageTypes.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="State.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="Topology.h" />
+    <ClInclude Include="UnorderedAccessView.h" />
+    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="ViewPort.h" />
+    <ClInclude Include="WindowHelper.h" />
+    <ClInclude Include="ImGui\imgui.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_dx11.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_win32.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_internal.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>stb_image</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image_resize.h">
+      <Filter>stb_image</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image_write.h">
+      <Filter>stb_image</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_rectpack.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_textedit.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_truetype.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicRenderer.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="ShaderLoader.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="BlendState.h" />
+    <ClInclude Include="DepthStencilState.h" />
+    <ClInclude Include="PerspectiveCamera.h" />
+    <ClInclude Include="DXUtil.h" />
+    <ClInclude Include="DepthStencilView.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="icon.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <ResourceCompile Include="StortSpelProjekt.rc" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="vs.hlsl">
-      <Filter>Shaders\VS</Filter>
-    </FxCompile>
-    <FxCompile Include="vs_Billboard.hlsl">
-      <Filter>Shaders\VS</Filter>
-    </FxCompile>
-    <FxCompile Include="vs_CubeD.hlsl">
-      <Filter>Shaders\VS</Filter>
-    </FxCompile>
-    <FxCompile Include="vs_QuadTree.hlsl">
-      <Filter>Shaders\VS</Filter>
-    </FxCompile>
-    <FxCompile Include="vs_Shadow.hlsl">
-      <Filter>Shaders\VS</Filter>
-    </FxCompile>
-    <FxCompile Include="vs_Tess.hlsl">
-      <Filter>Shaders\VS</Filter>
-    </FxCompile>
-    <FxCompile Include="ps.hlsl">
-      <Filter>Shaders\PS</Filter>
-    </FxCompile>
-    <FxCompile Include="ps_Billboard.hlsl">
-      <Filter>Shaders\PS</Filter>
-    </FxCompile>
-    <FxCompile Include="ps_Color.hlsl">
-      <Filter>Shaders\PS</Filter>
-    </FxCompile>
-    <FxCompile Include="ps_Cube.hlsl">
-      <Filter>Shaders\PS</Filter>
-    </FxCompile>
-    <FxCompile Include="ps_CubeD.hlsl">
-      <Filter>Shaders\PS</Filter>
-    </FxCompile>
-    <FxCompile Include="hs.hlsl">
-      <Filter>Shaders\HS</Filter>
-    </FxCompile>
-    <FxCompile Include="gs_Billboard.hlsl">
-      <Filter>Shaders\GS</Filter>
-    </FxCompile>
-    <FxCompile Include="ds.hlsl">
-      <Filter>Shaders\DS</Filter>
-    </FxCompile>
-    <FxCompile Include="cs.hlsl">
-      <Filter>Shaders\CS</Filter>
-    </FxCompile>
-    <FxCompile Include="cs_Particle.hlsl">
-      <Filter>Shaders\CS</Filter>
-    </FxCompile>
+    <Image Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Light.hlsli">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Vertex.hlsli">
-      <Filter>Shaders</Filter>
-    </None>
+    <Filter Include="ImGui">
+      <UniqueIdentifier>{2920180e-767b-41b0-b5d4-b8291c9b66f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="stb_image">
+      <UniqueIdentifier>{04645332-69e8-44a7-93c1-88dd530212f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

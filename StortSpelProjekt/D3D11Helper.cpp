@@ -5,8 +5,8 @@ bool CreateInterfaces(UINT width, UINT height, HWND window, ID3D11Device*& devic
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 
-	swapChainDesc.BufferDesc.Width = 0;
-	swapChainDesc.BufferDesc.Height = 0;
+	swapChainDesc.BufferDesc.Width = width;
+	swapChainDesc.BufferDesc.Height = height;
 	swapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
 	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -39,6 +39,9 @@ bool CreateInterfaces(UINT width, UINT height, HWND window, ID3D11Device*& devic
 	GPU::device = device;
 	GPU::immediateContext = immediateContext;
 	GPU::swapChain = swapChain;
+
+	GPU::windowWidth = 1264;
+	GPU::windowHeight = 681;
 
 	return !FAILED(hr);
 }

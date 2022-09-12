@@ -18,7 +18,7 @@ void Camera::updateCamera(ID3D11DeviceContext* immediateContext)
 Camera::Camera(ID3D11DeviceContext* immediateContext, ID3D11Device* device)
 {
 	viewMatrix = XMMatrixLookAtLH(cameraPos, lookAtPos, upVector);
-	projMatrix = DirectX::XMMatrixPerspectiveFovLH(0.8f, 1080 / 720, 0.1f, 800.0f);
+	projMatrix = DirectX::XMMatrixPerspectiveFovLH(0.8f, 1264.f / 681.f, 0.1f, 800.0f);
 	viewProj = viewMatrix * projMatrix;
 	viewProj = XMMatrixTranspose(viewProj);
 

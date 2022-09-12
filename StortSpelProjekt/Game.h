@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "BasicRenderer.h"
 #include "Mesh.h"
+#include "Input.h"
 
 class Game : public State
 {

@@ -4,8 +4,7 @@ void Game::loadObjects()
 {
 	// load obj file
 	std::vector<OBJ>objs_Static{
-		OBJ("../Meshes/gob"),
-		OBJ("../Meshes/pinto"),
+		OBJ("../Meshes/Planet")
 	};
 
 	// foreach obj in objs_static variable
@@ -20,9 +19,7 @@ void Game::loadObjects()
 		}
 
 	}
-
-	// set position
-	meshes_Static[1].position = { -20, 0, 0 };
+	meshes_Static[0].scale = DirectX::SimpleMath::Vector3(5, 5, 5);
 
 	// re-calculate bounding box
 	for (auto& mesh : meshes_Static)
@@ -32,7 +29,7 @@ void Game::loadObjects()
 
 	// load obj file
 	std::vector<OBJ>objs_Dynamic{
-		OBJ("../Meshes/pinto"),
+		OBJ("../Meshes/Player"),
 	};
 
 	// foreach obj in objs_Dynamic variable
@@ -47,6 +44,10 @@ void Game::loadObjects()
 		}
 
 	}
+	meshes_Dynamic[0].scale = DirectX::SimpleMath::Vector3(0.25, 0.25, 0.25);
+	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(10, 10, -10);
+
+
 }
 
 void Game::drawObjects()
@@ -73,6 +74,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	loadObjects();
+	camera.updateCamera(immediateContext);
 }
 
 Game::~Game()
@@ -85,13 +87,19 @@ GAMESTATE Game::Update()
 	static bool forward = false;
 	float zpos = meshes_Dynamic[0].position.z;
 
-	if (zpos >= 0)
-		forward = false;
-	else if (zpos <= -10)
-		forward = true;
+	float pos[3]{ meshes_Dynamic[0].position.x,meshes_Dynamic[0].position.y ,meshes_Dynamic[0].position.z };
+	if (Input::KeyDown(KeyCode::W)) pos[2] += 0.1;
+	if (Input::KeyDown(KeyCode::S)) pos[2] -= 0.1;
+	if (Input::KeyDown(KeyCode::D)) pos[0] += 0.1;
+	if (Input::KeyDown(KeyCode::A)) pos[0] -= 0.1;
 
-	forward ? zpos += speed : zpos -= speed;
-	meshes_Dynamic[0].position = { -10, 0, zpos };
+	/*for (int i = 0; i < 3; i++)
+	{
+		if (pos[i] > 10) pos[i] = 10;
+		else if (pos[i] < -10) pos[i] = -10;
+	}*/
+
+	meshes_Dynamic[0].position = {pos[0], pos[1] , pos[2] };
 
 	for (int i = 0; i < meshes_Static.size(); i++)
 	{
@@ -103,14 +111,12 @@ GAMESTATE Game::Update()
 		meshes_Dynamic[i].UpdateCB();
 	}
 
-	camera.moveCamera(immediateContext, 1.f/100.f);
-	std::cout << "This is the Game State!\n";
+	//camera.moveCamera(immediateContext, 1.f/100.f);
 	return NOCHANGE;
 }
 
 void Game::Render()
 {
 	basicRenderer.setUpScene();
-	camera.updateCamera(immediateContext);
 	drawObjects();
 }

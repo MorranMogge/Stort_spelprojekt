@@ -11,8 +11,8 @@ private:
 	DirectX::XMMATRIX viewProj;
 
 	DirectX::XMMATRIX rotationMX;
-	DirectX::XMVECTOR cameraPos = DirectX::XMVectorSet(-10.0f, 0.0f, -10.0f, 0.0f);
-	DirectX::XMVECTOR lookAtPos = DirectX::XMVectorSet(-10.0f, 0.0f, 5.0f, 0.0f);
+	DirectX::XMVECTOR cameraPos = DirectX::XMVectorSet(0.0f, 0.0f, -20.0f, 0.0f);
+	DirectX::XMVECTOR lookAtPos = DirectX::XMVectorSet(0.0f, 0.0f, 5.0f, 0.0f);
 
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);

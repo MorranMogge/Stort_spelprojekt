@@ -167,7 +167,7 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 				if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 				{
 					ID3D11ShaderResourceView* tempSRV = {};
-					std::string FullPath = "../Meshes/";
+					std::string FullPath = "../Textures/";
 					FullPath.append(Path.data);
 					//make srv
 					this->makeSRV(tempSRV, Path.data);

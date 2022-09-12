@@ -176,13 +176,15 @@ Menu::Menu()
 
 #pragma region Mesh_Static
 
-	manager.loadMeshData("../Meshes/goblin.fbx");
-
-
-
-	this->testMeshes = manager.getMeshes();
-
+	manager = new ModelManager(GPU::device);
+	
+	manager->loadMeshData("../Meshes/goblin.fbx");
+	
+	this->testMeshes = manager->getMeshes();
+	
 	std::cout << testMeshes.size() << "\n";
+	 
+	
 	// load obj file
 	/*std::vector<OBJ>objs_Static{
 		OBJ("../Meshes/gob"),
@@ -235,10 +237,10 @@ Menu::Menu()
 
 #pragma endregion
 
-	for (int i = 0; i < testMeshes.size(); i++)
-	{
-		testMeshes[i]->Draw(GPU::immediateContext);
-	}
+	//for (int i = 0; i < testMeshes.size(); i++)
+	//{
+	//	testMeshes[i]->Draw(GPU::immediateContext);
+	//}
 
 #pragma region MainCamera
 

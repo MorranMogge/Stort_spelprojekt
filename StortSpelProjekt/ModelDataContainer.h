@@ -6,6 +6,8 @@
 #include<iterator>
 #include<string>
 
+
+//Model data container
 class MDC
 {
 public:

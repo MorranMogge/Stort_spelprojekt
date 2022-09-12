@@ -28,7 +28,7 @@ private:
 
 #pragma region Meshes
 
-	ModelManager manager;
+	ModelManager* manager;
 	std::vector<Mesh2*> testMeshes;
 
 	std::vector<Mesh> meshes_Static;

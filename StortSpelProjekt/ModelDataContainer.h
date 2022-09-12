@@ -5,9 +5,8 @@
 #include<map>
 #include<iterator>
 #include<string>
+#include<tuple>
 
-
-//Model data container
 class MDC
 {
 public:
@@ -16,21 +15,23 @@ public:
 
 	bool hasItem(const std::string key);
 	ID3D11ShaderResourceView* getSrv(const std::string key);
-	ID3D11Buffer* getVertexBuffer(const std::string key);
-	ID3D11Buffer* getIndexBuffer(const std::string key);
+	bool getIndexMeshBuffers(const std::string key, ID3D11Buffer*& indexBuff, ID3D11Buffer*& vertexBuff);
 
 	void addSrv(std::string key, ID3D11ShaderResourceView* srv);
-	void addVertexBuffer(std::string key, ID3D11Buffer* vertexBuf);
-	void addIndexBuffer(std::string key, ID3D11Buffer* indexBuf);
-
+	void addMeshBuffers(std::string key, ID3D11Buffer* vertexBuf, ID3D11Buffer* indexBuf);
 private:
+
+	enum tupelOrder
+	{
+		INDEXBUFFER,
+		VERTEXBUFFER
+	};
 
 	std::map<std::string, ID3D11ShaderResourceView*> srvMap;
 	std::map<std::string, ID3D11ShaderResourceView*>::iterator srvIt;
 
-	std::map<std::string, ID3D11Buffer*> vertexMap;
-	std::map<std::string, ID3D11Buffer*> indexMap;
-	std::map<std::string, ID3D11Buffer*>::iterator buffIt;
+	std::tuple <ID3D11Buffer*, ID3D11Buffer*> meshTupel;
 
-
+	std::map<std::string, std::tuple <ID3D11Buffer*, ID3D11Buffer*>> meshMap;
+	std::map<std::string, std::tuple <ID3D11Buffer*, ID3D11Buffer*>>::iterator meshIt;
 };

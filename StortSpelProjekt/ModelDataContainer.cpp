@@ -10,15 +10,12 @@ MDC::~MDC()
 	{
 		this->srvIt->second->Release();
 	}
-
-	for (this->buffIt = this->vertexMap.begin(); this->buffIt != this->vertexMap.end(); this->buffIt++)
+	std::tuple<ID3D11Buffer*, ID3D11Buffer*> delTupel;
+	for (this->meshIt = this->meshMap.begin(); this->meshIt != this->meshMap.end(); this->meshIt++)
 	{
-		this->buffIt->second->Release();
-	}
-
-	for (this->buffIt = this->indexMap.begin(); this->buffIt != this->indexMap.end(); this->buffIt++)
-	{
-		this->buffIt->second->Release();
+		delTupel = this->meshIt->second;
+		std::get<0>(delTupel)->Release();
+		std::get<1>(delTupel)->Release();
 	}
 }
 
@@ -30,8 +27,8 @@ bool MDC::hasItem(std::string key)
 		return true;
 	}
 
-	this->buffIt = this->vertexMap.find((const std::string)key);
-	if (this->buffIt != this->vertexMap.end())
+	this->meshIt = this->meshMap.find((const std::string)key);
+	if (this->meshIt != this->meshMap.end())
 	{
 		return true;
 	}
@@ -48,24 +45,17 @@ ID3D11ShaderResourceView* MDC::getSrv(const std::string key)
 	return this->srvIt->second;
 }
 
-ID3D11Buffer* MDC::getVertexBuffer(const std::string key)
+bool MDC::getIndexMeshBuffers(const std::string key, ID3D11Buffer*& indexBuff, ID3D11Buffer*& vertexBuff)
 {
-	this->buffIt = this->vertexMap.find(key);
-	if (this->buffIt == this->vertexMap.end())
+	this->meshIt = this->meshMap.find(key);
+	if (this->meshIt == this->meshMap.end())
 	{
-		return nullptr;
+		return false;
 	}
-	return this->buffIt->second;
-}
-
-ID3D11Buffer* MDC::getIndexBuffer(const std::string key)
-{
-	this->buffIt = this->indexMap.find(key);
-	if (this->buffIt == this->indexMap.end())
-	{
-		return nullptr;
-	}
-	return this->buffIt->second;
+	std::tuple tup = meshIt->second;
+	indexBuff = std::get<tupelOrder::INDEXBUFFER>(tup);
+	vertexBuff = std::get<tupelOrder::VERTEXBUFFER>(tup);
+	return true;
 }
 
 void MDC::addSrv(std::string key, ID3D11ShaderResourceView* srv)
@@ -73,12 +63,10 @@ void MDC::addSrv(std::string key, ID3D11ShaderResourceView* srv)
 	this->srvMap.insert(std::pair<std::string, ID3D11ShaderResourceView*>(key, srv));
 }
 
-void MDC::addVertexBuffer(std::string key, ID3D11Buffer* vertexBuf)
+void MDC::addMeshBuffers(std::string key, ID3D11Buffer* vertexBuf, ID3D11Buffer* indexBuf)
 {
-	this->vertexMap.insert(std::pair<std::string, ID3D11Buffer*>(key, vertexBuf));
-}
+	std::tuple <ID3D11Buffer*, ID3D11Buffer*> newTup;
+	newTup = std::make_tuple(indexBuf, vertexBuf);
 
-void MDC::addIndexBuffer(std::string key, ID3D11Buffer* indexBuf)
-{
-	this->indexMap.insert(std::pair<std::string, ID3D11Buffer*>(key, indexBuf));
+	this->meshMap.insert(std::pair<std::string, std::tuple<ID3D11Buffer*, ID3D11Buffer*>>(key, newTup));;
 }

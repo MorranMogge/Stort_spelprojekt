@@ -23,6 +23,7 @@ struct serverData
 {
 	bool endServer = false;
 	sf::UdpSocket socket;
+	sf::UdpSocket sendSocket;
 	std::vector< userData> users;
 	unsigned short port;
 	sf::Packet packet;
@@ -96,6 +97,19 @@ bool receiveDataUdp(sf::Packet& receivedPacket, serverData* &data)
 	}
 };
 
+void sendDataUdp(sf::Packet& sentPacket, serverData*& data, std::string remoteIpAdress, unsigned short remotePort)
+{
+	if (data->sendSocket.send(sentPacket, remoteIpAdress, remotePort) == sf::Socket::Done)
+	{
+		//sent
+		std::cout << "sent data to server\n";
+	}
+	else
+	{
+		std::cout << "failed to send data to server\n";
+	}
+};
+
 
 int main()
 {
@@ -157,6 +171,8 @@ int main()
 		//{
 		//	std::cout << "failure\n";
 		//}
+
+
 		sf::Packet receivedPacket;
 		if (receiveDataUdp(receivedPacket, data))
 		{

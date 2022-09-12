@@ -19,7 +19,7 @@ void Game::loadObjects()
 		}
 
 	}
-	meshes_Static[0].scale = DirectX::SimpleMath::Vector3(5, 5, 5);
+	meshes_Static[0].scale = DirectX::SimpleMath::Vector3(20, 20, 20);
 
 	// re-calculate bounding box
 	for (auto& mesh : meshes_Static)
@@ -44,10 +44,9 @@ void Game::loadObjects()
 		}
 
 	}
-	meshes_Dynamic[0].scale = DirectX::SimpleMath::Vector3(0.25, 0.25, 0.25);
-	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(10, 10, -10);
-
-
+	//meshes_Dynamic[0].scale = DirectX::SimpleMath::Vector3(0.25, 0.25, 0.25);
+	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(0, 0, -20);
+	meshes_Dynamic[0].rotation.y = DirectX::XM_PI / 2;
 }
 
 void Game::drawObjects()
@@ -93,6 +92,10 @@ GAMESTATE Game::Update()
 	if (Input::KeyDown(KeyCode::D)) pos[0] += 0.1;
 	if (Input::KeyDown(KeyCode::A)) pos[0] -= 0.1;
 
+	/*OutputDebugString(L"PLAYER: ");
+	OutputDebugString(std::to_wstring(pos[2]).c_str());
+	OutputDebugString(L"\n");*/
+
 	/*for (int i = 0; i < 3; i++)
 	{
 		if (pos[i] > 10) pos[i] = 10;
@@ -100,6 +103,7 @@ GAMESTATE Game::Update()
 	}*/
 
 	meshes_Dynamic[0].position = {pos[0], pos[1] , pos[2] };
+	camera.moveCamera(immediateContext, 1.f / 100.f, meshes_Dynamic[0].position);
 
 	for (int i = 0; i < meshes_Static.size(); i++)
 	{
@@ -111,7 +115,6 @@ GAMESTATE Game::Update()
 		meshes_Dynamic[i].UpdateCB();
 	}
 
-	//camera.moveCamera(immediateContext, 1.f/100.f);
 	return NOCHANGE;
 }
 

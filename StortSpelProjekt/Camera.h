@@ -11,12 +11,12 @@ private:
 	DirectX::XMMATRIX viewProj;
 
 	DirectX::XMMATRIX rotationMX;
-	DirectX::XMVECTOR cameraPos = DirectX::XMVectorSet(0.0f, 0.0f, -20.0f, 0.0f);
-	DirectX::XMVECTOR lookAtPos = DirectX::XMVectorSet(0.0f, 0.0f, 5.0f, 0.0f);
+	DirectX::XMVECTOR cameraPos = DirectX::XMVectorSet(0.0f, 0.0f, -45.0f, 0.0f);
+	DirectX::XMVECTOR lookAtPos = DirectX::XMVectorSet(0.0f, 0.0f, -20.0f, 0.0f);
 
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 10.0f, 0.0f);
 
 	DirectX::XMVECTOR forwardVec = DEFAULT_FORWARD;
 	DirectX::XMVECTOR upVector = DEFAULT_UP;
@@ -32,5 +32,5 @@ public:
 	~Camera();
 
 	void updateCamera(ID3D11DeviceContext* immediateContext);
-	void moveCamera(ID3D11DeviceContext* immediateContext, float dt);
+	void moveCamera(ID3D11DeviceContext* immediateContext, float dt, DirectX::XMVECTOR playerPosition);
 };

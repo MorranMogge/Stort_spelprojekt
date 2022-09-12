@@ -1,5 +1,6 @@
 #include "Camera.h"
 using namespace DirectX;
+#include <string>
 
 void Camera::updateCamera(ID3D11DeviceContext* immediateContext)
 {
@@ -39,14 +40,25 @@ Camera::~Camera()
 	cameraBuffer->Release();
 }
 
-void Camera::moveCamera(ID3D11DeviceContext* immediateContext, float dt)
+void Camera::moveCamera(ID3D11DeviceContext* immediateContext, float dt, DirectX::XMVECTOR playerPosition)
 {
 	if (GetAsyncKeyState((VK_SHIFT)))
 	{
 		dt *= 5.0f;
 	}
 
-	if (GetAsyncKeyState('W'))
+	cameraPos = playerPosition - forwardVec;
+	lookAtPos = playerPosition;
+	updateCamera(immediateContext);
+
+	/*XMFLOAT3 newPos;
+	XMStoreFloat3(&newPos, cameraPos);
+
+	OutputDebugString(L"Camera: ");
+	OutputDebugString(std::to_wstring(newPos.z).c_str());
+	OutputDebugString(L"\n");*/
+
+	/*if (GetAsyncKeyState('W'))
 	{
 		forwardVec = DEFAULT_FORWARD;
 		cameraPos += forwardVec * 10 * dt;
@@ -76,5 +88,5 @@ void Camera::moveCamera(ID3D11DeviceContext* immediateContext, float dt)
 		cameraPos -= rightVec * 10 * dt;
 		lookAtPos -= rightVec * 10 * dt;
 		updateCamera(immediateContext);
-	}
+	}*/
 }

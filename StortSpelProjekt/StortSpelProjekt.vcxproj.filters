@@ -4,7 +4,6 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="D3D11Helper.cpp" />
     <ClCompile Include="ErrorLog.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GuiHandler.cpp" />
     <ClCompile Include="GUISprite.cpp" />
     <ClCompile Include="GUIText.cpp" />
@@ -40,6 +39,9 @@
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DXUtil.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Credits.cpp" />
+    <ClCompile Include="SettingsUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bound.h" />
@@ -121,6 +123,8 @@
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="DXUtil.h" />
     <ClInclude Include="DepthStencilView.h" />
+    <ClInclude Include="Credits.h" />
+    <ClInclude Include="SettingsUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

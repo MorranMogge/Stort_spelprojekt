@@ -157,6 +157,7 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ConstantBuffer.h" />
+    <ClInclude Include="Credits.h" />
     <ClInclude Include="DepthStencilState.h" />
     <ClInclude Include="DepthStencilView.h" />
     <ClInclude Include="DXUtil.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderTargetView.h" />
     <ClInclude Include="SamplerState.h" />
+    <ClInclude Include="SettingsUI.h" />
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="ShaderResourceView.h" />
     <ClInclude Include="ShaderResourceTexture.h" />
@@ -215,6 +217,7 @@
     <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="Credits.cpp" />
     <ClCompile Include="D3D11Helper.cpp" />
     <ClCompile Include="DXUtil.cpp" />
     <ClCompile Include="ErrorLog.cpp" />
@@ -233,6 +236,7 @@
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="SettingsUI.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="Texture.cpp" />

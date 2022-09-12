@@ -77,6 +77,25 @@ void handleReceivedData(void* param)
 
 }
 
+bool receiveDataUdp(sf::Packet& receivedPacket, serverData* &data)
+{
+	//remote adress
+	sf::IpAddress remoteAddress;
+	
+
+	if (data->socket.receive(receivedPacket, remoteAddress, data->port) == sf::Socket::Done)
+	{
+		std::string receivedString;
+		std::cout << "received data from address: " << remoteAddress.toString() << std::endl;
+
+		return true;
+	}
+	else
+	{
+		std::cout << "failure\n";
+	}
+};
+
 
 int main()
 {
@@ -92,22 +111,23 @@ int main()
 	//sf::UdpSocket socket;
 	std::string connectionType, mode;
 
-	serverData data;
+	serverData* data = new serverData();
 	userData tempUser;
 	tempUser.ipAdress = "192.168.43.251";
 	tempUser.userName = "mike hawk";
+	sf::IpAddress remoteAddress;
 
 	sf::IpAddress ip = sf::IpAddress::getLocalAddress();
 
-	data.users.push_back(tempUser);
-	data.port = 2001;
+	data->users.push_back(tempUser);
+	data->port = 2001;
 
-	std::cout << ip.toString() << "\n" << "port: " << data.port << std::endl;
+	std::cout << ip.toString() << "\n" << "port: " << data->port << std::endl;
 	//serverData* serverData;
 	//std::cout << "Starting handleReceiveData thread!\n";
 	//std::thread* serverThread = new std::thread(handleReceivedData, &serverData);
 
-	if (data.socket.bind(data.port) != sf::Socket::Done)
+	if (data->socket.bind(data->port) != sf::Socket::Done)
 	{
 		std::cout << "Failed to bind UDP servern\n";
 		return -1;
@@ -121,31 +141,28 @@ int main()
 	int counter = 0;
 	while (true)
 	{
-		//if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > 1.0f / frequency)
+
+		//if (data.socket.receive(packet, remoteAddress, data.port) == sf::Socket::Done)
 		//{
-		//	std::getline(std::cin, s);
-		//	//s = std::to_string(counter++);
-		//	packet << s;
+		//	std::string receivedString;
+		//	std::cout << "received data from address: " << remoteAddress.toString() << std::endl;
 
-		//	
+		//	packet >> receivedString;
+		//	std::cout << "Received string from client: " << receivedString << std::endl;
+
+		//	data.packet = packet;
 		//	packet.clear();
-		//	start = std::chrono::system_clock::now();
 		//}
-
-		if (data.socket.receive(packet, data.users[0].ipAdress, data.port) == sf::Socket::Done)
+		//else
+		//{
+		//	std::cout << "failure\n";
+		//}
+		sf::Packet receivedPacket;
+		if (receiveDataUdp(receivedPacket, data))
 		{
-			std::string receivedString;
-			std::cout << "received data from address: " << data.users[0].ipAdress.toString() << std::endl;
-
-			packet >> receivedString;
-			std::cout << "Received string from client" << receivedString << std::endl;
-
-			data.packet = packet;
-			packet.clear();
-		}
-		else
-		{
-			std::cout << "failure\n";
+			std::string s;
+			receivedPacket >> s;
+			std::cout << "Received string from packet: " << s << std::endl;
 		}
 		
 	}

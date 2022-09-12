@@ -41,7 +41,7 @@ Client::~Client()
 
 void Client::connectToServer(std::string ipAddress, int port)
 {
-	//data.socket.connect(ipAddress, port);
+	data.socket.connect(ipAddress, port);
 }
 
 void Client::connectToServer()

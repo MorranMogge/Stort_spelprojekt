@@ -27,6 +27,8 @@ void ImGuiHelper::drawInterface(std::string message)
 
 		ImGui::Text("port: %d", client->getport());
 
+
+
 		char buf[255]{};
 		std::string ip;
 		if (ImGui::InputText("ipAdress", buf, sizeof(buf)))
@@ -55,6 +57,11 @@ void ImGuiHelper::drawInterface(std::string message)
 		if (ImGui::Button("send msg"))
 		{
 			client->sendToServer();
+		}
+
+		if (ImGui::Button("connect TCP"))
+		{
+			client->connectToServer();
 		}
 
 

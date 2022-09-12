@@ -7,6 +7,8 @@
 #include <thread>
 #include <vector>
 
+//const int MAXNUMBEROFPLAYERS = 2;
+
 struct acceptMePacketData
 {
 	std::string identifier;
@@ -17,6 +19,17 @@ struct userData
 {
 	sf::IpAddress ipAdress;
 	std::string userName;
+	sf::TcpSocket tcpSocket;
+	//userData()
+	//{
+
+	//}
+	//userData(const userData& obj)
+	//{
+	//	this->ipAdress == obj.ipAdress;
+	//	this->userName = obj.userName;
+	//	this->tcpSocket = tcpSocket;
+	//}
 };
 
 struct serverData
@@ -24,7 +37,9 @@ struct serverData
 	bool endServer = false;
 	sf::UdpSocket socket;
 	sf::UdpSocket sendSocket;
-	std::vector< userData> users;
+	sf::TcpListener tcpListener;
+	sf::TcpSocket tcpSocket;
+	std::vector<userData> users;
 	unsigned short port;
 	sf::Packet packet;
 };
@@ -65,7 +80,7 @@ void handleReceivedData(void* param)
 				{
 					std::string receivedString;
 					std::cout << "received data from address: " << remoteAddress.toString() << std::endl;
-					
+
 					packet >> receivedString;
 					std::cout << "Received string from client: " << receivedString << std::endl;
 
@@ -76,18 +91,18 @@ void handleReceivedData(void* param)
 		}
 	}
 
-}
+};
 
-bool receiveDataUdp(sf::Packet& receivedPacket, serverData* &data)
+bool receiveDataUdp(sf::Packet& receivedPacket, serverData &data, unsigned short& packetIdentifier)
 {
 	//remote adress
 	sf::IpAddress remoteAddress;
 	
 
-	if (data->socket.receive(receivedPacket, remoteAddress, data->port) == sf::Socket::Done)
+	if (data.socket.receive(receivedPacket, remoteAddress, data.port) == sf::Socket::Done)
 	{
 		std::string receivedString;
-		std::cout << "received data from address: " << remoteAddress.toString() << std::endl;
+		std::cout << "UDP received data from address: " << remoteAddress.toString() << std::endl;
 
 		return true;
 	}
@@ -97,9 +112,10 @@ bool receiveDataUdp(sf::Packet& receivedPacket, serverData* &data)
 	}
 };
 
-void sendDataUdp(sf::Packet& sentPacket, serverData*& data, std::string remoteIpAdress, unsigned short remotePort)
+
+void sendDataUdp(sf::Packet& sentPacket, serverData& data, std::string remoteIpAdress, unsigned short remotePort)
 {
-	if (data->sendSocket.send(sentPacket, remoteIpAdress, remotePort) == sf::Socket::Done)
+	if (data.sendSocket.send(sentPacket, remoteIpAdress, remotePort) == sf::Socket::Done)
 	{
 		//sent
 		std::cout << "sent data to server\n";
@@ -107,6 +123,49 @@ void sendDataUdp(sf::Packet& sentPacket, serverData*& data, std::string remoteIp
 	else
 	{
 		std::cout << "failed to send data to server\n";
+	}
+};
+
+bool receiveDataTcp(sf::Packet& receivedPacket, serverData& data, unsigned short& packetIdentifier)
+{
+	//remote adress
+
+	if (data.tcpSocket.receive(receivedPacket) == sf::Socket::Done)
+	{
+		std::string receivedString;
+		std::cout << "TCP received data from address: " << data.tcpSocket.getRemoteAddress().toString() << std::endl;
+
+		return true;
+	}
+	else
+	{
+		std::cout << "failure\n";
+	}
+};
+
+void setupTcp(serverData& data)
+{
+	unsigned short listenport = 2001;
+	data.tcpListener.listen(listenport);
+	std::cout << "listening on port: " << std::to_string((int)listenport) << std::endl;
+};
+
+void acceptPlayers(serverData& data)
+{
+	std::cout << "Accepting players TCP socket\n";
+
+	int MAXNUMBEROFPLAYERS = 2;
+	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+	{
+		data.users.push_back(userData());
+		if (data.tcpListener.accept(data.users.at(i).tcpSocket) == sf::TcpListener::Done)
+		{
+			std::cout << "Accepted new player ipAdress: " << data.users.at(i).tcpSocket.getRemoteAddress().toString() << std::endl;
+			userData temp;
+			temp.ipAdress = data.users.at(i).tcpSocket.getRemoteAddress().toString();
+			temp.userName = std::to_string(i + 1);
+		}
+		
 	}
 };
 
@@ -120,12 +179,12 @@ int main()
 	sf::Packet receivedPacket;
 	float frequency = 30.f;
 
-	
+
 
 	//sf::UdpSocket socket;
 	std::string connectionType, mode;
 
-	serverData* data = new serverData();
+	serverData data;
 	userData tempUser;
 	tempUser.ipAdress = "192.168.43.251";
 	tempUser.userName = "mike hawk";
@@ -133,15 +192,14 @@ int main()
 
 	sf::IpAddress ip = sf::IpAddress::getLocalAddress();
 
-	data->users.push_back(tempUser);
-	data->port = 2001;
+	data.port = 2001;
 
-	std::cout << ip.toString() << "\n" << "port: " << data->port << std::endl;
+	std::cout << ip.toString() << "\n" << "port: " << data.port << std::endl;
 	//serverData* serverData;
 	//std::cout << "Starting handleReceiveData thread!\n";
 	//std::thread* serverThread = new std::thread(handleReceivedData, &serverData);
 
-	if (data->socket.bind(data->port) != sf::Socket::Done)
+	if (data.socket.bind(data.port) != sf::Socket::Done)
 	{
 		std::cout << "Failed to bind UDP servern\n";
 		return -1;
@@ -152,29 +210,27 @@ int main()
 	std::chrono::time_point<std::chrono::system_clock> start;
 	start = std::chrono::system_clock::now();
 
-	int counter = 0;
+
+	setupTcp(data);
+
+	acceptPlayers(data);
+	
 	while (true)
 	{
 
-		//if (data.socket.receive(packet, remoteAddress, data.port) == sf::Socket::Done)
-		//{
-		//	std::string receivedString;
-		//	std::cout << "received data from address: " << remoteAddress.toString() << std::endl;
 
-		//	packet >> receivedString;
-		//	std::cout << "Received string from client: " << receivedString << std::endl;
+		/*sf::Packet receivedPacket;
+		unsigned short packetIdentifier;
+		if (receiveDataUdp(receivedPacket, data, packetIdentifier))
+		{
+			std::string s;
+			receivedPacket >> s;
+			std::cout << "Received string from packet: " << s << std::endl;
+		}*/
 
-		//	data.packet = packet;
-		//	packet.clear();
-		//}
-		//else
-		//{
-		//	std::cout << "failure\n";
-		//}
-
-
-		sf::Packet receivedPacket;
-		if (receiveDataUdp(receivedPacket, data))
+		sf::Packet receivecPacket;
+		unsigned short packetIdentifier;
+		if (receiveDataTcp(receivecPacket, data, packetIdentifier))
 		{
 			std::string s;
 			receivedPacket >> s;
@@ -229,7 +285,7 @@ int main()
 	}*/
 
 
-    (void*)getchar();
+    //(void*)getchar();
     return 0;
 }
 

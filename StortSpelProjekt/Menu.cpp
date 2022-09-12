@@ -15,10 +15,6 @@ void Menu::UpdateConstanBuffer()
 {
 #pragma region Mesh
 
-	LightHandler testHandler;
-	testHandler.addLight(DirectX::XMFLOAT3(0, 20, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), DirectX::XMFLOAT3(0, 1, 0));
-	testHandler.finalizeLights(GPU::device, GPU::immediateContext);
-
 
 	//ConstantBufferNew<MyStruct>testStruct;
 	//testStruct.Initialize(,);
@@ -218,6 +214,14 @@ Menu::Menu()
 	{
 		mesh.CalcBound();
 	}
+
+
+	LightHandler testHandler;
+	testHandler.addLight(DirectX::XMFLOAT3(0, 20, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), DirectX::XMFLOAT3(0, 1, 0));
+	testHandler.addLight(DirectX::XMFLOAT3(0, 20, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), DirectX::XMFLOAT3(0, 1, 0));
+
+
+
 
 #pragma endregion
 

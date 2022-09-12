@@ -21,9 +21,13 @@ public:
 	DirectX::XMFLOAT3 getUpDir()		const;
 	DirectX::XMFLOAT3 getDirection()	const;
 	DirectX::XMMATRIX getViewMatrix()	const;
+	void setPosition(DirectX::XMFLOAT3 position);		
+	void setUpDirection(DirectX::XMFLOAT3 direction);
+	void setDirection(DirectX::XMFLOAT3 direction);
+	void setColor(DirectX::XMFLOAT3 color);
+	void setConeAngle(float angle);
+	void setLightType(float type);
 	float getConeAngle()	const;
 	int getType()			const;
-	void updatePosition(DirectX::XMFLOAT3 pos);
-	void updateColor(DirectX::XMFLOAT3 color);
 	void updateMatrix(DirectX::XMFLOAT3 lightPos, DirectX::XMFLOAT3 FocusPos, DirectX::XMFLOAT3 UpDir);
 };

@@ -34,6 +34,39 @@ DirectX::XMMATRIX Light::getViewMatrix() const
 	return this->view;
 }
 
+void Light::setPosition(DirectX::XMFLOAT3 position)
+{
+	this->position = position;
+	updateMatrix(position, this->direction, this->upDirection);
+}
+
+void Light::setUpDirection(DirectX::XMFLOAT3 direction)
+{
+	this->upDirection = direction;
+	updateMatrix(this->position, this->direction, direction);
+}
+
+void Light::setDirection(DirectX::XMFLOAT3 direction)
+{
+	this->direction = direction;
+	updateMatrix(this->position, direction, this->upDirection);
+}
+
+void Light::setColor(DirectX::XMFLOAT3 color)
+{
+	this->color = color;
+}
+
+void Light::setConeAngle(float angle)
+{
+	this->coneAngle = angle;
+}
+
+void Light::setLightType(float type)
+{
+	this->lightType = type;
+}
+
 float Light::getConeAngle() const
 {
 	return this->coneAngle;
@@ -44,15 +77,6 @@ int Light::getType() const
 	return this->lightType;
 }
 
-void Light::updatePosition(DirectX::XMFLOAT3 pos)
-{
-	this->updateMatrix(pos, this->direction, this->upDirection);
-}
-
-void Light::updateColor(DirectX::XMFLOAT3 color)
-{
-	this->color = color;
-}
 
 void Light::updateMatrix(DirectX::XMFLOAT3 lightPos, DirectX::XMFLOAT3 FocusPos, DirectX::XMFLOAT3 UpDir)
 {

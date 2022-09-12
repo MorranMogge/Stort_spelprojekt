@@ -3,6 +3,7 @@
 #include <wrl/client.h>
 #include <vector>
 #include "BufferTypes.h"
+#include <iostream>
 
 template <class T>
 class StructuredBuffer
@@ -15,11 +16,12 @@ private:
 	bool reInitialize(ID3D11Device* device);
 public:
 	StructuredBuffer();
-	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
+	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T> buffData);
 	ID3D11Buffer* const* getReferenceOf();
 	ID3D11Buffer* Get()const;
 	T& getData(int index);
 	void addData(T &obj, ID3D11Device* device);
+	void remapBuffer(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T> &buffData);
 	ID3D11Buffer getBuffer();
 	void applyData();
 };
@@ -43,6 +45,7 @@ inline bool StructuredBuffer<T>::reInitialize(ID3D11Device* device)
 	if (FAILED(hr))
 	{
 		//ErrorLog::Log(hr, "Failed to create constantBuffer");
+		std::cout << "failed creating structured buffer" << std::endl;
 		return false;
 	}
 	return true;
@@ -54,9 +57,14 @@ StructuredBuffer<T>::StructuredBuffer()
 }
 
 template<class T>
-bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext)//Kolla bytewidth *0
+bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T> buffData)//Kolla bytewidth *0
 {
 	this->deviceContext = deviceContext;
+
+	for (int i = 0; i < buffData.size(); i++)
+	{
+		bufferData.push_back(buffData.at(i));
+	}
 
 	D3D11_BUFFER_DESC cBuffDesc = { 0 };
 	cBuffDesc.ByteWidth = sizeof(T) * bufferData.size();			//size of buffer //*nr of elements
@@ -73,6 +81,7 @@ bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 	if (FAILED(hr))
 	{
 		//ErrorLog::Log(hr, "Failed to create constantBuffer");
+		std::cout << "failed creating structured buffer" << std::endl;
 		return false;
 	}
 	return true;
@@ -87,7 +96,7 @@ ID3D11Buffer* const* StructuredBuffer<T>::getReferenceOf()
 template<class T>
 ID3D11Buffer* StructuredBuffer<T>::Get() const
 {
-	return buffer.GetAddressOf();
+	return buffer.Get();
 }
 
 template<class T>
@@ -105,6 +114,18 @@ inline void StructuredBuffer<T>::addData(T &obj, ID3D11Device* device)
 }
 
 template<class T>
+inline void StructuredBuffer<T>::remapBuffer(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T> &buffData)
+{
+	buffer.~ComPtr();
+	bufferData.clear();
+	for (int i = 0; i < buffData.size(); i++)
+	{
+		bufferData.push_back(buffData[i]);
+	}
+	this->Initialize(device, deviceContext, buffData);
+}
+
+template<class T>
 void StructuredBuffer<T>::applyData()
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -112,6 +133,7 @@ void StructuredBuffer<T>::applyData()
 	if (FAILED(hr))
 	{
 		//ErrorLogger::Log(hr, "Failed to map constant buffer.");
+		std::cout << "Failed to map constant buffer." << std::endl;
 		//return false;
 	}
 	CopyMemory(mappedResource.pData, &bufferData, sizeof(T));

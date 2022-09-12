@@ -29,28 +29,34 @@ private:
 	std::vector<Light> lights;													//Vector of light objects
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> structuredBufferSrv;		//View for structured buffer
 	std::vector<Microsoft::WRL::ComPtr<ID3D11Buffer>> viewBuffers;				//View/proj matrix for each light
-	Microsoft::WRL::ComPtr<ID3D11Buffer> structuredlightBuffer;					//Holds Light data 
+	StructuredBuffer<LightStruct>lightBuffer;
+	//Microsoft::WRL::ComPtr<ID3D11Buffer> structuredlightBuffer;				//Holds Light data 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> numLightBuffer;						//Holds nr of lights
 	int LightCap = 10;
 
 	//Mesh
-
 	//std::vector<Mesh> boundingSphere;											//Mesh for visualization
 	
 public:
 
 	LightHandler();
 	void addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, DirectX::XMFLOAT3 UpDir, int type = 0, float coneAngle = 0.5f);
-	void finalizeLights(ID3D11Device* device, ID3D11DeviceContext* immediateContext);
-	//bool updateLights(ID3D11DeviceContext* immediateContext, int ltIndex, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, float lightIntensity);
-	
+	bool updateBuffers();
+	void setPosition(DirectX::XMFLOAT3 position, int lightIndex);				//changes view matrix
+	void setUpDirection(DirectX::XMFLOAT3 direction, int lightIndex);			//changes view matrix
+	void setColor(DirectX::XMFLOAT3 color, int lightIndex);
+	void setConeAngle(float angle, int lightIndex);
+	void setLightType(float type, int lightIndex);								//0 point, 1 directional, 2 spot
+	//void setRange?
+	//void setFalloff?
+
 
 	ID3D11Buffer* getViewBuffer(int ltIndex) const;
 	int getNrOfLights() const;
 	
 	/*
-	void bindLightBuffer(ID3D11DeviceContext* immediateContext, ID3D11Buffer*& cameraPosBuffer, ID3D11ShaderResourceView** dfSrvArr);
-	void bindDepthStencil(ID3D11DeviceContext* immediateContext, int ptLightIndex);
-	void bindAndDrawIndexedMesh(ID3D11DeviceContext* immediateContext, ID3D11Buffer*& viewProjBuffer, bool tesselation);
+	void bindLightBuffer(ID3D11Buffer*& cameraPosBuffer, ID3D11ShaderResourceView** dfSrvArr);
+	void bindDepthStencil(int ptLightIndex);
+	void bindAndDrawIndexedMesh(ID3D11Buffer*& viewProjBuffer, bool tesselation);
 	*/
 };

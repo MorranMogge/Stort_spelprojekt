@@ -4,8 +4,6 @@ using namespace DirectX;
 
 void Camera::updateCamera(ID3D11DeviceContext* immediateContext)
 {
-
-
 	viewMatrix = XMMatrixLookAtLH(cameraPos, lookAtPos, upVector);
 	viewProj = viewMatrix * projMatrix;
 	viewProj = XMMatrixTranspose(viewProj);
@@ -20,6 +18,7 @@ void Camera::updateCamera(ID3D11DeviceContext* immediateContext)
 
 Camera::Camera(ID3D11DeviceContext* immediateContext, ID3D11Device* device)
 {
+	rotationMX = XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f);
 	viewMatrix = XMMatrixLookAtLH(cameraPos, lookAtPos, upVector);
 	projMatrix = DirectX::XMMatrixPerspectiveFovLH(0.8f, 1264.f / 681.f, 0.1f, 800.0f);
 	viewProj = viewMatrix * projMatrix;
@@ -42,15 +41,19 @@ Camera::~Camera()
 	cameraBuffer->Release();
 }
 
-void Camera::moveCamera(ID3D11DeviceContext* immediateContext, float dt, const DirectX::XMVECTOR& playerPosition)
+void Camera::moveCamera(ID3D11DeviceContext* immediateContext, float dt, const DirectX::XMVECTOR& playerPosition, const DirectX::XMVECTOR& playerRotation)
 {
 	if (GetAsyncKeyState((VK_SHIFT)))
 	{
 		dt *= 5.0f;
 	}
 
-	cameraPos = playerPosition - forwardVec  + upVector;
-	lookAtPos = playerPosition;
+	rotationMX = XMMatrixRotationRollPitchYawFromVector(playerRotation * XM_PI);
+	forwardVec = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
+	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
+
+	cameraPos = (playerPosition - forwardVec + upVector);
+	lookAtPos = (playerPosition + forwardVec);
 	updateCamera(immediateContext);
 
 	/*XMFLOAT3 newPos;
@@ -62,7 +65,6 @@ void Camera::moveCamera(ID3D11DeviceContext* immediateContext, float dt, const D
 
 	/*if (GetAsyncKeyState('W'))
 	{
-		forwardVec = DEFAULT_FORWARD;
 		cameraPos += forwardVec * 10 * dt;
 		lookAtPos += forwardVec * 10 * dt;
 		updateCamera(immediateContext);
@@ -70,13 +72,12 @@ void Camera::moveCamera(ID3D11DeviceContext* immediateContext, float dt, const D
 
 	else if (GetAsyncKeyState('S'))
 	{
-		forwardVec = DEFAULT_FORWARD;
 		cameraPos -= forwardVec * 10 * dt;
 		lookAtPos -= forwardVec * 10 * dt;
 		updateCamera(immediateContext);
-	}
+	}*/
 
-	if (GetAsyncKeyState('D'))
+	/*if (GetAsyncKeyState('D'))
 	{
 		rightVec = DEFAULT_RIGHT;
 		cameraPos += rightVec * 10 * dt;

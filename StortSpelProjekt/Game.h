@@ -16,6 +16,7 @@ private:
 
 	Camera camera;
 	BasicRenderer basicRenderer;
+	LightHandler ltHandler;
 
 	//Objects
 	std::vector<Mesh> meshes_Static;

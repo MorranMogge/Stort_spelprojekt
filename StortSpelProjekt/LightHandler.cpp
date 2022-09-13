@@ -339,3 +339,41 @@ int LightHandler::getNrOfLights() const
 {
 	return this->lights.size();
 }
+
+void LightHandler::drawShadows(int lightIndex, std::vector<GameObject> gameObjects)
+{
+	//Variables
+	ID3D11RenderTargetView* nullRtv{ nullptr };
+	ID3D11DepthStencilView* nullDsView{ nullptr };
+
+
+	//Clear Depth Stencil
+	GPU::immediateContext->ClearDepthStencilView(this->depthViews.at(lightIndex).Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+
+	//Set render targets
+	GPU::immediateContext->OMSetRenderTargets(1, &nullRtv, this->depthViews.at(lightIndex).Get());
+
+
+	//Draw Objects
+	for (int i = 0; i < gameObjects.size(); i++)	
+	{
+		//gameObjects.at(i).draw(???);
+	}
+
+	//Unbind render targets & Depth Stencil
+	GPU::immediateContext->OMSetRenderTargets(1, &nullRtv, nullDsView);							
+}
+
+void LightHandler::bindLightBuffers(ID3D11Buffer*& cameraPosBuffer, ID3D11ShaderResourceView** dfSrvArr)
+{
+	//Add Srv & Buffer data from lights to temp vectors
+	//tempBuff.push_back(this->numLightBuffer.Get());					//Buffer for nr Lights
+
+	//Bind shader resource views ShadowMap(s) & light structuredBuffer
+	//tempSrv.push_back(this->shadowSrv.Get());						//ShadowMap(s)
+	//tempSrv.push_back(this->structuredBufferSrv.Get());				//Srv for light structuredBuffer content (pos, color, lightViewMatrix)
+
+
+	//GPU::immediateContext->CSSetShaderResources(0, 10, tempSrv.data());	//Bind Srv's
+	//GPU::immediateContext->CSSetConstantBuffers(0, 2, tempBuff.data());	//Bind Buffers's
+}

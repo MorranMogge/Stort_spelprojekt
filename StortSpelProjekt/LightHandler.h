@@ -6,6 +6,7 @@
 #include "ConstantBufferNew.h"
 #include "StructuredBuffer.h"
 #include "GPU.h"
+#include "GameObject.h"
 
 
 class LightHandler
@@ -50,12 +51,9 @@ public:
 	void setLightType(float type, int lightIndex);								//0 point, 1 directional, 2 spot
 	void setRange(float range, int lightIndex);
 	void setFalloff(float falloff, int lightIndex);
-
 	ID3D11Buffer* getViewBuffer(int ltIndex) const;
 	int getNrOfLights() const;
-	/*
-	void bindLightBuffer(ID3D11Buffer*& cameraPosBuffer, ID3D11ShaderResourceView** dfSrvArr);
-	void bindDepthStencil(int ptLightIndex);
-	void bindAndDrawIndexedMesh(ID3D11Buffer*& viewProjBuffer, bool tesselation);
-	*/
+	void drawShadows(int lightIndex, std::vector<GameObject> gameObjects);
+	void bindLightBuffers(ID3D11Buffer*& cameraPosBuffer, ID3D11ShaderResourceView** dfSrvArr); //Inte klar Behöver skrivas om!
+	//void drawDebugMesh();
 };

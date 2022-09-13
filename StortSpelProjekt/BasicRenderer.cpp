@@ -48,6 +48,13 @@ BasicRenderer::~BasicRenderer()
 	pShader->Release();
 }
 
+void BasicRenderer::lightPrePass()
+{
+	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	immediateContext->VSSetShader(vShader, nullptr, 0);
+	immediateContext->PSSetShader(nullptr, nullptr, 0);
+}
+
 bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT)
 {
 	std::string vShaderByteCode;

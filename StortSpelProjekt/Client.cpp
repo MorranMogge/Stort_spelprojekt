@@ -27,6 +27,7 @@ Client::Client(std::string ipAddress, int port)
 	sf::IpAddress ip = sf::IpAddress(ipAddress);
 	this->ip = ipAddress;
 	this->tmp = "empty";
+	this->port = 2001;
 }
 
 Client::~Client()

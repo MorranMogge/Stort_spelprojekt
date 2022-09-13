@@ -7,6 +7,7 @@
 #include "Light.h"
 #include "StructuredBuffer.h"
 #include "BufferTypes.h"
+#include "LightHandler.h"
 
 class Game : public State
 {

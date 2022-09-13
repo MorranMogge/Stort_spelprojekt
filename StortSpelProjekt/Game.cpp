@@ -44,9 +44,8 @@ void Game::loadObjects()
 		}
 
 	}
-	//meshes_Dynamic[0].scale = DirectX::SimpleMath::Vector3(0.25, 0.25, 0.25);
 	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(0, 0, -20);
-	meshes_Dynamic[0].rotation.y = DirectX::XM_PI / 2;
+	meshes_Dynamic[0].rotation.y = (DirectX::XM_PI / DirectX::XM_PI) / -2;
 }
 
 void Game::drawObjects()
@@ -87,10 +86,12 @@ GAMESTATE Game::Update()
 	float zpos = meshes_Dynamic[0].position.z;
 
 	float pos[3]{ meshes_Dynamic[0].position.x,meshes_Dynamic[0].position.y ,meshes_Dynamic[0].position.z };
-	if (Input::KeyDown(KeyCode::W)) pos[2] += 0.1;
-	if (Input::KeyDown(KeyCode::S)) pos[2] -= 0.1;
 	if (Input::KeyDown(KeyCode::D)) pos[0] += 0.1;
 	if (Input::KeyDown(KeyCode::A)) pos[0] -= 0.1;
+	if (Input::KeyDown(KeyCode::ARROW_Up)) pos[1] += 0.1;
+	if (Input::KeyDown(KeyCode::ARROW_Down)) pos[1] -= 0.1;
+	if (Input::KeyDown(KeyCode::W)) pos[2] += 0.1;
+	if (Input::KeyDown(KeyCode::S)) pos[2] -= 0.1;
 
 	/*OutputDebugString(L"PLAYER: ");
 	OutputDebugString(std::to_wstring(pos[2]).c_str());

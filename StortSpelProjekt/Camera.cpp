@@ -4,6 +4,8 @@ using namespace DirectX;
 
 void Camera::updateCamera(ID3D11DeviceContext* immediateContext)
 {
+
+
 	viewMatrix = XMMatrixLookAtLH(cameraPos, lookAtPos, upVector);
 	viewProj = viewMatrix * projMatrix;
 	viewProj = XMMatrixTranspose(viewProj);
@@ -40,14 +42,14 @@ Camera::~Camera()
 	cameraBuffer->Release();
 }
 
-void Camera::moveCamera(ID3D11DeviceContext* immediateContext, float dt, DirectX::XMVECTOR playerPosition)
+void Camera::moveCamera(ID3D11DeviceContext* immediateContext, float dt, const DirectX::XMVECTOR& playerPosition)
 {
 	if (GetAsyncKeyState((VK_SHIFT)))
 	{
 		dt *= 5.0f;
 	}
 
-	cameraPos = playerPosition - forwardVec;
+	cameraPos = playerPosition - forwardVec  + upVector;
 	lookAtPos = playerPosition;
 	updateCamera(immediateContext);
 

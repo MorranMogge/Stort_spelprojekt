@@ -4,6 +4,7 @@
 #include "BasicRenderer.h"
 #include "Mesh.h"
 #include "Input.h"
+#include "GravityField.h"
 
 class Game : public State
 {
@@ -12,6 +13,7 @@ private:
 
 	Camera camera;
 	BasicRenderer basicRenderer;
+	GravityField planetGravityField;
 
 	//Objects
 	std::vector<Mesh> meshes_Static;

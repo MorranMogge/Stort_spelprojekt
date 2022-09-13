@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "DirectXMathHelper.h"
 
 void Game::loadObjects()
 {
@@ -19,7 +20,7 @@ void Game::loadObjects()
 		}
 
 	}
-	meshes_Static[0].scale = DirectX::SimpleMath::Vector3(5, 5, 5);
+	meshes_Static[0].scale = DirectX::SimpleMath::Vector3(0.5, 0.5, 0.5);
 
 	// re-calculate bounding box
 	for (auto& mesh : meshes_Static)
@@ -87,11 +88,13 @@ GAMESTATE Game::Update()
 	static bool forward = false;
 	float zpos = meshes_Dynamic[0].position.z;
 
-	float pos[3]{ meshes_Dynamic[0].position.x,meshes_Dynamic[0].position.y ,meshes_Dynamic[0].position.z };
-	if (Input::KeyDown(KeyCode::W)) pos[2] += 0.1;
-	if (Input::KeyDown(KeyCode::S)) pos[2] -= 0.1;
-	if (Input::KeyDown(KeyCode::D)) pos[0] += 0.1;
-	if (Input::KeyDown(KeyCode::A)) pos[0] -= 0.1;
+	DirectX::XMFLOAT3 pos( meshes_Dynamic[0].position.x,meshes_Dynamic[0].position.y ,meshes_Dynamic[0].position.z );
+	if (Input::KeyDown(KeyCode::W)) pos.z += 0.1;
+	if (Input::KeyDown(KeyCode::S)) pos.z -= 0.1;
+	if (Input::KeyDown(KeyCode::I)) pos.y += 0.1;
+	if (Input::KeyDown(KeyCode::K)) pos.y -= 0.1;
+	if (Input::KeyDown(KeyCode::D)) pos.x += 0.1;
+	if (Input::KeyDown(KeyCode::A)) pos.x -= 0.1;
 
 	/*for (int i = 0; i < 3; i++)
 	{
@@ -99,7 +102,9 @@ GAMESTATE Game::Update()
 		else if (pos[i] < -10) pos[i] = -10;
 	}*/
 
-	meshes_Dynamic[0].position = {pos[0], pos[1] , pos[2] };
+	subtractionXMFLOAT3(pos, planetGravityField.calcGravFactor(pos));
+
+	meshes_Dynamic[0].position = {pos.x, pos.y , pos.z };
 
 	for (int i = 0; i < meshes_Static.size(); i++)
 	{

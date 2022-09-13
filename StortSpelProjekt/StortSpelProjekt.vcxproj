@@ -159,10 +159,12 @@
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="DepthStencilState.h" />
     <ClInclude Include="DepthStencilView.h" />
+    <ClInclude Include="DirectXMathHelper.h" />
     <ClInclude Include="DXUtil.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GPU.h" />
+    <ClInclude Include="GravityField.h" />
     <ClInclude Include="GuiHandler.h" />
     <ClInclude Include="GUIObject.h" />
     <ClInclude Include="GUISprite.h" />
@@ -216,10 +218,12 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="D3D11Helper.cpp" />
+    <ClCompile Include="DirectXMathHelper.cpp" />
     <ClCompile Include="DXUtil.cpp" />
     <ClCompile Include="ErrorLog.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GravityField.cpp" />
     <ClCompile Include="GuiHandler.cpp" />
     <ClCompile Include="GUISprite.cpp" />
     <ClCompile Include="GUIText.cpp" />

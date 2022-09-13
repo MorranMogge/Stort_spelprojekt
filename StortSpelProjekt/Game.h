@@ -5,6 +5,8 @@
 #include "Mesh.h"
 #include "Input.h"
 #include "GravityField.h"
+#include <reactphysics3d\reactphysics3d.h>
+
 
 class Game : public State
 {
@@ -14,6 +16,13 @@ private:
 	Camera camera;
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
+
+	reactphysics3d::PhysicsCommon com;
+	reactphysics3d::PhysicsWorld* world;
+
+
+	reactphysics3d::SphereShape* planetCollider;
+	reactphysics3d::BoxShape* playerCollider;
 
 	//Objects
 	std::vector<Mesh> meshes_Static;

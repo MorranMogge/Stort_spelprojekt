@@ -160,9 +160,8 @@ void acceptPlayers(serverData& data)
 		if (data.tcpListener.accept(data.users[i].tcpSocket) == sf::TcpListener::Done)
 		{
 			std::cout << "TCP Accepted new player ipAdress: " << data.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
-			userData temp;
-			temp.ipAdress = data.users[i].tcpSocket.getRemoteAddress().toString();
-			temp.userName = std::to_string(i + 1);
+			data.users[i].ipAdress = data.users[i].tcpSocket.getRemoteAddress().toString();
+			data.users[i].userName = std::to_string(i + 1);
 		}
 		
 	}
@@ -230,7 +229,7 @@ int main()
 		}*/
 
 
-		std::cout << "first connection: " << data.users[0].ipAdress.toString() << " second connection: " << data.users[1].ipAdress.toString() << std::endl;
+		//std::cout << "first connection: " << data.users[0].ipAdress.toString() << " second connection: " << data.users[1].ipAdress.toString() << std::endl;
 		
 
 		sf::Packet receivecPacket;

@@ -3,6 +3,10 @@
 #include "Camera.h"
 #include "BasicRenderer.h"
 #include "Mesh.h"
+#include "LightHandler.h"
+#include "Light.h"
+#include "StructuredBuffer.h"
+#include "BufferTypes.h"
 
 class Game : public State
 {

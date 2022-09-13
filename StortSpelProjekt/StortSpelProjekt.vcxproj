@@ -155,8 +155,10 @@
     <ClInclude Include="BlendState.h" />
     <ClInclude Include="Bound.h" />
     <ClInclude Include="Buffer.h" />
+    <ClInclude Include="BufferTypes.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ConstantBuffer.h" />
+    <ClInclude Include="ConstantBufferNew.h" />
     <ClInclude Include="Credits.h" />
     <ClInclude Include="DepthStencilState.h" />
     <ClInclude Include="DepthStencilView.h" />
@@ -169,6 +171,8 @@
     <ClInclude Include="GUISprite.h" />
     <ClInclude Include="GUIText.h" />
     <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="LightHandler.h" />
     <ClInclude Include="MaterialLibrary.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MTL.h" />
@@ -205,6 +209,7 @@
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_resize.h" />
     <ClInclude Include="stb_image_write.h" />
+    <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Topology.h" />
     <ClInclude Include="UnorderedAccessView.h" />
@@ -234,6 +239,8 @@
     <ClCompile Include="ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LightHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="SettingsUI.cpp" />

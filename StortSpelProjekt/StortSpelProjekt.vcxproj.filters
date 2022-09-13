@@ -42,6 +42,8 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Credits.cpp" />
     <ClCompile Include="SettingsUI.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LightHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bound.h" />
@@ -125,6 +127,11 @@
     <ClInclude Include="DepthStencilView.h" />
     <ClInclude Include="Credits.h" />
     <ClInclude Include="SettingsUI.h" />
+    <ClInclude Include="BufferTypes.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="LightHandler.h" />
+    <ClInclude Include="StructuredBuffer.h" />
+    <ClInclude Include="ConstantBufferNew.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

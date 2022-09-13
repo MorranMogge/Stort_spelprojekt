@@ -149,14 +149,8 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 		return false;
 	}
 
-	//Kolla om filen existerar i banken isåfall return false
-	if (this->bank.hasItem(filePath))
-	{
-		return false;
-	}
-
 	processNodes(pScene->mRootNode, pScene);
-	
+	return true;
 
 	if (pScene->HasMaterials())
 	{
@@ -165,7 +159,7 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 			const aiMaterial* pMaterial = pScene->mMaterials[i];
 			if (pMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 			{
-				aiString Path = pScene->mMaterials[i]->GetName();
+				aiString Path;
 				//har vi texturen?
 				if (this->bank.hasItem(Path.data))
 				{
@@ -185,10 +179,6 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 			}
 		}
 	}
-
-	//this->bank.addMeshBuffers(filePath)
-
-	return true;
 }
 
 std::vector<Mesh2*> ModelManager::getMeshes() const

@@ -54,6 +54,8 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		meshes.push_back(readNodes(mesh, scene));
+		aiMaterial* material = scene->mMaterials[scene->mMeshes[i]->mMaterialIndex];
+		//här srv inläsning
 	}
 
 	for (UINT i = 0; i < node->mNumChildren; i++)

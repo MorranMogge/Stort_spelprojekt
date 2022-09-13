@@ -46,7 +46,7 @@ void Client::connectToServer(std::string ipAddress, int port)
 
 void Client::connectToServer()
 {
-	//data.socket.connect(this->ip, this->port);
+	data.socket.connect(this->ip, this->port);
 	data.socket.setBlocking(false);
 }
 

@@ -22,7 +22,6 @@ public:
 	T& getData(int index);
 	void addData(T &obj, ID3D11Device* device);
 	void remapBuffer(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T> &buffData);
-	ID3D11Buffer getBuffer();
 	void applyData();
 };
 
@@ -57,7 +56,7 @@ StructuredBuffer<T>::StructuredBuffer()
 }
 
 template<class T>
-bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T> buffData)//Kolla bytewidth *0
+bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T> buffData)
 {
 	this->deviceContext = deviceContext;
 
@@ -67,12 +66,12 @@ bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 	}
 
 	D3D11_BUFFER_DESC cBuffDesc = { 0 };
-	cBuffDesc.ByteWidth = sizeof(T) * bufferData.size();			//size of buffer //*nr of elements
+	cBuffDesc.ByteWidth = sizeof(T) * bufferData.size();						//size of buffer //*nr of elements
 	cBuffDesc.Usage = D3D11_USAGE_DYNAMIC;										//sets interaction with gpu and cpu
 	cBuffDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;							//Specifies the type of buffer
 	cBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;							//Specifies cpu acess
 	cBuffDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;				//Misc flags
-	cBuffDesc.StructureByteStride = sizeof(T);						//Size of each element in structure
+	cBuffDesc.StructureByteStride = sizeof(T);									//Size of each element in structure
 	D3D11_SUBRESOURCE_DATA cBufData = { 0 };									//holds matrix data
 	cBufData.pSysMem = bufferData.data();										//pointer to data
 

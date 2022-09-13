@@ -12,6 +12,8 @@ private:
 	DirectX::XMFLOAT3 color;
 	float coneAngle;
 	int lightType;	//0 point, 1 directional, 2 spot
+	float range;
+	float falloff;
 
 public:
 
@@ -27,6 +29,8 @@ public:
 	void setColor(DirectX::XMFLOAT3 color);
 	void setConeAngle(float angle);
 	void setLightType(float type);
+	void setRange(float range);
+	void setFalloff(float falloff);
 	float getConeAngle()	const;
 	int getType()			const;
 	void updateMatrix(DirectX::XMFLOAT3 lightPos, DirectX::XMFLOAT3 FocusPos, DirectX::XMFLOAT3 UpDir);

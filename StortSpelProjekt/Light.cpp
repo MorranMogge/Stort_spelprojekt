@@ -1,7 +1,7 @@
 #include "Light.h"
 
 Light::Light(DirectX::XMFLOAT3 lightColor, DirectX::XMFLOAT3 lightPos, DirectX::XMFLOAT3 FocusPos, DirectX::XMFLOAT3 UpDir, float coneAngle, int type)
-	:position(lightPos), color(lightColor), upDirection(UpDir), direction(FocusPos), coneAngle(coneAngle), lightType(type)
+	:position(lightPos), color(lightColor), upDirection(UpDir), direction(FocusPos), coneAngle(coneAngle), lightType(type), falloff(1.0), range(200)
 {
 	DirectX::XMVECTOR pos = DirectX::XMVectorSet(this->position.x, this->position.y, this->position.z, 0);
 	DirectX::XMVECTOR focusPos = DirectX::XMVectorSet(FocusPos.x, FocusPos.y, FocusPos.z, 0);
@@ -65,6 +65,16 @@ void Light::setConeAngle(float angle)
 void Light::setLightType(float type)
 {
 	this->lightType = type;
+}
+
+void Light::setRange(float range)
+{
+	this->range = range;
+}
+
+void Light::setFalloff(float falloff)
+{
+	this->falloff = falloff;
 }
 
 float Light::getConeAngle() const

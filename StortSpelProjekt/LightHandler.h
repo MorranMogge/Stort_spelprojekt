@@ -8,8 +8,6 @@
 #include "GPU.h"
 
 
-
-
 class LightHandler
 {
 private:
@@ -29,13 +27,15 @@ private:
 	std::vector<Light> lights;													//Vector of light objects
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> structuredBufferSrv;		//View for structured buffer
 	std::vector<Microsoft::WRL::ComPtr<ID3D11Buffer>> viewBuffers;				//View/proj matrix for each light
-	StructuredBuffer<LightStruct>lightBuffer;
-	//Microsoft::WRL::ComPtr<ID3D11Buffer> structuredlightBuffer;				//Holds Light data 
+	StructuredBuffer<LightStruct>lightBuffer;									//Holds Light data 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> numLightBuffer;						//Holds nr of lights
-	int LightCap = 10;
+	int LightCap = 10;															//Max nr of lights that can be created
 
 	//Mesh
+	
 	//std::vector<Mesh> boundingSphere;											//Mesh for visualization
+
+	bool updateViewMatrix(int lightIndex);
 	
 public:
 
@@ -43,17 +43,16 @@ public:
 	void addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, DirectX::XMFLOAT3 UpDir, int type = 0, float coneAngle = 0.5f);
 	bool updateBuffers();
 	void setPosition(DirectX::XMFLOAT3 position, int lightIndex);				//changes view matrix
+	void setDirection(DirectX::XMFLOAT3 direction, int lightIndex);				//changes view matrix
 	void setUpDirection(DirectX::XMFLOAT3 direction, int lightIndex);			//changes view matrix
 	void setColor(DirectX::XMFLOAT3 color, int lightIndex);
 	void setConeAngle(float angle, int lightIndex);
 	void setLightType(float type, int lightIndex);								//0 point, 1 directional, 2 spot
-	//void setRange?
-	//void setFalloff?
-
+	void setRange(float range, int lightIndex);
+	void setFalloff(float falloff, int lightIndex);
 
 	ID3D11Buffer* getViewBuffer(int ltIndex) const;
 	int getNrOfLights() const;
-	
 	/*
 	void bindLightBuffer(ID3D11Buffer*& cameraPosBuffer, ID3D11ShaderResourceView** dfSrvArr);
 	void bindDepthStencil(int ptLightIndex);

@@ -140,15 +140,22 @@ void Menu::GeometryPass()
 #pragma region Draw
 
 	//draw Static meshes
-	for (auto& mesh : meshes_Static)
+	//for (auto& mesh : meshes_Static)
+	//{
+	//	mesh.DrawWithMat();
+	//}
+	////draw Dynamic meshes
+	//for (auto& mesh : meshes_Dynamic)
+	//{
+	//	mesh.DrawWithMat();
+	//}
+
+	GPU::immediateContext->PSSetShaderResources(0, 1, &this->m_textureSRV);
+	for (int i = 0; i < testMeshes.size(); i++)
 	{
-		mesh.DrawWithMat();
+		testMeshes[i]->Draw(GPU::immediateContext);
 	}
-	//draw Dynamic meshes
-	for (auto& mesh : meshes_Dynamic)
-	{
-		mesh.DrawWithMat();
-	}
+
 
 #pragma endregion
 
@@ -178,13 +185,53 @@ Menu::Menu()
 
 	manager = new ModelManager(GPU::device);
 	
-	manager->loadMeshData("../Meshes/goblin.fbx");
+	manager->loadMeshData("../Meshes/Gob.obj");
 	
 	this->testMeshes = manager->getMeshes();
 	
 	std::cout << testMeshes.size() << "\n";
 	 
 	
+	
+
+	int textureWidth;
+	int textureHeight;
+	unsigned char* imageData = stbi_load("../Textures/Dango.png", &textureWidth, &textureHeight, nullptr, STBI_rgb_alpha);
+
+	if (!imageData)
+		imageData = stbi_load("missingTexture.png", &textureWidth, &textureHeight, nullptr, STBI_rgb_alpha);
+
+	ID3D11Texture2D* texture2D;
+
+	D3D11_TEXTURE2D_DESC desc;
+	desc.Width = textureWidth;
+	desc.Height = textureHeight;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_IMMUTABLE;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA data;
+	data.pSysMem = &imageData[0];
+	data.SysMemPitch = textureWidth * 4;
+	data.SysMemSlicePitch = 0;
+
+	stbi_image_free;
+
+	if (FAILED(GPU::device->CreateTexture2D(&desc, &data, &texture2D)))
+	{
+		
+	}
+
+	HRESULT hr = GPU::device->CreateShaderResourceView(texture2D, nullptr, &m_textureSRV);
+	texture2D->Release();
+
+
 	// load obj file
 	/*std::vector<OBJ>objs_Static{
 		OBJ("../Meshes/gob"),
@@ -219,10 +266,10 @@ Menu::Menu()
 
 	// load obj file
 	std::vector<OBJ>objs_Dynamic{
-		/*OBJ("../Meshes/pinto"),*/
+		OBJ("../Meshes/pinto"),
 	};
 
-	// foreach obj in objs_Dynamic variable
+	 //foreach obj in objs_Dynamic variable
 	for (auto& obj : objs_Dynamic)
 	{
 		auto& mesh = meshes_Dynamic.emplace_back(obj); // create mesh from obj
@@ -237,10 +284,7 @@ Menu::Menu()
 
 #pragma endregion
 
-	//for (int i = 0; i < testMeshes.size(); i++)
-	//{
-	//	testMeshes[i]->Draw(GPU::immediateContext);
-	//}
+	
 
 #pragma region MainCamera
 
@@ -471,6 +515,7 @@ GAMESTATE Menu::Update()
 
 void Menu::Render()
 {
+	//GPU::immediateContext->VSSetShader()
 	
 	UpdateConstanBuffer();
 

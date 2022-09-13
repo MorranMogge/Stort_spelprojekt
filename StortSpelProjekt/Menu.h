@@ -30,6 +30,7 @@ private:
 
 	ModelManager* manager;
 	std::vector<Mesh2*> testMeshes;
+	ID3D11ShaderResourceView* m_textureSRV;
 
 	std::vector<Mesh> meshes_Static;
 	std::vector<Mesh> meshes_Dynamic;

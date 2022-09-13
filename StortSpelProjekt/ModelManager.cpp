@@ -5,13 +5,13 @@
 
 #include <iostream>
 
-bool ModelManager::makeSRV(ID3D11ShaderResourceView*& srv, std::string filePath)
+bool ModelManager::makeSRV(ID3D11ShaderResourceView*& srv, std::string finalFilePath)
 {
 	ID3D11Texture2D* texture;
 
 	D3D11_TEXTURE2D_DESC desc = {};
 	int width, height, channels;
-	unsigned char* image = stbi_load(filePath.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+	unsigned char* image = stbi_load(finalFilePath.c_str(), &width, &height, &channels, STBI_rgb_alpha);
 	if (!image)
 	{
 		stbi_image_free(image);
@@ -52,10 +52,33 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene)
 {
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
+		if (this->meshes.size() > this->diffuseMaps.size())
+		{
+			this->diffuseMaps.push_back(this->bank.getSrv("Missing.png"));
+		}
+
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		meshes.push_back(readNodes(mesh, scene));
 		aiMaterial* material = scene->mMaterials[scene->mMeshes[i]->mMaterialIndex];
 		//här srv inläsning
+
+		aiString Path;
+		if(material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		{
+			if (this->bank.hasItem(Path.data))
+			{
+				continue;
+			};
+
+			ID3D11ShaderResourceView* tempSRV = {};
+			std::string FullPath = "../Textures/";
+			FullPath.append(Path.data);
+			//make srv
+			this->makeSRV(tempSRV, FullPath);
+			//give to bank
+			this->bank.addSrv(Path.data, tempSRV);
+			this->diffuseMaps.push_back(tempSRV);
+		}
 	}
 
 	for (UINT i = 0; i < node->mNumChildren; i++)
@@ -135,6 +158,9 @@ Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 ModelManager::ModelManager(ID3D11Device* device)
 {
 	this->device = device;
+	ID3D11ShaderResourceView* tempSRV;
+	this->makeSRV(tempSRV, "../Textures/Missing.png");
+	this->bank.addSrv("Missing.png", tempSRV);
 }
 
 bool ModelManager::loadMeshData(const std::string& filePath)
@@ -151,39 +177,16 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 
 	processNodes(pScene->mRootNode, pScene);
 	return true;
-
-	if (pScene->HasMaterials())
-	{
-		for (unsigned int i = 0; i < pScene->mNumMaterials; i++)
-		{
-			const aiMaterial* pMaterial = pScene->mMaterials[i];
-			if (pMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
-			{
-				aiString Path;
-				//har vi texturen?
-				if (this->bank.hasItem(Path.data))
-				{
-					continue;
-				};
-
-				if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
-				{
-					ID3D11ShaderResourceView* tempSRV = {};
-					std::string FullPath = "../Textures/";
-					FullPath.append(Path.data);
-					//make srv
-					this->makeSRV(tempSRV, Path.data);
-					//give to bank
-					this->bank.addSrv(Path.data, tempSRV);
-				}
-			}
-		}
-	}
 }
 
 std::vector<Mesh2*> ModelManager::getMeshes() const
 {
 	return meshes;
+}
+
+std::vector<ID3D11ShaderResourceView*> ModelManager::getTextureMaps() const
+{
+	return this->diffuseMaps;
 }
 
 //void ModelManager::createSRV()

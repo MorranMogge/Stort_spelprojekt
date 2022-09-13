@@ -226,7 +226,7 @@ public:
 		//		0, 0, 1, position.z,
 		//		0, 0, 0, 1
 		//	};
-		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ ((XMMatrixRotationZ(this->rotation.z * XM_PI) * XMMatrixRotationY(this->rotation.y * XM_PI) * XMMatrixRotationX(this->rotation.x * XM_PI)) * XMMatrixTranslation(this->position.x, this->position.y, this->position.z) * XMMatrixScaling(scale.x, scale.y, scale.z))}));
+		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ ((XMMatrixRotationZ(this->rotation.z * XM_PI) * XMMatrixRotationY(this->rotation.y) * XMMatrixRotationX(this->rotation.x * XM_PI)) * XMMatrixTranslation(this->position.x, this->position.y, this->position.z) * XMMatrixScaling(scale.x, scale.y, scale.z))}));
 
 		worldCB.Update(&worldS, sizeof(MatrixS));
 

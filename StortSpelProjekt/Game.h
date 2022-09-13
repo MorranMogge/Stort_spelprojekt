@@ -20,6 +20,8 @@ private:
 	void loadObjects();
 	void drawObjects();
 
+	float pos[3];
+
 public:
 	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain);
 	virtual ~Game() override;

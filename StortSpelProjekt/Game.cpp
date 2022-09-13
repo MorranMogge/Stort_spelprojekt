@@ -45,7 +45,11 @@ void Game::loadObjects()
 
 	}
 	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(0, 0, -20);
-	//meshes_Dynamic[0].rotation.y = (DirectX::XM_PI / DirectX::XM_PI) / -2;
+	pos[0] = meshes_Dynamic[0].position.x;
+	pos[1] = meshes_Dynamic[0].position.y;
+	pos[2] = meshes_Dynamic[0].position.z;
+	meshes_Dynamic[0].rotation.y -= DirectX::XM_PI / 2;
+	camera.setupCamera(immediateContext, meshes_Dynamic[0].position, meshes_Dynamic[0].rotation);
 }
 
 void Game::drawObjects()
@@ -85,39 +89,44 @@ GAMESTATE Game::Update()
 	static bool forward = false;
 	float zpos = meshes_Dynamic[0].position.z;
 
-	float pos[3]{ meshes_Dynamic[0].position.x,meshes_Dynamic[0].position.y ,meshes_Dynamic[0].position.z };
 	if (Input::KeyDown(KeyCode::D))
 	{
-		pos[0] += 0.1;
-		//meshes_Dynamic[0].rotation.y += 0.001;
+		meshes_Dynamic[0].position.x += 0.1;
+		meshes_Dynamic[0].rotation.y -= 0.0009;
+		camera.moveCamera(immediateContext, meshes_Dynamic[0].position, meshes_Dynamic[0].rotation);
 	}
 
 	if (Input::KeyDown(KeyCode::A))
 	{
-		pos[0] -= 0.1;
-		//meshes_Dynamic[0].rotation.y -= 0.001;
+		meshes_Dynamic[0].position.x -= 0.1;
+		meshes_Dynamic[0].rotation.y += 0.0009;
+		camera.moveCamera(immediateContext, meshes_Dynamic[0].position, meshes_Dynamic[0].rotation);
 	}
 
 	if (Input::KeyDown(KeyCode::ARROW_Up))
 	{
-		pos[1] += 0.1;
+		meshes_Dynamic[0].position.y += 0.1;
+		camera.moveCamera(immediateContext, meshes_Dynamic[0].position, meshes_Dynamic[0].rotation);
 	}
 
 	if (Input::KeyDown(KeyCode::ARROW_Down))
 	{
-		pos[1] -= 0.1;
+		meshes_Dynamic[0].position.y -= 0.1;
+		camera.moveCamera(immediateContext, meshes_Dynamic[0].position, meshes_Dynamic[0].rotation);
 	}
 
 	if (Input::KeyDown(KeyCode::W))
 	{
-		pos[2] += 0.1;
+		meshes_Dynamic[0].position.z += 0.1;
 		meshes_Dynamic[0].rotation.x += 0.001;
+		camera.moveCamera(immediateContext, meshes_Dynamic[0].position, meshes_Dynamic[0].rotation);
 	}
 
 	if (Input::KeyDown(KeyCode::S))
 	{
-		pos[2] -= 0.1;
+		meshes_Dynamic[0].position.z -= 0.1;
 		meshes_Dynamic[0].rotation.x -= 0.001;
+		camera.moveCamera(immediateContext, meshes_Dynamic[0].position, meshes_Dynamic[0].rotation);
 	}
 
 	/*OutputDebugString(L"PLAYER: ");
@@ -129,9 +138,6 @@ GAMESTATE Game::Update()
 		if (pos[i] > 10) pos[i] = 10;
 		else if (pos[i] < -10) pos[i] = -10;
 	}*/
-
-	meshes_Dynamic[0].position = {pos[0], pos[1] , pos[2] };
-	camera.moveCamera(immediateContext, 1.f / 100.f, meshes_Dynamic[0].position, meshes_Dynamic[0].rotation);
 
 	for (int i = 0; i < meshes_Static.size(); i++)
 	{

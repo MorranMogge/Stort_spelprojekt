@@ -16,6 +16,17 @@ void Camera::updateCamera(ID3D11DeviceContext* immediateContext)
 	immediateContext->VSSetConstantBuffers(1, 1, &cameraBuffer);
 }
 
+void Camera::setupCamera(ID3D11DeviceContext* immediateContext, const DirectX::XMVECTOR& playerPosition, const DirectX::XMVECTOR& playerRotation)
+{
+	/*rotationMX = XMMatrixRotationRollPitchYawFromVector(playerRotation);
+	forwardVec = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
+	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);*/
+
+	cameraPos = (playerPosition - forwardVec + upVector);
+	lookAtPos = (playerPosition + forwardVec);
+	updateCamera(immediateContext);
+}
+
 Camera::Camera(ID3D11DeviceContext* immediateContext, ID3D11Device* device)
 {
 	rotationMX = XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f);
@@ -41,14 +52,9 @@ Camera::~Camera()
 	cameraBuffer->Release();
 }
 
-void Camera::moveCamera(ID3D11DeviceContext* immediateContext, float dt, const DirectX::XMVECTOR& playerPosition, const DirectX::XMVECTOR& playerRotation)
+void Camera::moveCamera(ID3D11DeviceContext* immediateContext, const DirectX::XMVECTOR& playerPosition, const DirectX::XMVECTOR& playerRotation)
 {
-	if (GetAsyncKeyState((VK_SHIFT)))
-	{
-		dt *= 5.0f;
-	}
-
-	rotationMX = XMMatrixRotationRollPitchYawFromVector(playerRotation * XM_PI);
+	rotationMX = XMMatrixRotationRollPitchYawFromVector(playerRotation);
 	forwardVec = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
 	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
 

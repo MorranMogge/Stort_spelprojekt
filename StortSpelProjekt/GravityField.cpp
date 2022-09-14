@@ -17,9 +17,9 @@ DirectX::XMFLOAT3 GravityField::calcGravFactor(DirectX::XMFLOAT3 objectPosition)
     float z = (objectPosition.z - planetCenterPoint.z);
     float length = sqrt(x * x + y * y + z * z);
     float factor = gravityConstant / length;
-    objectPosition.x *= factor;
-    objectPosition.y *= factor;
-    objectPosition.z *= factor;
+    objectPosition.x *= -factor;
+    objectPosition.y *= -factor;
+    objectPosition.z *= -factor;
 
     return objectPosition;
 }

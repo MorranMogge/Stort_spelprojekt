@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 
-#include <reactphysics3d\reactphysics3d.h>
+//#include <reactphysics3d\reactphysics3d.h>
 
 #include "Console.h"
 #include "SoundCollection.h"

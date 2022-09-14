@@ -48,7 +48,7 @@ bool ModelManager::makeSRV(ID3D11ShaderResourceView*& srv, std::string finalFile
 	return true;
 }
 
-void ModelManager::processNodes(aiNode* node, const aiScene* scene)
+void ModelManager::processNodes(aiNode* node, const aiScene*& scene)
 {
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
@@ -91,7 +91,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene)
 	}
 }
 
-Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
+Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene*& scene)
 {
 	std::vector<vertex> vertexTriangle;
 	std::vector<DWORD> indexTriangle;

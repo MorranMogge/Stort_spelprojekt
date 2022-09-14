@@ -20,8 +20,8 @@ class ModelManager
 {
 private:
 	bool makeSRV(ID3D11ShaderResourceView*& srv, std::string finalFilePath);
-	void processNodes(aiNode* node, const aiScene* scene);
-	Mesh2* readNodes(aiMesh* mesh, const aiScene* scene);
+	void processNodes(aiNode* node, const aiScene*& scene);
+	Mesh2* readNodes(aiMesh* mesh, const aiScene*& scene);
 	std::vector<Mesh2*> meshes;
 	std::vector<ID3D11ShaderResourceView*> diffuseMaps;
 

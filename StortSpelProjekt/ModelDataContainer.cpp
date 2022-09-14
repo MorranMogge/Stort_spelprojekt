@@ -1,10 +1,11 @@
 #include "ModelDataContainer.h"
 
-MDC::MDC()
+ModelDataContainer::ModelDataContainer()
 {
+	
 }
 
-MDC::~MDC()
+ModelDataContainer::~ModelDataContainer()
 {
 	for (this->srvIt = this->srvMap.begin(); this->srvIt != this->srvMap.end(); this->srvIt++)
 	{
@@ -19,7 +20,7 @@ MDC::~MDC()
 	}
 }
 
-bool MDC::hasItem(std::string key)
+bool ModelDataContainer::hasItem(std::string key)
 {
 	this->srvIt = this->srvMap.find((const std::string) key);
 	if (this->srvIt != this->srvMap.end())
@@ -35,7 +36,7 @@ bool MDC::hasItem(std::string key)
 	return false;
 }
 
-ID3D11ShaderResourceView* MDC::getSrv(const std::string key)
+ID3D11ShaderResourceView* ModelDataContainer::getSrv(const std::string key)
 {
 	this->srvIt = this->srvMap.find(key);
 	if (this->srvIt == this->srvMap.end())
@@ -45,7 +46,7 @@ ID3D11ShaderResourceView* MDC::getSrv(const std::string key)
 	return this->srvIt->second;
 }
 
-bool MDC::getIndexMeshBuffers(const std::string key, ID3D11Buffer*& indexBuff, ID3D11Buffer*& vertexBuff)
+bool ModelDataContainer::getIndexMeshBuffers(const std::string key, ID3D11Buffer*& indexBuff, ID3D11Buffer*& vertexBuff)
 {
 	this->meshIt = this->meshMap.find(key);
 	if (this->meshIt == this->meshMap.end())
@@ -58,12 +59,12 @@ bool MDC::getIndexMeshBuffers(const std::string key, ID3D11Buffer*& indexBuff, I
 	return true;
 }
 
-void MDC::addSrv(std::string key, ID3D11ShaderResourceView* srv)
+void ModelDataContainer::addSrv(std::string key, ID3D11ShaderResourceView* srv)
 {
 	this->srvMap.insert(std::pair<std::string, ID3D11ShaderResourceView*>(key, srv));
 }
 
-void MDC::addMeshBuffers(std::string key, ID3D11Buffer* vertexBuf, ID3D11Buffer* indexBuf)
+void ModelDataContainer::addMeshBuffers(std::string key, ID3D11Buffer* vertexBuf, ID3D11Buffer* indexBuf)
 {
 	std::tuple <ID3D11Buffer*, ID3D11Buffer*> newTup;
 	newTup = std::make_tuple(indexBuf, vertexBuf);

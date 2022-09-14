@@ -25,7 +25,7 @@ private:
 	std::vector<Mesh2*> meshes;
 	std::vector<ID3D11ShaderResourceView*> diffuseMaps;
 
-	MDC bank;
+	ModelDataContainer bank;
 	ID3D11Device* device;
 public:
 	ModelManager(ID3D11Device* device);

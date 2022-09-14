@@ -2,16 +2,16 @@
 #include<iostream>
 #include<d3d11.h>
 #include<DirectXMath.h>
-#include<map>
+#include<unordered_map>
 #include<iterator>
 #include<string>
 #include<tuple>
 
-class MDC
+class ModelDataContainer
 {
 public:
-	MDC();
-	~MDC();
+	ModelDataContainer();
+	~ModelDataContainer();
 
 	bool hasItem(const std::string key);
 	ID3D11ShaderResourceView* getSrv(const std::string key);
@@ -27,11 +27,11 @@ private:
 		VERTEXBUFFER
 	};
 
-	std::map<std::string, ID3D11ShaderResourceView*> srvMap;
-	std::map<std::string, ID3D11ShaderResourceView*>::iterator srvIt;
+	std::unordered_map<std::string, ID3D11ShaderResourceView*> srvMap;
+	std::unordered_map<std::string, ID3D11ShaderResourceView*>::iterator srvIt;
 
 	std::tuple <ID3D11Buffer*, ID3D11Buffer*> meshTupel;
 
-	std::map<std::string, std::tuple <ID3D11Buffer*, ID3D11Buffer*>> meshMap;
-	std::map<std::string, std::tuple <ID3D11Buffer*, ID3D11Buffer*>>::iterator meshIt;
+	std::unordered_map<std::string, std::tuple <ID3D11Buffer*, ID3D11Buffer*>> meshMap;
+	std::unordered_map<std::string, std::tuple <ID3D11Buffer*, ID3D11Buffer*>>::iterator meshIt;
 };

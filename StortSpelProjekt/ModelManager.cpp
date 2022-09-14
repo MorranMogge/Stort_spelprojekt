@@ -67,6 +67,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene)
 		{
 			if (this->bank.hasItem(Path.data))
 			{
+				this->diffuseMaps.push_back(this->bank.getSrv(Path.data));
 				continue;
 			};
 
@@ -74,7 +75,10 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene)
 			std::string FullPath = "../Textures/";
 			FullPath.append(Path.data);
 			//make srv
-			this->makeSRV(tempSRV, FullPath);
+			if (!this->makeSRV(tempSRV, FullPath))
+			{
+				continue;
+			}
 			//give to bank
 			this->bank.addSrv(Path.data, tempSRV);
 			this->diffuseMaps.push_back(tempSRV);
@@ -150,9 +154,6 @@ Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 	
 	
 	return new Mesh2(GPU::device, vertexTriangle, indexTriangle);
-
-
-	
 }
 
 ModelManager::ModelManager(ID3D11Device* device)

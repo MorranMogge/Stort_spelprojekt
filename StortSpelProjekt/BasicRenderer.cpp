@@ -71,7 +71,7 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 }
 
 void BasicRenderer::setUpScene()
-{
+{				
 	immediateContext->ClearRenderTargetView(rtv, clearColour);
 	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
@@ -82,4 +82,9 @@ void BasicRenderer::setUpScene()
 	immediateContext->RSSetViewports(1, &viewport);
 	immediateContext->PSSetShader(pShader, nullptr, 0);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
+
+	//Unbind shadowmap & structuredBuffer srv
+	ID3D11ShaderResourceView* nullRsv{ nullptr };
+	immediateContext->PSSetShaderResources(3, 1, &nullRsv);
+	immediateContext->PSSetShaderResources(4, 1, &nullRsv);
 }

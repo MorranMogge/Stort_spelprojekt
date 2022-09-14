@@ -364,16 +364,9 @@ void LightHandler::drawShadows(int lightIndex, std::vector<GameObject> gameObjec
 	GPU::immediateContext->OMSetRenderTargets(1, &nullRtv, nullDsView);							
 }
 
-void LightHandler::bindLightBuffers(ID3D11Buffer*& cameraPosBuffer, ID3D11ShaderResourceView** dfSrvArr)
+void LightHandler::bindLightBuffers()
 {
-	//Add Srv & Buffer data from lights to temp vectors
-	//tempBuff.push_back(this->numLightBuffer.Get());					//Buffer for nr Lights
-
-	//Bind shader resource views ShadowMap(s) & light structuredBuffer
-	//tempSrv.push_back(this->shadowSrv.Get());						//ShadowMap(s)
-	//tempSrv.push_back(this->structuredBufferSrv.Get());				//Srv for light structuredBuffer content (pos, color, lightViewMatrix)
-
-
-	//GPU::immediateContext->CSSetShaderResources(0, 10, tempSrv.data());	//Bind Srv's
-	//GPU::immediateContext->CSSetConstantBuffers(0, 2, tempBuff.data());	//Bind Buffers's
+	GPU::immediateContext->PSSetShaderResources(3, 1, this->shadowSrv.GetAddressOf());				//Bind Srv's //ShadowMap(s)
+	GPU::immediateContext->PSSetShaderResources(4, 1, this->structuredBufferSrv.GetAddressOf());	//Srv for light structuredBuffer content (pos, color, lightViewMatrix)
+	GPU::immediateContext->PSSetConstantBuffers(0, 1, this->numLightBuffer.GetAddressOf());			//Bind CBuffers's //Buffer for nr Lights
 }

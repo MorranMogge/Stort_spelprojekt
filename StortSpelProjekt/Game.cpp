@@ -112,9 +112,13 @@ GAMESTATE Game::Update()
 
 void Game::Render()
 {
-	basicRenderer.lightPrePass();
 	//LIGHT STUFF
-	//lthandler.drawShadows(gameObjects);
+	basicRenderer.lightPrePass();
+	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
+	{
+		ltHandler.drawShadows(i, gameObjects);
+	}
+	ltHandler.bindLightBuffers();
 
 	basicRenderer.setUpScene();
 	camera.updateCamera(immediateContext);

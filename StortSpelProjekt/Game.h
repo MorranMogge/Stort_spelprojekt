@@ -21,6 +21,7 @@ private:
 	//Objects
 	std::vector<Mesh> meshes_Static;
 	std::vector<Mesh> meshes_Dynamic;
+	std::vector<GameObject> gameObjects;
 
 	void loadObjects();
 	void drawObjects();

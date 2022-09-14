@@ -20,7 +20,7 @@ class ModelManager
 {
 private:
 	bool makeSRV(ID3D11ShaderResourceView*& srv, std::string finalFilePath);
-	void processNodes(aiNode* node, const aiScene* scene);
+	void processNodes(aiNode* node, const aiScene* scene, const std::string& filePath);
 	Mesh2* readNodes(aiMesh* mesh, const aiScene* scene);
 	std::vector<Mesh2*> meshes;
 	std::vector<ID3D11ShaderResourceView*> diffuseMaps;
@@ -29,6 +29,7 @@ private:
 	ID3D11Device* device;
 public:
 	ModelManager(ID3D11Device* device);
+	~ModelManager();
 	bool loadMeshData(const std::string& filePath);
 	std::vector<Mesh2*> getMeshes() const;
 	std::vector<ID3D11ShaderResourceView*> getTextureMaps() const;

@@ -221,7 +221,6 @@ Menu::Menu()
 	data.SysMemPitch = textureWidth * 4;
 	data.SysMemSlicePitch = 0;
 
-	stbi_image_free;
 
 	if (FAILED(GPU::device->CreateTexture2D(&desc, &data, &texture2D)))
 	{
@@ -230,6 +229,7 @@ Menu::Menu()
 
 	HRESULT hr = GPU::device->CreateShaderResourceView(texture2D, nullptr, &m_textureSRV);
 	texture2D->Release();
+	stbi_image_free(imageData);
 
 
 	// load obj file
@@ -456,7 +456,7 @@ Menu::Menu()
 
 Menu::~Menu()
 {
-
+	delete this->manager;
 }
 
 GAMESTATE Menu::Update()

@@ -48,7 +48,7 @@ bool ModelManager::makeSRV(ID3D11ShaderResourceView*& srv, std::string finalFile
 	return true;
 }
 
-void ModelManager::processNodes(aiNode* node, const aiScene* scene)
+void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::string& filePath)
 {
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
@@ -58,7 +58,17 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene)
 		}
 
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.push_back(readNodes(mesh, scene));
+
+		//meshes.push_back(readNodes(mesh, scene));
+		
+
+
+		//för testing purpose - Elliot tar bort
+		meshes.emplace_back(readNodes(mesh, scene));
+		
+		//Mesh2* tmpData = readNodes(mesh, scene);
+		//bank.addMeshBuffers(filePath, tmpData->getVertexBuffer(), tmpData->getIndexBuffer());
+
 		aiMaterial* material = scene->mMaterials[scene->mMeshes[i]->mMaterialIndex];
 		//här srv inläsning
 
@@ -67,7 +77,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene)
 		{
 			if (this->bank.hasItem(Path.data))
 			{
-				this->diffuseMaps.push_back(this->bank.getSrv(Path.data));
+				this->diffuseMaps.emplace_back(this->bank.getSrv(Path.data));
 				continue;
 			};
 
@@ -81,14 +91,16 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene)
 			}
 			//give to bank
 			this->bank.addSrv(Path.data, tempSRV);
-			this->diffuseMaps.push_back(tempSRV);
+			this->diffuseMaps.emplace_back(tempSRV);
 		}
 	}
 
 	for (UINT i = 0; i < node->mNumChildren; i++)
 	{
-		processNodes(node->mChildren[i], scene);
+		processNodes(node->mChildren[i], scene, filePath);
 	}
+
+
 }
 
 Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
@@ -122,7 +134,7 @@ Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 			vertex.uv.y = (float)mesh->mTextureCoords[0][i].y;
 		}
 
-		vertexTriangle.push_back(vertex);
+		vertexTriangle.emplace_back(vertex);
 
 		if (vertex.pos.x < smallestX || vertex.pos.y < smallestY || vertex.pos.z < smallestZ)
 		{
@@ -144,7 +156,7 @@ Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 		aiFace face = mesh->mFaces[i];
 
 		for (UINT j = 0; j < face.mNumIndices; j++)
-			indexTriangle.push_back(face.mIndices[j]);
+			indexTriangle.emplace_back(face.mIndices[j]);
 	}
 
 	//smallestCoord = XMVectorSet(smallestX, smallestY, smallestZ, 0.0f);
@@ -164,6 +176,14 @@ ModelManager::ModelManager(ID3D11Device* device)
 	this->bank.addSrv("Missing.png", tempSRV);
 }
 
+ModelManager::~ModelManager()
+{
+	/*for (int i = 0; i < meshes.size(); i++)
+	{
+		delete this->meshes[i];
+	}*/
+}
+
 bool ModelManager::loadMeshData(const std::string& filePath)
 {
 	Assimp::Importer importer;
@@ -176,7 +196,12 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 		return false;
 	}
 
-	processNodes(pScene->mRootNode, pScene);
+	if (bank.hasItem(filePath) == true)
+	{
+		return false;
+	}
+
+	processNodes(pScene->mRootNode, pScene, filePath);
 	return true;
 }
 

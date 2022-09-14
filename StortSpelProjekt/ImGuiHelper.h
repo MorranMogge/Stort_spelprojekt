@@ -19,6 +19,7 @@ private:
 	std::string receivedMsg;
 public:
 	ImGuiHelper(Client*& client);
+	ImGuiHelper();
 	~ImGuiHelper();
 
 	void drawInterface(std::string message);

@@ -1,10 +1,8 @@
 #include "mesh2.h"
 
-HRESULT Mesh2::CreateIndexBuffer(std::vector<DWORD> indexTriangle)
+HRESULT Mesh2::CreateIndexBuffer(std::vector<DWORD>& indexTriangle)
 {
-	if (indexBuffer.Get() != nullptr)
-		indexBuffer.Reset();
-
+	
 	D3D11_BUFFER_DESC indexBufferDesc;
 	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -18,14 +16,12 @@ HRESULT Mesh2::CreateIndexBuffer(std::vector<DWORD> indexTriangle)
 
 	D3D11_SUBRESOURCE_DATA indexBufferData;
 	indexBufferData.pSysMem = indexTriangle.data();
-	HRESULT hr = device->CreateBuffer(&indexBufferDesc, &indexBufferData, indexBuffer.GetAddressOf());
+	HRESULT hr = device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
 	return hr;
 }
 
-HRESULT Mesh2::CreateVertexBuffer(std::vector<vertex> vertexTriangle)
+HRESULT Mesh2::CreateVertexBuffer(std::vector<vertex>& vertexTriangle)
 {
-	if (vertexBuffer.Get() != nullptr)
-		vertexBuffer.Reset();
 
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -39,11 +35,11 @@ HRESULT Mesh2::CreateVertexBuffer(std::vector<vertex> vertexTriangle)
 	data.pSysMem = vertexTriangle.data();
 	data.SysMemPitch = 0;
 	data.SysMemSlicePitch = 0;
-	HRESULT hr = device->CreateBuffer(&bufferDesc, &data, vertexBuffer.GetAddressOf());
+	HRESULT hr = device->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
 	return hr;
 }
 
-Mesh2::Mesh2(ID3D11Device* device, std::vector<vertex> vertexTriangle, std::vector<DWORD> indexTriangle)
+Mesh2::Mesh2(ID3D11Device* device, std::vector<vertex>& vertexTriangle, std::vector<DWORD>& indexTriangle)
 {
 	this->device = device;
 
@@ -61,8 +57,8 @@ void Mesh2::Draw(ID3D11DeviceContext* immediateContext)
 	UINT stride = sizeof(vertex);
 	UINT offset = 0;
 
-	immediateContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-	immediateContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+	immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
 	immediateContext->DrawIndexed(size, 0, 0);
 }
 
@@ -72,4 +68,20 @@ Mesh2::Mesh2(const Mesh2& mesh)
 	this->vertexBuffer = mesh.vertexBuffer;
 	this->device = mesh.device;
 	this->size = mesh.size;
+}
+
+ID3D11Buffer* Mesh2::getIndexBuffer() const
+{
+	return this->indexBuffer;
+}
+
+ID3D11Buffer* Mesh2::getVertexBuffer() const
+{
+	return this->vertexBuffer;
+}
+
+Mesh2::~Mesh2()
+{
+	vertexBuffer->Release();
+	indexBuffer->Release();
 }

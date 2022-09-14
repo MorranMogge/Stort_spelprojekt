@@ -6,6 +6,10 @@ ImGuiHelper::ImGuiHelper(Client*& client)
 	receivedMsg = "not yet received!";
 }
 
+ImGuiHelper::ImGuiHelper()
+{
+}
+
 ImGuiHelper::~ImGuiHelper()
 {
 }

@@ -41,15 +41,15 @@ Camera::~Camera()
 	cameraBuffer->Release();
 }
 
-void Camera::moveCamera(ID3D11DeviceContext* immediateContext, const DirectX::XMVECTOR& playerPosition, const DirectX::XMVECTOR& playerRotation)
+void Camera::moveCamera(ID3D11DeviceContext* immediateContext)
 {
-	rotationMX = XMMatrixRotationRollPitchYawFromVector(playerRotation * XM_PI);
-	forwardVec = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
-	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
+	//rotationMX = XMMatrixRotationRollPitchYawFromVector();
+	//forwardVec = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
+	//upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
 
-	cameraPos = (playerPosition - forwardVec + upVector);
-	lookAtPos = (playerPosition + forwardVec);
-	updateCamera(immediateContext);
+	//cameraPos = (playerPosition - forwardVec + upVector);
+	//lookAtPos = (playerPosition + forwardVec);
+	//updateCamera(immediateContext);
 
 	/*XMFLOAT3 newPos;
 	XMStoreFloat3(&newPos, cameraPos);
@@ -57,34 +57,17 @@ void Camera::moveCamera(ID3D11DeviceContext* immediateContext, const DirectX::XM
 	OutputDebugString(L"Camera: ");
 	OutputDebugString(std::to_wstring(newPos.z).c_str());
 	OutputDebugString(L"\n");*/
+}
 
-	/*if (GetAsyncKeyState('W'))
-	{
-		cameraPos += forwardVec * 10 * dt;
-		lookAtPos += forwardVec * 10 * dt;
-		updateCamera(immediateContext);
-	}
+void Camera::AdjustRotation(ID3D11DeviceContext* immediateContext, float x, float y)
+{
+	rotation.x += x;
+	rotation.y += y;
+	rotVector = XMLoadFloat3(&rotation);
 
-	else if (GetAsyncKeyState('S'))
-	{
-		cameraPos -= forwardVec * 10 * dt;
-		lookAtPos -= forwardVec * 10 * dt;
-		updateCamera(immediateContext);
-	}*/
+	rotationMX = XMMatrixRotationRollPitchYawFromVector(rotVector);
+	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
+	lookAtPos = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX) + cameraPos;
 
-	/*if (GetAsyncKeyState('D'))
-	{
-		rightVec = DEFAULT_RIGHT;
-		cameraPos += rightVec * 10 * dt;
-		lookAtPos += rightVec * 10 * dt;
-		updateCamera(immediateContext);
-	}
-
-	else if (GetAsyncKeyState('A'))
-	{
-		rightVec = DEFAULT_RIGHT;
-		cameraPos -= rightVec * 10 * dt;
-		lookAtPos -= rightVec * 10 * dt;
-		updateCamera(immediateContext);
-	}*/
+	updateCamera(immediateContext);
 }

@@ -170,6 +170,8 @@
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="MaterialLibrary.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MouseClass.h" />
+    <ClInclude Include="MouseEvent.h" />
     <ClInclude Include="MTL.h" />
     <ClInclude Include="OBJ.h" />
     <ClInclude Include="PerspectiveCamera.h" />
@@ -233,6 +235,8 @@
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="MouseClass.cpp" />
+    <ClCompile Include="MouseEvent.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="Texture.cpp" />

@@ -4,6 +4,7 @@
 #include "BasicRenderer.h"
 #include "Mesh.h"
 #include "Input.h"
+#include "MouseClass.h"
 
 class Game : public State
 {
@@ -22,8 +23,17 @@ private:
 
 	float pos[3];
 
+	//Variables for the mouse movement
+	MouseClass* mouse;
+	POINT mousePos = {};
+	HWND* window;
+	RECT rect;
+	POINT ul;
+	POINT lr;
+	MSG* msg;
+
 public:
-	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain);
+	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window);
 	virtual ~Game() override;
 
 	// Inherited via State

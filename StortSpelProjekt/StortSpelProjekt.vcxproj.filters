@@ -40,6 +40,8 @@
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DXUtil.cpp" />
+    <ClCompile Include="MouseClass.cpp" />
+    <ClCompile Include="MouseEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bound.h" />
@@ -121,6 +123,8 @@
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="DXUtil.h" />
     <ClInclude Include="DepthStencilView.h" />
+    <ClInclude Include="MouseClass.h" />
+    <ClInclude Include="MouseEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

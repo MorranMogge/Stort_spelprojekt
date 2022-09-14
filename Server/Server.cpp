@@ -1,5 +1,5 @@
 #include <iostream>
-#include <iostream>
+#include <string>
 #include "../StortSpelProjekt/PackageTypes.h"
 
 #include <SFML/Network.hpp>
@@ -7,7 +7,7 @@
 #include <thread>
 #include <vector>
 
-const int MAXNUMBEROFPLAYERS = 2;
+const short MAXNUMBEROFPLAYERS = 2;
 
 struct acceptMePacketData
 {
@@ -126,21 +126,21 @@ void sendDataUdp(sf::Packet& sentPacket, serverData& data, std::string remoteIpA
 	}
 };
 
-bool receiveDataTcp(sf::Packet& receivedPacket, serverData& data, unsigned short& packetIdentifier)
+bool receiveDataTcp(sf::Packet& receivedPacket, serverData& data, unsigned short& packetIdentifier, const int playerid)
 {
-	//remote adress
-
-	if (data.tcpSocket.receive(receivedPacket) == sf::Socket::Done)
+	if (data.users[playerid].tcpSocket.receive(receivedPacket) != sf::Socket::Done)
+	{
+		//std::cout << "failed to receive TCP\n";
+		return false;
+	}
+	else
 	{
 		std::string receivedString;
 		std::cout << "TCP received data from address: " << data.tcpSocket.getRemoteAddress().toString() << std::endl;
 
 		return true;
 	}
-	else
-	{
-		//std::cout << "failure\n";
-	}
+
 };
 
 void setupTcp(serverData& data)
@@ -154,7 +154,6 @@ void acceptPlayers(serverData& data)
 {
 	std::cout << "Accepting players TCP socket\n";
 
-	int MAXNUMBEROFPLAYERS = 2;
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
 		if (data.tcpListener.accept(data.users[i].tcpSocket) == sf::TcpListener::Done)
@@ -164,6 +163,22 @@ void acceptPlayers(serverData& data)
 			data.users[i].userName = std::to_string(i + 1);
 		}
 		
+	}
+};
+
+void sendDataAllPlayers(sf::Packet& packet, serverData& data)
+{
+	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+	{
+		if (data.users[i].tcpSocket.send(packet) != sf::Socket::Done)
+		{
+			//error
+			//std::cout << "Couldnt send data to player from array slot: " << std::to_string(i) << std::endl;
+		}
+		else
+		{
+			std::cout << "sent data to player: " << data.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
+		}
 	}
 };
 
@@ -177,6 +192,7 @@ int main()
 	sf::Packet receivedPacket;
 	float frequency = 30.f;
 
+	sf::SocketSelector selector;
 
 
 	//sf::UdpSocket socket;
@@ -211,10 +227,16 @@ int main()
 	start = std::chrono::system_clock::now();
 
 
+
 	setupTcp(data);
 
 	acceptPlayers(data);
-	
+		
+	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+	{
+		selector.add(data.users[i].tcpSocket);
+	}
+
 	while (true)
 	{
 
@@ -230,16 +252,33 @@ int main()
 
 
 		//std::cout << "first connection: " << data.users[0].ipAdress.toString() << " second connection: " << data.users[1].ipAdress.toString() << std::endl;
-		
 
-		sf::Packet receivecPacket;
-		unsigned short packetIdentifier;
-		if (receiveDataTcp(receivecPacket, data, packetIdentifier))
+
+			/*sf::Packet pack;
+			std::string packString = "server data XDXDDX";
+			pack << packString;
+			sendDataAllPlayers(pack, data);*/
+
+		if (selector.wait())
 		{
-			std::string s;
-			receivedPacket >> s;
-			std::cout << "Received string from packet: " << s << std::endl;
+			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+			{
+				if (selector.isReady(data.users[i].tcpSocket))
+				{
+					std::cout << "user ip: " << data.users[i].ipAdress.toString() << std::endl;
+					sf::Packet receivedPacket;
+					unsigned short packetIdentifier;
+
+					if (receiveDataTcp(receivedPacket, data, packetIdentifier, i))
+					{
+						std::string s;
+						receivedPacket >> s;
+						std::cout << "Received string from packet: " << s << std::endl;
+					}
+				}
+			}
 		}
+		
 		
 	}
 	/*if (connectionType == "s")

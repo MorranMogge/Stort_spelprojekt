@@ -47,8 +47,8 @@ void Client::connectToServer(std::string ipAddress, int port)
 
 void Client::connectToServer()
 {
-	data.socket.connect(this->ip, this->port);
-	data.socket.setBlocking(false);
+	tcpSocket.connect(this->ip, this->port);
+	//data.socket.setBlocking(false);
 }
 
 void Client::joinThread()
@@ -80,7 +80,7 @@ std::string Client::receive()
 }
 
 //used for sending string
-void Client::sendToServer(std::string stringToSend)
+void Client::sendToServerUdp(std::string stringToSend)
 {
 	sendPacket << stringToSend;
 
@@ -98,7 +98,7 @@ void Client::sendToServer(std::string stringToSend)
 }
 
 //used for sending already saved MSG
-void Client::sendToServer()
+void Client::sendToServerUdp()
 {
 	sendPacket << this->tmp;
 
@@ -113,6 +113,56 @@ void Client::sendToServer()
 		std::cout << "failed to send data to server\n";
 	}
 	sendPacket.clear();
+}
+
+void Client::sendToServerTcp()
+{
+	sendPacket.clear();
+	sendPacket << this->tmp;
+
+	if(tcpSocket.send(sendPacket) != sf::Socket::Done)
+	{
+		//error
+		std::cout << "TCP Couldnt send packet\n";
+	}
+
+	std::string s;
+	sendPacket >> s;
+	std::cout << "TCP sent packet: " << s << std::endl;
+	sendPacket.clear();
+}
+
+void Client::sendToServerTcp(std::string buf)
+{
+	sendPacket << buf;
+
+	if (tcpSocket.send(this->sendPacket) != sf::Socket::Done)
+	{
+		//error
+		std::cout << "TCP Couldnt send packet\n";
+	}
+	else
+	{
+		std::string s;
+		sendPacket >> s;
+		std::cout << "TCP sent packet: " << s << std::endl;
+	}
+}
+
+void Client::receiveFromServerTcp()
+{
+	receivedPacket.clear();
+	if (tcpSocket.receive(receivedPacket) != sf::Socket::Done)
+	{
+		std::cout << "failed to receive TCP\n";
+	}
+	else
+	{
+		std::string receivedString;
+		std::cout << "TCP received data from address: " << tcpSocket.getRemoteAddress().toString() << std::endl;
+		receivedPacket << receivedString;
+		std::cout << "data received from server: " << receivedString << std::endl;
+	}
 }
 
 

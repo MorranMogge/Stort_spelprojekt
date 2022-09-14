@@ -15,6 +15,7 @@ class Client
 private:
 	ThreadInfo data;
 	sf::UdpSocket sendSocket;
+	sf::TcpSocket tcpSocket;
 	sf::Packet sendPacket;
 	sf::Packet receivedPacket;
 	
@@ -37,8 +38,12 @@ public:
 
 	bool setupThread();
 	std::string receive();
-	void sendToServer(std::string stringToSend);
-	void sendToServer();
+	void sendToServerUdp(std::string stringToSend);
+	void sendToServerUdp();
+
+	void sendToServerTcp();
+	void sendToServerTcp(std::string buf);
+	void receiveFromServerTcp();
 
 	void saveText(std::string text);
 	void saveMsg(std::string text);

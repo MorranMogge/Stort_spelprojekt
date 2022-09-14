@@ -48,8 +48,7 @@ void Game::loadObjects()
 	pos[0] = meshes_Dynamic[0].position.x;
 	pos[1] = meshes_Dynamic[0].position.y;
 	pos[2] = meshes_Dynamic[0].position.z;
-	meshes_Dynamic[0].rotation.y -= DirectX::XM_PI / 2;
-	camera.setupCamera(immediateContext, meshes_Dynamic[0].position, meshes_Dynamic[0].rotation);
+	camera.moveCamera(immediateContext, meshes_Dynamic[0].position, meshes_Dynamic[0].rotation);
 }
 
 void Game::drawObjects()

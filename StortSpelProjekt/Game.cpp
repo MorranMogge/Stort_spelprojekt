@@ -46,7 +46,7 @@ void Game::loadObjects()
 
 	}
 	meshes_Dynamic[0].scale = DirectX::SimpleMath::Vector3(0.25, 0.25, 0.25);
-	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(25, 25, -25);
+	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(25*4, 25 * 4, -25 * 4);
 
 
 }
@@ -173,7 +173,7 @@ GAMESTATE Game::Update()
 	static bool forward = false;
 	float zpos = meshes_Dynamic[0].position.z;
 
-	if (Input::KeyDown(KeyCode::D))
+	/*if (Input::KeyDown(KeyCode::D))
 	{
 		meshes_Dynamic[0].position.x += 0.1;
 		meshes_Dynamic[0].rotation.y -= 0.0009;
@@ -211,7 +211,7 @@ GAMESTATE Game::Update()
 		meshes_Dynamic[0].position.z -= 0.1;
 		meshes_Dynamic[0].rotation.x -= 0.001;
 		camera.moveCamera(immediateContext);
-	}
+	}*/
 
 	DirectX::XMFLOAT3 pos(meshes_Dynamic[0].position.x, meshes_Dynamic[0].position.y, meshes_Dynamic[0].position.z);
 	/*OutputDebugString(L"PLAYER: ");
@@ -228,7 +228,7 @@ GAMESTATE Game::Update()
 	grav = planetGravityField.calcGravFactor(pos);
 
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(pos));
-	if (getLength(pos) <= 20+2) velocity = DirectX::XMFLOAT3(0, 0, 0);
+	if (getLength(pos) <= 20 * 4 +2) velocity = DirectX::XMFLOAT3(0, 0, 0);
 	additionXMFLOAT3(pos, getScalarMultiplicationXMFLOAT3(dt,velocity));
 	meshes_Dynamic[0].position = { pos.x, pos.y, pos.z };
 

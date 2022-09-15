@@ -10,6 +10,7 @@ class StructuredBuffer
 {
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> buffer;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
 	ID3D11DeviceContext* deviceContext;
 	std::vector<T> bufferData;
 
@@ -23,6 +24,10 @@ public:
 	void addData(T &obj, ID3D11Device* device);
 	void remapBuffer(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T> &buffData);
 	void applyData();
+
+	void Bind(UINT toRegister);
+	ID3D11ShaderResourceView* getSRV();
+
 };
 
 
@@ -47,6 +52,16 @@ inline bool StructuredBuffer<T>::reInitialize(ID3D11Device* device)
 		std::cout << "failed creating structured buffer" << std::endl;
 		return false;
 	}
+
+	//ShaderResource view 
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
+	shaderResourceViewDesc.Format = DXGI_FORMAT_UNKNOWN;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	shaderResourceViewDesc.Buffer.FirstElement = 0;
+	shaderResourceViewDesc.Buffer.NumElements = structVector.size();
+	//create shader resource view 
+	GPU::device->CreateShaderResourceView(buffer.Get(), &shaderResourceViewDesc, srv.GetAddressOf());
+
 	return true;
 }
 
@@ -138,4 +153,16 @@ void StructuredBuffer<T>::applyData()
 	CopyMemory(mappedResource.pData, &bufferData, sizeof(T));
 	this->deviceContext->Unmap(buffer.Get(), 0);
 	//return true;
+}
+
+template<class T>
+inline void StructuredBuffer<T>::Bind(UINT toRegister)
+{
+	deviceContext->VSSetShaderResources(toRegister, 1, srv.GetAddressOf());
+}
+
+template<class T>
+inline ID3D11ShaderResourceView* StructuredBuffer<T>::getSRV()
+{
+	return srv.Get();
 }

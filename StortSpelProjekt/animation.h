@@ -76,7 +76,7 @@ public:
 
 	void Bind(UINT toRegister)
 	{
-		sb.Bind(toRegister);
+		sb.BindToVS(toRegister);
 	}
 
 };

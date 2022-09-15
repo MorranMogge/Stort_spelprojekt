@@ -103,6 +103,17 @@ bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 		std::cout << "failed creating structured buffer" << std::endl;
 		return false;
 	}
+
+	//ShaderResource view 
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
+	shaderResourceViewDesc.Format = DXGI_FORMAT_UNKNOWN;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	shaderResourceViewDesc.Buffer.FirstElement = 0;
+	shaderResourceViewDesc.Buffer.NumElements = structVector.size();
+
+	//create shader resource view 
+	HRESULT hr2 = device->CreateShaderResourceView(buffer.Get(), &shaderResourceViewDesc, srv.GetAddressOf());
+
 	return true;
 }
 

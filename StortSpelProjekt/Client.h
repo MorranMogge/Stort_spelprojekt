@@ -43,6 +43,7 @@ public:
 
 	void sendToServerTcp();
 	void sendToServerTcp(std::string buf);
+	void sendToServerTEMPTCP();
 	void receiveFromServerTcp();
 
 	void saveText(std::string text);

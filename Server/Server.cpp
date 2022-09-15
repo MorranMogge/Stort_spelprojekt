@@ -7,7 +7,7 @@
 #include <thread>
 #include <vector>
 
-const short MAXNUMBEROFPLAYERS = 2;
+const short MAXNUMBEROFPLAYERS = 1;
 
 struct acceptMePacketData
 {
@@ -126,7 +126,7 @@ void sendDataUdp(sf::Packet& sentPacket, serverData& data, std::string remoteIpA
 	}
 };
 
-bool receiveDataTcp(sf::Packet& receivedPacket, serverData& data, unsigned short& packetIdentifier, const int playerid)
+bool receiveDataTcp(sf::Packet& receivedPacket, serverData& data, const int playerid)
 {
 	if (data.users[playerid].tcpSocket.receive(receivedPacket) != sf::Socket::Done)
 	{
@@ -140,7 +140,6 @@ bool receiveDataTcp(sf::Packet& receivedPacket, serverData& data, unsigned short
 
 		return true;
 	}
-
 };
 
 void setupTcp(serverData& data)
@@ -182,6 +181,29 @@ void sendDataAllPlayers(sf::Packet& packet, serverData& data)
 	}
 };
 
+void packetId(sf::Packet& packet, serverData& data)
+{
+	//sendPacket >> id >> n >> s;
+	unsigned short packetIdentifier;
+	int nr;
+	std::string s;
+
+	packet >> packetIdentifier;
+	std::cout << "packetId: " << std::to_string(packetIdentifier) << std::endl;
+
+	switch (packetIdentifier)
+	{
+	case 1:
+		packet >> s;
+		std::cout << "Packet identifier: " << packetIdentifier << ", received string: " << s << std::endl;
+	
+		break;
+	case 2:
+		packet >> nr >> s;
+		std::cout << "packet ID: " << packetIdentifier << ", Nr: " << nr << ", string: " << s << std::endl;
+		break;
+	}
+};
 
 int main()
 {
@@ -199,9 +221,6 @@ int main()
 	std::string connectionType, mode;
 
 	serverData data;
-	userData tempUser;
-	tempUser.ipAdress = "192.168.43.251";
-	tempUser.userName = "mike hawk";
 	sf::IpAddress remoteAddress;
 
 	sf::IpAddress ip = sf::IpAddress::getLocalAddress();
@@ -269,11 +288,9 @@ int main()
 					sf::Packet receivedPacket;
 					unsigned short packetIdentifier;
 
-					if (receiveDataTcp(receivedPacket, data, packetIdentifier, i))
+					if (receiveDataTcp(receivedPacket, data, i))
 					{
-						std::string s;
-						receivedPacket >> s;
-						std::cout << "Received string from packet: " << s << std::endl;
+						packetId(receivedPacket, data);
 					}
 				}
 			}

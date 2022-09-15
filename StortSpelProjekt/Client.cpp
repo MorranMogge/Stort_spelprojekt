@@ -118,7 +118,8 @@ void Client::sendToServerUdp()
 void Client::sendToServerTcp()
 {
 	sendPacket.clear();
-	sendPacket << this->tmp;
+	unsigned short packetIdentifier = 1;
+	sendPacket << packetIdentifier << this->tmp;
 
 	if(tcpSocket.send(sendPacket) != sf::Socket::Done)
 	{
@@ -127,8 +128,9 @@ void Client::sendToServerTcp()
 	}
 
 	std::string s;
-	sendPacket >> s;
-	std::cout << "TCP sent packet: " << s << std::endl;
+	unsigned short id;
+	sendPacket >> id >> s;
+	std::cout << "TCP sent packet: " << id << s << std::endl;
 	sendPacket.clear();
 }
 
@@ -147,6 +149,27 @@ void Client::sendToServerTcp(std::string buf)
 		sendPacket >> s;
 		std::cout << "TCP sent packet: " << s << std::endl;
 	}
+}
+
+void Client::sendToServerTEMPTCP()
+{
+	sendPacket.clear();
+	unsigned short packetIdentifier = 2;
+	int nr = 420;
+	sendPacket << packetIdentifier << nr << this->tmp;
+
+	if (tcpSocket.send(sendPacket) != sf::Socket::Done)
+	{
+		//error
+		std::cout << "TCP Couldnt send packet\n";
+	}
+
+	std::string s;
+	unsigned short id;
+	int n;
+	sendPacket >> id >> n >> s;
+	std::cout << "TCP sent packet: " << id << ", " << n << ", " << s << std::endl;
+	sendPacket.clear();
 }
 
 void Client::receiveFromServerTcp()

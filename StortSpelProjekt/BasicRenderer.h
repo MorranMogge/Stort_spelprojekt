@@ -18,6 +18,10 @@ private:
 	ID3D11InputLayout* inputLayout;
 	ID3D11VertexShader* vShader;
 	ID3D11PixelShader* pShader;
+	ID3D11VertexShader* pt_vShader;
+	ID3D11PixelShader* pt_pShader;
+	ID3D11ComputeShader* pt_UpdateShader;
+	ID3D11GeometryShader* pt_gShader;
 
 	D3D11_VIEWPORT viewport;
 
@@ -31,4 +35,5 @@ public:
 	void lightPrePass();
 	bool initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT);
 	void setUpScene();
+	void geometryPass();
 };

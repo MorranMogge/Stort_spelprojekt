@@ -177,6 +177,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MTL.h" />
     <ClInclude Include="OBJ.h" />
+    <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderTargetView.h" />
@@ -243,6 +244,7 @@
     <ClCompile Include="LightHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="SettingsUI.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="State.cpp" />

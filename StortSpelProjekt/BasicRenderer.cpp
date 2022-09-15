@@ -88,3 +88,21 @@ void BasicRenderer::setUpScene()
 	immediateContext->PSSetShaderResources(3, 1, &nullRsv);
 	immediateContext->PSSetShaderResources(4, 1, &nullRsv);
 }
+
+void BasicRenderer::geometryPass()
+{
+	//Variables
+	vector<ID3D11Buffer*> tempBuff;
+	tempBuff.push_back(cameraMatrix);
+	tempBuff.push_back(cameraPosBuffer);
+
+	//s?tt samma depth buffer fr?n geometripass.
+	immediateContext->VSSetShader(pt_vShader, nullptr, 0);								//SetVTXShader
+	immediateContext->PSSetShader(pt_pShader, nullptr, 0);								//Set PSShader
+	immediateContext->GSSetShader(pt_gShader, nullptr, 0);								//SetGeoShader
+	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);		//Set how topology
+	immediateContext->IASetInputLayout(inputLayout);									//Input layout = float3 position for each vertex
+	immediateContext->GSSetConstantBuffers(0, 2, tempBuff.data());						//Set camera pos for ,Set matrix [world],[view]
+	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
+
+}

@@ -44,6 +44,7 @@
     <ClCompile Include="SettingsUI.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightHandler.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bound.h" />
@@ -132,6 +133,7 @@
     <ClInclude Include="LightHandler.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="ConstantBufferNew.h" />
+    <ClInclude Include="ParticleEmitter.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

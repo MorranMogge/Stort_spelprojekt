@@ -23,7 +23,7 @@ private:
 	DirectX::XMFLOAT3 grav;
 
 	Camera camera;
-	DirectX::XMFLOAT3 tempRot;
+	DirectX::XMVECTOR playerUpVec;
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
 

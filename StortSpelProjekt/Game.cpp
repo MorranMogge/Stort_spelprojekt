@@ -216,6 +216,10 @@ GAMESTATE Game::Update()
 	additionXMFLOAT3(pos, getScalarMultiplicationXMFLOAT3(dt, velocity));
 	meshes_Dynamic[0].position = { pos.x, pos.y, pos.z };
 
+	grav = normalizeXMFLOAT3(grav);
+	playerUpVec = DirectX::XMVectorSet(-grav.z * 0.4, -grav.y * 0.4, grav.x * 0.4, 0.0f);
+	meshes_Dynamic[0].rotation = playerUpVec;
+
 	camera.moveCamera(immediateContext, meshes_Dynamic[0].position, dt);
 
 	//KLARA DONT LOOK HERE!

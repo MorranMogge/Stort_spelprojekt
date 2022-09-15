@@ -25,7 +25,12 @@ public:
 	void remapBuffer(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T> &buffData);
 	void applyData();
 
-	void Bind(UINT toRegister);
+	void BindToVS(UINT toRegister);
+	void BindToPS(UINT toRegister);
+	void BindToHS(UINT toRegister);
+	void BindToGS(UINT toRegister);
+	void BindToDS(UINT toRegister);
+	void BindToCS(UINT toRegister);
 	ID3D11ShaderResourceView* getSRV();
 
 };
@@ -156,9 +161,39 @@ void StructuredBuffer<T>::applyData()
 }
 
 template<class T>
-inline void StructuredBuffer<T>::Bind(UINT toRegister)
+inline void StructuredBuffer<T>::BindToVS(UINT toRegister)
 {
 	deviceContext->VSSetShaderResources(toRegister, 1, srv.GetAddressOf());
+}
+
+template<class T>
+inline void StructuredBuffer<T>::BindToPS(UINT toRegister)
+{
+	deviceContext->PSSetShaderResources(toRegister, 1, srv.GetAddressOf());
+}
+
+template<class T>
+inline void StructuredBuffer<T>::BindToHS(UINT toRegister)
+{
+	deviceContext->HSSetShaderResources(toRegister, 1, srv.GetAddressOf());
+}
+
+template<class T>
+inline void StructuredBuffer<T>::BindToGS(UINT toRegister)
+{
+	deviceContext->GSSetShaderResources(toRegister, 1, srv.GetAddressOf());
+}
+
+template<class T>
+inline void StructuredBuffer<T>::BindToDS(UINT toRegister)
+{
+	deviceContext->DSSetShaderResources(toRegister, 1, srv.GetAddressOf());
+}
+
+template<class T>
+inline void StructuredBuffer<T>::BindToCS(UINT toRegister)
+{
+	deviceContext->CSSetShaderResources(toRegister, 1, srv.GetAddressOf()); deviceContext->VSSetShaderResources(toRegister, 1, srv.GetAddressOf());
 }
 
 template<class T>

@@ -41,15 +41,14 @@ Camera::~Camera()
 	cameraBuffer->Release();
 }
 
-void Camera::moveCamera(ID3D11DeviceContext* immediateContext)
+void Camera::moveCamera(ID3D11DeviceContext* immediateContext, DirectX::XMFLOAT3 pos)
 {
-	//rotationMX = XMMatrixRotationRollPitchYawFromVector();
-	//forwardVec = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
-	//upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
+	forwardVec = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
+	temp = XMLoadFloat3(&pos);
 
-	//cameraPos = (playerPosition - forwardVec + upVector);
-	//lookAtPos = (playerPosition + forwardVec);
-	//updateCamera(immediateContext);
+	cameraPos = (temp - forwardVec + upVector);
+	lookAtPos = (temp);
+	updateCamera(immediateContext);
 
 	/*XMFLOAT3 newPos;
 	XMStoreFloat3(&newPos, cameraPos);
@@ -70,4 +69,9 @@ void Camera::AdjustRotation(ID3D11DeviceContext* immediateContext, float x, floa
 	lookAtPos = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX) + cameraPos;
 
 	updateCamera(immediateContext);
+}
+
+DirectX::XMFLOAT3 Camera::getRotation() const
+{
+	return this->rotation;
 }

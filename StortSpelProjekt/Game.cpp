@@ -45,8 +45,8 @@ void Game::loadObjects()
 		}
 
 	}
-	meshes_Dynamic[0].scale = DirectX::SimpleMath::Vector3(0.25, 0.25, 0.25);
-	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(25*4, 25 * 4, -25 * 4);
+	meshes_Dynamic[0].scale = DirectX::SimpleMath::Vector3(1, 1, 1);
+	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(25, 25, -25);
 
 
 }
@@ -172,65 +172,50 @@ GAMESTATE Game::Update()
 	constexpr float speed = 0.3f;
 	static bool forward = false;
 	float zpos = meshes_Dynamic[0].position.z;
+	DirectX::XMFLOAT3 pos(meshes_Dynamic[0].position.x, meshes_Dynamic[0].position.y, meshes_Dynamic[0].position.z);
 
-	/*if (Input::KeyDown(KeyCode::D))
+	if (Input::KeyDown(KeyCode::D))
 	{
-		meshes_Dynamic[0].position.x += 0.1;
-		meshes_Dynamic[0].rotation.y -= 0.0009;
-		camera.moveCamera(immediateContext);
+		pos.x += 0.1;
 	}
 
 	if (Input::KeyDown(KeyCode::A))
 	{
-		meshes_Dynamic[0].position.x -= 0.1;
-		meshes_Dynamic[0].rotation.y += 0.0009;
-		camera.moveCamera(immediateContext);
+		pos.x -= 0.1;
 	}
 
 	if (Input::KeyDown(KeyCode::ARROW_Up))
 	{
-		meshes_Dynamic[0].position.y += 0.1;
-		camera.moveCamera(immediateContext);
+		pos.y += 0.1;
 	}
 
 	if (Input::KeyDown(KeyCode::ARROW_Down))
 	{
-		meshes_Dynamic[0].position.y -= 0.1;
-		camera.moveCamera(immediateContext);
+		pos.y -= 0.1;
 	}
 
 	if (Input::KeyDown(KeyCode::W))
 	{
-		meshes_Dynamic[0].position.z += 0.1;
-		meshes_Dynamic[0].rotation.x += 0.001;
-		camera.moveCamera(immediateContext);
+		pos.z += 0.1;
 	}
 
 	if (Input::KeyDown(KeyCode::S))
 	{
-		meshes_Dynamic[0].position.z -= 0.1;
-		meshes_Dynamic[0].rotation.x -= 0.001;
-		camera.moveCamera(immediateContext);
-	}*/
+		pos.z -= 0.1;
+	}
 
-	DirectX::XMFLOAT3 pos(meshes_Dynamic[0].position.x, meshes_Dynamic[0].position.y, meshes_Dynamic[0].position.z);
 	/*OutputDebugString(L"PLAYER: ");
 	OutputDebugString(std::to_wstring(pos[2]).c_str());
 	OutputDebugString(L"\n");*/
 
-	if (Input::KeyDown(KeyCode::W)) pos.z += 0.1;
-	if (Input::KeyDown(KeyCode::S)) pos.z -= 0.1;
-	if (Input::KeyDown(KeyCode::I)) pos.y += 0.1;
-	if (Input::KeyDown(KeyCode::K)) pos.y -= 0.1;
-	if (Input::KeyDown(KeyCode::D)) pos.x += 0.1;
-	if (Input::KeyDown(KeyCode::A)) pos.x -= 0.1;
-
 	grav = planetGravityField.calcGravFactor(pos);
 
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(pos));
-	if (getLength(pos) <= 20 * 4 +2) velocity = DirectX::XMFLOAT3(0, 0, 0);
+	if (getLength(pos) <= 20 +2) velocity = DirectX::XMFLOAT3(0, 0, 0);
 	additionXMFLOAT3(pos, getScalarMultiplicationXMFLOAT3(dt,velocity));
 	meshes_Dynamic[0].position = { pos.x, pos.y, pos.z };
+
+	camera.moveCamera(immediateContext, pos);
 
 	//KLARA DONT LOOK HERE!
 	//DirectX::XMFLOAT3 pos = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y, playerRigidBody->getTransform().getPosition().z};

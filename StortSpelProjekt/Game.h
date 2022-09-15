@@ -23,6 +23,7 @@ private:
 	DirectX::XMFLOAT3 grav;
 
 	Camera camera;
+	DirectX::XMFLOAT3 tempRot;
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
 

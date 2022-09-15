@@ -50,7 +50,7 @@ void Player::move(float deltaTime)
     //Variables
     float rotationConstant = 0;
 
-
+    
     //hämta down vektor
     //XMFLOAT3 upVector = -downVector;
 

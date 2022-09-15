@@ -111,7 +111,6 @@ void GameObject::setMesh(std::string meshPath)
 		delete this->mesh;
 	}
 
-
 	// load obj file
 	OBJ testObj(meshPath);
 	this->mesh = new Mesh(testObj);

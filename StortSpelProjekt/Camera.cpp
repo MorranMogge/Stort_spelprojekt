@@ -41,13 +41,12 @@ Camera::~Camera()
 	cameraBuffer->Release();
 }
 
-void Camera::moveCamera(ID3D11DeviceContext* immediateContext, DirectX::XMFLOAT3 pos)
+void Camera::moveCamera(ID3D11DeviceContext* immediateContext, const DirectX::XMVECTOR& playerPosition, const float& deltaTime)
 {
-	forwardVec = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
-	temp = XMLoadFloat3(&pos);
+	this->deltaTime = deltaTime;
 
-	cameraPos = (temp - forwardVec + upVector);
-	lookAtPos = (temp);
+	cameraPos = (playerPosition - forwardVec + upVector);
+	lookAtPos = (playerPosition);
 	updateCamera(immediateContext);
 
 	/*XMFLOAT3 newPos;
@@ -66,12 +65,19 @@ void Camera::AdjustRotation(ID3D11DeviceContext* immediateContext, float x, floa
 
 	rotationMX = XMMatrixRotationRollPitchYawFromVector(rotVector);
 	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
+	rightVec = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
+	forwardVec = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
 	lookAtPos = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX) + cameraPos;
 
 	updateCamera(immediateContext);
 }
 
-DirectX::XMFLOAT3 Camera::getRotation() const
+const DirectX::XMVECTOR Camera::getForwardVec()
 {
-	return this->rotation;
+	return this->forwardVec * this->deltaTime * 20;
+}
+
+const DirectX::XMVECTOR Camera::getRightVec()
+{
+	return this->rightVec * this->deltaTime * 20;
 }

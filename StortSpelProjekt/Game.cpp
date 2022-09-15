@@ -96,7 +96,7 @@ void Game::setUpReact3D()
 }
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
-	:camera(Camera(immediateContext, device)), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0,0,0))
+	:camera(Camera(immediateContext, device)), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
 	MaterialLibrary::LoadDefault();
 
@@ -172,37 +172,38 @@ GAMESTATE Game::Update()
 	constexpr float speed = 0.3f;
 	static bool forward = false;
 	float zpos = meshes_Dynamic[0].position.z;
-	DirectX::XMFLOAT3 pos(meshes_Dynamic[0].position.x, meshes_Dynamic[0].position.y, meshes_Dynamic[0].position.z);
 
 	if (Input::KeyDown(KeyCode::D))
 	{
-		pos.x += 0.1;
+		meshes_Dynamic[0].position += camera.getRightVec();
 	}
 
-	if (Input::KeyDown(KeyCode::A))
+	else if (Input::KeyDown(KeyCode::A))
 	{
-		pos.x -= 0.1;
+		meshes_Dynamic[0].position -= camera.getRightVec();
 	}
 
-	if (Input::KeyDown(KeyCode::ARROW_Up))
+	if (Input::KeyDown(KeyCode::E))
 	{
-		pos.y += 0.1;
+		meshes_Dynamic[0].position.y += 0.1;
 	}
 
-	if (Input::KeyDown(KeyCode::ARROW_Down))
+	else if (Input::KeyDown(KeyCode::Q))
 	{
-		pos.y -= 0.1;
+		meshes_Dynamic[0].position.y -= 0.1;
 	}
 
 	if (Input::KeyDown(KeyCode::W))
 	{
-		pos.z += 0.1;
+		meshes_Dynamic[0].position += camera.getForwardVec();
 	}
 
-	if (Input::KeyDown(KeyCode::S))
+	else if (Input::KeyDown(KeyCode::S))
 	{
-		pos.z -= 0.1;
+		meshes_Dynamic[0].position -= camera.getForwardVec();
 	}
+
+	DirectX::XMFLOAT3 pos(meshes_Dynamic[0].position.x, meshes_Dynamic[0].position.y, meshes_Dynamic[0].position.z);
 
 	/*OutputDebugString(L"PLAYER: ");
 	OutputDebugString(std::to_wstring(pos[2]).c_str());
@@ -211,11 +212,11 @@ GAMESTATE Game::Update()
 	grav = planetGravityField.calcGravFactor(pos);
 
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(pos));
-	if (getLength(pos) <= 20 +2) velocity = DirectX::XMFLOAT3(0, 0, 0);
-	additionXMFLOAT3(pos, getScalarMultiplicationXMFLOAT3(dt,velocity));
+	if (getLength(pos) <= 22) velocity = DirectX::XMFLOAT3(0, 0, 0);
+	additionXMFLOAT3(pos, getScalarMultiplicationXMFLOAT3(dt, velocity));
 	meshes_Dynamic[0].position = { pos.x, pos.y, pos.z };
 
-	camera.moveCamera(immediateContext, pos);
+	camera.moveCamera(immediateContext, meshes_Dynamic[0].position, dt);
 
 	//KLARA DONT LOOK HERE!
 	//DirectX::XMFLOAT3 pos = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y, playerRigidBody->getTransform().getPosition().z};

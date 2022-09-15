@@ -44,3 +44,93 @@ void Player::handleInputs()
     }
 
 }
+
+void Player::move(float deltaTime)
+{
+    //Variables
+    float rotationConstant = 0;
+
+
+    //Forward
+    if (Input::KeyDown(KeyCode::W))                                 //W
+    {
+        this->setRot(XMFLOAT3(0, 0 + rotationConstant, 0));
+
+       
+        if (Input::KeyDown(KeyCode::A))                             //WA
+        {
+            
+        }
+        else if (Input::KeyDown(KeyCode::D))                        //WD
+        {
+            
+        }
+
+    }
+
+
+    //Back
+    if (Input::KeyDown(KeyCode::S))                                 //S
+    {
+        if (Input::KeyDown(KeyCode::A))                             //SA
+        {
+
+        }
+        else if (Input::KeyDown(KeyCode::D))                        //SD
+        {
+
+        }
+    }
+
+
+    //Right
+    if (Input::KeyDown(KeyCode::D))                                 //D
+    {
+        if (Input::KeyDown(KeyCode::W))                             //DW
+        {
+
+        }
+        else if (Input::KeyDown(KeyCode::S))                        //DS
+        {
+
+        }
+    }    
+
+
+    //Left
+    if (Input::KeyDown(KeyCode::A))                                 //A
+    {
+        if (Input::KeyDown(KeyCode::W))                             //AW
+        {
+
+        }
+        else if (Input::KeyDown(KeyCode::S))                        //AS
+        {
+
+        }
+    }
+
+
+}
+
+bool Player::getPickup(GameObject* pickup)
+{
+    bool pickedUp = false;
+
+
+    if (Input::KeyDown(KeyCode::SPACE))                           //SPACE
+    {
+        //Check if should pick up
+        if (this->withinRadious(*pickup, 50) && this->pickup == nullptr)
+        {
+            this->pickup = pickup;
+        }  
+    }
+
+    return pickedUp;
+}
+
+void Player::releasePickup()
+{
+    this->pickup = nullptr;
+}

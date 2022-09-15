@@ -17,6 +17,10 @@ private:
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> start;
 
+	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
+	DirectX::XMFLOAT3 velocity;
+	DirectX::XMFLOAT3 grav;
+
 	Camera camera;
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
@@ -26,8 +30,10 @@ private:
 
 	reactphysics3d::RigidBody* rigid;
 
-	reactphysics3d::SphereShape* planetCollider;
-	reactphysics3d::BoxShape* playerCollider;
+	reactphysics3d::SphereShape* planetShape;
+	reactphysics3d::Collider* planetCollider;
+	reactphysics3d::BoxShape* playerShape;
+	reactphysics3d::Collider* playerCollider;
 
 	reactphysics3d::RigidBody* playerRigidBody;
 	reactphysics3d::RigidBody* planetRigidBody;

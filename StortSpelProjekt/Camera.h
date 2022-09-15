@@ -19,9 +19,9 @@ private:
 	DirectX::XMVECTOR cameraPos = DirectX::XMVectorSet(0.0f, 0.0f, -25.0f, 0.0f);
 	DirectX::XMVECTOR lookAtPos = DirectX::XMVectorSet(0.0f, 0.0f, -20.0f, 0.0f);
 
-	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(10.0f, 0.0f, 0.0f, 0.0f);
-	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 30.0f, 0.0f, 0.0f);
-	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 10.0f, 0.0f);
+	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 
 	DirectX::XMVECTOR rightVec = DEFAULT_RIGHT;
 	DirectX::XMVECTOR forwardVec = DEFAULT_FORWARD;
@@ -35,7 +35,7 @@ public:
 	~Camera();
 
 	void updateCamera(ID3D11DeviceContext* immediateContext);
-	void moveCamera(ID3D11DeviceContext* immediateContext, const DirectX::XMVECTOR& playerPosition, const float& deltaTime);
+	void moveCamera(ID3D11DeviceContext* immediateContext, const DirectX::XMVECTOR& playerPosition, const DirectX::XMVECTOR& playerForwardVec, const DirectX::XMVECTOR& playerUpVec, const float& deltaTime);
 	void AdjustRotation(ID3D11DeviceContext* immediateContext, float x, float y);
 	const DirectX::XMVECTOR getForwardVec();
 	const DirectX::XMVECTOR getRightVec();

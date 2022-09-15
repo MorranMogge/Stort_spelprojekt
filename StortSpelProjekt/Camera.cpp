@@ -41,11 +41,11 @@ Camera::~Camera()
 	cameraBuffer->Release();
 }
 
-void Camera::moveCamera(ID3D11DeviceContext* immediateContext, const DirectX::XMVECTOR& playerPosition, const float& deltaTime)
+void Camera::moveCamera(ID3D11DeviceContext* immediateContext, const DirectX::XMVECTOR& playerPosition, const DirectX::XMVECTOR& playerForwardVec, const DirectX::XMVECTOR& playerUpVec, const float& deltaTime)
 {
 	this->deltaTime = deltaTime;
 
-	cameraPos = (playerPosition - forwardVec + upVector);
+	cameraPos = (playerPosition - forwardVec * 10 + upVector * 30);
 	lookAtPos = (playerPosition);
 	updateCamera(immediateContext);
 
@@ -74,10 +74,10 @@ void Camera::AdjustRotation(ID3D11DeviceContext* immediateContext, float x, floa
 
 const DirectX::XMVECTOR Camera::getForwardVec()
 {
-	return this->forwardVec * this->deltaTime * 20;
+	return this->forwardVec * this->deltaTime * 40;
 }
 
 const DirectX::XMVECTOR Camera::getRightVec()
 {
-	return this->rightVec * this->deltaTime * 20;
+	return this->rightVec * this->deltaTime * 40;
 }

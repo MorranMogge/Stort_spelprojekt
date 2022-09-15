@@ -173,14 +173,28 @@ GAMESTATE Game::Update()
 	static bool forward = false;
 	float zpos = meshes_Dynamic[0].position.z;
 
+	playerUpVec = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);
+	playerForwardVec = DirectX::XMVector3Cross(camera.getRightVec(), playerUpVec);
+	playerRightVec = DirectX::XMVector3Cross(playerUpVec, playerForwardVec);
+
+	if (Input::KeyDown(KeyCode::W))
+	{
+		meshes_Dynamic[0].position += playerForwardVec;
+	}
+
+	else if (Input::KeyDown(KeyCode::S))
+	{
+		meshes_Dynamic[0].position -= playerForwardVec;
+	}
+
 	if (Input::KeyDown(KeyCode::D))
 	{
-		meshes_Dynamic[0].position += camera.getRightVec();
+		meshes_Dynamic[0].position += playerRightVec;
 	}
 
 	else if (Input::KeyDown(KeyCode::A))
 	{
-		meshes_Dynamic[0].position -= camera.getRightVec();
+		meshes_Dynamic[0].position -= playerRightVec;
 	}
 
 	if (Input::KeyDown(KeyCode::E))
@@ -193,34 +207,19 @@ GAMESTATE Game::Update()
 		meshes_Dynamic[0].position.y -= 0.1;
 	}
 
-	if (Input::KeyDown(KeyCode::W))
-	{
-		meshes_Dynamic[0].position += camera.getForwardVec();
-	}
-
-	else if (Input::KeyDown(KeyCode::S))
-	{
-		meshes_Dynamic[0].position -= camera.getForwardVec();
-	}
-
 	DirectX::XMFLOAT3 pos(meshes_Dynamic[0].position.x, meshes_Dynamic[0].position.y, meshes_Dynamic[0].position.z);
+	grav = planetGravityField.calcGravFactor(pos);
 
 	/*OutputDebugString(L"PLAYER: ");
 	OutputDebugString(std::to_wstring(pos[2]).c_str());
 	OutputDebugString(L"\n");*/
 
-	grav = planetGravityField.calcGravFactor(pos);
-
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(pos));
-	if (getLength(pos) <= 22) velocity = DirectX::XMFLOAT3(0, 0, 0);
+	if (getLength(pos) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); newNormalizeXMFLOAT3(pos); scalarMultiplicationXMFLOAT3(22, pos); }
 	additionXMFLOAT3(pos, getScalarMultiplicationXMFLOAT3(dt, velocity));
 	meshes_Dynamic[0].position = { pos.x, pos.y, pos.z };
 
-	grav = normalizeXMFLOAT3(grav);
-	playerUpVec = DirectX::XMVectorSet(-grav.z * 0.4, -grav.y * 0.4, grav.x * 0.4, 0.0f);
-	meshes_Dynamic[0].rotation = playerUpVec;
-
-	camera.moveCamera(immediateContext, meshes_Dynamic[0].position, dt);
+	camera.moveCamera(immediateContext, meshes_Dynamic[0].position, playerForwardVec, playerUpVec, dt);
 
 	//KLARA DONT LOOK HERE!
 	//DirectX::XMFLOAT3 pos = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y, playerRigidBody->getTransform().getPosition().z};

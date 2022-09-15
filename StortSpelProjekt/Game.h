@@ -24,6 +24,13 @@ private:
 
 	Camera camera;
 	DirectX::XMVECTOR playerUpVec;
+	DirectX::XMVECTOR playerForwardVec;
+	DirectX::XMVECTOR playerRightVec;
+
+	DirectX::XMVECTOR tempXDiff;
+	DirectX::XMVECTOR tempYDiff;
+	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
 

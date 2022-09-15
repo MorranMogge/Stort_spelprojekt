@@ -42,6 +42,8 @@ out float4 worldPosition : WORLDPOSITION)
     worldPosition = mul(float4(sumPos, 1.0f), worldM);
     position = mul(worldPosition, camViewProjM);
     
+    uv = v.uv;
+    
     //Calculate the normal vector against the world matrix only.
-    normal = normalize(mul(normal, (float3x3) worldM));
+    normal = normalize(mul(v.normal, (float3x3) worldM));
 }

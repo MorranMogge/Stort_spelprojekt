@@ -63,9 +63,9 @@ inline bool StructuredBuffer<T>::reInitialize(ID3D11Device* device)
 	shaderResourceViewDesc.Format = DXGI_FORMAT_UNKNOWN;
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 	shaderResourceViewDesc.Buffer.FirstElement = 0;
-	shaderResourceViewDesc.Buffer.NumElements = structVector.size();
+	shaderResourceViewDesc.Buffer.NumElements = bufferData.size();
 	//create shader resource view 
-	GPU::device->CreateShaderResourceView(buffer.Get(), &shaderResourceViewDesc, srv.GetAddressOf());
+	device->CreateShaderResourceView(buffer.Get(), &shaderResourceViewDesc, srv.GetAddressOf());
 
 	return true;
 }
@@ -109,7 +109,7 @@ bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 	shaderResourceViewDesc.Format = DXGI_FORMAT_UNKNOWN;
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 	shaderResourceViewDesc.Buffer.FirstElement = 0;
-	shaderResourceViewDesc.Buffer.NumElements = structVector.size();
+	shaderResourceViewDesc.Buffer.NumElements = bufferData.size();
 
 	//create shader resource view 
 	HRESULT hr2 = device->CreateShaderResourceView(buffer.Get(), &shaderResourceViewDesc, srv.GetAddressOf());

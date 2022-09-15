@@ -279,6 +279,9 @@
     <ClInclude Include="StructuredBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="animation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="State.cpp">
@@ -412,6 +415,9 @@
     </FxCompile>
     <FxCompile Include="cs_Particle.hlsl">
       <Filter>Shaders\CS</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_animation.hlsl">
+      <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

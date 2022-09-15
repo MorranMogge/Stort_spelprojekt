@@ -51,6 +51,11 @@ void Player::move(float deltaTime)
     float rotationConstant = 0;
 
 
+    //hämta down vektor
+    //XMFLOAT3 upVector = -downVector;
+
+
+
     //Forward
     if (Input::KeyDown(KeyCode::W))                                 //W
     {
@@ -121,7 +126,7 @@ bool Player::getPickup(GameObject* pickup)
     if (Input::KeyDown(KeyCode::SPACE))                           //SPACE
     {
         //Check if should pick up
-        if (this->withinRadious(*pickup, 50) && this->pickup == nullptr)
+        if (this->withinRadious(pickup, 50) && this->pickup == nullptr)
         {
             this->pickup = pickup;
         }  

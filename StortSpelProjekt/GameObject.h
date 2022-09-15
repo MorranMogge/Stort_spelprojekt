@@ -27,6 +27,6 @@ public:
 	void updateBuffer();
 	void setMesh(std::string meshPath);
 	void setMesh(Mesh*);
-	bool withinRadious(GameObject &object ,float radius) const;
-	//virtual void draw();
+	bool withinRadious(GameObject *object ,float radius) const;
+	virtual void draw();
 };

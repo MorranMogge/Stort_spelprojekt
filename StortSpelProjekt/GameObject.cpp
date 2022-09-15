@@ -148,11 +148,11 @@ void GameObject::setMesh(Mesh*)
 	this->mesh->rotation = this->rotation;
 }
 
-bool GameObject::withinRadious(GameObject& object, float radius) const
+bool GameObject::withinRadious(GameObject* object, float radius) const
 {
 	using namespace DirectX;
 
-	XMFLOAT3 objPos = object.getPos();
+	XMFLOAT3 objPos = object->getPos();
 	XMFLOAT3 selfPos = this->getPos();
 	bool inRange = false;
 
@@ -171,6 +171,11 @@ bool GameObject::withinRadious(GameObject& object, float radius) const
 	}
 
 	return inRange;
+}
+
+void GameObject::draw()
+{
+	this->mesh->DrawWithMat();
 }
 
 

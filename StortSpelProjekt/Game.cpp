@@ -123,7 +123,6 @@ Game::~Game()
 GAMESTATE Game::Update()
 {
 	//Mouse events
-
 	if (PeekMessage(msg, NULL, WM_MOUSEFIRST, WM_KEYLAST, PM_REMOVE))
 	{
 		TranslateMessage(msg);
@@ -173,13 +172,32 @@ GAMESTATE Game::Update()
 	static bool forward = false;
 	float zpos = meshes_Dynamic[0].position.z;
 
+	grav = normalizeXMFLOAT3(grav);
 	playerUpVec = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);
 	playerForwardVec = DirectX::XMVector3Cross(camera.getRightVec(), playerUpVec);
 	playerRightVec = DirectX::XMVector3Cross(playerUpVec, playerForwardVec);
 
+
+	/*XMFLOAT3 newPos;
+	XMStoreFloat3(&newPos, playerForwardVec);
+
+	OutputDebugString(L"PLAYER FORWARD: ");
+	OutputDebugString(std::to_wstring(newPos.x).c_str());
+	OutputDebugString(L"\n");
+	OutputDebugString(std::to_wstring(newPos.y).c_str());
+	OutputDebugString(L"\n");
+	OutputDebugString(std::to_wstring(newPos.z).c_str());
+	OutputDebugString(L"\n");
+	OutputDebugString(L"\n");*/
+
 	if (Input::KeyDown(KeyCode::W))
 	{
-		meshes_Dynamic[0].position += playerForwardVec;
+		//meshes_Dynamic[0].position += playerForwardVec;
+
+		XMFLOAT3 newPos;
+		XMStoreFloat3(&newPos, playerForwardVec);
+
+		meshes_Dynamic[0].rotation.y;
 	}
 
 	else if (Input::KeyDown(KeyCode::S))

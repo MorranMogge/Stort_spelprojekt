@@ -74,10 +74,10 @@ void Camera::AdjustRotation(ID3D11DeviceContext* immediateContext, float x, floa
 
 const DirectX::XMVECTOR Camera::getForwardVec()
 {
-	return this->forwardVec * this->deltaTime * 40;
+	return this->forwardVec;
 }
 
 const DirectX::XMVECTOR Camera::getRightVec()
 {
-	return this->rightVec * this->deltaTime * 40;
+	return this->rightVec;
 }

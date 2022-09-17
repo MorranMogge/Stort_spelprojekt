@@ -9,6 +9,7 @@
 #include "GravityField.h"
 #include <chrono>
 
+using namespace DirectX;
 
 class Game : public State
 {
@@ -22,14 +23,26 @@ private:
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT3 grav;
 
+	//Camera
 	Camera camera;
+
+
+
+	DirectX::XMMATRIX rotationMX;
+	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+
+	DirectX::XMVECTOR rightVec = DEFAULT_RIGHT;
+	DirectX::XMVECTOR forwardVec;
+	DirectX::XMVECTOR upVector = DEFAULT_UP;
+	DirectX::XMVECTOR tempVector;
+
+
+
 	DirectX::XMVECTOR playerUpVec;
 	DirectX::XMVECTOR playerForwardVec;
 	DirectX::XMVECTOR playerRightVec;
-
-	DirectX::XMVECTOR tempXDiff;
-	DirectX::XMVECTOR tempYDiff;
-	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;

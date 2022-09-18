@@ -64,8 +64,13 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 
 
 		//för testing purpose - Elliot tar bort
+		
+		
 		meshes.emplace_back(readNodes(mesh, scene));
 		
+		readNodes2(mesh, scene);
+
+
 		//Mesh2* tmpData = readNodes(mesh, scene);
 		//bank.addMeshBuffers(filePath, tmpData->getVertexBuffer(), tmpData->getIndexBuffer());
 
@@ -98,8 +103,8 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 	for (UINT i = 0; i < node->mNumChildren; i++)
 	{
 		processNodes(node->mChildren[i], scene, filePath);
-	}
 
+	}
 
 }
 
@@ -135,6 +140,7 @@ Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 		}
 
 		vertexTriangle.emplace_back(vertex);
+		//dataForMesh.vertexTriangle.emplace_back(vertex);
 
 		if (vertex.pos.x < smallestX || vertex.pos.y < smallestY || vertex.pos.z < smallestZ)
 		{
@@ -156,16 +162,116 @@ Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 		aiFace face = mesh->mFaces[i];
 
 		for (UINT j = 0; j < face.mNumIndices; j++)
+		{
 			indexTriangle.emplace_back(face.mIndices[j]);
+			//dataForMesh.indexTriangle.emplace_back(face.mIndices[j]);
+		}
 	}
-
-	//smallestCoord = XMVectorSet(smallestX, smallestY, smallestZ, 0.0f);
-	//biggestCoord = XMVectorSet(biggestX, biggestY, biggestZ, 0.0f);
 	
 	
-	
+	std::cout << "Old way mesh vertex count: " << vertexTriangle.size() << "\n";
+	std::cout << "Old way mesh index count: " << indexTriangle.size() << "\n";
 	
 	return new Mesh2(GPU::device, vertexTriangle, indexTriangle);
+}
+
+void ModelManager::readNodes2(aiMesh* mesh, const aiScene* scene)
+{
+	std::vector<vertex> vertexTriangle;
+	std::vector<DWORD> indexTriangle;
+
+	float smallestX = 0.0f;
+	float smallestY = 0.0f;
+	float smallestZ = 0.0f;
+
+	float biggestX = 0.0f;
+	float biggestY = 0.0f;
+	float biggestZ = 0.0f;
+
+	vertex vertex;
+
+	for (UINT i = 0; i < mesh->mNumVertices; i++)
+	{
+		vertex.pos.x = mesh->mVertices[i].x;
+		vertex.pos.y = mesh->mVertices[i].y;
+		vertex.pos.z = mesh->mVertices[i].z;
+
+		vertex.nor.x = mesh->mNormals[i].x;
+		vertex.nor.y = mesh->mNormals[i].y;
+		vertex.nor.z = mesh->mNormals[i].z;
+
+		if (mesh->mTextureCoords[0])
+		{
+			vertex.uv.x = (float)mesh->mTextureCoords[0][i].x;
+			vertex.uv.y = (float)mesh->mTextureCoords[0][i].y;
+		}
+
+		vertexTriangle.emplace_back(vertex);
+		dataForMesh.vertexTriangle.emplace_back(vertex);
+
+		if (vertex.pos.x < smallestX || vertex.pos.y < smallestY || vertex.pos.z < smallestZ)
+		{
+			if (vertex.pos.x < smallestX) smallestX = vertex.pos.x;
+			if (vertex.pos.y < smallestY) smallestY = vertex.pos.y;
+			if (vertex.pos.z < smallestZ) smallestZ = vertex.pos.z;
+		}
+
+		if (vertex.pos.x > biggestX || vertex.pos.y > biggestY || vertex.pos.z > biggestZ)
+		{
+			if (vertex.pos.x > biggestX) biggestX = vertex.pos.x;
+			if (vertex.pos.y > biggestY) biggestY = vertex.pos.y;
+			if (vertex.pos.z > biggestZ) biggestZ = vertex.pos.z;
+		}
+	}
+
+	for (UINT i = 0; i < mesh->mNumFaces; i++)
+	{
+		aiFace face = mesh->mFaces[i];
+
+		for (UINT j = 0; j < face.mNumIndices; j++)
+		{
+			indexTriangle.emplace_back(face.mIndices[j]);
+			dataForMesh.indexTriangle.emplace_back(face.mIndices[j]);
+		}
+	}
+	
+
+	ID3D11Buffer* indexBuffer = {};
+
+	D3D11_BUFFER_DESC indexBufferDesc = {};
+	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * indexTriangle.size();
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.StructureByteStride = 0;
+
+
+	D3D11_SUBRESOURCE_DATA indexBufferData;
+	indexBufferData.pSysMem = indexTriangle.data();
+	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
+
+
+	this->vecIndexBuff.emplace_back(indexBuffer);
+
+	std::cout << "StructVertexDataSize: " << dataForMesh.vertexTriangle.size() << "\n";
+	std::cout << "StructIndexDataSize: " << dataForMesh.indexTriangle.size() << "\n";
+
+	submeshRanges.emplace_back(dataForMesh.indexTriangle.size());
+
+	for (int i = 0; i < submeshRanges.size(); i++)
+	{
+		std::cout << "submeshranges on index: " << i << " with range " << submeshRanges[i] << "\n";
+	}
+
+}
+
+std::vector<ID3D11Buffer*> ModelManager::getBuff() const
+{
+	std::cout << this->vecIndexBuff.size() << "här\n";
+
+	return this->vecIndexBuff;
 }
 
 ModelManager::ModelManager(ID3D11Device* device)
@@ -201,7 +307,63 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 		return false;
 	}
 
+	//processNodes(pScene->mRootNode, pScene, filePath);
+
 	processNodes(pScene->mRootNode, pScene, filePath);
+	
+
+	//skapa vertexBuffer
+
+	ID3D11Buffer* vertexBuffer = {};
+
+	D3D11_BUFFER_DESC bufferDesc;
+	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	bufferDesc.ByteWidth = sizeof(vertex) * dataForMesh.vertexTriangle.size();
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDesc.CPUAccessFlags = 0;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA data;
+	data.pSysMem = dataForMesh.vertexTriangle.data();
+	data.SysMemPitch = 0;
+	data.SysMemSlicePitch = 0;
+	device->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
+
+	
+
+	//std::cout << dataForMesh.vertexTriangle.size() << "\n";
+
+	//skapa indexBuffer
+
+	ID3D11Buffer* indexBuffer = {};
+
+	D3D11_BUFFER_DESC indexBufferDesc = {};
+	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * dataForMesh.indexTriangle.size();
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.StructureByteStride = 0;
+
+	
+	D3D11_SUBRESOURCE_DATA indexBufferData;
+	indexBufferData.pSysMem = dataForMesh.indexTriangle.data();
+	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
+
+
+	//ändra i banken till vertexBuffer först och indexBuffer som tredje parametern.
+	
+	bank.addMeshBuffers(filePath, vertexBuffer, indexBuffer, submeshRanges);
+
+	indexBuffer = {};
+	vertexBuffer = {};
+	submeshRanges.clear();
+	memset(&dataForMesh, 0, sizeof(dataForMesh));
+
+	//bank.getIndexMeshBuffers(filePath, inde)
+
 	return true;
 }
 
@@ -215,14 +377,7 @@ std::vector<ID3D11ShaderResourceView*> ModelManager::getTextureMaps() const
 	return this->diffuseMaps;
 }
 
-//void ModelManager::createSRV()
-//{
-//}
-//
-//void ModelManager::createIndexBuffer()
-//{
-//}
-//
-//void ModelManager::createVertexBuffer()
-//{
-//}
+bool ModelManager::getMeshData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges)
+{
+	return bank.getIndexMeshBuffers(filePath, indexBuffer, vertexBuffer, submeshRanges);
+}

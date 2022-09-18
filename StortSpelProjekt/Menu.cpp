@@ -151,11 +151,39 @@ void Menu::GeometryPass()
 	//}
 
 	GPU::immediateContext->PSSetShaderResources(0, 1, &this->m_textureSRV);
-	for (int i = 0; i < testMeshes.size(); i++)
+	
+	
+
+	//testing purposes only
+	
+	
+	UINT stride = sizeof(vertex);
+	UINT offset = 0;
+	
+	GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	//GPU::immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+	
+	
+	// Detta funkar men är gamla sättet
+	/*for (int i = 0; i < testMeshes.size(); i++)
 	{
 		testMeshes[i]->Draw(GPU::immediateContext);
-	}
+	}*/
 
+	int startIndex = 0;
+	
+	for (int i = 0; i < subMeshRanges.size(); i++)
+	{
+		GPU::immediateContext->IASetIndexBuffer(this->testIndexBuff[i], DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+		//std::cout << "start index when drawing submesh " << i <<": " << startIndex << "\n";
+		GPU::immediateContext->DrawIndexed(subMeshRanges[i], 0, 0);
+		startIndex += subMeshRanges[i];
+	
+	}
+		
+
+	
+	
 
 #pragma endregion
 
@@ -185,18 +213,23 @@ Menu::Menu()
 
 	manager = new ModelManager(GPU::device);
 	
-	manager->loadMeshData("../Meshes/Gob.obj");
+	manager->loadMeshData("../Meshes/gob.obj");
 	
 	this->testMeshes = manager->getMeshes();
 	
-	std::cout << testMeshes.size() << "\n";
+	//std::cout << testMeshes.size() << "\n";
 	 
-	
-	
+	vertexBuffer = {};
+	indexBuffer = {};
+
+	auto t2 = manager->getMeshes();
+
+	bool test = manager->getMeshData("../Meshes/gob.obj", vertexBuffer, indexBuffer, subMeshRanges);
+	//std::cout << test << "\n" << subMeshRanges.size() << "\n";
 
 	int textureWidth;
 	int textureHeight;
-	unsigned char* imageData = stbi_load("../Textures/Dango.png", &textureWidth, &textureHeight, nullptr, STBI_rgb_alpha);
+	unsigned char* imageData = stbi_load("../Textures/texture2.png", &textureWidth, &textureHeight, nullptr, STBI_rgb_alpha);
 
 	if (!imageData)
 		imageData = stbi_load("missingTexture.png", &textureWidth, &textureHeight, nullptr, STBI_rgb_alpha);
@@ -231,6 +264,8 @@ Menu::Menu()
 	texture2D->Release();
 	stbi_image_free(imageData);
 
+
+	this->testIndexBuff = manager->getBuff();
 
 	// load obj file
 	/*std::vector<OBJ>objs_Static{

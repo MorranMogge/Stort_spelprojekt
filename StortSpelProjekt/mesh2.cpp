@@ -22,7 +22,6 @@ HRESULT Mesh2::CreateIndexBuffer(std::vector<DWORD>& indexTriangle)
 
 HRESULT Mesh2::CreateVertexBuffer(std::vector<vertex>& vertexTriangle)
 {
-
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	bufferDesc.ByteWidth = sizeof(vertex) * vertexTriangle.size();

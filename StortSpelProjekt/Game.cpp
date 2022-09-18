@@ -177,11 +177,13 @@ GAMESTATE Game::Update()
 	playerForwardVec = DirectX::XMVector3Cross(camera.getRightVec(), playerUpVec);
 	playerRightVec = DirectX::XMVector3Cross(playerUpVec, playerForwardVec);
 
+	hejVec = XMVector3Cross(tempVector, playerForwardVec);
+	forwardVec = XMVector3AngleBetweenVectors(tempVector, playerForwardVec);
 
-	/*XMFLOAT3 newPos;
-	XMStoreFloat3(&newPos, playerForwardVec);
+	XMFLOAT3 newPos;
+	XMStoreFloat3(&newPos, forwardVec);
 
-	OutputDebugString(L"PLAYER FORWARD: ");
+	/*OutputDebugString(L"PLAYER FORWARD: ");
 	OutputDebugString(std::to_wstring(newPos.x).c_str());
 	OutputDebugString(L"\n");
 	OutputDebugString(std::to_wstring(newPos.y).c_str());
@@ -190,14 +192,26 @@ GAMESTATE Game::Update()
 	OutputDebugString(L"\n");
 	OutputDebugString(L"\n");*/
 
+	if (Input::KeyPress(KeyCode::W))
+	{
+		XMFLOAT3 newPos2;
+		XMStoreFloat3(&newPos2, hejVec);
+
+		if (newPos2.y < 0.0f)
+		{
+			meshes_Dynamic[0].rotation.y -= newPos.y;
+		}
+		else
+		{
+			meshes_Dynamic[0].rotation.y += newPos.y;
+		}
+
+		tempVector = playerForwardVec;
+	}
+
 	if (Input::KeyDown(KeyCode::W))
 	{
 		//meshes_Dynamic[0].position += playerForwardVec;
-
-		XMFLOAT3 newPos;
-		XMStoreFloat3(&newPos, playerForwardVec);
-
-		meshes_Dynamic[0].rotation.y;
 	}
 
 	else if (Input::KeyDown(KeyCode::S))

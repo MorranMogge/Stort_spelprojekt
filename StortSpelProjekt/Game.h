@@ -35,8 +35,13 @@ private:
 
 	DirectX::XMVECTOR rightVec = DEFAULT_RIGHT;
 	DirectX::XMVECTOR forwardVec;
+	DirectX::XMVECTOR hejVec;
 	DirectX::XMVECTOR upVector = DEFAULT_UP;
-	DirectX::XMVECTOR tempVector;
+	DirectX::XMVECTOR tempVector = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+
+	//DirectX::XMVECTOR forwardVec;
+	//DirectX::XMVECTOR forwardVec;
+	//DirectX::XMVECTOR forwardVec;
 
 
 

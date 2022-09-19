@@ -46,9 +46,9 @@ void Game::loadObjects()
 
 	}
 	meshes_Dynamic[0].scale = DirectX::SimpleMath::Vector3(1, 1, 1);
-	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(25, 25, -25);
+	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(22, 22, -22);
 
-
+	
 }
 
 void Game::drawObjects()
@@ -96,7 +96,7 @@ void Game::setUpReact3D()
 }
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
-	:camera(Camera(immediateContext, device)), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
+	:camera(Camera(immediateContext, device)), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 22, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
 {
 	MaterialLibrary::LoadDefault();
 
@@ -173,85 +173,12 @@ GAMESTATE Game::Update()
 	float zpos = meshes_Dynamic[0].position.z;
 
 	grav = normalizeXMFLOAT3(grav);
-	playerUpVec = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);
-	playerForwardVec = DirectX::XMVector3Cross(camera.getRightVec(), playerUpVec);
-	playerRightVec = DirectX::XMVector3Cross(playerUpVec, playerForwardVec);
-
-	hejVec = XMVector3Cross(tempVector, playerForwardVec);
-	forwardVec = XMVector3AngleBetweenVectors(tempVector, playerForwardVec);
-
-	XMFLOAT3 newPos;
-	XMStoreFloat3(&newPos, forwardVec);
-
-	/*OutputDebugString(L"PLAYER FORWARD: ");
-	OutputDebugString(std::to_wstring(newPos.x).c_str());
-	OutputDebugString(L"\n");
-	OutputDebugString(std::to_wstring(newPos.y).c_str());
-	OutputDebugString(L"\n");
-	OutputDebugString(std::to_wstring(newPos.z).c_str());
-	OutputDebugString(L"\n");
-	OutputDebugString(L"\n");*/
-
-	if (Input::KeyPress(KeyCode::W))
-	{
-		XMFLOAT3 newPos2;
-		XMStoreFloat3(&newPos2, hejVec);
-
-		if (newPos2.y < 0.0f)
-		{
-			meshes_Dynamic[0].rotation.y -= newPos.y;
-		}
-		else
-		{
-			meshes_Dynamic[0].rotation.y += newPos.y;
-		}
-
-		tempVector = playerForwardVec;
-	}
-
-	if (Input::KeyDown(KeyCode::W))
-	{
-		//meshes_Dynamic[0].position += playerForwardVec;
-	}
-
-	else if (Input::KeyDown(KeyCode::S))
-	{
-		meshes_Dynamic[0].position -= playerForwardVec;
-	}
-
-	if (Input::KeyDown(KeyCode::D))
-	{
-		meshes_Dynamic[0].position += playerRightVec;
-	}
-
-	else if (Input::KeyDown(KeyCode::A))
-	{
-		meshes_Dynamic[0].position -= playerRightVec;
-	}
-
-	if (Input::KeyDown(KeyCode::E))
-	{
-		meshes_Dynamic[0].position.y += 0.1;
-	}
-
-	else if (Input::KeyDown(KeyCode::Q))
-	{
-		meshes_Dynamic[0].position.y -= 0.1;
-	}
-
-	DirectX::XMFLOAT3 pos(meshes_Dynamic[0].position.x, meshes_Dynamic[0].position.y, meshes_Dynamic[0].position.z);
-	grav = planetGravityField.calcGravFactor(pos);
-
-	/*OutputDebugString(L"PLAYER: ");
-	OutputDebugString(std::to_wstring(pos[2]).c_str());
-	OutputDebugString(L"\n");*/
-
-	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(pos));
-	if (getLength(pos) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); newNormalizeXMFLOAT3(pos); scalarMultiplicationXMFLOAT3(22, pos); }
-	additionXMFLOAT3(pos, getScalarMultiplicationXMFLOAT3(dt, velocity));
-	meshes_Dynamic[0].position = { pos.x, pos.y, pos.z };
-
-	camera.moveCamera(immediateContext, meshes_Dynamic[0].position, playerForwardVec, playerUpVec, dt);
+	player.move(meshes_Dynamic[0].position, grav, camera.getRightVec(), dt);
+	grav = planetGravityField.calcGravFactor(meshes_Dynamic[0].position);
+	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(meshes_Dynamic[0].position));
+	if (getLength(meshes_Dynamic[0].position) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); newNormalizeXMFLOAT3(meshes_Dynamic[0].position); scalarMultiplicationXMFLOAT3(22, meshes_Dynamic[0].position); }
+	additionXMFLOAT3(meshes_Dynamic[0].position, getScalarMultiplicationXMFLOAT3(dt, velocity));
+	camera.moveCamera(immediateContext, meshes_Dynamic[0].position, dt);
 
 	//KLARA DONT LOOK HERE!
 	//DirectX::XMFLOAT3 pos = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y, playerRigidBody->getTransform().getPosition().z};

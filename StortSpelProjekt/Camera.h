@@ -35,7 +35,7 @@ public:
 	~Camera();
 
 	void updateCamera(ID3D11DeviceContext* immediateContext);
-	void moveCamera(ID3D11DeviceContext* immediateContext, const DirectX::XMVECTOR& playerPosition, const DirectX::XMVECTOR& playerForwardVec, const DirectX::XMVECTOR& playerUpVec, const float& deltaTime);
+	void moveCamera(ID3D11DeviceContext* immediateContext, const DirectX::XMVECTOR& playerPosition, const float& deltaTime);
 	void AdjustRotation(ID3D11DeviceContext* immediateContext, float x, float y);
 	const DirectX::XMVECTOR getForwardVec();
 	const DirectX::XMVECTOR getRightVec();

@@ -44,6 +44,7 @@
     <ClCompile Include="MouseEvent.cpp" />
     <ClCompile Include="GravityField.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bound.h" />
@@ -129,6 +130,7 @@
     <ClInclude Include="MouseEvent.h" />
     <ClInclude Include="GravityField.h" />
     <ClInclude Include="DirectXMathHelper.h" />
+    <ClInclude Include="Player.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

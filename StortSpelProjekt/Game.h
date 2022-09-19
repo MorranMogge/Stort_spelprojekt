@@ -1,15 +1,14 @@
 #pragma once
 #include <reactphysics3d\reactphysics3d.h>
 #include "State.h"
-#include "Camera.h"
 #include "BasicRenderer.h"
 #include "Mesh.h"
 #include "Input.h"
 #include "MouseClass.h"
 #include "GravityField.h"
 #include <chrono>
-
-using namespace DirectX;
+#include "Player.h"
+#include "Camera.h"
 
 class Game : public State
 {
@@ -22,32 +21,6 @@ private:
 	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT3 grav;
-
-	//Camera
-	Camera camera;
-
-
-
-	DirectX::XMMATRIX rotationMX;
-	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-
-	DirectX::XMVECTOR rightVec = DEFAULT_RIGHT;
-	DirectX::XMVECTOR forwardVec;
-	DirectX::XMVECTOR hejVec;
-	DirectX::XMVECTOR upVector = DEFAULT_UP;
-	DirectX::XMVECTOR tempVector = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-
-	//DirectX::XMVECTOR forwardVec;
-	//DirectX::XMVECTOR forwardVec;
-	//DirectX::XMVECTOR forwardVec;
-
-
-
-	DirectX::XMVECTOR playerUpVec;
-	DirectX::XMVECTOR playerForwardVec;
-	DirectX::XMVECTOR playerRightVec;
 
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
@@ -65,6 +38,8 @@ private:
 	reactphysics3d::RigidBody* playerRigidBody;
 	reactphysics3d::RigidBody* planetRigidBody;
 
+	Camera camera;
+	Player player;
 
 	//Objects
 	std::vector<Mesh> meshes_Static;

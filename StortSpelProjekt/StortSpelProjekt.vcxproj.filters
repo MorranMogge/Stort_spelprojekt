@@ -140,4 +140,10 @@
       <UniqueIdentifier>{04645332-69e8-44a7-93c1-88dd530212f4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="PixelShader.hlsl" />
+    <FxCompile Include="VertexShader.hlsl" />
+    <FxCompile Include="DebuggerVshader.hlsl" />
+    <FxCompile Include="DebuggerPshader.hlsl" />
+  </ItemGroup>
 </Project>

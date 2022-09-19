@@ -34,7 +34,7 @@ bool ConstantBufferNew<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext*
 	D3D11_BUFFER_DESC bufferDesc = {};
 	//bufferDesc.ByteWidth = sizeof(T);
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDesc.BindFlags = D3D11_CPU_ACCESS_WRITE | D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_UNORDERED_ACCESS;
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bufferDesc.ByteWidth = sizeof(T);//static_cast<UINT>(sizeof(T) + (16 - (sizeof(T) % 16)));
 	bufferDesc.MiscFlags = 0;

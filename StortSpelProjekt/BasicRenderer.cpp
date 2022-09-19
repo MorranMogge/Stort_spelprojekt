@@ -46,6 +46,12 @@ BasicRenderer::~BasicRenderer()
 	inputLayout->Release();
 	vShader->Release();
 	pShader->Release();
+
+	pt_inputLayout->Release();
+	pt_vShader->Release();
+	pt_pShader->Release();
+	pt_UpdateShader->Release();
+	pt_gShader->Release();
 }
 
 void BasicRenderer::lightPrePass()
@@ -70,6 +76,17 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	return true;
 }
 
+bool BasicRenderer::initiateGeometryPass(ID3D11DeviceContext* immediateContext, ID3D11Device* device)
+{
+	//Setup Geometry shader pass (Particles)
+	//if (!setUpInputLayout(device, vShaderByteCode))									return false;
+	//if (!LoadVertexShader(device, pt_vShader, vShaderByteCode, "PT_VertexShader"))	return false;
+	if (!LoadPixelShader(device, pt_pShader, "PT_PixelShader"))						return false;
+	if (!LoadGeometryShader(device, pt_gShader, "PT_GeometryShader"))				return false;
+	if (!LoadComputeShader(device, pt_UpdateShader, "PT_UpdateShader"))				return false;
+	return true;
+}
+
 void BasicRenderer::setUpScene()
 {				
 	immediateContext->ClearRenderTargetView(rtv, clearColour);
@@ -91,10 +108,10 @@ void BasicRenderer::setUpScene()
 
 void BasicRenderer::geometryPass()
 {
-	//Variables
-	vector<ID3D11Buffer*> tempBuff;
-	tempBuff.push_back(cameraMatrix);
-	tempBuff.push_back(cameraPosBuffer);
+	////Variables
+	//vector<ID3D11Buffer*> tempBuff;
+	//tempBuff.push_back(cameraMatrix);
+	//tempBuff.push_back(cameraPosBuffer);
 
 	//s?tt samma depth buffer fr?n geometripass.
 	immediateContext->VSSetShader(pt_vShader, nullptr, 0);								//SetVTXShader
@@ -102,7 +119,7 @@ void BasicRenderer::geometryPass()
 	immediateContext->GSSetShader(pt_gShader, nullptr, 0);								//SetGeoShader
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);		//Set how topology
 	immediateContext->IASetInputLayout(inputLayout);									//Input layout = float3 position for each vertex
-	immediateContext->GSSetConstantBuffers(0, 2, tempBuff.data());						//Set camera pos for ,Set matrix [world],[view]
+	//immediateContext->GSSetConstantBuffers(0, 2, tempBuff.data());						//Set camera pos for ,Set matrix [world],[view]
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
 
 }

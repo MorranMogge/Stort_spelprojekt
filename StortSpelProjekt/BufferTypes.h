@@ -25,3 +25,16 @@ struct LightStruct
 		this->angleTypePadding.w = 1;
 	}
 };
+
+struct particleStruct
+{
+	DirectX::XMFLOAT3 pos;
+	float delta;
+	float lifeTime;
+	particleStruct(const DirectX::XMFLOAT3 & position, const float deltaTime, const float lifeTime)
+	{
+		this->pos = position;
+		this->delta = deltaTime;
+		this->lifeTime = lifeTime;
+	}
+};

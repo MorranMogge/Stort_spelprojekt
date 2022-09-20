@@ -305,6 +305,7 @@ int main()
 				float ywow = data.users[i].playa.getposition('y');
 				std::string playerName = "player " + std::to_string(i);
 				tempPack << playerName << xwow << ywow;
+				std::cout << "Sent to all players\n";
 				sendDataAllPlayers(tempPack, data);
 			}
 			start = std::chrono::system_clock::now();

@@ -39,6 +39,7 @@ public:
 	void setIdentifier(std::string id);
 
 	bool checkIfPacketReadyReceive();
+	void addselector();
 
 	bool setupThread();
 	std::string receive();

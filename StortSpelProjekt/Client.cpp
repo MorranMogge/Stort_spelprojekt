@@ -43,12 +43,13 @@ Client::~Client()
 void Client::connectToServer(std::string ipAddress, int port)
 {
 	data.socket.connect(ipAddress, port);
-	selector.add(this->tcpSocket);
+	
 }
 
 void Client::connectToServer()
 {
 	tcpSocket.connect(this->ip, this->port);
+
 	//data.socket.setBlocking(false);
 }
 
@@ -79,6 +80,11 @@ bool Client::checkIfPacketReadyReceive()
 		}
 	}
 	return false;
+}
+
+void Client::addselector()
+{
+	selector.add(tcpSocket);
 }
 
 bool Client::setupThread()

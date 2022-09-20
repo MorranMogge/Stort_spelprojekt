@@ -1,5 +1,5 @@
 #pragma once
-#include <reactphysics3d\reactphysics3d.h>
+#include "PhysicsWorld.h"
 #include "State.h"
 #include "Camera.h"
 #include "BasicRenderer.h"
@@ -26,19 +26,7 @@ private:
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
 
-	reactphysics3d::PhysicsCommon com;
-	reactphysics3d::PhysicsWorld* world;
-
-	reactphysics3d::RigidBody* rigid;
-	reactphysics3d::DebugRenderer* debugRenderer;
-	reactphysics3d::SphereShape* planetShape;
-	reactphysics3d::Collider* planetCollider;
-	reactphysics3d::BoxShape* playerShape;
-	reactphysics3d::Collider* playerCollider;
-
-	reactphysics3d::RigidBody* playerRigidBody;
-	reactphysics3d::RigidBody* planetRigidBody;
-
+	PhysicsWorld physWolrd;
 
 	//Objects
 	std::vector<Mesh> meshes_Static;
@@ -46,17 +34,6 @@ private:
 
 	void loadObjects();
 	void drawObjects();
-	void setUpReact3D();
-	void renderReact3D();
-	bool setVertexBuffer();
-
-	ID3D11Buffer* debuggerBuffer;
-	UINT stride;
-	UINT offset;
-	ID3D11VertexShader* dvShader;
-	ID3D11PixelShader* dpShader;
-	ID3D11InputLayout* dInput;
-	std::vector<reactphysics3d::DebugRenderer::DebugTriangle> tri;
 
 	//Create Shape
 	//Create Rigidbody

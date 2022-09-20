@@ -175,6 +175,7 @@
     <ClInclude Include="MTL.h" />
     <ClInclude Include="OBJ.h" />
     <ClInclude Include="PerspectiveCamera.h" />
+    <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderTargetView.h" />
     <ClInclude Include="SamplerState.h" />
@@ -206,6 +207,7 @@
     <ClInclude Include="stb_image_resize.h" />
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TimeStruct.h" />
     <ClInclude Include="Topology.h" />
     <ClInclude Include="UnorderedAccessView.h" />
     <ClInclude Include="Vertex.h" />
@@ -237,6 +239,7 @@
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="Texture.cpp" />

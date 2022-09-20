@@ -5,14 +5,15 @@
 void PhysicsWorld::setUpBaseScenario()
 {
 	//Create Player
-	playerShape = com.createBoxShape(reactphysics3d::Vector3(5, 5, 5));
-	reactphysics3d::Transform playerTransform = reactphysics3d::Transform(reactphysics3d::Vector3(10, 10, -10), reactphysics3d::Quaternion::identity());
+	playerShape = com.createBoxShape(reactphysics3d::Vector3(0.5f, 0.5f, 0.5f));
+	reactphysics3d::Transform playerTransform = reactphysics3d::Transform(reactphysics3d::Vector3(1, 1, 1), reactphysics3d::Quaternion::identity());
 	playerRigidBody = world->createRigidBody(playerTransform);
 	playerCollider = playerRigidBody->addCollider(playerShape, reactphysics3d::Transform(reactphysics3d::Vector3(0, 0, 0), reactphysics3d::Quaternion::identity()));
 	playerRigidBody->setType(reactphysics3d::BodyType::DYNAMIC);
 	playerRigidBody->enableGravity(false);
-	playerRigidBody->setMass(1000);
-	playerRigidBody->applyLocalTorque(reactphysics3d::Vector3(10000, 10000, 10000));
+	playerRigidBody->setMass(1);
+	playerRigidBody->setTransform(reactphysics3d::Transform(reactphysics3d::Vector3(10, 10, -10), reactphysics3d::Quaternion::identity()));
+	//playerRigidBody->applyLocalTorque(reactphysics3d::Vector3(10000, 10000, 10000));
 
 
 	//Planet
@@ -35,10 +36,6 @@ void PhysicsWorld::updateVertexBuffer()
 {
 	//debugRenderer->computeDebugRenderingPrimitives(*world);
 	const reactphysics3d::DebugRenderer::DebugTriangle* debugTriangles = this->debugRenderer->getTrianglesArray();
-	if (this->debugRenderer->getTriangles().size() * 3 > 1008)
-	{
-		int test = 0;
-	}
 	for (int i = 0; i < this->debugRenderer->getTriangles().size(); i++)
 	{
 		this->triangles[3 * i + 0].position = DirectX::SimpleMath::Vector3(debugTriangles[i].point1.x, debugTriangles[i].point1.y, debugTriangles[i].point1.z);
@@ -189,7 +186,8 @@ void PhysicsWorld::update(float dt)
 
 void PhysicsWorld::addForceToObject(const DirectX::XMFLOAT3& gravityVec)
 {
-	playerRigidBody->applyLocalForceAtCenterOfMass(playerRigidBody->getMass() * reactphysics3d::Vector3(gravityVec.x, gravityVec.y, gravityVec.z));
+	playerRigidBody->applyWorldForceAtCenterOfMass(playerRigidBody->getMass() * reactphysics3d::Vector3(gravityVec.x, gravityVec.y, gravityVec.z));
+	//playerRigidBody->applyLocalForceAtCenterOfMass(playerRigidBody->getMass() * reactphysics3d::Vector3(gravityVec.x, gravityVec.y, gravityVec.z));
 }
 
 DirectX::SimpleMath::Vector3 PhysicsWorld::getPos()

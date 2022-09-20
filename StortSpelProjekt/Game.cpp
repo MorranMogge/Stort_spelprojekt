@@ -98,7 +98,7 @@ GAMESTATE Game::Update()
 	if (Input::KeyDown(KeyCode::A)) pos.x -= 0.1;
 
 	grav = planetGravityField.calcGravFactor(pos);
-
+	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(pos));
 	/*additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(pos));
 	if (getLength(pos) <= 20+2) velocity = DirectX::XMFLOAT3(0, 0, 0);
 	additionXMFLOAT3(pos, getScalarMultiplicationXMFLOAT3(dt,velocity));

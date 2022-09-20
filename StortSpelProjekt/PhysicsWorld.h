@@ -26,12 +26,15 @@ private:
 
 	std::vector<reactphysics3d::DebugRenderer::DebugTriangle> tri;
 	std::vector<Vertex> triangles;
+
 	ID3D11Buffer* debuggerBuffer;
 	ID3D11PixelShader* dpShader;
+	ID3D11RasterizerState* wireframeMode;
 
 	DirectX::XMFLOAT4X4 identityM;
 	ID3D11Buffer* identityMatrix;
 
+	bool setUpWireframe();
 	bool setVertexBuffer();
 	void setUpBaseScenario();
 	void updateVertexBuffer();

@@ -52,6 +52,26 @@ void PhysicsWorld::updateVertexBuffer()
 	GPU::immediateContext->Unmap(debuggerBuffer, 0);
 }
 
+bool PhysicsWorld::setUpWireframe()
+{
+	D3D11_RASTERIZER_DESC wireframedesc;
+	wireframedesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
+	wireframedesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+	wireframedesc.FrontCounterClockwise = false;
+	wireframedesc.DepthBias = 0;
+	wireframedesc.DepthBiasClamp = 0.0f;
+	wireframedesc.SlopeScaledDepthBias = 0.0f;
+	wireframedesc.DepthClipEnable = true;
+	wireframedesc.ScissorEnable = false;
+	wireframedesc.MultisampleEnable = false;
+	wireframedesc.AntialiasedLineEnable = false;
+
+
+	HRESULT hr = GPU::device->CreateRasterizerState(&wireframedesc, &wireframeMode);
+
+	return !FAILED(hr);
+}
+
 bool PhysicsWorld::setVertexBuffer()
 {
 	DirectX::XMStoreFloat4x4(&identityM, DirectX::XMMatrixTranspose(DirectX::XMMatrixIdentity()));
@@ -132,6 +152,7 @@ PhysicsWorld::PhysicsWorld(std::string worldName)
 	world = com.createPhysicsWorld(settings);
 	this->setUpBaseScenario();
 	this->setVertexBuffer();
+	this->setUpWireframe();
 }
 
 void PhysicsWorld::renderReact3D()
@@ -140,10 +161,12 @@ void PhysicsWorld::renderReact3D()
 	GPU::immediateContext->VSSetConstantBuffers(0, 1, &identityMatrix);
 	GPU::immediateContext->IASetIndexBuffer(nullptr, DXGI_FORMAT::DXGI_FORMAT_R16_UINT, 0);
 	GPU::immediateContext->IASetVertexBuffers(0, 1, &debuggerBuffer, &stride, &offset);
+	GPU::immediateContext->RSSetState(wireframeMode);
 	//GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 	GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	GPU::immediateContext->PSSetShader(dpShader, nullptr, 0);
 	GPU::immediateContext->Draw(this->triangles.size(), 0);
+	GPU::immediateContext->RSSetState(nullptr);
 }
 
 PhysicsWorld::~PhysicsWorld()
@@ -156,6 +179,7 @@ PhysicsWorld::~PhysicsWorld()
 	debuggerBuffer->Release();
 	dpShader->Release();
 	identityMatrix->Release();
+	wireframeMode->Release();
 }
 
 void PhysicsWorld::update(float dt)

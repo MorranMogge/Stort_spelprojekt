@@ -8,6 +8,7 @@
 #include "StructuredBuffer.h"
 #include "BufferTypes.h"
 #include "LightHandler.h"
+#include "ParticleEmitter.h"
 
 class Game : public State
 {
@@ -22,6 +23,7 @@ private:
 	std::vector<Mesh> meshes_Static;
 	std::vector<Mesh> meshes_Dynamic;
 	std::vector<GameObject> gameObjects;
+	
 
 	void loadObjects();
 	void drawObjects();

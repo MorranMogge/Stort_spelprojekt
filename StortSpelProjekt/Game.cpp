@@ -74,7 +74,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	loadObjects();
 	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
-
+	ParticleEmitter ptEmitter(DirectX::XMFLOAT3(0, 0, 0), 30, DirectX::XMFLOAT2(3,4));
 }
 
 Game::~Game()
@@ -112,7 +112,7 @@ GAMESTATE Game::Update()
 
 void Game::Render()
 {
-	//LIGHT STUFF
+	//Light stuff
 	basicRenderer.lightPrePass();
 	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
 	{
@@ -120,7 +120,12 @@ void Game::Render()
 	}
 	ltHandler.bindLightBuffers();
 
+	//Scene stuff
 	basicRenderer.setUpScene();
 	camera.updateCamera(immediateContext);
 	drawObjects();
+
+	//Particle stuff
+	//basicRenderer.geometryPass(camera);
+	//ptEmitter.BindAndDraw(timeBuffer);
 }

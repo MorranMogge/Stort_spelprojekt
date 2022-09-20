@@ -43,6 +43,7 @@ Client::~Client()
 void Client::connectToServer(std::string ipAddress, int port)
 {
 	data.socket.connect(ipAddress, port);
+	selector.add(this->tcpSocket);
 }
 
 void Client::connectToServer()
@@ -66,6 +67,18 @@ void Client::setIpAndPort(std::string ipAddress, int port)
 void Client::setIdentifier(std::string id)
 {
 
+}
+
+bool Client::checkIfPacketReadyReceive()
+{
+	if (selector.wait())
+	{
+		if (selector.isReady(tcpSocket))
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Client::setupThread()
@@ -188,6 +201,24 @@ void Client::receiveFromServerTcp()
 	}
 }
 
+void Client::RECEIVEPOSITIONTEST()
+{
+	receivedPacket.clear();
+	if (tcpSocket.receive(receivedPacket) != sf::Socket::Done)
+	{
+		std::cout << "failed to receive TCP\n";
+	}
+	else
+	{
+		std::string receivedString;
+		float x = 0.0f;
+		float y = 0.0f;
+		std::cout << "TCP received data from address: " << tcpSocket.getRemoteAddress().toString() << std::endl;
+		receivedPacket >> receivedString >> x >> y;
+		std::cout << "data received from server: " << receivedString << "x : " << x << "y: " << y << std::endl;
+		receivedPacket.clear();
+	}
+}
 
 void Client::saveText(std::string text)
 {

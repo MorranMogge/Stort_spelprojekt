@@ -78,6 +78,11 @@ void ImGuiHelper::drawInterface(std::string message)
 			client->sendToServerTEMPTCP();
 		}
 
+		if (client->checkIfPacketReadyReceive())
+		{
+			client->RECEIVEPOSITIONTEST();
+		}
+
 
 		ImGui::Text(client->receive().c_str());
 

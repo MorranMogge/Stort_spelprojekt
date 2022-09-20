@@ -6,6 +6,7 @@
 #include <chrono>
 #include <thread>
 #include <vector>
+#include "player.h"
 
 const short MAXNUMBEROFPLAYERS = 1;
 
@@ -15,11 +16,22 @@ struct acceptMePacketData
 	std::string s;
 };
 
+struct
+{
+	unsigned short packetId;
+	unsigned short playerId;
+	float xPos;
+	float yPos;
+	float zPos;
+};
+
 struct userData
 {
 	sf::IpAddress ipAdress;
 	std::string userName;
 	sf::TcpSocket tcpSocket;
+
+	player playa;
 	//userData()
 	//{
 
@@ -214,8 +226,10 @@ int main()
 	sf::Packet receivedPacket;
 	float frequency = 30.f;
 
+
 	sf::SocketSelector selector;
 
+	std::vector<player> players;
 
 	//sf::UdpSocket socket;
 	std::string connectionType, mode;
@@ -244,12 +258,14 @@ int main()
 	
 	std::chrono::time_point<std::chrono::system_clock> start;
 	start = std::chrono::system_clock::now();
+	float timerLength = 1.2f;
 
 
 
 	setupTcp(data);
-
+	
 	acceptPlayers(data);
+
 		
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
@@ -277,6 +293,22 @@ int main()
 			std::string packString = "server data XDXDDX";
 			pack << packString;
 			sendDataAllPlayers(pack, data);*/
+
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() < timerLength)
+		{
+			//för varje spelare så skicka deras position till alla klienter
+			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+			{
+
+				sf::Packet tempPack;
+				float xwow = data.users[i].playa.getposition('x');
+				float ywow = data.users[i].playa.getposition('y');
+				std::string playerName = "player " + std::to_string(i);
+				tempPack << playerName << xwow << ywow;
+				sendDataAllPlayers(tempPack, data);
+			}
+			start = std::chrono::system_clock::now();
+		}
 
 		if (selector.wait())
 		{

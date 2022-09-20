@@ -18,6 +18,8 @@ private:
 	sf::TcpSocket tcpSocket;
 	sf::Packet sendPacket;
 	sf::Packet receivedPacket;
+
+	sf::SocketSelector selector;
 	
 	std::string ip;
 	int port;
@@ -36,6 +38,8 @@ public:
 	void setIpAndPort(std::string ipAddress, int port);
 	void setIdentifier(std::string id);
 
+	bool checkIfPacketReadyReceive();
+
 	bool setupThread();
 	std::string receive();
 	void sendToServerUdp(std::string stringToSend);
@@ -45,6 +49,8 @@ public:
 	void sendToServerTcp(std::string buf);
 	void sendToServerTEMPTCP();
 	void receiveFromServerTcp();
+
+	void RECEIVEPOSITIONTEST();
 
 	void saveText(std::string text);
 	void saveMsg(std::string text);

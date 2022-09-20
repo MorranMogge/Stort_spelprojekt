@@ -17,7 +17,7 @@ private:
 	bool reInitialize(ID3D11Device* device);
 public:
 	StructuredBuffer();
-	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T> buffData);
+	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T>& buffData);
 	ID3D11Buffer* const* getReferenceOf();
 	ID3D11Buffer* Get()const;
 	T& getData(int index);
@@ -76,7 +76,7 @@ StructuredBuffer<T>::StructuredBuffer()
 }
 
 template<class T>
-bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T> buffData)
+bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T>& buffData)
 {
 	this->deviceContext = deviceContext;
 
@@ -139,6 +139,7 @@ template<class T>
 inline void StructuredBuffer<T>::addData(T &obj, ID3D11Device* device)
 {
 	buffer.~ComPtr();
+	srv.~ComPtr();
 	bufferData.push_back(obj);
 	this->reInitialize(device);
 }

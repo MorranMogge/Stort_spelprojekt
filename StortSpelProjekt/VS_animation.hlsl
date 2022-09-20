@@ -1,4 +1,16 @@
 
+StructuredBuffer<float4x4> Tx : register (t0);
+
+struct VertexAnim
+{
+    float3 position : POSITION;
+    float2 uv : UV;
+    float3 normal : NORMAL;
+    uint4 jointIndex : JointIndex;
+    float4 weights : Weights;
+    int nrOfJoint : NrOfJoint;
+};
+
 cbuffer WorldCB : register(b0)
 {
     float4x4 worldM;
@@ -7,18 +19,6 @@ cbuffer CamCB : register(b1)
 {
     float4x4 camViewProjM;
 }
-
-StructuredBuffer<float4x4> Tx : register (t0);
-
-struct VertexAnim
-{
-    float3 position : POSITION;
-    float2 uv : UV;
-    float3 normal : NORMAL;
-    int4 bones : BONES;
-    float4 weights : WEIGHTS;
-    int joints : JOINTS;
-};
 
 void main(
 in VertexAnim v,
@@ -33,9 +33,9 @@ out float4 worldPosition : WORLDPOSITION)
     float3 sumPos = float3(0, 0, 0);
     
     [unroll]
-    for (int i = 0; i < v.joints; i++)
+    for (int i = 0; i < v.nrOfJoint; i++)
     {
-        sumPos += mul(startPosition, Tx[v.bones[i]] * v.weights[i]);
+        sumPos += mul(startPosition, Tx[v.jointIndex[i]] * v.weights[i]);
     }
     
     //Calculate position of vertex in world

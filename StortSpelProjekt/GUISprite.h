@@ -33,6 +33,8 @@ public:
 	//Render
 	virtual void Draw();
 
+	bool IntersectMouse() const;
+
 protected:
 
 	Microsoft::WRL::ComPtr<ID3D11Resource> m_pResource;

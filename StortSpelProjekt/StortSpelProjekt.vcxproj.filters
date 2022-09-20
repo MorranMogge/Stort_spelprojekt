@@ -70,6 +70,9 @@
     <Filter Include="Header Files\Camera">
       <UniqueIdentifier>{6b5e6852-bcfa-49ca-99c6-0d24b5223d0a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Menus">
+      <UniqueIdentifier>{33094eb0-0f69-4d2a-98c3-3d70391aff74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="State.h">
@@ -282,6 +285,18 @@
     <ClInclude Include="animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Credits.h">
+      <Filter>Header Files\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsUI.h">
+      <Filter>Header Files\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsMenu.h">
+      <Filter>Header Files\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="CreditsMenu.h">
+      <Filter>Header Files\Menus</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="State.cpp">
@@ -355,6 +370,18 @@
     </ClCompile>
     <ClCompile Include="LightHandler.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Credits.cpp">
+      <Filter>Header Files\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsUI.cpp">
+      <Filter>Header Files\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsMenu.cpp">
+      <Filter>Header Files\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="CreditsMenu.cpp">
+      <Filter>Header Files\Menus</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

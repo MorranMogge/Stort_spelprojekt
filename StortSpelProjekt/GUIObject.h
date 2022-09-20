@@ -82,6 +82,7 @@ public:
 		brt.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL; //write all channels
 
 		GPU::device->CreateBlendState(&blendDesc, blendState.GetAddressOf());
+		init = true;
 	}
 	static void Begin()
 	{

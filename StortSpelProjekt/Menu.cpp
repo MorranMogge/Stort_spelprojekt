@@ -471,7 +471,7 @@ GAMESTATE Menu::Update()
 
 #pragma endregion
 
-	return NOCHANGE;
+	return ui.GetGameState();
 }
 
 void Menu::Render()

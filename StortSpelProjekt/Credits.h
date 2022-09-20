@@ -1,20 +1,15 @@
 #pragma once
 #include "GUISprite.h"
-#include "GUIText.h"
 #include "State.h"
 
-class GuiHandler final
+class Credits final
 {
-	GUISprite spriteWeaponBox;
 
-	GUISprite start;
-	GUISprite settings;
-	GUISprite credits;
-	GUISprite exit;
+	GUISprite creditsText;
+	GUISprite nameText;
+	GUISprite backText;
 
 	GAMESTATE gameState;
-
-	GUIText testText;
 
 	void HandleInputs();
 
@@ -25,8 +20,7 @@ public:
 
 	GAMESTATE GetGameState();
 
-	GuiHandler();
+	Credits();
 	void Draw();
-
 };
 

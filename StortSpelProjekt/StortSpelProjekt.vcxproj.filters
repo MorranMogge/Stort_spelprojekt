@@ -297,6 +297,12 @@
     <ClInclude Include="CreditsMenu.h">
       <Filter>Header Files\Menus</Filter>
     </ClInclude>
+    <ClInclude Include="BasicRenderer.h">
+      <Filter>Header Files\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderLoader.h">
+      <Filter>Header Files\Sprite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="State.cpp">
@@ -382,6 +388,12 @@
     </ClCompile>
     <ClCompile Include="CreditsMenu.cpp">
       <Filter>Header Files\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicRenderer.cpp">
+      <Filter>Header Files\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderLoader.cpp">
+      <Filter>Header Files\Sprite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

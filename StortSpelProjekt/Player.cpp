@@ -57,6 +57,7 @@ void Player::move(DirectX::SimpleMath::Vector3& position, const DirectX::XMFLOAT
     if (Input::KeyDown(KeyCode::W))
     {
         position += playerForwardVec;
+        //tempo
     }
 
     else if (Input::KeyDown(KeyCode::S))

@@ -58,12 +58,7 @@ private:
 
 	//Variables for the mouse movement
 	MouseClass* mouse;
-	POINT mousePos = {};
 	HWND* window;
-	RECT rect;
-	POINT ul;
-	POINT lr;
-	MSG* msg;
 
 public:
 	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window);

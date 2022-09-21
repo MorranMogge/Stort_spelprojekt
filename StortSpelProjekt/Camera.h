@@ -1,16 +1,17 @@
 #pragma once
 #include <directxmath.h>
 #include <d3d11.h>
+#include "ConstantBufferNew.h"
+#include "GPU.h"
 
 class Camera
 {
 private:
 	float deltaTime;
+	ConstantBufferNew<cameraStruct> cameraBuffer;
 
-	ID3D11Buffer* cameraBuffer;
 	DirectX::XMMATRIX viewMatrix;
 	DirectX::XMMATRIX projMatrix;
-	DirectX::XMMATRIX viewProj;
 
 	DirectX::XMFLOAT3 rotation;
 	DirectX::XMVECTOR rotVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -27,16 +28,13 @@ private:
 	DirectX::XMVECTOR forwardVec = DEFAULT_FORWARD;
 	DirectX::XMVECTOR upVector = DEFAULT_UP;
 
-	DirectX::XMFLOAT4X4 floatMX;
-	D3D11_MAPPED_SUBRESOURCE subData = {};
-
 public:
-	Camera(ID3D11DeviceContext* immediateContext, ID3D11Device* device);
+	Camera();
 	~Camera();
 
-	void updateCamera(ID3D11DeviceContext* immediateContext);
-	void moveCamera(ID3D11DeviceContext* immediateContext, const DirectX::XMVECTOR& playerPosition, const float& deltaTime);
-	void AdjustRotation(ID3D11DeviceContext* immediateContext, float x, float y);
+	void updateCamera();
+	void moveCamera(const DirectX::XMVECTOR& playerPosition, const float& deltaTime);
+	void AdjustRotation(float x, float y);
 	const DirectX::XMVECTOR getForwardVec();
 	const DirectX::XMVECTOR getRightVec();
 };

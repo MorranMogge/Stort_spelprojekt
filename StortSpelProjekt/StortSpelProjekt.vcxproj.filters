@@ -131,6 +131,8 @@
     <ClInclude Include="GravityField.h" />
     <ClInclude Include="DirectXMathHelper.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="ConstantBufferNew.h" />
+    <ClInclude Include="BufferTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

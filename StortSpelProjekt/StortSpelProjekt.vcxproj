@@ -155,8 +155,10 @@
     <ClInclude Include="BlendState.h" />
     <ClInclude Include="Bound.h" />
     <ClInclude Include="Buffer.h" />
+    <ClInclude Include="BufferTypes.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ConstantBuffer.h" />
+    <ClInclude Include="ConstantBufferNew.h" />
     <ClInclude Include="DepthStencilState.h" />
     <ClInclude Include="DepthStencilView.h" />
     <ClInclude Include="DirectXMathHelper.h" />

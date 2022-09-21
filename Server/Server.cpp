@@ -266,12 +266,14 @@ int main()
 	
 	acceptPlayers(data);
 
+	//data.users->tcpSocket.send(&data, sizeof(data));
+
 		
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
 		selector.add(data.users[i].tcpSocket);
 	}
-
+	std::cout << "Starting while loop! \n";
 	while (true)
 	{
 
@@ -294,9 +296,10 @@ int main()
 			pack << packString;
 			sendDataAllPlayers(pack, data);*/
 
-		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() < timerLength)
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
 		{
 			//för varje spelare så skicka deras position till alla klienter
+			std::cout << "all that\n";
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{
 
@@ -311,7 +314,7 @@ int main()
 			start = std::chrono::system_clock::now();
 		}
 
-		if (selector.wait())
+	/*	if (selector.wait())
 		{
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{
@@ -327,7 +330,7 @@ int main()
 					}
 				}
 			}
-		}
+		}*/
 		
 		
 	}

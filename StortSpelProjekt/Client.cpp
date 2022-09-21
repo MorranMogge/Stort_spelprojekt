@@ -7,11 +7,16 @@ void clientFunction(void* param)
 	sf::Packet receivedPacket;
 	while (!data->endThread)
 	{
+		std::cout << "thread is running BEFORE recv\n";
 		data->socket.receive(receivedPacket); //Receives the packet
-		if (receivedPacket >> temp)	//Checks whether or not the packet contains data
-		{
-			data->receivedstring = temp;
-		}
+		std::cout << "thread is running after recv\n";
+			std::string receivedString;
+			float x = 0.0f;
+			float y = 0.0f;
+			std::cout << "TCP received data from address: " << data->socket.getRemoteAddress().toString() << std::endl;
+			receivedPacket >> receivedString >> x >> y;
+			std::cout << "data received from server: " << receivedString << "x : " << x << "y: " << y << std::endl;
+		
 		receivedPacket.clear();
 	}
 }
@@ -32,30 +37,46 @@ Client::Client(std::string ipAddress, int port)
 
 Client::~Client()
 {
-	if (clientThread != nullptr)
+	/*if (clientThread != nullptr)
 	{
 		data.endThread = true;
 		clientThread->join();
 		delete clientThread;
-	}
+	}*/
 }
 
 void Client::connectToServer(std::string ipAddress, int port)
 {
-	data.socket.connect(ipAddress, port);
-	
+	if (tcpSocket.connect(ipAddress, port) != sf::Socket::Done)
+	{
+		std::cout << "Couldnt connect\n";
+	}
+	else
+	{
+		std::cout << "Was able to connect\n";
+	}
+	//addselector();
 }
 
 void Client::connectToServer()
 {
-	tcpSocket.connect(this->ip, this->port);
-
+	if (data.socket.connect(this->ip, this->port) != sf::Socket::Done)
+	{
+		std::cout << "Couldnt connect\n";
+	}
+	else
+	{
+		std::cout << "Was able to connect\n";
+	}
+	this->setupThread();
+	//this->joinThread();
+	//addselector();
 	//data.socket.setBlocking(false);
 }
 
 void Client::joinThread()
 {
-	data.endThread = true;
+	//data.endThread = true;
 	clientThread->join();
 }
 
@@ -68,23 +89,6 @@ void Client::setIpAndPort(std::string ipAddress, int port)
 void Client::setIdentifier(std::string id)
 {
 
-}
-
-bool Client::checkIfPacketReadyReceive()
-{
-	if (selector.wait())
-	{
-		if (selector.isReady(tcpSocket))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-void Client::addselector()
-{
-	selector.add(tcpSocket);
 }
 
 bool Client::setupThread()
@@ -216,13 +220,13 @@ void Client::RECEIVEPOSITIONTEST()
 	}
 	else
 	{
-		std::string receivedString;
+		/*std::string receivedString;
 		float x = 0.0f;
 		float y = 0.0f;
 		std::cout << "TCP received data from address: " << tcpSocket.getRemoteAddress().toString() << std::endl;
 		receivedPacket >> receivedString >> x >> y;
 		std::cout << "data received from server: " << receivedString << "x : " << x << "y: " << y << std::endl;
-		receivedPacket.clear();
+		receivedPacket.clear();*/
 	}
 }
 

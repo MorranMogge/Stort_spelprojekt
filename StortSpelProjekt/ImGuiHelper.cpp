@@ -77,18 +77,9 @@ void ImGuiHelper::drawInterface(std::string message)
 		{
 			client->sendToServerTEMPTCP();
 		}
-
-		if (client->checkIfPacketReadyReceive())
-		{
-			client->RECEIVEPOSITIONTEST();
-		}
+		
 
 		//selector.add(tcpSocket);
-
-		if (ImGui::Button("add selector"))
-		{
-			client->addselector();
-		}
 
 		ImGui::Text(client->receive().c_str());
 

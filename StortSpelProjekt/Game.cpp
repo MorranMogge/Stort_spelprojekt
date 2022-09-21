@@ -102,6 +102,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
+	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
+
 	//this->setUpReact3D();
 
 	this->mouse = &mouse;
@@ -159,6 +161,14 @@ GAMESTATE Game::Update()
 void Game::Render()
 {
 	start = std::chrono::system_clock::now();
+	//LIGHT STUFF
+	basicRenderer.lightPrePass();
+	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
+	{
+		ltHandler.drawShadows(i, gameObjects);
+	}
+	ltHandler.bindLightBuffers();
+
 	basicRenderer.setUpScene();
 	drawObjects();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();

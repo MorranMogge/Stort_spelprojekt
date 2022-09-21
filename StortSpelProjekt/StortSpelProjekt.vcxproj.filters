@@ -4,7 +4,6 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="D3D11Helper.cpp" />
     <ClCompile Include="ErrorLog.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GuiHandler.cpp" />
     <ClCompile Include="GUISprite.cpp" />
     <ClCompile Include="GUIText.cpp" />
@@ -44,6 +43,11 @@
     <ClCompile Include="MouseEvent.cpp" />
     <ClCompile Include="GravityField.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Credits.cpp" />
+    <ClCompile Include="SettingsUI.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LightHandler.cpp" />
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +137,12 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="ConstantBufferNew.h" />
     <ClInclude Include="BufferTypes.h" />
+    <ClInclude Include="Credits.h" />
+    <ClInclude Include="SettingsUI.h" />
+    <ClInclude Include="BufferTypes.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="LightHandler.h" />
+    <ClInclude Include="StructuredBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -147,5 +157,9 @@
     <Filter Include="stb_image">
       <UniqueIdentifier>{04645332-69e8-44a7-93c1-88dd530212f4}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="VertexShader.hlsl" />
+    <FxCompile Include="PixelShader.hlsl" />
   </ItemGroup>
 </Project>

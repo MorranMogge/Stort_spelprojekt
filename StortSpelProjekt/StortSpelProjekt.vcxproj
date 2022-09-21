@@ -159,6 +159,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferNew.h" />
+    <ClInclude Include="Credits.h" />
     <ClInclude Include="DepthStencilState.h" />
     <ClInclude Include="DepthStencilView.h" />
     <ClInclude Include="DirectXMathHelper.h" />
@@ -172,6 +173,8 @@
     <ClInclude Include="GUISprite.h" />
     <ClInclude Include="GUIText.h" />
     <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="LightHandler.h" />
     <ClInclude Include="MaterialLibrary.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MouseClass.h" />
@@ -183,6 +186,7 @@
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderTargetView.h" />
     <ClInclude Include="SamplerState.h" />
+    <ClInclude Include="SettingsUI.h" />
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="ShaderResourceView.h" />
     <ClInclude Include="ShaderResourceTexture.h" />
@@ -210,6 +214,7 @@
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_resize.h" />
     <ClInclude Include="stb_image_write.h" />
+    <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Topology.h" />
     <ClInclude Include="UnorderedAccessView.h" />
@@ -222,6 +227,7 @@
     <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="Credits.cpp" />
     <ClCompile Include="D3D11Helper.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
     <ClCompile Include="DXUtil.cpp" />
@@ -240,11 +246,14 @@
     <ClCompile Include="ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LightHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MouseClass.cpp" />
     <ClCompile Include="MouseEvent.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="SettingsUI.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -260,6 +269,16 @@
     <ProjectReference Include="..\DirectXTK-main\DirectXTK_Desktop_2022_Win10.vcxproj">
       <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="PixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="VertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

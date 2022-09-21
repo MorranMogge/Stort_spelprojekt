@@ -10,7 +10,7 @@
 #include "SoundCollection.h"
 #include "Client.h"
 #include "Game.h"
-//#include "Menu.h"
+#include "Menu.h"
 #include "WindowHelper.h"
 #include "D3D11Helper.h"
 #include "MemoryLeackChecker.h"
@@ -90,7 +90,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			{
 			case MENU:
 				delete currentState;
-				//currentState = new Menu();
+				currentState = new Menu();
 				break;
 			case GAME:
 				delete currentState;

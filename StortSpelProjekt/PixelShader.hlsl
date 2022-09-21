@@ -1,8 +1,19 @@
+struct lightStruct
+{
+    float4 lightPos;
+    float4 lightColor;
+    float4 lightDirection;
+    float4 angleTypePadding;
+    float4x4 ltViewMatix;
+};
+
 Texture2D diffuseTex : register(t0);
 Texture2D ambientTex : register(t1);
 Texture2D specularTex : register(t2);
-
+Texture2DArray shadowMaps : register(t3);
+StructuredBuffer<lightStruct> lightStructBuff : register(t4); //Structured buffer with Light data
 SamplerState samplerState : register(s0);
+
 
 struct Material
 {
@@ -15,6 +26,11 @@ struct Material
 cbuffer Mat : register(b0)
 {
     Material mat;
+};
+
+cbuffer numLightBuffer : register(b1)
+{
+    int lightNr;
 };
 
 struct PSin

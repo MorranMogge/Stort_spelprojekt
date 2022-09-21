@@ -9,6 +9,11 @@
 #include <chrono>
 #include "Player.h"
 #include "Camera.h"
+#include "LightHandler.h"
+#include "Light.h"
+#include "StructuredBuffer.h"
+#include "BufferTypes.h"
+#include "LightHandler.h"
 
 class Game : public State
 {
@@ -40,10 +45,12 @@ private:
 
 	Camera camera;
 	Player player;
+	LightHandler ltHandler;
 
 	//Objects
 	std::vector<Mesh> meshes_Static;
 	std::vector<Mesh> meshes_Dynamic;
+	std::vector<GameObject> gameObjects;
 
 	void loadObjects();
 	void drawObjects();

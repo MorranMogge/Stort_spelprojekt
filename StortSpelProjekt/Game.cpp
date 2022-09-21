@@ -20,7 +20,7 @@ void Game::loadObjects()
 		}
 
 	}
-	meshes_Static[0].scale = DirectX::SimpleMath::Vector3(2.5,2.5,2.5);
+	meshes_Static[0].scale = DirectX::SimpleMath::Vector3(5,5,5);
 
 	// re-calculate bounding box
 	for (auto& mesh : meshes_Static)
@@ -53,17 +53,44 @@ void Game::loadObjects()
 
 void Game::drawObjects()
 {
-	//for (auto& mesh : meshes_Static) //draw Static meshes
-	//{
-	//	mesh.DrawWithMat();
-	//}
+	for (auto& mesh : meshes_Static) //draw Static meshes
+	{
+		mesh.DrawWithMat();
+	}
 	for (auto& mesh : meshes_Dynamic) //draw Dynamic meshes
 	{
 		mesh.DrawWithMat();
 	}
 }
 
+bool Game::setUpWireframe()
+{
+	reactWireframeInfo.wireframeClr = DirectX::XMFLOAT3(1.f, 0.f, 0.f);
 
+	D3D11_BUFFER_DESC bufferDesc = {};
+	bufferDesc.ByteWidth = sizeof(wirefameInfo);
+	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA data = {};
+	data.pSysMem = &reactWireframeInfo;
+	data.SysMemPitch = 0;
+	data.SysMemSlicePitch = 0;
+
+	HRESULT hr = GPU::device->CreateBuffer(&bufferDesc, &data, &wireBuffer);
+	return !FAILED(hr);
+}
+
+void Game::updateBuffers()
+{
+	ZeroMemory(&subData, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	immediateContext->Map(wireBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &subData);
+	memcpy(subData.pData, &reactWireframeInfo, sizeof(wirefameInfo));
+	immediateContext->Unmap(wireBuffer, 0);
+}
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain)
 	:camera(Camera(immediateContext, device)), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0,0,0))
@@ -72,6 +99,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
+	this->setUpWireframe();
 	camera.updateCamera(immediateContext);
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
@@ -79,6 +107,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 Game::~Game()
 {
+	wireBuffer->Release();
 }
 
 GAMESTATE Game::Update()
@@ -96,6 +125,8 @@ GAMESTATE Game::Update()
 	if (Input::KeyDown(KeyCode::K)) pos.y -= 0.1;
 	if (Input::KeyDown(KeyCode::D)) pos.x += 0.1;
 	if (Input::KeyDown(KeyCode::A)) pos.x -= 0.1;
+	if (Input::KeyDown(KeyCode::R)) physWolrd.addBoxToWorld();
+
 
 	grav = planetGravityField.calcGravFactor(pos);
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(pos));
@@ -131,7 +162,8 @@ void Game::Render()
 {
 	start = std::chrono::system_clock::now();
 	basicRenderer.setUpScene();
-	this->drawObjects();
-	physWolrd.renderReact3D();
+	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr);
+	if (objectDraw) this->drawObjects();
+	if (wireframe) { this->updateBuffers(); immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 }

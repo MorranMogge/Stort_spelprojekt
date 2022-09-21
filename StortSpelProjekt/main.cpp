@@ -109,7 +109,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 		currentState->DrawUI();
 		*/
-		imGuiHelper.drawInterface("test");
+		//imGuiHelper.drawInterface("test");
 		swapChain->Present(0, 0);
 	}
 

@@ -134,6 +134,7 @@
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="ConstantBufferNew.h" />
     <ClInclude Include="ParticleEmitter.h" />
+    <ClInclude Include="TimeStruct.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -152,5 +153,8 @@
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl" />
     <FxCompile Include="PixelShader.hlsl" />
+    <FxCompile Include="PT_VertexShader.hlsl" />
+    <FxCompile Include="PT_GeometryShader.hlsl" />
+    <FxCompile Include="PT_PixelShader.hlsl" />
   </ItemGroup>
 </Project>

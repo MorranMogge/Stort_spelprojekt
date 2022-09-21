@@ -19,7 +19,7 @@ GameObject::GameObject(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::X
 
 
 	// load all materials for Obj
-	int nrOfMat = testObj.mtl.materials.size();
+	int nrOfMat = (int)testObj.mtl.materials.size();
 	for (int i = 0; i < nrOfMat; i++)
 	{
 		MaterialLibrary::LoadMaterial(testObj.mtl.materials[i]);

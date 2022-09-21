@@ -19,7 +19,7 @@ bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>lightBuff
 		DirectX::XMFLOAT4 col = DirectX::XMFLOAT4(color.x, color.y, color.z, 0);
 		DirectX::XMFLOAT4 dir = DirectX::XMFLOAT4(direction.x, direction.y, direction.z, 0);
 		float ca = lights.at(i).getConeAngle();
-		float typ = lights.at(i).getType();
+		float typ = (float)lights.at(i).getType();
 		DirectX::XMMATRIX tempMatrix = DirectX::XMMatrixTranspose(lights.at(i).getViewMatrix());
 		XMStoreFloat4x4(&matrix, tempMatrix);
 
@@ -37,7 +37,7 @@ bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>lightBuff
 	shaderResourceViewDesc.Format = DXGI_FORMAT_UNKNOWN;
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 	shaderResourceViewDesc.Buffer.FirstElement = 0;
-	shaderResourceViewDesc.Buffer.NumElements = structVector.size();
+	shaderResourceViewDesc.Buffer.NumElements = (UINT)structVector.size();
 
 	//create shader resource view 
 	HRESULT hr = device->CreateShaderResourceView(lightBuffer.Get(), &shaderResourceViewDesc, lightBuffView.GetAddressOf());
@@ -172,7 +172,7 @@ void LightHandler::addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color,
 
 
 		//current light id
-		int lightID = this->lights.size();
+		int lightID = (int)this->lights.size();
 
 
 		//For first light create buffer, else unmap/remap buffer with new info
@@ -233,7 +233,7 @@ bool LightHandler::updateBuffers()
 		DirectX::XMFLOAT4 col = DirectX::XMFLOAT4(color.x, color.y, color.z, 0);
 		DirectX::XMFLOAT4 dir = DirectX::XMFLOAT4(direction.x, direction.y, direction.z, 0);
 		float ca = lights.at(i).getConeAngle();
-		float typ = lights.at(i).getType();
+		float typ = (float)lights.at(i).getType();
 		DirectX::XMMATRIX tempMatrix = DirectX::XMMatrixTranspose(lights.at(i).getViewMatrix());
 		XMStoreFloat4x4(&matrix, tempMatrix);
 
@@ -250,7 +250,7 @@ bool LightHandler::updateBuffers()
 	//---------------------------------------- NrLight Buffer ----------------------------------------
 
 	//Ger nrOf lights
-	int nrOfLights = this->lights.size();
+	int nrOfLights = (UINT)this->lights.size();
 
 	//Map
 	D3D11_MAPPED_SUBRESOURCE map;
@@ -297,7 +297,7 @@ void LightHandler::setConeAngle(float angle, int lightIndex)
 	this->lights.at(lightIndex).setConeAngle(angle);
 }
 
-void LightHandler::setLightType(float type, int lightIndex)
+void LightHandler::setLightType(int type, int lightIndex)
 {
 	this->lights.at(lightIndex).setLightType(type);
 }
@@ -337,7 +337,7 @@ ID3D11Buffer* LightHandler::getViewBuffer(int ltIndex) const
 
 int LightHandler::getNrOfLights() const
 {
-	return this->lights.size();
+	return (UINT)this->lights.size();
 }
 
 void LightHandler::drawShadows(int lightIndex, std::vector<GameObject> gameObjects)

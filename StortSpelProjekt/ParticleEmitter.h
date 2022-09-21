@@ -6,7 +6,7 @@
 #include <DirectXMath.h>
 #include "GPU.h"
 #include "ConstantBufferNew.h"
-
+#include "TimeStruct.h"
 
 
 class ParticleEmitter
@@ -16,25 +16,32 @@ private:
 	Microsoft::WRL::ComPtr <ID3D11UnorderedAccessView> PT_UAV;			//UAV for vertex shader
 	Microsoft::WRL::ComPtr<ID3D11Buffer> PT_vertexBuffer;				//Vertex buffer
 	Microsoft::WRL::ComPtr<ID3D11Buffer> emitterPosBuffer;				//Position buffer
+	Microsoft::WRL::ComPtr<ID3D11Buffer> timeBuffer;					//Time buffer, contains delta time
 	
-	
-	std::vector<particleStruct> PT_Data;						//Particle Data (pos, delta time, lifetime)
-	DirectX::XMFLOAT2 minMaxLifetime;							//Min and max lifetime of particles
-	DirectX::XMFLOAT3 Position;									//Emitter Position
-	int nrOfParticles;									//Nr of points in buffer
-	bool active;										//Particle emitter state 
-	//int maxHeight = 10;									//Respawn height (gör på compute shader?)
+	TimeStruct tStruct;
+	std::vector<particleStruct> PT_Data;								//Particle Data (pos, delta time, lifetime)
+	DirectX::XMFLOAT2 minMaxLifetime;									//Min and max lifetime of particles
+	DirectX::XMFLOAT3 Position;											//Emitter Position
+	DirectX::XMFLOAT3 Rotation;											//Emitter Rotation
+	int nrOfParticles;													//Nr of points in buffer
+	bool active;														//Particle emitter state 
+
+	void updateTimeBuffer(float delta);
 
 public:
-	ParticleEmitter(DirectX::XMFLOAT3 Pos, int nrOfPT, DirectX::XMFLOAT2 minMaxLifetime, int randRange = 10);
+	ParticleEmitter(DirectX::XMFLOAT3 Pos, DirectX::XMFLOAT3 Rot, int nrOfPT, DirectX::XMFLOAT2 minMaxLifetime, int randRange = 10);
+	void BindAndDraw();
+	void updateBuffer();												//Updates position, rotation & state (emitter on or off)
+
 	ID3D11Buffer* getVTXBuffer();
 	ID3D11Buffer* getPosBuffer();
-	void BindAndDraw(ID3D11Buffer*& timeBuffer);
 	ID3D11UnorderedAccessView* getUAV();
 	int getNrOfParticles();
-	void updateBuffer(ID3D11DeviceContext* immediateContext);		//Updates position & active state
 	DirectX::XMFLOAT3 getPosition();
+	DirectX::XMFLOAT3 getRotation();
+
 	void setPosition(DirectX::XMFLOAT3 Pos);
+	void setRotation(DirectX::XMFLOAT3 Rot);
 	void setActive(bool onOrOff);
 	bool isActive();
 };

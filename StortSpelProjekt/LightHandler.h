@@ -48,7 +48,7 @@ public:
 	void setUpDirection(DirectX::XMFLOAT3 direction, int lightIndex);			//changes view matrix
 	void setColor(DirectX::XMFLOAT3 color, int lightIndex);
 	void setConeAngle(float angle, int lightIndex);
-	void setLightType(float type, int lightIndex);								//0 point, 1 directional, 2 spot
+	void setLightType(int type, int lightIndex);								//0 point, 1 directional, 2 spot
 	void setRange(float range, int lightIndex);
 	void setFalloff(float falloff, int lightIndex);
 	ID3D11Buffer* getViewBuffer(int ltIndex) const;

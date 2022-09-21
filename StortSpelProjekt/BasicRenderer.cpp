@@ -9,7 +9,7 @@ bool BasicRenderer::setUpInputLayout(ID3D11Device* device, const std::string& vS
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
-	HRESULT hr = device->CreateInputLayout(inputDesc, std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &inputLayout);
+	HRESULT hr = device->CreateInputLayout(inputDesc, (UINT)std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &inputLayout);
 
 	return !FAILED(hr);
 }
@@ -23,7 +23,7 @@ bool BasicRenderer::setUp_PT_InputLayout(ID3D11Device* device, const std::string
 		{"LIFETIME", 0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
-	HRESULT hr = device->CreateInputLayout(inputDesc, std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &pt_inputLayout);
+	HRESULT hr = device->CreateInputLayout(inputDesc, (UINT)std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &pt_inputLayout);
 
 	return !FAILED(hr);
 }
@@ -61,11 +61,11 @@ BasicRenderer::~BasicRenderer()
 	vShader->Release();
 	pShader->Release();
 
-	/*pt_inputLayout->Release();
+	pt_inputLayout->Release();
 	pt_vShader->Release();
 	pt_pShader->Release();
-	pt_UpdateShader->Release();
-	pt_gShader->Release();*/
+	//pt_UpdateShader->Release();
+	pt_gShader->Release();
 }
 
 void BasicRenderer::lightPrePass()
@@ -85,10 +85,10 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadVertexShader(device, vShader, vShaderByteCode, "VertexShader"))		return false;
 	if (!setUpInputLayout(device, vShaderByteCode))									return false;
 	if (!LoadPixelShader(device, pShader, "PixelShader"))							return false;
-	//if (!setUp_PT_InputLayout(device, vShaderByteCode))								return false;
-	//if (!LoadVertexShader(device, pt_vShader, vShaderByteCode, "PT_VertexShader"))	return false;
-	//if (!LoadPixelShader(device, pt_pShader, "PT_PixelShader"))						return false;
-	//if (!LoadGeometryShader(device, pt_gShader, "PT_GeometryShader"))				return false;
+	if (!LoadVertexShader(device, pt_vShader, vShaderByteCode, "PT_VertexShader"))	return false;
+	if (!setUp_PT_InputLayout(device, vShaderByteCode))								return false;
+	if (!LoadPixelShader(device, pt_pShader, "PT_PixelShader"))						return false;
+	if (!LoadGeometryShader(device, pt_gShader, "PT_GeometryShader"))				return false;
 	//if (!LoadComputeShader(device, pt_UpdateShader, "PT_UpdateShader"))				return false;
 	if (!setUpSampler(device))														return false;
 	SetViewport(viewport, WIDTH, HEIGHT);

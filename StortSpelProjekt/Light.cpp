@@ -62,7 +62,7 @@ void Light::setConeAngle(float angle)
 	this->coneAngle = angle;
 }
 
-void Light::setLightType(float type)
+void Light::setLightType(int type)
 {
 	this->lightType = type;
 }

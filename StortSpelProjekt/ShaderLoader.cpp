@@ -22,7 +22,7 @@ bool LoadVertexShader(ID3D11Device* device, ID3D11VertexShader*& vShader, std::s
 
 bool LoadVertexShader(ID3D11Device* device, ID3D11VertexShader*& vShader, const std::string path)
 {
-	std::ifstream reader("../x64/Debug/" + path + ".cso", std::ios::binary | std::ios::ate);
+	std::ifstream reader("../Shaders/" + path + ".cso", std::ios::binary | std::ios::ate);
 
 	if (reader.is_open())
 	{
@@ -43,7 +43,7 @@ bool LoadVertexShader(ID3D11Device* device, ID3D11VertexShader*& vShader, const 
 
 bool LoadDomainShader(ID3D11Device* device, ID3D11DomainShader*& dShader, const std::string path)
 {
-	std::ifstream reader("../x64/Debug/" + path + ".cso", std::ios::binary | std::ios::ate);
+	std::ifstream reader("../Shaders/" + path + ".cso", std::ios::binary | std::ios::ate);
 
 	if (reader.is_open())
 	{
@@ -64,7 +64,7 @@ bool LoadDomainShader(ID3D11Device* device, ID3D11DomainShader*& dShader, const 
 
 bool LoadHullShader(ID3D11Device* device, ID3D11HullShader*& hShader, const std::string path)
 {
-	std::ifstream reader("../x64/Debug/" + path + ".cso", std::ios::binary | std::ios::ate);
+	std::ifstream reader("../Shaders/" + path + ".cso", std::ios::binary | std::ios::ate);
 
 	if (reader.is_open())
 	{

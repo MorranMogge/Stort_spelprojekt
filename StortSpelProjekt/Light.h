@@ -28,7 +28,7 @@ public:
 	void setDirection(DirectX::XMFLOAT3 direction);
 	void setColor(DirectX::XMFLOAT3 color);
 	void setConeAngle(float angle);
-	void setLightType(float type);
+	void setLightType(int type);
 	void setRange(float range);
 	void setFalloff(float falloff);
 	float getConeAngle()	const;

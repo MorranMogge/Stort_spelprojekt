@@ -54,9 +54,57 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
     playerForwardVec = DirectX::XMVector3Cross(cameraRight, playerUpVec);
     playerRightVec = DirectX::XMVector3Cross(playerUpVec, playerForwardVec);
 
+    forwardVec = XMVector3AngleBetweenVectors(zVec, playerForwardVec);
+    XMFLOAT3 newPos;
+    XMStoreFloat3(&newPos, forwardVec);
+
+    dotVector = XMVector3Dot(tempRightVec, playerForwardVec);
+    XMFLOAT3 newPos2;
+    XMStoreFloat3(&newPos2, dotVector);
+
+    OutputDebugString(L"PLAYER DOT: ");
+    OutputDebugString(L"\n");
+    OutputDebugString(std::to_wstring(newPos2.y).c_str());
+    OutputDebugString(L"\n");
+    OutputDebugString(L"\n");
+
+    XMFLOAT3 newPos3;
+    XMStoreFloat3(&newPos3, playerForwardVec);
+
+    /*OutputDebugString(L"PLAYER FORWARD: ");
+    OutputDebugString(std::to_wstring(newPos3.x).c_str());
+    OutputDebugString(L"\n");
+    OutputDebugString(std::to_wstring(newPos3.y).c_str());
+    OutputDebugString(L"\n");
+    OutputDebugString(std::to_wstring(newPos3.z).c_str());
+    OutputDebugString(L"\n");
+    OutputDebugString(L"\n");*/
+
+    /*if (Input::KeyPress(KeyCode::W))
+    {
+        if (newPos2.x < 0.0f)
+        {
+            rotation.y -= newPos.y;
+        }
+        else
+        {
+            rotation.y += newPos.y;
+        }
+
+        zVec = playerForwardVec;
+        tempRightVec = playerRightVec;
+    }
+
+    if (Input::KeyDown(KeyCode::O))
+    {
+        position += tempRightVec;
+    }*/
+
     if (Input::KeyDown(KeyCode::W))
     {
         position += playerForwardVec;
+        /*rotation.x += newPos3.z * 0.02;
+        rotation.z -= newPos3.x * 0.02;*/
     }
 
     else if (Input::KeyDown(KeyCode::S))

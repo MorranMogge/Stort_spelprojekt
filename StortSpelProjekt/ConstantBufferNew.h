@@ -15,6 +15,7 @@ public:
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, void* data, UINT size);
 	ID3D11Buffer* const* GetAddressOf();
 	ID3D11Buffer* Get()const;
+
 	T* getData();
 	ID3D11Buffer getBuffer();
 	void applyData(UINT size);

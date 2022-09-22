@@ -6,6 +6,11 @@ struct MyStruct
 	float testf;
 };
 
+struct cameraStruct
+{
+	DirectX::XMMATRIX viewProjMX;
+};
+
 struct LightStruct
 {
 	DirectX::XMFLOAT4 pos;

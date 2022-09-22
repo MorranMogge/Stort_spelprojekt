@@ -1,80 +1,65 @@
 #include "Camera.h"
 using namespace DirectX;
+#include <string>
 
-void Camera::updateCamera(ID3D11DeviceContext* immediateContext)
+void Camera::updateCamera()
 {
 	viewMatrix = XMMatrixLookAtLH(cameraPos, lookAtPos, upVector);
-	viewProj = viewMatrix * projMatrix;
-	viewProj = XMMatrixTranspose(viewProj);
+	cameraBuffer.getData().viewProjMX = viewMatrix * projMatrix;
+	cameraBuffer.getData().viewProjMX = XMMatrixTranspose(cameraBuffer.getData().viewProjMX);
 
-	XMStoreFloat4x4(&floatMX, viewProj);
-	ZeroMemory(&subData, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	immediateContext->Map(cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &subData);
-	memcpy(subData.pData, &floatMX, sizeof(floatMX));
-	immediateContext->Unmap(cameraBuffer, 0);
-	immediateContext->VSSetConstantBuffers(1, 1, &cameraBuffer);
+	cameraBuffer.applyData();
+	GPU::immediateContext->VSSetConstantBuffers(1, 1, cameraBuffer.getReferenceOf());
 }
 
-Camera::Camera(ID3D11DeviceContext* immediateContext, ID3D11Device* device)
+Camera::Camera()
 {
+	cameraBuffer.Initialize(GPU::device, GPU::immediateContext);
+
+	rotationMX = XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f);
 	viewMatrix = XMMatrixLookAtLH(cameraPos, lookAtPos, upVector);
-	projMatrix = DirectX::XMMatrixPerspectiveFovLH(0.8f, 1080 / 720, 0.1f, 800.0f);
-	viewProj = viewMatrix * projMatrix;
-	viewProj = XMMatrixTranspose(viewProj);
+	projMatrix = DirectX::XMMatrixPerspectiveFovLH(0.8f, 1264.f / 681.f, 0.1f, 800.0f);
+	cameraBuffer.getData().viewProjMX = viewMatrix * projMatrix;
+	cameraBuffer.getData().viewProjMX = XMMatrixTranspose(cameraBuffer.getData().viewProjMX);
 
-	D3D11_BUFFER_DESC bufferDesc = {};
-	bufferDesc.ByteWidth = sizeof(viewProj);
-	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bufferDesc.MiscFlags = 0;
-	bufferDesc.StructureByteStride = 0;
-
-	HRESULT hr = device->CreateBuffer(&bufferDesc, 0, &cameraBuffer);
-	immediateContext->VSSetConstantBuffers(1, 1, &cameraBuffer);
+	cameraBuffer.applyData();
+	GPU::immediateContext->VSSetConstantBuffers(1, 1, cameraBuffer.getReferenceOf());
 }
 
 Camera::~Camera()
 {
-	cameraBuffer->Release();
 }
 
-void Camera::moveCamera(ID3D11DeviceContext* immediateContext, float dt)
+void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const float& deltaTime)
 {
-	if (GetAsyncKeyState((VK_SHIFT)))
-	{
-		dt *= 5.0f;
-	}
+	this->deltaTime = deltaTime;
 
-	if (GetAsyncKeyState('W'))
-	{
-		forwardVec = DEFAULT_FORWARD;
-		cameraPos += forwardVec * 10 * dt;
-		lookAtPos += forwardVec * 10 * dt;
-		updateCamera(immediateContext);
-	}
+	cameraPos = (playerPosition - forwardVec * 10 + upVector * 30);
+	lookAtPos = (playerPosition);
+	updateCamera();
+}
 
-	else if (GetAsyncKeyState('S'))
-	{
-		forwardVec = DEFAULT_FORWARD;
-		cameraPos -= forwardVec * 10 * dt;
-		lookAtPos -= forwardVec * 10 * dt;
-		updateCamera(immediateContext);
-	}
+void Camera::AdjustRotation(float x, float y)
+{
+	rotation.x += x;
+	rotation.y += y;
+	rotVector = XMLoadFloat3(&rotation);
 
-	if (GetAsyncKeyState('D'))
-	{
-		rightVec = DEFAULT_RIGHT;
-		cameraPos += rightVec * 10 * dt;
-		lookAtPos += rightVec * 10 * dt;
-		updateCamera(immediateContext);
-	}
+	rotationMX = XMMatrixRotationRollPitchYawFromVector(rotVector);
+	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
+	rightVec = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
+	forwardVec = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
+	lookAtPos = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX) + cameraPos;
 
-	else if (GetAsyncKeyState('A'))
-	{
-		rightVec = DEFAULT_RIGHT;
-		cameraPos -= rightVec * 10 * dt;
-		lookAtPos -= rightVec * 10 * dt;
-		updateCamera(immediateContext);
-	}
+	updateCamera();
+}
+
+const DirectX::XMVECTOR Camera::getForwardVec()
+{
+	return this->forwardVec * deltaTime * 40;
+}
+
+const DirectX::XMVECTOR Camera::getRightVec()
+{
+	return this->rightVec * deltaTime * 40;
 }

@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-bool ModelManager::makeSRV(ID3D11ShaderResourceView*& srv, std::string finalFilePath)
+bool ModelManager::makeSRV(ID3D11ShaderResourceView*& srv, const std::string& finalFilePath)
 {
 	ID3D11Texture2D* texture;
 
@@ -66,10 +66,10 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		//för testing purpose - Elliot tar bort
 		
 		
-		meshes.emplace_back(readNodes(mesh, scene));
+		//meshes.emplace_back(readNodes(mesh, scene));
 		
 		readNodes2(mesh, scene);
-
+		
 
 		//Mesh2* tmpData = readNodes(mesh, scene);
 		//bank.addMeshBuffers(filePath, tmpData->getVertexBuffer(), tmpData->getIndexBuffer());
@@ -164,13 +164,10 @@ Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 		for (UINT j = 0; j < face.mNumIndices; j++)
 		{
 			indexTriangle.emplace_back(face.mIndices[j]);
+			oldIndexTriangle.emplace_back(face.mIndices[j]);
 			//dataForMesh.indexTriangle.emplace_back(face.mIndices[j]);
 		}
 	}
-	
-	
-	std::cout << "Old way mesh vertex count: " << vertexTriangle.size() << "\n";
-	std::cout << "Old way mesh index count: " << indexTriangle.size() << "\n";
 	
 	return new Mesh2(GPU::device, vertexTriangle, indexTriangle);
 }
@@ -227,7 +224,7 @@ void ModelManager::readNodes2(aiMesh* mesh, const aiScene* scene)
 	for (UINT i = 0; i < mesh->mNumFaces; i++)
 	{
 		aiFace face = mesh->mFaces[i];
-
+		
 		for (UINT j = 0; j < face.mNumIndices; j++)
 		{
 			indexTriangle.emplace_back(face.mIndices[j]);
@@ -236,9 +233,42 @@ void ModelManager::readNodes2(aiMesh* mesh, const aiScene* scene)
 	}
 	
 
-	ID3D11Buffer* indexBuffer = {};
+	//ID3D11Buffer* indexBuffer = {};
+	//
+	//D3D11_BUFFER_DESC indexBufferDesc = {};
+	//ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
+	//indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	//indexBufferDesc.ByteWidth = sizeof(DWORD) * indexTriangle.size();
+	//indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	//indexBufferDesc.CPUAccessFlags = 0;
+	//indexBufferDesc.MiscFlags = 0;
+	//indexBufferDesc.StructureByteStride = 0;
+	//
+	//
+	//D3D11_SUBRESOURCE_DATA indexBufferData;
+	//indexBufferData.pSysMem = indexTriangle.data();
+	//device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
+	//
+	//
+	//this->vecIndexBuff.emplace_back(indexBuffer);
+	//
+	//std::cout << "StructVertexDataSize: " << dataForMesh.vertexTriangle.size() << "\n";
+	//std::cout << "StructIndexDataSize: " << dataForMesh.indexTriangle.size() << "\n";
+	//
+	//oldIndexTriangleSize.emplace_back(indexTriangle.size());
+	//submeshRanges.emplace_back(dataForMesh.indexTriangle.size());
+	//
+	//for (int i = 0; i < submeshRanges.size(); i++)
+	//{
+	//	std::cout << "submeshranges on index: " << i << " with range " << submeshRanges[i] << "\n";
+	//}
+}
 
-	D3D11_BUFFER_DESC indexBufferDesc = {};
+bool ModelManager::createIndexBuffer(ID3D11Buffer*& indexBuffer, std::vector<DWORD>& indexTriangle)
+{
+	indexBuffer = {};
+
+	D3D11_BUFFER_DESC indexBufferDesc;
 	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	indexBufferDesc.ByteWidth = sizeof(DWORD) * indexTriangle.size();
@@ -247,74 +277,22 @@ void ModelManager::readNodes2(aiMesh* mesh, const aiScene* scene)
 	indexBufferDesc.MiscFlags = 0;
 	indexBufferDesc.StructureByteStride = 0;
 
+	//subMeshCount
+	//size = indexTriangle.size();
 
 	D3D11_SUBRESOURCE_DATA indexBufferData;
 	indexBufferData.pSysMem = indexTriangle.data();
-	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
-
-
-	this->vecIndexBuff.emplace_back(indexBuffer);
-
-	std::cout << "StructVertexDataSize: " << dataForMesh.vertexTriangle.size() << "\n";
-	std::cout << "StructIndexDataSize: " << dataForMesh.indexTriangle.size() << "\n";
-
-	submeshRanges.emplace_back(dataForMesh.indexTriangle.size());
-
-	for (int i = 0; i < submeshRanges.size(); i++)
-	{
-		std::cout << "submeshranges on index: " << i << " with range " << submeshRanges[i] << "\n";
-	}
-
-}
-
-std::vector<ID3D11Buffer*> ModelManager::getBuff() const
-{
-	std::cout << this->vecIndexBuff.size() << "här\n";
-
-	return this->vecIndexBuff;
-}
-
-ModelManager::ModelManager(ID3D11Device* device)
-{
-	this->device = device;
-	ID3D11ShaderResourceView* tempSRV;
-	this->makeSRV(tempSRV, "../Textures/Missing.png");
-	this->bank.addSrv("Missing.png", tempSRV);
-}
-
-ModelManager::~ModelManager()
-{
-	/*for (int i = 0; i < meshes.size(); i++)
-	{
-		delete this->meshes[i];
-	}*/
-}
-
-bool ModelManager::loadMeshData(const std::string& filePath)
-{
-	Assimp::Importer importer;
-	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
-		aiProcess_ConvertToLeftHanded | aiProcess_PreTransformVertices);
-
-	if (pScene == nullptr)
-	{
-		ErrorLog::Log("Cant read FBX-File!");
-		return false;
-	}
-
-	if (bank.hasItem(filePath) == true)
+	HRESULT hr = device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
+	if (FAILED(hr))
 	{
 		return false;
 	}
+	return true;
+}
 
-	//processNodes(pScene->mRootNode, pScene, filePath);
-
-	processNodes(pScene->mRootNode, pScene, filePath);
-	
-
-	//skapa vertexBuffer
-
-	ID3D11Buffer* vertexBuffer = {};
+bool ModelManager::createVertexBuffer(ID3D11Buffer*& vertexBuffer)
+{
+	vertexBuffer = {};
 
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -328,15 +306,16 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	data.pSysMem = dataForMesh.vertexTriangle.data();
 	data.SysMemPitch = 0;
 	data.SysMemSlicePitch = 0;
-	device->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
+	HRESULT hr = device->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
+	if (FAILED(hr))
+		return false;
 
-	
+	return true;
+}
 
-	//std::cout << dataForMesh.vertexTriangle.size() << "\n";
-
-	//skapa indexBuffer
-
-	ID3D11Buffer* indexBuffer = {};
+bool ModelManager::createIndexBuffer(ID3D11Buffer*& indexBuffer)
+{
+	indexBuffer = {};
 
 	D3D11_BUFFER_DESC indexBufferDesc = {};
 	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
@@ -347,15 +326,113 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	indexBufferDesc.MiscFlags = 0;
 	indexBufferDesc.StructureByteStride = 0;
 
-	
+
 	D3D11_SUBRESOURCE_DATA indexBufferData;
 	indexBufferData.pSysMem = dataForMesh.indexTriangle.data();
-	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
+	HRESULT hr = device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
+	if (FAILED(hr))
+		return false;
 
+	return true;
+}
+
+bool ModelManager::createVertexBuffer(ID3D11Buffer*& vertexBuffer, std::vector<vertex>& vertexTriangle)
+{
+	vertexBuffer = {};
+
+	D3D11_BUFFER_DESC bufferDesc;
+	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	bufferDesc.ByteWidth = sizeof(vertex) * vertexTriangle.size();
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDesc.CPUAccessFlags = 0;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA data;
+	data.pSysMem = vertexTriangle.data();
+	data.SysMemPitch = 0;
+	data.SysMemSlicePitch = 0;
+	HRESULT hr = device->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+	return true;
+}
+
+std::vector<ID3D11Buffer*> ModelManager::getBuff() const
+{
+	std::cout << this->vecIndexBuff.size() << "här\n";
+
+	return this->vecIndexBuff;
+}
+
+bool ModelManager::getMeshData(const std::string& filePath, std::vector<Mesh2*>& mesh)
+{
+	return bank.getMesh(filePath, mesh);
+}
+
+std::vector<int> ModelManager::getOldIndexTriangleSize() const
+{
+	return this->oldIndexTriangleSize;
+}
+
+ModelManager::ModelManager(ID3D11Device* device)
+{
+	this->device = device;
+	ID3D11ShaderResourceView* tempSRV;
+	this->makeSRV(tempSRV, "../Textures/Missing.png");
+	this->bank.addSrv("Missing.png", tempSRV);
+}
+
+ModelManager::~ModelManager()
+{
+	
+}
+
+bool ModelManager::loadMeshData(const std::string& filePath)
+{
+	Assimp::Importer importer;
+	//const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
+	//	aiProcess_ConvertToLeftHanded | aiProcess_PreTransformVertices);
+	//
+	//if (pScene == nullptr)
+	//{
+	//	ErrorLog::Log("Cant read FBX-File!");
+	//	return false;
+	//}
+	//
+	//if (bank.hasItem(filePath) == true)
+	//{
+	//	return false;
+	//}
+
+	//processNodes(pScene->mRootNode, pScene, filePath);
+	
+	//skapa vertexBuffer
+
+	ID3D11Buffer* vertexBuffer = {};
+
+	//bool result = createVertexBuffer(vertexBuffer);
+	//if (!result)
+	//	ErrorLog::Log("failed to create vertexBuffer\n");
+
+	//checkIfSame();
+
+	
+
+	//skapa indexBuffer
+
+	ID3D11Buffer* indexBuffer = {};
+
+
+	//result = createIndexBuffer(indexBuffer);
+	//if (!result)
+	//	ErrorLog::Log("failed to create indexBuffer\n");
 
 	//ändra i banken till vertexBuffer först och indexBuffer som tredje parametern.
 	
-	bank.addMeshBuffers(filePath, vertexBuffer, indexBuffer, submeshRanges);
+	//bank.addMeshBuffers(filePath, vertexBuffer, indexBuffer, submeshRanges);
 
 	indexBuffer = {};
 	vertexBuffer = {};
@@ -364,6 +441,16 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 
 	//bank.getIndexMeshBuffers(filePath, inde)
 
+
+
+	//bank.addMesh(filePath, this->meshes);
+
+	/*for (int i = 0; i < this->meshes.size(); i++)
+	{
+		delete meshes[i];
+	}*/
+
+	//this->meshes.resize(0);
 	return true;
 }
 

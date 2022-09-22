@@ -140,17 +140,17 @@ void Menu::GeometryPass()
 #pragma region Draw
 
 	//draw Static meshes
-	//for (auto& mesh : meshes_Static)
-	//{
-	//	mesh.DrawWithMat();
-	//}
-	////draw Dynamic meshes
-	//for (auto& mesh : meshes_Dynamic)
-	//{
-	//	mesh.DrawWithMat();
-	//}
+	for (auto& mesh : meshes_Static)
+	{
+		mesh.DrawWithMat();
+	}
+	//draw Dynamic meshes
+	for (auto& mesh : meshes_Dynamic)
+	{
+		mesh.DrawWithMat();
+	}
 
-	GPU::immediateContext->PSSetShaderResources(0, 1, &this->m_textureSRV);
+	//GPU::immediateContext->PSSetShaderResources(0, 1, &this->m_textureSRV);
 	
 	
 
@@ -160,35 +160,50 @@ void Menu::GeometryPass()
 	UINT stride = sizeof(vertex);
 	UINT offset = 0;
 	
-	GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	//GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	
+	
 	//GPU::immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
 	
 	
 	// Detta funkar men är gamla sättet
+
+	
+
+	int startIndex = 0;
+	
+	/*for (int i = 0; i < indexesSize.size(); i++)
+	{
+
+		GPU::immediateContext->IASetIndexBuffer(testIndexBuff[i], DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+		GPU::immediateContext->DrawIndexed(indexesSize[i], 0, 0);	
+	}*/
+
 	/*for (int i = 0; i < testMeshes.size(); i++)
 	{
 		testMeshes[i]->Draw(GPU::immediateContext);
 	}*/
-
-	int startIndex = 0;
 	
-	for (int i = 0; i < subMeshRanges.size(); i++)
+	/*for (int i = 0; i < vecMesh.size(); i++)
 	{
-		GPU::immediateContext->IASetIndexBuffer(this->testIndexBuff[i], DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
-		//std::cout << "start index when drawing submesh " << i <<": " << startIndex << "\n";
-		GPU::immediateContext->DrawIndexed(subMeshRanges[i], 0, 0);
-		startIndex += subMeshRanges[i];
-	
-	}
+		vecMesh[i]->Draw(GPU::immediateContext);
+	}*/
 		
-
+	//GPU::immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+	//for (int i = 0; i < subMeshRanges.size(); i++)
+	//{
+	//	//GPU::immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+	//	//std::cout << "start index when drawing submesh " << i <<": " << startIndex << "\n";
+	//	GPU::immediateContext->DrawIndexed(subMeshRanges[i], startIndex, 0);
+	//	startIndex += subMeshRanges[i];
+	//} 
 	
 	
 
 #pragma endregion
 
 #pragma region UnBind
-
+	
 	// unbinds
 	Shader::UnBindVS();
 	Shader::UnBindPS();
@@ -215,17 +230,21 @@ Menu::Menu()
 	
 	manager->loadMeshData("../Meshes/gob.obj");
 	
-	this->testMeshes = manager->getMeshes();
+	//
+	//this->testMeshes = manager->getMeshes();
+	//
+	////std::cout << testMeshes.size() << "\n";
+	// 
+	//vertexBuffer = {};
+	//indexBuffer = {};
+	//
+	//auto t2 = manager->getMeshes();
+
+	//bool test = manager->getMeshData("../Meshes/gob.obj", vertexBuffer, indexBuffer, subMeshRanges);
 	
-	//std::cout << testMeshes.size() << "\n";
-	 
-	vertexBuffer = {};
-	indexBuffer = {};
-
-	auto t2 = manager->getMeshes();
-
-	bool test = manager->getMeshData("../Meshes/gob.obj", vertexBuffer, indexBuffer, subMeshRanges);
 	//std::cout << test << "\n" << subMeshRanges.size() << "\n";
+
+	//manager->getMeshData("../Meshes/gob.obj", vecMesh);
 
 	int textureWidth;
 	int textureHeight;
@@ -260,40 +279,40 @@ Menu::Menu()
 		
 	}
 
-	HRESULT hr = GPU::device->CreateShaderResourceView(texture2D, nullptr, &m_textureSRV);
-	texture2D->Release();
-	stbi_image_free(imageData);
-
-
-	this->testIndexBuff = manager->getBuff();
+	//HRESULT hr = GPU::device->CreateShaderResourceView(texture2D, nullptr, &m_textureSRV);
+	//texture2D->Release();
+	//stbi_image_free(imageData);
+	//
+	//this->indexesSize = manager->getOldIndexTriangleSize();
+	//this->testIndexBuff = manager->getBuff();
 
 	// load obj file
-	/*std::vector<OBJ>objs_Static{
+	std::vector<OBJ>objs_Static{
 		OBJ("../Meshes/gob"),
 		OBJ("../Meshes/pinto"),
-	};*/
+	};
 
-	// foreach obj in objs_static variable
-	//for (auto& obj : objs_Static) 
-	//{
-	//	meshes_Static.emplace_back(obj); // create mesh from obj
+	 //foreach obj in objs_static variable
+	for (auto& obj : objs_Static) 
+	{
+		meshes_Static.emplace_back(obj); // create mesh from obj
 
-	//	// load obj material
-	//	for (auto& mat : obj.mtl.materials)
-	//	{
-	//		MaterialLibrary::LoadMaterial(mat);
-	//	}
+		// load obj material
+		for (auto& mat : obj.mtl.materials)
+		{
+			MaterialLibrary::LoadMaterial(mat);
+		}
 
-	//}
+	}
 	//
 	//// set position
-	//meshes_Static[1].position = { -20, 0, 0 };
+	meshes_Static[1].position = { -20, 0, 0 };
 
-	//// re-calculate bounding box
-	//for (auto& mesh : meshes_Static)
-	//{
-	//	mesh.CalcBound();
-	//}
+	// re-calculate bounding box
+	for (auto& mesh : meshes_Static)
+	{
+		mesh.CalcBound();
+	}
 
 #pragma endregion
 
@@ -301,14 +320,14 @@ Menu::Menu()
 
 	// load obj file
 	std::vector<OBJ>objs_Dynamic{
-		OBJ("../Meshes/pinto"),
+		OBJ("../Meshes/gob.obj"),
 	};
 
 	 //foreach obj in objs_Dynamic variable
 	for (auto& obj : objs_Dynamic)
 	{
 		auto& mesh = meshes_Dynamic.emplace_back(obj); // create mesh from obj
-
+		
 		// load material
 		for (auto& mat : obj.mtl.materials)
 		{
@@ -492,6 +511,15 @@ Menu::Menu()
 Menu::~Menu()
 {
 	delete this->manager;
+	//for (int i = 0; i < vecMesh.size(); i++)
+	//{
+	//	delete vecMesh[i];
+	//}
+	//for (int i = 0; i < testMeshes.size(); i++)
+	//{
+	//	delete testMeshes[i];
+	//}
+
 }
 
 GAMESTATE Menu::Update()

@@ -23,8 +23,8 @@ struct vertex
 class Mesh2
 {
 private:
-    ID3D11Buffer* vertexBuffer;
-    ID3D11Buffer* indexBuffer;
+    Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
+    Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
     ID3D11Device* device;
     //Microsoft::WRL::ComPtr<ID3D11DeviceContext> immediateContext;
     DWORD size = 0;
@@ -36,7 +36,7 @@ public:
     Mesh2(ID3D11Device* device, std::vector<vertex>& vertexTriangle, std::vector<DWORD>& indexTriangle);
     void Draw(ID3D11DeviceContext* immediateContext);
     Mesh2(const Mesh2& mesh);
-    ID3D11Buffer* getIndexBuffer() const;
-    ID3D11Buffer* getVertexBuffer() const;
+    //ID3D11Buffer* getIndexBuffer() const;
+    //ID3D11Buffer* getVertexBuffer() const;
     ~Mesh2();
 };

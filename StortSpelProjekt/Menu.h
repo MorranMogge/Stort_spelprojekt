@@ -30,15 +30,18 @@ private:
 
 	ModelManager* manager;
 	std::vector<Mesh2*> testMeshes;
-	ID3D11ShaderResourceView* m_textureSRV;
-
-	ID3D11Buffer* vertexBuffer;
-	ID3D11Buffer* indexBuffer;
-	std::vector<int> subMeshRanges;
-	std::vector<ID3D11Buffer*> testIndexBuff;
+	//ID3D11ShaderResourceView* m_textureSRV;
+	//std::vector<Mesh2*> vecMesh;
+	//
+	//ID3D11Buffer* vertexBuffer;
+	//ID3D11Buffer* indexBuffer;
+	//std::vector<int> subMeshRanges;
+	//std::vector<ID3D11Buffer*> testIndexBuff;
+	//std::vector<int> indexesSize;
 
 	std::vector<Mesh> meshes_Static;
 	std::vector<Mesh> meshes_Dynamic;
+
 
 #pragma endregion
 

@@ -1,4 +1,6 @@
 #include "mesh2.h"
+#include <iostream>
+
 
 HRESULT Mesh2::CreateIndexBuffer(std::vector<DWORD>& indexTriangle)
 {
@@ -16,7 +18,7 @@ HRESULT Mesh2::CreateIndexBuffer(std::vector<DWORD>& indexTriangle)
 
 	D3D11_SUBRESOURCE_DATA indexBufferData;
 	indexBufferData.pSysMem = indexTriangle.data();
-	HRESULT hr = device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
+	HRESULT hr = device->CreateBuffer(&indexBufferDesc, &indexBufferData, indexBuffer.GetAddressOf());
 	return hr;
 }
 
@@ -34,7 +36,7 @@ HRESULT Mesh2::CreateVertexBuffer(std::vector<vertex>& vertexTriangle)
 	data.pSysMem = vertexTriangle.data();
 	data.SysMemPitch = 0;
 	data.SysMemSlicePitch = 0;
-	HRESULT hr = device->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
+	HRESULT hr = device->CreateBuffer(&bufferDesc, &data, vertexBuffer.GetAddressOf());
 	return hr;
 }
 
@@ -56,9 +58,10 @@ void Mesh2::Draw(ID3D11DeviceContext* immediateContext)
 	UINT stride = sizeof(vertex);
 	UINT offset = 0;
 
-	immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-	immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+	immediateContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+	immediateContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
 	immediateContext->DrawIndexed(size, 0, 0);
+
 }
 
 Mesh2::Mesh2(const Mesh2& mesh)
@@ -69,18 +72,18 @@ Mesh2::Mesh2(const Mesh2& mesh)
 	this->size = mesh.size;
 }
 
-ID3D11Buffer* Mesh2::getIndexBuffer() const
-{
-	return this->indexBuffer;
-}
-
-ID3D11Buffer* Mesh2::getVertexBuffer() const
-{
-	return this->vertexBuffer;
-}
+//ID3D11Buffer* Mesh2::getIndexBuffer() const
+//{
+//	return this->indexBuffer;
+//}
+//
+//ID3D11Buffer* Mesh2::getVertexBuffer() const
+//{
+//	return this->vertexBuffer;
+//}
 
 Mesh2::~Mesh2()
 {
-	vertexBuffer->Release();
-	indexBuffer->Release();
+	//vertexBuffer->Release();
+	//indexBuffer->Release();
 }

@@ -32,16 +32,12 @@ struct userData
 	sf::TcpSocket tcpSocket;
 
 	player playa;
-	//userData()
-	//{
+};
 
-	//}
-	//userData(const userData& obj)
-	//{
-	//	this->ipAdress == obj.ipAdress;
-	//	this->userName = obj.userName;
-	//	this->tcpSocket = tcpSocket;
-	//}
+struct threadInfo
+{
+	userData* user;
+	bool ifUserRecv;
 };
 
 struct serverData
@@ -193,7 +189,7 @@ void sendDataAllPlayers(sf::Packet& packet, serverData& data)
 	}
 };
 
-void packetId(sf::Packet& packet, serverData& data)
+void packetId(sf::Packet& packet)
 {
 	//sendPacket >> id >> n >> s;
 	unsigned short packetIdentifier;
@@ -217,6 +213,27 @@ void packetId(sf::Packet& packet, serverData& data)
 	}
 };
 
+void recvData(void* param)
+{
+	threadInfo* data = (threadInfo*)param;
+	sf::Packet packet;
+	while (1)
+	{
+		if (data->user->tcpSocket.receive(packet) != sf::Socket::Done)
+		{
+			//error
+		}
+		else
+		{
+			std::cout << "thread from recvData got a packet from: " << data->user->tcpSocket.getRemoteAddress().toString() << std::endl;
+			packetId(packet);
+
+		}
+		
+		std::cout << "userName: " << data->user->userName << std::endl;
+	}
+};
+
 int main()
 {
 	std::string identifier;
@@ -224,10 +241,9 @@ int main()
 	// Group the variables to send into a packet
 	sf::Packet packet;
 	sf::Packet receivedPacket;
+
 	float frequency = 30.f;
 
-
-	sf::SocketSelector selector;
 
 	std::vector<player> players;
 
@@ -266,13 +282,16 @@ int main()
 	
 	acceptPlayers(data);
 
-	//data.users->tcpSocket.send(&data, sizeof(data));
-
+	std::thread* recvThread;
+	threadInfo threadData;
+	threadData.user = &data.users[0];
+	threadData.ifUserRecv = false;
+	
 		
-	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-	{
-		selector.add(data.users[i].tcpSocket);
-	}
+	recvThread = new std::thread(recvData, &threadData);
+	
+
+
 	std::cout << "Starting while loop! \n";
 	while (true)
 	{
@@ -299,7 +318,6 @@ int main()
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
 		{
 			//för varje spelare så skicka deras position till alla klienter
-			std::cout << "all that\n";
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{
 
@@ -308,29 +326,12 @@ int main()
 				float ywow = data.users[i].playa.getposition('y');
 				std::string playerName = "player " + std::to_string(i);
 				tempPack << playerName << xwow << ywow;
-				std::cout << "Sent to all players\n";
 				sendDataAllPlayers(tempPack, data);
 			}
 			start = std::chrono::system_clock::now();
 		}
 
-	/*	if (selector.wait())
-		{
-			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-			{
-				if (selector.isReady(data.users[i].tcpSocket))
-				{
-					std::cout << "user ip: " << data.users[i].ipAdress.toString() << std::endl;
-					sf::Packet receivedPacket;
-					unsigned short packetIdentifier;
-
-					if (receiveDataTcp(receivedPacket, data, i))
-					{
-						packetId(receivedPacket, data);
-					}
-				}
-			}
-		}*/
+		
 		
 		
 	}

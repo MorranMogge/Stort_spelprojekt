@@ -7,15 +7,13 @@ void clientFunction(void* param)
 	sf::Packet receivedPacket;
 	while (!data->endThread)
 	{
-		std::cout << "thread is running BEFORE recv\n";
 		data->socket.receive(receivedPacket); //Receives the packet
-		std::cout << "thread is running after recv\n";
 			std::string receivedString;
 			float x = 0.0f;
 			float y = 0.0f;
 			std::cout << "TCP received data from address: " << data->socket.getRemoteAddress().toString() << std::endl;
 			receivedPacket >> receivedString >> x >> y;
-			std::cout << "data received from server: " << receivedString << "x : " << x << "y: " << y << std::endl;
+			std::cout << "data received from server: " << receivedString << ", x : " << x << ", y: " << y << std::endl;
 		
 		receivedPacket.clear();
 	}
@@ -25,6 +23,7 @@ Client::Client()
 {
 	this->ip = sf::IpAddress::getLocalAddress().toString();
 	this->port = 2001;
+	this->tmp = "empty String UwU";
 }
 
 Client::Client(std::string ipAddress, int port)
@@ -186,13 +185,16 @@ void Client::sendToServerTEMPTCP()
 		//error
 		std::cout << "TCP Couldnt send packet\n";
 	}
-
-	std::string s;
-	unsigned short id;
-	int n;
-	sendPacket >> id >> n >> s;
-	std::cout << "TCP sent packet: " << id << ", " << n << ", " << s << std::endl;
-	sendPacket.clear();
+	else
+	{
+		std::string s;
+		unsigned short id;
+		int n;
+		sendPacket >> id >> n >> s;
+		std::cout << "TCP sent packet: " << id << ", " << n << ", " << s << std::endl;
+		sendPacket.clear();
+	}
+	
 }
 
 void Client::receiveFromServerTcp()

@@ -47,9 +47,7 @@ void Player::handleInputs()
 
 void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::Vector3& rotation, const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, float deltaTime)
 {
-    //Variables
-    float rotationConstant = 0;
-    
+    //Variables    
     playerUpVec = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);
     playerForwardVec = DirectX::XMVector3Cross(cameraRight, playerUpVec);
     playerRightVec = DirectX::XMVector3Cross(playerUpVec, playerForwardVec);
@@ -70,6 +68,12 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 
     XMFLOAT3 newPos3;
     XMStoreFloat3(&newPos3, playerForwardVec);
+
+    OutputDebugString(L"PLAYER ANGLE: ");
+    OutputDebugString(L"\n");
+    OutputDebugString(std::to_wstring(newPos.y).c_str());
+    OutputDebugString(L"\n");
+    OutputDebugString(L"\n");
 
     /*OutputDebugString(L"PLAYER DOT: ");
     OutputDebugString(L"\n");
@@ -96,15 +100,18 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
         {
             rotation.y += newPos.y;
         }
-
-        zVec = playerForwardVec;
-        tempRightVec = playerRightVec;
     }
 
     if (Input::KeyDown(KeyCode::W))
     {
         position += playerForwardVec * deltaTime * 40;
         rotation.x += deltaTime * 1.8f;
+    }
+
+    if (Input::KeyUp(KeyCode::W))
+    {
+        zVec = playerForwardVec;
+        tempRightVec = playerRightVec;
     }
 
     else if (Input::KeyDown(KeyCode::S))
@@ -125,6 +132,7 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
         rotation.z += deltaTime * 1.8f;
     }
 
+    //Help keys
     if (Input::KeyDown(KeyCode::E))
     {
         position.y += 0.1;

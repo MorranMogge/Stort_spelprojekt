@@ -3,7 +3,7 @@
 
 //------------------------------------------------------------------------------- SETUP FUNCTIONS -------------------------------------------------------------------------------
 
-bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>lightBuffer, std::vector<Light>& lights, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& lightBuffView)
+bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBuffer, std::vector<Light>& lights)
 {
 	std::vector<LightStruct> structVector;
 	for (int i = 0; i < lights.size(); i++)
@@ -28,20 +28,10 @@ bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>lightBuff
 		structVector.push_back(lightArray);
 	}
 
-
 	lightBuffer.Initialize(GPU::device, GPU::immediateContext, structVector);
 	lightBuffer.applyData();
 
-	//ShaderResource view 
-	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
-	shaderResourceViewDesc.Format = DXGI_FORMAT_UNKNOWN;
-	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-	shaderResourceViewDesc.Buffer.FirstElement = 0;
-	shaderResourceViewDesc.Buffer.NumElements = (UINT)structVector.size();
-
-	//create shader resource view 
-	HRESULT hr = device->CreateShaderResourceView(lightBuffer.Get(), &shaderResourceViewDesc, lightBuffView.GetAddressOf());
-	return !FAILED(hr);
+	return true; //!FAILED(hr);
 }
 
 
@@ -146,6 +136,7 @@ bool CreateViewBuffer(ID3D11Device* device, Microsoft::WRL::ComPtr<ID3D11Buffer>
 	HRESULT hr = device->CreateBuffer(&cBuffDesc, &cBufData, viewBuffer.GetAddressOf());
 	return !FAILED(hr);
 }
+
 //------------------------------------------------------------------------------- CONSTRUCTOR -------------------------------------------------------------------------------
 
 
@@ -173,13 +164,13 @@ void LightHandler::addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color,
 
 		//current light id
 		int lightID = (int)this->lights.size();
-
+		
 
 		//For first light create buffer, else unmap/remap buffer with new info
 		if (lightID == 1)
 		{
 			//Create structured buffer containing all light data
-			if (!CreateLtBuffer(GPU::device, this->lightBuffer, this->lights, this->structuredBufferSrv))
+			if (!CreateLtBuffer(GPU::device, this->lightBuffer, this->lights))
 			{
 				std::cout << "error creating lightBuffer!" << std::endl;
 			}
@@ -367,6 +358,6 @@ void LightHandler::drawShadows(int lightIndex, std::vector<GameObject> gameObjec
 void LightHandler::bindLightBuffers()
 {
 	GPU::immediateContext->PSSetShaderResources(3, 1, this->shadowSrv.GetAddressOf());				//Bind Srv's //ShadowMap(s)
-	GPU::immediateContext->PSSetShaderResources(4, 1, this->structuredBufferSrv.GetAddressOf());	//Srv for light structuredBuffer content (pos, color, lightViewMatrix)
+	this->lightBuffer.BindToPS(4);																	//Srv for light structuredBuffer content (pos, color, lightViewMatrix)
 	GPU::immediateContext->PSSetConstantBuffers(0, 1, this->numLightBuffer.GetAddressOf());			//Bind CBuffers's //Buffer for nr Lights
 }

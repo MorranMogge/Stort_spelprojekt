@@ -19,7 +19,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> timeBuffer;					//Time buffer, contains delta time
 	
 	TimeStruct tStruct;
-	std::vector<particleStruct> PT_Data;								//Particle Data (pos, delta time, lifetime)
+	std::vector<particleStruct> PT_Data;								//Particle Data (pos, delta time, lifetime)//Add speed?
 	DirectX::XMFLOAT2 minMaxLifetime;									//Min and max lifetime of particles
 	DirectX::XMFLOAT3 Position;											//Emitter Position
 	DirectX::XMFLOAT3 Rotation;											//Emitter Rotation

@@ -26,7 +26,7 @@ private:
 	//Light
 
 	std::vector<Light> lights;													//Vector of light objects
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> structuredBufferSrv;		//View for structured buffer
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> structuredBufferSrv;		//View for structured buffer
 	std::vector<Microsoft::WRL::ComPtr<ID3D11Buffer>> viewBuffers;				//View/proj matrix for each light
 	StructuredBuffer<LightStruct>lightBuffer;									//Holds Light data 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> numLightBuffer;						//Holds nr of lights

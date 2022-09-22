@@ -86,7 +86,7 @@ bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 	}
 
 	D3D11_BUFFER_DESC cBuffDesc = { 0 };
-	cBuffDesc.ByteWidth = sizeof(T) * (UINT)bufferData.size();						//size of buffer //*nr of elements
+	cBuffDesc.ByteWidth = sizeof(T) * (UINT)bufferData.size();					//size of buffer //*nr of elements
 	cBuffDesc.Usage = D3D11_USAGE_DYNAMIC;										//sets interaction with gpu and cpu
 	cBuffDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;							//Specifies the type of buffer
 	cBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;							//Specifies cpu acess
@@ -148,6 +148,7 @@ template<class T>
 inline void StructuredBuffer<T>::remapBuffer(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T>& buffData)
 {
 	buffer.~ComPtr();
+	srv.~ComPtr();
 	bufferData.clear();
 	for (int i = 0; i < buffData.size(); i++)
 	{

@@ -5,7 +5,7 @@ using namespace std;
 using namespace Microsoft;
 using namespace WRL;
 
-bool CreateBuffer(ComPtr<ID3D11Buffer>  PT_vertexBuffer, ComPtr <ID3D11UnorderedAccessView>& particleUav, vector<particleStruct> structVector)
+bool CreateBuffer(ComPtr<ID3D11Buffer>&  PT_vertexBuffer, ComPtr <ID3D11UnorderedAccessView>& particleUav, vector<particleStruct>& structVector)
 {
 	D3D11_BUFFER_DESC bufferDesc;													//create Vertex buffer
 	bufferDesc.ByteWidth = structVector.size() * sizeof(particleStruct);									//size of buffer

@@ -45,6 +45,11 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightHandler.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
+    <ClCompile Include="MouseClass.cpp" />
+    <ClCompile Include="GravityField.cpp" />
+    <ClCompile Include="MouseEvent.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="DirectXMathHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bound.h" />
@@ -135,6 +140,11 @@
     <ClInclude Include="ConstantBufferNew.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="TimeStruct.h" />
+    <ClInclude Include="MouseClass.h" />
+    <ClInclude Include="GravityField.h" />
+    <ClInclude Include="MouseEvent.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="DirectXMathHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -156,5 +166,6 @@
     <FxCompile Include="PT_VertexShader.hlsl" />
     <FxCompile Include="PT_GeometryShader.hlsl" />
     <FxCompile Include="PT_PixelShader.hlsl" />
+    <FxCompile Include="PT_UpdateShader.hlsl" />
   </ItemGroup>
 </Project>

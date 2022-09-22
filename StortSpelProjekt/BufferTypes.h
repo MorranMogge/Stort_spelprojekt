@@ -1,9 +1,10 @@
 #pragma once
 #include <d3d11.h>
 
-struct MyStruct
+struct posStruct
 {
-	float testf;
+	DirectX::XMFLOAT3 pos;
+	float padding;
 };
 
 struct cameraStruct

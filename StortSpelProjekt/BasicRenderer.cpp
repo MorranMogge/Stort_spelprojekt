@@ -64,7 +64,7 @@ BasicRenderer::~BasicRenderer()
 	pt_inputLayout->Release();
 	pt_vShader->Release();
 	pt_pShader->Release();
-	//pt_UpdateShader->Release();
+	pt_UpdateShader->Release();
 	pt_gShader->Release();
 }
 
@@ -89,7 +89,7 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!setUp_PT_InputLayout(device, vShaderByteCode))								return false;
 	if (!LoadPixelShader(device, pt_pShader, "PT_PixelShader"))						return false;
 	if (!LoadGeometryShader(device, pt_gShader, "PT_GeometryShader"))				return false;
-	//if (!LoadComputeShader(device, pt_UpdateShader, "PT_UpdateShader"))				return false;
+	if (!LoadComputeShader(device, pt_UpdateShader, "PT_UpdateShader"))				return false;
 	if (!setUpSampler(device))														return false;
 	SetViewport(viewport, WIDTH, HEIGHT);
 	return true;
@@ -118,8 +118,8 @@ void BasicRenderer::geometryPass(Camera& stageCamera)
 {
 	//Variables
 	std::vector<ID3D11Buffer*> tempBuff;
-	//tempBuff.push_back(stageCamera.getMatrixBuffer());
-	//tempBuff.push_back(stageCamera.getPosBuffer());
+	tempBuff.push_back(stageCamera.getViewBuffer());
+	tempBuff.push_back(stageCamera.getPositionBuffer());
 
 	//re-use same depth buffer as geometry pass.
 	immediateContext->CSSetShader(pt_UpdateShader, nullptr, 0);							//Set ComputeShader
@@ -127,7 +127,7 @@ void BasicRenderer::geometryPass(Camera& stageCamera)
 	immediateContext->PSSetShader(pt_pShader, nullptr, 0);								//Set PSShader
 	immediateContext->GSSetShader(pt_gShader, nullptr, 0);								//SetGeoShader
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);		//Set how topology
-	immediateContext->IASetInputLayout(inputLayout);									//Input layout = float3 position for each vertex
+	immediateContext->IASetInputLayout(pt_inputLayout);									//Input layout = float3 position for each vertex
 	immediateContext->GSSetConstantBuffers(0, 2, tempBuff.data());						//Set camera pos for ,Set matrix [world],[view]
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
 

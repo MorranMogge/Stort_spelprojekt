@@ -103,7 +103,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
 	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
-	ParticleEmitter ptEmitter(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 30, DirectX::XMFLOAT2(3,4));
+	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 30, DirectX::XMFLOAT2(3,4)));
 
 
 	//this->setUpReact3D();
@@ -157,6 +157,11 @@ GAMESTATE Game::Update()
 	}
 
 	mouse->clearEvents();
+	if (Input::KeyPress(KeyCode::ESC))
+	{
+		return EXIT;
+	}
+
 	return NOCHANGE;
 }
 
@@ -176,7 +181,10 @@ void Game::Render()
 	drawObjects();
 
 	//Particle stuff
-	//basicRenderer.geometryPass(camera);
-	//ptEmitter.BindAndDraw(timeBuffer);
+	basicRenderer.geometryPass(camera);
+	for (int i = 0; i < this->ptEmitters.size(); i++)
+	{
+		this->ptEmitters.at(i).BindAndDraw();
+	}
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 }

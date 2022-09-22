@@ -1,19 +1,70 @@
 
 #include "particle_Include.hlsli"
 
+
+RWBuffer<float> rawBuffer : register(u0);
+
+
+cbuffer timeValue : register(b0)
+{
+    float deltaTime;
+};
+cbuffer posValue : register(b1)
+{
+    float3 offsetFromOrigin;
+    bool enable;
+    
+    float4 orientation;
+};
+
+
 [numthreads(32, 1, 1)]
 void main( uint3 DTid : SV_DispatchThreadID )
 {
-    particlePositions[DTid.x * 3] = cos(deltaTime * 0.1f * DTid.x);
+    #define offset 5
     
-    if (particlePositions[DTid.x * 3 + 1] > 15.0f) // if y position is greater than 15
+    #define PositionX rawBuffer[DTid.x * offset]
+    #define PositionY rawBuffer[DTid.x * offset + 1]
+    #define PositionZ rawBuffer[DTid.x * offset + 2]
+    
+    #define SimulateTime rawBuffer[DTid.x * offset + 3]
+    
+    #define LifeTime rawBuffer[DTid.x * offset + 4]
+    
+    
+    SimulateTime += deltaTime;
+    
+    const float speed = 1.0f;
+    
+    // remap time value, in range of 0 to 1
+    //const float normalizedLifeTime = SimulateTime / LifeTime;
+    
+    float4 position;
+    if (SimulateTime > LifeTime)
     {
-        particlePositions[DTid.x * 3 + 1] = particlePositions[DTid.x * 3 + 1] - 25; //reset position
+        SimulateTime -= LifeTime;
+
+        // reset position
+        position = float4(offsetFromOrigin, 1.0f);
     }
     else
     {
-        particlePositions[DTid.x * 3 + 1] += (1 - (sin(deltaTime * 3.1415926 * DTid.x) * 0.5f + 0.5f)) * 0.003f;
+        //store xyz in a variable for math
+        position = float4(PositionX, PositionY, PositionZ, 0.0f);
+        
+        //convert world pos to local pos
+        position -= offsetFromOrigin;
+        
+        //convert orientation to local orientation
+        position *= -orientation;
+        
+        position += speed;
+        
+        position += float4(offsetFromOrigin, 0.0f);
+        position *= orientation;
+
+        
     }
     
-    particlePositions[DTid.x * 3 + 2] = sin(deltaTime * 0.1f * DTid.x);
+    
 }

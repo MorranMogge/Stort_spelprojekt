@@ -466,5 +466,8 @@
     <None Include="Vertex.hlsli">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="particle_Include.hlsli">
+      <Filter>Shaders\CS</Filter>
+    </None>
   </ItemGroup>
 </Project>

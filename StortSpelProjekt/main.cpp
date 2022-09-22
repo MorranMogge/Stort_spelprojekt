@@ -3,7 +3,7 @@
 
 #include <string>
 #include <iostream>
-
+#include <time.h>
 //#include <reactphysics3d\reactphysics3d.h>
 
 #include "Console.h"
@@ -22,6 +22,7 @@
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace, _In_ LPWSTR lpCmdLine, _In_ int nCmdShhow)
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	srand((unsigned)time(0));
 
 	SoundCollection::Load();
 

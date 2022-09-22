@@ -175,6 +175,7 @@
     <ClInclude Include="MTL.h" />
     <ClInclude Include="OBJ.h" />
     <ClInclude Include="PerspectiveCamera.h" />
+    <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderTargetView.h" />
@@ -239,6 +240,7 @@
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="State.cpp" />

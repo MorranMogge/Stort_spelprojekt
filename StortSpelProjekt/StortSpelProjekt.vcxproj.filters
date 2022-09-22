@@ -43,6 +43,7 @@
     <ClCompile Include="GravityField.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
+    <ClCompile Include="PhysicsComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bound.h" />
@@ -128,6 +129,7 @@
     <ClInclude Include="DirectXMathHelper.h" />
     <ClInclude Include="TimeStruct.h" />
     <ClInclude Include="PhysicsWorld.h" />
+    <ClInclude Include="PhysicsComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

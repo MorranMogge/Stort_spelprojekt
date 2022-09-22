@@ -217,10 +217,6 @@ void PhysicsWorld::renderReact3D()
 
 PhysicsWorld::~PhysicsWorld()
 {
-	if (playerRigidBody != nullptr) world->destroyRigidBody(playerRigidBody);
-	if (planetRigidBody != nullptr) world->destroyRigidBody(planetRigidBody);
-	if (playerShape != nullptr) com.destroyBoxShape(playerShape);
-	if (planetShape != nullptr) com.destroySphereShape(planetShape);
 	if (world != nullptr) com.destroyPhysicsWorld(world);
 	debuggerBuffer->Release();
 	dpShader->Release();
@@ -259,7 +255,13 @@ DirectX::SimpleMath::Vector3 PhysicsWorld::getRot()
 
 void PhysicsWorld::addBoxToWorld(DirectX::XMFLOAT3 dimensions, float mass, DirectX::XMFLOAT3 position)
 {
-	//if (position.x == 0 && position.y == 0 && position.z == 0) position = DirectX::XMFLOAT3(10 - rand() % 11,  10 - rand() % 11, 10 - rand() % 11);
+	if (position.x == 0 && position.y == 10 && position.z == 0)
+	{
+		float x = 10.f - 2.f * (float)(rand() % 11);
+		float y = 10.f - 2.f * (float)(rand() % 11);
+		float z = 10.f - 2.f * (float)(rand() % 11);
+		position = DirectX::XMFLOAT3(x, y, z);
+	}
 	int vectorSize = this->bodies.size();
 	this->shapes.push_back(com.createBoxShape(reactphysics3d::Vector3(dimensions.x, dimensions.y, dimensions.z)));
 	reactphysics3d::Transform transform = reactphysics3d::Transform(reactphysics3d::Vector3(position.x, position.y, position.z), reactphysics3d::Quaternion::identity());
@@ -277,6 +279,3 @@ void PhysicsWorld::addSphereToWorld(float radius, DirectX::XMFLOAT3 position)
 {
 }
 
-//void PhysicsWorld::addSphereToWorld(reactphysics3d::decimal radius, DirectX::XMFLOAT3 position)
-//{
-//}

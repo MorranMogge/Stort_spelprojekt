@@ -34,8 +34,8 @@ void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const float& de
 {
 	this->deltaTime = deltaTime;
 
-	cameraPos = (playerPosition - forwardVec * 10 + upVector * 30);
-	lookAtPos = (playerPosition);
+	cameraPos = playerPosition - forwardVec * 10 + upVector * 30;
+	lookAtPos = playerPosition;
 	updateCamera();
 }
 

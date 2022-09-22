@@ -10,7 +10,7 @@ private:
 
 	GameObject* pickup;
 
-	//Camera
+	//Movement
 	DirectX::XMVECTOR playerUpVec;
 	DirectX::XMVECTOR playerForwardVec;
 	DirectX::XMVECTOR playerRightVec;

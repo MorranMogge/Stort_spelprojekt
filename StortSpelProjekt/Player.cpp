@@ -69,11 +69,11 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
     XMFLOAT3 newPos3;
     XMStoreFloat3(&newPos3, playerForwardVec);
 
-    OutputDebugString(L"PLAYER ANGLE: ");
+    /*OutputDebugString(L"PLAYER ANGLE: ");
     OutputDebugString(L"\n");
     OutputDebugString(std::to_wstring(newPos.y).c_str());
     OutputDebugString(L"\n");
-    OutputDebugString(L"\n");
+    OutputDebugString(L"\n");*/
 
     /*OutputDebugString(L"PLAYER DOT: ");
     OutputDebugString(L"\n");

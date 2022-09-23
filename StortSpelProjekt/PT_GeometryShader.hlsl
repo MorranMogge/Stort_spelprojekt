@@ -19,6 +19,7 @@ cbuffer CamPosCB : register(b1)
 struct Particle
 {
     float3 pos : POSITION;
+    float3 stpos : START_POSITION;
     float delta : DELTA;
     float lifeTime : LIFETIME;
 };

@@ -2,7 +2,7 @@
 //#include "particle_Include.hlsli"
 
 
-RWBuffer<float> particlePositions : register(u0);
+RWBuffer<float> rawBuffer : register(u0);
 
 
 cbuffer timeValue : register(b0)

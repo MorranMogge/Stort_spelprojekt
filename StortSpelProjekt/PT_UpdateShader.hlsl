@@ -21,15 +21,19 @@ cbuffer posValue : register(b1)
 [numthreads(1, 1, 1)]
 void main(uint3 DTid : SV_DispatchThreadID)
 {
-#define offset 5
+#define offset 8
  
 #define PositionX rawBuffer[DTid.x * offset]
 #define PositionY rawBuffer[DTid.x * offset + 1]
 #define PositionZ rawBuffer[DTid.x * offset + 2]
 
-#define SimulateTime rawBuffer[DTid.x * offset + 3]
+#define StartPositionX rawBuffer[DTid.x * offset + 3]
+#define StartPositionY rawBuffer[DTid.x * offset + 4]
+#define StartPositionZ rawBuffer[DTid.x * offset + 5]
+    
+#define SimulateTime rawBuffer[DTid.x * offset + 6]
 
-#define LifeTime rawBuffer[DTid.x * offset + 4]
+#define LifeTime rawBuffer[DTid.x * offset + 7]
 
     
     SimulateTime += deltaTime;
@@ -40,9 +44,9 @@ void main(uint3 DTid : SV_DispatchThreadID)
     {
         SimulateTime -= LifeTime;
         
-        PositionX = 0.0f;
-        PositionY = 0.0f;
-        PositionZ = 0.0f;
+        PositionX = StartPositionX;
+        PositionY = StartPositionY;
+        PositionZ = StartPositionZ;
     }
     else
     {

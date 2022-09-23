@@ -6,7 +6,6 @@ void Game::loadObjects()
 	// load obj file
 	std::vector<OBJ>objs_Static{
 		OBJ("../Meshes/Planet"),
-		OBJ("../Meshes/Planet")
 
 	};
 
@@ -23,7 +22,7 @@ void Game::loadObjects()
 
 	}
 	meshes_Static[0].scale = DirectX::SimpleMath::Vector3(20, 20, 20);
-	meshes_Static[1].position = DirectX::SimpleMath::Vector3(22, 22, -22);
+
 	// re-calculate bounding box
 	for (auto& mesh : meshes_Static)
 	{
@@ -62,6 +61,7 @@ void Game::drawObjects()
 	{
 		mesh.DrawWithMat();
 	}
+	potion.draw();
 }
 
 void Game::setUpReact3D()
@@ -97,7 +97,7 @@ void Game::setUpReact3D()
 }
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0), potion("../Meshes/player", DirectX::SimpleMath::Vector3(0,0,0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0), potion("../Meshes/player", DirectX::SimpleMath::Vector3(5,5,5), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
 {
 	MaterialLibrary::LoadDefault();
 
@@ -138,7 +138,9 @@ GAMESTATE Game::Update()
 	additionXMFLOAT3(meshes_Dynamic[0].position, getScalarMultiplicationXMFLOAT3(dt, velocity));
 	camera.moveCamera(meshes_Dynamic[0].position, dt);
 
-	potion.setPos({0,0,0});
+	player.pickupItem(&potion);
+
+	
 
 	//KLARA DONT LOOK HERE!
 	//DirectX::XMFLOAT3 pos = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y, playerRigidBody->getTransform().getPosition().z};
@@ -156,7 +158,7 @@ GAMESTATE Game::Update()
 	{
 		meshes_Dynamic[i].UpdateCB();
 	}
-
+	potion.updateBuffer();
 	mouse->clearEvents();
 	return NOCHANGE;
 }

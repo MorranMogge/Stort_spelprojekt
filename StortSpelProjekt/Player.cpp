@@ -87,15 +87,15 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 
 bool Player::pickupItem(Item* itemToPickup)
 {
-
     bool successfulPickup = false;
 
     if (Input::KeyDown(KeyCode::SPACE))
     {
-        if (this->withinRadious(itemToPickup, 50))
+        if (this->withinRadius(itemToPickup, 50))
         {
             addItem(itemToPickup);
             successfulPickup = true;
+            std::cout << successfulPickup << "\n";
         }
     }
     

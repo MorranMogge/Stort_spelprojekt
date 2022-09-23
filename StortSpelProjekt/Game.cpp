@@ -5,7 +5,9 @@ void Game::loadObjects()
 {
 	// load obj file
 	std::vector<OBJ>objs_Static{
+		OBJ("../Meshes/Planet"),
 		OBJ("../Meshes/Planet")
+
 	};
 
 	// foreach obj in objs_static variable
@@ -21,7 +23,7 @@ void Game::loadObjects()
 
 	}
 	meshes_Static[0].scale = DirectX::SimpleMath::Vector3(20, 20, 20);
-
+	meshes_Static[1].position = DirectX::SimpleMath::Vector3(22, 22, -22);
 	// re-calculate bounding box
 	for (auto& mesh : meshes_Static)
 	{
@@ -30,7 +32,7 @@ void Game::loadObjects()
 
 	// load obj file
 	std::vector<OBJ>objs_Dynamic{
-		OBJ("../Meshes/Player"),
+		OBJ("../Meshes/Player")
 	};
 
 	// foreach obj in objs_Dynamic variable
@@ -47,7 +49,6 @@ void Game::loadObjects()
 	}
 	meshes_Dynamic[0].scale = DirectX::SimpleMath::Vector3(1, 1, 1);
 	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(22, 22, -22);
-
 	
 }
 
@@ -96,7 +97,7 @@ void Game::setUpReact3D()
 }
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 22, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0), potion("../Meshes/player", DirectX::SimpleMath::Vector3(0,0,0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
 {
 	MaterialLibrary::LoadDefault();
 
@@ -136,6 +137,8 @@ GAMESTATE Game::Update()
 	if (getLength(meshes_Dynamic[0].position) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); newNormalizeXMFLOAT3(meshes_Dynamic[0].position); scalarMultiplicationXMFLOAT3(22, meshes_Dynamic[0].position); }
 	additionXMFLOAT3(meshes_Dynamic[0].position, getScalarMultiplicationXMFLOAT3(dt, velocity));
 	camera.moveCamera(meshes_Dynamic[0].position, dt);
+
+	potion.setPos({0,0,0});
 
 	//KLARA DONT LOOK HERE!
 	//DirectX::XMFLOAT3 pos = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y, playerRigidBody->getTransform().getPosition().z};

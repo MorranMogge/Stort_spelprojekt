@@ -15,6 +15,8 @@
 #include "BufferTypes.h"
 #include "LightHandler.h"
 
+#include "Potion.h"
+
 class Game : public State
 {
 private:
@@ -45,6 +47,9 @@ private:
 
 	Camera camera;
 	Player player;
+	Potion potion;
+
+
 	LightHandler ltHandler;
 
 	//Objects

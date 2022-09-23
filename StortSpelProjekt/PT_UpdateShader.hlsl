@@ -16,27 +16,37 @@ cbuffer posValue : register(b1)
     float4 orientation;
 };
 
-
-[numthreads(18, 1, 1)]
-void main(int3 DTid : SV_DispatchThreadID)
+[numthreads(1, 1, 1)]
+void main(uint3 DTid : SV_DispatchThreadID)
 {
-    //particlePositions[DTid.x * 3] = cos(time * 0.9f + DTid.x);
-    //particlePositions[DTid.x * 3 + 2] = sin(time * 0.9f + DTid.x);
+#define offset 5
+ 
+#define PositionX rawBuffer[DTid.x * offset]
+#define PositionY rawBuffer[DTid.x * offset + 1]
+#define PositionZ rawBuffer[DTid.x * offset + 2]
+
+#define SimulateTime rawBuffer[DTid.x * offset + 3]
+
+#define LifeTime rawBuffer[DTid.x * offset + 4]
+
     
-    particlePositions[DTid.x * 5] = particlePositions[DTid.x * 5]; //+cos(time * +DTid.x);
+    SimulateTime += deltaTime;
+
+    const float speed = 1.0f * 0.05f;
     
-    if (particlePositions[DTid.x * 5 + 1] > 15)
+    if (SimulateTime > LifeTime)
     {
-        particlePositions[DTid.x * 5 + 1] = particlePositions[DTid.x * 5 + 1] - 25; //sin(time * 1.1f + DTid.x);
+        SimulateTime -= LifeTime;
+        
+        PositionX = 0.0f;
+        PositionY = 0.0f;
+        PositionZ = 0.0f;
     }
     else
     {
-        particlePositions[DTid.x * 5 + 1] = particlePositions[DTid.x * 5 + 1] + (deltaTime * 0.5); //sin(time * 1.1f + DTid.x);
+        PositionX += speed * orientation.x;
+        PositionY += speed * orientation.y;
+        PositionZ += speed * orientation.z;
     }
-    particlePositions[DTid.x * 5 + 2] = particlePositions[DTid.x * 5 + 2]; //+sin(time * +DTid.x); //sin(time * 1.1f + DTid.x);
-    
-    //particlePositions[DTid.x * 5] = 0;
-    //particlePositions[DTid.x * 5+1] = 0;
-    //particlePositions[DTid.x * 5+2] = 0;
-    
+
 }

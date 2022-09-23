@@ -102,8 +102,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
+
 	ltHandler.addLight(DirectX::XMFLOAT3(20, 20, 20), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
-	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(0, 1, 0), 36, DirectX::XMFLOAT2(3,4)));
+	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
+	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
 
 
 	this->setUpReact3D();

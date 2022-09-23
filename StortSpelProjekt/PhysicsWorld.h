@@ -5,6 +5,7 @@
 #include <SimpleMath.h>
 #include "Vertex.h"
 #include "ImGuiHelper.h"
+#include "PhysicsComponent.h"
 
 class PhysicsWorld
 {
@@ -12,9 +13,7 @@ private:
 	UINT stride;
 	UINT offset;
 
-	std::vector<reactphysics3d::CollisionShape*> shapes; //Shapes tell us how the collider looks like
-	std::vector<reactphysics3d::Collider*> colliders;	//Colliders lets us collide
-	std::vector<reactphysics3d::RigidBody*> bodies;		//Rigidbody tells us where the collider is located
+	std::vector<PhysicsComponent *> physObjects;
 
 	reactphysics3d::PhysicsCommon com;
 	reactphysics3d::PhysicsWorld* world;

@@ -160,10 +160,10 @@ GAMESTATE Game::Update()
 
 void Game::Render()
 {
+	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 	start = std::chrono::system_clock::now();
 	basicRenderer.setUpScene();
-	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr);
+	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
 	if (objectDraw) this->drawObjects();
 	if (wireframe) { this->updateBuffers(); immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
-	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 }

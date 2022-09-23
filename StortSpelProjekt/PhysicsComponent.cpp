@@ -50,7 +50,7 @@ PhysicsComponent::~PhysicsComponent()
 
 void PhysicsComponent::initiateComponent(reactphysics3d::PhysicsCommon* com, reactphysics3d::PhysicsWorld* world)
 {
-	this->comPtr = comPtr;
+	this->comPtr = com;
 	this->worldPtr = world;
 
 	//Creates basic physics component
@@ -61,6 +61,7 @@ void PhysicsComponent::initiateComponent(reactphysics3d::PhysicsCommon* com, rea
 	//Gives some values	
 	this->setType();
 	this->setMass();
+	this->rigidBody->enableGravity(false);
 }
 
 void PhysicsComponent::setType(reactphysics3d::BodyType physicsType)
@@ -123,7 +124,7 @@ void PhysicsComponent::setIsSleeping(bool sleep)
 
 void PhysicsComponent::applyForceToCenter(const reactphysics3d::Vector3& force)
 {
-	this->rigidBody->applyLocalForceAtCenterOfMass(force);
+	this->rigidBody->applyWorldForceAtCenterOfMass(force);
 }
 
 void PhysicsComponent::applyForceToPoint(const reactphysics3d::Vector3& force, const reactphysics3d::Vector3& point)
@@ -153,7 +154,7 @@ reactphysics3d::CollisionShapeName PhysicsComponent::getTypeName() const
 
 float PhysicsComponent::getMass() const
 {
-	return this->getMass();
+	return this->rigidBody->getMass();
 }
 
 float PhysicsComponent::getLinearDampning() const

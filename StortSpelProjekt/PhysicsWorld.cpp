@@ -27,10 +27,6 @@ void PhysicsWorld::setUpBaseScenario()
 	world->setIsDebugRenderingEnabled(true);
 	debugRenderer = &world->getDebugRenderer();
 	debugRenderer->setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, true);
-	debugRenderer->setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_POINT, true);
-	debugRenderer->setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::CONTACT_NORMAL, true);
-	debugRenderer->setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_AABB, true);
-	debugRenderer->setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_BROADPHASE_AABB, true);
 
 	debugRenderer->computeDebugRenderingPrimitives(*world);
 }
@@ -150,10 +146,6 @@ bool PhysicsWorld::setVertexBuffer()
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	/*bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bufferDesc.CPUAccessFlags = 0;*/
 	bufferDesc.MiscFlags = 0;
 	bufferDesc.StructureByteStride = 0;
 
@@ -169,14 +161,6 @@ bool PhysicsWorld::setVertexBuffer()
 	hr = GPU::device->CreateBuffer(&bufferDesc, &data, &debuggerBuffer);
 
 	LoadPixelShader(GPU::device, dpShader, "DebuggerPshader");
-
-	/*D3D11_INPUT_ELEMENT_DESC inputDesc[2] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOUR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12, 20, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
-
-	hr = GPU::device->CreateInputLayout(inputDesc, std::size(inputDesc), temp.c_str(), temp.length(), &dInput);*/
 
 	return !FAILED(hr);
 }
@@ -208,7 +192,6 @@ void PhysicsWorld::renderReact3D()
 	GPU::immediateContext->IASetIndexBuffer(nullptr, DXGI_FORMAT::DXGI_FORMAT_R16_UINT, 0);
 	GPU::immediateContext->IASetVertexBuffers(0, 1, &debuggerBuffer, &stride, &offset);
 	GPU::immediateContext->RSSetState(wireframeMode);
-	//GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 	GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	GPU::immediateContext->PSSetShader(dpShader, nullptr, 0);
 	GPU::immediateContext->Draw(this->triangles.size(), 0);
@@ -217,6 +200,10 @@ void PhysicsWorld::renderReact3D()
 
 PhysicsWorld::~PhysicsWorld()
 {
+	for (int i = 0; i < physObjects.size(); i++)
+	{
+		delete physObjects[i];
+	}
 	if (world != nullptr) com.destroyPhysicsWorld(world);
 	debuggerBuffer->Release();
 	dpShader->Release();
@@ -234,13 +221,12 @@ void PhysicsWorld::addForceToObject(const DirectX::XMFLOAT3& gravityVec)
 	playerRigidBody->applyWorldForceAtCenterOfMass(playerRigidBody->getMass() * reactphysics3d::Vector3(gravityVec.x, gravityVec.y, gravityVec.z));
 	DirectX::XMFLOAT3 grav;
 	reactphysics3d::Vector3 temp;
-	for (int i = 0; i < this->bodies.size(); i++)
+	for (int i = 0; i < this->physObjects.size(); i++)
 	{
-		temp = this->bodies[i]->getTransform().getPosition();
+		temp = this->physObjects[i]->getPosition();
 		grav = normalizeXMFLOAT3(DirectX::XMFLOAT3(-temp.x, -temp.y, -temp.z));
-		this->bodies[i]->applyWorldForceAtCenterOfMass(this->bodies[i]->getMass() * reactphysics3d::Vector3(9.82 * grav.x, 9.82 * grav.y, 9.82 * grav.z));
+		this->physObjects[i]->applyForceToCenter(this->physObjects[i]->getMass() * reactphysics3d::Vector3(1.82 * grav.x, 1.82 * grav.y, 1.82 * grav.z));
 	}
-	//playerRigidBody->applyLocalForceAtCenterOfMass(playerRigidBody->getMass() * reactphysics3d::Vector3(gravityVec.x, gravityVec.y, gravityVec.z));
 }
 
 DirectX::SimpleMath::Vector3 PhysicsWorld::getPos()
@@ -262,16 +248,12 @@ void PhysicsWorld::addBoxToWorld(DirectX::XMFLOAT3 dimensions, float mass, Direc
 		float z = 10.f - 2.f * (float)(rand() % 11);
 		position = DirectX::XMFLOAT3(x, y, z);
 	}
-	int vectorSize = this->bodies.size();
-	this->shapes.push_back(com.createBoxShape(reactphysics3d::Vector3(dimensions.x, dimensions.y, dimensions.z)));
-	reactphysics3d::Transform transform = reactphysics3d::Transform(reactphysics3d::Vector3(position.x, position.y, position.z), reactphysics3d::Quaternion::identity());
-	this->bodies.push_back(world->createRigidBody(transform));
-	this->colliders.push_back(this->bodies[vectorSize]->addCollider(this->shapes[vectorSize], reactphysics3d::Transform(reactphysics3d::Vector3(0, 0, 0), reactphysics3d::Quaternion::identity())));
-	this->bodies[vectorSize]->setType(reactphysics3d::BodyType::DYNAMIC);
-	this->bodies[vectorSize]->setMass(mass);
+	int vectorSize = this->physObjects.size();
+	physObjects.emplace_back(new PhysicsComponent());
+	physObjects[vectorSize]->initiateComponent(&this->com, this->world);
+	physObjects[vectorSize]->setPosition(reactphysics3d::Vector3(position.x, position.y, position.z));
 
-	//We disable gravity since we have implemented our own defined gravity
-	this->bodies[vectorSize]->enableGravity(false);
+	//UPDATE THE VERTEX BUFFER TO BE ABLE TO DRAW THE NEW PHYSOBJECTS
 	this->recreateVertexBuffer();
 }
 

@@ -57,7 +57,7 @@ void ImGuiHelper::setupImGui(float bgColour[])
 	style->Colors[ImGuiCol_TitleBgActive] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
 }
 
-void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, DirectX::XMFLOAT3& wireframeClr)
+void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, DirectX::XMFLOAT3& wireframeClr, const float& dt)
 {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -66,10 +66,13 @@ void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, DirectX::XMFLOAT3&
 
 	ImGui::NewFrame();
 	{
+		float fps = 1.f / dt;
 		float wClr[3]{ wireframeClr.x, wireframeClr.y, wireframeClr.z };
 		bool begun = ImGui::Begin("React Physics 3D");
 		if (begun)
 		{
+			std::string tmpStr = "FPS: " + std::to_string(fps);
+			ImGui::Text(tmpStr.c_str());
 			ImGui::Checkbox("Draw collision boxes", &wireframe);
 			ImGui::Checkbox("Draw objects", &drawObjects);
 			ImGui::ColorEdit3("Wireframe colour", wClr);

@@ -16,7 +16,7 @@ struct acceptMePacketData
 	std::string s;
 };
 
-struct
+struct wow
 {
 	unsigned short packetId;
 	unsigned short playerId;
@@ -213,24 +213,26 @@ void packetId(sf::Packet& packet)
 	}
 };
 
-void recvData(void* param)
+void recvData(void* param, userData* user)
 {
 	threadInfo* data = (threadInfo*)param;
 	sf::Packet packet;
+
+	std::cout << "ip from socket in thread: " << user->tcpSocket.getRemoteAddress().toString() << std::endl;
 	while (1)
 	{
-		if (data->user->tcpSocket.receive(packet) != sf::Socket::Done)
+		if (user->tcpSocket.receive(packet) != sf::Socket::Done)
 		{
 			//error
 		}
 		else
 		{
-			std::cout << "thread from recvData got a packet from: " << data->user->tcpSocket.getRemoteAddress().toString() << std::endl;
+			std::cout << "thread from recvData got a packet from: " << user->tcpSocket.getRemoteAddress().toString() << std::endl;
 			packetId(packet);
 
 		}
 		
-		std::cout << "userName: " << data->user->userName << std::endl;
+		//std::cout << "userName: " << data->user->userName << std::endl;
 	}
 };
 
@@ -284,11 +286,10 @@ int main()
 
 	std::thread* recvThread;
 	threadInfo threadData;
-	threadData.user = &data.users[0];
 	threadData.ifUserRecv = false;
 	
 		
-	recvThread = new std::thread(recvData, &threadData);
+	recvThread = new std::thread(recvData, &threadData, &data.users[0]);
 	
 
 

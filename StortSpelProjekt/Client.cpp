@@ -68,6 +68,7 @@ void Client::connectToServer()
 		std::cout << "Was able to connect\n";
 	}
 	this->setupThread();
+
 	//this->joinThread();
 	//addselector();
 	//data.socket.setBlocking(false);
@@ -143,7 +144,7 @@ void Client::sendToServerTcp()
 	unsigned short packetIdentifier = 1;
 	sendPacket << packetIdentifier << this->tmp;
 
-	if(tcpSocket.send(sendPacket) != sf::Socket::Done)
+	if(data.socket.send(sendPacket) != sf::Socket::Done)
 	{
 		//error
 		std::cout << "TCP Couldnt send packet\n";
@@ -180,7 +181,7 @@ void Client::sendToServerTEMPTCP()
 	int nr = 420;
 	sendPacket << packetIdentifier << nr << this->tmp;
 
-	if (tcpSocket.send(sendPacket) != sf::Socket::Done)
+	if (data.socket.send(sendPacket) != sf::Socket::Done)
 	{
 		//error
 		std::cout << "TCP Couldnt send packet\n";

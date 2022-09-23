@@ -8,14 +8,14 @@ using namespace WRL;
 bool CreateBuffer(ComPtr<ID3D11Buffer>&  PT_vertexBuffer, ComPtr <ID3D11UnorderedAccessView>& particleUav, vector<particleStruct>& structVector)
 {
 	D3D11_BUFFER_DESC bufferDesc;													//create Vertex buffer
-	bufferDesc.ByteWidth = structVector.size() * sizeof(particleStruct);									//size of buffer
+	bufferDesc.ByteWidth = structVector.size() * sizeof(particleStruct);			//size of buffer
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;											//sets interaction with gpu and cpu
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_UNORDERED_ACCESS;	//Specifies the type of buffer
 	bufferDesc.CPUAccessFlags = 0;													//Specifies cpu acess
 	bufferDesc.MiscFlags = 0;														//Misc flags
 	bufferDesc.StructureByteStride = 0;												//Size of each element in structure
 	D3D11_SUBRESOURCE_DATA data;													//holds geometry data
-	data.pSysMem = structVector.data();													//pointer to geometry data
+	data.pSysMem = structVector.data();												//pointer to geometry data
 	data.SysMemPitch = 0;															//distance in bytes from the beginning of one line of a texture to the next
 	data.SysMemSlicePitch = 0;														//for 3d texture
 
@@ -27,7 +27,7 @@ bool CreateBuffer(ComPtr<ID3D11Buffer>&  PT_vertexBuffer, ComPtr <ID3D11Unordere
 	uavDesc.Format = DXGI_FORMAT_R32_FLOAT;
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 	uavDesc.Buffer.FirstElement = 0;
-	uavDesc.Buffer.NumElements = size(structVector) * 3;//fel???
+	uavDesc.Buffer.NumElements = size(structVector) * 5;//fel???
 	uavDesc.Buffer.Flags = 0;
 	
 	if (FAILED(GPU::device->CreateUnorderedAccessView(PT_vertexBuffer.Get(), &uavDesc, particleUav.GetAddressOf())))
@@ -174,6 +174,7 @@ void ParticleEmitter::BindAndDraw()
 
 	//Reset delta time
 	tStruct.resetStartTime();
+	this->updateTimeBuffer(tStruct.getDt());
 
 	//Unbind shader & UAV, Reset Topology
 	GPU::immediateContext->GSSetShader(nullShader, nullptr, 0);													//Unbinding

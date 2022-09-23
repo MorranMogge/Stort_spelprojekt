@@ -95,8 +95,11 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	return true;
 }
 
-void BasicRenderer::setUpScene()
+void BasicRenderer::setUpScene(Camera& stageCamera)
 {				
+	ID3D11Buffer* tempBuff = stageCamera.getPositionBuffer();
+	GPU::immediateContext->PSSetConstantBuffers(1, 1, &tempBuff);			//Bind CBuffers's 
+
 	immediateContext->ClearRenderTargetView(rtv, clearColour);
 	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);

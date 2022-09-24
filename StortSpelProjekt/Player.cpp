@@ -49,98 +49,47 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 {
     //Variables    
     playerUpVec = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);
-    playerForwardVec = DirectX::XMVector3Cross(cameraRight, playerUpVec);
-    playerRightVec = DirectX::XMVector3Cross(playerUpVec, playerForwardVec);
+    
+    rotationMX = XMMatrixRotationRollPitchYawFromVector(rotation);
+    playerRightVec = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
+    //playerForwardVec = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
 
-    playerForwardVec = XMVector3Normalize(playerForwardVec);
-    playerRightVec = XMVector3Normalize(playerRightVec);
-
-    zVec = XMVector3Normalize(zVec);
-    forwardVec = XMVector3AngleBetweenVectors(zVec, playerForwardVec);
-    XMFLOAT3 newPos;
-    XMStoreFloat3(&newPos, forwardVec);
-
-    tempRightVec = XMVector3Normalize(tempRightVec);
-    playerForwardVec = XMVector3Normalize(playerForwardVec);
-    dotVector = XMVector3Dot(tempRightVec, playerForwardVec);
-    XMFLOAT3 newPos2;
-    XMStoreFloat3(&newPos2, dotVector);
-
-    XMFLOAT3 newPos3;
-    XMStoreFloat3(&newPos3, playerForwardVec);
-
-    /*OutputDebugString(L"PLAYER ANGLE: ");
-    OutputDebugString(L"\n");
-    OutputDebugString(std::to_wstring(newPos.y).c_str());
-    OutputDebugString(L"\n");
-    OutputDebugString(L"\n");*/
-
-    /*OutputDebugString(L"PLAYER DOT: ");
-    OutputDebugString(L"\n");
-    OutputDebugString(std::to_wstring(newPos2.y).c_str());
-    OutputDebugString(L"\n");
-    OutputDebugString(L"\n");*/
-
-    /*OutputDebugString(L"PLAYER FORWARD: ");
-    OutputDebugString(std::to_wstring(newPos3.x).c_str());
-    OutputDebugString(L"\n");
-    OutputDebugString(std::to_wstring(newPos3.y).c_str());
-    OutputDebugString(L"\n");
-    OutputDebugString(std::to_wstring(newPos3.z).c_str());
-    OutputDebugString(L"\n");
-    OutputDebugString(L"\n");*/
-
-    if (Input::KeyPress(KeyCode::W))
-    {
-        if (newPos2.x < 0.0f)
-        {
-            rotation.y -= newPos.y;
-        }
-        else
-        {
-            rotation.y += newPos.y;
-        }
-    }
+    playerForwardVec = DirectX::XMVector3Cross(playerRightVec, playerUpVec);
+    //playerRightVec = DirectX::XMVector3Cross(playerUpVec, playerForwardVec
 
     if (Input::KeyDown(KeyCode::W))
     {
-        position += playerForwardVec * deltaTime * 40;
-        rotation.x += deltaTime * 1.8f;
-    }
-
-    if (Input::KeyUp(KeyCode::W))
-    {
-        zVec = playerForwardVec;
-        tempRightVec = playerRightVec;
+        position += playerForwardVec * 0.5;
+        rotation.x += 0.023;
     }
 
     else if (Input::KeyDown(KeyCode::S))
     {
-        position -= playerForwardVec * deltaTime * 40;
-        rotation.x -= deltaTime * 1.8f;
+        position -= playerForwardVec * 0.5;
+        rotation.x -= 0.022;
     }
 
     if (Input::KeyDown(KeyCode::D))
     {
-        position += playerRightVec * deltaTime * 40;
-        rotation.z -= deltaTime * 1.8f;
+        position += playerRightVec * 0.5;
+        rotation.z -= 0.022;
     }
 
     else if (Input::KeyDown(KeyCode::A))
     {
-        position -= playerRightVec * deltaTime * 40;
-        rotation.z += deltaTime * 1.8f;
+        position -= playerRightVec * 0.5;
+        rotation.z += 0.022;
     }
 
     //Help keys
     if (Input::KeyDown(KeyCode::E))
     {
-        position.y += 0.1;
+        position.y += 1.0f;
     }
 
     else if (Input::KeyDown(KeyCode::Q))
     {
-        position.y -= 0.1;
+        position.y -= 1.0f;
     }
 }
 

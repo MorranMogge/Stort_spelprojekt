@@ -15,10 +15,18 @@ private:
 	DirectX::XMVECTOR playerForwardVec;
 	DirectX::XMVECTOR playerRightVec;
 
-	DirectX::XMVECTOR forwardVec;
-	DirectX::XMVECTOR zVec = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	/*DirectX::XMVECTOR zVec = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	DirectX::XMVECTOR dotVector;
-	DirectX::XMVECTOR tempRightVec = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	DirectX::XMVECTOR tempRightVec = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);*/
+
+	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+
+	DirectX::XMMATRIX rotationMX;
+	DirectX::XMVECTOR rightVec = DEFAULT_RIGHT;
+	DirectX::XMVECTOR forwardVec = DEFAULT_FORWARD;
+	DirectX::XMVECTOR upVector = DEFAULT_UP;
 
 public:
 	Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);

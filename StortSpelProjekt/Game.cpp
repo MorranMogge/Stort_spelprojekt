@@ -123,7 +123,7 @@ Game::~Game()
 
 GAMESTATE Game::Update()
 {
-	mouse->handleEvents(this->window, camera);
+	//mouse->handleEvents(this->window, camera);
 
 	constexpr float speed = 0.3f;
 	static bool forward = false;
@@ -135,7 +135,7 @@ GAMESTATE Game::Update()
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(meshes_Dynamic[0].position));
 	if (getLength(meshes_Dynamic[0].position) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); newNormalizeXMFLOAT3(meshes_Dynamic[0].position); scalarMultiplicationXMFLOAT3(22, meshes_Dynamic[0].position); }
 	additionXMFLOAT3(meshes_Dynamic[0].position, getScalarMultiplicationXMFLOAT3(dt, velocity));
-	camera.moveCamera(meshes_Dynamic[0].position, dt);
+	camera.moveCamera(meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, dt);
 
 	//KLARA DONT LOOK HERE!
 	//DirectX::XMFLOAT3 pos = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y, playerRigidBody->getTransform().getPosition().z};

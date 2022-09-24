@@ -30,11 +30,16 @@ Camera::~Camera()
 {
 }
 
-void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const float& deltaTime)
+void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMVECTOR& playerRotation, const float& deltaTime)
 {
 	this->deltaTime = deltaTime;
 
-	cameraPos = playerPosition - forwardVec * 10 + upVector * 30;
+	rotationMX = XMMatrixRotationRollPitchYawFromVector(playerRotation);
+	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
+	rightVec = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
+	forwardVec = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
+
+	cameraPos = playerPosition - forwardVec * 55 + upVector * 15;
 	lookAtPos = playerPosition;
 	updateCamera();
 }
@@ -49,7 +54,6 @@ void Camera::AdjustRotation(float x, float y)
 	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
 	rightVec = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
 	forwardVec = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
-	lookAtPos = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX) + cameraPos;
 
 	updateCamera();
 }

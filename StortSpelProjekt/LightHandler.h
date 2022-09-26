@@ -26,18 +26,18 @@ private:
 	//Light
 
 	std::vector<Light> lights;													//Vector of light objects
-	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> structuredBufferSrv;		//View for structured buffer
 	std::vector<Microsoft::WRL::ComPtr<ID3D11Buffer>> viewBuffers;				//View/proj matrix for each light
 	StructuredBuffer<LightStruct>lightBuffer;									//Holds Light data 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> numLightBuffer;						//Holds nr of lights
 	int LightCap = 10;															//Max nr of lights that can be created
 
 	//Debug Mesh
-	std::vector<GameObject> boundingSphere;										//Mesh for visualization
+	std::vector<GameObject*> boundingSphere;										//Mesh for visualization
 	
 public:
 
 	LightHandler();
+	~LightHandler();
 	void addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, DirectX::XMFLOAT3 UpDir, int type = 0, float coneAngle = 0.5f);
 	bool updateBuffers();
 	void setPosition(DirectX::XMFLOAT3 position, int lightIndex);				//changes view matrix
@@ -53,6 +53,7 @@ public:
 	void drawShadows(int lightIndex, std::vector<GameObject*> gameObjects);
 	void bindLightBuffers();
 	void drawDebugMesh();
+	void unbindSrv();
 
 private:
 

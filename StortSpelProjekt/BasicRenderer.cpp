@@ -71,11 +71,12 @@ BasicRenderer::~BasicRenderer()
 
 void BasicRenderer::lightPrePass()
 {
+	ID3D11PixelShader* nullShader(nullptr);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	immediateContext->IASetInputLayout(this->inputLayout);
 	immediateContext->RSSetViewports(1, &viewport);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
-	immediateContext->PSSetShader(nullptr, nullptr, 0);
+	immediateContext->PSSetShader(nullShader, nullptr, 0);
 }
 
 bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT)
@@ -100,8 +101,11 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 
 void BasicRenderer::setUpScene(Camera& stageCamera)
 {				
+	
 	ID3D11Buffer* tempBuff = stageCamera.getPositionBuffer();
+	ID3D11Buffer* tempBuff2 = stageCamera.getViewBuffer();
 	GPU::immediateContext->PSSetConstantBuffers(1, 1, &tempBuff);			//Bind CBuffers's 
+	GPU::immediateContext->VSSetConstantBuffers(1, 1, &tempBuff2);
 
 	immediateContext->ClearRenderTargetView(rtv, clearColour);
 	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
@@ -113,11 +117,6 @@ void BasicRenderer::setUpScene(Camera& stageCamera)
 	immediateContext->RSSetViewports(1, &viewport);
 	immediateContext->PSSetShader(pShader, nullptr, 0);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
-
-	//Unbind shadowmap & structuredBuffer srv
-	ID3D11ShaderResourceView* nullsrv{ nullptr };
-	immediateContext->PSSetShaderResources(3, 1, &nullsrv);
-	immediateContext->PSSetShaderResources(4, 1, &nullsrv);
 }
 
 void BasicRenderer::geometryPass(Camera& stageCamera)

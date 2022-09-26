@@ -150,6 +150,17 @@ LightHandler::LightHandler()
 	}
 }
 
+LightHandler::~LightHandler()
+{
+	for (int i = 0; i < boundingSphere.size(); i++)
+	{
+		if (boundingSphere.at(i) != nullptr)
+		{
+			delete boundingSphere.at(i);
+		}
+	}
+}
+
 // ------------------------------------------------------------------------------- FUNCTIONS -------------------------------------------------------------------------------
 
 void LightHandler::addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, DirectX::XMFLOAT3 UpDir, int type, float coneAngle)
@@ -197,7 +208,7 @@ void LightHandler::addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color,
 		this->viewBuffers.push_back(tempBuffer);
 
 		//Create Debug Mesh
-		//this->boundingSphere.push_back(GameObject("../Meshes/pinto", position, direction, lightID));//Id does nothing yet
+		this->boundingSphere.push_back(new GameObject("../Meshes/Cone", position, direction, lightID));//Id does nothing yet!
 	}
 	else
 	{
@@ -259,6 +270,9 @@ void LightHandler::setPosition(DirectX::XMFLOAT3 position, int lightIndex)
 	
 	//Matrix update
 	updateViewMatrix(lightIndex);
+
+	//Mesh update
+	this->boundingSphere.at(lightIndex)->setPos(position);
 }
 
 void LightHandler::setDirection(DirectX::XMFLOAT3 direction, int lightIndex)
@@ -267,6 +281,9 @@ void LightHandler::setDirection(DirectX::XMFLOAT3 direction, int lightIndex)
 
 	//Matrix update
 	updateViewMatrix(lightIndex);
+
+	//Mesh update
+	this->boundingSphere.at(lightIndex)->setRot(direction);
 }
 
 void LightHandler::setUpDirection(DirectX::XMFLOAT3 direction, int lightIndex)
@@ -306,7 +323,13 @@ bool LightHandler::updateViewMatrix(int lightIndex)
 {
 	//---------------------------------------- View Buffer ----------------------------------------
 
-	//Ger matrix
+	//Update Debug meshes
+	for (int i = 0; i < this->boundingSphere.size(); i++)
+	{
+		this->boundingSphere.at(i)->updateBuffer();
+	}
+
+	//Get matrix
 	DirectX::XMMATRIX view = this->lights.at(lightIndex).getViewMatrix();
 
 	//Map
@@ -336,6 +359,11 @@ void LightHandler::drawShadows(int lightIndex, std::vector<GameObject*> gameObje
 	ID3D11RenderTargetView* nullRtv{ nullptr };
 	ID3D11DepthStencilView* nullDsView{ nullptr };
 
+	//Set view buffer
+	GPU::immediateContext->VSSetConstantBuffers(1, 1, this->viewBuffers.at(lightIndex).GetAddressOf());
+
+	//unbind pixel shader
+	//GPU::immediateContext->PSSetShader(nullptr, );
 
 	//Clear Depth Stencil
 	GPU::immediateContext->ClearDepthStencilView(this->depthViews.at(lightIndex).Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
@@ -365,6 +393,14 @@ void LightHandler::drawDebugMesh()
 {
 	for (int i = 0; i < this->boundingSphere.size(); i++)
 	{
-		this->boundingSphere.at(i).draw();
+		this->boundingSphere.at(i)->draw();
 	}
+}
+
+void LightHandler::unbindSrv()
+{
+	//Unbind shadowmap & structuredBuffer srv
+	ID3D11ShaderResourceView* nullsrv{ nullptr };
+	GPU::immediateContext->PSSetShaderResources(3, 1, &nullsrv);
+	GPU::immediateContext->PSSetShaderResources(4, 1, &nullsrv);
 }

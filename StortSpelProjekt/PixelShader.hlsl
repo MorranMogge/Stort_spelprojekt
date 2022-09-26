@@ -7,6 +7,14 @@ struct lightStruct
     float4x4 ltViewMatix;
 };
 
+struct Material
+{
+    float4 ambient;
+    float4 diffuse;
+    float3 specular;
+    float specularPower;
+};
+
 struct PSin
 {
     float4 position : SV_POSITION;
@@ -22,15 +30,21 @@ Texture2DArray shadowMaps : register(t3);
 StructuredBuffer<lightStruct> lightStructBuff : register(t4); //Structured buffer with Light data
 SamplerState samplerState : register(s0);
 
-cbuffer numLightBuffer : register(b0)
+cbuffer Mat : register(b0)
 {
-    int nrOfLights;
+    Material mat;
 };
 
 cbuffer cameraValue : register(b1)
 {
     float4 cameraPosition;
 };
+
+cbuffer numLightBuffer : register(b2)
+{
+    int nrOfLights;
+};
+
 
 float GetShadowIntensity(int i, float4 lightWorldPosition, float shadowStrenth, float3 worldPosition, float3 normal)
 {

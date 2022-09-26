@@ -101,12 +101,6 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 
 void BasicRenderer::setUpScene(Camera& stageCamera)
 {				
-	
-	ID3D11Buffer* tempBuff = stageCamera.getPositionBuffer();
-	ID3D11Buffer* tempBuff2 = stageCamera.getViewBuffer();
-	GPU::immediateContext->PSSetConstantBuffers(1, 1, &tempBuff);			//Bind CBuffers's 
-	GPU::immediateContext->VSSetConstantBuffers(1, 1, &tempBuff2);
-
 	immediateContext->ClearRenderTargetView(rtv, clearColour);
 	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
@@ -117,6 +111,11 @@ void BasicRenderer::setUpScene(Camera& stageCamera)
 	immediateContext->RSSetViewports(1, &viewport);
 	immediateContext->PSSetShader(pShader, nullptr, 0);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
+
+	ID3D11Buffer* tempBuff = stageCamera.getPositionBuffer();
+	ID3D11Buffer* tempBuff2 = stageCamera.getViewBuffer();
+	GPU::immediateContext->PSSetConstantBuffers(1, 1, &tempBuff);			//Bind CBuffers's //fel?? kan inte binda till slot 1 om inte slot 0 är fullt?
+	GPU::immediateContext->VSSetConstantBuffers(1, 1, &tempBuff2);
 }
 
 void BasicRenderer::geometryPass(Camera& stageCamera)

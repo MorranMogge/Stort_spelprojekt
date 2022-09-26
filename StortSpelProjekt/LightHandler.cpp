@@ -251,7 +251,7 @@ bool LightHandler::updateBuffers()
 	//---------------------------------------- NrLight Buffer ----------------------------------------
 
 	//Ger nrOf lights
-	int nrOfLights = (UINT)this->lights.size();
+	int nrOfLights = (UINT)this->lights.size() -1;
 
 	//Map
 	D3D11_MAPPED_SUBRESOURCE map;
@@ -386,7 +386,7 @@ void LightHandler::bindLightBuffers()
 {
 	GPU::immediateContext->PSSetShaderResources(3, 1, this->shadowSrv.GetAddressOf());				//Bind Srv's //ShadowMap(s)
 	this->lightBuffer.BindToPS(4);																	//Srv for light structuredBuffer content (pos, color, lightViewMatrix)
-	GPU::immediateContext->PSSetConstantBuffers(0, 1, this->numLightBuffer.GetAddressOf());			//Bind CBuffers's //Buffer for nr Lights
+	GPU::immediateContext->PSSetConstantBuffers(2, 1, this->numLightBuffer.GetAddressOf());			//Bind CBuffers's //Buffer for nr Lights
 }
 
 void LightHandler::drawDebugMesh()

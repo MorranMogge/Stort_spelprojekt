@@ -28,7 +28,6 @@ private:
 	reactphysics3d::RigidBody* playerRigidBody;
 	reactphysics3d::RigidBody* planetRigidBody;
 
-	std::vector<reactphysics3d::DebugRenderer::DebugTriangle> tri;
 	std::vector<Vertex> triangles;
 
 	ID3D11Buffer* debuggerBuffer;

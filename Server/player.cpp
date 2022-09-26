@@ -25,3 +25,10 @@ float player::getposition(char whichPos) const
 		break;
 	}
 }
+
+void player::setPosition(float pos[3])
+{
+	this->xPos = pos[0];
+	this->yPos = pos[1];
+	this->zPos = pos[2];
+}

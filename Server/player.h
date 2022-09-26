@@ -13,4 +13,6 @@ public:
 
 	//skicka in char 'x', 'y' eller 'z'
 	float getposition(char whichPos)const;
+
+	void setPosition(float pos[3]);
 };

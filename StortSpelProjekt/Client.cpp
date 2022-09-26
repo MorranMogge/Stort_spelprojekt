@@ -9,15 +9,20 @@ void clientFunction(void* param)
 	{
 		data->socket.receive(receivedPacket); //Receives the packet
 			std::string receivedString;
+			unsigned short packetId;
+			std::string playerName;
 			float x = 0.0f;
 			float y = 0.0f;
+			float z = 0.0f;
 			std::cout << "TCP received data from address: " << data->socket.getRemoteAddress().toString() << std::endl;
-			receivedPacket >> receivedString >> x >> y;
-			std::cout << "data received from server: " << receivedString << ", x : " << x << ", y: " << y << std::endl;
+			receivedPacket >> packetId >> playerName >> x >> y >> z;
+			std::cout << "data received from server: Packet id: " << std::to_string(packetId) << " player name: " << playerName <<
+				" x : " << std::to_string(x) << " y: " << std::to_string(y) << " z: " << std::to_string(z) << std::endl;
 		
 		receivedPacket.clear();
 	}
 }
+//tempPack << packId << playerName << x << y << z;
 
 Client::Client()
 {

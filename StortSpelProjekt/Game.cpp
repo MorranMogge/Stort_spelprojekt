@@ -20,7 +20,7 @@ void Game::loadObjects()
 		}
 
 	}
-	meshes_Static[0].scale = DirectX::SimpleMath::Vector3(5,5,5);
+	meshes_Static[0].scale = DirectX::SimpleMath::Vector3(20, 20, 20);
 
 	// re-calculate bounding box
 	for (auto& mesh : meshes_Static)
@@ -45,10 +45,10 @@ void Game::loadObjects()
 		}
 
 	}
-	meshes_Dynamic[0].scale = DirectX::SimpleMath::Vector3(0.25, 0.25, 0.25);
-	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(25, 25, -25);
+	meshes_Dynamic[0].scale = DirectX::SimpleMath::Vector3(1, 1, 1);
+	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(22, 22, -22);
 
-
+	
 }
 
 void Game::drawObjects()
@@ -92,15 +92,21 @@ void Game::updateBuffers()
 	immediateContext->Unmap(wireBuffer, 0);
 }
 
-Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain)
-	:camera(Camera(immediateContext, device)), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0,0,0))
+Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 22, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
 {
 	MaterialLibrary::LoadDefault();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
 	this->setUpWireframe();
-	camera.updateCamera(immediateContext);
+	//camera.updateCamera(immediateContext);
+	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
+
+	//this->setUpReact3D();
+
+	this->mouse = &mouse;
+	this->window = &window;
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 }
@@ -112,33 +118,29 @@ Game::~Game()
 
 GAMESTATE Game::Update()
 {
+	mouse->handleEvents(this->window, camera);
+
 	constexpr float speed = 0.3f;
 	static bool forward = false;
 	float zpos = meshes_Dynamic[0].position.z;
 
-	DirectX::XMFLOAT3 pos(meshes_Dynamic[0].position.x, meshes_Dynamic[0].position.y, meshes_Dynamic[0].position.z);
-	//DirectX::XMFLOAT3 pos = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y, playerRigidBody->getTransform().getPosition().z};
-
-	if (Input::KeyDown(KeyCode::W)) pos.z += 0.1;
-	if (Input::KeyDown(KeyCode::S)) pos.z -= 0.1;
-	if (Input::KeyDown(KeyCode::I)) pos.y += 0.1;
-	if (Input::KeyDown(KeyCode::K)) pos.y -= 0.1;
-	if (Input::KeyDown(KeyCode::D)) pos.x += 0.1;
-	if (Input::KeyDown(KeyCode::A)) pos.x -= 0.1;
-	if (Input::KeyDown(KeyCode::R)) physWolrd.addBoxToWorld();
-
-
+	//Do we want this?
 	grav = planetGravityField.calcGravFactor(pos);
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(pos));
-	/*additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(pos));
-	if (getLength(pos) <= 20+2) velocity = DirectX::XMFLOAT3(0, 0, 0);
-	additionXMFLOAT3(pos, getScalarMultiplicationXMFLOAT3(dt,velocity));
-	meshes_Dynamic[0].position = { pos.x, pos.y, pos.z };*/
+
+	grav = normalizeXMFLOAT3(grav);
+	player.move(meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, grav, camera.getRightVec(), dt);
+	grav = planetGravityField.calcGravFactor(meshes_Dynamic[0].position);
+	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(meshes_Dynamic[0].position));
+	if (getLength(meshes_Dynamic[0].position) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); newNormalizeXMFLOAT3(meshes_Dynamic[0].position); scalarMultiplicationXMFLOAT3(22, meshes_Dynamic[0].position); }
+	additionXMFLOAT3(meshes_Dynamic[0].position, getScalarMultiplicationXMFLOAT3(dt, velocity));
+	camera.moveCamera(meshes_Dynamic[0].position, dt);
 
 	//KLARA DONT LOOK HERE!
 	//playerRigidBody->applyLocalForceAtCenterOfMass(playerRigidBody->getMass() * reactphysics3d::Vector3(grav.x, grav.y, grav.z));
 	//world->update(reactphysics3d::decimal(dt));
 	
+
 	physWolrd.addForceToObject(grav);
 	physWolrd.update(dt);
 	meshes_Dynamic[0].position = physWolrd.getPos();
@@ -154,7 +156,7 @@ GAMESTATE Game::Update()
 		meshes_Dynamic[i].UpdateCB();
 	}
 
-	//camera.moveCamera(immediateContext, 1.f/100.f);
+	mouse->clearEvents();
 	return NOCHANGE;
 }
 
@@ -162,6 +164,14 @@ void Game::Render()
 {
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 	start = std::chrono::system_clock::now();
+	//LIGHT STUFF
+	basicRenderer.lightPrePass();
+	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
+	{
+		ltHandler.drawShadows(i, gameObjects);
+	}
+	ltHandler.bindLightBuffers();
+
 	basicRenderer.setUpScene();
 	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
 	if (objectDraw) this->drawObjects();

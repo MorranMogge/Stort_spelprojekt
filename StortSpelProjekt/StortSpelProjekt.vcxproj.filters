@@ -4,7 +4,6 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="D3D11Helper.cpp" />
     <ClCompile Include="ErrorLog.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GuiHandler.cpp" />
     <ClCompile Include="GUISprite.cpp" />
     <ClCompile Include="GUIText.cpp" />
@@ -40,10 +39,18 @@
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DXUtil.cpp" />
+    <ClCompile Include="MouseClass.cpp" />
+    <ClCompile Include="MouseEvent.cpp" />
     <ClCompile Include="GravityField.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="PhysicsComponent.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Credits.cpp" />
+    <ClCompile Include="SettingsUI.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LightHandler.cpp" />
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bound.h" />
@@ -125,11 +132,22 @@
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="DXUtil.h" />
     <ClInclude Include="DepthStencilView.h" />
+    <ClInclude Include="MouseClass.h" />
+    <ClInclude Include="MouseEvent.h" />
     <ClInclude Include="GravityField.h" />
     <ClInclude Include="DirectXMathHelper.h" />
     <ClInclude Include="TimeStruct.h" />
     <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="PhysicsComponent.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="ConstantBufferNew.h" />
+    <ClInclude Include="BufferTypes.h" />
+    <ClInclude Include="Credits.h" />
+    <ClInclude Include="SettingsUI.h" />
+    <ClInclude Include="BufferTypes.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="LightHandler.h" />
+    <ClInclude Include="StructuredBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -150,5 +168,7 @@
     <FxCompile Include="VertexShader.hlsl" />
     <FxCompile Include="DebuggerVshader.hlsl" />
     <FxCompile Include="DebuggerPshader.hlsl" />
+    <FxCompile Include="VertexShader.hlsl" />
+    <FxCompile Include="PixelShader.hlsl" />
   </ItemGroup>
 </Project>

@@ -1,15 +1,22 @@
 #pragma once
 #include "PhysicsWorld.h"
 #include "State.h"
-#include "Camera.h"
 #include "BasicRenderer.h"
 #include "Mesh.h"
 #include "Input.h"
+#include "MouseClass.h"
 #include "GravityField.h"
 #include <chrono>
 #include "ShaderLoader.h"
 #include "ImGuiHelper.h"
 
+#include "Player.h"
+#include "Camera.h"
+#include "LightHandler.h"
+#include "Light.h"
+#include "StructuredBuffer.h"
+#include "BufferTypes.h"
+#include "LightHandler.h"
 
 struct wirefameInfo
 {
@@ -36,15 +43,19 @@ private:
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT3 grav;
 
-	Camera camera;
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
 
 	PhysicsWorld physWolrd;
 
+	Camera camera;
+	Player player;
+	LightHandler ltHandler;
+
 	//Objects
 	std::vector<Mesh> meshes_Static;
 	std::vector<Mesh> meshes_Dynamic;
+	std::vector<GameObject> gameObjects;
 
 	void loadObjects();
 	void drawObjects();
@@ -56,8 +67,14 @@ private:
 	//Create transform
 	//Create collider, rigidbody->createCollider(&shape, transform)
 
+	float pos[3];
+
+	//Variables for the mouse movement
+	MouseClass* mouse;
+	HWND* window;
+
 public:
-	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain);
+	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window);
 	virtual ~Game() override;
 
 	// Inherited via State

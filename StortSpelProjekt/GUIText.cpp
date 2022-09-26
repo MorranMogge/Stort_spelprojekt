@@ -5,7 +5,7 @@ using namespace DirectX::SimpleMath;
 
 GUIText::GUIText()
 {
-    
+
 }
 
 GUIText::GUIText(const float x, const float y, const float layer)
@@ -43,7 +43,7 @@ void GUIText::Load(ID3D11Device* device, const wchar_t* file)
     spriteFont = std::make_unique<DirectX::SpriteFont>(device, file);
 
     //spriteFont->MeasureDrawBounds(m_text.c_str(), m_Position);
-    
+
     m_Origin = DirectX::SimpleMath::Vector2(0.0f, 0.0f); //origin = center of texture also important to rotate as rotates around centrepoint
     m_SourceRect.left = 0;
     m_SourceRect.top = 0;

@@ -28,6 +28,18 @@ DirectX::XMFLOAT3 normalizeXMFLOAT3(DirectX::XMFLOAT3 argOne)
     return argOne;
 }
 
+void newNormalizeXMFLOAT3(DirectX::XMFLOAT3& argOne)
+{
+    float x = argOne.x;
+    float y = argOne.y;
+    float z = argOne.z;
+    float length = sqrt(x * x + y * y + z * z);
+    float factor = 1 / length;
+    argOne.x *= factor;
+    argOne.y *= factor;
+    argOne.z *= factor;
+}
+
 void scalarMultiplicationXMFLOAT3(float scalar, DirectX::XMFLOAT3& argOne)
 {
     argOne.x *= scalar;

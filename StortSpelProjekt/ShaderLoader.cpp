@@ -85,7 +85,7 @@ bool LoadHullShader(ID3D11Device* device, ID3D11HullShader*& hShader, const std:
 
 bool LoadPixelShader(ID3D11Device* device, ID3D11PixelShader*& pShader, const std::string path)
 {
-	std::ifstream reader("../Shaders/"  + path + ".cso", std::ios::binary | std::ios::ate);
+	std::ifstream reader("../Shaders/" + path + ".cso", std::ios::binary | std::ios::ate);
 
 	if (reader.is_open())
 	{
@@ -106,7 +106,7 @@ bool LoadPixelShader(ID3D11Device* device, ID3D11PixelShader*& pShader, const st
 
 bool LoadComputeShader(ID3D11Device* device, ID3D11ComputeShader*& cShader, const std::string path)
 {
-	std::ifstream reader("../x64/Debug/" + path + ".cso", std::ios::binary | std::ios::ate);
+	std::ifstream reader("../Shaders/" + path + ".cso", std::ios::binary | std::ios::ate);
 
 	if (reader.is_open())
 	{

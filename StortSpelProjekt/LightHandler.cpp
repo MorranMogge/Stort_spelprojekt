@@ -143,7 +143,6 @@ bool CreateViewBuffer(ID3D11Device* device, Microsoft::WRL::ComPtr<ID3D11Buffer>
 LightHandler::LightHandler()
 	:shadowHeight(GPU::windowHeight), shadowWidth(GPU::windowWidth)
 {
-
 	//Create depth stencil, textureArr, depthViews & shader resource views 
 	if (!CreateDepthStencil(GPU::device, this->shadowWidth, this->shadowHeight, this->depthTextures, this->depthViews, this->shadowSrv, this->LightCap))
 	{
@@ -197,8 +196,8 @@ void LightHandler::addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color,
 		}
 		this->viewBuffers.push_back(tempBuffer);
 
-		//Create Meshes?
-
+		//Create Debug Mesh
+		//this->boundingSphere.push_back(GameObject("../Meshes/pinto", position, direction, lightID));//Id does nothing yet
 	}
 	else
 	{
@@ -331,7 +330,7 @@ int LightHandler::getNrOfLights() const
 	return (UINT)this->lights.size();
 }
 
-void LightHandler::drawShadows(int lightIndex, std::vector<GameObject> gameObjects)
+void LightHandler::drawShadows(int lightIndex, std::vector<GameObject*> gameObjects)
 {
 	//Variables
 	ID3D11RenderTargetView* nullRtv{ nullptr };
@@ -348,7 +347,7 @@ void LightHandler::drawShadows(int lightIndex, std::vector<GameObject> gameObjec
 	//Draw Objects
 	for (int i = 0; i < gameObjects.size(); i++)	
 	{
-		//gameObjects.at(i).draw(???);
+		gameObjects.at(i)->draw();
 	}
 
 	//Unbind render targets & Depth Stencil
@@ -360,4 +359,12 @@ void LightHandler::bindLightBuffers()
 	GPU::immediateContext->PSSetShaderResources(3, 1, this->shadowSrv.GetAddressOf());				//Bind Srv's //ShadowMap(s)
 	this->lightBuffer.BindToPS(4);																	//Srv for light structuredBuffer content (pos, color, lightViewMatrix)
 	GPU::immediateContext->PSSetConstantBuffers(0, 1, this->numLightBuffer.GetAddressOf());			//Bind CBuffers's //Buffer for nr Lights
+}
+
+void LightHandler::drawDebugMesh()
+{
+	for (int i = 0; i < this->boundingSphere.size(); i++)
+	{
+		this->boundingSphere.at(i).draw();
+	}
 }

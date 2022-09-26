@@ -32,11 +32,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> numLightBuffer;						//Holds nr of lights
 	int LightCap = 10;															//Max nr of lights that can be created
 
-	//Mesh
-	
-	//std::vector<Mesh> boundingSphere;											//Mesh for visualization
-
-	bool updateViewMatrix(int lightIndex);
+	//Debug Mesh
+	std::vector<GameObject> boundingSphere;										//Mesh for visualization
 	
 public:
 
@@ -53,7 +50,11 @@ public:
 	void setFalloff(float falloff, int lightIndex);
 	ID3D11Buffer* getViewBuffer(int ltIndex) const;
 	int getNrOfLights() const;
-	void drawShadows(int lightIndex, std::vector<GameObject> gameObjects);
+	void drawShadows(int lightIndex, std::vector<GameObject*> gameObjects);
 	void bindLightBuffers();
-	//void drawDebugMesh();
+	void drawDebugMesh();
+
+private:
+
+	bool updateViewMatrix(int lightIndex);
 };

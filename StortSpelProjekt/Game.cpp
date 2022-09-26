@@ -104,9 +104,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->loadObjects();
 
 	ltHandler.addLight(DirectX::XMFLOAT3(20, 20, 20), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
-	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
-	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
-
+//	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
+	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
+	gameObjects.push_back(new GameObject("../Meshes/Planet", DirectX::SimpleMath::Vector3(0, 0, -0), DirectX::XMFLOAT3(0.5, 0.5, 0), 0));
+	gameObjects.push_back(new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 22, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0));
 
 	this->setUpReact3D();
 
@@ -123,6 +124,11 @@ Game::~Game()
 	if (playerShape != nullptr) com.destroyBoxShape(playerShape);
 	if (planetShape != nullptr) com.destroySphereShape(planetShape);
 	if (world != nullptr) com.destroyPhysicsWorld(world);
+
+	for (int i = 0; i < this->gameObjects.size(); i++)
+	{
+		delete this->gameObjects.at(i);
+	}
 }
 
 GAMESTATE Game::Update()
@@ -141,13 +147,6 @@ GAMESTATE Game::Update()
 	additionXMFLOAT3(meshes_Dynamic[0].position, getScalarMultiplicationXMFLOAT3(dt, velocity));
 	camera.moveCamera(meshes_Dynamic[0].position, dt);
 
-	//KLARA DONT LOOK HERE!
-	//DirectX::XMFLOAT3 pos = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y, playerRigidBody->getTransform().getPosition().z};
-	//playerRigidBody->applyLocalForceAtCenterOfMass(playerRigidBody->getMass() * reactphysics3d::Vector3(grav.x, grav.y, grav.z));
-	//world->update(reactphysics3d::decimal(dt));
-	//meshes_Dynamic[0].position = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y , playerRigidBody->getTransform().getPosition().z};
-	//meshes_Dynamic[0].rotation = { playerRigidBody->getTransform().getOrientation().x, playerRigidBody->getTransform().getOrientation().y , playerRigidBody->getTransform().getOrientation().z};
-
 	for (int i = 0; i < meshes_Static.size(); i++)
 	{
 		meshes_Static[i].UpdateCB();
@@ -164,6 +163,13 @@ GAMESTATE Game::Update()
 		return EXIT;
 	}
 
+	if (Input::KeyPress(KeyCode::T))
+	{
+		XMFLOAT3 test(this->ptEmitters.at(0).getPosition().x, this->ptEmitters.at(0).getPosition().y, this->ptEmitters.at(0).getPosition().z -10);
+		this->ptEmitters.at(0).setPosition(test);
+		this->ptEmitters.at(0).updateBuffer();
+	}
+
 	return NOCHANGE;
 }
 
@@ -171,16 +177,21 @@ void Game::Render()
 {
 	start = std::chrono::system_clock::now();
 	//LIGHT STUFF
-	basicRenderer.lightPrePass();
-	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
-	{
-		ltHandler.drawShadows(i, gameObjects);
-	}
-	ltHandler.bindLightBuffers();
+	//basicRenderer.lightPrePass();
+	//for (int i = 0; i < ltHandler.getNrOfLights(); i++)
+	//{
+	//	ltHandler.drawShadows(i, gameObjects);
+	//}
+	//ltHandler.bindLightBuffers();
 
 	//Scene stuff
 	basicRenderer.setUpScene(this->camera);
 	drawObjects();
+	for (int i = 0; i < gameObjects.size(); i++)
+	{
+		gameObjects.at(i)->draw();
+	}
+	//ltHandler.drawDebugMesh();
 
 	//Particle stuff
 	basicRenderer.geometryPass(camera);

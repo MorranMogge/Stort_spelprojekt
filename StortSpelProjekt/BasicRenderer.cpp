@@ -72,6 +72,8 @@ BasicRenderer::~BasicRenderer()
 void BasicRenderer::lightPrePass()
 {
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	immediateContext->IASetInputLayout(this->inputLayout);
+	immediateContext->RSSetViewports(1, &viewport);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
 	immediateContext->PSSetShader(nullptr, nullptr, 0);
 }

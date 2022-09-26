@@ -51,7 +51,10 @@ private:
 	//Objects
 	std::vector<Mesh> meshes_Static;
 	std::vector<Mesh> meshes_Dynamic;
-	std::vector<GameObject> gameObjects;
+
+
+
+	std::vector<GameObject*> gameObjects;
 	std::vector<ParticleEmitter> ptEmitters;
 	
 	

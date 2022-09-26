@@ -168,18 +168,20 @@ bool Player::withinRadius(Item* itemToLookWithinRadius, float radius) const
 
 void Player::update()
 {
-    if (holdingItem)
-        holdingItem->setPos({this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f});
+    if (holdingItem != nullptr)
+    {
+        holdingItem->setPos({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f });
         
-    if (holdingItem && Input::KeyDown(KeyCode::R))
-    {
-        holdingItem->setPos({this->getPos().x, this->getPos().y, this->getPos().z});
-        holdingItem = nullptr;
-    }
-    else if (holdingItem && Input::KeyDown(KeyCode::T))
-    {
-        holdingItem->useItem();
-        holdingItem = nullptr;
+        if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
+        {
+            holdingItem->setPos({ this->getPos().x, this->getPos().y, this->getPos().z });
+            holdingItem = nullptr;
+        }
+        else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
+        {
+            holdingItem->useItem();
+            holdingItem = nullptr;
+        }
     }
     std::cout << this->health << "\n";
 }

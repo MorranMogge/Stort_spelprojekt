@@ -28,4 +28,5 @@ public:
 	void addItem(Item* itemToHold);
 	void releaseItem();
 	bool withinRadius(Item* itemToLookWithinRadius, float radius) const;
+	void update();
 };

@@ -97,7 +97,7 @@ void Game::setUpReact3D()
 }
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0), potion("../Meshes/player", DirectX::SimpleMath::Vector3(5,5,5), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0), potion("../Meshes/player", DirectX::SimpleMath::Vector3(10,10,15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
 {
 	MaterialLibrary::LoadDefault();
 
@@ -140,8 +140,12 @@ GAMESTATE Game::Update()
 
 	player.pickupItem(&potion);
 
-	
+	//std::cout << "player Pos: " << player.getPos().x << " " << player.getPos().y << " " << player.getPos().z << "\n";
+	//std::cout << "potion Pos: " << potion.getPos().x << " " << potion.getPos().y << " " << potion.getPos().z << "\n";
 
+	
+	player.setPos({ meshes_Dynamic[0].position.x,  meshes_Dynamic[0].position.y, meshes_Dynamic[0].position.z });
+	player.update();
 	//KLARA DONT LOOK HERE!
 	//DirectX::XMFLOAT3 pos = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y, playerRigidBody->getTransform().getPosition().z};
 	//playerRigidBody->applyLocalForceAtCenterOfMass(playerRigidBody->getMass() * reactphysics3d::Vector3(grav.x, grav.y, grav.z));

@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "DirectXMathHelper.h"
 
 Player::Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
     :GameObject(useMesh, pos, rot, id), health(69), holdingItem(nullptr)
@@ -56,7 +57,7 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 
     if (Input::KeyDown(KeyCode::W))
     {
-        position += playerForwardVec;
+         position += playerForwardVec;
     }
 
     else if (Input::KeyDown(KeyCode::S))
@@ -91,7 +92,7 @@ bool Player::pickupItem(Item* itemToPickup)
 
     if (Input::KeyDown(KeyCode::SPACE))
     {
-        if (this->withinRadius(itemToPickup, 50))
+        if (this->withinRadius(itemToPickup, 5))
         {
             addItem(itemToPickup);
             successfulPickup = true;
@@ -122,18 +123,39 @@ bool Player::withinRadius(Item* itemToLookWithinRadius, float radius) const
     bool inRange = false;
 
     //X range
-    if (objPos.x <= selfPos.x + radius && objPos.x >= selfPos.x - radius)
+    //if (objPos.x <= selfPos.x + radius && objPos.x >= selfPos.x - radius)
+    //{
+    //    //Y range
+    //    if (objPos.y <= selfPos.y + radius && objPos.y >= selfPos.y - radius)
+    //    {
+    //        //Z range
+    //        if (objPos.z <= selfPos.z + radius && objPos.z >= selfPos.z - radius)
+    //        {
+    //            inRange = true;
+    //        }
+    //    }
+    //}
+
+    XMFLOAT3 vecToObject = selfPos;
+    subtractionXMFLOAT3(vecToObject, objPos);
+
+    float lengthToVec = getLength(vecToObject);
+    if (lengthToVec<=radius)
     {
-        //Y range
-        if (objPos.y <= selfPos.y + radius && objPos.y >= selfPos.y - radius)
-        {
-            //Z range
-            if (objPos.z <= selfPos.z + radius && objPos.z >= selfPos.z - radius)
-            {
-                inRange = true;
-            }
-        }
+        inRange = true;
     }
 
     return inRange;
+}
+
+void Player::update()
+{
+    if (holdingItem)
+        holdingItem->setPos({this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f});
+        
+    if (holdingItem && Input::KeyDown(KeyCode::R))
+    {
+        holdingItem->setPos({this->getPos().x, this->getPos().y, this->getPos().z});
+        holdingItem = nullptr;
+    }
 }

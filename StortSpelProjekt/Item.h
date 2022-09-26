@@ -1,6 +1,8 @@
 #pragma once
 #include "GameObject.h"
 
+
+//Lägga in mutex så att inte flera spelar kan ta samma item.
 class Item : public GameObject
 {
 private:

@@ -28,6 +28,8 @@ private:
 	DirectX::XMVECTOR forwardVec = DEFAULT_FORWARD;
 	DirectX::XMVECTOR upVector = DEFAULT_UP;
 
+	int turn = 0;
+
 public:
 	Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
 	Player(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);

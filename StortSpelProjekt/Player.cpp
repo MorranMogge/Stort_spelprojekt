@@ -1,4 +1,5 @@
 #include "Player.h"
+#include <algorithm>
 
 Player::Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
     :GameObject(useMesh, pos, rot, id)
@@ -49,16 +50,11 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 {
     //Variables    
     playerUpVec = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);
+    rotation.y = std::clamp(rotation.y, 0.0f, XM_PI * 2);
 
-    /*XMFLOAT3 newPos;
-    XMStoreFloat3(&newPos, playerUpVec);
-
-    OutputDebugString(L"PLAYER UP: ");
-    OutputDebugString(std::to_wstring(newPos.x).c_str());
+    /*OutputDebugString(L"PLAYER ROTATION: ");
     OutputDebugString(L"\n");
-    OutputDebugString(std::to_wstring(newPos.y).c_str());
-    OutputDebugString(L"\n");
-    OutputDebugString(std::to_wstring(newPos.z).c_str());
+    OutputDebugString(std::to_wstring(rotation.y).c_str());
     OutputDebugString(L"\n");
     OutputDebugString(L"\n");*/
     
@@ -71,23 +67,26 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 
     if (Input::KeyDown(KeyCode::W))
     {
-        position += playerForwardVec  * deltaTime * 40;
+        //position += playerForwardVec * 0.3f;
+        //position += playerForwardVec  * deltaTime * 40;
         //rotation.x += deltaTime * 2;
+        
 
-        if (rotation.y < 0.0f)
-        {
-            rotation.y += 0.06f;
-        }
-
-        if (rotation.y > 0.0f)
+        if ((rotation.y - XM_PI) < 0.0f)
         {
             rotation.y -= 0.06f;
+        }
+
+        if ((rotation.y - XM_PI) > 0.0f)
+        {
+            rotation.y += 0.06f;
         }
     }
 
     else if (Input::KeyDown(KeyCode::S))
     {
-        position += playerForwardVec * deltaTime * 40;
+        //position += playerForwardVec * 0.3f;
+        //position += playerForwardVec  * deltaTime * 40;
         //rotation.x -= deltaTime * 2;
 
         if (Input::KeyDown(KeyCode::D))
@@ -114,15 +113,21 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 
     else if (Input::KeyDown(KeyCode::D))
     {
-        position += playerForwardVec * deltaTime * 40;
+        //position += playerForwardVec * 0.3f;
+        //position += playerForwardVec  * deltaTime * 40;
         //rotation.z -= deltaTime * 2;
 
-        if (rotation.y < XM_PIDIV2)
+        if (rotation.y > 6.0f)
+        {
+            rotation.y = 0.0f;
+        }
+
+        if (rotation.y > (XM_PI + XM_PIDIV2) || rotation.y < XM_PIDIV2)
         {
             rotation.y += 0.06f;
         }
 
-        if (rotation.y > XM_PIDIV2)
+        else if (rotation.y < (XM_PI + XM_PIDIV2))
         {
             rotation.y -= 0.06f;
         }
@@ -130,23 +135,30 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 
     else if (Input::KeyDown(KeyCode::A))
     {
-        position += playerForwardVec * deltaTime * 40;
+        //position += playerForwardVec * 0.3f;
+        //position += playerForwardVec  * deltaTime * 40;
         //rotation.z += deltaTime * 2;
 
-        if (rotation.y < (XM_PI + XM_PIDIV2))
+        if (rotation.y == 0.0f)
         {
-            rotation.y += 0.06f;
+            rotation.y = 6.0f;
         }
 
-        if (rotation.y > (XM_PI + XM_PIDIV2))
+        if (rotation.y < XM_PIDIV2 || rotation.y > (XM_PI + XM_PIDIV2))
         {
             rotation.y -= 0.06f;
+        }
+
+        else if (rotation.y > XM_PIDIV2)
+        {
+            rotation.y += 0.06f;
         }
     }
 
     //Help keys
     if (Input::KeyDown(KeyCode::E))
     {
+        //position.y += 1.5f;
         position.y +=  0.1f;
     }
 

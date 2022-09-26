@@ -75,7 +75,7 @@ void PhysicsComponent::setShape(reactphysics3d::CollisionShapeName shapeType)
 	switch (shapeType)
 	{
 	case reactphysics3d::CollisionShapeName::BOX:
-		this->shape = this->comPtr->createBoxShape(reactphysics3d::Vector3(0.5f, 0.5f, 0.5f));
+		this->shape = this->comPtr->createBoxShape(reactphysics3d::Vector3(4*0.5f, 4 * 0.5f, 4 * 0.5f));
 		break;
 	case reactphysics3d::CollisionShapeName::SPHERE:
 		this->shape = this->comPtr->createSphereShape(0.5f);

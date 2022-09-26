@@ -51,7 +51,7 @@ public:
 	void addForceToObject(const DirectX::XMFLOAT3& gravityVec);
 	DirectX::SimpleMath::Vector3 getPos();
 	DirectX::SimpleMath::Vector3 getRot();
-
+	void updatePlayerBox(const DirectX::SimpleMath::Vector3& pos);
 	void addBoxToWorld(DirectX::XMFLOAT3 dimensions = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f), float mass = 1.0f,  DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10, 00));
 	void addSphereToWorld(float radius = 0.5f, DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 0, 0));
 };

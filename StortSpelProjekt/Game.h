@@ -30,7 +30,7 @@ private:
 	ID3D11DeviceContext* immediateContext;
 
 	ImGuiHelper imGui;
-	bool wireframe = false;
+	bool wireframe = true;
 	bool objectDraw = true;
 	wirefameInfo reactWireframeInfo;
 	ID3D11Buffer* wireBuffer;

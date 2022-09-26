@@ -124,7 +124,10 @@ GAMESTATE Game::Update()
 	static bool forward = false;
 	float zpos = meshes_Dynamic[0].position.z;
 
+
+	if (GetAsyncKeyState('R')) physWolrd.addBoxToWorld();
 	//Do we want this?
+	DirectX::XMFLOAT3 pos = { meshes_Dynamic[0].position.x ,  meshes_Dynamic[0].position.y ,  meshes_Dynamic[0].position.z };
 	grav = planetGravityField.calcGravFactor(pos);
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(pos));
 
@@ -140,11 +143,11 @@ GAMESTATE Game::Update()
 	//playerRigidBody->applyLocalForceAtCenterOfMass(playerRigidBody->getMass() * reactphysics3d::Vector3(grav.x, grav.y, grav.z));
 	//world->update(reactphysics3d::decimal(dt));
 	
-
+	physWolrd.updatePlayerBox(meshes_Dynamic[0].position);
 	physWolrd.addForceToObject(grav);
 	physWolrd.update(dt);
-	meshes_Dynamic[0].position = physWolrd.getPos();
-	meshes_Dynamic[0].rotation = physWolrd.getRot();
+	//meshes_Dynamic[0].position = physWolrd.getPos();
+	//meshes_Dynamic[0].rotation = physWolrd.getRot();
 
 	for (int i = 0; i < meshes_Static.size(); i++)
 	{

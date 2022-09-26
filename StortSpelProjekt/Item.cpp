@@ -10,6 +10,10 @@ Item::Item(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot,
 {
 }
 
+Item::~Item()
+{
+}
+
 void Item::useItem()
 {
 }

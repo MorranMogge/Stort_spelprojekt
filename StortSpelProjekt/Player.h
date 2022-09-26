@@ -1,7 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Input.h"
-#include "Item.h"
+#include "Potion.h"
 #include <iostream>
 using namespace DirectX;
 
@@ -26,6 +26,7 @@ public:
 	bool pickupItem(Item *itemToPickup);
 	void releasePickup();
 	void addItem(Item* itemToHold);
+	void addHealth(const int& healthToIncrease);
 	void releaseItem();
 	bool withinRadius(Item* itemToLookWithinRadius, float radius) const;
 	void update();

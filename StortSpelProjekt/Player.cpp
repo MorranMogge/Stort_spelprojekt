@@ -95,6 +95,14 @@ bool Player::pickupItem(Item* itemToPickup)
         if (this->withinRadius(itemToPickup, 5))
         {
             addItem(itemToPickup);
+
+            Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
+            if (tmp)
+                tmp->setPlayerptr(this);
+               
+            
+
+
             successfulPickup = true;
             std::cout << successfulPickup << "\n";
         }
@@ -107,6 +115,16 @@ void Player::addItem(Item* itemToHold)
 {
     if (!this->holdingItem)
         this->holdingItem = itemToHold;
+}
+
+void Player::addHealth(const int& healthToIncrease)
+{
+    this->health += healthToIncrease;
+    //Prototyp för en cap så man inte kan få mer liv än en kapacitet
+    if (this->health > 100)
+    {
+        this->health = 100;
+    }
 }
 
 void Player::releaseItem()
@@ -158,4 +176,10 @@ void Player::update()
         holdingItem->setPos({this->getPos().x, this->getPos().y, this->getPos().z});
         holdingItem = nullptr;
     }
+    else if (holdingItem && Input::KeyDown(KeyCode::T))
+    {
+        holdingItem->useItem();
+        holdingItem = nullptr;
+    }
+    std::cout << this->health << "\n";
 }

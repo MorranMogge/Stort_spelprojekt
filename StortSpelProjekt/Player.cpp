@@ -57,22 +57,22 @@ void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& camera
 
     if (Input::KeyDown(KeyCode::W))
     {
-         this->position += playerForwardVec;
+         this->position += deltaTime * this->speedConstant * playerForwardVec;
     }
 
     else if (Input::KeyDown(KeyCode::S))
     {
-        this->position -= playerForwardVec;
+        this->position -= deltaTime * this->speedConstant * playerForwardVec;
     }
 
     if (Input::KeyDown(KeyCode::D))
     {
-        this->position += playerRightVec;
+        this->position += deltaTime * this->speedConstant * playerRightVec;
     }
 
     else if (Input::KeyDown(KeyCode::A))
     {
-        this->position -= playerRightVec;
+        this->position -= deltaTime * this->speedConstant * playerRightVec;
     }
 
     if (Input::KeyDown(KeyCode::E))

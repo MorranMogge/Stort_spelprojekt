@@ -8,7 +8,7 @@ using namespace DirectX;
 class Player: public GameObject
 {
 private:
-
+	const float speedConstant = 100.f;
 	//Olivers order
 	Item* holdingItem;
 	//Camera

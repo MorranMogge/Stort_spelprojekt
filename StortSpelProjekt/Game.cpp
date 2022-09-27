@@ -75,33 +75,34 @@ GAMESTATE Game::Update()
 {
 	mouse->handleEvents(this->window, camera);
 
-	constexpr float speed = 0.3f;
-	static bool forward = false;
-
 	if (GetAsyncKeyState('C')) physWolrd.addBoxToWorld();
 	//Do we want this?
 	grav = planetGravityField.calcGravFactor(player.getPosV3());
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(player.getPos()));
-	grav = normalizeXMFLOAT3(grav);
 	player.move(grav, camera.getRightVec(), dt);
 	
+	//Keeps player at the surface of the planet
 	if (getLength(player.getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(player.getPos()); player.setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
 	player.movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
-	camera.moveCamera(player.getPosV3(), dt);
-
 	
 	player.pickupItem(&potion);
 	player.update();
-
+	
+	camera.moveCamera(player.getPosV3(), dt);
 	
 	physWolrd.updatePlayerBox(player.getPos());
-	physWolrd.addForceToObject(grav);
+	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
 	
+
+	//Here you can write client-server related functions?
+
 	potion.updateBuffer();
 	player.updateBuffer();
 	planet->updateBuffer();
+	
 	mouse->clearEvents();
+	
 	return NOCHANGE;
 }
 

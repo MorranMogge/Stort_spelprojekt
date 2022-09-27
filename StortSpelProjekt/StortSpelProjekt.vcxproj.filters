@@ -43,6 +43,8 @@
     <ClCompile Include="MouseEvent.cpp" />
     <ClCompile Include="GravityField.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
+    <ClCompile Include="PhysicsWorld.cpp" />
+    <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Credits.cpp" />
     <ClCompile Include="SettingsUI.cpp" />
@@ -134,6 +136,9 @@
     <ClInclude Include="MouseEvent.h" />
     <ClInclude Include="GravityField.h" />
     <ClInclude Include="DirectXMathHelper.h" />
+    <ClInclude Include="TimeStruct.h" />
+    <ClInclude Include="PhysicsWorld.h" />
+    <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="ConstantBufferNew.h" />
     <ClInclude Include="BufferTypes.h" />
@@ -159,6 +164,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="PixelShader.hlsl" />
+    <FxCompile Include="VertexShader.hlsl" />
+    <FxCompile Include="DebuggerVshader.hlsl" />
+    <FxCompile Include="DebuggerPshader.hlsl" />
     <FxCompile Include="VertexShader.hlsl" />
     <FxCompile Include="PixelShader.hlsl" />
   </ItemGroup>

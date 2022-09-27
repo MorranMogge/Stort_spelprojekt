@@ -4,6 +4,8 @@
 #include <string>
 #include <iostream>
 
+//#include <reactphysics3d\reactphysics3d.h>
+
 #include "Console.h"
 #include "SoundCollection.h"
 #include "Client.h"
@@ -26,6 +28,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	Console::Activate(); // activate console for cout and cin, to destroy console call "Console::Destroy();" 
 	std::cout << "test print \n"; //test print
 
+	reactphysics3d::PhysicsCommon com;
+
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
@@ -46,13 +50,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ID3D11Device* device;
 	ID3D11DeviceContext* immediateContext;
 	IDXGISwapChain* swapChain;
-	ID3D11RenderTargetView* rtv;
-	ID3D11DepthStencilView* dsView;
-	ID3D11Texture2D* dsTexture;
 
-	D3D11_VIEWPORT viewport;
-
-	if (!SetupD3D11(WIDTH, HEIGHT, window, device, immediateContext, swapChain, rtv, dsTexture, dsView, viewport))
+	if (!CreateInterfaces(WIDTH, HEIGHT, window, device, immediateContext, swapChain))
 	{
 		ErrorLog::Log("Could not set up D3D11!");
 		return -1;
@@ -60,8 +59,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX11_Init(device, immediateContext);
+	MouseClass mouse;
+	SetUpMouse(mouse);
 
-	State* currentState = DBG_NEW Menu();
+	State* currentState = new Game(immediateContext, device, swapChain, mouse, window);
 	GAMESTATE stateInfo = NOCHANGE;
 
 	MSG msg = {};
@@ -70,7 +71,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	ImGuiHelper imGuiHelper(client);
 	imGuiHelper.setupImGui(clearColour);
-
 
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
@@ -94,7 +94,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 				break;
 			case GAME:
 				delete currentState;
-				currentState = new Game();
+				currentState = new Game(immediateContext, device, swapChain, mouse, window);
 				break;
 			default:
 				break;
@@ -104,13 +104,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 		currentState->Render();
 
 		//immediateContext->ClearRenderTargetView(rtv, clearColour);
-		immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+		/*immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 		immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		immediateContext->RSSetViewports(1, &viewport);
 
 		currentState->DrawUI();
+		*/
 		imGuiHelper.drawInterface("test");
-
 		swapChain->Present(0, 0);
 	}
 
@@ -129,9 +129,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	device->Release();
 	immediateContext->Release();
 	swapChain->Release();
-	rtv->Release();
-	dsView->Release();
-	dsTexture->Release();
 	#pragma endregion
 	
 	return 0;

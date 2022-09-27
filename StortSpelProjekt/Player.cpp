@@ -46,7 +46,7 @@ void Player::handleInputs()
 
 }
 
-void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::Vector3& rotation, const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, float deltaTime)
+void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::Vector3& rotation, const DirectX::XMFLOAT3& grav, float deltaTime)
 {
     rotation.y = std::clamp(rotation.y, 0.0f, XM_PI * 2);
     rotationMX = XMMatrixRotationRollPitchYawFromVector(rotation);
@@ -89,7 +89,7 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 
     if (Input::KeyDown(KeyCode::W))
     {
-        position += forwardVector * deltaTime * 40;
+        position += forwardVector * 0.3f;
         
         if (Input::KeyDown(KeyCode::D))
         {
@@ -115,7 +115,7 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 
     else if (Input::KeyDown(KeyCode::S))
     {
-        position += forwardVector * deltaTime * 40;
+        position += forwardVector * 0.3f;
 
         if (Input::KeyDown(KeyCode::D))
         {
@@ -141,7 +141,7 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 
     else if (Input::KeyDown(KeyCode::D))
     {
-        position += forwardVector * deltaTime * 40;
+        position += forwardVector * 0.3f;
 
         if (rotation.y >= XM_PI * 2)
         {
@@ -161,7 +161,7 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 
     else if (Input::KeyDown(KeyCode::A))
     {
-        position += forwardVector * deltaTime * 40;
+        position += forwardVector * 0.3f;
 
         if (rotation.y <= 0.0f)
         {
@@ -182,12 +182,12 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
     //Help keys
     if (Input::KeyDown(KeyCode::E))
     {
-        position.y +=  0.1f;
+        position.y += 1.5f;
     }
 
     else if (Input::KeyDown(KeyCode::Q))
     {
-        position.y -= 0.1f;
+        position.y -= 1.5f;
     }
 }
 

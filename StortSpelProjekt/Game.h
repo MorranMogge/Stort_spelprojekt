@@ -20,6 +20,8 @@ class Game : public State
 private:
 	ID3D11DeviceContext* immediateContext;
 
+	DirectX::XMVECTOR tempVector;
+
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> start;
 

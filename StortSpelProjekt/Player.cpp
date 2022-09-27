@@ -46,7 +46,7 @@ void Player::handleInputs()
 
 }
 
-void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::Vector3& rotation, const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, float deltaTime)
+void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, float deltaTime)
 {
     //Variables
     float rotationConstant = 0;
@@ -57,32 +57,32 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 
     if (Input::KeyDown(KeyCode::W))
     {
-         position += playerForwardVec;
+         this->position += playerForwardVec;
     }
 
     else if (Input::KeyDown(KeyCode::S))
     {
-        position -= playerForwardVec;
+        this->position -= playerForwardVec;
     }
 
     if (Input::KeyDown(KeyCode::D))
     {
-        position += playerRightVec;
+        this->position += playerRightVec;
     }
 
     else if (Input::KeyDown(KeyCode::A))
     {
-        position -= playerRightVec;
+        this->position -= playerRightVec;
     }
 
     if (Input::KeyDown(KeyCode::E))
     {
-        position.y += 0.1;
+        this->position.y += 0.1;
     }
 
     else if (Input::KeyDown(KeyCode::Q))
     {
-        position.y -= 0.1;
+        this->position.y -= 0.1;
     }
 }
 

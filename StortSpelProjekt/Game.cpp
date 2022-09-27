@@ -5,65 +5,15 @@
 
 void Game::loadObjects()
 {
-	// load obj file
-	std::vector<OBJ>objs_Static{
-		OBJ("../Meshes/Planet"),
-
-	};
-
-	// foreach obj in objs_static variable
-	for (auto& obj : objs_Static)
-	{
-		meshes_Static.emplace_back(obj); // create mesh from obj
-
-		// load obj material
-		for (auto& mat : obj.mtl.materials)
-		{
-			MaterialLibrary::LoadMaterial(mat);
-		}
-
-	}
-	meshes_Static[0].scale = DirectX::SimpleMath::Vector3(20, 20, 20);
-
-	// re-calculate bounding box
-	for (auto& mesh : meshes_Static)
-	{
-		mesh.CalcBound();
-	}
-
-	// load obj file
-	std::vector<OBJ>objs_Dynamic{
-		OBJ("../Meshes/Player")
-	};
-
-	// foreach obj in objs_Dynamic variable
-	for (auto& obj : objs_Dynamic)
-	{
-		auto& mesh = meshes_Dynamic.emplace_back(obj); // create mesh from obj
-
-		// load material
-		for (auto& mat : obj.mtl.materials)
-		{
-			MaterialLibrary::LoadMaterial(mat);
-		}
-
-	}
-	meshes_Dynamic[0].scale = DirectX::SimpleMath::Vector3(1, 1, 1);
-	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(22, 22, -22);
-	
+	//Here we can add base object we want in the beginning of the game
+	planet = new GameObject("../Meshes/Planet", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
 }
 
 void Game::drawObjects()
 {
-	for (auto& mesh : meshes_Static) //draw Static meshes
-	{
-		mesh.DrawWithMat();
-	}
-	for (auto& mesh : meshes_Dynamic) //draw Dynamic meshes
-	{
-		mesh.DrawWithMat();
-	}
 	potion.draw();
+	player.draw();
+	planet->draw();
 }
 
 bool Game::setUpWireframe()
@@ -118,6 +68,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 Game::~Game()
 {
 	wireBuffer->Release();
+	delete planet;
 }
 
 GAMESTATE Game::Update()
@@ -126,46 +77,30 @@ GAMESTATE Game::Update()
 
 	constexpr float speed = 0.3f;
 	static bool forward = false;
-	float zpos = meshes_Dynamic[0].position.z;
-
 
 	if (GetAsyncKeyState('C')) physWolrd.addBoxToWorld();
 	//Do we want this?
-	DirectX::XMFLOAT3 pos = { meshes_Dynamic[0].position.x ,  meshes_Dynamic[0].position.y ,  meshes_Dynamic[0].position.z };
-	grav = planetGravityField.calcGravFactor(pos);
-	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(pos));
-
+	grav = planetGravityField.calcGravFactor(player.getPosV3());
+	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(player.getPos()));
 	grav = normalizeXMFLOAT3(grav);
-	player.move(meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, grav, camera.getRightVec(), dt);
-	grav = planetGravityField.calcGravFactor(meshes_Dynamic[0].position);
-	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(meshes_Dynamic[0].position));
-	if (getLength(meshes_Dynamic[0].position) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); newNormalizeXMFLOAT3(meshes_Dynamic[0].position); scalarMultiplicationXMFLOAT3(22, meshes_Dynamic[0].position); }
-	additionXMFLOAT3(meshes_Dynamic[0].position, getScalarMultiplicationXMFLOAT3(dt, velocity));
-	camera.moveCamera(meshes_Dynamic[0].position, dt);
+	player.move(grav, camera.getRightVec(), dt);
+	
+	if (getLength(player.getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(player.getPos()); player.setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
+	player.movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
+	camera.moveCamera(player.getPosV3(), dt);
 
+	
 	player.pickupItem(&potion);
-	
-	player.setPos({ meshes_Dynamic[0].position.x,  meshes_Dynamic[0].position.y, meshes_Dynamic[0].position.z });
 	player.update();
-	
-	
 
 	
-	physWolrd.updatePlayerBox(meshes_Dynamic[0].position);
+	physWolrd.updatePlayerBox(player.getPos());
 	physWolrd.addForceToObject(grav);
 	physWolrd.update(dt);
 	
-
-	for (int i = 0; i < meshes_Static.size(); i++)
-	{
-		meshes_Static[i].UpdateCB();
-	}
-
-	for (int i = 0; i < meshes_Dynamic.size(); i++)
-	{
-		meshes_Dynamic[i].UpdateCB();
-	}
 	potion.updateBuffer();
+	player.updateBuffer();
+	planet->updateBuffer();
 	mouse->clearEvents();
 	return NOCHANGE;
 }

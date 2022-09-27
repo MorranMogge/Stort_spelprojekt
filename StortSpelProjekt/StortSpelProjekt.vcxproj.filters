@@ -7,10 +7,7 @@
     <ClCompile Include="GuiHandler.cpp" />
     <ClCompile Include="GUISprite.cpp" />
     <ClCompile Include="GUIText.cpp" />
-    <ClCompile Include="ImGuiHelper.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="State.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="WindowHelper.cpp" />
     <ClCompile Include="ImGui\imgui.cpp">
@@ -35,17 +32,11 @@
       <Filter>ImGui</Filter>
     </ClCompile>
     <ClCompile Include="BasicRenderer.cpp" />
-    <ClCompile Include="Game.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DXUtil.cpp" />
-    <ClCompile Include="MouseClass.cpp" />
-    <ClCompile Include="MouseEvent.cpp" />
     <ClCompile Include="GravityField.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
-    <ClCompile Include="PhysicsWorld.cpp" />
-    <ClCompile Include="PhysicsComponent.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Credits.cpp" />
     <ClCompile Include="SettingsUI.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -53,12 +44,38 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Potion.cpp" />
+    <ClCompile Include="PhysicsWorld.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsComponent.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiHelper.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseClass.cpp">
+      <Filter>MouseClass</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseEvent.cpp">
+      <Filter>MouseClass</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bound.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="ConstantBuffer.h" />
-    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GPU.h" />
     <ClInclude Include="GuiHandler.h" />
     <ClInclude Include="GUIObject.h" />
@@ -80,14 +97,11 @@
     <ClInclude Include="Console.h" />
     <ClInclude Include="D3D11Helper.h" />
     <ClInclude Include="ErrorLog.h" />
-    <ClInclude Include="ImGuiHelper.h" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="MemoryLeackChecker.h" />
-    <ClInclude Include="Menu.h" />
     <ClInclude Include="PackageTypes.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="State.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Topology.h" />
     <ClInclude Include="UnorderedAccessView.h" />
@@ -126,7 +140,6 @@
       <Filter>ImGui</Filter>
     </ClInclude>
     <ClInclude Include="BasicRenderer.h" />
-    <ClInclude Include="Game.h" />
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="BlendState.h" />
@@ -134,13 +147,9 @@
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="DXUtil.h" />
     <ClInclude Include="DepthStencilView.h" />
-    <ClInclude Include="MouseClass.h" />
-    <ClInclude Include="MouseEvent.h" />
     <ClInclude Include="GravityField.h" />
     <ClInclude Include="DirectXMathHelper.h" />
     <ClInclude Include="TimeStruct.h" />
-    <ClInclude Include="PhysicsWorld.h" />
-    <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="ConstantBufferNew.h" />
     <ClInclude Include="BufferTypes.h" />
@@ -152,6 +161,33 @@
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Potion.h" />
+    <ClInclude Include="PhysicsWorld.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsComponent.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiHelper.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseClass.h">
+      <Filter>MouseClass</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseEvent.h">
+      <Filter>MouseClass</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -166,13 +202,26 @@
     <Filter Include="stb_image">
       <UniqueIdentifier>{04645332-69e8-44a7-93c1-88dd530212f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{49297479-471c-4cc8-85a3-c150d3eb66a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObjects">
+      <UniqueIdentifier>{2e2e4dc7-3936-4221-8f24-81775a0b84ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game-States">
+      <UniqueIdentifier>{f3dfddc5-031d-40f6-bfbe-372117da74f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MouseClass">
+      <UniqueIdentifier>{7e39fc3d-95b3-4fc2-a175-117077aa7e81}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl" />
     <FxCompile Include="VertexShader.hlsl" />
-    <FxCompile Include="DebuggerVshader.hlsl" />
-    <FxCompile Include="DebuggerPshader.hlsl" />
     <FxCompile Include="VertexShader.hlsl" />
     <FxCompile Include="PixelShader.hlsl" />
+    <FxCompile Include="DebuggerPshader.hlsl">
+      <Filter>Physics</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

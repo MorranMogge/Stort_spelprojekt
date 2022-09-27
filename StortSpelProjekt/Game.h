@@ -7,6 +7,7 @@
 #include "MouseClass.h"
 #include "GravityField.h"
 #include <chrono>
+#include <GamePad.h>
 #include "ShaderLoader.h"
 #include "ImGuiHelper.h"
 
@@ -36,6 +37,8 @@ private:
 	wirefameInfo reactWireframeInfo;
 	ID3D11Buffer* wireBuffer;
 	D3D11_MAPPED_SUBRESOURCE subData;
+
+	std::unique_ptr<DirectX::GamePad> gamePad;
 
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> start;

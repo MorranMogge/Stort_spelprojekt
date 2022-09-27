@@ -11,23 +11,17 @@ private:
 	GameObject* pickup;
 
 	//Movement
-	DirectX::XMVECTOR playerUpVec;
-	DirectX::XMVECTOR playerForwardVec;
-	DirectX::XMVECTOR playerRightVec;
+	XMFLOAT3 dotValue;
+	DirectX::XMVECTOR dotProduct;
+	DirectX::XMMATRIX rotationMX;
 
-	/*DirectX::XMVECTOR zVec = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	DirectX::XMVECTOR dotVector;
-	DirectX::XMVECTOR tempRightVec = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);*/
+	DirectX::XMVECTOR upVector;
+	DirectX::XMVECTOR forwardVector;
+	DirectX::XMVECTOR rightVector;
 
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-
-	DirectX::XMMATRIX rotationMX;
-	DirectX::XMVECTOR rightVec = DEFAULT_RIGHT;
-	DirectX::XMVECTOR forwardVec = DEFAULT_FORWARD;
-	DirectX::XMVECTOR upVector = DEFAULT_UP;
-	DirectX::XMVECTOR dotProduct;
 
 public:
 	Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);

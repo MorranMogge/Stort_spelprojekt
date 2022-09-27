@@ -7,10 +7,9 @@ using namespace DirectX;
 class Player: public GameObject
 {
 private:
-
 	GameObject* pickup;
 
-	//Movement
+	//Movement variables
 	XMFLOAT3 dotValue;
 	DirectX::XMVECTOR dotProduct;
 	DirectX::XMMATRIX rotationMX;
@@ -22,6 +21,13 @@ private:
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+
+	//Calculations only done once
+	float northWest = XM_PI + XM_PIDIV2 + XM_PIDIV4;
+	float northEast = XM_PIDIV4;
+	float southWest = XM_PI + XM_PIDIV4;
+	float southEast = XM_PIDIV2 + XM_PIDIV4;
+	float piDiv2 = XM_PI + XM_PIDIV2;
 
 public:
 	Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);

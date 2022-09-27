@@ -51,6 +51,8 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightHandler.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Potion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bound.h" />
@@ -148,6 +150,8 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightHandler.h" />
     <ClInclude Include="StructuredBuffer.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="Potion.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

@@ -83,7 +83,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 		}
 		Sound::Update();
 
+		
+
+
 		stateInfo = currentState->Update();
+
+		if (GetAsyncKeyState(VK_ESCAPE))
+			stateInfo = EXIT;
 
 		if (stateInfo != NOCHANGE)
 		{

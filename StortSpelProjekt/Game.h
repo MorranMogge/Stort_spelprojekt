@@ -17,6 +17,7 @@
 #include "StructuredBuffer.h"
 #include "BufferTypes.h"
 #include "LightHandler.h"
+#include "Potion.h"
 
 struct wirefameInfo
 {
@@ -50,6 +51,9 @@ private:
 
 	Camera camera;
 	Player player;
+	Potion potion;
+
+
 	LightHandler ltHandler;
 
 	//Objects
@@ -61,11 +65,6 @@ private:
 	void drawObjects();
 	bool setUpWireframe();
 	void updateBuffers();
-
-	//Create Shape
-	//Create Rigidbody
-	//Create transform
-	//Create collider, rigidbody->createCollider(&shape, transform)
 
 	float pos[3];
 

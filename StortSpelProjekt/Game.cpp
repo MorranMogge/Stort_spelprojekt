@@ -1,11 +1,14 @@
 #include "Game.h"
 #include "DirectXMathHelper.h"
 
+
+
 void Game::loadObjects()
 {
 	// load obj file
 	std::vector<OBJ>objs_Static{
-		OBJ("../Meshes/Planet")
+		OBJ("../Meshes/Planet"),
+
 	};
 
 	// foreach obj in objs_static variable
@@ -30,7 +33,7 @@ void Game::loadObjects()
 
 	// load obj file
 	std::vector<OBJ>objs_Dynamic{
-		OBJ("../Meshes/Player"),
+		OBJ("../Meshes/Player")
 	};
 
 	// foreach obj in objs_Dynamic variable
@@ -47,7 +50,6 @@ void Game::loadObjects()
 	}
 	meshes_Dynamic[0].scale = DirectX::SimpleMath::Vector3(1, 1, 1);
 	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(22, 22, -22);
-
 	
 }
 
@@ -61,6 +63,7 @@ void Game::drawObjects()
 	{
 		mesh.DrawWithMat();
 	}
+	potion.draw();
 }
 
 bool Game::setUpWireframe()
@@ -93,8 +96,9 @@ void Game::updateBuffers()
 }
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 22, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0), potion("../Meshes/player", DirectX::SimpleMath::Vector3(10,10,15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
 {
+	
 	MaterialLibrary::LoadDefault();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -125,7 +129,7 @@ GAMESTATE Game::Update()
 	float zpos = meshes_Dynamic[0].position.z;
 
 
-	if (GetAsyncKeyState('R')) physWolrd.addBoxToWorld();
+	if (GetAsyncKeyState('C')) physWolrd.addBoxToWorld();
 	//Do we want this?
 	DirectX::XMFLOAT3 pos = { meshes_Dynamic[0].position.x ,  meshes_Dynamic[0].position.y ,  meshes_Dynamic[0].position.z };
 	grav = planetGravityField.calcGravFactor(pos);
@@ -139,15 +143,18 @@ GAMESTATE Game::Update()
 	additionXMFLOAT3(meshes_Dynamic[0].position, getScalarMultiplicationXMFLOAT3(dt, velocity));
 	camera.moveCamera(meshes_Dynamic[0].position, dt);
 
-	//KLARA DONT LOOK HERE!
-	//playerRigidBody->applyLocalForceAtCenterOfMass(playerRigidBody->getMass() * reactphysics3d::Vector3(grav.x, grav.y, grav.z));
-	//world->update(reactphysics3d::decimal(dt));
+	player.pickupItem(&potion);
+	
+	player.setPos({ meshes_Dynamic[0].position.x,  meshes_Dynamic[0].position.y, meshes_Dynamic[0].position.z });
+	player.update();
+	
+	
+
 	
 	physWolrd.updatePlayerBox(meshes_Dynamic[0].position);
 	physWolrd.addForceToObject(grav);
 	physWolrd.update(dt);
-	//meshes_Dynamic[0].position = physWolrd.getPos();
-	//meshes_Dynamic[0].rotation = physWolrd.getRot();
+	
 
 	for (int i = 0; i < meshes_Static.size(); i++)
 	{
@@ -158,7 +165,7 @@ GAMESTATE Game::Update()
 	{
 		meshes_Dynamic[i].UpdateCB();
 	}
-
+	potion.updateBuffer();
 	mouse->clearEvents();
 	return NOCHANGE;
 }

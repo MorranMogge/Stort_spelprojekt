@@ -171,7 +171,6 @@ void Player::update()
     if (holdingItem != nullptr)
     {
         holdingItem->setPos({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f });
-        
         if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
         {
             holdingItem->setPos({ this->getPos().x, this->getPos().y, this->getPos().z });

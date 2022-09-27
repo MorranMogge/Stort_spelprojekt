@@ -66,36 +66,33 @@ void Game::drawObjects()
 	potion.draw();
 }
 
-void Game::setUpReact3D()
+bool Game::setUpWireframe()
 {
-	// Create the world settings 
-	reactphysics3d::PhysicsWorld::WorldSettings settings;
-	settings.defaultVelocitySolverNbIterations = 20;
-	settings.isSleepingEnabled = false;
-	settings.worldName = "Planet SIS";
+	reactWireframeInfo.wireframeClr = DirectX::XMFLOAT3(1.f, 0.f, 0.f);
 
-	// Create the physics world with your settings 
-	world = com.createPhysicsWorld(settings);
+	D3D11_BUFFER_DESC bufferDesc = {};
+	bufferDesc.ByteWidth = sizeof(wirefameInfo);
+	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
 
-	//Create Player
-	playerShape = com.createBoxShape(reactphysics3d::Vector3(5, 5, 5));
-	reactphysics3d::Transform playerTransform = reactphysics3d::Transform(reactphysics3d::Vector3(30, 30, -30), reactphysics3d::Quaternion::identity());
-	playerRigidBody = world->createRigidBody(playerTransform);
-	playerCollider = playerRigidBody->addCollider(playerShape, playerTransform);
-	playerRigidBody->setType(reactphysics3d::BodyType::DYNAMIC);
-	playerRigidBody->enableGravity(false);
-	playerRigidBody->setMass(10);
-	playerRigidBody->applyLocalTorque(reactphysics3d::Vector3(10000, 10000, 10000));
+	D3D11_SUBRESOURCE_DATA data = {};
+	data.pSysMem = &reactWireframeInfo;
+	data.SysMemPitch = 0;
+	data.SysMemSlicePitch = 0;
 
+	HRESULT hr = GPU::device->CreateBuffer(&bufferDesc, &data, &wireBuffer);
+	return !FAILED(hr);
+}
 
-	//Planet
-	planetShape = com.createSphereShape(reactphysics3d::decimal(5));
-	reactphysics3d::Transform planetTransform = reactphysics3d::Transform(reactphysics3d::Vector3(0, 0, 0), reactphysics3d::Quaternion::identity());
-	planetRigidBody = world->createRigidBody(planetTransform);
-	planetCollider = planetRigidBody->addCollider(planetShape, planetTransform);
-	planetRigidBody->setType(reactphysics3d::BodyType::STATIC);
-	planetRigidBody->enableGravity(false);
-
+void Game::updateBuffers()
+{
+	ZeroMemory(&subData, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	immediateContext->Map(wireBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &subData);
+	memcpy(subData.pData, &reactWireframeInfo, sizeof(wirefameInfo));
+	immediateContext->Unmap(wireBuffer, 0);
 }
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
@@ -106,6 +103,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
+	this->setUpWireframe();
+	//camera.updateCamera(immediateContext);
 	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
 
 	//this->setUpReact3D();
@@ -118,11 +117,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 Game::~Game()
 {
-	if (playerRigidBody != nullptr) world->destroyRigidBody(playerRigidBody);
-	if (planetRigidBody != nullptr) world->destroyRigidBody(planetRigidBody);
-	if (playerShape != nullptr) com.destroyBoxShape(playerShape);
-	if (planetShape != nullptr) com.destroySphereShape(planetShape);
-	if (world != nullptr) com.destroyPhysicsWorld(world);
+	wireBuffer->Release();
 }
 
 GAMESTATE Game::Update()
@@ -132,6 +127,13 @@ GAMESTATE Game::Update()
 	constexpr float speed = 0.3f;
 	static bool forward = false;
 	float zpos = meshes_Dynamic[0].position.z;
+
+
+	if (GetAsyncKeyState('R')) physWolrd.addBoxToWorld();
+	//Do we want this?
+	DirectX::XMFLOAT3 pos = { meshes_Dynamic[0].position.x ,  meshes_Dynamic[0].position.y ,  meshes_Dynamic[0].position.z };
+	grav = planetGravityField.calcGravFactor(pos);
+	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(pos));
 
 	grav = normalizeXMFLOAT3(grav);
 	player.move(meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, grav, camera.getRightVec(), dt);
@@ -146,6 +148,12 @@ GAMESTATE Game::Update()
 	player.setPos({ meshes_Dynamic[0].position.x,  meshes_Dynamic[0].position.y, meshes_Dynamic[0].position.z });
 	player.update();
 	
+	
+
+	
+	physWolrd.updatePlayerBox(meshes_Dynamic[0].position);
+	physWolrd.addForceToObject(grav);
+	physWolrd.update(dt);
 	
 
 	for (int i = 0; i < meshes_Static.size(); i++)
@@ -164,6 +172,7 @@ GAMESTATE Game::Update()
 
 void Game::Render()
 {
+	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 	start = std::chrono::system_clock::now();
 	//LIGHT STUFF
 	basicRenderer.lightPrePass();
@@ -174,6 +183,7 @@ void Game::Render()
 	ltHandler.bindLightBuffers();
 
 	basicRenderer.setUpScene();
-	drawObjects();
-	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
+	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
+	if (objectDraw) this->drawObjects();
+	if (wireframe) { this->updateBuffers(); immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
 }

@@ -14,10 +14,6 @@ Item::~Item()
 {
 }
 
-void Item::useItem()
-{
-}
-
 void Item::throwItem()
 {
 }

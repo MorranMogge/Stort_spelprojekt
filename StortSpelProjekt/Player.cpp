@@ -100,11 +100,7 @@ bool Player::pickupItem(Item* itemToPickup)
             if (tmp)
                 tmp->setPlayerptr(this);
                
-            
-
-
             successfulPickup = true;
-            std::cout << successfulPickup << "\n";
         }
     }
     
@@ -140,20 +136,6 @@ bool Player::withinRadius(Item* itemToLookWithinRadius, float radius) const
     XMFLOAT3 selfPos = this->getPos();
     bool inRange = false;
 
-    //X range
-    //if (objPos.x <= selfPos.x + radius && objPos.x >= selfPos.x - radius)
-    //{
-    //    //Y range
-    //    if (objPos.y <= selfPos.y + radius && objPos.y >= selfPos.y - radius)
-    //    {
-    //        //Z range
-    //        if (objPos.z <= selfPos.z + radius && objPos.z >= selfPos.z - radius)
-    //        {
-    //            inRange = true;
-    //        }
-    //    }
-    //}
-
     XMFLOAT3 vecToObject = selfPos;
     subtractionXMFLOAT3(vecToObject, objPos);
 
@@ -182,5 +164,4 @@ void Player::update()
             holdingItem = nullptr;
         }
     }
-    std::cout << this->health << "\n";
 }

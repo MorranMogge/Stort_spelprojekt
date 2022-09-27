@@ -129,7 +129,7 @@ GAMESTATE Game::Update()
 	float zpos = meshes_Dynamic[0].position.z;
 
 
-	if (GetAsyncKeyState('R')) physWolrd.addBoxToWorld();
+	if (GetAsyncKeyState('C')) physWolrd.addBoxToWorld();
 	//Do we want this?
 	DirectX::XMFLOAT3 pos = { meshes_Dynamic[0].position.x ,  meshes_Dynamic[0].position.y ,  meshes_Dynamic[0].position.z };
 	grav = planetGravityField.calcGravFactor(pos);

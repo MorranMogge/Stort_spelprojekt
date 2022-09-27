@@ -51,15 +51,51 @@ void Game::loadObjects()
 	
 }
 
-void Game::drawObjects()
+void Game::drawShadows()
 {
-	for (auto& mesh : meshes_Static) //draw Static meshes
+	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
 	{
-		mesh.DrawWithMat();
+		ltHandler.drawShadows(i, gameObjects);
 	}
-	for (auto& mesh : meshes_Dynamic) //draw Dynamic meshes
+}
+
+void Game::drawObjects(bool drawDebug)
+{
+	//Bind light
+	ltHandler.bindLightBuffers();
+
+	//Draw Game objects
+	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		mesh.DrawWithMat();
+		gameObjects.at(i)->draw();
+	}
+	
+	//Draw light debug meshes
+	if (drawDebug)
+	{
+		ltHandler.drawDebugMesh();
+	}
+	
+	//Remove
+	//for (auto& mesh : meshes_Static) //draw Static meshes
+	//{
+	//	mesh.DrawWithMat();
+	//}
+	//for (auto& mesh : meshes_Dynamic) //draw Dynamic meshes
+	//{
+	//	mesh.DrawWithMat();
+	//}
+
+
+	//Unbind light
+	ltHandler.unbindSrv();
+}
+
+void Game::drawParticles()
+{
+	for (int i = 0; i < this->ptEmitters.size(); i++)
+	{
+		this->ptEmitters.at(i).BindAndDraw();
 	}
 }
 
@@ -104,7 +140,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->loadObjects();
 
 	ltHandler.addLight(DirectX::XMFLOAT3(20, 30, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(0.25, 0.25, -0.25), DirectX::XMFLOAT3(0, 1, 0));
-	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
+	//ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
 	gameObjects.push_back(new GameObject("../Meshes/Cone", DirectX::SimpleMath::Vector3(0, 0, -0), DirectX::XMFLOAT3(1, 0, 0), 0, DirectX::XMFLOAT3(20, 20, 20)));
 	gameObjects.push_back(new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 22, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0));
@@ -178,30 +214,19 @@ GAMESTATE Game::Update()
 void Game::Render()
 {
 	start = std::chrono::system_clock::now();
-	//LIGHT STUFF
+
+	//Render shadow maps
 	basicRenderer.lightPrePass();
-	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
-	{
-		ltHandler.drawShadows(i, gameObjects);
-	}
+	drawShadows();
 	
 
-	//Scene stuff
+	//Render Scene
 	basicRenderer.setUpScene(this->camera);
-	ltHandler.bindLightBuffers();
-	//drawObjects();
-	for (int i = 0; i < gameObjects.size(); i++)
-	{
-		gameObjects.at(i)->draw();
-	}
-	//ltHandler.drawDebugMesh();
-	ltHandler.unbindSrv();
+	drawObjects(false);
 
-	//Particle stuff
+
+	//Render Particles
 	basicRenderer.geometryPass(camera);
-	for (int i = 0; i < this->ptEmitters.size(); i++)
-	{
-		this->ptEmitters.at(i).BindAndDraw();
-	}
+	drawParticles();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 }

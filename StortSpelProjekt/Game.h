@@ -60,8 +60,12 @@ private:
 	
 
 	void loadObjects();
-	void drawObjects();
+	void drawShadows();
+	void drawObjects(bool drawDebug);
+	void drawParticles();
 	void setUpReact3D();
+
+	
 
 	//Create Shape
 	//Create Rigidbody

@@ -216,5 +216,5 @@ float4 main(PSin input) : SV_TARGET
     const float4 resultColor = float4((diffuse + specular), 0);
     float4 test = (float4(ambient, 0.0f) + resultColor);
 
-    return float4(texColor);
+    return float4(texColor); //test *
 }

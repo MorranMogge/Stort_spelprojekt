@@ -22,7 +22,7 @@ private:
 	UINT shadowHeight;															//Width shadowmap
 	UINT shadowWidth;															//Height shadowmap
 
-
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> structuredBufferSrv;		//View for structured buffer
 	//Light
 
 	std::vector<Light> lights;													//Vector of light objects

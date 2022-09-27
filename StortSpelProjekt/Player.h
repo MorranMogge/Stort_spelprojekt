@@ -27,8 +27,7 @@ private:
 	DirectX::XMVECTOR rightVec = DEFAULT_RIGHT;
 	DirectX::XMVECTOR forwardVec = DEFAULT_FORWARD;
 	DirectX::XMVECTOR upVector = DEFAULT_UP;
-
-	int turn = 0;
+	DirectX::XMVECTOR dotProduct;
 
 public:
 	Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);

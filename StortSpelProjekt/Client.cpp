@@ -64,6 +64,7 @@ Client::Client()
 	this->ip = sf::IpAddress::getLocalAddress().toString();
 	this->port = 2001;
 	this->tmp = "empty String UwU";
+	this->isConnected = false;
 }
 
 Client::Client(std::string ipAddress, int port)
@@ -72,6 +73,7 @@ Client::Client(std::string ipAddress, int port)
 	this->ip = ipAddress;
 	this->tmp = "empty";
 	this->port = 2001;
+	this->isConnected = false;
 }
 
 Client::~Client()
@@ -114,6 +116,7 @@ void Client::connectToServer()
 	data.playerId = 0;
 	data.endThread = false;
 	this->setupThread();
+	this->isConnected = true;
 
 	//this->joinThread();
 	//data.socket.setBlocking(false);
@@ -241,11 +244,12 @@ void Client::sendToServerTEMPTCP(Player& currentPlayer)
 	}
 	else
 	{
-		std::string s;
+		float sentPos[3];
+
 		unsigned short id;
-		int n;
-		sendPacket >> id >> n >> s;
-		std::cout << "TCP sent packet: " << id << ", " << n << ", " << s << std::endl;
+		sendPacket >> id >> sentPos[0] >> sentPos[1] >> sentPos[2];
+		std::cout << "TCP sent packet: " << id << ", " << std::to_string(sentPos[0]) << ", " << std::to_string(sentPos[1])
+			<< ", " << std::to_string(sentPos[2]) << std::endl;
 		sendPacket.clear();
 	}
 	

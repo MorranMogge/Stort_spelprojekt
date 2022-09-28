@@ -4,6 +4,8 @@
 #include <thread>
 #include "Player.h"
 
+#include "Player.h"
+
 struct ThreadInfo
 {
 	sf::TcpSocket socket;
@@ -21,6 +23,8 @@ private:
 	sf::Packet sendPacket;
 	sf::Packet receivedPacket;
 
+	bool isConnected;
+
 	sf::SocketSelector selector;
 	
 	std::string ip;
@@ -30,6 +34,8 @@ private:
 	std::string id;
 
 	std::thread* clientThread;
+
+	int extractPacketId();
 public:
 	Client();
 	Client(std::string ipAddress, int port = 2001);

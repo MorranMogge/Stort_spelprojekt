@@ -43,6 +43,9 @@ private:
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT3 grav;
 
+	
+	Client* client;
+
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
 

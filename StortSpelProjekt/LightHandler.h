@@ -13,7 +13,6 @@ class LightHandler
 {
 private:
 
-
 	//Shadow
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shadowSrv;					//Shader view ShadowTx for lights	//Bind to shader to sample from shadow map
@@ -22,7 +21,6 @@ private:
 	UINT shadowHeight;															//Width shadowmap
 	UINT shadowWidth;															//Height shadowmap
 
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> structuredBufferSrv;		//View for structured buffer
 	//Light
 
 	std::vector<Light> lights;													//Vector of light objects
@@ -32,7 +30,7 @@ private:
 	int LightCap = 10;															//Max nr of lights that can be created
 
 	//Debug Mesh
-	std::vector<GameObject*> boundingSphere;										//Mesh for visualization
+	std::vector<GameObject*> boundingSphere;									//Mesh for visualization
 	
 public:
 

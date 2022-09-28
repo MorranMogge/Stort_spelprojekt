@@ -33,12 +33,12 @@ public:
 	void BindAndDraw();
 	void updateBuffer();												//Updates position, rotation & state (emitter on or off)
 
-	ID3D11Buffer* getVTXBuffer();
-	ID3D11Buffer* getPosBuffer();
-	ID3D11UnorderedAccessView* getUAV();
-	int getNrOfParticles();
-	DirectX::XMFLOAT3 getPosition();
-	DirectX::XMFLOAT3 getRotation();
+	ID3D11Buffer* getVTXBuffer() const;
+	ID3D11Buffer* getPosBuffer() const;
+	ID3D11UnorderedAccessView* getUAV() const;
+	int getNrOfParticles() const;
+	DirectX::XMFLOAT3 getPosition() const;
+	DirectX::XMFLOAT3 getRotation() const;
 
 	void setPosition(DirectX::XMFLOAT3 Pos);
 	void setRotation(DirectX::XMFLOAT3 Rot);

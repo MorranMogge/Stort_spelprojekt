@@ -1,4 +1,5 @@
 #include "Light.h"
+#include "GPU.h"
 
 Light::Light(DirectX::XMFLOAT3 lightColor, DirectX::XMFLOAT3 lightPos, DirectX::XMFLOAT3 FocusPos, DirectX::XMFLOAT3 UpDir, float coneAngle, int type)
 	:position(lightPos), color(lightColor), upDirection(UpDir), direction(FocusPos), coneAngle(coneAngle), lightType(type), falloff(1.0), range(200)
@@ -6,7 +7,7 @@ Light::Light(DirectX::XMFLOAT3 lightColor, DirectX::XMFLOAT3 lightPos, DirectX::
 	DirectX::XMVECTOR pos = DirectX::XMVectorSet(this->position.x, this->position.y, this->position.z, 0);
 	DirectX::XMVECTOR focusPos = DirectX::XMVectorSet(FocusPos.x, FocusPos.y, FocusPos.z, 0);
 	DirectX::XMVECTOR upPos = DirectX::XMVectorSet(UpDir.x, UpDir.y, UpDir.z, 0);
-	this->view = { DirectX::XMMatrixLookAtLH(pos,focusPos, upPos) * DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PI / 2.0f, 0.75f, 0.1f, 200.0f) };
+	this->view = { DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtLH(pos,focusPos, upPos) * DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PI / 2.0f, (float)GPU::windowWidth/ (float)GPU::windowHeight, 0.1f, 200.0f)) };
 }
 
 DirectX::XMFLOAT3 Light::getPosition() const

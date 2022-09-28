@@ -157,6 +157,7 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="BufferTypes.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="ClientHandler.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferNew.h" />
     <ClInclude Include="Credits.h" />
@@ -178,8 +179,12 @@
     <ClInclude Include="LightHandler.h" />
     <ClInclude Include="MaterialLibrary.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MouseClass.h" />
-    <ClInclude Include="MouseEvent.h" />
+    <ClInclude Include="MouseClass.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="MouseEvent.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="MTL.h" />
     <ClInclude Include="OBJ.h" />
     <ClInclude Include="PerspectiveCamera.h" />
@@ -232,6 +237,7 @@
     <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="Credits.cpp" />
     <ClCompile Include="D3D11Helper.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
@@ -256,10 +262,14 @@
     <ClCompile Include="LightHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="MouseClass.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
-    <ClCompile Include="MouseClass.cpp" />
-    <ClCompile Include="MouseEvent.cpp" />
+    <ClCompile Include="MouseEvent.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Potion.cpp" />
     <ClCompile Include="SettingsUI.cpp" />

@@ -1,5 +1,15 @@
 #include "Client.h"
 
+//returns the id of the packet
+int extractPacketId(sf::Packet& packet)
+{
+	unsigned short packetIdentifier;
+
+	packet >> packetIdentifier;
+	//std::cout << "packetId: " << std::to_string(packetIdentifier) << std::endl;
+	return packetIdentifier;
+}
+
 void clientFunction(void* param)
 {
 	ThreadInfo* data = (ThreadInfo*)param;
@@ -8,16 +18,41 @@ void clientFunction(void* param)
 	while (!data->endThread)
 	{
 		data->socket.receive(receivedPacket); //Receives the packet
-			std::string receivedString;
-			unsigned short packetId;
-			std::string playerName;
-			float x = 0.0f;
-			float y = 0.0f;
-			float z = 0.0f;
+		int packetid = extractPacketId(receivedPacket);
+		
+		std::string receivedString;
+		unsigned short packetId;
+		int playerid;
+		float x = 0.0f;
+		float y = 0.0f;
+		float z = 0.0f;
+
+		switch (packetid)
+		{
+		default:
+			break;
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+
+
 			std::cout << "TCP received data from address: " << data->socket.getRemoteAddress().toString() << std::endl;
-			receivedPacket >> packetId >> playerName >> x >> y >> z;
-			std::cout << "data received from server: Packet id: " << std::to_string(packetId) << " player name: " << playerName <<
+			receivedPacket >> packetId >> playerid >> x >> y >> z;
+			std::cout << "data received from server: Packet id: " << std::to_string(packetId) << " player name: " << playerid <<
 				" x : " << std::to_string(x) << " y: " << std::to_string(y) << " z: " << std::to_string(z) << std::endl;
+
+			break;
+		case 4:
+			break;
+		case 10://receiving id in player vector from server side
+
+
+			receivedPacket >> data->playerId;
+			break;
+		}
+			
 		
 		receivedPacket.clear();
 	}
@@ -59,7 +94,10 @@ void Client::connectToServer(std::string ipAddress, int port)
 	{
 		std::cout << "Was able to connect\n";
 	}
-	//addselector();
+	data.playerId = -1;
+	data.endThread = false;
+	this->setupThread();
+
 }
 
 void Client::connectToServer()
@@ -72,10 +110,12 @@ void Client::connectToServer()
 	{
 		std::cout << "Was able to connect\n";
 	}
+
+	data.playerId = 0;
+	data.endThread = false;
 	this->setupThread();
 
 	//this->joinThread();
-	//addselector();
 	//data.socket.setBlocking(false);
 }
 
@@ -179,12 +219,20 @@ void Client::sendToServerTcp(std::string buf)
 	}
 }
 
-void Client::sendToServerTEMPTCP()
+void Client::sendToServerTEMPTCP(Player& currentPlayer)
 {
+
+	float x = currentPlayer.getPos().x;
+	float y = currentPlayer.getPos().y;
+	float z = currentPlayer.getPos().z;
+	//int playerid = data.users[i].playerId;
+
+	
+
 	sendPacket.clear();
-	unsigned short packetIdentifier = 2;
-	int nr = 420;
-	sendPacket << packetIdentifier << nr << this->tmp;
+	unsigned short packetIdentifier = 3;
+	
+	sendPacket << packetIdentifier << data.playerId << x << y << z;
 
 	if (data.socket.send(sendPacket) != sf::Socket::Done)
 	{
@@ -256,6 +304,11 @@ void Client::tempwrite()
 int Client::getport() const
 {
 	return this->port;
+}
+
+int Client::getPlayerId() const
+{
+	return this->data.playerId;
 }
 
 std::string Client::getipAdress() const

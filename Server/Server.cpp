@@ -30,6 +30,7 @@ struct userData
 	sf::IpAddress ipAdress;
 	std::string userName;
 	sf::TcpSocket tcpSocket;
+	int playerId;
 
 	player playa;
 };
@@ -168,7 +169,8 @@ void acceptPlayers(serverData& data)
 		{
 			std::cout << "TCP Accepted new player ipAdress: " << data.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
 			data.users[i].ipAdress = data.users[i].tcpSocket.getRemoteAddress().toString();
-			data.users[i].userName = std::to_string(i + 1);
+			data.users[i].userName = "fixa username " + std::to_string(i + 1);
+			data.users[i].playerId = i;
 		}
 		
 	}
@@ -217,6 +219,13 @@ void packetId(sf::Packet& packet)
 
 	packet >> packetIdentifier;
 	std::cout << "packetId: " << std::to_string(packetIdentifier) << std::endl;
+	
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
+	int playerid = -1;
+	unsigned short packId = 3;
+
 
 	switch (packetIdentifier)
 	{
@@ -229,13 +238,19 @@ void packetId(sf::Packet& packet)
 		packet >> nr >> s;
 		std::cout << "packet ID: " << packetIdentifier << ", Nr: " << nr << ", string: " << s << std::endl;
 		break;
+
+	case 3:
+		//sending position data to all players
+		packet << packId << playerid << x << y << z;
+		//TA EMOT POSITION
+		break;
 	}
 };
 
 int extractPacketId(sf::Packet& packet)
 {
 	unsigned short packetIdentifier;
-
+	
 	packet >> packetIdentifier;
 	//std::cout << "packetId: " << std::to_string(packetIdentifier) << std::endl;
 	return packetIdentifier;
@@ -267,6 +282,27 @@ void recvData(void* param, userData* user)
 		}
 		
 		//std::cout << "userName: " << data->user->userName << std::endl;
+	}
+};
+
+void sendIdToAllPlayers(serverData& data)
+{
+	unsigned short packetid = 10;
+
+	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+	{
+		sf::Packet pack;
+		pack << packetid << data.users[i].playerId;
+
+		if (data.users[i].tcpSocket.send(pack) != sf::Socket::Done)
+		{
+			//error
+			std::cout << "sendIdToAllPlayers(), couldnt send id to player: " << std::to_string(i) << std::endl;
+		}
+		else
+		{
+			std::cout << "sendIdToAllPlayers() sent to player nr: " << std::to_string(data.users[i].playerId);
+		}
 	}
 };
 
@@ -313,10 +349,11 @@ int main()
 	float timerLength = 1.2f;
 
 
-
 	setupTcp(data);
 	
 	acceptPlayers(data);
+
+
 
 	std::thread* recvThread[MAXNUMBEROFPLAYERS];
 	threadInfo threadData[MAXNUMBEROFPLAYERS];
@@ -368,10 +405,10 @@ int main()
 				float x = data.users[i].playa.getposition('x');
 				float y = data.users[i].playa.getposition('y');
 				float z = data.users[i].playa.getposition('z');
-				std::string playerName = "player " + std::to_string(i);
+				int playerid = data.users[i].playerId;
 				unsigned short packId = 3;
 				//sending position data to all players
-				tempPack << packId << playerName << x << y << z;
+				tempPack << packId << playerid << x << y << z;
 				
 				sendDataAllPlayers(tempPack, data);
 			}

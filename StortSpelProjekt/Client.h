@@ -2,11 +2,13 @@
 #include <SFML/Network.hpp>
 #include <iostream>
 #include <thread>
+#include "Player.h"
 
 struct ThreadInfo
 {
 	sf::TcpSocket socket;
 	std::string receivedstring;
+	int playerId;
 	bool endThread = false;
 };
 
@@ -48,7 +50,7 @@ public:
 
 	void sendToServerTcp();
 	void sendToServerTcp(std::string buf);
-	void sendToServerTEMPTCP();
+	void sendToServerTEMPTCP(Player& currentPlayer);
 	void receiveFromServerTcp();
 
 	void RECEIVEPOSITIONTEST();
@@ -58,5 +60,6 @@ public:
 	void tempwrite();
 
 	int getport()const;
+	int getPlayerId()const;
 	std::string getipAdress()const;
 };

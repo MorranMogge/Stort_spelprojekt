@@ -4,7 +4,6 @@
 #include "BasicRenderer.h"
 #include "Mesh.h"
 #include "Input.h"
-#include "MouseClass.h"
 #include "GravityField.h"
 #include <chrono>
 #include "ShaderLoader.h"
@@ -18,6 +17,7 @@
 #include "BufferTypes.h"
 #include "LightHandler.h"
 #include "Potion.h"
+#include "Client.h"
 
 struct wirefameInfo
 {
@@ -30,7 +30,6 @@ class Game : public State
 private:
 	ID3D11DeviceContext* immediateContext;
 
-	ImGuiHelper imGui;
 	bool wireframe = true;
 	bool objectDraw = true;
 	wirefameInfo reactWireframeInfo;
@@ -49,13 +48,17 @@ private:
 
 	PhysicsWorld physWolrd;
 
+
+	Player currentPlayer;
+	std::vector<Player> players;
+
 	Camera camera;
-	Player player;
 	GameObject* planet;
 	Potion potion;
 
 
 	LightHandler ltHandler;
+	ImGuiHelper* imguiHelper;
 
 	//Objects
 	std::vector<GameObject> gameObjects;
@@ -65,14 +68,13 @@ private:
 	bool setUpWireframe();
 	void updateBuffers();
 
-	float pos[3];
+	//float pos[3];
 
 	//Variables for the mouse movement
-	MouseClass* mouse;
 	HWND* window;
 
 public:
-	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window);
+	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, ImGuiHelper& imguiHelper);
 	virtual ~Game() override;
 
 	// Inherited via State

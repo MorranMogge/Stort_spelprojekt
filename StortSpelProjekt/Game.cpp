@@ -12,7 +12,7 @@ void Game::loadObjects()
 void Game::drawObjects()
 {
 	potion.draw();
-	player.draw();
+	currentPlayer.draw();
 	planet->draw();
 }
 
@@ -45,12 +45,13 @@ void Game::updateBuffers()
 	immediateContext->Unmap(wireBuffer, 0);
 }
 
-Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0), potion("../Meshes/player", DirectX::SimpleMath::Vector3(10,10,15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
+Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, ImGuiHelper& imguiHelper)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), currentPlayer("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0), potion("../Meshes/player", DirectX::SimpleMath::Vector3(10,10,15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
 {
 	
 	MaterialLibrary::LoadDefault();
 
+	this->imguiHelper = &imguiHelper;
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
 	this->setUpWireframe();
@@ -59,7 +60,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	//this->setUpReact3D();
 
-	this->mouse = &mouse;
 	this->window = &window;
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
@@ -73,24 +73,23 @@ Game::~Game()
 
 GAMESTATE Game::Update()
 {
-	mouse->handleEvents(this->window, camera);
 
 	if (GetAsyncKeyState('C')) physWolrd.addBoxToWorld();
 	//Do we want this?
-	grav = planetGravityField.calcGravFactor(player.getPosV3());
-	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(player.getPos()));
-	player.move(grav, camera.getRightVec(), dt);
+	grav = planetGravityField.calcGravFactor(currentPlayer.getPosV3());
+	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(currentPlayer.getPos()));
+	currentPlayer.move(grav, camera.getRightVec(), dt);
 	
 	//Keeps player at the surface of the planet
-	if (getLength(player.getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(player.getPos()); player.setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
-	player.movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
+	if (getLength(currentPlayer.getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(currentPlayer.getPos()); currentPlayer.setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
+	currentPlayer.movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
 	
-	player.pickupItem(&potion);
-	player.update();
+	currentPlayer.pickupItem(&potion);
+	currentPlayer.update();
 	
-	camera.moveCamera(player.getPosV3(), dt);
+	camera.moveCamera(currentPlayer.getPosV3(), dt);
 	
-	physWolrd.updatePlayerBox(player.getPos());
+	physWolrd.updatePlayerBox(currentPlayer.getPos());
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
 	
@@ -98,10 +97,9 @@ GAMESTATE Game::Update()
 	//Here you can write client-server related functions?
 
 	potion.updateBuffer();
-	player.updateBuffer();
+	currentPlayer.updateBuffer();
 	planet->updateBuffer();
 	
-	mouse->clearEvents();
 	
 	return NOCHANGE;
 }
@@ -119,7 +117,8 @@ void Game::Render()
 	ltHandler.bindLightBuffers();
 
 	basicRenderer.setUpScene();
-	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
 	if (objectDraw) this->drawObjects();
 	if (wireframe) { this->updateBuffers(); immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
+
+	//imguiHelper->drawInterface("test");
 }

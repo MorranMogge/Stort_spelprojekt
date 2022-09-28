@@ -60,18 +60,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX11_Init(device, immediateContext);
-	MouseClass mouse;
-	SetUpMouse(mouse);
+	
+	float clearColour[4]{ 0,0,0,0 };
+	ImGuiHelper imGuiHelper(client);
+	imGuiHelper.setupImGui(clearColour);
 
-	State* currentState = new Game(immediateContext, device, swapChain, mouse, window);
+	State* currentState = new Game(immediateContext, device, swapChain, window, imGuiHelper);
 	GAMESTATE stateInfo = NOCHANGE;
 
 	MSG msg = {};
-
-	float clearColour[4]{ 0,0,0,0 };
-
-	ImGuiHelper imGuiHelper(client);
-	imGuiHelper.setupImGui(clearColour);
+	
 
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
@@ -101,7 +99,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 				break;
 			case GAME:
 				delete currentState;
-				currentState = new Game(immediateContext, device, swapChain, mouse, window);
+				currentState = new Game(immediateContext, device, swapChain, window, imGuiHelper);
 				break;
 			default:
 				break;
@@ -117,7 +115,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 		currentState->DrawUI();
 		*/
-		//imGuiHelper.drawInterface("test");
+		imGuiHelper.drawInterface("test");
 		swapChain->Present(0, 0);
 	}
 

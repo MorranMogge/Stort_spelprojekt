@@ -38,9 +38,6 @@
     <ClCompile Include="ImGuiHelper.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="MouseClass.cpp">
-      <Filter>MouseClass</Filter>
-    </ClCompile>
     <ClCompile Include="MouseEvent.cpp">
       <Filter>MouseClass</Filter>
     </ClCompile>
@@ -113,6 +110,10 @@
     <ClCompile Include="Client.cpp">
       <Filter>User</Filter>
     </ClCompile>
+    <ClCompile Include="MouseClass.cpp">
+      <Filter>MouseClass</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -160,9 +161,6 @@
     </ClInclude>
     <ClInclude Include="ImGuiHelper.h">
       <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="MouseClass.h">
-      <Filter>MouseClass</Filter>
     </ClInclude>
     <ClInclude Include="MouseEvent.h">
       <Filter>MouseClass</Filter>
@@ -342,6 +340,12 @@
       <Filter>User</Filter>
     </ClInclude>
     <ClInclude Include="Client.h">
+      <Filter>User</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseClass.h">
+      <Filter>MouseClass</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientHandler.h">
       <Filter>User</Filter>
     </ClInclude>
   </ItemGroup>

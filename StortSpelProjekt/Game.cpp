@@ -95,10 +95,13 @@ void Game::setUpReact3D()
 
 }
 
-Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 22, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
+Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, Client*& client)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player",
+		DirectX::SimpleMath::Vector3(22, 22, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
 {
 	MaterialLibrary::LoadDefault();
+
+	this->client = client;
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
@@ -106,7 +109,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	//this->setUpReact3D();
 
-	this->mouse = &mouse;
 	this->window = &window;
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
@@ -123,7 +125,7 @@ Game::~Game()
 
 GAMESTATE Game::Update()
 {
-	mouse->handleEvents(this->window, camera);
+	//mouse->handleEvents(this->window, camera);
 
 	constexpr float speed = 0.3f;
 	static bool forward = false;
@@ -144,6 +146,12 @@ GAMESTATE Game::Update()
 	//meshes_Dynamic[0].position = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y , playerRigidBody->getTransform().getPosition().z};
 	//meshes_Dynamic[0].rotation = { playerRigidBody->getTransform().getOrientation().x, playerRigidBody->getTransform().getOrientation().y , playerRigidBody->getTransform().getOrientation().z};
 
+
+	if (client->getIsConnected())
+	{
+		client->sendToServerPlayerPos(player);
+	}
+
 	for (int i = 0; i < meshes_Static.size(); i++)
 	{
 		meshes_Static[i].UpdateCB();
@@ -153,8 +161,7 @@ GAMESTATE Game::Update()
 	{
 		meshes_Dynamic[i].UpdateCB();
 	}
-
-	mouse->clearEvents();
+	
 	return NOCHANGE;
 }
 

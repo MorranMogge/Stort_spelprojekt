@@ -73,10 +73,6 @@ void ImGuiHelper::drawInterface(std::string message)
 		{
 			client->receiveFromServerTcp();
 		}
-		if (ImGui::Button("Send to server packet 2"))
-		{
-			client->sendToServerTEMPTCP();
-		}
 		
 
 		//selector.add(tcpSocket);

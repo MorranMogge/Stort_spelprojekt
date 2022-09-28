@@ -4,7 +4,7 @@
 #include "BasicRenderer.h"
 #include "Mesh.h"
 #include "Input.h"
-#include "MouseClass.h"
+//#include "MouseClass.h"
 #include "GravityField.h"
 #include <chrono>
 #include "Player.h"
@@ -14,6 +14,7 @@
 #include "StructuredBuffer.h"
 #include "BufferTypes.h"
 #include "LightHandler.h"
+#include "Client.h"
 
 class Game : public State
 {
@@ -26,6 +27,9 @@ private:
 	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT3 grav;
+
+	
+	Client* client;
 
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
@@ -64,11 +68,11 @@ private:
 	float pos[3];
 
 	//Variables for the mouse movement
-	MouseClass* mouse;
+	//MouseClass* mouse;
 	HWND* window;
 
 public:
-	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window);
+	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, Client*& client);
 	virtual ~Game() override;
 
 	// Inherited via State

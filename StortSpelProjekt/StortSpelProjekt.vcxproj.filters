@@ -143,6 +143,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightHandler.h" />
     <ClInclude Include="StructuredBuffer.h" />
+    <ClInclude Include="ClientHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

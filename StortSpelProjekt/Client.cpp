@@ -1,5 +1,7 @@
 #include "Client.h"
 
+
+
 void clientFunction(void* param)
 {
 	ThreadInfo* data = (ThreadInfo*)param;
@@ -29,6 +31,7 @@ Client::Client()
 	this->ip = sf::IpAddress::getLocalAddress().toString();
 	this->port = 2001;
 	this->tmp = "empty String UwU";
+	this->isConnected = false;
 }
 
 Client::Client(std::string ipAddress, int port)
@@ -37,6 +40,7 @@ Client::Client(std::string ipAddress, int port)
 	this->ip = ipAddress;
 	this->tmp = "empty";
 	this->port = 2001;
+	this->isConnected = false;
 }
 
 Client::~Client()
@@ -60,6 +64,8 @@ void Client::connectToServer(std::string ipAddress, int port)
 		std::cout << "Was able to connect\n";
 	}
 	//addselector();
+	this->setupThread();
+	this->isConnected = true;
 }
 
 void Client::connectToServer()
@@ -73,6 +79,7 @@ void Client::connectToServer()
 		std::cout << "Was able to connect\n";
 	}
 	this->setupThread();
+	this->isConnected = true;
 
 	//this->joinThread();
 	//addselector();
@@ -179,12 +186,13 @@ void Client::sendToServerTcp(std::string buf)
 	}
 }
 
-void Client::sendToServerTEMPTCP()
+void Client::sendToServerPlayerPos( Player& player)
 {
 	sendPacket.clear();
-	unsigned short packetIdentifier = 2;
-	int nr = 420;
-	sendPacket << packetIdentifier << nr << this->tmp;
+	float tempPos[3]{ player.getPos().x, player.getPos().y,player.getPos().z };
+	unsigned short packId = 3;
+
+	sendPacket << packId << tempPos[0] << tempPos[1] << tempPos[2];
 
 	if (data.socket.send(sendPacket) != sf::Socket::Done)
 	{
@@ -193,11 +201,12 @@ void Client::sendToServerTEMPTCP()
 	}
 	else
 	{
-		std::string s;
+		float sentPos[3];
+
 		unsigned short id;
-		int n;
-		sendPacket >> id >> n >> s;
-		std::cout << "TCP sent packet: " << id << ", " << n << ", " << s << std::endl;
+		sendPacket >> id >> sentPos[0] >> sentPos[1] >> sentPos[2];
+		std::cout << "TCP sent packet: " << id << ", " << std::to_string(sentPos[0]) << ", " << std::to_string(sentPos[1])
+			<< ", " << std::to_string(sentPos[2]) << std::endl;
 		sendPacket.clear();
 	}
 	
@@ -256,6 +265,11 @@ void Client::tempwrite()
 int Client::getport() const
 {
 	return this->port;
+}
+
+bool Client::getIsConnected() const
+{
+	return this->isConnected;
 }
 
 std::string Client::getipAdress() const

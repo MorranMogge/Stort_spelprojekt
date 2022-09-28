@@ -263,6 +263,7 @@ void recvData(void* param, userData* user)
 			if (packetId == 3)
 			{
 				packet >> data->pos[0] >> data->pos[1] >> data->pos[2];
+				std::cout << "Position recv: " << std::to_string(data->pos[0]) << ", " << std::to_string(data->pos[1]) << ", " << std::to_string(data->pos[2]) << std::endl;
 			}
 		}
 		
@@ -324,9 +325,9 @@ int main()
 	
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
-		threadData[i].pos[0] = 0.0f;
-		threadData[i].pos[1] = 0.0f;
-		threadData[i].pos[2] = 0.0f;
+		threadData[i].pos[0] = 22.0f;
+		threadData[i].pos[1] = 22.0f;
+		threadData[i].pos[2] = -22.0f;
 		recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
 	}
 	

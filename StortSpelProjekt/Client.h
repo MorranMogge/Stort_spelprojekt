@@ -3,6 +3,8 @@
 #include <iostream>
 #include <thread>
 
+#include "Player.h"
+
 struct ThreadInfo
 {
 	sf::TcpSocket socket;
@@ -19,6 +21,8 @@ private:
 	sf::Packet sendPacket;
 	sf::Packet receivedPacket;
 
+	bool isConnected;
+
 	sf::SocketSelector selector;
 	
 	std::string ip;
@@ -28,6 +32,8 @@ private:
 	std::string id;
 
 	std::thread* clientThread;
+
+	int extractPacketId();
 public:
 	Client();
 	Client(std::string ipAddress, int port = 2001);
@@ -48,7 +54,7 @@ public:
 
 	void sendToServerTcp();
 	void sendToServerTcp(std::string buf);
-	void sendToServerTEMPTCP();
+	void sendToServerPlayerPos(Player& player);
 	void receiveFromServerTcp();
 
 	void RECEIVEPOSITIONTEST();
@@ -58,5 +64,6 @@ public:
 	void tempwrite();
 
 	int getport()const;
+	bool getIsConnected()const;
 	std::string getipAdress()const;
 };

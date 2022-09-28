@@ -12,9 +12,6 @@ cbuffer posValue : register(b1)
     float3 orientation;
 };
 
-[numthreads(1, 1, 1)]
-void main(uint3 DTid : SV_DispatchThreadID)
-{
 #define Offset 8
     
 #define PositionX rawBuffer[DTid.x * Offset]
@@ -30,41 +27,38 @@ void main(uint3 DTid : SV_DispatchThreadID)
 #define LifeTime rawBuffer[DTid.x * Offset + 7]
 
 #define Speed 1.0f
-#define SpeedMultyply 100.0f
-    
-    // if SimulateTime bigger than LifeTime or not enabled, reset it to 0, else plus delta time
-    SimulateTime = SimulateTime > LifeTime || !enable ? 0.0f : SimulateTime + deltaTime;
-    
-    // up vector from camera
+#define Range 100.0f
+
+// up vector from camera
 #define CameraUpVector float3(0.0f, 1.0f, 0.0f)
 
-    // euler direction Z
-    const float3 eulerZ = normalize(cross(orientation, CameraUpVector));
-    
-    // euler direction X
-    const float3 eulerX = normalize(cross(orientation, eulerZ));
-    
-// euler direction matrix, 3x3 without translation
-#define EulerDirection float3x3(eulerX, orientation, eulerZ)
-    
 // start position in local space
 #define StartPosition float3(StartPositionX, StartPositionY, StartPositionZ)
-    
+
 // remap simulate time in range of 0 to 1
-#define TimeScale SimulateTime / LifeTime 
+#define TimeScale SimulateTime / LifeTime
+
+// position offset in local space 
+#define LocalOffset Speed * Range * TimeScale
+
+[numthreads(1, 1, 1)]
+void main(uint3 DTid : SV_DispatchThreadID)
+{
+    // if SimulateTime bigger than LifeTime or not enabled, reset it to 0, else add delta time
+    SimulateTime = SimulateTime > LifeTime || !enable ? 0.0f : SimulateTime + deltaTime;
     
-// oriented/rotated start position in local space
-#define OrientedStartPosition mul(EulerDirection, StartPosition)
+    const float3 eulerZ = normalize(cross(orientation, CameraUpVector)); // rotation Z
+    const float3 eulerX = normalize(cross(orientation, eulerZ)); // rotation X
     
-// offset in local space (move particles)
-#define LocalOffset (Speed * SpeedMultyply * TimeScale * orientation) 
+#define EulerRotation float3x3(eulerX, orientation, eulerZ) // rotation matrix, 3x3 without translation
+#define RotatedStartPosition mul(EulerRotation, StartPosition) // oriented/rotated start position in local space
+#define RotatedLocalOffset (LocalOffset * orientation) // rotated local offset
     
     // position in world space
-    const float3 position = OrientedStartPosition + LocalOffset + offsetFromOrigin;
+    const float3 position = RotatedStartPosition + RotatedLocalOffset + offsetFromOrigin;
     
     //apply position to buffer
     PositionX = position.x;
     PositionY = position.y;
     PositionZ = position.z;
-
 }

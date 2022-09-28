@@ -1,12 +1,13 @@
 #include "Player.h"
+#include "DirectXMathHelper.h"
 
 Player::Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
-    :GameObject(useMesh, pos, rot, id)
+    :GameObject(useMesh, pos, rot, id), health(69), holdingItem(nullptr)
 {
 }
 
 Player::Player(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
-	:GameObject(objectPath, pos, rot, id)
+	:GameObject(objectPath, pos, rot, id), health(69), holdingItem(nullptr)
 {
 }
 
@@ -45,7 +46,7 @@ void Player::handleInputs()
 
 }
 
-void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::Vector3& rotation, const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, float deltaTime)
+void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, float deltaTime)
 {
     //Variables
     float rotationConstant = 0;
@@ -56,53 +57,111 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 
     if (Input::KeyDown(KeyCode::W))
     {
-        position += playerForwardVec;
+         this->position += deltaTime * this->speedConstant * playerForwardVec;
     }
 
     else if (Input::KeyDown(KeyCode::S))
     {
-        position -= playerForwardVec;
+        this->position -= deltaTime * this->speedConstant * playerForwardVec;
     }
 
     if (Input::KeyDown(KeyCode::D))
     {
-        position += playerRightVec;
+        this->position += deltaTime * this->speedConstant * playerRightVec;
     }
 
     else if (Input::KeyDown(KeyCode::A))
     {
-        position -= playerRightVec;
+        this->position -= deltaTime * this->speedConstant * playerRightVec;
     }
 
     if (Input::KeyDown(KeyCode::E))
     {
-        position.y += 0.1;
+        this->position.y += 0.1;
     }
 
     else if (Input::KeyDown(KeyCode::Q))
     {
-        position.y -= 0.1;
+        this->position.y -= 0.1;
     }
 }
 
-bool Player::getPickup(GameObject* pickup)
+bool Player::pickupItem(Item* itemToPickup)
 {
-    bool pickedUp = false;
+    bool successfulPickup = false;
 
-
-    if (Input::KeyDown(KeyCode::SPACE))                           //SPACE
+    if (Input::KeyDown(KeyCode::SPACE))
     {
-        //Check if should pick up
-        if (this->withinRadious(pickup, 50) && this->pickup == nullptr)
+        if (this->withinRadius(itemToPickup, 5))
         {
-            this->pickup = pickup;
-        }  
-    }
+            addItem(itemToPickup);
 
-    return pickedUp;
+            Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
+            if (tmp)
+                tmp->setPlayerptr(this);
+               
+            successfulPickup = true;
+        }
+    }
+    
+    return successfulPickup;
 }
 
-void Player::releasePickup()
+void Player::addItem(Item* itemToHold)
 {
-    this->pickup = nullptr;
+    if (!this->holdingItem)
+        this->holdingItem = itemToHold;
+}
+
+void Player::addHealth(const int& healthToIncrease)
+{
+    this->health += healthToIncrease;
+    //Prototyp för en cap så man inte kan få mer liv än en kapacitet
+    if (this->health > 100)
+    {
+        this->health = 100;
+    }
+}
+
+void Player::releaseItem()
+{
+    this->holdingItem = nullptr;
+}
+
+bool Player::withinRadius(Item* itemToLookWithinRadius, float radius) const
+{
+    using namespace DirectX;
+
+    XMFLOAT3 objPos = itemToLookWithinRadius->getPos();
+    XMFLOAT3 selfPos = this->getPos();
+    bool inRange = false;
+
+    XMFLOAT3 vecToObject = selfPos;
+    subtractionXMFLOAT3(vecToObject, objPos);
+
+    float lengthToVec = getLength(vecToObject);
+    if (lengthToVec<=radius)
+    {
+        inRange = true;
+    }
+
+    return inRange;
+}
+
+void Player::update()
+{
+    if (holdingItem != nullptr)
+    {
+        holdingItem->setPos({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f });
+        if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
+        {
+            holdingItem->setPos({ this->getPos().x, this->getPos().y, this->getPos().z });
+            holdingItem = nullptr;
+        }
+        else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
+        {
+            holdingItem->useItem();
+            holdingItem = nullptr;
+        }
+    }
 }

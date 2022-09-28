@@ -1,18 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Client.cpp" />
-    <ClCompile Include="D3D11Helper.cpp" />
-    <ClCompile Include="ErrorLog.cpp" />
-    <ClCompile Include="GuiHandler.cpp" />
-    <ClCompile Include="GUISprite.cpp" />
-    <ClCompile Include="GUIText.cpp" />
-    <ClCompile Include="ImGuiHelper.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="State.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="WindowHelper.cpp" />
     <ClCompile Include="ImGui\imgui.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
@@ -34,63 +23,98 @@
     <ClCompile Include="ImGui\imgui_widgets.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="BasicRenderer.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="ShaderLoader.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="DXUtil.cpp" />
-    <ClCompile Include="MouseClass.cpp" />
-    <ClCompile Include="MouseEvent.cpp" />
-    <ClCompile Include="GravityField.cpp" />
-    <ClCompile Include="DirectXMathHelper.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Credits.cpp" />
-    <ClCompile Include="SettingsUI.cpp" />
-    <ClCompile Include="Light.cpp" />
-    <ClCompile Include="LightHandler.cpp" />
-    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PhysicsWorld.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsComponent.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiHelper.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseClass.cpp">
+      <Filter>MouseClass</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseEvent.cpp">
+      <Filter>MouseClass</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
+    <ClCompile Include="GravityField.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Potion.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXMathHelper.cpp">
+      <Filter>Handler/Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11Helper.cpp">
+      <Filter>Handler/Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiHandler.cpp">
+      <Filter>Handler/Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="GUISprite.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIText.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ErrorLog.cpp">
+      <Filter>Handler/Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowHelper.cpp">
+      <Filter>Handler/Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Credits.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderLoader.cpp">
+      <Filter>Handler/Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="LightHandler.cpp">
+      <Filter>Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>DirectX11</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicRenderer.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="DXUtil.cpp">
+      <Filter>Structs</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>User</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>User</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bound.h" />
-    <ClInclude Include="Buffer.h" />
-    <ClInclude Include="ConstantBuffer.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="GPU.h" />
-    <ClInclude Include="GuiHandler.h" />
-    <ClInclude Include="GUIObject.h" />
-    <ClInclude Include="GUISprite.h" />
-    <ClInclude Include="GUIText.h" />
-    <ClInclude Include="IndexBuffer.h" />
-    <ClInclude Include="MaterialLibrary.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MTL.h" />
-    <ClInclude Include="OBJ.h" />
-    <ClInclude Include="RasterizerState.h" />
-    <ClInclude Include="RenderTargetView.h" />
-    <ClInclude Include="SamplerState.h" />
-    <ClInclude Include="ShaderResourceView.h" />
-    <ClInclude Include="ShaderResourceTexture.h" />
-    <ClInclude Include="Sound.h" />
-    <ClInclude Include="SoundCollection.h" />
-    <ClInclude Include="Client.h" />
-    <ClInclude Include="Console.h" />
-    <ClInclude Include="D3D11Helper.h" />
-    <ClInclude Include="ErrorLog.h" />
-    <ClInclude Include="ImGuiHelper.h" />
-    <ClInclude Include="ImGui\imconfig.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="MemoryLeackChecker.h" />
-    <ClInclude Include="Menu.h" />
-    <ClInclude Include="PackageTypes.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="State.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="Topology.h" />
-    <ClInclude Include="UnorderedAccessView.h" />
-    <ClInclude Include="Vertex.h" />
-    <ClInclude Include="VertexBuffer.h" />
-    <ClInclude Include="ViewPort.h" />
-    <ClInclude Include="WindowHelper.h" />
     <ClInclude Include="ImGui\imgui.h">
       <Filter>ImGui</Filter>
     </ClInclude>
@@ -121,34 +145,208 @@
     <ClInclude Include="ImGui\imstb_truetype.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="BasicRenderer.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="ShaderLoader.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="BlendState.h" />
-    <ClInclude Include="DepthStencilState.h" />
-    <ClInclude Include="PerspectiveCamera.h" />
-    <ClInclude Include="DXUtil.h" />
-    <ClInclude Include="DepthStencilView.h" />
-    <ClInclude Include="MouseClass.h" />
-    <ClInclude Include="MouseEvent.h" />
-    <ClInclude Include="GravityField.h" />
-    <ClInclude Include="DirectXMathHelper.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="ConstantBufferNew.h" />
     <ClInclude Include="BufferTypes.h" />
-    <ClInclude Include="Credits.h" />
-    <ClInclude Include="SettingsUI.h" />
-    <ClInclude Include="BufferTypes.h" />
-    <ClInclude Include="Light.h" />
-    <ClInclude Include="LightHandler.h" />
-    <ClInclude Include="StructuredBuffer.h" />
+    <ClInclude Include="PhysicsWorld.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsComponent.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiHelper.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseClass.h">
+      <Filter>MouseClass</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseEvent.h">
+      <Filter>MouseClass</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="GravityField.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Potion.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXMathHelper.h">
+      <Filter>Handler/Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Helper.h">
+      <Filter>Handler/Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiHandler.h">
+      <Filter>Handler/Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIObject.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUISprite.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIText.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h">
+      <Filter>Handler/Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorLog.h">
+      <Filter>Handler/Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowHelper.h">
+      <Filter>Handler/Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Credits.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferTypes.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBuffer.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBufferNew.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthStencilState.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthStencilView.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexBuffer.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="RasterizerState.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTargetView.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="SamplerState.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Topology.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="UnorderedAccessView.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewPort.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderLoader.h">
+      <Filter>Handler/Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="LightHandler.h">
+      <Filter>Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderResourceTexture.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderResourceView.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="BlendState.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Bound.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="DXUtil.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="GPU.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imconfig.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialLibrary.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryLeackChecker.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="MTL.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="OBJ.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="PackageTypes.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="PerspectiveCamera.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundCollection.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="StructuredBuffer.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeStruct.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicRenderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>User</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>User</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ImGui">
@@ -157,9 +355,59 @@
     <Filter Include="stb_image">
       <UniqueIdentifier>{04645332-69e8-44a7-93c1-88dd530212f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{49297479-471c-4cc8-85a3-c150d3eb66a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObjects">
+      <UniqueIdentifier>{2e2e4dc7-3936-4221-8f24-81775a0b84ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game-States">
+      <UniqueIdentifier>{f3dfddc5-031d-40f6-bfbe-372117da74f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MouseClass">
+      <UniqueIdentifier>{7e39fc3d-95b3-4fc2-a175-117077aa7e81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Handler/Helpers">
+      <UniqueIdentifier>{8e133564-ce19-43a1-a21c-65fe6a5ef6d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{ba1312b9-5986-4d0e-a6e2-ae28fc80e00e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DirectX11">
+      <UniqueIdentifier>{388cb123-b739-4995-adab-63eca035db5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lights">
+      <UniqueIdentifier>{5ac107c2-9c81-4d3c-9102-f085b24bc5f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Structs">
+      <UniqueIdentifier>{3aba2d8d-cef0-41b4-84b7-330cf2d5afe5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{0d927e0c-f975-4e10-8167-ce4ea5de783c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{258d0a52-de7c-4429-a9dc-bd8e21ba47bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="User">
+      <UniqueIdentifier>{ecab4726-7e3a-4e25-9b94-e03ac70687bf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl" />
     <FxCompile Include="PixelShader.hlsl" />
+    <FxCompile Include="DebuggerPshader.hlsl">
+      <Filter>Physics</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico">
+      <Filter>GUI</Filter>
+    </Image>
   </ItemGroup>
 </Project>

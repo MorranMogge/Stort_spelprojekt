@@ -1,4 +1,5 @@
 #include "Potion.h"
+#include "Player.h"
 
 Potion::Potion(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
 	:Item(useMesh, pos, rot, id), playerPtr(nullptr), restoringAmount(10)

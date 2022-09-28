@@ -7,6 +7,8 @@ void Game::loadObjects()
 {
 	//Here we can add base object we want in the beginning of the game
 	planet = new GameObject("../Meshes/Planet", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
+	
+	physWolrd.addPhysComponent(planet);
 }
 
 void Game::drawObjects()

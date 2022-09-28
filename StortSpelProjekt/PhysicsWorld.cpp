@@ -264,3 +264,14 @@ void PhysicsWorld::addSphereToWorld(float radius, DirectX::XMFLOAT3 position)
 {
 }
 
+void PhysicsWorld::addPhysComponent(GameObject* gameObj)
+{
+	PhysicsComponent* newComp = new PhysicsComponent();
+	newComp->initiateComponent(&this->com, this->world);
+	newComp->setLinearDampning(1.f);
+	gameObj->setPhysComp(newComp);
+	physObjects.emplace_back(newComp);
+
+	this->recreateVertexBuffer();
+}
+

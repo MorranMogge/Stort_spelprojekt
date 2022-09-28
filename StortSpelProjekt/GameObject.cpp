@@ -116,6 +116,16 @@ Bound* GameObject::getBounds() const
 	return &this->mesh->bound; //funkar??
 }
 
+void GameObject::setPhysComp(PhysicsComponent* comp)
+{
+	this->physComp = comp;
+}
+
+PhysicsComponent* GameObject::getPhysComp() const
+{
+	return this->physComp;
+}
+
 void GameObject::updateBuffer()
 {
 	//Set mesh pos & rot to current member variable pos/rot

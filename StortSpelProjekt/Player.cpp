@@ -1,5 +1,7 @@
 #include "Player.h"
 #include "DirectXMathHelper.h"
+#include "Potion.h"
+using namespace DirectX;
 
 Player::Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
     :GameObject(useMesh, pos, rot, id), health(69), holdingItem(nullptr)
@@ -130,13 +132,11 @@ void Player::releaseItem()
 
 bool Player::withinRadius(Item* itemToLookWithinRadius, float radius) const
 {
-    using namespace DirectX;
-
-    XMFLOAT3 objPos = itemToLookWithinRadius->getPos();
-    XMFLOAT3 selfPos = this->getPos();
+    DirectX::XMFLOAT3 objPos = itemToLookWithinRadius->getPos();
+    DirectX::XMFLOAT3 selfPos = this->getPos();
     bool inRange = false;
 
-    XMFLOAT3 vecToObject = selfPos;
+    DirectX::XMFLOAT3 vecToObject = selfPos;
     subtractionXMFLOAT3(vecToObject, objPos);
 
     float lengthToVec = getLength(vecToObject);

@@ -1,23 +1,5 @@
 #pragma once
-#include "PhysicsWorld.h"
-#include "State.h"
-#include "BasicRenderer.h"
-#include "Mesh.h"
-#include "Input.h"
-#include "MouseClass.h"
-#include "GravityField.h"
-#include <chrono>
-#include "ShaderLoader.h"
-#include "ImGuiHelper.h"
-
-#include "Player.h"
-#include "Camera.h"
-#include "LightHandler.h"
-#include "Light.h"
-#include "StructuredBuffer.h"
-#include "BufferTypes.h"
-#include "LightHandler.h"
-#include "Potion.h"
+#include "GameInclude.h"
 
 struct wirefameInfo
 {

@@ -344,6 +344,7 @@
     <ClInclude Include="Client.h">
       <Filter>User</Filter>
     </ClInclude>
+    <ClInclude Include="GameInclude.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

@@ -1,9 +1,9 @@
 #pragma once
 #include "GameObject.h"
 #include "Input.h"
-#include "Potion.h"
 #include <iostream>
-using namespace DirectX;
+
+class Item;
 
 class Player: public GameObject
 {

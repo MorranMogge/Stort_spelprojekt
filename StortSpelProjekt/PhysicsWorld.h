@@ -1,11 +1,12 @@
 #pragma once
 #include <reactphysics3d\reactphysics3d.h>
 #include <d3d11.h>
-#include <DirectXMath.h>
 #include <SimpleMath.h>
+
+#include "GameObject.h"
+#include "PhysicsComponent.h"
 #include "Vertex.h"
 #include "ImGuiHelper.h"
-#include "PhysicsComponent.h"
 
 class PhysicsWorld
 {
@@ -54,4 +55,5 @@ public:
 	void updatePlayerBox(const DirectX::SimpleMath::Vector3& pos);
 	void addBoxToWorld(DirectX::XMFLOAT3 dimensions = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f), float mass = 1.0f,  DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10, 00));
 	void addSphereToWorld(float radius = 0.5f, DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 0, 0));
+	void addPhysComponent(GameObject* gameObj);
 };

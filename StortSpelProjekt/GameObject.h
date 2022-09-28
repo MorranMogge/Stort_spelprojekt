@@ -1,13 +1,16 @@
 #pragma once
-#include <DirectXMath.h>
+
+//#include <reactphysics3d/reactphysics3d.h>
 #include "Mesh.h"
-#include <string>
+
+class PhysicsComponent;
 
 class GameObject
 {
 private:
 	Mesh* mesh;
 	int objectID;
+	PhysicsComponent* physComp;
 	//float mass
 	//collider
 protected:
@@ -29,6 +32,8 @@ public:
 	DirectX::XMFLOAT3 getRot() const;
 	DirectX::XMFLOAT3 getScale() const;
 	Bound* getBounds() const;
+	void setPhysComp(PhysicsComponent* comp);
+	PhysicsComponent* getPhysComp()const;
 	void updateBuffer();
 	void setMesh(std::string meshPath);
 	void setMesh(Mesh*);

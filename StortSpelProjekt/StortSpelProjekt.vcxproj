@@ -165,6 +165,7 @@
     <ClInclude Include="DirectXMathHelper.h" />
     <ClInclude Include="DXUtil.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameInclude.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GPU.h" />
     <ClInclude Include="GravityField.h" />

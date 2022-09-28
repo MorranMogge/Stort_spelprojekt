@@ -5,8 +5,6 @@
 #include "SettingsUI.h"
 #include "Credits.h"
 
-using namespace DirectX::SimpleMath;
-
 void GuiHandler::SpritePass()
 {
 	start.Draw();

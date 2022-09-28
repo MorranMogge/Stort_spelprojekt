@@ -1,7 +1,6 @@
 #include "GUIText.h"
 #include <SpriteFont.h>
 #include <string>
-using namespace DirectX::SimpleMath;
 
 GUIText::GUIText()
 {
@@ -10,18 +9,18 @@ GUIText::GUIText()
 
 GUIText::GUIText(const float x, const float y, const float layer)
 {
-    m_Position = Vector2(x, y);
-    m_Scale = Vector2(1, 1);
+    m_Position = DirectX::SimpleMath::Vector2(x, y);
+    m_Scale = DirectX::SimpleMath::Vector2(1, 1);
     m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
     m_Alpha = 1.0f;
     m_Rotation = 0.0f;
     m_Layer = layer;
 }
 
-GUIText::GUIText(const Vector2& position, const float layer)
+GUIText::GUIText(const DirectX::SimpleMath::Vector2& position, const float layer)
 {
     m_Position = position;
-    m_Scale = Vector2(1, 1);
+    m_Scale = DirectX::SimpleMath::Vector2(1, 1);
     m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
     m_Alpha = 1.0f;
     m_Rotation = 0.0f;

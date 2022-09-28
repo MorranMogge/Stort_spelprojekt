@@ -130,14 +130,14 @@ GAMESTATE Game::Update()
 	float zpos = meshes_Dynamic[0].position.z;
 
 	grav = normalizeXMFLOAT3(grav);
-	player.move(meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, grav, dt);
+	player.move(camera.getUpVector(), meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, grav, dt);
+
 	grav = planetGravityField.calcGravFactor(meshes_Dynamic[0].position);
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(meshes_Dynamic[0].position));
 	if (getLength(meshes_Dynamic[0].position) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); newNormalizeXMFLOAT3(meshes_Dynamic[0].position); scalarMultiplicationXMFLOAT3(22, meshes_Dynamic[0].position); }
 	additionXMFLOAT3(meshes_Dynamic[0].position, getScalarMultiplicationXMFLOAT3(dt, velocity));
 
-	tempVector = XMVectorSet(grav.x, grav.y, grav.z, 0.0f);
-	camera.moveCamera(meshes_Dynamic[0].position, tempVector, dt);
+	camera.moveCamera(meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, player.getUpVector(), player.getForwardVector(), player.getRightVector(), dt);
 
 	//KLARA DONT LOOK HERE!
 	//DirectX::XMFLOAT3 pos = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y, playerRigidBody->getTransform().getPosition().z};

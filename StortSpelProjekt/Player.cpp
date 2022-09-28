@@ -46,7 +46,7 @@ void Player::handleInputs()
 
 }
 
-void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::Vector3& rotation, const DirectX::XMFLOAT3& grav, float deltaTime)
+void Player::move(DirectX::XMVECTOR cameraUp, DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::Vector3& rotation, const DirectX::XMFLOAT3& grav, float deltaTime)
 {
     rotation.y = std::clamp(rotation.y, 0.0f, XM_PI * 2);
     rotationMX = XMMatrixRotationRollPitchYawFromVector(rotation);
@@ -54,7 +54,7 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
     upVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);
     rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
     forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
-    
+
     //Rotating in the X-axis
     dotProduct = XMVector3Dot(upVector, forwardVector);
     XMStoreFloat3(&dotValue, dotProduct);
@@ -89,7 +89,7 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 
     if (Input::KeyDown(KeyCode::W))
     {
-        position += forwardVector * 0.3f;
+        /*position += forwardVector * deltaTime * 40;
         
         if (Input::KeyDown(KeyCode::D))
         {
@@ -110,12 +110,15 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
             {
                 rotation.y += 0.06f;
             }
-        }
+        }*/
+
+        position += cameraUp * deltaTime * 40;
+
     }
 
     else if (Input::KeyDown(KeyCode::S))
     {
-        position += forwardVector * 0.3f;
+        /*position += forwardVector * deltaTime * 40;
 
         if (Input::KeyDown(KeyCode::D))
         {
@@ -136,32 +139,36 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
             {
                 rotation.y -= 0.06f;
             }
-        }
+        }*/
+
+        position -= cameraUp * deltaTime * 40;
     }
 
     else if (Input::KeyDown(KeyCode::D))
     {
-        position += forwardVector * 0.3f;
+        //position += rightVector * deltaTime * 40;
+        ////position += forwardVector * deltaTime * 40;
 
-        if (rotation.y >= XM_PI * 2)
-        {
-            rotation.y = 0.0f;
-        }
+        //if (rotation.y >= XM_PI * 2)
+        //{
+        //    rotation.y = 0.0f;
+        //}
 
-        if (rotation.y > piDiv2 || rotation.y < (XM_PIDIV2 - 0.1f))
-        {
-            rotation.y += 0.06f;
-        }
+        ///*if (rotation.y > piDiv2 || rotation.y < (XM_PIDIV2 - 0.1f))
+        //{
+        //    rotation.y += 0.06f;
+        //}
 
-        else if (rotation.y > (XM_PIDIV2 + 0.1f))
-        {
-            rotation.y -= 0.06f;
-        }
+        //else if (rotation.y > (XM_PIDIV2 + 0.1f))
+        //{
+        //    rotation.y -= 0.06f;
+        //}*/
     }
 
     else if (Input::KeyDown(KeyCode::A))
     {
-        position += forwardVector * 0.3f;
+        //position += rightVector * deltaTime * 40;
+        /*position += forwardVector * deltaTime * 40;
 
         if (rotation.y <= 0.0f)
         {
@@ -176,18 +183,18 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
         else if (rotation.y < (piDiv2 - 0.1f))
         {
             rotation.y += 0.06f;
-        }
+        }*/
     }
 
     //Help keys
     if (Input::KeyDown(KeyCode::E))
     {
-        position.y += 1.5f;
+        position.y += 0.1f;
     }
 
     else if (Input::KeyDown(KeyCode::Q))
     {
-        position.y -= 1.5f;
+        position.y -= 0.1f;
     }
 }
 
@@ -211,4 +218,19 @@ bool Player::getPickup(GameObject* pickup)
 void Player::releasePickup()
 {
     this->pickup = nullptr;
+}
+
+DirectX::XMVECTOR Player::getUpVector()
+{
+    return this->upVector;
+}
+
+DirectX::XMVECTOR Player::getForwardVector()
+{
+    return this->forwardVector;
+}
+
+DirectX::XMVECTOR Player::getRightVector()
+{
+    return this->rightVector;
 }

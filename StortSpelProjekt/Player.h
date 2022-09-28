@@ -14,13 +14,13 @@ private:
 	DirectX::XMVECTOR dotProduct;
 	DirectX::XMMATRIX rotationMX;
 
-	DirectX::XMVECTOR upVector;
-	DirectX::XMVECTOR forwardVector;
-	DirectX::XMVECTOR rightVector;
-
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+
+	DirectX::XMVECTOR upVector = DEFAULT_UP;
+	DirectX::XMVECTOR forwardVector = DEFAULT_FORWARD;
+	DirectX::XMVECTOR rightVector = DEFAULT_RIGHT;
 
 	//Calculations only done once
 	float northWest = XM_PI + XM_PIDIV2 + XM_PIDIV4;
@@ -33,7 +33,11 @@ public:
 	Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
 	Player(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
 	void handleInputs(); 
-	void move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::Vector3& rotation, const DirectX::XMFLOAT3& grav, float deltaTime);
+	void move(DirectX::XMVECTOR cameraUp, DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::Vector3& rotation, const DirectX::XMFLOAT3& grav, float deltaTime);
 	bool getPickup(GameObject *pickup);
 	void releasePickup();
+
+	DirectX::XMVECTOR getUpVector();
+	DirectX::XMVECTOR getForwardVector();
+	DirectX::XMVECTOR getRightVector();
 };

@@ -32,15 +32,12 @@ void main(uint3 DTid : SV_DispatchThreadID)
 #define Speed 1.0f
 #define SpeedMultyply 100.0f
     
-// remap simulate time in range of 0 to 1
-#define TimeScale SimulateTime / LifeTime 
-    
-// up vector from camera
-#define CameraUpVector float3(0.0f, 1.0f, 0.0f)
-    
     // if SimulateTime bigger than LifeTime or not enabled, reset it to 0, else plus delta time
     SimulateTime = SimulateTime > LifeTime || !enable ? 0.0f : SimulateTime + deltaTime;
     
+    // up vector from camera
+#define CameraUpVector float3(0.0f, 1.0f, 0.0f)
+
     // euler direction Z
     const float3 eulerZ = normalize(cross(orientation, CameraUpVector));
     
@@ -53,14 +50,17 @@ void main(uint3 DTid : SV_DispatchThreadID)
 // start position in local space
 #define StartPosition float3(StartPositionX, StartPositionY, StartPositionZ)
     
+// remap simulate time in range of 0 to 1
+#define TimeScale SimulateTime / LifeTime 
+    
 // oriented/rotated start position in local space
 #define OrientedStartPosition mul(EulerDirection, StartPosition)
     
 // offset in local space (move particles)
-#define LocalSpaceOffset (Speed * SpeedMultyply * TimeScale * orientation) 
+#define LocalOffset (Speed * SpeedMultyply * TimeScale * orientation) 
     
     // position in world space
-    const float3 position = OrientedStartPosition + LocalSpaceOffset + offsetFromOrigin;
+    const float3 position = OrientedStartPosition + LocalOffset + offsetFromOrigin;
     
     //apply position to buffer
     PositionX = position.x;

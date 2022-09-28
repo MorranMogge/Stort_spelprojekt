@@ -1,8 +1,8 @@
 #include "Light.h"
 #include "GPU.h"
 
-Light::Light(DirectX::XMFLOAT3 lightColor, DirectX::XMFLOAT3 lightPos, DirectX::XMFLOAT3 FocusPos, DirectX::XMFLOAT3 UpDir, float coneAngle, int type)
-	:position(lightPos), color(lightColor), upDirection(UpDir), direction(FocusPos), coneAngle(coneAngle), lightType(type), falloff(1.0), range(200)
+Light::Light(DirectX::XMFLOAT3 lightColor, DirectX::XMFLOAT3 lightPos, DirectX::XMFLOAT3 FocusPos, DirectX::XMFLOAT3 UpDir, float coneAngle, int type, float range, float falloff)
+	:position(lightPos), color(lightColor), upDirection(UpDir), direction(FocusPos), coneAngle(coneAngle), lightType(type), falloff(falloff), range(range)
 {
 	DirectX::XMVECTOR pos = DirectX::XMVectorSet(this->position.x, this->position.y, this->position.z, 0);
 	DirectX::XMVECTOR focusPos = DirectX::XMVectorSet(FocusPos.x, FocusPos.y, FocusPos.z, 0);
@@ -86,6 +86,16 @@ float Light::getConeAngle() const
 int Light::getType() const
 {
 	return this->lightType;
+}
+
+float Light::getFalloff() const
+{
+	return this->falloff;
+}
+
+float Light::getRange() const
+{
+	return this->range;
 }
 
 

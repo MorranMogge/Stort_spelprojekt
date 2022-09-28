@@ -33,49 +33,21 @@ void main(uint3 DTid : SV_DispatchThreadID)
 
 #define LifeTime rawBuffer[DTid.x * offset + 7]
 
-    
-    SimulateTime += deltaTime;
+    [flatten]
+    SimulateTime = SimulateTime > LifeTime || !enable ? 0.0f : SimulateTime + deltaTime;
 
-    const float speed = 10.0f * deltaTime;
+    const float speed = 100.0f;
+    const float normalizedLifeTime = SimulateTime / LifeTime;
     
-    //transform for euler angle
-    float3x3 transform;
+    const float3 y = orientation.xyz;
+    const float3 z = normalize(cross(y, float3(0, 1, 0)));
+    const float3 x = normalize(cross(y, z));
+    const float3x3 euler = float3x3(x, y, z);
     
-    if (orientation.x == 0 && orientation.z == 0 && orientation.y < 0)
-    {
-        transform = float3x3(
-            -1.0f, 0.0f, 0.0f,
-            0.0f, -1.0f, 0.0f,
-            0.0f, 0.0f, 1.0f);
-        
-    }
-    else
-    {
-        float3 new_y = orientation;
-        float3 new_z = normalize(cross(new_y, float3(0, 1, 0)));
-        float3 new_x = normalize(cross(new_y, new_z));
-        
-        transform = float3x3(new_x, new_y, new_z);
-    }
+    const float3 startPos = mul(euler, float3(StartPositionX, StartPositionY, StartPositionZ));
     
-    
-    if (SimulateTime > LifeTime || enable == 0)
-    {
-        //SimulateTime -= LifeTime;
-        SimulateTime = 0.0f;
-        
-        float3 startPos = mul(transform, float3(StartPositionX, StartPositionY, StartPositionZ));
-        
-        
-        PositionX = startPos.x + offsetFromOrigin.x;
-        PositionY = startPos.y + offsetFromOrigin.y;
-        PositionZ = startPos.z + offsetFromOrigin.z;
-    }
-    else
-    {
-        PositionX += speed * orientation.x;
-        PositionY += speed * orientation.y;
-        PositionZ += speed * orientation.z;
-    }
+    PositionX = startPos.x + (speed * normalizedLifeTime * orientation.x) + offsetFromOrigin.x;
+    PositionY = startPos.y + (speed * normalizedLifeTime * orientation.y) + offsetFromOrigin.y;
+    PositionZ = startPos.z + (speed * normalizedLifeTime * orientation.z) + offsetFromOrigin.z;
 
 }

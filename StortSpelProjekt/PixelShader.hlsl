@@ -30,24 +30,20 @@ Texture2DArray shadowMaps : register(t3);
 StructuredBuffer<lightStruct> lightStructBuff : register(t4); //Structured buffer with Light data
 SamplerState samplerState : register(s0);
 
-
-//cbuffer Mat : register(b0)
-//{
-//    Material mat;
-//};
-
-
-cbuffer numLightBuffer : register(b0)
+cbuffer Mat : register(b0)
 {
-    int nrOfLights;
+    Material mat;
 };
-
 
 cbuffer cameraValue : register(b1)
 {
     float4 cameraPosition;
 };
 
+cbuffer numLightBuffer : register(b2)
+{
+    int nrOfLights;
+};
 
 
 float GetShadowIntensity(int i, float4 lightWorldPosition, float shadowStrenth, float3 worldPosition, float3 normal)
@@ -72,7 +68,6 @@ float GetShadowIntensity(int i, float4 lightWorldPosition, float shadowStrenth, 
     
     return shadowIntensity;
 }
-
 
 float FallOff(float range, float distance)
 {
@@ -107,54 +102,119 @@ LitResult GetPointL(int i, float specularExponent, float3 specularColor, float3 
 float4 main(PSin input) : SV_TARGET
 {
     //variables
-    //const float4 cameraPos = cameraPosition; //Camera Position    (worldspace)
+    const float4 cameraPos = cameraPosition;        //Camera Position    (worldspace)
     const float4 fragmentPosition = input.position; //Fragment Position  (worldspace)
-    const float3 fragementNormal = input.normal; //normal for fragment
-    const float4 texColor = float4(diffuseTex.Sample(samplerState, input.uv).xyz, 1.0f); //Texture Color
+    const float3 fragementNormal = input.normal;    //normal for fragment
+    const float4 ambientColor = float4(ambientTex.Sample(samplerState, input.uv).xyz, 1.0f);    //Ambient Color
+    const float4 texColor = float4(diffuseTex.Sample(samplerState, input.uv).xyz, 1.0f);        //Diffuse Color
+    const float4 specColor = float4(specularTex.Sample(samplerState, input.uv).xyz, 1.0f);      //Specular Color
+    const float2 UVpos = input.uv; //UV !!UNUSED!!
+
     
-    //Placeholder/Hardcoded?//hämta in från ljuset via struct
-    //float ambientStrenght =  0.1f;
-    //float diffuseStrenght =  0.0f;
+    //Placeholder/Hardcoded//hämta in från ljuset via struct
+    float specularExponent = 10.0f; //Spc Exp
     float specularStrenght = 10.5f;
+    float ambientStrenght = 0.1f;
     
     //Changes per light
     float4 lightColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 lightPos = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    float3 fragToLight = float3(0.0f, 0.0f, 0.0f);
     
     //Cumulative
     float3 diffuse = float3(0.0f, 0.0f, 0.0f);
     float3 specular = float3(0.0f, 0.0f, 0.0f);
-    //lägg till range baserad fall of på ljus
+    int lightType = 0;
+    float spotCone = 0.0f;
+    float4 direction;
+    float attenuation = 0.0f;
     
-    float3 viewDirection = normalize(cameraPosition.xyz - fragmentPosition.xyz);
     
-    LitResult finalLit = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
-    float shadowIntensity = 0.0f;
-    
-    float3 specularColor = { 0.0f, 0.0f, 0.0f };
     
     for (int i = 0; i < nrOfLights; i++)
     {
-        LitResult currentLit = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
-        
-        currentLit = GetPointL(i, specularStrenght /*specularExponent*/, specularColor /*specularColor.xyz*/, fragmentPosition.xyz, fragementNormal.xyz, viewDirection);
+        lightColor = lightStructBuff[i].lightColor;
+        lightPos = lightStructBuff[i].lightPos;
+        lightType = lightStructBuff[i].angleTypePadding.x;
+        spotCone = lightStructBuff[i].angleTypePadding.y;
+        direction = lightStructBuff[i].lightDirection;
 
-        finalLit.diffuse += currentLit.diffuse;
-        finalLit.specular += currentLit.specular;
         
+        // -------------Shading--------------- //
+        
+        //fragments position transformed into lights view->clip space, then convert to ndc by dividing by w. Z channel represents depth from light
         float4 fragPosInLightView = mul(fragmentPosition, lightStructBuff[i].ltViewMatix);
-        shadowIntensity += GetShadowIntensity(i, fragPosInLightView, 4.0f, fragmentPosition.xyz, fragementNormal.xyz);
+        fragPosInLightView.xy /= fragPosInLightView.w;
+        float depth = fragPosInLightView.z / fragPosInLightView.w;
+        
+        //modify xy value range from (-1 to 1) to (0 to 1)
+        float2 smTex = float2(0.5f * fragPosInLightView.x + 0.5f, -0.5f * fragPosInLightView.y + 0.5f);
+    
+        //get depth at pos in shadow map and compare to fragPos depth. Offset added to remove shadow acne.
+        if (shadowMaps.SampleLevel(samplerState, float3(smTex.xy, 0), i).r > depth - 0.0005)
+        {
+            // ------------- Spotlight ------------------//
+            float cone = dot(fragToLight, normalize(direction.xyz)); //skalärptodukt mellan vektorn från ljus till fragment och ljusets riktning
+            
+            // ------------- Diffuse --------------  //
+
+            //normalized vector from fragment to light
+            if (lightType == 1)
+            {
+                fragToLight = normalize(-direction.xyz);
+            }
+            else
+            {
+                fragToLight = normalize(lightPos.xyz - fragmentPosition.xyz);
+            }
+
+	        //calculate diffuse light
+            float diff = max(dot((fragToLight), fragementNormal), 0.0);
+            
+            //multiply with light color
+            
+            if (lightType == 2)
+            {
+                diffuse += (diff * lightColor) * cone;
+            }
+            else
+            {
+                diffuse += diff * lightColor; //diffuseStrenght * (lightColor*?) (diff * diffuseColor) 
+            }
+            //	------------- Specular -------------- //
+
+            //vector from fragment to camera
+            const float3 fragToCam = normalize(cameraPos.xyz - fragmentPosition.xyz);
+    
+            //reflected vector
+            float3 reflectedLight = normalize(reflect(-fragToLight, fragementNormal));
+
+            //phong type
+            float spec = pow(max(dot(fragToCam, reflectedLight), 0.0f), specularExponent);
+    
+            if (lightType == 2)
+            {
+                specular += (specularStrenght * spec * lightColor) * cone;
+            }
+            else
+            {
+                specular += specularStrenght * spec * lightColor; //specularStrenght * (lightColor*?) (spec * specularColor)?
+            }
+
+        }
     }
     
   
     //	------------- Ambient ---------------//
     
+    const float3 ambient = ambientStrenght * lightColor; //ambientStrenght * (lightColor*) ambientColor (ta bort strenght?)
+   
+    //Combine Light for fragment
     
-    float3 finalColor = /*ambientColor.xyz*/0.35f; //0.23
-    finalColor += saturate(shadowIntensity * finalLit.diffuse);
-    
-    finalColor = saturate((finalLit.diffuse + finalColor) * texColor.xyz); //multiply light result with texture color
-    finalColor = saturate(finalColor + finalLit.specular); //not multiply to put on top and not affect color of image
 
-    return float4(finalColor, 1.0f);
+   
+    const float4 resultColor = float4((diffuse + specular), 0);
+    float4 test = (float4(ambient, 0.0f) + resultColor);
+
+    return float4(texColor); //test *
 }

@@ -1,17 +1,23 @@
 #include "GameObject.h"
 
-GameObject::GameObject(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
-	:position(pos), rotation(rot), mesh(useMesh), objectID(id)
+GameObject::GameObject(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, DirectX::XMFLOAT3 scale)
+	:position(pos), rotation(rot), mesh(useMesh), objectID(id), scale(scale)
 {
 	// set position
 	mesh->position = pos;
 
 	// set rotation
 	mesh->rotation = rot;
+
+	// set scale
+	this->setScale(scale);
+
+	//Update constantbuffer
+	this->updateBuffer();
 }
 
-GameObject::GameObject(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
-	:position(pos), rotation(rot), objectID(id)
+GameObject::GameObject(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, DirectX::XMFLOAT3 scale)
+	:position(pos), rotation(rot), objectID(id), scale(scale)
 {
 	// load obj file
 	OBJ testObj(objectPath);
@@ -30,6 +36,12 @@ GameObject::GameObject(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::X
 
 	// set rotation
 	this->mesh->rotation = rot;
+
+	// set scale
+	this->setScale(scale);
+
+	//Update constantbuffer
+	this->updateBuffer();
 }
 
 GameObject::GameObject()
@@ -53,6 +65,7 @@ GameObject::GameObject()
 	this->mesh->rotation = { 0, 0, 0 };
 
 	//Update constantbuffer
+	this->updateBuffer();
 }
 
 GameObject::~GameObject()
@@ -86,6 +99,11 @@ DirectX::XMFLOAT3 GameObject::getPos() const
 DirectX::XMFLOAT3 GameObject::getRot() const
 {
 	return this->rotation;
+}
+
+DirectX::XMFLOAT3 GameObject::getScale() const
+{
+	return this->scale;
 }
 
 Bound* GameObject::getBounds() const

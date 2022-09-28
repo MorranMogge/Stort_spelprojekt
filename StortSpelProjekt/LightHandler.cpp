@@ -3,7 +3,7 @@
 
 //------------------------------------------------------------------------------- SETUP FUNCTIONS -------------------------------------------------------------------------------
 
-bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBuffer, std::vector<Light>& lights)
+bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBuffer, std::vector<Light>& lights, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& structuredBufferSrv)
 {
 	std::vector<LightStruct> structVector;
 	for (int i = 0; i < lights.size(); i++)
@@ -30,6 +30,36 @@ bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBu
 
 	lightBuffer.Initialize(GPU::device, GPU::immediateContext, structVector);
 	lightBuffer.applyData();
+
+
+
+	D3D11_BUFFER_DESC cBuffDesc = { 0 };
+	cBuffDesc.ByteWidth = sizeof(LightStruct) * structVector.size();			//size of buffer //*nr of elements
+	cBuffDesc.Usage = D3D11_USAGE_DYNAMIC;										//sets interaction with gpu and cpu
+	cBuffDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;							//Specifies the type of buffer
+	cBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;							//Specifies cpu acess
+	cBuffDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;				//Misc flags
+	cBuffDesc.StructureByteStride = sizeof(LightStruct);						//Size of each element in structure
+	D3D11_SUBRESOURCE_DATA cBufData = { 0 };									//holds matrix data
+	cBufData.pSysMem = structVector.data();										//pointer to data
+
+
+	//Create light buffer
+	//HRESULT hr = device->CreateBuffer(&cBuffDesc, &cBufData, lightBuffer.getBuffer());
+
+
+
+		//ShaderResource view 
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
+	shaderResourceViewDesc.Format = DXGI_FORMAT_UNKNOWN;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	shaderResourceViewDesc.Buffer.FirstElement = 0;
+	shaderResourceViewDesc.Buffer.NumElements = structVector.size();
+
+	//create shader resource view 
+	device->CreateShaderResourceView(lightBuffer.Get(), &shaderResourceViewDesc, structuredBufferSrv.GetAddressOf());
+
+
 
 	return true; //!FAILED(hr);
 }
@@ -143,11 +173,21 @@ bool CreateViewBuffer(ID3D11Device* device, Microsoft::WRL::ComPtr<ID3D11Buffer>
 LightHandler::LightHandler()
 	:shadowHeight(GPU::windowHeight), shadowWidth(GPU::windowWidth)
 {
-
 	//Create depth stencil, textureArr, depthViews & shader resource views 
 	if (!CreateDepthStencil(GPU::device, this->shadowWidth, this->shadowHeight, this->depthTextures, this->depthViews, this->shadowSrv, this->LightCap))
 	{
 		std::cerr << "error creating Dstencil/Srv!" << std::endl;
+	}
+}
+
+LightHandler::~LightHandler()
+{
+	for (int i = 0; i < boundingSphere.size(); i++)
+	{
+		if (boundingSphere.at(i) != nullptr)
+		{
+			delete boundingSphere.at(i);
+		}
 	}
 }
 
@@ -170,7 +210,7 @@ void LightHandler::addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color,
 		if (lightID == 1)
 		{
 			//Create structured buffer containing all light data
-			if (!CreateLtBuffer(GPU::device, this->lightBuffer, this->lights))
+			if (!CreateLtBuffer(GPU::device, this->lightBuffer, this->lights, this->structuredBufferSrv))
 			{
 				std::cout << "error creating lightBuffer!" << std::endl;
 			}
@@ -197,8 +237,8 @@ void LightHandler::addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color,
 		}
 		this->viewBuffers.push_back(tempBuffer);
 
-		//Create Meshes?
-
+		//Create Debug Mesh
+		this->boundingSphere.push_back(new GameObject("../Meshes/Cone", position, direction, lightID));//Id does nothing yet!
 	}
 	else
 	{
@@ -260,6 +300,9 @@ void LightHandler::setPosition(DirectX::XMFLOAT3 position, int lightIndex)
 	
 	//Matrix update
 	updateViewMatrix(lightIndex);
+
+	//Mesh update
+	this->boundingSphere.at(lightIndex)->setPos(position);
 }
 
 void LightHandler::setDirection(DirectX::XMFLOAT3 direction, int lightIndex)
@@ -268,6 +311,9 @@ void LightHandler::setDirection(DirectX::XMFLOAT3 direction, int lightIndex)
 
 	//Matrix update
 	updateViewMatrix(lightIndex);
+
+	//Mesh update
+	this->boundingSphere.at(lightIndex)->setRot(direction);
 }
 
 void LightHandler::setUpDirection(DirectX::XMFLOAT3 direction, int lightIndex)
@@ -307,7 +353,13 @@ bool LightHandler::updateViewMatrix(int lightIndex)
 {
 	//---------------------------------------- View Buffer ----------------------------------------
 
-	//Ger matrix
+	//Update Debug meshes
+	for (int i = 0; i < this->boundingSphere.size(); i++)
+	{
+		this->boundingSphere.at(i)->updateBuffer();
+	}
+
+	//Get matrix
 	DirectX::XMMATRIX view = this->lights.at(lightIndex).getViewMatrix();
 
 	//Map
@@ -331,12 +383,17 @@ int LightHandler::getNrOfLights() const
 	return (UINT)this->lights.size();
 }
 
-void LightHandler::drawShadows(int lightIndex, std::vector<GameObject> gameObjects)
+void LightHandler::drawShadows(int lightIndex, std::vector<GameObject*> gameObjects)
 {
 	//Variables
 	ID3D11RenderTargetView* nullRtv{ nullptr };
 	ID3D11DepthStencilView* nullDsView{ nullptr };
 
+	//Set view buffer
+	GPU::immediateContext->VSSetConstantBuffers(1, 1, this->viewBuffers.at(lightIndex).GetAddressOf());
+
+	//unbind pixel shader
+	//GPU::immediateContext->PSSetShader(nullptr, );
 
 	//Clear Depth Stencil
 	GPU::immediateContext->ClearDepthStencilView(this->depthViews.at(lightIndex).Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
@@ -348,7 +405,7 @@ void LightHandler::drawShadows(int lightIndex, std::vector<GameObject> gameObjec
 	//Draw Objects
 	for (int i = 0; i < gameObjects.size(); i++)	
 	{
-		//gameObjects.at(i).draw(???);
+		gameObjects.at(i)->draw();
 	}
 
 	//Unbind render targets & Depth Stencil
@@ -358,6 +415,23 @@ void LightHandler::drawShadows(int lightIndex, std::vector<GameObject> gameObjec
 void LightHandler::bindLightBuffers()
 {
 	GPU::immediateContext->PSSetShaderResources(3, 1, this->shadowSrv.GetAddressOf());				//Bind Srv's //ShadowMap(s)
-	this->lightBuffer.BindToPS(4);																	//Srv for light structuredBuffer content (pos, color, lightViewMatrix)
-	GPU::immediateContext->PSSetConstantBuffers(0, 1, this->numLightBuffer.GetAddressOf());			//Bind CBuffers's //Buffer for nr Lights
+	//this->lightBuffer.BindToPS(4);																	//Srv for light structuredBuffer content (pos, color, lightViewMatrix)
+	GPU::immediateContext->PSSetShaderResources(4, 1, this->structuredBufferSrv.GetAddressOf());
+	GPU::immediateContext->PSSetConstantBuffers(2, 1, this->numLightBuffer.GetAddressOf());			//Bind CBuffers's //Buffer for nr Lights
+}
+
+void LightHandler::drawDebugMesh()
+{
+	for (int i = 0; i < this->boundingSphere.size(); i++)
+	{
+		this->boundingSphere.at(i)->draw();
+	}
+}
+
+void LightHandler::unbindSrv()
+{
+	//Unbind shadowmap & structuredBuffer srv
+	ID3D11ShaderResourceView* nullsrv{ nullptr };
+	GPU::immediateContext->PSSetShaderResources(3, 1, &nullsrv);
+	GPU::immediateContext->PSSetShaderResources(4, 1, &nullsrv);
 }

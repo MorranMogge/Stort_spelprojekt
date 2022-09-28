@@ -51,15 +51,51 @@ void Game::loadObjects()
 	
 }
 
-void Game::drawObjects()
+void Game::drawShadows()
 {
-	for (auto& mesh : meshes_Static) //draw Static meshes
+	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
 	{
-		mesh.DrawWithMat();
+		ltHandler.drawShadows(i, gameObjects);
 	}
-	for (auto& mesh : meshes_Dynamic) //draw Dynamic meshes
+}
+
+void Game::drawObjects(bool drawDebug)
+{
+	//Bind light
+	ltHandler.bindLightBuffers();
+
+	//Draw Game objects
+	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		mesh.DrawWithMat();
+		gameObjects.at(i)->draw();
+	}
+	
+	//Draw light debug meshes
+	if (drawDebug)
+	{
+		ltHandler.drawDebugMesh();
+	}
+	
+	//Remove
+	//for (auto& mesh : meshes_Static) //draw Static meshes
+	//{
+	//	mesh.DrawWithMat();
+	//}
+	//for (auto& mesh : meshes_Dynamic) //draw Dynamic meshes
+	//{
+	//	mesh.DrawWithMat();
+	//}
+
+
+	//Unbind light
+	ltHandler.unbindSrv();
+}
+
+void Game::drawParticles()
+{
+	for (int i = 0; i < this->ptEmitters.size(); i++)
+	{
+		this->ptEmitters.at(i).BindAndDraw();
 	}
 }
 
@@ -103,11 +139,14 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
 
-	ltHandler.addLight(DirectX::XMFLOAT3(20, 20, 20), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
-	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
-	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
+	ltHandler.addLight(DirectX::XMFLOAT3(20, 30, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(0.25, 0.25, -0.25), DirectX::XMFLOAT3(0, 1, 0));
+	//ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
+	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
+	gameObjects.push_back(new GameObject("../Meshes/Cone", DirectX::SimpleMath::Vector3(0, 0, -0), DirectX::XMFLOAT3(1, 0, 0), 0, DirectX::XMFLOAT3(20, 20, 20)));
+	gameObjects.push_back(new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 22, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0));
 
 
+	
 	this->setUpReact3D();
 
 	this->mouse = &mouse;
@@ -123,6 +162,11 @@ Game::~Game()
 	if (playerShape != nullptr) com.destroyBoxShape(playerShape);
 	if (planetShape != nullptr) com.destroySphereShape(planetShape);
 	if (world != nullptr) com.destroyPhysicsWorld(world);
+
+	for (int i = 0; i < this->gameObjects.size(); i++)
+	{
+		delete this->gameObjects.at(i);
+	}
 }
 
 GAMESTATE Game::Update()
@@ -141,13 +185,6 @@ GAMESTATE Game::Update()
 	additionXMFLOAT3(meshes_Dynamic[0].position, getScalarMultiplicationXMFLOAT3(dt, velocity));
 	camera.moveCamera(meshes_Dynamic[0].position, dt);
 
-	//KLARA DONT LOOK HERE!
-	//DirectX::XMFLOAT3 pos = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y, playerRigidBody->getTransform().getPosition().z};
-	//playerRigidBody->applyLocalForceAtCenterOfMass(playerRigidBody->getMass() * reactphysics3d::Vector3(grav.x, grav.y, grav.z));
-	//world->update(reactphysics3d::decimal(dt));
-	//meshes_Dynamic[0].position = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y , playerRigidBody->getTransform().getPosition().z};
-	//meshes_Dynamic[0].rotation = { playerRigidBody->getTransform().getOrientation().x, playerRigidBody->getTransform().getOrientation().y , playerRigidBody->getTransform().getOrientation().z};
-
 	for (int i = 0; i < meshes_Static.size(); i++)
 	{
 		meshes_Static[i].UpdateCB();
@@ -164,29 +201,32 @@ GAMESTATE Game::Update()
 		return EXIT;
 	}
 
+	if (Input::KeyPress(KeyCode::T))
+	{
+		XMFLOAT3 test(this->ptEmitters.at(0).getPosition().x, this->ptEmitters.at(0).getPosition().y, this->ptEmitters.at(0).getPosition().z -10);
+		this->ptEmitters.at(0).setPosition(test);
+		this->ptEmitters.at(0).updateBuffer();
+	}
+
 	return NOCHANGE;
 }
 
 void Game::Render()
 {
 	start = std::chrono::system_clock::now();
-	//LIGHT STUFF
+
+	//Render shadow maps
 	basicRenderer.lightPrePass();
-	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
-	{
-		ltHandler.drawShadows(i, gameObjects);
-	}
-	ltHandler.bindLightBuffers();
+	drawShadows();
+	
 
-	//Scene stuff
+	//Render Scene
 	basicRenderer.setUpScene(this->camera);
-	drawObjects();
+	drawObjects(false);
 
-	//Particle stuff
+
+	//Render Particles
 	basicRenderer.geometryPass(camera);
-	for (int i = 0; i < this->ptEmitters.size(); i++)
-	{
-		this->ptEmitters.at(i).BindAndDraw();
-	}
+	drawParticles();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 }

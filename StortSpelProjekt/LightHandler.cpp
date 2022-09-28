@@ -3,7 +3,7 @@
 
 //------------------------------------------------------------------------------- SETUP FUNCTIONS -------------------------------------------------------------------------------
 
-bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBuffer, std::vector<Light>& lights, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& structuredBufferSrv)
+bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBuffer, std::vector<Light>& lights)
 {
 	std::vector<LightStruct> structVector;
 	for (int i = 0; i < lights.size(); i++)
@@ -20,7 +20,7 @@ bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBu
 		DirectX::XMFLOAT4 dir = DirectX::XMFLOAT4(direction.x, direction.y, direction.z, 0);
 		float ca = lights.at(i).getConeAngle();
 		float typ = (float)lights.at(i).getType();
-		DirectX::XMMATRIX tempMatrix = DirectX::XMMatrixTranspose(lights.at(i).getViewMatrix());
+		DirectX::XMMATRIX tempMatrix = lights.at(i).getViewMatrix();
 		XMStoreFloat4x4(&matrix, tempMatrix);
 
 		//Create & push back struct
@@ -30,36 +30,6 @@ bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBu
 
 	lightBuffer.Initialize(GPU::device, GPU::immediateContext, structVector);
 	lightBuffer.applyData();
-
-
-
-	D3D11_BUFFER_DESC cBuffDesc = { 0 };
-	cBuffDesc.ByteWidth = sizeof(LightStruct) * structVector.size();			//size of buffer //*nr of elements
-	cBuffDesc.Usage = D3D11_USAGE_DYNAMIC;										//sets interaction with gpu and cpu
-	cBuffDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;							//Specifies the type of buffer
-	cBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;							//Specifies cpu acess
-	cBuffDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;				//Misc flags
-	cBuffDesc.StructureByteStride = sizeof(LightStruct);						//Size of each element in structure
-	D3D11_SUBRESOURCE_DATA cBufData = { 0 };									//holds matrix data
-	cBufData.pSysMem = structVector.data();										//pointer to data
-
-
-	//Create light buffer
-	//HRESULT hr = device->CreateBuffer(&cBuffDesc, &cBufData, lightBuffer.getBuffer());
-
-
-
-		//ShaderResource view 
-	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
-	shaderResourceViewDesc.Format = DXGI_FORMAT_UNKNOWN;
-	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-	shaderResourceViewDesc.Buffer.FirstElement = 0;
-	shaderResourceViewDesc.Buffer.NumElements = structVector.size();
-
-	//create shader resource view 
-	device->CreateShaderResourceView(lightBuffer.Get(), &shaderResourceViewDesc, structuredBufferSrv.GetAddressOf());
-
-
 
 	return true; //!FAILED(hr);
 }
@@ -210,7 +180,7 @@ void LightHandler::addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color,
 		if (lightID == 1)
 		{
 			//Create structured buffer containing all light data
-			if (!CreateLtBuffer(GPU::device, this->lightBuffer, this->lights, this->structuredBufferSrv))
+			if (!CreateLtBuffer(GPU::device, this->lightBuffer, this->lights))
 			{
 				std::cout << "error creating lightBuffer!" << std::endl;
 			}
@@ -392,9 +362,6 @@ void LightHandler::drawShadows(int lightIndex, std::vector<GameObject*> gameObje
 	//Set view buffer
 	GPU::immediateContext->VSSetConstantBuffers(1, 1, this->viewBuffers.at(lightIndex).GetAddressOf());
 
-	//unbind pixel shader
-	//GPU::immediateContext->PSSetShader(nullptr, );
-
 	//Clear Depth Stencil
 	GPU::immediateContext->ClearDepthStencilView(this->depthViews.at(lightIndex).Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 
@@ -415,8 +382,7 @@ void LightHandler::drawShadows(int lightIndex, std::vector<GameObject*> gameObje
 void LightHandler::bindLightBuffers()
 {
 	GPU::immediateContext->PSSetShaderResources(3, 1, this->shadowSrv.GetAddressOf());				//Bind Srv's //ShadowMap(s)
-	//this->lightBuffer.BindToPS(4);																	//Srv for light structuredBuffer content (pos, color, lightViewMatrix)
-	GPU::immediateContext->PSSetShaderResources(4, 1, this->structuredBufferSrv.GetAddressOf());
+	this->lightBuffer.BindToPS(4);																	//Srv for light structuredBuffer content (pos, color, lightViewMatrix)
 	GPU::immediateContext->PSSetConstantBuffers(2, 1, this->numLightBuffer.GetAddressOf());			//Bind CBuffers's //Buffer for nr Lights
 }
 

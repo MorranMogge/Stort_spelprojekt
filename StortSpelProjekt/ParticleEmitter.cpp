@@ -133,12 +133,12 @@ ParticleEmitter::ParticleEmitter(XMFLOAT3 Pos, XMFLOAT3 Rot, int nrOfPT, XMFLOAT
 }
 
 
-ID3D11Buffer * ParticleEmitter::getVTXBuffer()
+ID3D11Buffer * ParticleEmitter::getVTXBuffer() const
 {
 	return this->PT_vertexBuffer.Get();
 }
 
-ID3D11Buffer* ParticleEmitter::getPosBuffer()
+ID3D11Buffer* ParticleEmitter::getPosBuffer() const
 {
 	return this->emitterPosBuffer.Get();
 }
@@ -183,12 +183,12 @@ void ParticleEmitter::BindAndDraw()
 }
 
 
-ID3D11UnorderedAccessView * ParticleEmitter::getUAV()
+ID3D11UnorderedAccessView * ParticleEmitter::getUAV() const
 {
 	return this->PT_UAV.Get();
 }
 
-int ParticleEmitter::getNrOfParticles()
+int ParticleEmitter::getNrOfParticles() const
 {
 	return this->nrOfParticles;
 }
@@ -226,12 +226,12 @@ void ParticleEmitter::updateTimeBuffer(float delta)
 	GPU::immediateContext->Unmap(this->timeBuffer.Get(), 0);
 }
 
-XMFLOAT3 ParticleEmitter::getPosition()
+XMFLOAT3 ParticleEmitter::getPosition() const
 {
 	return this->Position;
 }
 
-DirectX::XMFLOAT3 ParticleEmitter::getRotation()
+DirectX::XMFLOAT3 ParticleEmitter::getRotation() const
 {
 	return this->Rotation;
 }

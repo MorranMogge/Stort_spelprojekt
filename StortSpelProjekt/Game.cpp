@@ -95,7 +95,10 @@ void Game::drawParticles()
 {
 	for (int i = 0; i < this->ptEmitters.size(); i++)
 	{
-		this->ptEmitters.at(i).BindAndDraw();
+		if (this->ptEmitters.at(i).isActive())
+		{
+			this->ptEmitters.at(i).BindAndDraw();
+		}
 	}
 }
 

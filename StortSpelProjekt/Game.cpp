@@ -95,7 +95,10 @@ void Game::drawParticles()
 {
 	for (int i = 0; i < this->ptEmitters.size(); i++)
 	{
-		this->ptEmitters.at(i).BindAndDraw();
+		if (this->ptEmitters.at(i).isActive())
+		{
+			this->ptEmitters.at(i).BindAndDraw();
+		}
 	}
 }
 
@@ -208,6 +211,14 @@ GAMESTATE Game::Update()
 		this->ptEmitters.at(0).setRotation(XMFLOAT3(-1,0,0));
 		this->ptEmitters.at(0).updateBuffer();
 	}
+	if (Input::KeyPress(KeyCode::Y))
+	{
+		this->ptEmitters.at(0).setActive(false);
+	}
+	if (Input::KeyPress(KeyCode::U))
+	{
+		this->ptEmitters.at(0).setActive(true);
+	}
 
 	return NOCHANGE;
 }
@@ -229,5 +240,6 @@ void Game::Render()
 	//Render Particles
 	basicRenderer.geometryPass(camera);
 	drawParticles();
+	this->ptEmitters.at(0).unbind();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 }

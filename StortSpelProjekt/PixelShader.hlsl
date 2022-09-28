@@ -3,7 +3,10 @@ struct lightStruct
     float4 lightPos;
     float4 lightColor;
     float4 lightDirection;
-    float4 angleTypePadding;
+    float  angle;
+    float  type;
+    float  range;
+    float  falloff;
     float4x4 ltViewMatix;
 };
 
@@ -167,8 +170,8 @@ float4 main(PSin input) : SV_TARGET
     {
         lightColor = lightStructBuff[i].lightColor;
         lightPos = lightStructBuff[i].lightPos;
-        lightType = lightStructBuff[i].angleTypePadding.x;
-        spotCone = lightStructBuff[i].angleTypePadding.y;
+        lightType = lightStructBuff[i].type;
+        spotCone = lightStructBuff[i].angle;
         direction = lightStructBuff[i].lightDirection;
 
         

@@ -146,8 +146,6 @@ ID3D11Buffer* ParticleEmitter::getPosBuffer() const
 void ParticleEmitter::BindAndDraw()
 {
 	//Variables
-	ID3D11GeometryShader* nullShader{ nullptr };
-	ID3D11UnorderedAccessView* nullUav{ nullptr };
 	ID3D11Buffer* nullBuffer{ nullptr };
 	UINT stride = sizeof(particleStruct);
 	UINT offset = 0;
@@ -175,6 +173,13 @@ void ParticleEmitter::BindAndDraw()
 	//Reset delta time
 	tStruct.resetStartTime();
 	this->updateTimeBuffer(tStruct.getDt());
+}
+
+void ParticleEmitter::unbind()
+{
+	//Variables
+	ID3D11GeometryShader* nullShader{ nullptr };
+	ID3D11UnorderedAccessView* nullUav{ nullptr };
 
 	//Unbind shader & UAV, Reset Topology
 	GPU::immediateContext->GSSetShader(nullShader, nullptr, 0);													//Unbinding

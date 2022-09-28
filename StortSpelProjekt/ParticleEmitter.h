@@ -31,6 +31,7 @@ private:
 public:
 	ParticleEmitter(DirectX::XMFLOAT3 Pos, DirectX::XMFLOAT3 Rot, int nrOfPT, DirectX::XMFLOAT2 minMaxLifetime, int randRange = 10);
 	void BindAndDraw();
+	void unbind();
 	void updateBuffer();												//Updates position, rotation & state (emitter on or off)
 
 	ID3D11Buffer* getVTXBuffer() const;

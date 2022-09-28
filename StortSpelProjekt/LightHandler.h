@@ -36,7 +36,7 @@ public:
 
 	LightHandler();
 	~LightHandler();
-	void addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, DirectX::XMFLOAT3 UpDir, int type = 0, float coneAngle = 0.5f);
+	void addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, DirectX::XMFLOAT3 UpDir, int type = 0, float coneAngle = 0.5f, float range = 50, float falloff = 1);
 	bool updateBuffers();
 	void setPosition(DirectX::XMFLOAT3 position, int lightIndex);				//changes view matrix
 	void setDirection(DirectX::XMFLOAT3 direction, int lightIndex);				//changes view matrix

@@ -12,6 +12,8 @@ bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBu
 		DirectX::XMFLOAT3 position = lights.at(i).getPosition();
 		DirectX::XMFLOAT3 color = lights.at(i).getColor();
 		DirectX::XMFLOAT3 direction = lights.at(i).getDirection();
+		
+	
 
 		//Change to XMFLOAT4
 		DirectX::XMFLOAT4X4 matrix;
@@ -20,11 +22,13 @@ bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBu
 		DirectX::XMFLOAT4 dir = DirectX::XMFLOAT4(direction.x, direction.y, direction.z, 0);
 		float ca = lights.at(i).getConeAngle();
 		float typ = (float)lights.at(i).getType();
+		float rng = lights.at(i).getRange();
+		float fall = lights.at(i).getFalloff();
 		DirectX::XMMATRIX tempMatrix = lights.at(i).getViewMatrix();
 		XMStoreFloat4x4(&matrix, tempMatrix);
 
 		//Create & push back struct
-		LightStruct lightArray(pos, col, dir, ca, typ, matrix);
+		LightStruct lightArray(pos, col, dir, ca, typ, rng, fall, matrix);
 		structVector.push_back(lightArray);
 	}
 
@@ -163,13 +167,13 @@ LightHandler::~LightHandler()
 
 // ------------------------------------------------------------------------------- FUNCTIONS -------------------------------------------------------------------------------
 
-void LightHandler::addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, DirectX::XMFLOAT3 UpDir, int type, float coneAngle)
+void LightHandler::addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, DirectX::XMFLOAT3 UpDir, int type, float coneAngle, float range, float falloff)
 {
 	//Check if light limit has been reached
 	if (this->lights.size() < this->LightCap)
 	{
 		//Skapa ljus
-		this->lights.push_back(Light(color, position, direction, UpDir, coneAngle, type));
+		this->lights.push_back(Light(color, position, direction, UpDir, coneAngle, type, range, falloff));
 
 
 		//current light id
@@ -235,11 +239,13 @@ bool LightHandler::updateBuffers()
 		DirectX::XMFLOAT4 dir = DirectX::XMFLOAT4(direction.x, direction.y, direction.z, 0);
 		float ca = lights.at(i).getConeAngle();
 		float typ = (float)lights.at(i).getType();
-		DirectX::XMMATRIX tempMatrix = DirectX::XMMatrixTranspose(lights.at(i).getViewMatrix());
+		float rng = lights.at(i).getRange();
+		float fall = lights.at(i).getFalloff();
+		DirectX::XMMATRIX tempMatrix = lights.at(i).getViewMatrix();
 		XMStoreFloat4x4(&matrix, tempMatrix);
 
 		//Create & push back struct
-		LightStruct lightArray(pos, col, dir, ca, typ, matrix);
+		LightStruct lightArray(pos, col, dir, ca, typ, rng, fall, matrix);
 		structVector.push_back(lightArray);
 	}
 

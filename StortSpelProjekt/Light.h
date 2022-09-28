@@ -17,7 +17,7 @@ private:
 
 public:
 
-	Light(DirectX::XMFLOAT3 lightColor, DirectX::XMFLOAT3 lightPos, DirectX::XMFLOAT3 FocusPos, DirectX::XMFLOAT3 UpDir, float coneAngle = 0.5f, int type = 0);
+	Light(DirectX::XMFLOAT3 lightColor, DirectX::XMFLOAT3 lightPos, DirectX::XMFLOAT3 FocusPos, DirectX::XMFLOAT3 UpDir, float coneAngle = 0.5f, int type = 0, float range = 50, float falloff = 1);
 	DirectX::XMFLOAT3 getPosition()		const;
 	DirectX::XMFLOAT3 getColor()		const;
 	DirectX::XMFLOAT3 getUpDir()		const;
@@ -33,5 +33,7 @@ public:
 	void setFalloff(float falloff);
 	float getConeAngle()	const;
 	int getType()			const;
+	float getFalloff()		const;
+	float getRange()		const;
 	void updateMatrix(DirectX::XMFLOAT3 lightPos, DirectX::XMFLOAT3 FocusPos, DirectX::XMFLOAT3 UpDir);
 };

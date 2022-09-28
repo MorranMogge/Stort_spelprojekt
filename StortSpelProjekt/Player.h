@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Input.h"
 #include "Potion.h"
+#include <GamePad.h>
 #include <iostream>
 using namespace DirectX;
 
@@ -21,13 +22,13 @@ public:
 	Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
 	Player(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
 	void handleInputs(); 
-	void move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::Vector3& rotation, const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, float deltaTime);
+	void move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::Vector3& rotation, const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime);
 	bool getPickup(GameObject *pickup);
-	bool pickupItem(Item *itemToPickup);
+	bool pickupItem(Item *itemToPickup, std::unique_ptr<DirectX::GamePad>& gamePad);
 	void releasePickup();
 	void addItem(Item* itemToHold);
 	void addHealth(const int& healthToIncrease);
 	void releaseItem();
 	bool withinRadius(Item* itemToLookWithinRadius, float radius) const;
-	void update();
+	void update(std::unique_ptr<DirectX::GamePad>& gamePad);
 };

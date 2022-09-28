@@ -138,86 +138,19 @@ GAMESTATE Game::Update()
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(pos));
 
 	grav = normalizeXMFLOAT3(grav);
-	player.move(meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, grav, camera.getRightVec(), dt);
+	player.move(meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, grav, camera.getRightVec(), gamePad, dt);
 	grav = planetGravityField.calcGravFactor(meshes_Dynamic[0].position);
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(meshes_Dynamic[0].position));
 	if (getLength(meshes_Dynamic[0].position) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); newNormalizeXMFLOAT3(meshes_Dynamic[0].position); scalarMultiplicationXMFLOAT3(22, meshes_Dynamic[0].position); }
 	additionXMFLOAT3(meshes_Dynamic[0].position, getScalarMultiplicationXMFLOAT3(dt, velocity));
 	camera.moveCamera(meshes_Dynamic[0].position, dt);
 
-	player.pickupItem(&potion);
+	player.pickupItem(&potion, gamePad);
 	
 	player.setPos({ meshes_Dynamic[0].position.x,  meshes_Dynamic[0].position.y, meshes_Dynamic[0].position.z });
-	player.update();
+	player.update(gamePad);
 	
-	auto state = gamePad->GetState(0);
-
-	if (state.IsConnected())
-	{
-		if (state.IsAPressed())
-		{ 
-			std::cout << "A is pressed\n";
-			gamePad->SetVibration(0, 1.f, 1.f);
-		}
-		else
-		{
-			gamePad->SetVibration(0, 0.f, 0.f);
-
-		}
-
-			// Do action for button A being down
-
-		if (state.buttons.y)
-		{
-			std::cout << "Y is pressed\n";
-		}
-				// Do action for button Y being down
-
-		if (state.IsDPadLeftPressed())
-		{
-			std::cout << "DPAD Left is down\n";
-		}
-					// Do action for DPAD Left being down
-
-		if (state.dpad.up || state.dpad.down || state.dpad.left || state.dpad.right)
-		{
-			std::cout << "DPAD\n";
-		}
-						// Do action based on any DPAD change
-
-		float posx = state.thumbSticks.leftX;
-		float posy = state.thumbSticks.leftY;
-		// These values are normalized to -1 to 1
-
-		if (posy >= 1)
-		{
-			std::cout << "Y >= 1\n";
-		}
-
-		float throttle = state.triggers.right;
-		// This value is normalized 0 -> 1
-
-		if (state.IsLeftTriggerPressed())
-		{
-			std::cout << "Left trigger pressed\n";
-		}
-			// Do action based on a left trigger pressed more than halfway
-
-		if (state.IsViewPressed())
-		{
-			std::cout << "backbutton is pressed\n";
-		}
-
-		if (state.IsLeftStickPressed())
-		{
-			std::cout << "Left stick down\n";
-		}
-
-		
-
-				// This is an alias for the Xbox 360 'Back' button
-				// which is called 'View' on the Xbox One controller.
-	}
+	
 
 	
 	physWolrd.updatePlayerBox(meshes_Dynamic[0].position);

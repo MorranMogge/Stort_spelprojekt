@@ -38,13 +38,41 @@ void main(uint3 DTid : SV_DispatchThreadID)
 
     const float speed = 1.0f * 0.05f;
     
+    float3x3 transform;
+    
+    if(orientation.x == 0 && orientation.z == 0)
+    {
+        if (orientation.y < 0)
+        {
+            transform = float4x4(
+            -1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 0.0f);
+        }
+        
+    }
+    else
+    {
+        float3 new_y = orientation;
+        float3 new_z = normalize(cross(new_y, float3(0, 1, 0)));
+        float3 new_x = normalize(cross(new_y, new_z));
+        
+        transform = float3x3(new_x, new_y, new_z);
+
+    }
+    
+    
     if (SimulateTime > LifeTime)
     {
         SimulateTime -= LifeTime;
         
-        PositionX = StartPositionX;
-        PositionY = StartPositionY;
-        PositionZ = StartPositionZ;
+        float3 startPos = mul(transform, float3(StartPositionX, StartPositionY, StartPositionZ));
+        
+        
+        PositionX = startPos.x + offsetFromOrigin.x;
+        PositionY = startPos.y + offsetFromOrigin.y;
+        PositionZ = startPos.z + offsetFromOrigin.z;
     }
     else
     {

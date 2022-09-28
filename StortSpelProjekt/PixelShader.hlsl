@@ -72,6 +72,38 @@ float GetShadowIntensity(int i, float4 lightWorldPosition, float shadowStrenth, 
     return shadowIntensity;
 }
 
+float ShadowFactor(int i, float4 fragmentPositionInLightSpace, float3 normal, float3 lightDirection)
+{
+    float3 projectedCoordinates = fragmentPositionInLightSpace.xyz / fragmentPositionInLightSpace.w;
+    projectedCoordinates = 0.5f * projectedCoordinates + 0.5f;
+    
+    float fragmentDepth = projectedCoordinates.z;
+    
+    float2 texSize;
+    shadowMaps.GetDimensions(texSize.x, texSize.y, i);
+    texSize = 1 / texSize;
+    
+    float result = 0.0f;
+    
+    int PCFsize = 3;
+    int K = PCFsize / 2;
+    
+    float bias = max(0.01f * (1.0f - dot(normal, lightDirection)), 0.005f);
+    
+    for (int x = -K; x <= K;x++)
+    {
+        for (int y = -K; y <= K;y++)
+        {
+            float PCFDepth = shadowMaps.SampleLevel(samplerState, float3(projectedCoordinates.xy + float2(x, y) * texSize, 0), i).r;
+            result += ((fragmentDepth - bias) > PCFDepth) ? 1.0 : 0.0f;
+        }
+    }
+    
+    result /= float(PCFsize * PCFsize);
+    return (1.0f - result);
+}
+
+
 float FallOff(float range, float distance)
 {
     return saturate(1 - distance / range); // normalize distance in range, linear falloff

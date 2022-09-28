@@ -205,6 +205,7 @@ GAMESTATE Game::Update()
 	{
 		XMFLOAT3 test(this->ptEmitters.at(0).getPosition().x, this->ptEmitters.at(0).getPosition().y, this->ptEmitters.at(0).getPosition().z -10);
 		this->ptEmitters.at(0).setPosition(test);
+		this->ptEmitters.at(0).setRotation(XMFLOAT3(-1,0,0));
 		this->ptEmitters.at(0).updateBuffer();
 	}
 

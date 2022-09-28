@@ -36,20 +36,17 @@ void main(uint3 DTid : SV_DispatchThreadID)
     
     SimulateTime += deltaTime;
 
-    const float speed = 1.0f * 0.05f;
+    const float speed = 10.0f * deltaTime;
     
+    //transform for euler angle
     float3x3 transform;
     
-    if(orientation.x == 0 && orientation.z == 0)
+    if (orientation.x == 0 && orientation.z == 0 && orientation.y < 0)
     {
-        if (orientation.y < 0)
-        {
-            transform = float4x4(
-            -1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, -1.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f, 0.0f);
-        }
+        transform = float3x3(
+            -1.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, 0.0f, 1.0f);
         
     }
     else
@@ -59,7 +56,6 @@ void main(uint3 DTid : SV_DispatchThreadID)
         float3 new_x = normalize(cross(new_y, new_z));
         
         transform = float3x3(new_x, new_y, new_z);
-
     }
     
     

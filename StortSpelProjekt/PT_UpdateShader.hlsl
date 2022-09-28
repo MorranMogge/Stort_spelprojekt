@@ -12,7 +12,7 @@ cbuffer timeValue : register(b0)
 cbuffer posValue : register(b1)
 {
     float3 offsetFromOrigin;
-    bool enable;
+    float enable;
     float4 orientation;
 };
 
@@ -59,9 +59,10 @@ void main(uint3 DTid : SV_DispatchThreadID)
     }
     
     
-    if (SimulateTime > LifeTime)
+    if (SimulateTime > LifeTime || enable == 0)
     {
-        SimulateTime -= LifeTime;
+        //SimulateTime -= LifeTime;
+        SimulateTime = 0.0f;
         
         float3 startPos = mul(transform, float3(StartPositionX, StartPositionY, StartPositionZ));
         

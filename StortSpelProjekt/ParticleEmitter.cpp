@@ -207,7 +207,7 @@ void ParticleEmitter::updateBuffer()
 
 	//Update buffer
 	vector<XMFLOAT4> data;
-	data.push_back(XMFLOAT4(this->Position.x, this->Position.y, this->Position.z, active));
+	data.push_back(XMFLOAT4(this->Position.x, this->Position.y, this->Position.z, this->active));
 	data.push_back(XMFLOAT4(this->Rotation.x, this->Rotation.y, this->Rotation.z, 0));
 
 	HRESULT hr = GPU::immediateContext->Map(this->emitterPosBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &map);

@@ -214,10 +214,12 @@ GAMESTATE Game::Update()
 	if (Input::KeyPress(KeyCode::Y))
 	{
 		this->ptEmitters.at(0).setActive(false);
+		this->ptEmitters.at(0).updateBuffer();
 	}
 	if (Input::KeyPress(KeyCode::U))
 	{
 		this->ptEmitters.at(0).setActive(true);
+		this->ptEmitters.at(0).updateBuffer();
 	}
 
 	return NOCHANGE;

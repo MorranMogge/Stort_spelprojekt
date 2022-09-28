@@ -1,9 +1,5 @@
 
-//#include "particle_Include.hlsli"
-
-
 RWBuffer<float> rawBuffer : register(u0);
-
 
 cbuffer timeValue : register(b0)
 {
@@ -19,37 +15,54 @@ cbuffer posValue : register(b1)
 [numthreads(1, 1, 1)]
 void main(uint3 DTid : SV_DispatchThreadID)
 {
-#define offset 8
- 
-#define PositionX rawBuffer[DTid.x * offset]
-#define PositionY rawBuffer[DTid.x * offset + 1]
-#define PositionZ rawBuffer[DTid.x * offset + 2]
+#define Offset 8
+    
+#define PositionX rawBuffer[DTid.x * Offset]
+#define PositionY rawBuffer[DTid.x * Offset + 1]
+#define PositionZ rawBuffer[DTid.x * Offset + 2]
+    
+#define StartPositionX rawBuffer[DTid.x * Offset + 3]
+#define StartPositionY rawBuffer[DTid.x * Offset + 4]
+#define StartPositionZ rawBuffer[DTid.x * Offset + 5]
+    
+#define SimulateTime rawBuffer[DTid.x * Offset + 6]
 
-#define StartPositionX rawBuffer[DTid.x * offset + 3]
-#define StartPositionY rawBuffer[DTid.x * offset + 4]
-#define StartPositionZ rawBuffer[DTid.x * offset + 5]
-    
-#define SimulateTime rawBuffer[DTid.x * offset + 6]
+#define LifeTime rawBuffer[DTid.x * Offset + 7]
 
-#define LifeTime rawBuffer[DTid.x * offset + 7]
-
-    [flatten]// ugly attribute for performance to flat the if else
-    SimulateTime = SimulateTime > LifeTime || !enable ? 0.0f : SimulateTime + deltaTime; 
-
-#define SpeedFactor 100.0f
-    const float speed = 1.0f * SpeedFactor;
+#define Speed 1.0f
+#define SpeedMultyply 100.0f
     
-    const float normalizedLifeTime = SimulateTime / LifeTime; // re-map simulate time in 0 to 1
+// remap simulate time in range of 0 to 1
+#define TimeScale SimulateTime / LifeTime 
     
-    const float3 z = normalize(cross(orientation, float3(0.0f, 1.0f, 0.0f))); // euler Z, cross orientation and up vector(0,1,0)
-    const float3 x = normalize(cross(orientation, z)); // euler X, cross orientation and euler Z
-    const float3x3 euler = float3x3(x, orientation, z); // apply it to euler matrix
+// up vector from camera
+#define CameraUpVector float3(0.0f, 1.0f, 0.0f)
     
-    const float3 position = 
-        mul(euler, float3(StartPositionX, StartPositionY, StartPositionZ))// start position in local space
-        + (speed * normalizedLifeTime * orientation) // + curren offset in local space
-        + offsetFromOrigin; // + offset from origin = world space
+    // if SimulateTime bigger than LifeTime or not enabled, reset it to 0, else plus delta time
+    SimulateTime = SimulateTime > LifeTime || !enable ? 0.0f : SimulateTime + deltaTime;
     
+    // euler direction Z
+    const float3 eulerZ = normalize(cross(orientation, CameraUpVector));
+    
+    // euler direction X
+    const float3 eulerX = normalize(cross(orientation, eulerZ));
+    
+// euler direction matrix, 3x3 without translation
+#define EulerDirection float3x3(eulerX, orientation, eulerZ)
+    
+// start position in local space
+#define StartPosition float3(StartPositionX, StartPositionY, StartPositionZ)
+    
+// oriented/rotated start position in local space
+#define OrientedStartPosition mul(EulerDirection, StartPosition)
+    
+// offset in local space (move particles)
+#define LocalSpaceOffset (Speed * SpeedMultyply * TimeScale * orientation) 
+    
+    // position in world space
+    const float3 position = OrientedStartPosition + LocalSpaceOffset + offsetFromOrigin;
+    
+    //apply position to buffer
     PositionX = position.x;
     PositionY = position.y;
     PositionZ = position.z;

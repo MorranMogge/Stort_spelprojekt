@@ -9,7 +9,6 @@
 #include <chrono>
 #include "ShaderLoader.h"
 #include "ImGuiHelper.h"
-
 #include "Player.h"
 #include "Camera.h"
 #include "LightHandler.h"
@@ -71,7 +70,6 @@ private:
 	void drawShadows();
 	void drawObjects(bool drawDebug);
 	void drawParticles();
-	void setUpReact3D();
 	bool setUpWireframe();
 	void updateBuffers();
 

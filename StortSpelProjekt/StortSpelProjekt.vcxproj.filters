@@ -113,6 +113,7 @@
     <ClCompile Include="Client.cpp">
       <Filter>User</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleEmitter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -344,6 +345,7 @@
     <ClInclude Include="Client.h">
       <Filter>User</Filter>
     </ClInclude>
+    <ClInclude Include="ParticleEmitter.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

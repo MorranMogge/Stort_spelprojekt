@@ -125,7 +125,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 
 	
-	this->setUpReact3D();
 
 	this->mouse = &mouse;
 	this->window = &window;
@@ -221,6 +220,6 @@ void Game::Render()
 
 
 	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
-	if (objectDraw) this->drawObjects();
-	if (wireframe) { this->updateBuffers(); immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
+	//if (objectDraw) this->drawObjects();
+	//if (wireframe) { this->updateBuffers(); immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
 }

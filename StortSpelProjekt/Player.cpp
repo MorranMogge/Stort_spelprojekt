@@ -48,6 +48,61 @@ void Player::handleInputs()
 
 void Player::move(DirectX::XMVECTOR cameraRight, DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::Vector3& rotation, const DirectX::XMFLOAT3& grav, float deltaTime)
 {
+    normalVector = XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
+
+    rotationMX = XMMatrixRotationRollPitchYawFromVector(rotation);
+    upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
+    rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
+    forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
+    
+    //X-Rotation
+    dotProduct = XMVector3Dot(normalVector, forwardVector);
+    XMStoreFloat3(&dotValue, dotProduct);
+    if (dotValue.x < -0.1f)
+    {
+        rotation.x -= 0.05f;
+    }
+    else if (dotValue.x > 0.1f)
+    {
+        rotation.x += 0.05f;
+    }
+
+    //Y-Rotation
+    dotProduct = XMVector3Dot(normalVector, rightVector);
+    XMStoreFloat3(&dotValue, dotProduct);
+    if (dotValue.y < -0.1f)
+    {
+        rotation.y += 0.05f;
+    }
+    else if (dotValue.y > 0.1f)
+    {
+        rotation.y -= 0.05f;
+    }
+
+    if (Input::KeyDown(KeyCode::W))
+    {
+        position += forwardVector * 0.3f;
+        //rotation.y = 0.0f;
+    }
+
+    if (Input::KeyDown(KeyCode::S))
+    {
+        position -= forwardVector * 0.3f;
+        //rotation.y = XM_PI;
+    }
+
+    if (Input::KeyDown(KeyCode::D))
+    {
+        position += rightVector * 0.3f;
+        //rotation.y = XM_PIDIV2;
+    }
+
+    if (Input::KeyDown(KeyCode::A))
+    {
+        position -= rightVector * 0.3f;
+        //rotation.y = piDiv2;
+    }
+
     //Help keys
     if (Input::KeyDown(KeyCode::E))
     {

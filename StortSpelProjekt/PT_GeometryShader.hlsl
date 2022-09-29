@@ -2,7 +2,8 @@ struct Output
 {
     float4 position : SV_Position;
     float2 uv : UV;
-
+    float delta : DELTA;
+    float lifeTime : LIFETIME;
     //float3 normal : Normal;
     //float4 worldPosition : WorldPosition;
 };
@@ -50,7 +51,9 @@ void main(point Particle input[1], inout TriangleStream<Output> outputStream)
         const Output output = {
             mul(float4(worldPos[i], 1.0f), mainCamViewProj),
             uv[i],
-
+            input,
+            input[0].delta,
+            input[0].lifeTime
             //normal,
             //float4(worldPos[i], 0.0f), //worldPosition
         };

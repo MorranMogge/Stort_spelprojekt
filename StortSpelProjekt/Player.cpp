@@ -67,16 +67,16 @@ void Player::move(DirectX::XMVECTOR cameraRight, DirectX::SimpleMath::Vector3& p
         rotation.x += 0.05f;
     }
 
-    //Y-Rotation
+    //Z-Rotation
     dotProduct = XMVector3Dot(normalVector, rightVector);
     XMStoreFloat3(&dotValue, dotProduct);
-    if (dotValue.y < -0.1f)
+    if (dotValue.z < -0.1f)
     {
-        rotation.y += 0.05f;
+        rotation.z += 0.05f;
     }
-    else if (dotValue.y > 0.1f)
+    else if (dotValue.z > 0.1f)
     {
-        rotation.y -= 0.05f;
+        rotation.z -= 0.05f;
     }
 
     if (Input::KeyDown(KeyCode::W))

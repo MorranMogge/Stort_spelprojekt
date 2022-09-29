@@ -1,5 +1,5 @@
 #pragma once
-#include <reactphysics3d\reactphysics3d.h>
+#include "PhysicsWorld.h"
 #include "State.h"
 #include "BasicRenderer.h"
 #include "Mesh.h"
@@ -7,6 +7,9 @@
 #include "MouseClass.h"
 #include "GravityField.h"
 #include <chrono>
+#include "ShaderLoader.h"
+#include "ImGuiHelper.h"
+
 #include "Player.h"
 #include "Camera.h"
 #include "LightHandler.h"
@@ -15,11 +18,25 @@
 #include "BufferTypes.h"
 #include "LightHandler.h"
 #include "ParticleEmitter.h"
+#include "Potion.h"
+
+struct wirefameInfo
+{
+	DirectX::XMFLOAT3 wireframeClr;
+	float padding;
+};
 
 class Game : public State
 {
 private:
 	ID3D11DeviceContext* immediateContext;
+
+	ImGuiHelper imGui;
+	bool wireframe = true;
+	bool objectDraw = true;
+	wirefameInfo reactWireframeInfo;
+	ID3D11Buffer* wireBuffer;
+	D3D11_MAPPED_SUBRESOURCE subData;
 
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> start;
@@ -31,29 +48,20 @@ private:
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
 
-	reactphysics3d::PhysicsCommon com;
-	reactphysics3d::PhysicsWorld* world;
-
-	reactphysics3d::RigidBody* rigid;
-
-	reactphysics3d::SphereShape* planetShape;
-	reactphysics3d::Collider* planetCollider;
-	reactphysics3d::BoxShape* playerShape;
-	reactphysics3d::Collider* playerCollider;
-
-	reactphysics3d::RigidBody* playerRigidBody;
-	reactphysics3d::RigidBody* planetRigidBody;
+	PhysicsWorld physWolrd;
 
 	Camera camera;
 	Player player;
+	GameObject* planet;
+	Potion potion;
+
+
 	LightHandler ltHandler;
 
 	//Objects
+
 	std::vector<Mesh> meshes_Static;
 	std::vector<Mesh> meshes_Dynamic;
-
-
-
 	std::vector<GameObject*> gameObjects;
 	std::vector<ParticleEmitter> ptEmitters;
 	
@@ -64,13 +72,8 @@ private:
 	void drawObjects(bool drawDebug);
 	void drawParticles();
 	void setUpReact3D();
-
-	
-
-	//Create Shape
-	//Create Rigidbody
-	//Create transform
-	//Create collider, rigidbody->createCollider(&shape, transform)
+	bool setUpWireframe();
+	void updateBuffers();
 
 	float pos[3];
 

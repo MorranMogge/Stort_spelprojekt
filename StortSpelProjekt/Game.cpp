@@ -95,9 +95,20 @@ void Game::drawParticles()
 {
 	for (int i = 0; i < this->ptEmitters.size(); i++)
 	{
-		if (this->ptEmitters.at(i).isActive())
+		if (!this->ptEmitters.at(i).isActive() && this->ptEmitters.at(i).isPassComplete())
+		{
+			//turn off
+		}
+		else
 		{
 			this->ptEmitters.at(i).BindAndDraw();
+		}
+
+
+
+		if (this->ptEmitters.at(i).isActive() && this->ptEmitters.at(i).isPassComplete())
+		{
+			
 		}
 	}
 }

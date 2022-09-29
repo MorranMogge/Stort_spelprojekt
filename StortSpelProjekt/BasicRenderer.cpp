@@ -114,7 +114,7 @@ void BasicRenderer::setUpScene(Camera& stageCamera)
 
 	ID3D11Buffer* tempBuff = stageCamera.getPositionBuffer();
 	ID3D11Buffer* tempBuff2 = stageCamera.getViewBuffer();
-	GPU::immediateContext->PSSetConstantBuffers(1, 1, &tempBuff);			//Bind CBuffers's //fel?? kan inte binda till slot 1 om inte slot 0 är fullt?
+	GPU::immediateContext->PSSetConstantBuffers(1, 1, &tempBuff);			
 	GPU::immediateContext->VSSetConstantBuffers(1, 1, &tempBuff2);
 }
 

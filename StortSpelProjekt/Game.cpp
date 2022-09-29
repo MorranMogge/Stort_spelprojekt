@@ -130,7 +130,7 @@ GAMESTATE Game::Update()
 	float zpos = meshes_Dynamic[0].position.z;
 
 	grav = normalizeXMFLOAT3(grav);
-	player.move(camera.getUpVector(), meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, grav, dt);
+	player.move(camera.getRightVector(), meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, grav, dt);
 
 	grav = planetGravityField.calcGravFactor(meshes_Dynamic[0].position);
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(meshes_Dynamic[0].position));

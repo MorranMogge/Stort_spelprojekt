@@ -54,14 +54,13 @@ private:
 
 	Camera camera;
 	Player player;
+	GameObject* planet;
 	Potion potion;
 
 
 	LightHandler ltHandler;
 
 	//Objects
-	std::vector<Mesh> meshes_Static;
-	std::vector<Mesh> meshes_Dynamic;
 	std::vector<GameObject> gameObjects;
 
 	void loadObjects();

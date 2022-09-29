@@ -9,7 +9,7 @@ using namespace DirectX;
 class Player: public GameObject
 {
 private:
-
+	const float speedConstant = 100.f;
 	//Olivers order
 	Item* holdingItem;
 	//Camera
@@ -22,7 +22,7 @@ public:
 	Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
 	Player(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
 	void handleInputs(); 
-	void move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::Vector3& rotation, const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime);
+	void move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime);
 	bool getPickup(GameObject *pickup);
 	bool pickupItem(Item *itemToPickup, std::unique_ptr<DirectX::GamePad>& gamePad);
 	void releasePickup();

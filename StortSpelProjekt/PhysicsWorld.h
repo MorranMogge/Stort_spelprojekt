@@ -48,7 +48,7 @@ public:
 	~PhysicsWorld();
 	void update(float dt);
 	void renderReact3D();
-	void addForceToObject(const DirectX::XMFLOAT3& gravityVec);
+	void addForceToObjects();
 	DirectX::SimpleMath::Vector3 getPos();
 	DirectX::SimpleMath::Vector3 getRot();
 	void updatePlayerBox(const DirectX::SimpleMath::Vector3& pos);

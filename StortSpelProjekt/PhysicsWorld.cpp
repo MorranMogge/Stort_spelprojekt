@@ -215,9 +215,8 @@ void PhysicsWorld::update(float dt)
 	world->update(dt);
 }
 
-void PhysicsWorld::addForceToObject(const DirectX::XMFLOAT3& gravityVec)
+void PhysicsWorld::addForceToObjects()
 {
-	playerRigidBody->applyWorldForceAtCenterOfMass(playerRigidBody->getMass() * reactphysics3d::Vector3(gravityVec.x, gravityVec.y, gravityVec.z));
 	DirectX::XMFLOAT3 grav;
 	reactphysics3d::Vector3 temp;
 	for (int i = 0; i < this->physObjects.size(); i++)
@@ -256,7 +255,7 @@ void PhysicsWorld::addBoxToWorld(DirectX::XMFLOAT3 dimensions, float mass, Direc
 	physObjects.emplace_back(new PhysicsComponent());
 	physObjects[vectorSize]->initiateComponent(&this->com, this->world);
 	physObjects[vectorSize]->setPosition(reactphysics3d::Vector3(position.x, position.y, position.z));
-
+	physObjects[vectorSize]->setLinearDampning(1.f);
 	//UPDATE THE VERTEX BUFFER TO BE ABLE TO DRAW THE NEW PHYSOBJECTS
 	this->recreateVertexBuffer();
 }

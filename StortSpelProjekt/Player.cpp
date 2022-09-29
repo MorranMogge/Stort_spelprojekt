@@ -46,7 +46,7 @@ void Player::handleInputs()
 
 }
 
-void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::Vector3& rotation, const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime)
+void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime)
 {
     //Variables
     float rotationConstant = 0;
@@ -57,32 +57,32 @@ void Player::move(DirectX::SimpleMath::Vector3& position, DirectX::SimpleMath::V
 
     if (Input::KeyDown(KeyCode::W))
     {
-         position += playerForwardVec;
+         this->position += deltaTime * this->speedConstant * playerForwardVec;
     }
 
     else if (Input::KeyDown(KeyCode::S))
     {
-        position -= playerForwardVec;
+        this->position -= deltaTime * this->speedConstant * playerForwardVec;
     }
 
     if (Input::KeyDown(KeyCode::D))
     {
-        position += playerRightVec;
+        this->position += deltaTime * this->speedConstant * playerRightVec;
     }
 
     else if (Input::KeyDown(KeyCode::A))
     {
-        position -= playerRightVec;
+        this->position -= deltaTime * this->speedConstant * playerRightVec;
     }
 
     if (Input::KeyDown(KeyCode::E))
     {
-        position.y += 0.1;
+        this->position.y += 0.1;
     }
 
     else if (Input::KeyDown(KeyCode::Q))
     {
-        position.y -= 0.1;
+        this->position.y -= 0.1;
     }
 
 
@@ -207,7 +207,7 @@ void Player::addItem(Item* itemToHold)
 void Player::addHealth(const int& healthToIncrease)
 {
     this->health += healthToIncrease;
-    //Prototyp för en cap så man inte kan få mer liv än en kapacitet
+    //Prototyp fï¿½r en cap sï¿½ man inte kan fï¿½ mer liv ï¿½n en kapacitet
     if (this->health > 100)
     {
         this->health = 100;

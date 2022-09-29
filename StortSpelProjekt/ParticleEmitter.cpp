@@ -77,8 +77,29 @@ bool CreateTimeBuffer(ComPtr<ID3D11Buffer>& timeBuffer, float &deltaTime)
 	return !FAILED(hr);
 }
 
+bool CreateBlendState(Microsoft::WRL::ComPtr <ID3D11BlendState> &blendState)
+{
+	D3D11_BLEND_DESC desc{};
+	D3D11_RENDER_TARGET_BLEND_DESC& brt = desc.RenderTarget[0];
+
+	brt.BlendEnable = true;
+	brt.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
+	brt.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+
+	brt.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+	brt.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+
+	brt.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
+	brt.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+
+	brt.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL; //write all channels
+	HRESULT hr = GPU::device->CreateBlendState(&desc, blendState.GetAddressOf());
+
+	return !FAILED(hr);
+}
+
 ParticleEmitter::ParticleEmitter(XMFLOAT3 Pos, XMFLOAT3 Rot, int nrOfPT, XMFLOAT2 minMaxTime, int randRange)
-	:Position(Pos), Rotation(Rot), nrOfParticles(nrOfPT), active(true)
+	:Position(Pos), Rotation(Rot), nrOfParticles(nrOfPT), active(true), renderPassComplete(true)
 {
 	//Initilize timer
 	tStruct.startTime;
@@ -130,6 +151,11 @@ ParticleEmitter::ParticleEmitter(XMFLOAT3 Pos, XMFLOAT3 Rot, int nrOfPT, XMFLOAT
 	{
 		std::cerr << "error creating PT_time_Buffer!" << std::endl;
 	}
+
+	if (!CreateBlendState(this->blendState))
+	{
+		std::cerr << "error creating Blendstate!" << std::endl;
+	}
 }
 
 
@@ -157,7 +183,10 @@ void ParticleEmitter::BindAndDraw()
 	tempBuff.push_back(this->timeBuffer.Get());
 	tempBuff.push_back(this->emitterPosBuffer.Get());
 
-
+	
+	//Bind blendstate
+	GPU::immediateContext->OMSetBlendState(this->blendState.Get(), nullptr, 0xffffffffu);
+	
 	//Draw
 	GPU::immediateContext->IASetVertexBuffers(0, 1, this->PT_vertexBuffer.GetAddressOf(), &stride, &offset);	//Set VtxBuffer
 	GPU::immediateContext->Draw(nrOfPt, 0);																		//Draw (once per primitive?)
@@ -173,6 +202,12 @@ void ParticleEmitter::BindAndDraw()
 	//Reset delta time
 	tStruct.resetStartTime();
 	this->updateTimeBuffer(tStruct.getDt());
+
+	//Reset render pass bool
+	if (!this->renderPassComplete)
+	{
+		this->renderPassComplete = true;
+	}
 }
 
 void ParticleEmitter::unbind()
@@ -180,11 +215,13 @@ void ParticleEmitter::unbind()
 	//Variables
 	ID3D11GeometryShader* nullShader{ nullptr };
 	ID3D11UnorderedAccessView* nullUav{ nullptr };
+	ID3D11BlendState* nullBlendstate{ nullptr };
 
 	//Unbind shader & UAV, Reset Topology
 	GPU::immediateContext->GSSetShader(nullShader, nullptr, 0);													//Unbinding
 	GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);						//Reset Topology
 	GPU::immediateContext->CSSetUnorderedAccessViews(0, 1, &nullUav, nullptr);									//Unbind UAV
+	GPU::immediateContext->OMSetBlendState(nullBlendstate, nullptr, 0xffffffffu);								//Unbind blendstate
 }
 
 
@@ -256,7 +293,21 @@ bool ParticleEmitter::isActive()
 	return this->active;
 }
 
+bool ParticleEmitter::isPassComplete()
+{
+	return this->renderPassComplete;
+}
+
 void ParticleEmitter::setActive(bool onOrOff)
 {
 	this->active = onOrOff;
+	if (onOrOff == false)
+	{
+		this->renderPassComplete = false;
+	}
+}
+
+void ParticleEmitter::setPassComplete(bool onOrOff)
+{
+	this->renderPassComplete = onOrOff;
 }

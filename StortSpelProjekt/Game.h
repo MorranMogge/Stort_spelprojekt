@@ -34,6 +34,8 @@ private:
 	Camera camera;
 	Player player;
 	GameObject* planet;
+	GameObject* testCube;
+	std::vector<GameObject*> testObjects;
 	Potion potion;
 
 

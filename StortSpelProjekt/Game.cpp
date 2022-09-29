@@ -8,7 +8,27 @@ void Game::loadObjects()
 	//Here we can add base object we want in the beginning of the game
 	planet = new GameObject("../Meshes/Planet", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
 	
-	physWolrd.addPhysComponent(planet);
+	//physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::BOX);
+	//planet->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
+
+	//skybox = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(-200.0f, 200.0f, 200.0f));
+	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+
+	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
+	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
+	testCube->getPhysComp()->setParent(testCube);
+
+	for (int i = 0; i < 20; i++)
+	{
+		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+		physWolrd.addPhysComponent(newObj, reactphysics3d::CollisionShapeName::BOX);
+		newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+i*10, 100));
+		testObjects.emplace_back(newObj);
+	}
+
+	physWolrd.addPhysComponent(&potion, reactphysics3d::CollisionShapeName::BOX);
+	potion.getPhysComp()->setPosition(reactphysics3d::Vector3(potion.getPosV3().x, potion.getPosV3().y, potion.getPosV3().z));
+
 }
 
 void Game::drawObjects()
@@ -16,6 +36,11 @@ void Game::drawObjects()
 	potion.draw();
 	player.draw();
 	planet->draw();
+	testCube->draw();
+	for (int i = 0; i < testObjects.size(); i++)
+	{
+		testObjects[i]->draw();
+	}
 }
 
 bool Game::setUpWireframe()
@@ -71,6 +96,11 @@ Game::~Game()
 {
 	wireBuffer->Release();
 	delete planet;
+	delete testCube;
+	for (int i = 0; i < testObjects.size(); i++)
+	{
+		delete testObjects[i];
+	}
 }
 
 GAMESTATE Game::Update()
@@ -95,14 +125,26 @@ GAMESTATE Game::Update()
 	physWolrd.updatePlayerBox(player.getPos());
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
-	
-
+	potion.getPhysComp()->updateParent();
+	testCube->getPhysComp()->updateParent();
+	for (int i = 0; i < testObjects.size(); i++)
+	{
+		testObjects[i]->getPhysComp()->updateParent();
+	}
+	//testCube->setPos(testCube->getPhysComp()->getPosV3());
+	//testCube->setRot(DirectX::XMFLOAT3(testCube->getPhysComp()->getRotation().getVectorV().x, testCube->getPhysComp()->getRotation().getVectorV().y, testCube->getPhysComp()->getRotation().getVectorV().z));
+	//testCube->setRot(DirectX::XMQuaternionNormalize(DirectX::XMVectorSet(testCube->getPhysComp()->getRotation().getVectorV().x, testCube->getPhysComp()->getRotation().getVectorV().y, testCube->getPhysComp()->getRotation().getVectorV().z, 1.0f)));
 	//Here you can write client-server related functions?
 
 	potion.updateBuffer();
 	player.updateBuffer();
 	planet->updateBuffer();
-	
+	testCube->updateBuffer();
+	for (int i = 0; i < testObjects.size(); i++)
+	{
+		testObjects[i]->updateBuffer();
+	}
+
 	mouse->clearEvents();
 	
 	return NOCHANGE;

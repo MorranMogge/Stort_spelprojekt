@@ -1,6 +1,7 @@
+#include "PhysicsComponent.h"
 #include "GameObject.h"
 
-GameObject::GameObject(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, DirectX::XMFLOAT3 scale)
+GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale)
 	:position(pos), rotation(rot), mesh(useMesh), objectID(id), scale(scale)
 {
 	// set position
@@ -13,11 +14,11 @@ GameObject::GameObject(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 r
 	mesh->scale = scale;
 }
 
-GameObject::GameObject(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, DirectX::XMFLOAT3 scale)
+GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale)
 	:position(pos), rotation(rot), objectID(id), scale(scale)
 {
 	// load obj file
-	OBJ testObj(objectPath);
+	OBJ testObj(meshPath);
 	this->mesh = new Mesh(testObj);
 
 
@@ -69,21 +70,26 @@ GameObject::~GameObject()
 	}
 }
 
-void GameObject::movePos(DirectX::XMFLOAT3 offset)
+void GameObject::movePos(const DirectX::XMFLOAT3& offset)
 {
 	this->position.x += offset.x;
 	this->position.y += offset.y;
 	this->position.z += offset.z;
 }
 
-void GameObject::setPos(DirectX::XMFLOAT3 pos)
+void GameObject::setPos(const DirectX::XMFLOAT3& pos)
 {
 	this->position = pos;
 }
 
-void GameObject::setRot(DirectX::XMFLOAT3 rot)
+void GameObject::setRot(const DirectX::XMFLOAT3& rot)
 {
 	this->rotation = rot;
+}
+
+void GameObject::setRot(const DirectX::XMVECTOR& rot)
+{
+	DirectX::XMStoreFloat3(&this->rotation, rot);
 }
 
 void GameObject::setScale(DirectX::XMFLOAT3 scale)
@@ -137,7 +143,7 @@ void GameObject::updateBuffer()
 	this->mesh->UpdateCB();
 }
 
-void GameObject::setMesh(std::string meshPath)
+void GameObject::setMesh(const  std::string& meshPath)
 {
 	//delete current mesh ptr
 	if (this->mesh != nullptr)

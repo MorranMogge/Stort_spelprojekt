@@ -1,14 +1,15 @@
+#include "PhysicsComponent.h"
 #include "Player.h"
 #include "DirectXMathHelper.h"
 #include "Potion.h"
 using namespace DirectX;
 
-Player::Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
+Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
     :GameObject(useMesh, pos, rot, id), health(69), holdingItem(nullptr)
 {
 }
 
-Player::Player(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
+Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
 	:GameObject(objectPath, pos, rot, id), health(69), holdingItem(nullptr)
 {
 }
@@ -48,7 +49,7 @@ void Player::handleInputs()
 
 }
 
-void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, float deltaTime)
+void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, const float& deltaTime)
 {
     //Variables
     float rotationConstant = 0;
@@ -130,7 +131,7 @@ void Player::releaseItem()
     this->holdingItem = nullptr;
 }
 
-bool Player::withinRadius(Item* itemToLookWithinRadius, float radius) const
+bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) const
 {
     DirectX::XMFLOAT3 objPos = itemToLookWithinRadius->getPos();
     DirectX::XMFLOAT3 selfPos = this->getPos();
@@ -155,6 +156,8 @@ void Player::update()
         holdingItem->setPos({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f });
         if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
         {
+            holdingItem->getPhysComp()->applyWorldTorque(reactphysics3d::Vector3(1000, 1000, 1000));
+            holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(10000, 10000, 10000));
             holdingItem->setPos({ this->getPos().x, this->getPos().y, this->getPos().z });
             holdingItem = nullptr;
         }

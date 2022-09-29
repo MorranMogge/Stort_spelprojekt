@@ -9,6 +9,7 @@
 //Physics
 #include "PhysicsWorld.h"
 #include "GravityField.h"
+#include "PhysicsComponent.h"
 
 //Rendering
 #include "BasicRenderer.h"

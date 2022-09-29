@@ -4,7 +4,6 @@
 #include <string>
 #include <iostream>
 #include <time.h>
-//#include <reactphysics3d\reactphysics3d.h>
 
 #include "Console.h"
 #include "SoundCollection.h"
@@ -93,13 +92,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 		{
 			switch (stateInfo)
 			{
-			case MENU:
-				delete currentState;
-				currentState = new Menu();
-				break;
 			case GAME:
 				delete currentState;
 				currentState = new Game(immediateContext, device, swapChain, mouse, window);
+				break;
+			case MENU:
+				delete currentState;
+				currentState = new Menu();
 				break;
 			default:
 				break;

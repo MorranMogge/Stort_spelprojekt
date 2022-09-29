@@ -17,12 +17,12 @@ cbuffer posValue : register(b1)
 #define PositionX rawBuffer[DTid.x * Offset]
 #define PositionY rawBuffer[DTid.x * Offset + 1]
 #define PositionZ rawBuffer[DTid.x * Offset + 2]
+
+#define SimulateTime rawBuffer[DTid.x * Offset + 3]
     
-#define StartPositionX rawBuffer[DTid.x * Offset + 3]
-#define StartPositionY rawBuffer[DTid.x * Offset + 4]
-#define StartPositionZ rawBuffer[DTid.x * Offset + 5]
-    
-#define SimulateTime rawBuffer[DTid.x * Offset + 6]
+#define StartPositionX rawBuffer[DTid.x * Offset + 4]
+#define StartPositionY rawBuffer[DTid.x * Offset + 5]
+#define StartPositionZ rawBuffer[DTid.x * Offset + 6]
 
 #define LifeTime rawBuffer[DTid.x * Offset + 7]
 

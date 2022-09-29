@@ -160,18 +160,12 @@ void Menu::GeometryPass()
 	UINT stride = sizeof(vertex);
 	UINT offset = 0;
 	
-	GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 	//GPU::immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
 	
 	
-	// Detta funkar men är gamla sättet
-	/*for (int i = 0; i < testMeshes.size(); i++)
-	{
-		testMeshes[i]->Draw(GPU::immediateContext);
-	}*/
-
 	int startIndex = 0;
 	
+	GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 	for (int i = 0; i < subMeshRanges.size(); i++)
 	{
 		GPU::immediateContext->IASetIndexBuffer(this->testIndexBuff[i], DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
@@ -181,9 +175,38 @@ void Menu::GeometryPass()
 	
 	}
 		
+	// Detta funkar men är gamla sättet
+	for (int i = 0; i < testMeshes.size(); i++)
+	{
+		testMeshes[i]->Draw(GPU::immediateContext);
+	}
+	
+	
+	GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	GPU::immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+	for (int i = 0; i < subMeshRanges.size(); i++)
+	{
+		//GPU::immediateContext->IASetIndexBuffer(this->testIndexBuff[i], DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+		//std::cout << "start index when drawing submesh " << i <<": " << startIndex << "\n";
+		GPU::immediateContext->DrawIndexed(subMeshRanges[i], 0, 0);
+		startIndex += subMeshRanges[i];
 
-	
-	
+	}
+
+	GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	for (int i = 0; i < subMeshRanges.size(); i++)
+	{
+		
+		GPU::immediateContext->IASetIndexBuffer(this->testIndexBuff[i], DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+		//std::cout << "start index when drawing submesh " << i <<": " << startIndex << "\n";
+		GPU::immediateContext->DrawIndexed(subMeshRanges[i], startIndex, 0);
+		startIndex += subMeshRanges[i];
+	}
+
+	for (int i = 0; i < testMeshes.size(); i++)
+	{
+		testMeshes[i]->Draw(GPU::immediateContext);
+	}
 
 #pragma endregion
 

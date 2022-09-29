@@ -2,7 +2,6 @@
 #include "GPU.h"
 #include <assimp/cimport.h>
 
-
 #include <iostream>
 
 bool ModelManager::makeSRV(ID3D11ShaderResourceView*& srv, std::string finalFilePath)
@@ -57,22 +56,11 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 			this->diffuseMaps.push_back(this->bank.getSrv("Missing.png"));
 		}
 
-		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-
-		//meshes.push_back(readNodes(mesh, scene));
-		
-
-
-		//för testing purpose - Elliot tar bort
-		
+		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];		
 		
 		meshes.emplace_back(readNodes(mesh, scene));
 		
 		readNodes2(mesh, scene);
-
-
-		//Mesh2* tmpData = readNodes(mesh, scene);
-		//bank.addMeshBuffers(filePath, tmpData->getVertexBuffer(), tmpData->getIndexBuffer());
 
 		aiMaterial* material = scene->mMaterials[scene->mMeshes[i]->mMaterialIndex];
 		//här srv inläsning
@@ -103,23 +91,13 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 	for (UINT i = 0; i < node->mNumChildren; i++)
 	{
 		processNodes(node->mChildren[i], scene, filePath);
-
 	}
-
 }
 
 Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<vertex> vertexTriangle;
 	std::vector<DWORD> indexTriangle;
-
-	float smallestX = 0.0f;
-	float smallestY = 0.0f;
-	float smallestZ = 0.0f;
-
-	float biggestX = 0.0f;
-	float biggestY = 0.0f;
-	float biggestZ = 0.0f;
 
 	vertex vertex;
 
@@ -141,20 +119,6 @@ Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 
 		vertexTriangle.emplace_back(vertex);
 		//dataForMesh.vertexTriangle.emplace_back(vertex);
-
-		if (vertex.pos.x < smallestX || vertex.pos.y < smallestY || vertex.pos.z < smallestZ)
-		{
-			if (vertex.pos.x < smallestX) smallestX = vertex.pos.x;
-			if (vertex.pos.y < smallestY) smallestY = vertex.pos.y;
-			if (vertex.pos.z < smallestZ) smallestZ = vertex.pos.z;
-		}
-
-		if (vertex.pos.x > biggestX || vertex.pos.y > biggestY || vertex.pos.z > biggestZ)
-		{
-			if (vertex.pos.x > biggestX) biggestX = vertex.pos.x;
-			if (vertex.pos.y > biggestY) biggestY = vertex.pos.y;
-			if (vertex.pos.z > biggestZ) biggestZ = vertex.pos.z;
-		}
 	}
 
 	for (UINT i = 0; i < mesh->mNumFaces; i++)
@@ -168,7 +132,6 @@ Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 		}
 	}
 	
-	
 	std::cout << "Old way mesh vertex count: " << vertexTriangle.size() << "\n";
 	std::cout << "Old way mesh index count: " << indexTriangle.size() << "\n";
 	
@@ -179,14 +142,6 @@ void ModelManager::readNodes2(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<vertex> vertexTriangle;
 	std::vector<DWORD> indexTriangle;
-
-	float smallestX = 0.0f;
-	float smallestY = 0.0f;
-	float smallestZ = 0.0f;
-
-	float biggestX = 0.0f;
-	float biggestY = 0.0f;
-	float biggestZ = 0.0f;
 
 	vertex vertex;
 
@@ -208,20 +163,6 @@ void ModelManager::readNodes2(aiMesh* mesh, const aiScene* scene)
 
 		vertexTriangle.emplace_back(vertex);
 		dataForMesh.vertexTriangle.emplace_back(vertex);
-
-		if (vertex.pos.x < smallestX || vertex.pos.y < smallestY || vertex.pos.z < smallestZ)
-		{
-			if (vertex.pos.x < smallestX) smallestX = vertex.pos.x;
-			if (vertex.pos.y < smallestY) smallestY = vertex.pos.y;
-			if (vertex.pos.z < smallestZ) smallestZ = vertex.pos.z;
-		}
-
-		if (vertex.pos.x > biggestX || vertex.pos.y > biggestY || vertex.pos.z > biggestZ)
-		{
-			if (vertex.pos.x > biggestX) biggestX = vertex.pos.x;
-			if (vertex.pos.y > biggestY) biggestY = vertex.pos.y;
-			if (vertex.pos.z > biggestZ) biggestZ = vertex.pos.z;
-		}
 	}
 
 	for (UINT i = 0; i < mesh->mNumFaces; i++)
@@ -235,7 +176,6 @@ void ModelManager::readNodes2(aiMesh* mesh, const aiScene* scene)
 		}
 	}
 	
-
 	ID3D11Buffer* indexBuffer = {};
 
 	D3D11_BUFFER_DESC indexBufferDesc = {};
@@ -247,11 +187,9 @@ void ModelManager::readNodes2(aiMesh* mesh, const aiScene* scene)
 	indexBufferDesc.MiscFlags = 0;
 	indexBufferDesc.StructureByteStride = 0;
 
-
 	D3D11_SUBRESOURCE_DATA indexBufferData;
 	indexBufferData.pSysMem = indexTriangle.data();
 	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
-
 
 	this->vecIndexBuff.emplace_back(indexBuffer);
 
@@ -264,13 +202,10 @@ void ModelManager::readNodes2(aiMesh* mesh, const aiScene* scene)
 	{
 		std::cout << "submeshranges on index: " << i << " with range " << submeshRanges[i] << "\n";
 	}
-
 }
 
 std::vector<ID3D11Buffer*> ModelManager::getBuff() const
 {
-	std::cout << this->vecIndexBuff.size() << "här\n";
-
 	return this->vecIndexBuff;
 }
 
@@ -284,10 +219,7 @@ ModelManager::ModelManager(ID3D11Device* device)
 
 ModelManager::~ModelManager()
 {
-	/*for (int i = 0; i < meshes.size(); i++)
-	{
-		delete this->meshes[i];
-	}*/
+	
 }
 
 bool ModelManager::loadMeshData(const std::string& filePath)
@@ -307,11 +239,9 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 		return false;
 	}
 
-	//processNodes(pScene->mRootNode, pScene, filePath);
-
+	
 	processNodes(pScene->mRootNode, pScene, filePath);
 	
-
 	//skapa vertexBuffer
 
 	ID3D11Buffer* vertexBuffer = {};
@@ -330,12 +260,7 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	data.SysMemSlicePitch = 0;
 	device->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
 
-	
-
-	//std::cout << dataForMesh.vertexTriangle.size() << "\n";
-
 	//skapa indexBuffer
-
 	ID3D11Buffer* indexBuffer = {};
 
 	D3D11_BUFFER_DESC indexBufferDesc = {};
@@ -347,22 +272,16 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	indexBufferDesc.MiscFlags = 0;
 	indexBufferDesc.StructureByteStride = 0;
 
-	
 	D3D11_SUBRESOURCE_DATA indexBufferData;
 	indexBufferData.pSysMem = dataForMesh.indexTriangle.data();
 	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
 
-
-	//ändra i banken till vertexBuffer först och indexBuffer som tredje parametern.
-	
 	bank.addMeshBuffers(filePath, vertexBuffer, indexBuffer, submeshRanges);
 
 	indexBuffer = {};
 	vertexBuffer = {};
 	submeshRanges.clear();
 	memset(&dataForMesh, 0, sizeof(dataForMesh));
-
-	//bank.getIndexMeshBuffers(filePath, inde)
 
 	return true;
 }

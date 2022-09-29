@@ -128,8 +128,7 @@ ParticleEmitter::ParticleEmitter(XMFLOAT3 Pos, XMFLOAT3 Rot, int nrOfPT, XMFLOAT
 			z = -z;
 		}
 
-		float lifeTime = 10;//minMaxTime.x + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (minMaxTime.y - minMaxTime.x)));
-		//cout << "lifetime: " << lifeTime << endl;
+		float lifeTime = minMaxTime.x + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (minMaxTime.y - minMaxTime.x)));
 		particleStruct tempStruct(XMFLOAT3(Pos.x + x, Pos.y + y, Pos.z + z), i, lifeTime);
 		this->PT_Data.push_back(tempStruct);
 	}

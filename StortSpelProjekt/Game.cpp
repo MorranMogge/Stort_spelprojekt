@@ -131,9 +131,6 @@ GAMESTATE Game::Update()
 	{
 		testObjects[i]->getPhysComp()->updateParent();
 	}
-	//testCube->setPos(testCube->getPhysComp()->getPosV3());
-	//testCube->setRot(DirectX::XMFLOAT3(testCube->getPhysComp()->getRotation().getVectorV().x, testCube->getPhysComp()->getRotation().getVectorV().y, testCube->getPhysComp()->getRotation().getVectorV().z));
-	//testCube->setRot(DirectX::XMQuaternionNormalize(DirectX::XMVectorSet(testCube->getPhysComp()->getRotation().getVectorV().x, testCube->getPhysComp()->getRotation().getVectorV().y, testCube->getPhysComp()->getRotation().getVectorV().z, 1.0f)));
 	//Here you can write client-server related functions?
 
 	potion.updateBuffer();

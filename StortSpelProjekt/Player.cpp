@@ -154,9 +154,10 @@ void Player::update()
     if (holdingItem != nullptr)
     {
         holdingItem->setPos({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f });
+        holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f }));
         if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
         {
-            holdingItem->getPhysComp()->applyWorldTorque(reactphysics3d::Vector3(1000, 1000, 1000));
+            holdingItem->getPhysComp()->applyLocalTorque(reactphysics3d::Vector3(1000, 1000, 1000));
             holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(10000, 10000, 10000));
             holdingItem->setPos({ this->getPos().x, this->getPos().y, this->getPos().z });
             holdingItem = nullptr;
@@ -164,6 +165,9 @@ void Player::update()
         else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
         {
             holdingItem->useItem();
+            holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ 200.f, 200.f, 200.f }));
+            holdingItem->getPhysComp()->setIsAllowedToSleep(true);
+            holdingItem->getPhysComp()->setIsSleeping(true);
             holdingItem = nullptr;
         }
     }

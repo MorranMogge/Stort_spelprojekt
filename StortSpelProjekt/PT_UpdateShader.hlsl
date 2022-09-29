@@ -38,6 +38,8 @@ cbuffer posValue : register(b1)
 // remap simulate time in range of 0 to 1
 #define TimeScale SimulateTime / LifeTime
 
+//LifeTime = 10;
+
 // position offset in local space 
 #define LocalOffset Speed * Range * TimeScale
 

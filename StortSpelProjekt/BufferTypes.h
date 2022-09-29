@@ -35,8 +35,8 @@ struct LightStruct
 struct particleStruct
 {
 	DirectX::XMFLOAT3 pos;
-	DirectX::XMFLOAT3 startpos;
 	float delta;
+	DirectX::XMFLOAT3 startpos;
 	float lifeTime;
 	particleStruct(const DirectX::XMFLOAT3 & position, const float deltaTime, const float lifeTime)
 	{

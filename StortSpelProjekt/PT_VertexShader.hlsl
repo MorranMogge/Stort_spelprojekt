@@ -7,7 +7,7 @@ struct ParticleStruct
 };
 
 
-ParticleStruct main(ParticleStruct input)
+void main(inout ParticleStruct input)
 {
-    return input;
+
 }

@@ -81,14 +81,14 @@ GAMESTATE Game::Update()
 	//Do we want this?
 	grav = planetGravityField.calcGravFactor(player.getPosV3());
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(player.getPos()));
-	player.move(grav, camera.getRightVec(), dt);
+	player.move(grav, camera.getRightVec(), gamePad, dt);
 	
 	//Keeps player at the surface of the planet
 	if (getLength(player.getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(player.getPos()); player.setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
 	player.movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
 	
-	player.pickupItem(&potion);
-	player.update();
+	player.pickupItem(&potion, gamePad);
+	player.update(gamePad);
 	
 	camera.moveCamera(player.getPosV3(), dt);
 	

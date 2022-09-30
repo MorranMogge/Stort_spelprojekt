@@ -93,11 +93,11 @@ void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& camera
         if (state.IsAPressed())
         {
             std::cout << "A is pressed\n";
-            gamePad->SetVibration(0, 1.f, 1.f);
+            //gamePad->SetVibration(0, 1.f, 1.f);
         }
         else
         {
-            gamePad->SetVibration(0, 0.f, 0.f);
+            //gamePad->SetVibration(0, 0.f, 0.f);
 
         }
 

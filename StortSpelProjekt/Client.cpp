@@ -13,12 +13,15 @@ int extractPacketId(sf::Packet& packet)
 void clientFunction(void* param)
 {
 	ThreadInfo* data = (ThreadInfo*)param;
+
+	data->mp_Event.isActive = false;
+
 	std::string temp;
 	sf::Packet receivedPacket;
 	while (!data->endThread)
 	{
 		data->socket.receive(receivedPacket); //Receives the packet
-		int packetid = extractPacketId(receivedPacket);
+		int packetid = extractPacketId(receivedPacket);//extract the id of the packet
 		
 		std::string receivedString;
 		unsigned short packetId;
@@ -36,20 +39,24 @@ void clientFunction(void* param)
 		case 2:
 			break;
 		case 3:
-
-
+			
+			data->mp_Event.isActive = true;
+			data->mp_Event.pos[0] = 0.0f;
+			data->mp_Event.pos[1] = 0.0f;
+			data->mp_Event.pos[2] = 0.0f;
 			std::cout << "TCP received data from address: " << data->socket.getRemoteAddress().toString() << std::endl;
-			receivedPacket >> packetId >> playerid >> x >> y >> z;
-			std::cout << "data received from server: Packet id: " << std::to_string(packetId) << " player name: " << playerid <<
-				" x : " << std::to_string(x) << " y: " << std::to_string(y) << " z: " << std::to_string(z) << std::endl;
+			receivedPacket >> packetId >> playerid >> data->mp_Event.pos[0] >> data->mp_Event.pos[1] >> data->mp_Event.pos[2];
+			std::cout << "data received from server: Packet id: " << std::to_string(packetId) << " player id: " << std::to_string(playerid) <<
+				" x : " << std::to_string(data->mp_Event.pos[0]) << " y: " << std::to_string(data->mp_Event.pos[1]) << 
+				" z: " << std::to_string(data->mp_Event.pos[2]) << std::endl;
 
 			break;
 		case 4:
 			break;
 		case 10://receiving id in player vector from server side
 
-
 			receivedPacket >> data->playerId;
+			std::cout << "player id recv: " << std::to_string(data->playerId) << std::endl;
 			break;
 		}
 			
@@ -78,12 +85,12 @@ Client::Client(std::string ipAddress, int port)
 
 Client::~Client()
 {
-	/*if (clientThread != nullptr)
+	if (clientThread != nullptr)
 	{
 		data.endThread = true;
 		clientThread->join();
 		delete clientThread;
-	}*/
+	}
 }
 
 void Client::connectToServer(std::string ipAddress, int port)
@@ -222,12 +229,12 @@ void Client::sendToServerTcp(std::string buf)
 	}
 }
 
-void Client::sendToServerTEMPTCP(Player& currentPlayer)
+void Client::sendToServerTEMPTCP( Player*& currentPlayer)
 {
 
-	float x = currentPlayer.getPos().x;
-	float y = currentPlayer.getPos().y;
-	float z = currentPlayer.getPos().z;
+	float x = currentPlayer->getPos().x;
+	float y = currentPlayer->getPos().y;
+	float z = currentPlayer->getPos().z;
 	//int playerid = data.users[i].playerId;
 
 	
@@ -305,6 +312,16 @@ void Client::tempwrite()
 	std::cout << id << std::endl;
 }
 
+movePlayerEvent Client::getMovePlayerEvent() const
+{
+	return data.mp_Event;
+}
+
+bool Client::getChangePlayerPos() const
+{
+	return data.mp_Event.isActive;
+}
+
 int Client::getport() const
 {
 	return this->port;
@@ -318,4 +335,9 @@ int Client::getPlayerId() const
 std::string Client::getipAdress() const
 {
 	return this->ip;
+}
+
+void Client::setPlayerRecv(const bool value)
+{
+	this->data.mp_Event.isActive = value;
 }

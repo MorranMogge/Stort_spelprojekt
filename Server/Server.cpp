@@ -187,7 +187,7 @@ void sendDataAllPlayers(sf::Packet& packet, serverData& data)
 		}
 		else
 		{
-			std::cout << "sent data to player: " << data.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
+			//std::cout << "sent data to player: " << data.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
 		}
 	}
 };
@@ -302,7 +302,7 @@ void sendIdToAllPlayers(serverData& data)
 		}
 		else
 		{
-			std::cout << "sendIdToAllPlayers() sent to player nr: " << std::to_string(data.users[i].playerId);
+			std::cout << "sendIdToAllPlayers() sent to player nr: " << std::to_string(data.users[i].playerId) << std::endl;
 		}
 	}
 };
@@ -354,7 +354,7 @@ int main()
 	
 	acceptPlayers(data);
 
-
+	sendIdToAllPlayers(data);
 
 	std::thread* recvThread[MAXNUMBEROFPLAYERS];
 	threadInfo threadData[MAXNUMBEROFPLAYERS];
@@ -363,7 +363,7 @@ int main()
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
 		threadData[i].pos[0] = 22.0f;
-		threadData[i].pos[1] = 22.0f;
+		threadData[i].pos[1] = 12.0f;
 		threadData[i].pos[2] = -22.0f;
 		recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
 	}
@@ -411,13 +411,12 @@ int main()
 				//sending position data to all players
 				tempPack << packId << playerid << x << y << z;
 				
+				std::cout << "data to send x: " << std::to_string(x) << ", y: " << std::to_string(y) << ", z: " << std::to_string(z) << std::endl;
+
 				sendDataAllPlayers(tempPack, data);
 			}
 			start = std::chrono::system_clock::now();
 		}
-
-		
-		
 		
 	}
 	/*if (connectionType == "s")

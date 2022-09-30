@@ -25,6 +25,8 @@ struct wirefameInfo
 	float padding;
 };
 
+const int NROFPLAYERS = 2;
+
 class Game : public State
 {
 private:
@@ -43,7 +45,9 @@ private:
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT3 grav;
 
+	std::chrono::time_point<std::chrono::system_clock> serverStart;
 	
+	float serverTimerLength = 1.2f;
 	Client* client;
 
 	BasicRenderer basicRenderer;
@@ -52,8 +56,8 @@ private:
 	PhysicsWorld physWolrd;
 
 
-	Player currentPlayer;
-	std::vector<Player> players;
+	Player* currentPlayer;
+	std::vector<Player*> players;
 
 	Camera camera;
 	GameObject* planet;
@@ -77,7 +81,7 @@ private:
 	HWND* window;
 
 public:
-	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, ImGuiHelper& imguiHelper);
+	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, ImGuiHelper& imguiHelper, Client*& client);
 	virtual ~Game() override;
 
 	// Inherited via State

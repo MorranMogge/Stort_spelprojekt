@@ -6,11 +6,19 @@
 
 #include "Player.h"
 
+struct movePlayerEvent
+{
+	float pos[3];
+	int affectedPlayerId;
+	bool isActive;
+};
+
 struct ThreadInfo
 {
 	sf::TcpSocket socket;
 	std::string receivedstring;
 	int playerId;
+	movePlayerEvent mp_Event;
 	bool endThread = false;
 };
 
@@ -22,6 +30,8 @@ private:
 	sf::TcpSocket tcpSocket;
 	sf::Packet sendPacket;
 	sf::Packet receivedPacket;
+
+
 
 	bool isConnected;
 
@@ -56,7 +66,7 @@ public:
 
 	void sendToServerTcp();
 	void sendToServerTcp(std::string buf);
-	void sendToServerTEMPTCP(Player& currentPlayer);
+	void sendToServerTEMPTCP(Player*& currentPlayer);
 	void receiveFromServerTcp();
 
 	void RECEIVEPOSITIONTEST();
@@ -65,7 +75,14 @@ public:
 	void saveMsg(std::string text);
 	void tempwrite();
 
+	//returns move player struct
+	movePlayerEvent getMovePlayerEvent()const;
+
+	//returns if a player position has been received
+	bool getChangePlayerPos()const;
 	int getport()const;
 	int getPlayerId()const;
 	std::string getipAdress()const;
+
+	void setPlayerRecv(const bool value);
 };

@@ -65,7 +65,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGuiHelper imGuiHelper(client);
 	imGuiHelper.setupImGui(clearColour);
 
-	State* currentState = new Game(immediateContext, device, swapChain, window, imGuiHelper);
+	State* currentState = new Game(immediateContext, device, swapChain, window, imGuiHelper, client);
 	GAMESTATE stateInfo = NOCHANGE;
 
 	MSG msg = {};
@@ -99,7 +99,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 				break;
 			case GAME:
 				delete currentState;
-				currentState = new Game(immediateContext, device, swapChain, window, imGuiHelper);
+				currentState = new Game(immediateContext, device, swapChain, window, imGuiHelper, client);
 				break;
 			default:
 				break;

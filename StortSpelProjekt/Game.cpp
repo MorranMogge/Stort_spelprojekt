@@ -12,7 +12,7 @@ void Game::loadObjects()
 void Game::drawObjects()
 {
 	potion.draw();
-	currentPlayer.draw();
+	currentPlayer->draw();
 	planet->draw();
 }
 
@@ -45,11 +45,13 @@ void Game::updateBuffers()
 	immediateContext->Unmap(wireBuffer, 0);
 }
 
-Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, ImGuiHelper& imguiHelper)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), currentPlayer("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0), potion("../Meshes/player", DirectX::SimpleMath::Vector3(10,10,15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
+Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, ImGuiHelper& imguiHelper, Client*& client)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), potion("../Meshes/player", DirectX::SimpleMath::Vector3(10,10,15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
 {
 	
 	MaterialLibrary::LoadDefault();
+
+	this->client = client;
 
 	this->imguiHelper = &imguiHelper;
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -60,6 +62,23 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	//this->setUpReact3D();
 
+	currentPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
+	int playerid = client->getPlayerId();
+	for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
+	{
+		Player *tmpPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
+		if (playerid != i)
+		{
+			players.push_back(tmpPlayer);
+		}
+		else
+		{
+			players.push_back(currentPlayer);
+			delete tmpPlayer;
+		}
+	}
+
+	serverStart = std::chrono::system_clock::now();
 	this->window = &window;
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
@@ -76,28 +95,37 @@ GAMESTATE Game::Update()
 
 	if (GetAsyncKeyState('C')) physWolrd.addBoxToWorld();
 	//Do we want this?
-	grav = planetGravityField.calcGravFactor(currentPlayer.getPosV3());
-	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(currentPlayer.getPos()));
-	currentPlayer.move(grav, camera.getRightVec(), dt);
+	grav = planetGravityField.calcGravFactor(currentPlayer->getPosV3());
+	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(currentPlayer->getPos()));
+	currentPlayer->move(grav, camera.getRightVec(), dt);
 	
 	//Keeps player at the surface of the planet
-	if (getLength(currentPlayer.getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(currentPlayer.getPos()); currentPlayer.setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
-	currentPlayer.movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
+	if (getLength(currentPlayer->getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(currentPlayer->getPos()); currentPlayer->setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
+	currentPlayer->movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
 	
-	currentPlayer.pickupItem(&potion);
-	currentPlayer.update();
+	currentPlayer->pickupItem(&potion);
+	currentPlayer->update();
 	
-	camera.moveCamera(currentPlayer.getPosV3(), dt);
+	camera.moveCamera(currentPlayer->getPosV3(), dt);
 	
-	physWolrd.updatePlayerBox(currentPlayer.getPos());
+	physWolrd.updatePlayerBox(currentPlayer->getPos());
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
 	
-
-	//Here you can write client-server related functions?
+	if (client->getChangePlayerPos())
+	{
+		movePlayerEvent	tmpMovePlayer = client->getMovePlayerEvent();
+		players.at(tmpMovePlayer.affectedPlayerId)->setPos(DirectX::XMFLOAT3(tmpMovePlayer.pos[0], tmpMovePlayer.pos[1], tmpMovePlayer.pos[2]));
+		client->setPlayerRecv(false);
+	}
+	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength)
+	{
+		client->sendToServerTEMPTCP(currentPlayer);
+		serverStart = std::chrono::system_clock::now();
+	}
 
 	potion.updateBuffer();
-	currentPlayer.updateBuffer();
+	currentPlayer->updateBuffer();
 	planet->updateBuffer();
 	
 	

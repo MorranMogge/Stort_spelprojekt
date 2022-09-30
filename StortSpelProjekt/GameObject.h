@@ -39,4 +39,5 @@ public:
 	void setMesh(Mesh*);
 	bool withinRadious(GameObject *object ,float radius) const;
 	virtual void draw();
+	virtual void update(); //This updates the hitboxes
 };

@@ -12,6 +12,7 @@ class Player: public GameObject
 {
 private:
 	const float speedConstant = 100.f;
+	int repairCount = 0;
 	//Olivers order
 	Item* holdingItem;
 	//Camera
@@ -32,5 +33,6 @@ public:
 	void addHealth(const int& healthToIncrease);
 	void releaseItem();
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
-	void update();
+	bool repairedShip() const;
+	virtual void update() override;
 };

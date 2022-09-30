@@ -57,6 +57,5 @@ public:
 	float getAngularDampning()const;
 
 	void setParent(GameObject* parent);
-	void updateParent();
 	void resetPhysicsObject(); //This might be used when transfering to a different world
 };

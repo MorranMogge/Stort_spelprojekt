@@ -149,6 +149,11 @@ bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) con
     return inRange;
 }
 
+bool Player::repairedShip() const
+{
+    return repairCount>=4;
+}
+
 void Player::update()
 {
     if (holdingItem != nullptr)
@@ -157,15 +162,20 @@ void Player::update()
         holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f }));
         if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
         {
-            holdingItem->getPhysComp()->applyLocalTorque(reactphysics3d::Vector3(1000, 1000, 1000));
-            holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(10000, 10000, 10000));
+            DirectX::XMFLOAT3 temp;
+            DirectX::XMStoreFloat3(&temp, this->playerForwardVec);
+            newNormalizeXMFLOAT3(temp);
+            holdingItem->getPhysComp()->applyLocalTorque(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z *1000));
+            holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * 10000, temp.y * 10000, temp.z * 10000));
             holdingItem->setPos({ this->getPos().x, this->getPos().y, this->getPos().z });
             holdingItem = nullptr;
         }
         else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
         {
             holdingItem->useItem();
-            holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ 200.f, 200.f, 200.f }));
+            repairCount++;
+            std::cout << "Progress " << repairCount << "/4\n";
+            //holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ 50.f, 50.f, 50.f }));
             holdingItem->getPhysComp()->setIsAllowedToSleep(true);
             holdingItem->getPhysComp()->setIsSleeping(true);
             holdingItem = nullptr;

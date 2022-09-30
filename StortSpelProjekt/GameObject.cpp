@@ -217,4 +217,10 @@ void GameObject::draw()
 	this->mesh->DrawWithMat();
 }
 
+void GameObject::update()
+{
+	this->position = this->physComp->getPosV3();
+	this->rotation = DirectX::XMFLOAT3(this->physComp->getRotation().x, this->physComp->getRotation().y, this->physComp->getRotation().z);
+}
+
 

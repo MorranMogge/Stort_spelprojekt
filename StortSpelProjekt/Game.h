@@ -14,7 +14,7 @@ private:
 
 	ImGuiHelper imGui;
 	bool wireframe = true;
-	bool objectDraw = true;
+	bool objectDraw = false;
 	wirefameInfo reactWireframeInfo;
 	ID3D11Buffer* wireBuffer;
 	D3D11_MAPPED_SUBRESOURCE subData;
@@ -49,7 +49,6 @@ private:
 	bool setUpWireframe();
 	void updateBuffers();
 
-	float pos[3];
 
 	//Variables for the mouse movement
 	MouseClass* mouse;

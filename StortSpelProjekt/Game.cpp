@@ -66,6 +66,17 @@ bool Game::setUpWireframe()
 
 void Game::updateBuffers()
 {
+	//Update GameObjects
+	potion.updateBuffer();
+	player.updateBuffer();
+	planet->updateBuffer();
+	testCube->updateBuffer();
+	for (int i = 0; i < testObjects.size(); i++)
+	{
+		testObjects[i]->updateBuffer();
+	}
+
+	//Update Wireframe buffer
 	ZeroMemory(&subData, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	immediateContext->Map(wireBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &subData);
 	memcpy(subData.pData, &reactWireframeInfo, sizeof(wirefameInfo));
@@ -73,7 +84,7 @@ void Game::updateBuffers()
 }
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0), potion("../Meshes/player", DirectX::SimpleMath::Vector3(10,10,15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0), potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10,10,15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
 {
 	
 	MaterialLibrary::LoadDefault();
@@ -125,25 +136,20 @@ GAMESTATE Game::Update()
 	physWolrd.updatePlayerBox(player.getPos());
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
-	potion.getPhysComp()->updateParent();
-	testCube->getPhysComp()->updateParent();
+	potion.update(); //getPhysComp()->updateParent();
+	testCube->update();//getPhysComp()->updateParent();
 	for (int i = 0; i < testObjects.size(); i++)
 	{
-		testObjects[i]->getPhysComp()->updateParent();
+		testObjects[i]->update();//->getPhysComp()->updateParent();
 	}
 	//Here you can write client-server related functions?
 
-	potion.updateBuffer();
-	player.updateBuffer();
-	planet->updateBuffer();
-	testCube->updateBuffer();
-	for (int i = 0; i < testObjects.size(); i++)
-	{
-		testObjects[i]->updateBuffer();
-	}
+	this->updateBuffers();
 
 	mouse->clearEvents();
 	
+	if (player.repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
+
 	return NOCHANGE;
 }
 
@@ -162,5 +168,5 @@ void Game::Render()
 	basicRenderer.setUpScene();
 	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
 	if (objectDraw) this->drawObjects();
-	if (wireframe) { this->updateBuffers(); immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
+	if (wireframe) { immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
 }

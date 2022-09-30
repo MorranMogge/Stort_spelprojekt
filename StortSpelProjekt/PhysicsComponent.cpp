@@ -189,12 +189,6 @@ void PhysicsComponent::setParent(GameObject* parent)
 	this->parent = parent;
 }
 
-void PhysicsComponent::updateParent()
-{
-	this->parent->setPos(this->getPosV3());
-	this->parent->setRot(DirectX::XMFLOAT3(this->getRotation().x, this->getRotation().y, this->getRotation().z));
-}
-
 void PhysicsComponent::resetPhysicsObject()
 {
 	this->deallocate();	//After this we can re-define a new physics component

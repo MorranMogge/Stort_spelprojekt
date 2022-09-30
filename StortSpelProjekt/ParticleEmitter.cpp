@@ -1,11 +1,7 @@
 #include "ParticleEmitter.h"
 
-using namespace DirectX;
-using namespace std;
-using namespace Microsoft;
-using namespace WRL;
 
-bool CreateBuffer(ComPtr<ID3D11Buffer>&  PT_vertexBuffer, ComPtr <ID3D11UnorderedAccessView>& particleUav, vector<particleStruct>& structVector)
+bool CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>&  PT_vertexBuffer, Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView>& particleUav, std::vector<particleStruct>& structVector)
 {
 	D3D11_BUFFER_DESC bufferDesc;													//create Vertex buffer
 	bufferDesc.ByteWidth = structVector.size() * sizeof(particleStruct);			//size of buffer
@@ -38,14 +34,14 @@ bool CreateBuffer(ComPtr<ID3D11Buffer>&  PT_vertexBuffer, ComPtr <ID3D11Unordere
 	return !FAILED(hr);
 }
 
-bool CreatePosActiveBuffer(ComPtr<ID3D11Buffer>& posBuffer, XMFLOAT3 position, XMFLOAT3 rotation)
+bool CreatePosActiveBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& posBuffer, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation)
 {
-	vector<XMFLOAT4> data;
-	data.push_back(XMFLOAT4(position.x, position.y, position.z, 1));
-	data.push_back(XMFLOAT4(rotation.x, rotation.y, rotation.z, 0));
+	std::vector<DirectX::XMFLOAT4> data;
+	data.push_back(DirectX::XMFLOAT4(position.x, position.y, position.z, 1));
+	data.push_back(DirectX::XMFLOAT4(rotation.x, rotation.y, rotation.z, 0));
 
 	D3D11_BUFFER_DESC cBuffDesc = { 0 };
-	cBuffDesc.ByteWidth = sizeof(XMFLOAT4) * data.size();						//size of buffer //Kolla senare funktion för att hitta närmaste multipel av 16 för int!
+	cBuffDesc.ByteWidth = sizeof(DirectX::XMFLOAT4) * data.size();						//size of buffer //Kolla senare funktion för att hitta närmaste multipel av 16 för int!
 	cBuffDesc.Usage = D3D11_USAGE_DYNAMIC;										//sets interaction with gpu and cpu
 	cBuffDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;							//Specifies the type of buffer
 	cBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;							//Specifies cpu acess
@@ -59,7 +55,7 @@ bool CreatePosActiveBuffer(ComPtr<ID3D11Buffer>& posBuffer, XMFLOAT3 position, X
 	return !FAILED(hr);
 }
 
-bool CreateTimeBuffer(ComPtr<ID3D11Buffer>& timeBuffer, float &deltaTime)
+bool CreateTimeBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& timeBuffer, float &deltaTime)
 {
 
 	D3D11_BUFFER_DESC cBuffDesc = { 0 };
@@ -98,7 +94,7 @@ bool CreateBlendState(Microsoft::WRL::ComPtr <ID3D11BlendState> &blendState)
 	return !FAILED(hr);
 }
 
-ParticleEmitter::ParticleEmitter(XMFLOAT3 Pos, XMFLOAT3 Rot, int nrOfPT, XMFLOAT2 minMaxTime, int randRange)
+ParticleEmitter::ParticleEmitter(DirectX::XMFLOAT3 Pos, DirectX::XMFLOAT3 Rot, int nrOfPT, DirectX::XMFLOAT2 minMaxTime, int randRange)
 	:Position(Pos), Rotation(Rot), nrOfParticles(nrOfPT), active(true), renderPassComplete(true)
 {
 	//Initilize timer
@@ -129,7 +125,7 @@ ParticleEmitter::ParticleEmitter(XMFLOAT3 Pos, XMFLOAT3 Rot, int nrOfPT, XMFLOAT
 		}
 
 		float lifeTime = minMaxTime.x + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (minMaxTime.y - minMaxTime.x)));
-		particleStruct tempStruct(XMFLOAT3(Pos.x + x, Pos.y + y, Pos.z + z), i, lifeTime);
+		particleStruct tempStruct(DirectX::XMFLOAT3(Pos.x + x, Pos.y + y, Pos.z + z), i, lifeTime);
 		this->PT_Data.push_back(tempStruct);
 	}
 
@@ -179,7 +175,7 @@ void ParticleEmitter::BindAndDraw()
 
 	//Update delta time 
 	this->updateTimeBuffer(tStruct.getDt());
-	vector<ID3D11Buffer*> tempBuff;
+	std::vector<ID3D11Buffer*> tempBuff;
 	tempBuff.push_back(this->timeBuffer.Get());
 	tempBuff.push_back(this->emitterPosBuffer.Get());
 
@@ -243,12 +239,12 @@ void ParticleEmitter::updateBuffer()
 
 
 	//Update buffer
-	vector<XMFLOAT4> data;
-	data.push_back(XMFLOAT4(this->Position.x, this->Position.y, this->Position.z, this->active));
-	data.push_back(XMFLOAT4(this->Rotation.x, this->Rotation.y, this->Rotation.z, 0));
+	std::vector<DirectX::XMFLOAT4> data;
+	data.push_back(DirectX::XMFLOAT4(this->Position.x, this->Position.y, this->Position.z, this->active));
+	data.push_back(DirectX::XMFLOAT4(this->Rotation.x, this->Rotation.y, this->Rotation.z, 0));
 
 	HRESULT hr = GPU::immediateContext->Map(this->emitterPosBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &map);
-	memcpy(map.pData, data.data(), sizeof(XMFLOAT4) * data.size());
+	memcpy(map.pData, data.data(), sizeof(DirectX::XMFLOAT4) * data.size());
 
 	//UnMap
 	GPU::immediateContext->Unmap(this->emitterPosBuffer.Get(), 0);
@@ -268,7 +264,7 @@ void ParticleEmitter::updateTimeBuffer(float delta)
 	GPU::immediateContext->Unmap(this->timeBuffer.Get(), 0);
 }
 
-XMFLOAT3 ParticleEmitter::getPosition() const
+DirectX::XMFLOAT3 ParticleEmitter::getPosition() const
 {
 	return this->Position;
 }
@@ -278,7 +274,7 @@ DirectX::XMFLOAT3 ParticleEmitter::getRotation() const
 	return this->Rotation;
 }
 
-void ParticleEmitter::setPosition(XMFLOAT3 Pos)
+void ParticleEmitter::setPosition(DirectX::XMFLOAT3 Pos)
 {
 	this->Position = Pos;
 }

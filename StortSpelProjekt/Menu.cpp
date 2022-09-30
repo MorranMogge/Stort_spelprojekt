@@ -185,7 +185,7 @@ Menu::Menu()
 
 	manager = new ModelManager(GPU::device);
 	
-	manager->loadMeshData("../Meshes/Gob.obj");
+	manager->loadMeshData("../Meshes/gobbb.fbx");
 	
 	this->testMeshes = manager->getMeshes();
 	

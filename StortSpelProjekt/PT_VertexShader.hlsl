@@ -6,8 +6,14 @@ struct ParticleStruct
     float lifeTime : LIFETIME;
 };
 
-
-void main(inout ParticleStruct input)
+struct Particle
 {
+    float3 pos : POSITION;
+    float faloff : FALOFF;
+};
 
+Particle main(in ParticleStruct input)
+{
+    Particle output = { input.pos, saturate(1 - input.delta / input.lifeTime) };
+    return output;
 }

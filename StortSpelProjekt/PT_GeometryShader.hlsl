@@ -2,8 +2,7 @@ struct Output
 {
     float4 position : SV_Position;
     float2 uv : UV;
-    float delta : DELTA;
-    float lifeTime : LIFETIME;
+    float faloff : FALOFF;
 };
 
 cbuffer CamViewProjCB : register(b0)
@@ -18,9 +17,7 @@ cbuffer CamPosCB : register(b1)
 struct Particle
 {
     float3 pos : POSITION;
-    float delta : DELTA;
-    float3 stpos : START_POSITION;
-    float lifeTime : LIFETIME;
+    float faloff : FALOFF;
 };
 
 #define Half 0.5f
@@ -41,8 +38,6 @@ void main(point Particle input[1], inout TriangleStream<Output> outputStream)
         { input[0].pos - right * Half - up * Half }, // bottom left
         { input[0].pos + right * Half - up * Half }, // bottom right
     };
-    
-    const float deltaT = input[0].delta;
 
 
     [unroll]
@@ -51,8 +46,7 @@ void main(point Particle input[1], inout TriangleStream<Output> outputStream)
         const Output output = {
             mul(float4(worldPos[i], 1.0f), mainCamViewProj),
             uv[i],
-            input[0].delta,
-            input[0].lifeTime,
+            input[0].faloff,
         };
         outputStream.Append(output);
     }

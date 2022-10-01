@@ -152,62 +152,37 @@ void Menu::GeometryPass()
 
 	GPU::immediateContext->PSSetShaderResources(0, 1, &this->m_textureSRV);
 	
-	
-
-	//testing purposes only
-	
-	
 	UINT stride = sizeof(vertex);
 	UINT offset = 0;
-	
-	//GPU::immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
-	
-	
-	int startIndex = 0;
-	
-	GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-	for (int i = 0; i < subMeshRanges.size(); i++)
-	{
-		GPU::immediateContext->IASetIndexBuffer(this->testIndexBuff[i], DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
-		//std::cout << "start index when drawing submesh " << i <<": " << startIndex << "\n";
-		GPU::immediateContext->DrawIndexed(subMeshRanges[i], 0, 0);
-		startIndex += subMeshRanges[i];
-	
-	}
 		
 	// Detta funkar men är gamla sättet
-	for (int i = 0; i < testMeshes.size(); i++)
-	{
-		testMeshes[i]->Draw(GPU::immediateContext);
-	}
+	//for (int i = 0; i < testMeshes.size(); i++)
+	//{
+	//	testMeshes[i]->Draw(GPU::immediateContext);
+	//}
 	
-	
+	int startIndex = 0;
 	GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 	GPU::immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
 	for (int i = 0; i < subMeshRanges.size(); i++)
 	{
-		//GPU::immediateContext->IASetIndexBuffer(this->testIndexBuff[i], DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
-		//std::cout << "start index when drawing submesh " << i <<": " << startIndex << "\n";
-		GPU::immediateContext->DrawIndexed(subMeshRanges[i], 0, 0);
-		startIndex += subMeshRanges[i];
-
-	}
-
-	GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-	for (int i = 0; i < subMeshRanges.size(); i++)
-	{
+		if (i == 0)
+			GPU::immediateContext->DrawIndexed(subMeshRanges[i], startIndex, 0);
+		else
+			GPU::immediateContext->DrawIndexed(subMeshRanges[i], startIndex, 4);
 		
-		GPU::immediateContext->IASetIndexBuffer(this->testIndexBuff[i], DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
-		//std::cout << "start index when drawing submesh " << i <<": " << startIndex << "\n";
-		GPU::immediateContext->DrawIndexed(subMeshRanges[i], startIndex, 0);
+		
 		startIndex += subMeshRanges[i];
 	}
-
-	for (int i = 0; i < testMeshes.size(); i++)
-	{
-		testMeshes[i]->Draw(GPU::immediateContext);
-	}
-
+	
+	//GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	//for (int i = 0; i < subMeshRanges.size(); i++)
+	//{
+	//	
+	//	GPU::immediateContext->IASetIndexBuffer(this->testIndexBuff[i], DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+	//	GPU::immediateContext->DrawIndexed(subMeshRanges[i], 0, 0);
+	//}
+	
 #pragma endregion
 
 #pragma region UnBind
@@ -235,20 +210,15 @@ Menu::Menu()
 #pragma region Mesh_Static
 
 	manager = new ModelManager(GPU::device);
-	
 	manager->loadMeshData("../Meshes/gob.obj");
 	
 	this->testMeshes = manager->getMeshes();
-	
-	//std::cout << testMeshes.size() << "\n";
-	 
+
 	vertexBuffer = {};
 	indexBuffer = {};
 
-	auto t2 = manager->getMeshes();
-
 	bool test = manager->getMeshData("../Meshes/gob.obj", vertexBuffer, indexBuffer, subMeshRanges);
-	//std::cout << test << "\n" << subMeshRanges.size() << "\n";
+	
 
 	int textureWidth;
 	int textureHeight;

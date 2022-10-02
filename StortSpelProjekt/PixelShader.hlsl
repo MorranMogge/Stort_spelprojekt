@@ -1,13 +1,13 @@
-struct lightStruct
+struct Light
 {
-    float4 lightPos;
-    float4 lightColor;
-    float4 lightDirection;
+    float4 position;
+    float4 color;
+    float4 direction;
     float  angle;
     float  type;
     float  range;
     float  falloff;
-    float4x4 ltViewMatix;
+    float4x4 view;
 };
 
 struct Material
@@ -18,19 +18,11 @@ struct Material
     float specularPower;
 };
 
-struct PSin
-{
-    float4 position : SV_POSITION;
-    float3 normal : NORMAL;
-    float2 uv : UV;
-    float4 worldPosition : WorldPosition;
-};
-
 Texture2D diffuseTex : register(t0);
 Texture2D ambientTex : register(t1);
 Texture2D specularTex : register(t2);
 Texture2DArray shadowMaps : register(t3);
-StructuredBuffer<lightStruct> lightStructBuff : register(t4); //Structured buffer with Light data
+StructuredBuffer<Light> lights : register(t4); //Structured buffer with Light data
 SamplerState samplerState : register(s0);
 
 cbuffer Mat : register(b0)
@@ -48,31 +40,107 @@ cbuffer numLightBuffer : register(b2)
     int nrOfLights;
 };
 
-
-float GetShadowIntensity(int i, float4 lightWorldPosition, float shadowStrenth, float3 worldPosition, float3 normal)
+struct LightResult
 {
-    lightWorldPosition.xy /= lightWorldPosition.w;
-    float2 smTex = float2(0.5f * lightWorldPosition.x + 0.5f, -0.5f * lightWorldPosition.y + 0.5f);
-    // Calculate depth of light.
-    float lightDepth = lightWorldPosition.z / lightWorldPosition.w;
-    
-    float shadowTexDepth = shadowMaps.SampleLevel(samplerState, float3(smTex.xy, 0), i).r;
-    float shadowIntensity = 0.0f;
-    
-    // fixing floating point precision issues by subtract 0.001 from the light Depth
-    lightDepth -= 0.00001f;
-    if (lightDepth < shadowTexDepth)
-    {
-        float3 lightDirection = normalize(lightStructBuff[i].lightPos.xyz - worldPosition);
-        
-	    // Calculate amount of light on this pixel.
-        shadowIntensity = saturate(dot(lightDirection, normal) * shadowStrenth);
-    }
-    
-    return shadowIntensity;
+    float4 Diffuse;
+    float4 Specular;
+};
+
+float4 DoDiffuse(Light light, float3 lightDir, float3 normal)
+{
+    float NdotL = max(0, dot(normal, lightDir));
+    return light.color * NdotL;
+}
+float4 DoSpecular(Light light, float3 ViewDir, float3 lightDir, float3 normal)
+{
+    // Phong lighting.
+    float3 R = normalize(reflect(-lightDir, normal));
+    float RdotV = max(0, dot(R, ViewDir));
+
+    // Blinn-Phong lighting
+    float3 H = normalize(lightDir + ViewDir);
+    float NdotH = max(0, dot(normal, H));
+
+    return light.color * pow(RdotV, mat.specularPower);
+}
+float DoAttenuation(Light light, float d)
+{
+    //return 1.0f / (light.ConstantAttenuation + light.LinearAttenuation * d + light.QuadraticAttenuation * d * d);
+    return saturate(1 - d / light.range);
 }
 
-float ShadowFactor(int i, float4 fragmentPositionInLightSpace, float3 normal, float3 lightDirection)
+LightResult DoPointLight(Light light, float3 ViewDir, float4 worldPosition, float3 normal)
+{
+    LightResult result;
+
+    float3 L = (light.position - worldPosition).xyz;
+    float distance = length(L);
+    L = L / distance;
+
+    float attenuation = DoAttenuation(light, distance);
+
+    result.Diffuse = DoDiffuse(light, L, normal) * attenuation;
+    result.Specular = DoSpecular(light, ViewDir, L, normal) * attenuation;
+
+    return result;
+}
+LightResult DoDirectionalLight(Light light, float3 ViewDir, float3 normal)
+{
+    LightResult result;
+
+    float3 lightDir = -light.direction.xyz;
+
+    result.Diffuse = DoDiffuse(light, lightDir, normal);
+    result.Specular = DoSpecular(light, ViewDir, lightDir, normal);
+
+    return result;
+}
+
+float DoSpotCone(Light light, float3 lightDir)
+{
+    float minCos = cos(light.angle);
+    float maxCos = (minCos + 1.0f) / 2.0f;
+    float cosAngle = dot(light.direction.xyz, -lightDir);
+    return smoothstep(minCos, maxCos, cosAngle);
+}
+LightResult DoSpotLight(Light light, float3 ViewDir, float4 worldPosition, float3 normal)
+{
+    LightResult result;
+
+    float3 L = (light.position - worldPosition).xyz;
+    float distance = length(L);
+    L = L / distance;
+
+    float attenuation = DoAttenuation(light, distance);
+    float spotIntensity = DoSpotCone(light, L);
+
+    result.Diffuse = DoDiffuse(light, L, normal) * attenuation * spotIntensity;
+    result.Specular = DoSpecular(light, ViewDir, L, normal) * attenuation * spotIntensity;
+
+    return result;
+}
+
+float ShadowIntensity(float4 lightWorldPosition, Light light, float3 LightDir, float3 worldPosition, float3 normal, int i, float shadowStrenth)
+{
+    lightWorldPosition.xy /= lightWorldPosition.w; //calculate x and y in texture space
+    float2 smTex = float2(0.5f * lightWorldPosition.x + 0.5f, -0.5f * lightWorldPosition.y + 0.5f); //re map range to 0,1
+    float lightDepth = lightWorldPosition.z / lightWorldPosition.w; // Calculate depth of light.
+    float shadowTexDepth = shadowMaps.SampleLevel(samplerState, float3(smTex.xy, i), 0).r;
+    float shadowIntensity = 1.0f;
+    
+    // fixing floating point precision issues by subtract 0.001 from the light Depth
+    //lightDepth -= 0.000005f;
+    lightDepth -= max(0.01f * (1.0f - dot(normal, LightDir)), 0.005f);
+    
+    if (shadowTexDepth > lightDepth)
+    {
+        float3 vectorToLight = normalize(light.position.xyz - worldPosition);
+	    // Calculate amount of light on this pixel.
+        shadowIntensity = saturate(dot(vectorToLight, normal) * shadowStrenth);
+    }
+    return shadowIntensity;
+}
+float ShadowFactor(float4 fragmentPositionInLightSpace, int i, float3 normal, float3 LightDir)
 {
     float3 projectedCoordinates = fragmentPositionInLightSpace.xyz / fragmentPositionInLightSpace.w;
     projectedCoordinates = 0.5f * projectedCoordinates + 0.5f;
@@ -88,11 +156,11 @@ float ShadowFactor(int i, float4 fragmentPositionInLightSpace, float3 normal, fl
     int PCFsize = 3;
     int K = PCFsize / 2;
     
-    float bias = max(0.01f * (1.0f - dot(normal, lightDirection)), 0.005f);
+    float bias = max(0.01f * (1.0f - dot(normal, LightDir)), 0.005f);
     
-    for (int x = -K; x <= K;x++)
+    for (int x = -K; x <= K; x++)
     {
-        for (int y = -K; y <= K;y++)
+        for (int y = -K; y <= K; y++)
         {
             float PCFDepth = shadowMaps.SampleLevel(samplerState, float3(projectedCoordinates.xy + float2(x, y) * texSize, 0), i).r;
             result += ((fragmentDepth - bias) > PCFDepth) ? 1.0 : 0.0f;
@@ -100,156 +168,42 @@ float ShadowFactor(int i, float4 fragmentPositionInLightSpace, float3 normal, fl
     }
     
     result /= float(PCFsize * PCFsize);
-    return (1.0f - result);
-}
-
-
-float FallOff(float range, float distance)
-{
-    return saturate(1 - distance / range); // normalize distance in range, linear falloff
-}
-
-struct LitResult
-{
-    float3 diffuse;
-    float3 specular;
-};
-
-LitResult GetPointL(int i, float specularExponent, float3 specularColor, float3 worldPosition, float3 normal, float3 viewDirection)
-{
-    LitResult result = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
-
-    float3 lightDirection = normalize(lightStructBuff[i].lightPos.xyz - worldPosition);
-    float intesity = saturate(dot(normal, lightDirection)); // dot(normal,lightDirection) ger vinkeln emellan vector och normal
-    float distance = length(worldPosition - lightStructBuff[i].lightPos.xyz);
-    if (distance < 100.0f /*lights[i].range*/ && intesity > 0.0f)
-    {
-        result.diffuse = saturate(intesity * lightStructBuff[i].lightColor.xyz) * FallOff(100.0f /*lights[i].range*/, distance);
-            
-        float3 reflection = normalize(2 * intesity * normal - lightDirection);
-        result.specular = lightStructBuff[i].lightColor.xyz;
-        result.specular *= pow(saturate(dot(reflection * specularColor, viewDirection)), specularExponent);
-    }
     return result;
 }
 
 
-float4 main(PSin input) : SV_TARGET
+float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : UV, float4 worldPosition : WorldPosition) : SV_TARGET
 {
-    //variables
-    const float4 cameraPos = cameraPosition;        //Camera Position    (worldspace)
-    const float4 fragmentPosition = input.position; //Fragment Position  (worldspace)
-    const float3 fragementNormal = input.normal;    //normal for fragment
-    const float4 ambientColor = float4(ambientTex.Sample(samplerState, input.uv).xyz, 1.0f);    //Ambient Color
-    const float4 texColor = float4(diffuseTex.Sample(samplerState, input.uv).xyz, 1.0f);        //Diffuse Color
-    const float4 specColor = float4(specularTex.Sample(samplerState, input.uv).xyz, 1.0f);      //Specular Color
-    const float2 UVpos = input.uv; //UV !!UNUSED!!
+    float4 ambient = ambientTex.Sample(samplerState, uv) * mat.ambient;
+    float4 diffuseColor = diffuseTex.Sample(samplerState, uv);
+    float4 specular = specularTex.Sample(samplerState, uv) * float4(mat.specular, 0);
 
-    
-    //Placeholder/Hardcoded//hämta in från ljuset via struct
-    float specularExponent = 10.0f; //Spc Exp
-    float specularStrenght = 10.5f;
-    float ambientStrenght = 0.1f;
-    
-    //Changes per light
-    float4 lightColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    float4 lightPos = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    float3 fragToLight = float3(0.0f, 0.0f, 0.0f);
-    
-    //Cumulative
-    float3 diffuse = float3(0.0f, 0.0f, 0.0f);
-    float3 specular = float3(0.0f, 0.0f, 0.0f);
-    int lightType = 0;
-    float spotCone = 0.0f;
-    float4 direction;
-    float attenuation = 0.0f;
-    
-    
-    
-    for (int i = 0; i < nrOfLights; i++)
+    float3 viewDir = normalize(cameraPosition.xyz - worldPosition.xyz);
+
+    LightResult litResult = { { 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
+    for (int i = 0; i < nrOfLights; ++i)
     {
-        lightColor = lightStructBuff[i].lightColor;
-        lightPos = lightStructBuff[i].lightPos;
-        lightType = lightStructBuff[i].type;
-        spotCone = lightStructBuff[i].angle;
-        direction = lightStructBuff[i].lightDirection;
-
+        //if (!lights[i].enabled)
+        //    continue;
         
-        // -------------Shading--------------- //
+        #define POINT_LIGHT 0
+        #define DIRECTIONAL_LIGHT 1
+        #define SPOT_LIGHT 2
         
-        //fragments position transformed into lights view->clip space, then convert to ndc by dividing by w. Z channel represents depth from light
-        float4 fragPosInLightView = mul(fragmentPosition, lightStructBuff[i].ltViewMatix);
-        fragPosInLightView.xy /= fragPosInLightView.w;
-        float depth = fragPosInLightView.z / fragPosInLightView.w;
-        
-        //modify xy value range from (-1 to 1) to (0 to 1)
-        float2 smTex = float2(0.5f * fragPosInLightView.x + 0.5f, -0.5f * fragPosInLightView.y + 0.5f);
-    
-        //get depth at pos in shadow map and compare to fragPos depth. Offset added to remove shadow acne.
-        if (shadowMaps.SampleLevel(samplerState, float3(smTex.xy, 0), i).r > depth - 0.0005)
+        LightResult result = { { 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
+        switch (lights[i].type)
         {
-            // ------------- Spotlight ------------------//
-            float cone = dot(fragToLight, normalize(direction.xyz)); //skalärptodukt mellan vektorn från ljus till fragment och ljusets riktning
-            
-            // ------------- Diffuse --------------  //
-
-            //normalized vector from fragment to light
-            if (lightType == 1)
-            {
-                fragToLight = normalize(-direction.xyz);
-            }
-            else
-            {
-                fragToLight = normalize(lightPos.xyz - fragmentPosition.xyz);
-            }
-
-	        //calculate diffuse light
-            float diff = max(dot((fragToLight), fragementNormal), 0.0);
-            
-            //multiply with light color
-            
-            if (lightType == 2)
-            {
-                diffuse += (diff * lightColor) * cone;
-            }
-            else
-            {
-                diffuse += diff * lightColor; //diffuseStrenght * (lightColor*?) (diff * diffuseColor) 
-            }
-            //	------------- Specular -------------- //
-
-            //vector from fragment to camera
-            const float3 fragToCam = normalize(cameraPos.xyz - fragmentPosition.xyz);
-    
-            //reflected vector
-            float3 reflectedLight = normalize(reflect(-fragToLight, fragementNormal));
-
-            //phong type
-            float spec = pow(max(dot(fragToCam, reflectedLight), 0.0f), specularExponent);
-    
-            if (lightType == 2)
-            {
-                specular += (specularStrenght * spec * lightColor) * cone;
-            }
-            else
-            {
-                specular += specularStrenght * spec * lightColor; //specularStrenght * (lightColor*?) (spec * specularColor)?
-            }
-
+            case DIRECTIONAL_LIGHT:
+                result = DoDirectionalLight(lights[i], viewDir, normal); break;
+            case POINT_LIGHT:
+                result = DoPointLight(lights[i], viewDir, worldPosition, normal); break;
+            case SPOT_LIGHT:
+                result = DoSpotLight(lights[i], viewDir, worldPosition, normal); break;
         }
+        litResult.Diffuse += result.Diffuse;
+        litResult.Specular += result.Specular;
     }
     
-  
-    //	------------- Ambient ---------------//
-    
-    const float3 ambient = ambientStrenght * lightColor; //ambientStrenght * (lightColor*) ambientColor (ta bort strenght?)
-   
-    //Combine Light for fragment
-    
-
-   
-    const float4 resultColor = float4((diffuse + specular), 0);
-    float4 test = (float4(ambient, 0.0f) + resultColor);
-
-    return float4(test * texColor); //
+    return saturate(ambient + mat.diffuse * litResult.Diffuse + specular * litResult.Specular) * diffuseColor;
 }
+

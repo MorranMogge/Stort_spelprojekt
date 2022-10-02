@@ -424,4 +424,9 @@
       <Filter>GUI</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Light.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
 </Project>

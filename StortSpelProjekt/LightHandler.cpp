@@ -167,7 +167,7 @@ LightHandler::~LightHandler()
 
 // ------------------------------------------------------------------------------- FUNCTIONS -------------------------------------------------------------------------------
 
-void LightHandler::addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, DirectX::XMFLOAT3 UpDir, int type, float coneAngle, float range, float falloff)
+void LightHandler::addLight(const DirectX::XMFLOAT3 &position, const DirectX::XMFLOAT3 &color, const DirectX::XMFLOAT3 &direction, const DirectX::XMFLOAT3 &UpDir, int type, float coneAngle, float range, float falloff)
 {
 	//Check if light limit has been reached
 	if (this->lights.size() < this->LightCap)
@@ -270,7 +270,7 @@ bool LightHandler::updateBuffers()
 	return !FAILED(hr);
 }
 
-void LightHandler::setPosition(DirectX::XMFLOAT3 position, int lightIndex)
+void LightHandler::setPosition(const DirectX::XMFLOAT3 &position, const int &lightIndex)
 {
 	this->lights.at(lightIndex).setPosition(position);
 	
@@ -281,7 +281,7 @@ void LightHandler::setPosition(DirectX::XMFLOAT3 position, int lightIndex)
 	this->boundingSphere.at(lightIndex)->setPos(position);
 }
 
-void LightHandler::setDirection(DirectX::XMFLOAT3 direction, int lightIndex)
+void LightHandler::setDirection(const DirectX::XMFLOAT3 &direction, const int& lightIndex)
 {
 	this->lights.at(lightIndex).setDirection(direction);
 
@@ -292,7 +292,7 @@ void LightHandler::setDirection(DirectX::XMFLOAT3 direction, int lightIndex)
 	this->boundingSphere.at(lightIndex)->setRot(direction);
 }
 
-void LightHandler::setUpDirection(DirectX::XMFLOAT3 direction, int lightIndex)
+void LightHandler::setUpDirection(const DirectX::XMFLOAT3 &direction, const int& lightIndex)
 {
 	this->lights.at(lightIndex).setUpDirection(direction);
 
@@ -300,32 +300,32 @@ void LightHandler::setUpDirection(DirectX::XMFLOAT3 direction, int lightIndex)
 	updateViewMatrix(lightIndex);
 }
 
-void LightHandler::setColor(DirectX::XMFLOAT3 color, int lightIndex)
+void LightHandler::setColor(const DirectX::XMFLOAT3 &color, const int& lightIndex)
 {
 	this->lights.at(lightIndex).setColor(color);
 }
 
-void LightHandler::setConeAngle(float angle, int lightIndex)
+void LightHandler::setConeAngle(const float &angle, const int& lightIndex)
 {
 	this->lights.at(lightIndex).setConeAngle(angle);
 }
 
-void LightHandler::setLightType(int type, int lightIndex)
+void LightHandler::setLightType(const int &type, const int& lightIndex)
 {
 	this->lights.at(lightIndex).setLightType(type);
 }
 
-void LightHandler::setRange(float range, int lightIndex)
+void LightHandler::setRange(const float &range, const int& lightIndex)
 {
 	this->lights.at(lightIndex).setRange(range);
 }
 
-void LightHandler::setFalloff(float falloff, int lightIndex)
+void LightHandler::setFalloff(const float &falloff, const int& lightIndex)
 {
 	this->lights.at(lightIndex).setFalloff(falloff);
 }
 
-bool LightHandler::updateViewMatrix(int lightIndex)
+bool LightHandler::updateViewMatrix(const int &lightIndex)
 {
 	//---------------------------------------- View Buffer ----------------------------------------
 
@@ -349,7 +349,7 @@ bool LightHandler::updateViewMatrix(int lightIndex)
 	return !FAILED(hr);
 }
 
-ID3D11Buffer* LightHandler::getViewBuffer(int ltIndex) const
+ID3D11Buffer* LightHandler::getViewBuffer(const int &ltIndex) const
 {
 	return this->viewBuffers.at(ltIndex).Get();
 }
@@ -359,7 +359,7 @@ int LightHandler::getNrOfLights() const
 	return (UINT)this->lights.size();
 }
 
-void LightHandler::drawShadows(int lightIndex, std::vector<GameObject*> gameObjects)
+void LightHandler::drawShadows(const int &lightIndex, const std::vector<GameObject*> &gameObjects)
 {
 	//Variables
 	ID3D11RenderTargetView* nullRtv{ nullptr };

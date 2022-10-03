@@ -113,7 +113,9 @@
     <ClCompile Include="Client.cpp">
       <Filter>User</Filter>
     </ClCompile>
-    <ClCompile Include="ParticleEmitter.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp">
+      <Filter>Particles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -345,7 +347,9 @@
     <ClInclude Include="Client.h">
       <Filter>User</Filter>
     </ClInclude>
-    <ClInclude Include="ParticleEmitter.h" />
+    <ClInclude Include="ParticleEmitter.h">
+      <Filter>Particles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -392,6 +396,9 @@
     </Filter>
     <Filter Include="User">
       <UniqueIdentifier>{ecab4726-7e3a-4e25-9b94-e03ac70687bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Particles">
+      <UniqueIdentifier>{1fe17447-53de-446c-a837-95b1c590f2f3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

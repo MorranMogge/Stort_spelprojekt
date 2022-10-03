@@ -1,7 +1,7 @@
 #include "Light.h"
 #include "GPU.h"
 
-Light::Light(DirectX::XMFLOAT3 lightColor, DirectX::XMFLOAT3 lightPos, DirectX::XMFLOAT3 FocusPos, DirectX::XMFLOAT3 UpDir, float coneAngle, int type, float range, float falloff)
+Light::Light(const DirectX::XMFLOAT3 &lightColor, const DirectX::XMFLOAT3 &lightPos, const DirectX::XMFLOAT3 &FocusPos, const DirectX::XMFLOAT3 &UpDir, float coneAngle, int type, float range, float falloff)
 	:position(lightPos), color(lightColor), upDirection(UpDir), direction(FocusPos), coneAngle(coneAngle), lightType(type), falloff(falloff), range(range)
 {
 	DirectX::XMVECTOR pos = DirectX::XMVectorSet(this->position.x, this->position.y, this->position.z, 0);
@@ -35,45 +35,45 @@ DirectX::XMMATRIX Light::getViewMatrix() const
 	return this->view;
 }
 
-void Light::setPosition(DirectX::XMFLOAT3 position)
+void Light::setPosition(const DirectX::XMFLOAT3 &position)
 {
 	this->position = position;
 	updateMatrix(position, this->direction, this->upDirection);
 }
 
-void Light::setUpDirection(DirectX::XMFLOAT3 direction)
+void Light::setUpDirection(const DirectX::XMFLOAT3 &direction)
 {
 	this->upDirection = direction;
 	updateMatrix(this->position, this->direction, direction);
 }
 
-void Light::setDirection(DirectX::XMFLOAT3 direction)
+void Light::setDirection(const DirectX::XMFLOAT3 &direction)
 {
 	this->direction = direction;
 	updateMatrix(this->position, direction, this->upDirection);
 }
 
-void Light::setColor(DirectX::XMFLOAT3 color)
+void Light::setColor(const DirectX::XMFLOAT3 &color)
 {
 	this->color = color;
 }
 
-void Light::setConeAngle(float angle)
+void Light::setConeAngle(const float &angle)
 {
 	this->coneAngle = angle;
 }
 
-void Light::setLightType(int type)
+void Light::setLightType(const int &type)
 {
 	this->lightType = type;
 }
 
-void Light::setRange(float range)
+void Light::setRange(const float &range)
 {
 	this->range = range;
 }
 
-void Light::setFalloff(float falloff)
+void Light::setFalloff(const float &falloff)
 {
 	this->falloff = falloff;
 }
@@ -99,7 +99,7 @@ float Light::getRange() const
 }
 
 
-void Light::updateMatrix(DirectX::XMFLOAT3 lightPos, DirectX::XMFLOAT3 FocusPos, DirectX::XMFLOAT3 UpDir)
+void Light::updateMatrix(const DirectX::XMFLOAT3 &lightPos, const DirectX::XMFLOAT3 &FocusPos, const DirectX::XMFLOAT3 &UpDir)
 {
 	DirectX::XMVECTOR pos = DirectX::XMVectorSet(lightPos.x, lightPos.y, lightPos.z, 0);
 	DirectX::XMVECTOR focusPos = DirectX::XMVectorSet(FocusPos.x, FocusPos.y, FocusPos.z, 0);

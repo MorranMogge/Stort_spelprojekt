@@ -36,24 +36,24 @@ public:
 
 	LightHandler();
 	~LightHandler();
-	void addLight(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 direction, DirectX::XMFLOAT3 UpDir, int type = 0, float coneAngle = 0.5f, float range = 50, float falloff = 1);
+	void addLight(const DirectX::XMFLOAT3 &position, const DirectX::XMFLOAT3 &color, const DirectX::XMFLOAT3 &direction, const DirectX::XMFLOAT3 &UpDir, int type = 0, float coneAngle = 0.5f, float range = 50, float falloff = 1);
 	bool updateBuffers();
-	void setPosition(DirectX::XMFLOAT3 position, int lightIndex);				//changes view matrix
-	void setDirection(DirectX::XMFLOAT3 direction, int lightIndex);				//changes view matrix
-	void setUpDirection(DirectX::XMFLOAT3 direction, int lightIndex);			//changes view matrix
-	void setColor(DirectX::XMFLOAT3 color, int lightIndex);
-	void setConeAngle(float angle, int lightIndex);
-	void setLightType(int type, int lightIndex);								//0 point, 1 directional, 2 spot
-	void setRange(float range, int lightIndex);
-	void setFalloff(float falloff, int lightIndex);
-	ID3D11Buffer* getViewBuffer(int ltIndex) const;
+	void setPosition(const DirectX::XMFLOAT3 &position, const int& lightIndex);				//changes view matrix
+	void setDirection(const DirectX::XMFLOAT3 &direction, const int& lightIndex);			//changes view matrix
+	void setUpDirection(const DirectX::XMFLOAT3 &direction, const int& lightIndex);			//changes view matrix
+	void setColor(const DirectX::XMFLOAT3 &color, const int& lightIndex);
+	void setConeAngle(const float &angle, const int &lightIndex);
+	void setLightType(const int& type, const int& lightIndex);								//0 point, 1 directional, 2 spot
+	void setRange(const float &range, const int& lightIndex);
+	void setFalloff(const float &falloff, const int& lightIndex);
+	ID3D11Buffer* getViewBuffer(const int& lightIndex) const;
 	int getNrOfLights() const;
-	void drawShadows(int lightIndex, std::vector<GameObject*> gameObjects);
+	void drawShadows(const int &lightIndex, const std::vector<GameObject*> &gameObjects);
 	void bindLightBuffers();
 	void drawDebugMesh();
 	void unbindSrv();
 
 private:
 
-	bool updateViewMatrix(int lightIndex);
+	bool updateViewMatrix(const int &lightIndex);
 };

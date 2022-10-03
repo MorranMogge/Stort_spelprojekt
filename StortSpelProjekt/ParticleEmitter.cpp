@@ -94,7 +94,7 @@ bool CreateBlendState(Microsoft::WRL::ComPtr <ID3D11BlendState> &blendState)
 	return !FAILED(hr);
 }
 
-ParticleEmitter::ParticleEmitter(DirectX::XMFLOAT3 Pos, DirectX::XMFLOAT3 Rot, int nrOfPT, DirectX::XMFLOAT2 minMaxTime, int randRange)
+ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XMFLOAT3& Rot, const int& nrOfPT, const DirectX::XMFLOAT2& minMaxTime, int randRange)
 	:Position(Pos), Rotation(Rot), nrOfParticles(nrOfPT), active(true), renderPassComplete(true)
 {
 	//Initilize timer
@@ -250,7 +250,7 @@ void ParticleEmitter::updateBuffer()
 	GPU::immediateContext->Unmap(this->emitterPosBuffer.Get(), 0);
 }
 
-void ParticleEmitter::updateTimeBuffer(float delta)
+void ParticleEmitter::updateTimeBuffer(const float &delta)
 {
 	//Map
 	D3D11_MAPPED_SUBRESOURCE map;
@@ -274,12 +274,12 @@ DirectX::XMFLOAT3 ParticleEmitter::getRotation() const
 	return this->Rotation;
 }
 
-void ParticleEmitter::setPosition(DirectX::XMFLOAT3 Pos)
+void ParticleEmitter::setPosition(const DirectX::XMFLOAT3 &Pos)
 {
 	this->Position = Pos;
 }
 
-void ParticleEmitter::setRotation(DirectX::XMFLOAT3 Rot)
+void ParticleEmitter::setRotation(const DirectX::XMFLOAT3 &Rot)
 {
 	this->Rotation = Rot;
 }
@@ -294,7 +294,7 @@ bool ParticleEmitter::isPassComplete()
 	return this->renderPassComplete;
 }
 
-void ParticleEmitter::setActive(bool onOrOff)
+void ParticleEmitter::setActive(const bool &onOrOff)
 {
 	this->active = onOrOff;
 	if (onOrOff == false)
@@ -303,7 +303,7 @@ void ParticleEmitter::setActive(bool onOrOff)
 	}
 }
 
-void ParticleEmitter::setPassComplete(bool onOrOff)
+void ParticleEmitter::setPassComplete(const bool &onOrOff)
 {
 	this->renderPassComplete = onOrOff;
 }

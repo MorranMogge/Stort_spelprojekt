@@ -50,17 +50,14 @@ private:
 	PhysicsWorld physWolrd;
 
 	Camera camera;
-	Player player;
+	Player* player;
 	GameObject* planet;
-	Potion potion;
+	Potion* potion;			//not in use
 
 
 	LightHandler ltHandler;
 
 	//Objects
-
-	std::vector<Mesh> meshes_Static;
-	std::vector<Mesh> meshes_Dynamic;
 	std::vector<GameObject*> gameObjects;
 	std::vector<ParticleEmitter> ptEmitters;
 	
@@ -72,6 +69,7 @@ private:
 	void drawParticles();
 	bool setUpWireframe();
 	void updateBuffers();
+	void handleKeybinds();
 
 	float pos[3];
 

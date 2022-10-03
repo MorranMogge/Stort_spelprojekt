@@ -271,30 +271,32 @@ void ModelManager::loadBones(const aiMesh* mesh, const int mesh_index)
 void ModelManager::numberBone(aiNode* node, int parentNode, DirectX::XMMATRIX& prevOffsets)
 {
 	int boneID = this->findBoneID(node->mName.data);
-	if (parentNode != -1)
+	bool realNode = true;
+	if (boneID == -1)
 	{
-		if (boneID != -1)
-		{
-			this->boneVec[boneID].parentID = parentNode;
-		}
+		realNode = false;
+		boneID = parentNode;
 	}
-	if (node->mNumChildren != 0)
+	if (realNode)
 	{
-		/*
-		DirectX::XMMATRIX temp;
-		this->aiMatrixToXMmatrix(node->mTransformation, temp);
-		DirectX::XMMatrixMultiply(prevOffsets, temp);
+		this->boneVec[boneID].parentID = parentNode;
 
-		if (boneID != -1)
-		{
-			this->boneVec[boneID].finalTransform = prevOffsets;
-		}
-		*/
-		for (int i = 0; i < node->mNumChildren; i++)
-		{
-			this->numberBone(node->mChildren[i], boneID, prevOffsets);
-		}
 	}
+	
+	DirectX::XMMATRIX temp;
+	this->aiMatrixToXMmatrix(node->mTransformation, temp);
+	DirectX::XMMatrixMultiply(prevOffsets, temp);
+
+	if (boneID != -1)
+	{
+		this->boneVec[boneID].finalTransform = prevOffsets;
+	}
+	
+	for (int i = 0; i < node->mNumChildren; i++)
+	{
+		this->numberBone(node->mChildren[i], boneID, prevOffsets);
+	}
+
 }
 
 int ModelManager::findAndAddBoneID(std::string name)
@@ -365,7 +367,7 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	this->numberBone(pScene->mRootNode, -1, startMatrix);
 
 	this->boneVec;
-	 bp = 2;
+	bp = 2;
 
 	return true;
 }

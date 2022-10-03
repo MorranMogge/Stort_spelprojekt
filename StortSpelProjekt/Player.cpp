@@ -1,12 +1,12 @@
 #include "Player.h"
 #include "DirectXMathHelper.h"
 
-Player::Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
+Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
     :GameObject(useMesh, pos, rot, id), health(69), holdingItem(nullptr)
 {
 }
 
-Player::Player(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
+Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
 	:GameObject(objectPath, pos, rot, id), health(69), holdingItem(nullptr)
 {
 }
@@ -46,7 +46,7 @@ void Player::handleInputs()
 
 }
 
-void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime)
+void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, const std::unique_ptr<DirectX::GamePad>& gamePad, const float& deltaTime)
 {
     //Variables
     float rotationConstant = 0;
@@ -174,7 +174,7 @@ void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& camera
 
 }
 
-bool Player::pickupItem(Item* itemToPickup, std::unique_ptr<DirectX::GamePad>& gamePad)
+bool Player::pickupItem(Item* itemToPickup, const std::unique_ptr<DirectX::GamePad>& gamePad)
 {
     bool successfulPickup = false;
 
@@ -219,7 +219,7 @@ void Player::releaseItem()
     this->holdingItem = nullptr;
 }
 
-bool Player::withinRadius(Item* itemToLookWithinRadius, float radius) const
+bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) const
 {
     using namespace DirectX;
 
@@ -239,7 +239,7 @@ bool Player::withinRadius(Item* itemToLookWithinRadius, float radius) const
     return inRange;
 }
 
-void Player::update(std::unique_ptr<DirectX::GamePad>& gamePad)
+void Player::update(const std::unique_ptr<DirectX::GamePad>& gamePad)
 {
     if (holdingItem != nullptr)
     {

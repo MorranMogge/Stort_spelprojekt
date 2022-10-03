@@ -22,7 +22,7 @@ bool LoadVertexShader(ID3D11Device* device, ID3D11VertexShader*& vShader, std::s
 
 bool LoadVertexShader(ID3D11Device* device, ID3D11VertexShader*& vShader, const std::string path)
 {
-	std::ifstream reader("../x64/Debug/" + path + ".cso", std::ios::binary | std::ios::ate);
+	std::ifstream reader("../Shaders/" + path + ".cso", std::ios::binary | std::ios::ate);
 
 	if (reader.is_open())
 	{
@@ -43,7 +43,7 @@ bool LoadVertexShader(ID3D11Device* device, ID3D11VertexShader*& vShader, const 
 
 bool LoadDomainShader(ID3D11Device* device, ID3D11DomainShader*& dShader, const std::string path)
 {
-	std::ifstream reader("../x64/Debug/" + path + ".cso", std::ios::binary | std::ios::ate);
+	std::ifstream reader("../Shaders/" + path + ".cso", std::ios::binary | std::ios::ate);
 
 	if (reader.is_open())
 	{
@@ -64,7 +64,7 @@ bool LoadDomainShader(ID3D11Device* device, ID3D11DomainShader*& dShader, const 
 
 bool LoadHullShader(ID3D11Device* device, ID3D11HullShader*& hShader, const std::string path)
 {
-	std::ifstream reader("../x64/Debug/" + path + ".cso", std::ios::binary | std::ios::ate);
+	std::ifstream reader("../Shaders/" + path + ".cso", std::ios::binary | std::ios::ate);
 
 	if (reader.is_open())
 	{
@@ -122,5 +122,26 @@ bool LoadComputeShader(ID3D11Device* device, ID3D11ComputeShader*& cShader, cons
 		return !FAILED(hr);
 	}
 	ErrorLog::Log("Failed to create Compute shader!");
+	return false;
+}
+
+bool LoadGeometryShader(ID3D11Device* device, ID3D11GeometryShader*& gShader, const std::string path)
+{
+	std::ifstream reader("../Shaders/" + path + ".cso", std::ios::binary | std::ios::ate);
+
+	if (reader.is_open())
+	{
+		std::string vShaderByteCode;
+		reader.seekg(0, std::ios::end);
+		vShaderByteCode.reserve(static_cast<unsigned int>(reader.tellg()));
+		reader.seekg(0, std::ios::beg);
+		vShaderByteCode.assign((std::istreambuf_iterator<char>(reader)), std::istreambuf_iterator<char>());
+
+		reader.close();
+		HRESULT hr = device->CreateGeometryShader(vShaderByteCode.c_str(), vShaderByteCode.length(), nullptr, &gShader);
+
+		return !FAILED(hr);
+	}
+	ErrorLog::Log("Failed to create Geometry shader!");
 	return false;
 }

@@ -9,6 +9,7 @@ class Camera
 private:
 	float deltaTime;
 	ConstantBufferNew<cameraStruct> cameraBuffer;
+	ConstantBufferNew<posStruct> positionBuffer;
 
 	DirectX::XMMATRIX viewMatrix;
 	DirectX::XMMATRIX projMatrix;
@@ -37,4 +38,6 @@ public:
 	void AdjustRotation(float x, float y);
 	const DirectX::XMVECTOR getForwardVec();
 	const DirectX::XMVECTOR getRightVec();
+	ID3D11Buffer* getViewBuffer();
+	ID3D11Buffer* getPositionBuffer();
 };

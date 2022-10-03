@@ -9,7 +9,6 @@
 #include <chrono>
 #include "ShaderLoader.h"
 #include "ImGuiHelper.h"
-
 #include "Player.h"
 #include "Camera.h"
 #include "LightHandler.h"
@@ -17,6 +16,7 @@
 #include "StructuredBuffer.h"
 #include "BufferTypes.h"
 #include "LightHandler.h"
+#include "ParticleEmitter.h"
 #include "Potion.h"
 
 struct wirefameInfo
@@ -33,6 +33,7 @@ private:
 	ImGuiHelper imGui;
 	bool wireframe = true;
 	bool objectDraw = true;
+	bool drawDebug = true;
 	wirefameInfo reactWireframeInfo;
 	ID3D11Buffer* wireBuffer;
 	D3D11_MAPPED_SUBRESOURCE subData;
@@ -50,20 +51,26 @@ private:
 	PhysicsWorld physWolrd;
 
 	Camera camera;
-	Player player;
+	Player* player;
 	GameObject* planet;
-	Potion potion;
+	Potion* potion;			//not in use
 
 
 	LightHandler ltHandler;
 
 	//Objects
-	std::vector<GameObject> gameObjects;
+	std::vector<GameObject*> gameObjects;
+	std::vector<ParticleEmitter> ptEmitters;
+	
+	
 
 	void loadObjects();
-	void drawObjects();
+	void drawShadows();
+	void drawObjects(bool drawDebug);
+	void drawParticles();
 	bool setUpWireframe();
 	void updateBuffers();
+	void handleKeybinds();
 
 	float pos[3];
 

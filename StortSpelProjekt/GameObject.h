@@ -6,6 +6,7 @@
 class GameObject
 {
 private:
+
 	Mesh* mesh;
 	int objectID;
 	//float mass
@@ -24,14 +25,14 @@ public:
 	void setPos(DirectX::XMFLOAT3 pos);
 	void setRot(DirectX::XMFLOAT3 rot);
 	void setScale(DirectX::XMFLOAT3 scale);
+	void setMesh(std::string meshPath);
+	void setMesh(Mesh*);
 	DirectX::XMFLOAT3 getPos() const;
 	DirectX::SimpleMath::Vector3 getPosV3()const;
 	DirectX::XMFLOAT3 getRot() const;
 	DirectX::XMFLOAT3 getScale() const;
 	Bound* getBounds() const;
 	void updateBuffer();
-	void setMesh(std::string meshPath);
-	void setMesh(Mesh*);
 	bool withinRadious(GameObject *object ,float radius) const;
-	virtual void draw();
+	void draw();
 };

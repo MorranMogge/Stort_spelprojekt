@@ -162,7 +162,7 @@ void Menu::GeometryPass()
 	//}
 	
 	int startIndex = 0;
-	GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	/*GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 	GPU::immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
 	for (int i = 0; i < subMeshRanges.size(); i++)
 	{
@@ -172,6 +172,17 @@ void Menu::GeometryPass()
 			GPU::immediateContext->DrawIndexed(subMeshRanges[i], startIndex, 4);
 		
 		
+		startIndex += subMeshRanges[i];
+	}*/
+	
+	int startVertex = 0;
+	GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	GPU::immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+	for (int i = 0; i < subMeshRanges.size(); i++)
+	{
+		
+		GPU::immediateContext->DrawIndexed(subMeshRanges[i], startIndex, startVertex);
+		startVertex += this->verticesRanges[i];
 		startIndex += subMeshRanges[i];
 	}
 	
@@ -216,8 +227,8 @@ Menu::Menu()
 
 	vertexBuffer = {};
 	indexBuffer = {};
-
-	bool test = manager->getMeshData("../Meshes/gob.obj", vertexBuffer, indexBuffer, subMeshRanges);
+	
+	bool test = manager->getMeshData("../Meshes/gob.obj", vertexBuffer, indexBuffer, subMeshRanges,verticesRanges);
 	
 
 	int textureWidth;

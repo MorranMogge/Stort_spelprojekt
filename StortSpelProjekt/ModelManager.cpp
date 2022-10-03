@@ -196,7 +196,8 @@ void ModelManager::readNodes2(aiMesh* mesh, const aiScene* scene)
 	std::cout << "StructVertexDataSize: " << dataForMesh.vertexTriangle.size() << "\n";
 	std::cout << "StructIndexDataSize: " << dataForMesh.indexTriangle.size() << "\n";
 
-	submeshRanges.emplace_back(dataForMesh.indexTriangle.size());
+	this->submeshRanges.emplace_back(dataForMesh.indexTriangle.size());
+	this->amountOfvertices.emplace_back(vertexTriangle.size());
 
 	for (int i = 0; i < submeshRanges.size(); i++)
 	{
@@ -276,11 +277,12 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	indexBufferData.pSysMem = dataForMesh.indexTriangle.data();
 	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
 
-	bank.addMeshBuffers(filePath, vertexBuffer, indexBuffer, submeshRanges);
+	bank.addMeshBuffers(filePath, vertexBuffer, indexBuffer, submeshRanges, amountOfvertices);
 
 	indexBuffer = {};
 	vertexBuffer = {};
-	submeshRanges.clear();
+	this->submeshRanges.clear();
+	this->amountOfvertices.clear();
 	memset(&dataForMesh, 0, sizeof(dataForMesh));
 
 	return true;
@@ -296,7 +298,7 @@ std::vector<ID3D11ShaderResourceView*> ModelManager::getTextureMaps() const
 	return this->diffuseMaps;
 }
 
-bool ModelManager::getMeshData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges)
+bool ModelManager::getMeshData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces)
 {
-	return bank.getIndexMeshBuffers(filePath, indexBuffer, vertexBuffer, submeshRanges);
+	return bank.getIndexMeshBuffers(filePath, indexBuffer, vertexBuffer, submeshRanges, amountOfVertces);
 }

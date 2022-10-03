@@ -29,6 +29,7 @@ private:
 	
 	struct meshData dataForMesh;
 	std::vector<int> submeshRanges;
+	std::vector<int> amountOfvertices;
 	std::vector<ID3D11Buffer*> vecIndexBuff;
 	bool makeSRV(ID3D11ShaderResourceView*& srv, std::string finalFilePath);
 	void processNodes(aiNode* node, const aiScene* scene, const std::string& filePath);
@@ -47,6 +48,6 @@ public:
 	std::vector<Mesh2*> getMeshes() const;
 	std::vector<ID3D11ShaderResourceView*> getTextureMaps() const;
 	//fills the params with meshdata
-	bool getMeshData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges);
+	bool getMeshData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces);
 	std::vector<ID3D11Buffer*> getBuff() const;
 };

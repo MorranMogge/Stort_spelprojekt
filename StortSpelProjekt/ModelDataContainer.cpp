@@ -11,7 +11,7 @@ ModelDataContainer::~ModelDataContainer()
 	{
 		this->srvIt->second->Release();
 	}
-	std::tuple<ID3D11Buffer*, ID3D11Buffer*, std::vector<int>> delTupel;
+	std::tuple<ID3D11Buffer*, ID3D11Buffer*, std::vector<int>, std::vector<int>> delTupel;
 	for (this->meshIt = this->meshMap.begin(); this->meshIt != this->meshMap.end(); this->meshIt++)
 	{
 		delTupel = this->meshIt->second;
@@ -46,7 +46,7 @@ ID3D11ShaderResourceView* ModelDataContainer::getSrv(const std::string key)
 	return this->srvIt->second;
 }
 
-bool ModelDataContainer::getIndexMeshBuffers(const std::string key, ID3D11Buffer*& indexBuff, ID3D11Buffer*& vertexBuff, std::vector<int>& subMeshRanges)
+bool ModelDataContainer::getIndexMeshBuffers(const std::string key, ID3D11Buffer*& indexBuff, ID3D11Buffer*& vertexBuff, std::vector<int>& subMeshRanges, std::vector<int>& amountOfVertces)
 {
 	this->meshIt = this->meshMap.find(key);
 	if (this->meshIt == this->meshMap.end())
@@ -57,6 +57,7 @@ bool ModelDataContainer::getIndexMeshBuffers(const std::string key, ID3D11Buffer
 	indexBuff = std::get<tupelOrder::INDEXBUFFER>(tup);
 	vertexBuff = std::get<tupelOrder::VERTEXBUFFER>(tup);
 	subMeshRanges = std::get<tupelOrder::SUBMESHRANGES>(tup);
+	amountOfVertces = std::get<tupelOrder::VERTICESRANGES>(tup);
 	return true;
 }
 
@@ -65,10 +66,10 @@ void ModelDataContainer::addSrv(std::string key, ID3D11ShaderResourceView* srv)
 	this->srvMap.insert(std::pair<std::string, ID3D11ShaderResourceView*>(key, srv));
 }
 
-void ModelDataContainer::addMeshBuffers(std::string key, ID3D11Buffer* vertexBuf, ID3D11Buffer* indexBuf, std::vector<int>& subMeshRanges)
+void ModelDataContainer::addMeshBuffers(std::string key, ID3D11Buffer* vertexBuf, ID3D11Buffer* indexBuf, std::vector<int>& subMeshRanges, std::vector<int>& amountOfVertces)
 {
-	std::tuple <ID3D11Buffer*, ID3D11Buffer*, std::vector<int>> newTup;
-	newTup = std::make_tuple(indexBuf, vertexBuf, subMeshRanges);
+	std::tuple <ID3D11Buffer*, ID3D11Buffer*, std::vector<int>, std::vector<int>> newTup;
+	newTup = std::make_tuple(indexBuf, vertexBuf, subMeshRanges, amountOfVertces);
 
-	this->meshMap.insert(std::pair<std::string, std::tuple<ID3D11Buffer*, ID3D11Buffer*, std::vector<int>>>(key, newTup));
+	this->meshMap.insert(std::pair<std::string, std::tuple<ID3D11Buffer*, ID3D11Buffer*, std::vector<int>, std::vector<int>>>(key, newTup));
 }

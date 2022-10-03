@@ -35,6 +35,7 @@ private:
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* indexBuffer;
 	std::vector<int> subMeshRanges;
+	std::vector<int> verticesRanges;
 	std::vector<ID3D11Buffer*> testIndexBuff;
 
 	std::vector<Mesh> meshes_Static;

@@ -35,7 +35,7 @@ float3 DoSpecular(Light light, float3 ViewDir, float3 lightDir, float3 normal, f
     float3 H = normalize(lightDir + ViewDir);
     float NdotH = max(0, dot(normal, H));
 
-    return light.color.xyz * pow(RdotV, specularPower);
+    return light.color.xyz * pow(RdotV, 0 /*specularPower*/);
 }
 float DoAttenuation(Light light, float d)
 {

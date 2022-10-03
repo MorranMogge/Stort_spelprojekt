@@ -33,6 +33,8 @@ public:
 	//Render
 	virtual void Draw();
 
+	bool IntersectMouse() const;
+
 protected:
 
 	Microsoft::WRL::ComPtr<ID3D11Resource> m_pResource;
@@ -42,7 +44,7 @@ protected:
 	RECT m_SourceRect;
 
 	DirectX::SimpleMath::Vector2  m_Position;
-	
+
 	DirectX::SimpleMath::Vector2  m_Origin;
 	DirectX::SimpleMath::Vector2  m_Scale;
 	DirectX::SimpleMath::Color	 m_Tint;
@@ -51,4 +53,3 @@ protected:
 	float	 m_Layer;
 
 };
-

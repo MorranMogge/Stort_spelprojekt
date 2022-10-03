@@ -38,7 +38,7 @@ public:
 
 protected:
 
-	
+
 	std::unique_ptr<DirectX::SpriteFont> spriteFont;
 
 	UINT		m_Width;

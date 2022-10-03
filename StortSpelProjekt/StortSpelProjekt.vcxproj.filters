@@ -113,6 +113,7 @@
     <ClCompile Include="Client.cpp">
       <Filter>User</Filter>
     </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -345,6 +346,7 @@
       <Filter>User</Filter>
     </ClInclude>
     <ClInclude Include="GameInclude.h" />
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

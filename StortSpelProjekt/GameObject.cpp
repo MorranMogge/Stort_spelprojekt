@@ -1,9 +1,11 @@
+#include "stdafx.h"
 #include "PhysicsComponent.h"
 #include "GameObject.h"
 
 GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale)
 	:position(pos), rotation(rot), mesh(useMesh), objectID(id), scale(scale)
 {
+	std::cout << "Testin\n";
 	// set position
 	mesh->position = pos;
 
@@ -222,5 +224,3 @@ void GameObject::update()
 	this->position = this->physComp->getPosV3();
 	this->rotation = DirectX::XMFLOAT3(this->physComp->getRotation().x, this->physComp->getRotation().y, this->physComp->getRotation().z);
 }
-
-

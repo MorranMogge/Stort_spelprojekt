@@ -5,8 +5,6 @@
 
 #include "OBJ.h"
 
-#include <vector>
-
 #include "GPU.h"
 #include "MaterialLibrary.h"
 
@@ -16,7 +14,6 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "ConstantBuffer.h"
-#include <SimpleMath.h>
 
 
 class Mesh

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Light.h"
 
 Light::Light(DirectX::XMFLOAT3 lightColor, DirectX::XMFLOAT3 lightPos, DirectX::XMFLOAT3 FocusPos, DirectX::XMFLOAT3 UpDir, float coneAngle, int type)

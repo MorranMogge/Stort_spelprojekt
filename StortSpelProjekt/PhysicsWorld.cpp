@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "PhysicsWorld.h"
 
 #include <time.h>

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "MouseClass.h"
 #include <string>
 #include "GPU.h"

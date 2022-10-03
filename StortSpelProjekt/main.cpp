@@ -1,9 +1,9 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 
-#include <string>
-#include <iostream>
+
 #include <time.h>
+#include "stdafx.h"
 
 #include "Console.h"
 #include "SoundCollection.h"

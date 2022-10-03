@@ -1,8 +1,7 @@
 #pragma once
 
-#include <d3d11.h>
+#include "stdafx.h"
 #include <wrl.h>
-#include <SimpleMath.h>
 
 struct GPU final
 {

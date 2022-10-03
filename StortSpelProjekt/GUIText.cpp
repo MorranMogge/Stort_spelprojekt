@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "GUIText.h"
 #include <SpriteFont.h>
 #include <string>

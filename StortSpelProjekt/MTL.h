@@ -1,13 +1,9 @@
 #pragma once
-
-#include <string>
-#include <vector>
+#include "stdafx.h"
 
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
-
-#include <SimpleMath.h>
 
 struct MTL final
 {

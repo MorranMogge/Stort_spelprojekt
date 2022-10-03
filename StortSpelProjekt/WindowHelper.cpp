@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "WindowHelper.h"
 #include <iostream>
 #include "GPU.h"

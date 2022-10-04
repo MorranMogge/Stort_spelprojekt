@@ -42,8 +42,8 @@ bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBu
 bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, Microsoft::WRL::ComPtr<ID3D11Texture2D>& dsTexture, std::vector<Microsoft::WRL::ComPtr<ID3D11DepthStencilView>>& dsViews, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& shaderView, int nrOfLights)
 {
 	D3D11_TEXTURE2D_DESC textureDesc = {};											//skapa svartvit textur som representerar djup i en scen
-	textureDesc.Width = width;
-	textureDesc.Height = height;
+	textureDesc.Width = 2048;
+	textureDesc.Height = 2048;
 	textureDesc.MipLevels = 1u;														//olika nivååer av kompression
 	textureDesc.ArraySize = nrOfLights;												//en buffer
 	textureDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;								// MapUsageTypless(usage);

@@ -20,6 +20,7 @@ struct VSout
     float3 normal : NORMAL;
     float2 uv : UV;
     float4 worldPosition : WorldPosition;
+    float3 localPosition : LocalPosition;
 };
 
 VSout main(VSin input)
@@ -34,5 +35,7 @@ VSout main(VSin input)
 
     //Calculate the normal vector against the world matrix only.
     output.normal = normalize(mul(input.normal, (float3x3) worldM));
+    
+    output.localPosition = input.position;
     return output;
 }

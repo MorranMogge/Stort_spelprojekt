@@ -14,3 +14,5 @@ bool LoadHullShader(ID3D11Device* device, ID3D11HullShader*& hShader, const std:
 bool LoadPixelShader(ID3D11Device* device, ID3D11PixelShader*& pShader, const std::string path);
 
 bool LoadComputeShader(ID3D11Device* device, ID3D11ComputeShader*& cShader, const std::string path);
+
+bool LoadGeometryShader(ID3D11Device* device, ID3D11GeometryShader*& cShader, const std::string path);

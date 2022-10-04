@@ -9,7 +9,22 @@ bool BasicRenderer::setUpInputLayout(ID3D11Device* device, const std::string& vS
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
-	HRESULT hr = device->CreateInputLayout(inputDesc, std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &inputLayout);
+	HRESULT hr = device->CreateInputLayout(inputDesc, (UINT)std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &inputLayout);
+
+	return !FAILED(hr);
+}
+
+bool BasicRenderer::setUp_PT_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode)
+{
+	D3D11_INPUT_ELEMENT_DESC inputDesc[4] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"DELTA", 0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"START_POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"LIFETIME", 0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	HRESULT hr = device->CreateInputLayout(inputDesc, (UINT)std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &pt_inputLayout);
 
 	return !FAILED(hr);
 }
@@ -46,31 +61,45 @@ BasicRenderer::~BasicRenderer()
 	inputLayout->Release();
 	vShader->Release();
 	pShader->Release();
+
+	pt_inputLayout->Release();
+	pt_vShader->Release();
+	pt_pShader->Release();
+	pt_UpdateShader->Release();
+	pt_gShader->Release();
 }
 
 void BasicRenderer::lightPrePass()
 {
+	ID3D11PixelShader* nullShader(nullptr);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	immediateContext->IASetInputLayout(this->inputLayout);
+	immediateContext->RSSetViewports(1, &viewport);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
-	immediateContext->PSSetShader(nullptr, nullptr, 0);
+	immediateContext->PSSetShader(nullShader, nullptr, 0);
 }
 
 bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT)
 {
 	std::string vShaderByteCode;
 	this->immediateContext = immediateContext;
-	if (this->immediateContext == nullptr)										return false;
-	if (!CreateRenderTargetView(device, swapChain, rtv))						return false;
-	if (!CreateDepthStencil(device, WIDTH, HEIGHT, dsTexture, dsView))			return false;
-	if (!LoadVertexShader(device, vShader, vShaderByteCode, "VertexShader"))	return false;
-	if (!LoadPixelShader(device, pShader, "PixelShader"))						return false;
-	if (!setUpInputLayout(device, vShaderByteCode))								return false;
-	if (!setUpSampler(device))		return false;
+	if (this->immediateContext == nullptr)											return false;
+	if (!CreateRenderTargetView(device, swapChain, rtv))							return false;
+	if (!CreateDepthStencil(device, WIDTH, HEIGHT, dsTexture, dsView))				return false;
+	if (!LoadVertexShader(device, vShader, vShaderByteCode, "VertexShader"))		return false;
+	if (!setUpInputLayout(device, vShaderByteCode))									return false;
+	if (!LoadPixelShader(device, pShader, "PixelShader"))							return false;
+	if (!LoadVertexShader(device, pt_vShader, vShaderByteCode, "PT_VertexShader"))	return false;
+	if (!setUp_PT_InputLayout(device, vShaderByteCode))								return false;
+	if (!LoadPixelShader(device, pt_pShader, "PT_PixelShader"))						return false;
+	if (!LoadGeometryShader(device, pt_gShader, "PT_GeometryShader"))				return false;
+	if (!LoadComputeShader(device, pt_UpdateShader, "PT_UpdateShader"))				return false;
+	if (!setUpSampler(device))														return false;
 	SetViewport(viewport, WIDTH, HEIGHT);
 	return true;
 }
 
-void BasicRenderer::setUpScene()
+void BasicRenderer::setUpScene(Camera& stageCamera)
 {				
 	immediateContext->ClearRenderTargetView(rtv, clearColour);
 	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
@@ -83,8 +112,27 @@ void BasicRenderer::setUpScene()
 	immediateContext->PSSetShader(pShader, nullptr, 0);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 
-	//Unbind shadowmap & structuredBuffer srv
-	ID3D11ShaderResourceView* nullRsv{ nullptr };
-	immediateContext->PSSetShaderResources(3, 1, &nullRsv);
-	immediateContext->PSSetShaderResources(4, 1, &nullRsv);
+	ID3D11Buffer* tempBuff = stageCamera.getPositionBuffer();
+	ID3D11Buffer* tempBuff2 = stageCamera.getViewBuffer();
+	GPU::immediateContext->PSSetConstantBuffers(1, 1, &tempBuff);			
+	GPU::immediateContext->VSSetConstantBuffers(1, 1, &tempBuff2);
+}
+
+void BasicRenderer::geometryPass(Camera& stageCamera)
+{
+	//Variables
+	std::vector<ID3D11Buffer*> tempBuff;
+	tempBuff.push_back(stageCamera.getViewBuffer());
+	tempBuff.push_back(stageCamera.getPositionBuffer());
+
+	//re-use same depth buffer as geometry pass.
+	immediateContext->CSSetShader(pt_UpdateShader, nullptr, 0);							//Set ComputeShader
+	immediateContext->VSSetShader(pt_vShader, nullptr, 0);								//SetVTXShader
+	immediateContext->PSSetShader(pt_pShader, nullptr, 0);								//Set PSShader
+	immediateContext->GSSetShader(pt_gShader, nullptr, 0);								//SetGeoShader
+	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);		//Set how topology
+	immediateContext->IASetInputLayout(pt_inputLayout);									//Input layout = float3 position for each vertex
+	immediateContext->GSSetConstantBuffers(0, 2, tempBuff.data());						//Set camera pos for ,Set matrix [world],[view]
+	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
+
 }

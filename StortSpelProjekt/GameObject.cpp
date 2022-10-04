@@ -12,6 +12,7 @@ GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const Direct
 
 	// set scale
 	mesh->scale = scale;
+	this->scale = scale;
 }
 
 GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale)
@@ -23,7 +24,7 @@ GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos
 
 
 	// load all materials for Obj
-	int nrOfMat = testObj.mtl.materials.size();
+	int nrOfMat = (int)testObj.mtl.materials.size();
 	for (int i = 0; i < nrOfMat; i++)
 	{
 		MaterialLibrary::LoadMaterial(testObj.mtl.materials[i]);
@@ -37,6 +38,7 @@ GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos
 
 	// set scale
 	this->mesh->scale = scale;
+	this->scale = scale;
 }
 
 GameObject::GameObject()
@@ -60,6 +62,7 @@ GameObject::GameObject()
 	this->mesh->rotation = { 0, 0, 0 };
 
 	//Update constantbuffer
+	this->updateBuffer();
 }
 
 GameObject::~GameObject()
@@ -94,6 +97,7 @@ void GameObject::setRot(const DirectX::XMVECTOR& rot)
 
 void GameObject::setScale(DirectX::XMFLOAT3 scale)
 {
+	this->mesh->scale = scale;
 	this->scale = scale;
 }
 

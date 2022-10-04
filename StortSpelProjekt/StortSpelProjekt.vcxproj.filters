@@ -288,9 +288,6 @@
     <ClInclude Include="GPU.h">
       <Filter>Structs</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui\imconfig.h">
-      <Filter>Structs</Filter>
-    </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Structs</Filter>
     </ClInclude>
@@ -347,6 +344,9 @@
     </ClInclude>
     <ClInclude Include="GameInclude.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="ImGui\imconfig.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

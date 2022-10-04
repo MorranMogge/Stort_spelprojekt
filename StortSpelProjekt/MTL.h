@@ -3,7 +3,6 @@
 
 #include <fstream>
 #include <sstream>
-#include <unordered_map>
 
 struct MTL final
 {

@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "MouseClass.h"
-#include <string>
 #include "GPU.h"
 #include <directxmath.h>
-#include <d3d11.h>
 
 MouseClass::MouseClass()
 {

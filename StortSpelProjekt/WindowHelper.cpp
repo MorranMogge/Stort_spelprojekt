@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "WindowHelper.h"
-#include <iostream>
 #include "GPU.h"
 #include "resource.h"
 #include "imGUI\imconfig.h"

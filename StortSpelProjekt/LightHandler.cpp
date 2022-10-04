@@ -407,4 +407,5 @@ void LightHandler::unbindSrv()
 	ID3D11ShaderResourceView* nullsrv{ nullptr };
 	GPU::immediateContext->PSSetShaderResources(3, 1, &nullsrv);
 	GPU::immediateContext->PSSetShaderResources(4, 1, &nullsrv);
+	GPU::immediateContext->PSSetShaderResources(5, 1, &nullsrv);
 }

@@ -14,6 +14,7 @@ Texture2D ambientTex : register(t1);
 Texture2D specularTex : register(t2);
 Texture2DArray shadowMaps : register(t3);
 StructuredBuffer<Light> lights : register(t4); //Structured buffer with Light data
+TextureCube txCube : register(t5);
 SamplerState samplerState : register(s0);
 
 cbuffer Mat : register(b0)

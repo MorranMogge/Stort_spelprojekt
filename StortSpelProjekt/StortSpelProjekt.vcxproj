@@ -195,6 +195,7 @@
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="ShaderResourceView.h" />
     <ClInclude Include="ShaderResourceTexture.h" />
+    <ClInclude Include="SkyboxObj.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundCollection.h" />
     <ClInclude Include="Client.h" />
@@ -266,6 +267,7 @@
     <ClCompile Include="Potion.cpp" />
     <ClCompile Include="SettingsUI.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
+    <ClCompile Include="SkyboxObj.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="WindowHelper.cpp" />

@@ -75,6 +75,9 @@ bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, ID3D11Tex
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
+	//	textureDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;	//binda till depth stencil
+	// 	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;									//MapUsageTypless(usage);
+
 	if (FAILED(device->CreateTexture2D(&textureDesc, nullptr, &dsTexture)))
 	{
 		std::cerr << "Failed to create depth stencil texture!" << std::endl;

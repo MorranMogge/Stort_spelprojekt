@@ -55,6 +55,7 @@ BasicRenderer::~BasicRenderer()
 {
 	rtv->Release();
 	dsView->Release();
+	dsView2->Release();
 	dsTexture->Release();
 	sampler->Release();
 
@@ -87,6 +88,7 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (this->immediateContext == nullptr)											return false;
 	if (!CreateRenderTargetView(device, swapChain, rtv))							return false;
 	if (!CreateDepthStencil(device, WIDTH, HEIGHT, dsTexture, dsView))				return false;
+	if (!CreateDepthStencil(device, WIDTH, HEIGHT, dsTexture, dsView2))				return false;
 	if (!LoadVertexShader(device, vShader, vShaderByteCode, "VertexShader"))		return false;
 	if (!setUpInputLayout(device, vShaderByteCode))									return false;
 	if (!LoadPixelShader(device, pShader, "PixelShader"))							return false;

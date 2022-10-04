@@ -18,6 +18,7 @@
 #include "LightHandler.h"
 #include "ParticleEmitter.h"
 #include "Potion.h"
+#include "SkyboxObj.h"
 
 struct wirefameInfo
 {
@@ -49,7 +50,7 @@ private:
 	GravityField planetGravityField;
 
 	PhysicsWorld physWolrd;
-
+	SkyboxObj skybox;
 	Camera camera;
 	Player* player;
 	GameObject* planet;

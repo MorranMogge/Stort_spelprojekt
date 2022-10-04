@@ -116,6 +116,7 @@
     <ClCompile Include="ParticleEmitter.cpp">
       <Filter>Particles</Filter>
     </ClCompile>
+    <ClCompile Include="SkyboxObj.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -350,6 +351,7 @@
     <ClInclude Include="ParticleEmitter.h">
       <Filter>Particles</Filter>
     </ClInclude>
+    <ClInclude Include="SkyboxObj.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

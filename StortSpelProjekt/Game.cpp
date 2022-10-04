@@ -29,12 +29,14 @@ void Game::drawObjects(bool drawDebug)
 	//Bind light
 	ltHandler.bindLightBuffers();
 
+	this->skybox.bindSkybox();
+
+
 	//Draw Game objects
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects.at(i)->draw();
 	}
-
 	//Draw light debug meshes
 	if (drawDebug)
 	{

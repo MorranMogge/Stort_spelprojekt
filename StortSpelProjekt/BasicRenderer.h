@@ -15,6 +15,7 @@ private:
 
 	ID3D11RenderTargetView* rtv;
 	ID3D11DepthStencilView* dsView;
+	ID3D11DepthStencilView* dsView2;	//Used for binding as render target
 	ID3D11Texture2D* dsTexture;
 	ID3D11SamplerState* sampler;
 	

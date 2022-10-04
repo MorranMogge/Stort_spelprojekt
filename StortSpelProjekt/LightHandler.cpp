@@ -212,7 +212,8 @@ void LightHandler::addLight(const DirectX::XMFLOAT3 &position, const DirectX::XM
 		this->viewBuffers.push_back(tempBuffer);
 
 		//Create Debug Mesh
-		this->boundingSphere.push_back(new GameObject("../Meshes/Cone", position, direction, lightID));//Id does nothing yet!
+		this->boundingSphere.push_back(new GameObject("../Meshes/Sphere", position, direction, lightID));
+		this->boundingSphere.back()->updateBuffer();
 	}
 	else
 	{

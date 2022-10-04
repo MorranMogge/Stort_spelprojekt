@@ -21,6 +21,7 @@ private:
 	ID3D11InputLayout* inputLayout;
 	ID3D11VertexShader* vShader;
 	ID3D11PixelShader* pShader;
+	ID3D11PixelShader* ApShader;
 
 	ID3D11InputLayout* pt_inputLayout;
 	ID3D11VertexShader* pt_vShader;
@@ -42,4 +43,5 @@ public:
 	bool initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT);
 	void setUpScene(Camera& stageCamera);
 	void geometryPass(Camera & stageCamera);
+	void bindAmbientShader();
 };

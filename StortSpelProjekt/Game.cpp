@@ -57,6 +57,11 @@ void Game::drawObjects(bool drawDebug)
 		gameObjects.at(i)->draw();
 	}
 
+	for (int i = 0; i < subMeshRanges.size(); i++)
+	{
+
+	}
+
 	//Draw light debug meshes
 	if (drawDebug)
 	{
@@ -153,7 +158,13 @@ void Game::handleKeybinds()
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
-	
+	this->vBuff = {};
+	this->iBuff = {};
+	this->manager.setDevice(device);
+	this->manager.loadMeshData("../Meshes/gob.obj");
+	this->manager.getMeshData("../Meshes/gob.obj", vBuff, iBuff, subMeshRanges, vertices);
+
+
 	MaterialLibrary::LoadDefault();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);

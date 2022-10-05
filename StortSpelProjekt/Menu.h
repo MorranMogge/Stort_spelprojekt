@@ -8,11 +8,6 @@
 #include "D3D11Helper.h"
 
 
-
-
-//Ny
-#include "ModelManager.h"
-
 class Menu : public State
 {
 private:

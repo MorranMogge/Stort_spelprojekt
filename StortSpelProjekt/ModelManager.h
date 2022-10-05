@@ -42,6 +42,7 @@ private:
 	ModelDataContainer bank;
 	ID3D11Device* device;
 public:
+	ModelManager();
 	ModelManager(ID3D11Device* device);
 	~ModelManager();
 	bool loadMeshData(const std::string& filePath);
@@ -50,4 +51,5 @@ public:
 	//fills the params with meshdata
 	bool getMeshData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces);
 	std::vector<ID3D11Buffer*> getBuff() const;
+	void setDevice(ID3D11Device* device);
 };

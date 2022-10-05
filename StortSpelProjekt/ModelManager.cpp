@@ -210,6 +210,15 @@ std::vector<ID3D11Buffer*> ModelManager::getBuff() const
 	return this->vecIndexBuff;
 }
 
+void ModelManager::setDevice(ID3D11Device* device)
+{
+	this->device = device;
+}
+
+ModelManager::ModelManager()
+{
+}
+
 ModelManager::ModelManager(ID3D11Device* device)
 {
 	this->device = device;

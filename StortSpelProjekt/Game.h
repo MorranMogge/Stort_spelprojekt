@@ -1,5 +1,7 @@
 #pragma once
+#define NOMINMAX
 #include "GameInclude.h"
+#include "ModelManager.h"
 
 struct wirefameInfo
 {
@@ -11,7 +13,7 @@ class Game : public State
 {
 private:
 	ID3D11DeviceContext* immediateContext;
-
+	ModelManager manager;
 	ImGuiHelper imGui;
 	bool wireframe = true;
 	bool objectDraw = true;

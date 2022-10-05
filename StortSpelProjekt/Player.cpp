@@ -90,49 +90,18 @@ void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& camera
 
     if (state.IsConnected())
     {
-        if (state.IsAPressed())
-        {
-            std::cout << "A is pressed\n";
-            //gamePad->SetVibration(0, 1.f, 1.f);
-        }
-        else
-        {
-            //gamePad->SetVibration(0, 0.f, 0.f);
-
-        }
-
-        // Do action for button A being down
-
-        if (state.buttons.y)
-        {
-            std::cout << "Y is pressed\n";
-        }
-        // Do action for button Y being down
-
-        if (state.IsDPadLeftPressed())
-        {
-            std::cout << "DPAD Left is down\n";
-        }
-        // Do action for DPAD Left being down
-
-        if (state.dpad.up || state.dpad.down || state.dpad.left || state.dpad.right)
-        {
-            std::cout << "DPAD\n";
-        }
-        // Do action based on any DPAD change
-
         float posx = state.thumbSticks.leftX;
         float posy = state.thumbSticks.leftY;
         // These values are normalized to -1 to 1
 
         if (posy >= 1)
         {
-            std::cout << "Y >= 1\n";
+            //std::cout << "Y >= 1\n";
             position += playerForwardVec;
         }
         else if (posy <= -1)
         {
-            std::cout << "Y >= -1\n";
+            //std::cout << "Y >= -1\n";
             position -= playerForwardVec;
         }
 
@@ -145,7 +114,36 @@ void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& camera
         {
             position -= playerRightVec;
         }
+
+        if (posy <= 0.90 && 0.50 <= posy && 0.1 <= posx && posx <= 0.90)
+        {
+            position += playerForwardVec;
+            position += playerRightVec;
+            //std::cout << "diagonal\n";
+        }
         
+        if (posy <= 0.90 && 0.50 <= posy && -1 <= posx && posx <= 0)
+        {
+            position += playerForwardVec;
+            position -= playerRightVec;
+        }
+      
+        //if (posy <= -1 && 0.f <= posy/* && 1.f <= posx && posx <= 0*/)
+        //{
+        //    position -= playerForwardVec;
+        //    position -= playerRightVec;
+        //}
+
+        if (posy <= 0.0 && -0.50 <= posy && 0.1 <= posx && posx <= 0.90)
+        {
+            position += playerForwardVec;
+            position += playerRightVec;
+        }
+
+        
+
+        std::cout << "Posx: " << posx << "\t" << "Posy: " << posy << "\n";
+
         float throttle = state.triggers.right;
         // This value is normalized 0 -> 1
 
@@ -164,14 +162,7 @@ void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& camera
         {
             std::cout << "Left stick down\n";
         }
-
-
-
-        // This is an alias for the Xbox 360 'Back' button
-        // which is called 'View' on the Xbox One controller.
     }
-
-
 }
 
 bool Player::pickupItem(Item* itemToPickup, const std::unique_ptr<DirectX::GamePad>& gamePad)
@@ -180,17 +171,11 @@ bool Player::pickupItem(Item* itemToPickup, const std::unique_ptr<DirectX::GameP
 
     auto state = gamePad->GetState(0);
 
-    
     if (Input::KeyDown(KeyCode::SPACE) || state.IsAPressed())
     {
         if (this->withinRadius(itemToPickup, 5))
         {
-            addItem(itemToPickup);
-
-            Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
-            if (tmp)
-                tmp->setPlayerptr(this);
-               
+            addItem(itemToPickup);    
             successfulPickup = true;
         }
     }

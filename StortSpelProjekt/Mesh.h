@@ -81,7 +81,7 @@ public:
 		std::vector<unsigned int> indices32;
 		std::vector<unsigned short> indices16;
 
-		const bool is16bit = vertices.size() > 65535;
+		const bool is16bit = vertices.size() < 65535;
 
 		//foreach vertex in submesh
 		for (auto& vertex : vertices)

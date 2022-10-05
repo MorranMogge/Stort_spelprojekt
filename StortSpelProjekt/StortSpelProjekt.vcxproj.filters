@@ -113,7 +113,9 @@
     <ClCompile Include="Client.cpp">
       <Filter>User</Filter>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp">
+      <Filter>Particles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -288,6 +290,9 @@
     <ClInclude Include="GPU.h">
       <Filter>Structs</Filter>
     </ClInclude>
+    <ClInclude Include="ImGui\imconfig.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Structs</Filter>
     </ClInclude>
@@ -342,10 +347,8 @@
     <ClInclude Include="Client.h">
       <Filter>User</Filter>
     </ClInclude>
-    <ClInclude Include="GameInclude.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="ImGui\imconfig.h">
-      <Filter>ImGui</Filter>
+    <ClInclude Include="ParticleEmitter.h">
+      <Filter>Particles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -394,6 +397,9 @@
     <Filter Include="User">
       <UniqueIdentifier>{ecab4726-7e3a-4e25-9b94-e03ac70687bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Particles">
+      <UniqueIdentifier>{1fe17447-53de-446c-a837-95b1c590f2f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl" />
@@ -407,10 +413,27 @@
     <FxCompile Include="VertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="PT_GeometryShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PT_PixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PT_UpdateShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PT_VertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico">
       <Filter>GUI</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Light.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

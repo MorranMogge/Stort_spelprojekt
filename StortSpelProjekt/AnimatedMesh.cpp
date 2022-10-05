@@ -6,6 +6,15 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 	aiMatrix4x4 transformMatrix = node->mTransformation;
 }
 
+void AnimatedMesh::InterpolateRotation(aiQuaternion& res, float animationTime, const aiNodeAnim* animationNode)
+{
+	if (animationNode->mNumRotationKeys == 1)
+	{
+		res = animationNode->mRotationKeys[0].mValue;
+		return;
+	}
+}
+
 AnimatedMesh::AnimatedMesh(ID3D11Device* device, std::vector<vertex> vertexTriangle, std::vector<DWORD> indexTriangle)
 	:Mesh2(device, vertexTriangle, indexTriangle)
 {

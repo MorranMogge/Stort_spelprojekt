@@ -32,7 +32,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		if (dataSize > 0)
 		{
 			std::unique_ptr<BYTE[]> rawdata = std::make_unique<BYTE[]>(dataSize);
-			if (GetRawInputData(reinterpret_cast<HRAWINPUT>(lParam), RID_INPUT, rawdata.get(), &dataSize, sizeof(RAWINPUTHEADER)) == dataSize);
+			if (GetRawInputData(reinterpret_cast<HRAWINPUT>(lParam), RID_INPUT, rawdata.get(), &dataSize, sizeof(RAWINPUTHEADER)) == dataSize)
 			{
 				RAWINPUT* raw = reinterpret_cast<RAWINPUT*>(rawdata.get());
 				if (raw->header.dwType == RIM_TYPEMOUSE)
@@ -55,7 +55,7 @@ bool SetupWindow(HINSTANCE instance, UINT& width, UINT& height, int nCmdShow, HW
 	static bool raw_input_initialized = false;
 	if (raw_input_initialized == false)
 	{
-		RAWINPUTDEVICE rid;
+		RAWINPUTDEVICE rid = {};
 
 		rid.usUsagePage = 0x01; // mouse
 		rid.usUsage = 0x02;
@@ -90,7 +90,7 @@ bool SetupWindow(HINSTANCE instance, UINT& width, UINT& height, int nCmdShow, HW
 
 	RegisterClassEx(&wc);
 
-	RECT wr = { 0, 0, width, height };
+	RECT wr = { 0, 0, LONG(width), LONG(height) };
 
 	window = CreateWindowEx(
 		0, //style, 0, not need style

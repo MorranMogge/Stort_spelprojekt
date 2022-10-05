@@ -52,26 +52,23 @@ void Game::drawObjects(bool drawDebug)
 	ltHandler.bindLightBuffers();
 
 	//Draw Game objects
-	for (int i = 0; i < gameObjects.size(); i++)
-	{
-		gameObjects.at(i)->draw();
-	}
+	//for (int i = 0; i < gameObjects.size(); i++)
+	//{
+	//	gameObjects.at(i)->draw();
+	//}
 
 	int startIndex = 0;
 	int startVertex = 0;
-	//GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-	//GPU::immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
-	//for (int i = 0; i < subMeshRanges.size(); i++)
-	//{
-	//
-	//	GPU::immediateContext->DrawIndexed(subMeshRanges[i], startIndex, startVertex);
-	//	startVertex += this->verticesRanges[i];
-	//	startIndex += subMeshRanges[i];
-	//}
-
+	UINT offset = 0;
+	UINT stride = sizeof(vertex);
+	GPU::immediateContext->IASetVertexBuffers(0, 1, &vBuff, &stride, &offset);
+	GPU::immediateContext->IASetIndexBuffer(iBuff, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
 	for (int i = 0; i < subMeshRanges.size(); i++)
 	{
-
+	
+		GPU::immediateContext->DrawIndexed(subMeshRanges[i], startIndex, startVertex);
+		startVertex += this->verticies[i];
+		startIndex += subMeshRanges[i];
 	}
 
 	//Draw light debug meshes
@@ -175,7 +172,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->manager.setDevice(device);
 	this->manager.loadMeshData("../Meshes/gob.obj");
 	this->manager.getMeshData("../Meshes/gob.obj", vBuff, iBuff, subMeshRanges, verticies);
-
+	this->textures = this->manager.getTextureMaps();
 
 	MaterialLibrary::LoadDefault();
 

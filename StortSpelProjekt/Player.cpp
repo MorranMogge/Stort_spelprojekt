@@ -1,12 +1,15 @@
+#include "PhysicsComponent.h"
 #include "Player.h"
 #include "DirectXMathHelper.h"
+#include "Potion.h"
+using namespace DirectX;
 
-Player::Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
+Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
     :GameObject(useMesh, pos, rot, id), health(69), holdingItem(nullptr)
 {
 }
 
-Player::Player(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
+Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
 	:GameObject(objectPath, pos, rot, id), health(69), holdingItem(nullptr)
 {
 }
@@ -46,7 +49,7 @@ void Player::handleInputs()
 
 }
 
-void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, float deltaTime)
+void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, const float& deltaTime)
 {
     //Variables
     float rotationConstant = 0;
@@ -128,15 +131,13 @@ void Player::releaseItem()
     this->holdingItem = nullptr;
 }
 
-bool Player::withinRadius(Item* itemToLookWithinRadius, float radius) const
+bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) const
 {
-    using namespace DirectX;
-
-    XMFLOAT3 objPos = itemToLookWithinRadius->getPos();
-    XMFLOAT3 selfPos = this->getPos();
+    DirectX::XMFLOAT3 objPos = itemToLookWithinRadius->getPos();
+    DirectX::XMFLOAT3 selfPos = this->getPos();
     bool inRange = false;
 
-    XMFLOAT3 vecToObject = selfPos;
+    DirectX::XMFLOAT3 vecToObject = selfPos;
     subtractionXMFLOAT3(vecToObject, objPos);
 
     float lengthToVec = getLength(vecToObject);
@@ -148,19 +149,35 @@ bool Player::withinRadius(Item* itemToLookWithinRadius, float radius) const
     return inRange;
 }
 
+bool Player::repairedShip() const
+{
+    return repairCount>=4;
+}
+
 void Player::update()
 {
     if (holdingItem != nullptr)
     {
         holdingItem->setPos({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f });
+        holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f }));
         if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
         {
+            DirectX::XMFLOAT3 temp;
+            DirectX::XMStoreFloat3(&temp, this->playerForwardVec);
+            newNormalizeXMFLOAT3(temp);
+            holdingItem->getPhysComp()->applyLocalTorque(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z *1000));
+            holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * 10000, temp.y * 10000, temp.z * 10000));
             holdingItem->setPos({ this->getPos().x, this->getPos().y, this->getPos().z });
             holdingItem = nullptr;
         }
         else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
         {
             holdingItem->useItem();
+            repairCount++;
+            std::cout << "Progress " << repairCount << "/4\n";
+            //holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ 50.f, 50.f, 50.f }));
+            holdingItem->getPhysComp()->setIsAllowedToSleep(true);
+            holdingItem->getPhysComp()->setIsSleeping(true);
             holdingItem = nullptr;
         }
     }

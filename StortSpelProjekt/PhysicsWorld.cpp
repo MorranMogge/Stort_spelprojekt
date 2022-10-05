@@ -1,8 +1,12 @@
 #include "PhysicsWorld.h"
+
+#include <time.h>
 #include "GPU.h"
 #include "ShaderLoader.h"
-#include <time.h>
 #include "DirectXMathHelper.h"
+
+#include "GameObject.h"
+#include "PhysicsComponent.h"
 
 void PhysicsWorld::setUpBaseScenario()
 {
@@ -246,21 +250,35 @@ void PhysicsWorld::addBoxToWorld(DirectX::XMFLOAT3 dimensions, float mass, Direc
 {
 	if (position.x == 0 && position.y == 10 && position.z == 0)
 	{
-		float x = 30.f - 2.f * (float)(rand() % 31);
-		float y = 30.f - 2.f * (float)(rand() % 31);
-		float z = 30.f - 2.f * (float)(rand() % 31);
+		float x = 50.f - 2.f * (float)(rand() % 61);
+		float y = 50.f - 2.f * (float)(rand() % 61);
+		float z = 50.f - 2.f * (float)(rand() % 61);
 		position = DirectX::XMFLOAT3(x, y, z);
 	}
 	int vectorSize = this->physObjects.size();
 	physObjects.emplace_back(new PhysicsComponent());
 	physObjects[vectorSize]->initiateComponent(&this->com, this->world);
 	physObjects[vectorSize]->setPosition(reactphysics3d::Vector3(position.x, position.y, position.z));
-	physObjects[vectorSize]->setLinearDampning(1.f);
+	physObjects[vectorSize]->setLinearDampning(0.3f);
 	//UPDATE THE VERTEX BUFFER TO BE ABLE TO DRAW THE NEW PHYSOBJECTS
 	this->recreateVertexBuffer();
 }
 
 void PhysicsWorld::addSphereToWorld(float radius, DirectX::XMFLOAT3 position)
 {
+}
+
+void PhysicsWorld::addPhysComponent(GameObject* gameObj, reactphysics3d::CollisionShapeName shape)
+{
+	PhysicsComponent* newComp = new PhysicsComponent();
+	newComp->initiateComponent(&this->com, this->world, shape);
+	newComp->setPosition({ gameObj->getPos().x, gameObj->getPos().y, gameObj->getPos().z });
+	newComp->setLinearDampning(0.3f);
+	newComp->applyWorldTorque(reactphysics3d::Vector3(10000000, 0, 0));
+	gameObj->setPhysComp(newComp);
+	newComp->setParent(gameObj);
+	physObjects.emplace_back(newComp);
+
+	this->recreateVertexBuffer();
 }
 

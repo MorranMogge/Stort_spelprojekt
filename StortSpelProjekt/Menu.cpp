@@ -5,8 +5,6 @@
 #include "Topology.h"
 #include "GameObject.h"
 
-using namespace DirectX::SimpleMath;
-
 void Menu::UpdateConstanBuffer()
 {
 }

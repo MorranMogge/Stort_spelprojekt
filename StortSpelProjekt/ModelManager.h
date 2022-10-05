@@ -65,6 +65,7 @@ private:
 	int findAndAddBoneID(std::string name);
 	int findBoneID(const std::string& name);
 
+	void readAnimations(aiScene* scene);
 public:
 	ModelManager(ID3D11Device* device);
 	bool loadMeshData(const std::string& filePath);

@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX
 #include "PhysicsWorld.h"
 #include "State.h"
 #include "BasicRenderer.h"

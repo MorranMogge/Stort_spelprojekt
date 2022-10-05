@@ -113,6 +113,10 @@
     <ClCompile Include="Client.cpp">
       <Filter>User</Filter>
     </ClCompile>
+    <ClCompile Include="ModelManager.cpp" />
+    <ClCompile Include="ModelDataContainer.cpp" />
+    <ClCompile Include="mesh2.cpp" />
+    <ClCompile Include="AnimatedMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -344,6 +348,10 @@
     <ClInclude Include="Client.h">
       <Filter>User</Filter>
     </ClInclude>
+    <ClInclude Include="ModelManager.h" />
+    <ClInclude Include="ModelDataContainer.h" />
+    <ClInclude Include="mesh2.h" />
+    <ClInclude Include="AnimatedMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

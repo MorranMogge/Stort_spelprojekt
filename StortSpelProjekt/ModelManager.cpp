@@ -332,6 +332,14 @@ int ModelManager::findBoneID(const std::string& name)
 	return bone_ID;
 }
 
+void ModelManager::readAnimations(aiScene* scene)
+{
+	if (scene->HasAnimations())
+	{
+
+	}
+}
+
 ModelManager::ModelManager(ID3D11Device* device)
 {
 	this->device = device;

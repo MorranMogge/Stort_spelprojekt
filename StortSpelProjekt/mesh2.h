@@ -34,6 +34,6 @@ protected:
     HRESULT CreateVertexBuffer(std::vector<vertex> vertexTriangle);
 public:
     Mesh2(ID3D11Device* device, std::vector<vertex> vertexTriangle, std::vector<DWORD> indexTriangle);
-    void Draw(ID3D11DeviceContext* immediateContext);
+    virtual void Draw(ID3D11DeviceContext* immediateContext);
     Mesh2(const Mesh2& mesh);
 };

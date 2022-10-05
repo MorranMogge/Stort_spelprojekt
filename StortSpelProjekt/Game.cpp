@@ -1,6 +1,6 @@
 #include "Game.h"
 #include "DirectXMathHelper.h"
-
+#include "ModelManager.h"
 
 
 void Game::loadObjects()
@@ -63,6 +63,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->window = &window;
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
+	ModelManager MM(device);
+	MM.loadMeshData("../Meshes/gobbb.fbx");
 }
 
 Game::~Game()

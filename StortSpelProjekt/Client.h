@@ -5,6 +5,7 @@
 #include "Player.h"
 
 #include "Player.h"
+#include "../Server/PacketsDataTypes.h"
 
 struct movePlayerEvent
 {

@@ -7,6 +7,8 @@
 #include <thread>
 #include <vector>
 #include "player.h"
+#include "PacketsDataTypes.h"
+#include "Packethandler.h"
 
 const short MAXNUMBEROFPLAYERS = 1;
 
@@ -176,11 +178,12 @@ void acceptPlayers(serverData& data)
 	}
 };
 
-void sendDataAllPlayers(sf::Packet& packet, serverData& data)
+void sendDataAllPlayers(testPosition &posData, serverData& serverData)
 {
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
-		if (data.users[i].tcpSocket.send(packet) != sf::Socket::Done)
+		std::size_t recvSize;
+		if (serverData.users[i].tcpSocket.send(&posData, sizeof(testPosition), recvSize) != sf::Socket::Done)
 		{
 			//error
 			//std::cout << "Couldnt send data to player from array slot: " << std::to_string(i) << std::endl;
@@ -256,7 +259,15 @@ int extractPacketId(sf::Packet& packet)
 	return packetIdentifier;
 };
 
-void recvData(void* param, userData* user)
+float extractBinaryPacketId(void*& pointerToData)
+{
+	float idPacket;
+	memcpy(&idPacket, pointerToData, sizeof(int));
+	
+	return idPacket;
+}
+
+void recvData(void* param, userData* user)//thread to recv data
 {
 	threadInfo* data = (threadInfo*)param;
 	sf::Packet packet;
@@ -264,22 +275,42 @@ void recvData(void* param, userData* user)
 	std::cout << "ip from socket in thread: " << user->tcpSocket.getRemoteAddress().toString() << std::endl;
 	while (1)
 	{
-		if (user->tcpSocket.receive(packet) != sf::Socket::Done)
+		//std::size_t recvSize;
+		std::size_t recv;
+		char datapointer[256];
+
+		if (user->tcpSocket.receive(&datapointer,256,recv) != sf::Socket::Done)
 		{
 			//error
 		}
 		else
 		{
 			//checks what id the packet is
-			int packetId = extractPacketId(packet);
-			std::cout << "thread from recvData got a packet from: " << user->tcpSocket.getRemoteAddress().toString() << ", Packet id: " << std::to_string(packetId) << std::endl;
+			//int packetId = extractPacketId(packet);
+			//std::cout << "thread from recvData got a packet from: " << user->tcpSocket.getRemoteAddress().toString() << ", Packet id: " << std::to_string(packetId) << std::endl;
 
-			//if id is 3, player sets position 
-			if (packetId == 3)
-			{
-				packet >> data->pos[0] >> data->pos[1] >> data->pos[2];
-				std::cout << "Position recv: " << std::to_string(data->pos[0]) << ", " << std::to_string(data->pos[1]) << ", " << std::to_string(data->pos[2]) << std::endl;
-			}
+			////if id is 3, player sets position 
+			//if (packetId == 3)
+			//{
+			//	packet >> data->pos[0] >> data->pos[1] >> data->pos[2];
+			//	std::cout << "Position recv: " << std::to_string(data->pos[0]) << ", " << std::to_string(data->pos[1]) << ", " << std::to_string(data->pos[2]) << std::endl;
+			//}
+
+			void* dta = extractData(datapointer, recv);
+			float packId = extractBinaryPacketId(dta);
+
+			memcpy(dta, datapointer, recv);
+			
+			testPosition *wow = (testPosition*)dta;
+			
+			std::cout << "testing binary packetId: " << std::to_string(wow->packetId) << std::endl;
+
+			data->pos[0] = wow->x;
+			data->pos[1] = wow->y;
+			data->pos[2] = wow->z;
+			
+			//data->user->playa.setPosition(wow->x, wow->y, wow->z);
+
 		}
 		
 		//std::cout << "userName: " << data->user->userName << std::endl;
@@ -354,7 +385,7 @@ int main()
 	
 	acceptPlayers(data);
 
-	sendIdToAllPlayers(data);
+	//sendIdToAllPlayers(data);
 
 	std::thread* recvThread[MAXNUMBEROFPLAYERS];
 	threadInfo threadData[MAXNUMBEROFPLAYERS];
@@ -402,18 +433,19 @@ int main()
 			//för varje spelare så skicka deras position till alla klienter
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{
-				sf::Packet tempPack;
-				float x = data.users[i].playa.getposition('x');
-				float y = data.users[i].playa.getposition('y');
-				float z = data.users[i].playa.getposition('z');
-				int playerid = data.users[i].playerId;
-				unsigned short packId = 3;
-				//sending position data to all players
-				tempPack << packId << playerid << x << y << z;
+				testPosition pos;
 				
-				std::cout << "data to send x: " << std::to_string(x) << ", y: " << std::to_string(y) << ", z: " << std::to_string(z) << std::endl;
+				pos.x = data.users[i].playa.getposition('x');
+				pos.y = data.users[i].playa.getposition('y');
+				pos.z = data.users[i].playa.getposition('z');
+				pos.playerId = i;
+				pos.packetId = 4;
+				//sending position data to all players
+				//tempPack << packId << playerid << x << y << z;
+				
+				std::cout << "data to send x: " << std::to_string(pos.x) << ", y: " << std::to_string(pos.y) << ", z: " << std::to_string(pos.z) << std::endl;
 
-				sendDataAllPlayers(tempPack, data);
+				sendDataAllPlayers(pos, data);
 			}
 			start = std::chrono::system_clock::now();
 		}

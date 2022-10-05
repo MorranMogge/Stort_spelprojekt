@@ -15,4 +15,5 @@ public:
 	float getposition(char whichPos)const;
 
 	void setPosition(float pos[3]);
+	void setPosition(float x, float y, float z);
 };

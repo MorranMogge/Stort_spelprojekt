@@ -112,12 +112,12 @@ GAMESTATE Game::Update()
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
 	
-	if (client->getChangePlayerPos())
+	/*if (client->getChangePlayerPos())
 	{
 		movePlayerEvent	tmpMovePlayer = client->getMovePlayerEvent();
 		players.at(tmpMovePlayer.affectedPlayerId)->setPos(DirectX::XMFLOAT3(tmpMovePlayer.pos[0], tmpMovePlayer.pos[1], tmpMovePlayer.pos[2]));
 		client->setPlayerRecv(false);
-	}
+	}*/
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength)
 	{
 		client->sendToServerTEMPTCP(currentPlayer);

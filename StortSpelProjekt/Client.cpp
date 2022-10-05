@@ -10,6 +10,22 @@ int extractPacketId(sf::Packet& packet)
 	return packetIdentifier;
 }
 
+int extractPacketId(const char data[])
+{
+	int idPacket;
+	memcpy(&idPacket, data, sizeof(int));
+
+	return idPacket;
+}
+
+//extracts the data thats been received
+void* extractData(const char data[], const std::size_t& recvSize)
+{
+	void* d = malloc(recvSize);
+	memcpy(d, data, recvSize);
+	return d;
+}
+
 void clientFunction(void* param)
 {
 	ThreadInfo* data = (ThreadInfo*)param;
@@ -20,11 +36,16 @@ void clientFunction(void* param)
 	sf::Packet receivedPacket;
 	while (!data->endThread)
 	{
-		data->socket.receive(receivedPacket); //Receives the packet
-		int packetid = extractPacketId(receivedPacket);//extract the id of the packet
+		char receivedData[256];
+		std::size_t recvSize;
+		data->socket.receive(receivedData, 256, recvSize); //Receives the packet
+		int packetid = extractPacketId(receivedData);//extract the id of the packet
 		
+		void* dataStruct = extractData(receivedData, recvSize);
+		testPosition *tst = (testPosition*)dataStruct;
+
 		std::string receivedString;
-		unsigned short packetId;
+		//unsigned short packetId;
 		int playerid;
 		float x = 0.0f;
 		float y = 0.0f;
@@ -44,19 +65,21 @@ void clientFunction(void* param)
 			data->mp_Event.pos[0] = 0.0f;
 			data->mp_Event.pos[1] = 0.0f;
 			data->mp_Event.pos[2] = 0.0f;
-			std::cout << "TCP received data from address: " << data->socket.getRemoteAddress().toString() << std::endl;
-			receivedPacket >> packetId >> playerid >> data->mp_Event.pos[0] >> data->mp_Event.pos[1] >> data->mp_Event.pos[2];
-			std::cout << "data received from server: Packet id: " << std::to_string(packetId) << " player id: " << std::to_string(playerid) <<
-				" x : " << std::to_string(data->mp_Event.pos[0]) << " y: " << std::to_string(data->mp_Event.pos[1]) << 
-				" z: " << std::to_string(data->mp_Event.pos[2]) << std::endl;
+			
 
 			break;
 		case 4:
+			std::cout << "TCP received data from address: " << data->socket.getRemoteAddress().toString() << std::endl;
+			//receivedPacket >> packetId >> playerid >> data->mp_Event.pos[0] >> data->mp_Event.pos[1] >> data->mp_Event.pos[2];
+			std::cout << "data received from server: Packet id: " << std::to_string(packetid) <<
+				" x : " << std::to_string(tst->x) << " y: " << std::to_string(tst->y) <<
+				" z: " << std::to_string(tst->z) << std::endl;
+			//free(tst);
 			break;
 		case 10://receiving id in player vector from server side
 
-			receivedPacket >> data->playerId;
-			std::cout << "player id recv: " << std::to_string(data->playerId) << std::endl;
+			//receivedPacket >> data->playerId;
+			//std::cout << "player id recv: " << std::to_string(data->playerId) << std::endl;
 			break;
 		}
 			
@@ -232,31 +255,31 @@ void Client::sendToServerTcp(std::string buf)
 void Client::sendToServerTEMPTCP( Player*& currentPlayer)
 {
 
-	float x = currentPlayer->getPos().x;
-	float y = currentPlayer->getPos().y;
-	float z = currentPlayer->getPos().z;
+	testPosition testStruct;
+
+	testStruct.packetId = 4;
+	testStruct.playerId = 69;
+	testStruct.x = currentPlayer->getPos().x;
+	testStruct.y = currentPlayer->getPos().y;
+	testStruct.z = currentPlayer->getPos().z;
 	//int playerid = data.users[i].playerId;
 
 	
 
 	sendPacket.clear();
-	unsigned short packetIdentifier = 3;
+	//unsigned short packetIdentifier = 3;
 	
-	sendPacket << packetIdentifier << data.playerId << x << y << z;
+	//returns the nr of bytes sent
+	std::size_t sentSize;
 
-	if (data.socket.send(sendPacket) != sf::Socket::Done)
+	if (data.socket.send(&testStruct,sizeof(testStruct), sentSize) != sf::Socket::Done)
 	{
 		//error
 		std::cout << "TCP Couldnt send packet\n";
 	}
 	else
 	{
-		float sentPos[3];
 
-		unsigned short id;
-		sendPacket >> id >> sentPos[0] >> sentPos[1] >> sentPos[2];
-		std::cout << "TCP sent packet: " << id << ", " << std::to_string(sentPos[0]) << ", " << std::to_string(sentPos[1])
-			<< ", " << std::to_string(sentPos[2]) << std::endl;
 		sendPacket.clear();
 	}
 	

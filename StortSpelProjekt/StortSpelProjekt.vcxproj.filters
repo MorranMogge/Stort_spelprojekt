@@ -348,6 +348,10 @@
     <ClInclude Include="ClientHandler.h">
       <Filter>User</Filter>
     </ClInclude>
+    <ClInclude Include="PacketHandler.h">
+      <Filter>User</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\PacketsDataTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

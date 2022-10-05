@@ -32,3 +32,10 @@ void player::setPosition(float pos[3])
 	this->yPos = pos[1];
 	this->zPos = pos[2];
 }
+
+void player::setPosition(float x, float y, float z)
+{
+	this->xPos = x;
+	this->yPos = y;
+	this->zPos = z;
+}

@@ -57,6 +57,18 @@ void Game::drawObjects(bool drawDebug)
 		gameObjects.at(i)->draw();
 	}
 
+	int startIndex = 0;
+	int startVertex = 0;
+	//GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	//GPU::immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+	//for (int i = 0; i < subMeshRanges.size(); i++)
+	//{
+	//
+	//	GPU::immediateContext->DrawIndexed(subMeshRanges[i], startIndex, startVertex);
+	//	startVertex += this->verticesRanges[i];
+	//	startIndex += subMeshRanges[i];
+	//}
+
 	for (int i = 0; i < subMeshRanges.size(); i++)
 	{
 
@@ -162,7 +174,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->iBuff = {};
 	this->manager.setDevice(device);
 	this->manager.loadMeshData("../Meshes/gob.obj");
-	this->manager.getMeshData("../Meshes/gob.obj", vBuff, iBuff, subMeshRanges, vertices);
+	this->manager.getMeshData("../Meshes/gob.obj", vBuff, iBuff, subMeshRanges, verticies);
 
 
 	MaterialLibrary::LoadDefault();

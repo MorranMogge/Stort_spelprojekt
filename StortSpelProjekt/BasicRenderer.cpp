@@ -61,7 +61,6 @@ BasicRenderer::~BasicRenderer()
 	inputLayout->Release();
 	vShader->Release();
 	pShader->Release();
-	ApShader->Release();
 
 	pt_inputLayout->Release();
 	pt_vShader->Release();
@@ -90,7 +89,6 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadVertexShader(device, vShader, vShaderByteCode, "VertexShader"))		return false;
 	if (!setUpInputLayout(device, vShaderByteCode))									return false;
 	if (!LoadPixelShader(device, pShader, "PixelShader"))							return false;
-	if (!LoadPixelShader(device, ApShader, "AmbientPixelShader"))					return false;
 	if (!LoadVertexShader(device, pt_vShader, vShaderByteCode, "PT_VertexShader"))	return false;
 	if (!setUp_PT_InputLayout(device, vShaderByteCode))								return false;
 	if (!LoadPixelShader(device, pt_pShader, "PT_PixelShader"))						return false;
@@ -137,9 +135,4 @@ void BasicRenderer::geometryPass(Camera& stageCamera)
 	immediateContext->GSSetConstantBuffers(0, 2, tempBuff.data());						//Set camera pos for ,Set matrix [world],[view]
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
 
-}
-
-void BasicRenderer::bindAmbientShader()
-{
-	immediateContext->PSSetShader(ApShader, nullptr, 0);
 }

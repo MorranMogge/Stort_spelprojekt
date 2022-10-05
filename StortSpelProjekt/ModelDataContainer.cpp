@@ -73,3 +73,18 @@ void ModelDataContainer::addMeshBuffers(std::string key, ID3D11Buffer* vertexBuf
 
 	this->meshMap.insert(std::pair<std::string, std::tuple<ID3D11Buffer*, ID3D11Buffer*, std::vector<int>, std::vector<int>>>(key, newTup));
 }
+
+void ModelDataContainer::release()
+{
+	for (this->srvIt = this->srvMap.begin(); this->srvIt != this->srvMap.end(); this->srvIt++)
+	{
+		this->srvIt->second->Release();
+	}
+	std::tuple<ID3D11Buffer*, ID3D11Buffer*, std::vector<int>, std::vector<int>> delTupel;
+	for (this->meshIt = this->meshMap.begin(); this->meshIt != this->meshMap.end(); this->meshIt++)
+	{
+		delTupel = this->meshIt->second;
+		std::get<0>(delTupel)->Release();
+		std::get<1>(delTupel)->Release();
+	}
+}

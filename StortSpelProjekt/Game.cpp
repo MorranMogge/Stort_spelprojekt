@@ -57,19 +57,22 @@ void Game::drawObjects(bool drawDebug)
 	//	gameObjects.at(i)->draw();
 	//}
 
-	int startIndex = 0;
-	int startVertex = 0;
-	UINT offset = 0;
-	UINT stride = sizeof(vertex);
-	GPU::immediateContext->IASetVertexBuffers(0, 1, &vBuff, &stride, &offset);
-	GPU::immediateContext->IASetIndexBuffer(iBuff, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
-	for (int i = 0; i < subMeshRanges.size(); i++)
-	{
+	//GPU::immediateContext->PSSetShaderResources(0, 1, &this->textures[0]);
 	
-		GPU::immediateContext->DrawIndexed(subMeshRanges[i], startIndex, startVertex);
-		startVertex += this->verticies[i];
-		startIndex += subMeshRanges[i];
-	}
+	//MaterialLibrary::textures["default_Ambient.png"].BindToPS(1);
+	//int startIndex = 0;
+	//int startVertex = 0;
+	//UINT offset = 0;
+	//UINT stride = sizeof(vertex);
+	//GPU::immediateContext->IASetVertexBuffers(0, 1, &vBuff, &stride, &offset);
+	//GPU::immediateContext->IASetIndexBuffer(iBuff, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+	//for (int i = 0; i < subMeshRanges.size(); i++)
+	//{
+	//
+	//	GPU::immediateContext->DrawIndexed(subMeshRanges[i], startIndex, startVertex);
+	//	startVertex += this->verticies[i];
+	//	startIndex += subMeshRanges[i];
+	//}
 
 	//Draw light debug meshes
 	if (drawDebug)
@@ -171,10 +174,12 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->iBuff = {};
 	this->manager.setDevice(device);
 	this->manager.loadMeshData("../Meshes/gob.obj");
-	this->manager.getMeshData("../Meshes/gob.obj", vBuff, iBuff, subMeshRanges, verticies);
-	this->textures = this->manager.getTextureMaps();
+	//this->manager.getMeshData("../Meshes/gob.obj", vBuff, iBuff, subMeshRanges, verticies);
+	//this->textures = this->manager.getTextureMaps();
 
 	MaterialLibrary::LoadDefault();
+
+	
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
@@ -202,7 +207,7 @@ Game::~Game()
 			delete this->gameObjects.at(i);
 		}
 	}
-
+	
 	wireBuffer->Release();
 }
 

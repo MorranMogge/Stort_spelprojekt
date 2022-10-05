@@ -19,6 +19,7 @@ public:
 
 	void addSrv(std::string key, ID3D11ShaderResourceView* srv);
 	void addMeshBuffers(std::string key, ID3D11Buffer* vertexBuf, ID3D11Buffer* indexBuf, std::vector<int>& subMeshRanges, std::vector<int>& amountOfVertces);
+	void release();
 private:
 
 	enum tupelOrder

@@ -1,5 +1,8 @@
 #pragma once
 
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+
 #include "OBJ.h"
 
 #include <vector>
@@ -47,7 +50,6 @@ public:
 
 	void Load(OBJ& obj)
 	{
-		using namespace DirectX::SimpleMath;
 #pragma region LoadObj
 
 		std::vector<Vertex> vertices;
@@ -82,7 +84,7 @@ public:
 		std::vector<unsigned int> indices32;
 		std::vector<unsigned short> indices16;
 
-		const bool is16bit = vertices.size() > 65535;
+		const bool is16bit = vertices.size() < 65535;
 
 		//foreach vertex in submesh
 		for (auto& vertex : vertices)
@@ -214,24 +216,23 @@ public:
 	}
 	void UpdateCB()
 	{
-		using namespace DirectX::SimpleMath;
 		using namespace DirectX;
 
 		static MatrixS worldS;
 
-		worldS.matrix = 
-			DirectX::XMFLOAT4X4{
-				1, 0, 0, position.x,
-				0, 1, 0, position.y,
-				0, 0, 1, position.z,
-				0, 0, 0, 1
-			};
-		//XMStoreFloat4x4(&worldS.matrix, { ((XMMatrixRotationZ(this->rotation.z * XM_PI) * XMMatrixRotationY(this->rotation.y * XM_PI) * XMMatrixRotationX(this->rotation.x * XM_PI)) * XMMatrixTranslation(this->position.x, this->position.y, this->position.z) * XMMatrixScaling(1.0f, 1.0f, 1.0f)) });
+		//worldS.matrix = 
+		//	DirectX::XMFLOAT4X4{
+		//		1, 0, 0, position.x,
+		//		0, 1, 0, position.y,
+		//		0, 0, 1, position.z,
+		//		0, 0, 0, 1
+		//	};
+		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * (XMMatrixRotationZ(this->rotation.z * XM_PI) *  XMMatrixRotationX(this->rotation.x * XM_PI)) * XMMatrixRotationY(this->rotation.y * XM_PI) * XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
 
 		worldCB.Update(&worldS, sizeof(MatrixS));
 
 		static VectorS positionS;
-		positionS.vector = Vector4(position);
+		positionS.vector = DirectX::SimpleMath::Vector4(position);
 		positionCB.Update(&positionS, sizeof(VectorS));
 	}
 	void CreateCB()

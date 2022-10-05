@@ -48,7 +48,6 @@ struct OBJ
 	}
 	OBJ(const std::string loadPath)
 	{
-		using namespace DirectX::SimpleMath;
 
 		std::ifstream in(loadPath + ".obj");
 
@@ -99,9 +98,9 @@ struct OBJ
 			std::stringstream line;
 
 			//reuse variables
-			Vector3 v;
-			Vector2 vt;
-			Vector3 vn;
+			DirectX::SimpleMath::Vector3 v;
+			DirectX::SimpleMath::Vector2 vt;
+			DirectX::SimpleMath::Vector3 vn;
 			std::string s;
 			std::string groupName;
 

@@ -1,27 +1,26 @@
 #include "GUIText.h"
 #include <SpriteFont.h>
 #include <string>
-using namespace DirectX::SimpleMath;
 
 GUIText::GUIText()
 {
-    
+
 }
 
 GUIText::GUIText(const float x, const float y, const float layer)
 {
-    m_Position = Vector2(x, y);
-    m_Scale = Vector2(1, 1);
+    m_Position = DirectX::SimpleMath::Vector2(x, y);
+    m_Scale = DirectX::SimpleMath::Vector2(1, 1);
     m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
     m_Alpha = 1.0f;
     m_Rotation = 0.0f;
     m_Layer = layer;
 }
 
-GUIText::GUIText(const Vector2& position, const float layer)
+GUIText::GUIText(const DirectX::SimpleMath::Vector2& position, const float layer)
 {
     m_Position = position;
-    m_Scale = Vector2(1, 1);
+    m_Scale = DirectX::SimpleMath::Vector2(1, 1);
     m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
     m_Alpha = 1.0f;
     m_Rotation = 0.0f;
@@ -43,7 +42,7 @@ void GUIText::Load(ID3D11Device* device, const wchar_t* file)
     spriteFont = std::make_unique<DirectX::SpriteFont>(device, file);
 
     //spriteFont->MeasureDrawBounds(m_text.c_str(), m_Position);
-    
+
     m_Origin = DirectX::SimpleMath::Vector2(0.0f, 0.0f); //origin = center of texture also important to rotate as rotates around centrepoint
     m_SourceRect.left = 0;
     m_SourceRect.top = 0;

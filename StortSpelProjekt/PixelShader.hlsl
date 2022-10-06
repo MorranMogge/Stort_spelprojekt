@@ -15,7 +15,7 @@ Texture2D specularTex : register(t2);
 Texture2DArray shadowMaps : register(t3);
 StructuredBuffer<Light> lights : register(t4); //Structured buffer with Light data
 Texture2D depthTex : register(t5);
-TextureCube txCube : register(t7);
+TextureCube txCube : register(t6);
 SamplerState samplerState : register(s0);
 
 cbuffer Mat : register(b0)
@@ -37,12 +37,12 @@ cbuffer numLightBuffer : register(b2)
 float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : UV, float4 worldPosition : WorldPosition, float3 localPosition : LocalPosition) : SV_TARGET
 {
 
-    //if (depthTex.Sample(samplerState, uv).r == 1.0f)
-    //{
-    //    float3 reflectVector = normalize(cameraPosition.xyz - localPosition);
-    //    reflectVector = reflect(reflectVector, normal);
-    //    return txCube.Sample(samplerState, reflectVector);
-    //}
+    if (depthTex.Sample(samplerState, uv).r == 1.0f)
+    {
+        float3 reflectVector = normalize(cameraPosition.xyz - localPosition);
+        reflectVector = reflect(reflectVector, normal);
+        return txCube.Sample(samplerState, reflectVector);
+    }
     
     
     float3 ambient = ambientTex.Sample(samplerState, uv).xyz * mat.ambient.xyz;

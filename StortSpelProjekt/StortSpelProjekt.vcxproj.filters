@@ -49,6 +49,7 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightHandler.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerVectors.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bound.h" />
@@ -143,6 +144,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightHandler.h" />
     <ClInclude Include="StructuredBuffer.h" />
+    <ClInclude Include="PlayerVectors.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -161,5 +163,7 @@
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl" />
     <FxCompile Include="PixelShader.hlsl" />
+    <FxCompile Include="playerVectorVertex.hlsl" />
+    <FxCompile Include="plaverVectorPixel.hlsl" />
   </ItemGroup>
 </Project>

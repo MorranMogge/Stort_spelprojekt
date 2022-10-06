@@ -1,17 +1,18 @@
 #include "GameObject.h"
 
 GameObject::GameObject(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
-	:position(pos), rotation(rot), mesh(useMesh), objectID(id)
+	:position(pos), mesh(useMesh), objectID(id)
 {
 	// set position
 	mesh->position = pos;
 
 	// set rotation
-	mesh->rotation = rot;
+	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMVectorSet(rot.x, rot.y, rot.z, 1.0f));
+	this->mesh->rotation = this->rotation;
 }
 
 GameObject::GameObject(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
-	:position(pos), rotation(rot), objectID(id)
+	:position(pos), objectID(id)
 {
 	// load obj file
 	OBJ testObj(objectPath);
@@ -29,7 +30,8 @@ GameObject::GameObject(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::X
 	this->mesh->position = pos;
 
 	// set rotation
-	this->mesh->rotation = rot;
+	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMVectorSet(rot.x, rot.y, rot.z, 1.0f));
+	this->mesh->rotation = this->rotation;
 }
 
 GameObject::GameObject()
@@ -50,7 +52,8 @@ GameObject::GameObject()
 	this->mesh->position = { 0, 0, 0 };
 
 	// set rotation
-	this->mesh->rotation = { 0, 0, 0 };
+	this->mesh->rotation = DirectX::XMMatrixIdentity();
+	this->rotation = DirectX::XMMatrixIdentity();
 
 	//Update constantbuffer
 }
@@ -68,9 +71,16 @@ void GameObject::setPos(DirectX::XMFLOAT3 pos)
 	this->position = pos;
 }
 
+void GameObject::setRot(DirectX::XMMATRIX rot)
+{
+	this->mesh->rotation = rot;
+	this->rotation = rot;
+}
+
 void GameObject::setRot(DirectX::XMFLOAT3 rot)
 {
-	this->rotation = rot;
+	this->mesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMVectorSet(rot.x, rot.y, rot.z, 1.0f));
+	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMVectorSet(rot.x, rot.y, rot.z, 1.0f));
 }
 
 void GameObject::setScale(DirectX::XMFLOAT3 scale)
@@ -83,7 +93,7 @@ DirectX::XMFLOAT3 GameObject::getPos() const
 	return this->position;
 }
 
-DirectX::XMFLOAT3 GameObject::getRot() const
+DirectX::XMMATRIX GameObject::getRot() const
 {
 	return this->rotation;
 }

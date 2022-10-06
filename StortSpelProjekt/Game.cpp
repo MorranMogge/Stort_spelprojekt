@@ -47,7 +47,7 @@ void Game::loadObjects()
 	}
 	meshes_Dynamic[0].scale = DirectX::SimpleMath::Vector3(1, 1, 1);
 	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(22, 22, -22);
-
+	meshes_Dynamic[0].rotation = DirectX::XMMatrixRotationRollPitchYaw(0, 0, 0);
 	
 }
 
@@ -105,7 +105,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
 
 	//this->setUpReact3D();
-
+	playerVecRenderer.setPlayer(&player);
 	this->mouse = &mouse;
 	this->window = &window;
 	start = std::chrono::system_clock::now();
@@ -130,14 +130,15 @@ GAMESTATE Game::Update()
 	float zpos = meshes_Dynamic[0].position.z;
 
 	grav = normalizeXMFLOAT3(grav);
-	player.move(camera.getRightVector(), meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, grav, dt);
-
+	player.move(camera.getForwardVector(), camera.getUpVector(), camera.getRightVector(), meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, grav, dt);
+	player.setPos({ meshes_Dynamic[0].position.x, meshes_Dynamic[0].position.y , meshes_Dynamic[0].position.z });
 	grav = planetGravityField.calcGravFactor(meshes_Dynamic[0].position);
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(meshes_Dynamic[0].position));
 	if (getLength(meshes_Dynamic[0].position) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); newNormalizeXMFLOAT3(meshes_Dynamic[0].position); scalarMultiplicationXMFLOAT3(22, meshes_Dynamic[0].position); }
 	additionXMFLOAT3(meshes_Dynamic[0].position, getScalarMultiplicationXMFLOAT3(dt, velocity));
 
-	camera.moveCamera(meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, player.getUpVector(), player.getForwardVector(), player.getRightVector(), dt);
+	camera.moveCamera(meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, player.getUpVec(), player.getForwardVec(), player.getRightVec(), dt);
+
 
 	//KLARA DONT LOOK HERE!
 	//DirectX::XMFLOAT3 pos = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y, playerRigidBody->getTransform().getPosition().z};
@@ -146,13 +147,17 @@ GAMESTATE Game::Update()
 	//meshes_Dynamic[0].position = { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y , playerRigidBody->getTransform().getPosition().z};
 	//meshes_Dynamic[0].rotation = { playerRigidBody->getTransform().getOrientation().x, playerRigidBody->getTransform().getOrientation().y , playerRigidBody->getTransform().getOrientation().z};
 
+	player.setRot(meshes_Dynamic[0].rotation);
+
 	for (int i = 0; i < meshes_Static.size(); i++)
 	{
+		meshes_Static[i].rotation = DirectX::XMMatrixRotationRollPitchYaw(0,0,0);
 		meshes_Static[i].UpdateCB();
 	}
 
 	for (int i = 0; i < meshes_Dynamic.size(); i++)
 	{
+		meshes_Dynamic[i].rotation = player.getRot();
 		meshes_Dynamic[i].UpdateCB();
 	}
 
@@ -173,5 +178,6 @@ void Game::Render()
 
 	basicRenderer.setUpScene();
 	drawObjects();
+	playerVecRenderer.drawLines();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 }

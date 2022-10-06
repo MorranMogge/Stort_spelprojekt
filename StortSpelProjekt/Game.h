@@ -1,5 +1,6 @@
 #pragma once
 #include <reactphysics3d\reactphysics3d.h>
+#include "PlayerVectors.h"
 #include "State.h"
 #include "BasicRenderer.h"
 #include "Mesh.h"
@@ -46,6 +47,7 @@ private:
 	Camera camera;
 	Player player;
 	LightHandler ltHandler;
+	PlayerVectors playerVecRenderer;
 
 	//Objects
 	std::vector<Mesh> meshes_Static;

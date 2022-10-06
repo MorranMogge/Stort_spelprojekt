@@ -7,7 +7,7 @@ class GameObject
 {
 private:
 	DirectX::XMFLOAT3 position;
-	DirectX::XMFLOAT3 rotation;//ska ändra till quaternion?
+	DirectX::XMMATRIX rotation;//ska ändra till quaternion?
 	Mesh* mesh;
 	int objectID;
 	//float mass
@@ -19,10 +19,11 @@ public:
 	GameObject();
 	virtual ~GameObject();
 	void setPos(DirectX::XMFLOAT3 pos);
+	void setRot(DirectX::XMMATRIX rot);
 	void setRot(DirectX::XMFLOAT3 rot);
 	void setScale(DirectX::XMFLOAT3 scale);
 	DirectX::XMFLOAT3 getPos() const;
-	DirectX::XMFLOAT3 getRot() const;
+	DirectX::XMMATRIX getRot() const;
 	Bound* getBounds() const;
 	void updateBuffer();
 	void setMesh(std::string meshPath);

@@ -160,6 +160,7 @@
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferNew.h" />
     <ClInclude Include="Credits.h" />
+    <ClInclude Include="CreditsMenu.h" />
     <ClInclude Include="DepthStencilState.h" />
     <ClInclude Include="DepthStencilView.h" />
     <ClInclude Include="DirectXMathHelper.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderTargetView.h" />
     <ClInclude Include="SamplerState.h" />
+    <ClInclude Include="SettingsMenu.h" />
     <ClInclude Include="SettingsUI.h" />
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="ShaderResourceView.h" />
@@ -235,6 +237,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Credits.cpp" />
+    <ClCompile Include="CreditsMenu.cpp" />
     <ClCompile Include="D3D11Helper.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
     <ClCompile Include="DXUtil.cpp" />
@@ -265,6 +268,7 @@
     <ClCompile Include="MouseEvent.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Potion.cpp" />
+    <ClCompile Include="SettingsMenu.cpp" />
     <ClCompile Include="SettingsUI.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="State.cpp" />

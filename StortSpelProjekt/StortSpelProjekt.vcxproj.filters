@@ -116,6 +116,12 @@
     <ClCompile Include="ParticleEmitter.cpp">
       <Filter>Particles</Filter>
     </ClCompile>
+    <ClCompile Include="CreditsMenu.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsMenu.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -349,6 +355,13 @@
     </ClInclude>
     <ClInclude Include="ParticleEmitter.h">
       <Filter>Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="GameInclude.h" />
+    <ClInclude Include="CreditsMenu.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsMenu.h">
+      <Filter>Game-States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -4,27 +4,25 @@
 
 void Credits::HandleInputs()
 {
-	if (show)
-	{
+
 #pragma region backText
 
-		if (backText.IntersectMouse())
-		{
-			backText.SetTint(DirectX::Colors::Green.v);
+	if (backText.IntersectMouse())
+	{
+		backText.SetTint(DirectX::Colors::Green.v);
 
-			if (Input::KeyPress(KeyCode::MOUSE_L))
-			{
-				show = false;
-				GuiHandler::show = true;
-			}
-		}
-		else
+		if (Input::KeyPress(KeyCode::MOUSE_L))
 		{
-			backText.SetTint(DirectX::Colors::White.v);
+			gameState = MENU;
 		}
+	}
+	else
+	{
+		backText.SetTint(DirectX::Colors::White.v);
+	}
 
 #pragma endregion
-	}
+
 }
 
 void Credits::TextPass()
@@ -39,8 +37,16 @@ void Credits::SpritePass()
 	backText.Draw();
 }
 
+
+GAMESTATE Credits::GetGameState()
+{
+	return gameState;
+}
+
 Credits::Credits()
 {
+	using namespace DirectX::SimpleMath;
+
 	GUI::Init();
 
 	creditsText = GUISprite(250 + 150, 150);
@@ -52,6 +58,8 @@ Credits::Credits()
 
 	backText = GUISprite(75 + 70, 600);
 	backText.Load(GPU::device, L"../Sprites/backText.png");
+
+	gameState = NOCHANGE;
 
 }
 

@@ -111,14 +111,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			}
 		}
 		
-		currentState->Render();
 
-		//immediateContext->ClearRenderTargetView(rtv, clearColour);
+
+		immediateContext->ClearRenderTargetView(rtv, clearColour);
 		immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 		immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		immediateContext->RSSetViewports(1, &viewport);
 
-		currentState->DrawUI();
+		currentState->Render();
 		imGuiHelper.drawInterface("test");
 
 		swapChain->Present(0, 0);

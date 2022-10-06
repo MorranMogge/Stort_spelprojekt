@@ -35,6 +35,10 @@ cbuffer numLightBuffer : register(b2)
     int nrOfLights;
 };
 
+float FresnelEffect(float3 Normal, float3 ViewDir, float Power)
+{
+    return pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+}
 
 float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : UV, float4 worldPosition : WorldPosition, float3 localPosition : LocalPosition) : SV_TARGET
 {
@@ -43,7 +47,7 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
     {
         float3 reflectVector = normalize(cameraPosition.xyz - localPosition);
         reflectVector = reflect(reflectVector, normal);
-        return float4(texCube.Sample(samplerState, reflectVector));
+        return texCube.Sample(samplerState, reflectVector);
     }
     
     float3 ambient = ambientTex.Sample(samplerState, uv).xyz * mat.ambient.xyz;
@@ -52,6 +56,8 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
 
     float3 viewDir = normalize(cameraPosition.xyz - worldPosition.xyz);
 
+    float shadow = 0;
+    
     LightResult litResult = { { 0, 0, 0 }, { 0, 0, 0 } };
     for (int i = 0; i < nrOfLights; ++i)
     {
@@ -62,13 +68,16 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
         float3 lightDirection = normalize(lights[i].position.xyz - worldPosition.xyz);
         
         float shadowStrenth = 1;
-        float shadowIntensity = ShadowIntensity2(lightWorldPosition, lights[i], lightDirection, worldPosition.xyz, normal, i, shadowMaps, samplerState);
-        //float shadowIntensity = ShadowIntensity(lightWorldPosition, lights[i], lightDirection, worldPosition.xyz, normal, i, shadowMaps, samplerState);
+        //shadow += ShadowIntensity(lightWorldPosition, lights[i], lightDirection, worldPosition.xyz, normal, i, shadowMaps, samplerState);
+        //float shadowIntensity = ShadowIntensity(lightWorldPosition, lights[i], lightDirection, worldPosition.xyz, normal, i, shadowStrenth, shadowMaps, samplerState);
+        //float shadowIntensity = ShadowIntensity(lightWorldPosition, lights[i], lightDirection, worldPosition.xyz, normal, i, shadowStrenth, shadowMaps, samplerState);
+        //shadow += ShadowIntensity(lightWorldPosition, lights[i], lightDirection, worldPosition.xyz, normal, i, shadowStrenth, shadowMaps, samplerState);
+        //float shadowIntensity = ShadowIntensity2(lightWorldPosition, lights[i], lightDirection, worldPosition.xyz, normal, i, shadowMaps, samplerState);
         //float shadowFactor = ShadowFactor(lightWorldPosition, i, normal, lightDirection, shadowMaps, samplerState);
         
-        if (!shadowIntensity)
-            continue;
-            
+        //if (shadowFactor == 0)
+        //    continue;
+        
         #define POINT_LIGHT 0
         #define DIRECTIONAL_LIGHT 1
         #define SPOT_LIGHT 2
@@ -87,6 +96,9 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
         litResult.Specular += result.Specular;
     }
     
-    return float4(saturate(ambient + mat.diffuse.xyz * litResult.Diffuse + specular * litResult.Specular) * diffuseColor, 1.0f);
+    float fres = FresnelEffect(normal, viewDir, 5);
+    
+    return float4(saturate(ambient + mat.diffuse.xyz * litResult.Diffuse + specular * (litResult.Specular/* * shadow*/)) * diffuseColor/* + fres*/, 1.0f);
+
 }
 

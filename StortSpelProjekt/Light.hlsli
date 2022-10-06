@@ -40,7 +40,7 @@ float3 DoSpecular(Light light, float3 ViewDir, float3 lightDir, float3 normal, f
 float DoAttenuation(Light light, float d)
 {
     //return 1.0f / (light.ConstantAttenuation + light.LinearAttenuation * d + light.QuadraticAttenuation * d * d);
-    return saturate((1 - d / light.range) + (1 - light.falloff));
+    return saturate(1 - d / light.range);
 }
 
 LightResult DoPointLight(Light light, float3 ViewDir, float4 worldPosition, float3 normal, float specularPower)
@@ -178,3 +178,56 @@ float ShadowIntensity2(float4 lightWorldPosition, Light light, float3 LightDir, 
     
     return shadowCoeff;
 }
+
+float ShadowIntensity4(float4 lightWorldPosition, Light light, float3 LightDir, float3 worldPosition, float3 normal, int i, Texture2DArray shadowMaps, SamplerState samplerState)
+{
+    lightWorldPosition.xy /= lightWorldPosition.w;
+
+    float2 smTexcoord = float2(0.5f * lightWorldPosition.x + 0.5f, -0.5f * lightWorldPosition.y + 0.5f);
+    float depth = lightWorldPosition.z / lightWorldPosition.w;
+    float SHADOW_EPSILON = 0.0000001f;
+    float dx = 1.0f / 2048.0f;
+    float d0 = shadowMaps.SampleLevel(samplerState, float3(0, 0, i), 0).r + SHADOW_EPSILON < depth ? 0.0f : 1.0f;
+    float d1 = shadowMaps.SampleLevel(samplerState, float3(dx, 0, i), 0).r + SHADOW_EPSILON < depth ? 0.0f : 1.0f;
+    float d2 = shadowMaps.SampleLevel(samplerState, float3(0, dx, i), 0).r + SHADOW_EPSILON < depth ? 0.0f : 1.0f;
+    float d3 = shadowMaps.SampleLevel(samplerState, float3(dx, dx, i), 0).r + SHADOW_EPSILON < depth ? 0.0f : 1.0f;
+
+    float2 texelPos = smTexcoord * 2048.0f;
+    float2 leps = frac(texelPos);
+    float shadowco = (d0 + d1 + d2 + d3) / 4;
+    //if (shadowco <= 0.3)
+    //    shadowco = 0.3f;
+    
+    return saturate(shadowco);
+}
+
+float ShadowIntensity3(float4 lightWorldPosition, Light light, float3 LightDir, float3 worldPosition, float3 normal, int i, Texture2DArray shadowMaps, SamplerState samplerState)
+{
+    lightWorldPosition.xyz /= lightWorldPosition.w; //calculate x and y in texture space
+    float depth = lightWorldPosition.z; // Calculate depth of light.
+    
+    float2 smTex = float2(0.5f * lightWorldPosition.x + 0.5f, -0.5f * lightWorldPosition.y + 0.5f); //re map range to 0,1
+    
+    float bias = 0.000005f;
+    
+    float dx = 1.0f / 2048.0f;
+    
+    float2 offsets[9] =
+    {
+        float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
+        float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
+        float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
+    };
+    
+    float percentLit = 0.0f;
+    [unroll]
+    for (int i = 0; i < 9; i++)
+    {
+
+        percentLit += shadowMaps.SampleLevel(samplerState, float3(smTex + offsets[i], i), 0).r;
+    }
+
+    // Average the samples
+    return percentLit /= 9.0f;
+}
+

@@ -420,6 +420,4 @@ void LightHandler::unbindSrv()
 	GPU::immediateContext->PSSetShaderResources(3, 1, &nullsrv);
 	GPU::immediateContext->PSSetShaderResources(4, 1, &nullsrv);
 	GPU::immediateContext->PSSetShaderResources(5, 1, &nullsrv);
-	GPU::immediateContext->PSSetShaderResources(6, 1, &nullsrv);
-
 }

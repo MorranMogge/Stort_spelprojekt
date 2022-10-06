@@ -1,4 +1,4 @@
-cbuffer TransformCBuf : register(b0)
+cbuffer TransformCBuf : register(b1)
 {
     matrix viewProj;
 };

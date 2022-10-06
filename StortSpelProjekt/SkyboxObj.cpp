@@ -81,10 +81,20 @@ SkyboxObj::SkyboxObj()
 	{
 		std::cerr << "error creating RenderTargets!" << std::endl;
 	}
+
+	this->skyBoxMesh = new GameObject("../Meshes/Skybox", DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 0, 0), 0, DirectX::XMFLOAT3(10, 10, 10));
 }
 
-void SkyboxObj::bindSkybox()
+SkyboxObj::~SkyboxObj()
 {
-	GPU::immediateContext->PSSetShaderResources(6, 1, textureCubeView.GetAddressOf());
+	delete this->skyBoxMesh;
+}
+
+void SkyboxObj::draw()
+{
+	ID3D11ShaderResourceView* nullsrv{ nullptr };
+	GPU::immediateContext->PSSetShaderResources(4, 1, textureCubeView.GetAddressOf());
+	this->skyBoxMesh->draw();
+	GPU::immediateContext->PSSetShaderResources(4, 1, &nullsrv);
 }
 

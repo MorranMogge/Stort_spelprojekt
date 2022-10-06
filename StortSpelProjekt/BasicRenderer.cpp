@@ -14,6 +14,18 @@ bool BasicRenderer::setUpInputLayout(ID3D11Device* device, const std::string& vS
 	return !FAILED(hr);
 }
 
+bool BasicRenderer::setUp_Sky_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode)
+{
+	D3D11_INPUT_ELEMENT_DESC inputDesc[1] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	HRESULT hr = device->CreateInputLayout(inputDesc, (UINT)std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &inputLayout_Skybox);
+
+	return !FAILED(hr);
+}
+
 bool BasicRenderer::setUp_PT_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode)
 {
 	D3D11_INPUT_ELEMENT_DESC inputDesc[4] =
@@ -72,6 +84,9 @@ BasicRenderer::~BasicRenderer()
 	pt_pShader->Release();
 	pt_UpdateShader->Release();
 	pt_gShader->Release();
+	vs_Skybox->Release();
+	ps_Skybox->Release();
+	inputLayout_Skybox->Release();
 }
 
 void BasicRenderer::lightPrePass()
@@ -105,6 +120,16 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadGeometryShader(device, pt_gShader, "PT_GeometryShader"))						return false;
 	if (!LoadComputeShader(device, pt_UpdateShader, "PT_UpdateShader"))						return false;
 	if (!setUpSampler(device))																return false;
+
+
+
+
+	if (!LoadVertexShader(device, vs_Skybox, vShaderByteCode, "Skybox_VS"))					return false;
+	if (!setUp_Sky_InputLayout(device, vShaderByteCode))									return false;
+	if (!LoadPixelShader(device, ps_Skybox, "Skybox_PS"))									return false;
+
+
+
 	SetViewport(viewport, WIDTH, HEIGHT);
 	return true;
 }
@@ -151,8 +176,24 @@ void BasicRenderer::depthPrePass()
 {
 	ID3D11RenderTargetView* nullRtv{ nullptr };
 	immediateContext->ClearDepthStencilView(dsView2, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-	//immediateContext->OMSetDepthStencilState(dsState, 0);
-	immediateContext->OMSetRenderTargets(1, &nullRtv, dsView2);
+	immediateContext->OMSetRenderTargets(1, &rtv, dsView2);
+}
+
+void BasicRenderer::depthUnbind()
+{
+	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
+	immediateContext->VSSetShader(vShader, nullptr, 0);
+	immediateContext->PSSetShader(pShader, nullptr, 0);
+}
+
+void BasicRenderer::skyboxPrePass()
+{
+	immediateContext->OMSetDepthStencilState(dsState, 0);
+	immediateContext->IASetInputLayout(inputLayout_Skybox);									
+	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+	immediateContext->VSSetShader(vs_Skybox, nullptr, 0);								//SetVTXShader
+	immediateContext->PSSetShader(ps_Skybox, nullptr, 0);								//Set PSShader
+
 }
 
 void BasicRenderer::bindAmbientShader()

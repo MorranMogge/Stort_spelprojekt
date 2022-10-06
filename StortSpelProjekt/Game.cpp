@@ -35,8 +35,6 @@ void Game::drawObjects(bool drawDebug)
 {
 	//Bind light
 	ltHandler.bindLightBuffers();
-	this->skybox.bindSkybox();
-
 
 	//Draw Game objects
 	for (int i = 0; i < gameObjects.size(); i++)
@@ -219,6 +217,10 @@ void Game::Render()
 	basicRenderer.setUpScene(this->camera);
 	drawObjects(drawDebug);
 
+	//Render Skybox
+	basicRenderer.skyboxPrePass();
+	this->skybox.draw();
+	basicRenderer.depthUnbind();
 
 	//Render Particles
 	basicRenderer.geometryPass(camera);

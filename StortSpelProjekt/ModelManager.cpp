@@ -6,44 +6,44 @@
 
 bool ModelManager::makeSRV(ID3D11ShaderResourceView*& srv, std::string finalFilePath)
 {
-	//ID3D11Texture2D* texture;
+	ID3D11Texture2D* texture;
 
-	//D3D11_TEXTURE2D_DESC desc = {};
-	//int width, height, channels;
-	//unsigned char* image = stbi_load(finalFilePath.c_str(), &width, &height, &channels, STBI_rgb_alpha);
-	//if (!image)
-	//{
-	//	stbi_image_free(image);
-	//	return false;
-	//}
-	//desc.Width = width;
-	//desc.Height = height;
-	//desc.MipLevels = 1;
-	//desc.ArraySize = 1;
-	//desc.MiscFlags = 0;
-	//desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	//desc.SampleDesc.Count = 1;
-	//desc.SampleDesc.Quality = 0;
-	//desc.Usage = D3D11_USAGE_IMMUTABLE;
-	//desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	//desc.CPUAccessFlags = 0;
+	D3D11_TEXTURE2D_DESC desc = {};
+	int width, height, channels;
+	unsigned char* image = stbi_load(finalFilePath.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+	if (!image)
+	{
+		stbi_image_free(image);
+		return false;
+	}
+	desc.Width = width;
+	desc.Height = height;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.MiscFlags = 0;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_IMMUTABLE;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = 0;
 
-	//D3D11_SUBRESOURCE_DATA data = {};
-	//data.pSysMem = image;
-	//data.SysMemPitch = width * 4; //RBGA - RGBA - ...
+	D3D11_SUBRESOURCE_DATA data = {};
+	data.pSysMem = image;
+	data.SysMemPitch = width * 4; //RBGA - RGBA - ...
 
-	//HRESULT hr = device->CreateTexture2D(&desc, &data, &texture);
-	//stbi_image_free(image);
-	//if (FAILED(hr))
-	//{
-	//	return false;
-	//}
-	//hr = device->CreateShaderResourceView(texture, NULL, &srv);
-	//if (FAILED(hr))
-	//{
-	//	return false;
-	//}
-	//texture->Release();
+	HRESULT hr = device->CreateTexture2D(&desc, &data, &texture);
+	stbi_image_free(image);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+	hr = device->CreateShaderResourceView(texture, NULL, &srv);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+	texture->Release();
 	return true;
 }
 
@@ -60,7 +60,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		
 		//meshes.emplace_back(readNodes(mesh, scene));
 		
-		readNodes2(mesh, scene);
+		readNodes(mesh, scene);
 
 		aiMaterial* material = scene->mMaterials[scene->mMeshes[i]->mMaterialIndex];
 		//här srv inläsning
@@ -138,7 +138,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 //	return new Mesh2(GPU::device, vertexTriangle, indexTriangle);
 //}
 
-void ModelManager::readNodes2(aiMesh* mesh, const aiScene* scene)
+void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<vertex> vertexTriangle;
 	std::vector<DWORD> indexTriangle;
@@ -198,11 +198,6 @@ void ModelManager::readNodes2(aiMesh* mesh, const aiScene* scene)
 
 	this->submeshRanges.emplace_back(dataForMesh.indexTriangle.size());
 	this->amountOfvertices.emplace_back(vertexTriangle.size());
-
-	for (int i = 0; i < submeshRanges.size(); i++)
-	{
-		std::cout << "submeshranges on index: " << i << " with range " << submeshRanges[i] << "\n";
-	}
 }
 
 std::vector<ID3D11Buffer*> ModelManager::getBuff() const
@@ -286,14 +281,15 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	indexBufferData.pSysMem = dataForMesh.indexTriangle.data();
 	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
 	
-	bank.addMeshBuffers(filePath, vertexBuffer, indexBuffer, submeshRanges, amountOfvertices);
+	//bank.addMeshBuffers(filePath, vertexBuffer, indexBuffer, submeshRanges, amountOfvertices);
 	
 	indexBuffer = {};
 	vertexBuffer = {};
 	this->submeshRanges.clear();
 	this->amountOfvertices.clear();
 
-	memset(&dataForMesh, 0, sizeof(dataForMesh));
+	dataForMesh.indexTriangle.clear();
+	dataForMesh.vertexTriangle.clear();
 	return true;
 }
 

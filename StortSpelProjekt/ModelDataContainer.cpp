@@ -12,11 +12,19 @@ ModelDataContainer::~ModelDataContainer()
 		this->srvIt->second->Release();
 	}
 	std::tuple<ID3D11Buffer*, ID3D11Buffer*, std::vector<int>, std::vector<int>> delTupel;
+	ID3D11Buffer* tmp = nullptr;
+	//ReportLiveObjects();
 	for (this->meshIt = this->meshMap.begin(); this->meshIt != this->meshMap.end(); this->meshIt++)
 	{
 		delTupel = this->meshIt->second;
-		std::get<0>(delTupel)->Release();
-		std::get<1>(delTupel)->Release();
+		tmp = std::get<0>(delTupel);
+		if (tmp != nullptr)
+			tmp->Release();
+
+		tmp = std::get<1>(delTupel);
+		if (tmp != nullptr)
+			tmp->Release();
+
 	}
 }
 

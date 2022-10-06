@@ -174,8 +174,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->iBuff = {};
 	this->manager.setDevice(device);
 	this->manager.loadMeshData("../Meshes/gob.obj");
-	//this->manager.getMeshData("../Meshes/gob.obj", vBuff, iBuff, subMeshRanges, verticies);
-	//this->textures = this->manager.getTextureMaps();
+	this->manager.getMeshData("../Meshes/gob.obj", vBuff, iBuff, subMeshRanges, verticies);
+	this->textures = this->manager.getTextureMaps();
 
 	MaterialLibrary::LoadDefault();
 

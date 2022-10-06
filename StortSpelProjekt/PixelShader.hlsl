@@ -14,7 +14,8 @@ Texture2D ambientTex : register(t1);
 Texture2D specularTex : register(t2);
 Texture2DArray shadowMaps : register(t3);
 StructuredBuffer<Light> lights : register(t4); //Structured buffer with Light data
-TextureCube txCube : register(t5);
+Texture2D depthTex : register(t5);
+TextureCube txCube : register(t7);
 SamplerState samplerState : register(s0);
 
 cbuffer Mat : register(b0)
@@ -33,14 +34,23 @@ cbuffer numLightBuffer : register(b2)
 };
 
 
-float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : UV, float4 worldPosition : WorldPosition) : SV_TARGET
+float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : UV, float4 worldPosition : WorldPosition, float3 localPosition : LocalPosition) : SV_TARGET
 {
+
+    //if (depthTex.Sample(samplerState, uv).r == 1.0f)
+    //{
+    //    float3 reflectVector = normalize(cameraPosition.xyz - localPosition);
+    //    reflectVector = reflect(reflectVector, normal);
+    //    return txCube.Sample(samplerState, reflectVector);
+    //}
+    
+    
     float3 ambient = ambientTex.Sample(samplerState, uv).xyz * mat.ambient.xyz;
     float3 diffuseColor = diffuseTex.Sample(samplerState, uv).xyz;
     float3 specular = specularTex.Sample(samplerState, uv).xyz * mat.specular;
-
     float3 viewDir = normalize(cameraPosition.xyz - worldPosition.xyz);
 
+    
     LightResult litResult = { { 0, 0, 0 }, { 0, 0, 0 } };
     for (int i = 0; i < nrOfLights; ++i)
     {

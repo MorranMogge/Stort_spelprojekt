@@ -22,13 +22,19 @@ void Game::drawShadows()
 	{
 		ltHandler.drawShadows(i, gameObjects);
 	}
+
+	basicRenderer.depthPrePass();
+	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
+	{
+		ltHandler.drawShadows(i, gameObjects, &camera);
+	}
+	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
 }
 
 void Game::drawObjects(bool drawDebug)
 {
 	//Bind light
 	ltHandler.bindLightBuffers();
-
 	this->skybox.bindSkybox();
 
 

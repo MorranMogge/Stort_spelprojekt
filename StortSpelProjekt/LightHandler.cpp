@@ -360,20 +360,32 @@ int LightHandler::getNrOfLights() const
 	return (UINT)this->lights.size();
 }
 
-void LightHandler::drawShadows(const int &lightIndex, const std::vector<GameObject*> &gameObjects)
+void LightHandler::drawShadows(const int &lightIndex, const std::vector<GameObject*> &gameObjects, Camera* stageCamera)
 {
 	//Variables
 	ID3D11RenderTargetView* nullRtv{ nullptr };
 	ID3D11DepthStencilView* nullDsView{ nullptr };
 
-	//Set view buffer
-	GPU::immediateContext->VSSetConstantBuffers(1, 1, this->viewBuffers.at(lightIndex).GetAddressOf());
+	if (stageCamera != nullptr)
+	{
+		ID3D11Buffer* tempBuff = stageCamera->getViewBuffer();
 
-	//Clear Depth Stencil
-	GPU::immediateContext->ClearDepthStencilView(this->depthViews.at(lightIndex).Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+		//Set view buffer
+		GPU::immediateContext->VSSetConstantBuffers(1, 1, &tempBuff);
 
-	//Set render targets
-	GPU::immediateContext->OMSetRenderTargets(1, &nullRtv, this->depthViews.at(lightIndex).Get());
+	}
+	else
+	{
+		//Set view buffer
+		GPU::immediateContext->VSSetConstantBuffers(1, 1, this->viewBuffers.at(lightIndex).GetAddressOf());
+
+		//Clear Depth Stencil
+		GPU::immediateContext->ClearDepthStencilView(this->depthViews.at(lightIndex).Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+
+		//Set render targets
+		GPU::immediateContext->OMSetRenderTargets(1, &nullRtv, this->depthViews.at(lightIndex).Get());
+	}
+
 
 
 	//Draw Objects
@@ -408,4 +420,6 @@ void LightHandler::unbindSrv()
 	GPU::immediateContext->PSSetShaderResources(3, 1, &nullsrv);
 	GPU::immediateContext->PSSetShaderResources(4, 1, &nullsrv);
 	GPU::immediateContext->PSSetShaderResources(5, 1, &nullsrv);
+	GPU::immediateContext->PSSetShaderResources(6, 1, &nullsrv);
+
 }

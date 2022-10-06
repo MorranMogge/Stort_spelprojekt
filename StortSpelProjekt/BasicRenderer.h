@@ -16,8 +16,11 @@ private:
 	ID3D11RenderTargetView* rtv;
 	ID3D11DepthStencilView* dsView;
 	ID3D11DepthStencilView* dsView2;	//Used for binding as render target
+	ID3D11Texture2D* dsTexture2;		//	 ----------||------------
+	ID3D11ShaderResourceView* depthSrv;	
 	ID3D11Texture2D* dsTexture;
 	ID3D11SamplerState* sampler;
+	ID3D11DepthStencilState* dsState;
 	
 	ID3D11InputLayout* inputLayout;
 	ID3D11VertexShader* vShader;
@@ -44,5 +47,6 @@ public:
 	bool initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT);
 	void setUpScene(Camera& stageCamera);
 	void geometryPass(Camera & stageCamera);
+	void depthPrePass();
 	void bindAmbientShader();
 };

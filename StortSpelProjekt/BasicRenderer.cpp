@@ -56,6 +56,9 @@ BasicRenderer::~BasicRenderer()
 	rtv->Release();
 	dsView->Release();
 	dsView2->Release();
+	dsTexture2->Release();
+	depthSrv->Release();
+	dsState->Release();
 	dsTexture->Release();
 	sampler->Release();
 
@@ -79,26 +82,29 @@ void BasicRenderer::lightPrePass()
 	immediateContext->RSSetViewports(1, &viewport);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
 	immediateContext->PSSetShader(nullShader, nullptr, 0);
+	
+
 }
 
 bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT)
 {
 	std::string vShaderByteCode;
 	this->immediateContext = immediateContext;
-	if (this->immediateContext == nullptr)											return false;
-	if (!CreateRenderTargetView(device, swapChain, rtv))							return false;
-	if (!CreateDepthStencil(device, WIDTH, HEIGHT, dsTexture, dsView))				return false;
-	if (!CreateDepthStencil(device, WIDTH, HEIGHT, dsTexture, dsView2))				return false;
-	if (!LoadVertexShader(device, vShader, vShaderByteCode, "VertexShader"))		return false;
-	if (!setUpInputLayout(device, vShaderByteCode))									return false;
-	if (!LoadPixelShader(device, pShader, "PixelShader"))							return false;
-	if (!LoadPixelShader(device, ApShader, "AmbientPixelShader"))					return false;
-	if (!LoadVertexShader(device, pt_vShader, vShaderByteCode, "PT_VertexShader"))	return false;
-	if (!setUp_PT_InputLayout(device, vShaderByteCode))								return false;
-	if (!LoadPixelShader(device, pt_pShader, "PT_PixelShader"))						return false;
-	if (!LoadGeometryShader(device, pt_gShader, "PT_GeometryShader"))				return false;
-	if (!LoadComputeShader(device, pt_UpdateShader, "PT_UpdateShader"))				return false;
-	if (!setUpSampler(device))														return false;
+	if (this->immediateContext == nullptr)													return false;
+	if (!CreateRenderTargetView(device, swapChain, rtv))									return false;
+	if (!CreateDepthStencil(device, WIDTH, HEIGHT, dsTexture, dsView))						return false;
+	if (!CreateDSState(dsState))															return false;
+	if (!CreateDepthStencilAndSrv(device, WIDTH, HEIGHT, dsTexture2, dsView2, depthSrv))	return false;
+	if (!LoadVertexShader(device, vShader, vShaderByteCode, "VertexShader"))				return false;
+	if (!setUpInputLayout(device, vShaderByteCode))											return false;
+	if (!LoadPixelShader(device, pShader, "PixelShader"))									return false;
+	if (!LoadPixelShader(device, ApShader, "AmbientPixelShader"))							return false;
+	if (!LoadVertexShader(device, pt_vShader, vShaderByteCode, "PT_VertexShader"))			return false;
+	if (!setUp_PT_InputLayout(device, vShaderByteCode))										return false;
+	if (!LoadPixelShader(device, pt_pShader, "PT_PixelShader"))								return false;
+	if (!LoadGeometryShader(device, pt_gShader, "PT_GeometryShader"))						return false;
+	if (!LoadComputeShader(device, pt_UpdateShader, "PT_UpdateShader"))						return false;
+	if (!setUpSampler(device))																return false;
 	SetViewport(viewport, WIDTH, HEIGHT);
 	return true;
 }
@@ -115,7 +121,7 @@ void BasicRenderer::setUpScene(Camera& stageCamera)
 	immediateContext->RSSetViewports(1, &viewport);
 	immediateContext->PSSetShader(pShader, nullptr, 0);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
-
+	immediateContext->PSSetShaderResources(5, 1, &depthSrv);
 	ID3D11Buffer* tempBuff = stageCamera.getPositionBuffer();
 	ID3D11Buffer* tempBuff2 = stageCamera.getViewBuffer();
 	GPU::immediateContext->PSSetConstantBuffers(1, 1, &tempBuff);			
@@ -139,6 +145,14 @@ void BasicRenderer::geometryPass(Camera& stageCamera)
 	immediateContext->GSSetConstantBuffers(0, 2, tempBuff.data());						//Set camera pos for ,Set matrix [world],[view]
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
 
+}
+
+void BasicRenderer::depthPrePass()
+{
+	ID3D11RenderTargetView* nullRtv{ nullptr };
+	immediateContext->ClearDepthStencilView(dsView2, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+	//immediateContext->OMSetDepthStencilState(dsState, 0);
+	immediateContext->OMSetRenderTargets(1, &nullRtv, dsView2);
 }
 
 void BasicRenderer::bindAmbientShader()

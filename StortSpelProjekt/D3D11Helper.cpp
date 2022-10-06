@@ -88,6 +88,59 @@ bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, ID3D11Tex
 	return !FAILED(hr);
 }
 
+bool CreateDepthStencilAndSrv(ID3D11Device* device, UINT width, UINT height, ID3D11Texture2D*& dsTexture, ID3D11DepthStencilView*& dsView, ID3D11ShaderResourceView*& shaderResource)
+{
+	D3D11_TEXTURE2D_DESC textureDesc;
+	textureDesc.Width = width;
+	textureDesc.Height = height;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = 0;
+
+
+	if (FAILED(device->CreateTexture2D(&textureDesc, nullptr, &dsTexture)))
+	{
+		std::cerr << "Failed to create depth stencil texture!" << std::endl;
+		return false;
+	}
+
+	//ShaderResource view 
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
+	shaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.Texture2D.MipLevels = 1u;
+
+	//create shader resource view 
+	HRESULT hr = device->CreateShaderResourceView(dsTexture, &shaderResourceViewDesc, &shaderResource);
+
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC descView = {};
+	descView.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descView.ViewDimension = D3D11_DSV_DIMENSION::D3D11_DSV_DIMENSION_TEXTURE2D;
+	descView.Flags = 0;
+	descView.Texture2D.MipSlice = 0;
+
+	HRESULT hr2 = device->CreateDepthStencilView(dsTexture, &descView, &dsView);
+	return !FAILED(hr2);
+}
+
+bool CreateDSState(ID3D11DepthStencilState*&dss)
+{
+	D3D11_DEPTH_STENCIL_DESC dssdesc = {};
+	dssdesc.DepthEnable = true;
+	dssdesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ZERO;
+	dssdesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
+	HRESULT hr = GPU::device->CreateDepthStencilState(&dssdesc, &dss);
+
+	return !FAILED(hr);
+}
+
 void SetViewport(D3D11_VIEWPORT& viewport, UINT width, UINT height)
 {
 	viewport.TopLeftX = 0;

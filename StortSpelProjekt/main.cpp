@@ -63,7 +63,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	MouseClass mouse;
 	SetUpMouse(mouse);
 
-	State* currentState = new Game(immediateContext, device, swapChain, mouse, window);
+	//State* currentState = new Game(immediateContext, device, swapChain, mouse, window);
+	State* currentState = new Menu;
 	GAMESTATE stateInfo = NOCHANGE;
 
 	MSG msg = {};

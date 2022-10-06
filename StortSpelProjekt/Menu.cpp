@@ -2,10 +2,6 @@
 #include "Input.h"
 #include "Console.h"
 #include "SoundCollection.h"
-#include "Topology.h"
-#include "Shader.h"
-#include "GameObject.h"
-#include "LightHandler.h"
 #include "GPU.h"
 
 
@@ -13,7 +9,7 @@ using namespace DirectX::SimpleMath;
 
 Menu::Menu()
 {
-
+	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 }
 
 Menu::~Menu()
@@ -28,5 +24,6 @@ GAMESTATE Menu::Update()
 
 void Menu::Render()
 {
+	basicRenderer.setUpScene();
 	ui.Draw();
 }

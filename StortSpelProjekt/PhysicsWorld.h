@@ -10,6 +10,11 @@ class PhysicsWorld
 private:
 	UINT stride;
 	UINT offset;
+	reactphysics3d::uint64 nrOfTriangles;
+
+	//Used for gravity
+	DirectX::XMFLOAT3 grav;
+	reactphysics3d::Vector3 temp;
 
 	std::vector<PhysicsComponent *> physObjects;
 

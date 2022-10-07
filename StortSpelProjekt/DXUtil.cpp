@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "DXUtil.h"
 
 void Utility::GetTextureDimentions(ID3D11Resource* res, UINT* width, UINT* height)

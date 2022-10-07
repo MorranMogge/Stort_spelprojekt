@@ -1,6 +1,6 @@
 #pragma once
-#include <unordered_map>
-#include <SimpleMath.h>
+#include "stdafx.h"
+
 #include "ShaderResourceTexture.h"
 #include "ConstantBuffer.h"
 #include "MTL.h"

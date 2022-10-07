@@ -1,6 +1,5 @@
 #pragma once
 #include "Buffer.h"
-#include <SimpleMath.h>
 
 struct MatrixS
 {

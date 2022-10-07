@@ -1,6 +1,5 @@
 #pragma once
-#include <d3d11.h>
-#include <vector>
+#include "stdafx.h"
 #include "D3D11Helper.h"
 #include "ShaderLoader.h"
 #include "Camera.h"

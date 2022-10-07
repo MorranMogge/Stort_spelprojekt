@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Item.h"
 
 Item::Item(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)

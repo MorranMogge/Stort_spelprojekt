@@ -1,10 +1,7 @@
 #pragma once
 
-#define WIN32_LEAN_AND_MEAN
-
 #include "GameObject.h"
 #include "Input.h"
-#include <iostream>
 
 class Item;
 

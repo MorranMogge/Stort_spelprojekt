@@ -122,6 +122,7 @@
     <ClCompile Include="SettingsMenu.cpp">
       <Filter>Game-States</Filter>
     </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -363,6 +364,7 @@
     <ClInclude Include="SettingsMenu.h">
       <Filter>Game-States</Filter>
     </ClInclude>
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

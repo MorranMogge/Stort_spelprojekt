@@ -1,20 +1,18 @@
+#include "stdafx.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
-
-#include <string>
-#include <iostream>
 #include <time.h>
 
 #include "Console.h"
+#include "MemoryLeackChecker.h"
 #include "SoundCollection.h"
 #include "Client.h"
 #include "Game.h"
 #include "Menu.h"
 #include "WindowHelper.h"
 #include "D3D11Helper.h"
-#include "MemoryLeackChecker.h"
-#include "GuiHandler.h"
 
+#include "GuiHandler.h"
 #include "ImGuiHelper.h"
 
 #include "SettingsMenu.h"
@@ -139,7 +137,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
-	if (Console::IsOpen)
+	if (Console::IsOpen())
 		Console::Destroy();
 
 	device->Release();

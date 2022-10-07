@@ -1,8 +1,9 @@
+#include "stdafx.h"
 #include "PhysicsComponent.h"
 #include "GameObject.h"
 
 GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale)
-	:position(pos), rotation(rot), mesh(useMesh), objectID(id), scale(scale)
+	:position(pos), rotation(rot), mesh(useMesh), objectID(id), scale(scale), physComp(nullptr)
 {
 	// set position
 	mesh->position = pos;
@@ -16,7 +17,7 @@ GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const Direct
 }
 
 GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale)
-	:position(pos), rotation(rot), objectID(id), scale(scale)
+	:position(pos), rotation(rot), objectID(id), scale(scale), physComp(nullptr)
 {
 	// load obj file
 	OBJ testObj(meshPath);
@@ -49,8 +50,8 @@ GameObject::GameObject()
 
 
 	// load all materials for Obj
-	int nrOfMat = testObj.mtl.materials.size();
-	for (int i = 0; i < nrOfMat; i++)
+	UINT nrOfMat = UINT(testObj.mtl.materials.size());
+	for (UINT i = 0; i < nrOfMat; i++)
 	{
 		MaterialLibrary::LoadMaterial(testObj.mtl.materials[i]);
 	}
@@ -161,8 +162,8 @@ void GameObject::setMesh(const  std::string& meshPath)
 
 
 	// load all materials for Obj
-	int nrOfMat = testObj.mtl.materials.size();
-	for (int i = 0; i < nrOfMat; i++)
+	UINT nrOfMat = UINT(testObj.mtl.materials.size());
+	for (UINT i = 0; i < nrOfMat; i++)
 	{
 		MaterialLibrary::LoadMaterial(testObj.mtl.materials[i]);
 	}
@@ -174,7 +175,7 @@ void GameObject::setMesh(const  std::string& meshPath)
 	this->mesh->rotation = this->rotation;
 }
 
-void GameObject::setMesh(Mesh*)
+void GameObject::setMesh(Mesh* inMesh)
 {
 
 	//delete current mesh ptr
@@ -183,12 +184,12 @@ void GameObject::setMesh(Mesh*)
 		delete this->mesh;
 	}
 
-
+	this->mesh = inMesh;
 	// set position
-	this->mesh->position = this->position;
+	this->mesh->position = inMesh->position;
 
 	// set rotation
-	this->mesh->rotation = this->rotation;
+	this->mesh->rotation = inMesh->rotation;
 }
 
 bool GameObject::withinRadious(GameObject* object, float radius) const
@@ -226,5 +227,3 @@ void GameObject::update()
 	this->position = this->physComp->getPosV3();
 	this->rotation = DirectX::XMFLOAT3(this->physComp->getRotation().x, this->physComp->getRotation().y, this->physComp->getRotation().z);
 }
-
-

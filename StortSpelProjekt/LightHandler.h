@@ -1,8 +1,6 @@
 #pragma once
 #include "Light.h"
 #include <wrl.h>
-#include <vector>
-#include <iostream>
 #include "ConstantBufferNew.h"
 #include "StructuredBuffer.h"
 #include "GPU.h"

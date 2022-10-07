@@ -9,21 +9,28 @@ void Game::loadObjects()
 	planet = new GameObject("../Meshes/Planet", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
 	player = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
 	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
+	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
+	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 
 	//physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::BOX);
 	//planet->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
 
 	//skybox = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(-200.0f, 200.0f, 200.0f));
-	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
+	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
+	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
+
 	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
-	testCube->getPhysComp()->setParent(testCube);
+	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
+	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
 
 	gameObjects.emplace_back(player);
 	gameObjects.emplace_back(planet);
 	gameObjects.emplace_back(potion);
 	gameObjects.emplace_back(testCube);
+	gameObjects.emplace_back(testBat);
+
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -33,9 +40,9 @@ void Game::loadObjects()
 		gameObjects.emplace_back(newObj);
 	}
 
-	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
-	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
-
+	testBat->setPlayer(player);
+	testBat->setTestObj(potion);
+	player->setPhysComp(physWolrd.getPlayerBox());
 }
 
 void Game::drawShadows()
@@ -109,7 +116,7 @@ void Game::updateBuffers()
 
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		gameObjects.at(i)->updateBuffer();
+		gameObjects[i]->updateBuffer();
 	}
 
 	//Update Wireframe buffer
@@ -201,6 +208,7 @@ GAMESTATE Game::Update()
 	player->movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
 	
 	//Player functions
+	player->pickupItem(testBat);
 	player->pickupItem(potion);
 	player->update();
 	
@@ -211,7 +219,8 @@ GAMESTATE Game::Update()
 	physWolrd.update(dt);
 	potion->update(); //getPhysComp()->updateParent();
 	testCube->update();//getPhysComp()->updateParent();
-	for (int i = 4; i < gameObjects.size(); i++)
+	testBat->update();
+	for (int i = 5; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->update();//->getPhysComp()->updateParent();
 	}

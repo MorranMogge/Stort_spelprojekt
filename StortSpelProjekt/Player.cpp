@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "DirectXMathHelper.h"
 #include "Potion.h"
+#include "BaseballBat.h"
 using namespace DirectX;
 
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
@@ -98,10 +99,16 @@ bool Player::pickupItem(Item* itemToPickup)
         if (this->withinRadius(itemToPickup, 5))
         {
             addItem(itemToPickup);
-            Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
-            if (tmp)
-                tmp->setPlayerptr(this);
-               
+            
+            //Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
+            //if (tmp)
+            //    tmp->setPlayerptr(this);
+            //else
+            //{
+            //    BaseballBat* bat = dynamic_cast<BaseballBat*>(itemToPickup);
+            //   /* if (bat)
+            //        bat->setPlayerptr(this);*/
+            //}
             successfulPickup = true;
             holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::KINEMATIC);
         }
@@ -176,7 +183,7 @@ void Player::update()
         //holdingItem->setPos({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f });
         //holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f }));
         DirectX::SimpleMath::Vector3 newPos = this->position; 
-        newPos += playerForwardVec * 40 + playerUpVec*4;
+        newPos += playerForwardVec * 40;// +playerUpVec * 4;
         holdingItem->setPos(newPos);
         holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z}));
         if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))

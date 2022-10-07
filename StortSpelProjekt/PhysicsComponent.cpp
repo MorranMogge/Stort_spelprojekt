@@ -163,6 +163,11 @@ reactphysics3d::CollisionShapeName PhysicsComponent::getTypeName() const
 	return this->shape->getName();
 }
 
+reactphysics3d::Collider* PhysicsComponent::getCollider() const
+{
+	return this->collider;
+}
+
 DirectX::SimpleMath::Vector3 PhysicsComponent::getPosV3() const
 {
 	reactphysics3d::Vector3 temp = this->getPosition();

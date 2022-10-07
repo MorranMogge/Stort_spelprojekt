@@ -11,13 +11,15 @@
 void PhysicsWorld::setUpBaseScenario()
 {
 	//Create Player
-	playerShape = com.createBoxShape(reactphysics3d::Vector3(4*0.35f, 4 * 0.35f, 4 * 0.35f));
-	reactphysics3d::Transform playerTransform = reactphysics3d::Transform(reactphysics3d::Vector3(1, 1, 1), reactphysics3d::Quaternion::identity());
-	playerRigidBody = world->createRigidBody(playerTransform);
-	playerCollider = playerRigidBody->addCollider(playerShape, reactphysics3d::Transform(reactphysics3d::Vector3(0, 0, 0), reactphysics3d::Quaternion::identity()));
-	playerRigidBody->setType(reactphysics3d::BodyType::KINEMATIC);
-	playerRigidBody->enableGravity(false);
-	playerRigidBody->setTransform(reactphysics3d::Transform(reactphysics3d::Vector3(-10, 10, -20), reactphysics3d::Quaternion::identity()));
+	//playerShape = com.createBoxShape(reactphysics3d::Vector3(4*0.35f, 4 * 0.35f, 4 * 0.35f));
+	//reactphysics3d::Transform playerTransform = reactphysics3d::Transform(reactphysics3d::Vector3(1, 1, 1), reactphysics3d::Quaternion::identity());
+	//playerRigidBody = world->createRigidBody(playerTransform);
+	//playerCollider = playerRigidBody->addCollider(playerShape, reactphysics3d::Transform(reactphysics3d::Vector3(0, 0, 0), reactphysics3d::Quaternion::identity()));
+	//playerRigidBody->setType(reactphysics3d::BodyType::KINEMATIC);
+	//playerRigidBody->enableGravity(false);
+	//playerRigidBody->setTransform(reactphysics3d::Transform(reactphysics3d::Vector3(-10, 10, -20), reactphysics3d::Quaternion::identity()));
+	playerBox = new PhysicsComponent();
+	playerBox->initiateComponent(&this->com, this->world);
 
 	//Planet
 	planetShape = com.createSphereShape(reactphysics3d::decimal(20));
@@ -238,17 +240,25 @@ void PhysicsWorld::addForceToObjects()
 
 DirectX::SimpleMath::Vector3 PhysicsWorld::getPos()
 {
-	return { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y , playerRigidBody->getTransform().getPosition().z };
+	//return { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y , playerRigidBody->getTransform().getPosition().z };
+	return playerBox->getPosV3();
 }
 
 DirectX::SimpleMath::Vector3 PhysicsWorld::getRot()
 {
-	return { playerRigidBody->getTransform().getOrientation().x, playerRigidBody->getTransform().getOrientation().y, playerRigidBody->getTransform().getOrientation().z };
+	//return { playerRigidBody->getTransform().getOrientation().x, playerRigidBody->getTransform().getOrientation().y, playerRigidBody->getTransform().getOrientation().z };
+	return { playerBox->getRotation().x, playerBox->getRotation().y, playerBox->getRotation().z };
+}
+
+PhysicsComponent* PhysicsWorld::getPlayerBox() const
+{
+	return this->playerBox;
 }
 
 void PhysicsWorld::updatePlayerBox(const DirectX::SimpleMath::Vector3& pos)
 {
-	playerRigidBody->setTransform(reactphysics3d::Transform(reactphysics3d::Vector3({ pos.x, pos.y, pos.z }), playerRigidBody->getTransform().getOrientation()));
+	//playerRigidBody->setTransform(reactphysics3d::Transform(reactphysics3d::Vector3({ pos.x, pos.y, pos.z }), playerRigidBody->getTransform().getOrientation()));
+	playerBox->setPosition(reactphysics3d::Vector3({ pos.x, pos.y, pos.z }));
 }
 
 void PhysicsWorld::addBoxToWorld(DirectX::XMFLOAT3 dimensions, float mass, DirectX::XMFLOAT3 position)

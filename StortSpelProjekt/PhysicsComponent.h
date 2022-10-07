@@ -50,6 +50,7 @@ public:
 	reactphysics3d::Vector3 getPosition()const;
 	reactphysics3d::Quaternion getRotation()const;
 	reactphysics3d::CollisionShapeName getTypeName()const;
+	reactphysics3d::Collider* getCollider()const;
 	DirectX::SimpleMath::Vector3 getPosV3()const;
 
 	float getMass()const;

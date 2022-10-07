@@ -117,6 +117,7 @@
       <Filter>Particles</Filter>
     </ClCompile>
     <ClCompile Include="PlayerVectors.cpp" />
+    <ClCompile Include="BaseballBat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -353,6 +354,7 @@
     </ClInclude>
     <ClInclude Include="GameInclude.h" />
     <ClInclude Include="PlayerVectors.h" />
+    <ClInclude Include="BaseballBat.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

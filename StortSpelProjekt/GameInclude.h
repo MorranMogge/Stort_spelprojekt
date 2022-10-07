@@ -20,6 +20,7 @@
 //GameObjects
 #include "Player.h"
 #include "Potion.h"
+#include "BaseballBat.h"
 
 //User
 #include "Input.h"

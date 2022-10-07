@@ -42,12 +42,10 @@ private:
 		int parentID;
 		std::string name;
 		DirectX::XMMATRIX offsetMatrix;
-		DirectX::XMMATRIX finalTransform;
 
 		boneInfo(const DirectX::XMMATRIX& offset)
 		{
 			offsetMatrix = offset;
-			finalTransform = {};
 			parentID = -1;
 			name = "";
 		}

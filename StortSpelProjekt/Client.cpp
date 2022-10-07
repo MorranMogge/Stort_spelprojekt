@@ -42,7 +42,8 @@ void clientFunction(void* param)
 		int packetid = extractPacketId(receivedData);//extract the id of the packet
 		
 		void* dataStruct = extractData(receivedData, recvSize);
-		testPosition *tst = (testPosition*)dataStruct;
+		testPosition *tst = nullptr;
+		idProtocol* protocol = nullptr;
 
 		std::string receivedString;
 		//unsigned short packetId;
@@ -69,6 +70,8 @@ void clientFunction(void* param)
 
 			break;
 		case 4:
+			tst = (testPosition*)dataStruct;
+
 			std::cout << "TCP received data from address: " << data->socket.getRemoteAddress().toString() << std::endl;
 			//receivedPacket >> packetId >> playerid >> data->mp_Event.pos[0] >> data->mp_Event.pos[1] >> data->mp_Event.pos[2];
 			std::cout << "data received from server: Packet id: " << std::to_string(packetid) <<
@@ -77,8 +80,9 @@ void clientFunction(void* param)
 			//free(tst);
 			break;
 		case 10://receiving id in player vector from server side
+			protocol = (idProtocol*)dataStruct;
 
-			//receivedPacket >> data->playerId;
+			std::cout << "received player id: " << std::to_string(protocol->assignedPlayerId) << std::endl;
 			//std::cout << "player id recv: " << std::to_string(data->playerId) << std::endl;
 			break;
 		}
@@ -298,25 +302,6 @@ void Client::receiveFromServerTcp()
 		std::cout << "TCP received data from address: " << tcpSocket.getRemoteAddress().toString() << std::endl;
 		receivedPacket << receivedString;
 		std::cout << "data received from server: " << receivedString << std::endl;
-	}
-}
-
-void Client::RECEIVEPOSITIONTEST()
-{
-	receivedPacket.clear();
-	if (tcpSocket.receive(receivedPacket) != sf::Socket::Done)
-	{
-		std::cout << "failed to receive TCP\n";
-	}
-	else
-	{
-		/*std::string receivedString;
-		float x = 0.0f;
-		float y = 0.0f;
-		std::cout << "TCP received data from address: " << tcpSocket.getRemoteAddress().toString() << std::endl;
-		receivedPacket >> receivedString >> x >> y;
-		std::cout << "data received from server: " << receivedString << "x : " << x << "y: " << y << std::endl;
-		receivedPacket.clear();*/
 	}
 }
 

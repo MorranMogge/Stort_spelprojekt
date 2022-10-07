@@ -259,12 +259,33 @@ int extractPacketId(sf::Packet& packet)
 	return packetIdentifier;
 };
 
-float extractBinaryPacketId(void*& pointerToData)
+int extractBinaryPacketId(char* pointerToData[])
 {
-	float idPacket;
+	int idPacket;
 	memcpy(&idPacket, pointerToData, sizeof(int));
 	
 	return idPacket;
+}
+
+//test för att flytta pekaren
+float exfloatTest(char* pointerToData[], const std::size_t& recvSize)
+{
+	float position = -1.0;
+	//to move the pointer
+	int bytesToMove = sizeof(int) + sizeof(int);
+	char* test = pointerToData[0];
+	test += bytesToMove;
+
+	
+	//void* vp = malloc(recvSize);
+	//memcpy(vp, pointerToData, recvSize);
+	//vp = (char*)vp + bytesToMove;
+
+	memcpy(&position, (pointerToData + 1), sizeof(float));
+	
+	//radera minnet 
+
+	return position;
 }
 
 void recvData(void* param, userData* user)//thread to recv data
@@ -279,7 +300,7 @@ void recvData(void* param, userData* user)//thread to recv data
 		std::size_t recv;
 		char datapointer[256];
 
-		if (user->tcpSocket.receive(&datapointer,256,recv) != sf::Socket::Done)
+		if (user->tcpSocket.receive(&datapointer, 256, recv) != sf::Socket::Done)
 		{
 			//error
 		}
@@ -296,18 +317,31 @@ void recvData(void* param, userData* user)//thread to recv data
 			//	std::cout << "Position recv: " << std::to_string(data->pos[0]) << ", " << std::to_string(data->pos[1]) << ", " << std::to_string(data->pos[2]) << std::endl;
 			//}
 
+			//kopierar datan till en void pekare
 			void* dta = extractData(datapointer, recv);
-			float packId = extractBinaryPacketId(dta);
-
 			memcpy(dta, datapointer, recv);
 			
-			testPosition *wow = (testPosition*)dta;
-			
-			std::cout << "testing binary packetId: " << std::to_string(wow->packetId) << std::endl;
+			//kopierar datan från den originala char arrayen som vi recv
+			char* charData[sizeof(testPosition)];
+			memcpy(charData, datapointer, sizeof(testPosition));
 
-			data->pos[0] = wow->x;
-			data->pos[1] = wow->y;
-			data->pos[2] = wow->z;
+			
+
+			//typercastar void pekaren till en struct för enklare användning
+			testPosition* tstPosition = (testPosition*)dta;
+
+			//typercastar char pekaren till en struct för enklare användning
+			testPosition* tst = (testPosition*)charData;
+
+			float packId = extractBinaryPacketId(charData);
+			float tstPos = exfloatTest(charData, recv);
+			
+			//std::cout << "size_t: " << std::to_string(sizeof(testPosition)) << std::endl;
+			std::cout << "testing tstpos.x: " << std::to_string(tstPos) << std::endl;
+
+			data->pos[0] = tst->x;
+			data->pos[1] = tst->y;
+			data->pos[2] = tst->z;
 			
 			//data->user->playa.setPosition(wow->x, wow->y, wow->z);
 
@@ -323,10 +357,13 @@ void sendIdToAllPlayers(serverData& data)
 
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
-		sf::Packet pack;
-		pack << packetid << data.users[i].playerId;
+		idProtocol protocol;
+		protocol.assignedPlayerId = data.users[i].playerId;
+		protocol.packetId = 10;
 
-		if (data.users[i].tcpSocket.send(pack) != sf::Socket::Done)
+		std::size_t sentSize;
+
+		if (data.users[i].tcpSocket.send(&protocol, sizeof(protocol), sentSize) != sf::Socket::Done)
 		{
 			//error
 			std::cout << "sendIdToAllPlayers(), couldnt send id to player: " << std::to_string(i) << std::endl;
@@ -348,6 +385,8 @@ int main()
 
 	float frequency = 30.f;
 
+
+	std::cout << std::to_string(sizeof(float)) << std::endl;
 
 	std::vector<player> players;
 
@@ -385,7 +424,7 @@ int main()
 	
 	acceptPlayers(data);
 
-	//sendIdToAllPlayers(data);
+	sendIdToAllPlayers(data);
 
 	std::thread* recvThread[MAXNUMBEROFPLAYERS];
 	threadInfo threadData[MAXNUMBEROFPLAYERS];

@@ -70,8 +70,6 @@ public:
 	void sendToServerTEMPTCP(Player*& currentPlayer);
 	void receiveFromServerTcp();
 
-	void RECEIVEPOSITIONTEST();
-
 	void saveText(std::string text);
 	void saveMsg(std::string text);
 	void tempwrite();

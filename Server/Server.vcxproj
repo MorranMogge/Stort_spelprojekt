@@ -133,10 +133,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="Packethandler.h" />
     <ClInclude Include="PacketsDataTypes.h" />
     <ClInclude Include="player.h" />

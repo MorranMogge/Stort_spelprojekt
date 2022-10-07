@@ -21,6 +21,9 @@
     <ClCompile Include="player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CircularBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="player.h">
@@ -30,6 +33,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Packethandler.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CircularBuffer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

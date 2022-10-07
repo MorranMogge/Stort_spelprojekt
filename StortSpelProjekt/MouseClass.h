@@ -1,8 +1,8 @@
 #pragma once
 #include "MouseEvent.h"
 #include <queue>
-#include <windows.h>
 #include "Camera.h"
+#include "stdafx.h"
 
 class MouseClass
 {

@@ -1,6 +1,5 @@
 #pragma once
-#include <reactphysics3d\reactphysics3d.h>
-#include <SimpleMath.h>
+#include "stdafx.h"
 
 class GameObject;
 

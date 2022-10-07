@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "PhysicsComponent.h"
 #include "GameObject.h"
 
@@ -181,7 +182,7 @@ float PhysicsComponent::getLinearDampning() const
 
 float PhysicsComponent::getAngularDampning() const
 {
-	return this->getAngularDampning();
+	return this->rigidBody->getAngularDamping();
 }
 
 void PhysicsComponent::setParent(GameObject* parent)

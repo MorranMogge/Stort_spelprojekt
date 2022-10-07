@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Client.h"
 
 void clientFunction(void* param)

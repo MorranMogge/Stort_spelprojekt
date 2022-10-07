@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "BasicRenderer.h"
 
 bool BasicRenderer::setUpInputLayout(ID3D11Device* device, const std::string& vShaderByteCode)

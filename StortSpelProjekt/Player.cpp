@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "PhysicsComponent.h"
 #include "Player.h"
 #include "DirectXMathHelper.h"
@@ -5,12 +6,14 @@
 using namespace DirectX;
 
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-    :GameObject(useMesh, pos, rot, id), health(69), holdingItem(nullptr)
+    :GameObject(useMesh, pos, rot, id), health(69), holdingItem(nullptr), 
+    playerForwardVec(XMVectorSet(0,0,0,0)), playerRightVec(XMVectorSet(0, 0, 0, 0)), playerUpVec(XMVectorSet(0, 0, 0, 0))
 {
 }
 
 Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-	:GameObject(objectPath, pos, rot, id), health(69), holdingItem(nullptr)
+	:GameObject(objectPath, pos, rot, id), health(69), holdingItem(nullptr),
+    playerForwardVec(XMVectorSet(0, 0, 0, 0)), playerRightVec(XMVectorSet(0, 0, 0, 0)), playerUpVec(XMVectorSet(0, 0, 0, 0))
 {
 }
 
@@ -80,12 +83,12 @@ void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& camera
 
     if (Input::KeyDown(KeyCode::E))
     {
-        this->position.y += 0.1;
+        this->position.y += 0.1f;
     }
 
     else if (Input::KeyDown(KeyCode::Q))
     {
-        this->position.y -= 0.1;
+        this->position.y -= 0.1f;
     }
 }
 

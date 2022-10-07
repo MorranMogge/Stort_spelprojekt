@@ -49,6 +49,8 @@ private:
 	LightHandler ltHandler;
 	PlayerVectors playerVecRenderer;
 
+	DirectX::XMMATRIX rotationMX;
+
 	//Objects
 	std::vector<Mesh> meshes_Static;
 	std::vector<Mesh> meshes_Dynamic;

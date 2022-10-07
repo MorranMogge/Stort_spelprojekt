@@ -24,8 +24,8 @@ private:
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 
-	DirectX::XMVECTOR rightVec = DEFAULT_RIGHT;
-	DirectX::XMVECTOR forwardVec = DEFAULT_FORWARD;
+	DirectX::XMVECTOR rightVector = DEFAULT_RIGHT;
+	DirectX::XMVECTOR forwardVector = DEFAULT_FORWARD;
 	DirectX::XMVECTOR upVector = DEFAULT_UP;
 
 public:

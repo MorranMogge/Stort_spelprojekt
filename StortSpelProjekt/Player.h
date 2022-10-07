@@ -16,9 +16,8 @@ private:
 	XMFLOAT3 dotValue2;
 	DirectX::XMVECTOR dotProduct2;
 
-	XMFLOAT3 angle;
+	float angle;
 
-	DirectX::XMMATRIX rotationMX;
 	DirectX::XMMATRIX rotationMX2;
 	DirectX::XMVECTOR rot;
 	DirectX::XMVECTOR rot2;
@@ -40,11 +39,13 @@ private:
 	float southEast = XM_PIDIV2 + XM_PIDIV4;
 	float piDiv2 = XM_PI + XM_PIDIV2;
 
+	float temp = 0.0f;
+
 public:
 	Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
 	Player(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
 	void handleInputs(); 
-	void move(DirectX::XMVECTOR cameraForward, DirectX::XMVECTOR cameraUp, DirectX::XMVECTOR cameraRight, DirectX::SimpleMath::Vector3& position, DirectX::XMMATRIX& rotation, const DirectX::XMFLOAT3& grav, float deltaTime);
+	void move(DirectX::XMVECTOR cameraForward, DirectX::XMVECTOR cameraUp, DirectX::XMVECTOR cameraRight, DirectX::SimpleMath::Vector3& position, DirectX::XMMATRIX& rotation, DirectX::XMMATRIX& rotationMX, const DirectX::XMFLOAT3& grav, float deltaTime);
 	bool getPickup(GameObject *pickup);
 	void releasePickup();
 

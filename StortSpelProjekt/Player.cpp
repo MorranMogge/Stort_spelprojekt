@@ -46,17 +46,20 @@ void Player::handleInputs()
 
 }
 
-void Player::move(DirectX::XMVECTOR cameraForward, DirectX::XMVECTOR cameraUp, DirectX::XMVECTOR cameraRight, DirectX::SimpleMath::Vector3& position, DirectX::XMMATRIX& rotation, const DirectX::XMFLOAT3& grav, float deltaTime)
+void Player::move(DirectX::XMVECTOR cameraForward, DirectX::XMVECTOR cameraUp, DirectX::XMVECTOR cameraRight, DirectX::SimpleMath::Vector3& position, DirectX::XMMATRIX& rotation, DirectX::XMMATRIX& rotationMX, const DirectX::XMFLOAT3& grav, float deltaTime)
 {
 	normalVector = XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 
 	upVector = XMVector3TransformCoord(DEFAULT_UP, rotation);
-	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
+	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
 
 	upVector = XMVector3Normalize(upVector);
 	rightVector = XMVector3Normalize(rightVector);
 	forwardVector = XMVector3Normalize(forwardVector);
+
+	cameraForward = XMVector3Normalize(cameraForward);
+	cameraRight = XMVector3Normalize(cameraRight);
 
 	//X-Rotation
 	dotProduct = XMVector3Dot(normalVector, forwardVector);
@@ -64,17 +67,13 @@ void Player::move(DirectX::XMVECTOR cameraForward, DirectX::XMVECTOR cameraUp, D
 	if (dotValue.x < -0.1f)
 	{
 		rotation *= XMMatrixRotationAxis(rightVector, -0.01f);
+		rotationMX *= XMMatrixRotationAxis(rightVector, -0.01f);
 	}
 	else if (dotValue.x > 0.1f)
 	{
 		rotation *= XMMatrixRotationAxis(rightVector, 0.01f);
+		rotationMX *= XMMatrixRotationAxis(rightVector, 0.01f);
 	}
-
-	/*OutputDebugString(L"PLAYER DOT: ");
-	OutputDebugString(L"\n");
-	OutputDebugString(std::to_wstring(dotValue.z).c_str());
-	OutputDebugString(L"\n");
-	OutputDebugString(L"\n");*/
 
 	//Z-Rotation
 	dotProduct2 = XMVector3Dot(normalVector, rightVector);
@@ -82,12 +81,21 @@ void Player::move(DirectX::XMVECTOR cameraForward, DirectX::XMVECTOR cameraUp, D
 	if (dotValue2.z < -0.1f)
 	{
 		rotation *= XMMatrixRotationAxis(forwardVector, 0.01f);
+		rotationMX *= XMMatrixRotationAxis(forwardVector, 0.01f);
 	}
 	else if (dotValue2.z > 0.1f)
 	{
 		rotation *= XMMatrixRotationAxis(forwardVector, -0.01f);
+		rotationMX *= XMMatrixRotationAxis(forwardVector, -0.01f);
 	}
 
+	//Help-rotation
+	if (Input::KeyDown(KeyCode::K))
+	{
+		rotation *= XMMatrixRotationAxis(normalVector, 0.01f);
+	}
+
+	//Movement
 	if (Input::KeyDown(KeyCode::SHIFT))
 	{
 		deltaTime *= 3.0f;
@@ -95,50 +103,82 @@ void Player::move(DirectX::XMVECTOR cameraForward, DirectX::XMVECTOR cameraUp, D
 
 	if (Input::KeyDown(KeyCode::W))
 	{
-		position += forwardVector * deltaTime * 30.0f;
-		
-		/*cameraUp = XMVector3Normalize(cameraUp);
-		forwardVector = XMVector3Normalize(forwardVector);
+		position += forwardVector * deltaTime * 40.0f;
 
-		dotProduct = XMVector3AngleBetweenNormals(cameraUp, forwardVector);
-		XMStoreFloat3(&dotValue, dotProduct);
-		rotation += XMQuaternionRotationAxis(normalVector, dotValue.x * 0.005f);*/
+		dotProduct2 = XMVector3Dot(cameraForward, rightVector);
+		XMStoreFloat3(&dotValue2, dotProduct2);
+		if (dotValue2.z < -0.005f)
+		{
+			rotation *= XMMatrixRotationAxis(normalVector, -0.02f);
+		}
+		else if (dotValue2.z > 0.005f)
+		{
+			rotation *= XMMatrixRotationAxis(normalVector, 0.02f);
+		}
+		else if (!XMVector3Equal(cameraRight, rightVector))
+		{
+			rotation *= XMMatrixRotationAxis(normalVector, 0.02f);
+		}
 	}
 
 	if (Input::KeyDown(KeyCode::S))
 	{
-		position -= forwardVector * deltaTime * 30.0f;
-		
-		/*cameraUp = XMVector3Normalize(cameraUp);
-		forwardVector = XMVector3Normalize(forwardVector);
+		position += forwardVector * deltaTime * 40.0f;
 
-		dotProduct = XMVector3AngleBetweenNormals(-cameraUp, forwardVector);
-		XMStoreFloat3(&dotValue, dotProduct);
-		rotation += XMQuaternionRotationAxis(normalVector, dotValue.x * 0.005f);*/
+		dotProduct2 = XMVector3Dot(-cameraForward, rightVector);
+		XMStoreFloat3(&dotValue2, dotProduct2);
+		if (dotValue2.z < -0.005f)
+		{
+			rotation *= XMMatrixRotationAxis(normalVector, -0.02f);
+		}
+		else if (dotValue2.z > 0.005f)
+		{
+			rotation *= XMMatrixRotationAxis(normalVector, 0.02f);
+		}
+		else if (!XMVector3Equal(-cameraRight, -rightVector))
+		{
+			rotation *= XMMatrixRotationAxis(normalVector, -0.02f);
+		}
 	}
 
 	if (Input::KeyDown(KeyCode::D))
 	{
-		position += rightVector * deltaTime * 30.0f;
+		position += forwardVector * deltaTime * 40.0f;
 
-		/*cameraRight = XMVector3Normalize(cameraRight);
-		forwardVector = XMVector3Normalize(forwardVector);
-
-		dotProduct = XMVector3AngleBetweenNormals(cameraRight, forwardVector);
-		XMStoreFloat3(&dotValue, dotProduct);
-		rotation += XMQuaternionRotationAxis(normalVector, dotValue.x * 0.005f);*/
+		dotProduct2 = XMVector3Dot(cameraRight, rightVector);
+		XMStoreFloat3(&dotValue2, dotProduct2);
+		if (dotValue2.z < -0.005f)
+		{
+			rotation *= XMMatrixRotationAxis(normalVector, -0.02f);
+		}
+		else if (dotValue2.z > 0.005f)
+		{
+			rotation *= XMMatrixRotationAxis(normalVector, 0.02f);
+		}
+		else if (!XMVector3Equal(cameraUp, rightVector))
+		{
+			rotation *= XMMatrixRotationAxis(normalVector, 0.02f);
+		}
 	}
 
 	if (Input::KeyDown(KeyCode::A))
 	{
-		position -= rightVector * deltaTime * 30.0f;
+		position += forwardVector * deltaTime * 40.0f;
 
-		/*cameraRight = XMVector3Normalize(cameraRight);
-		forwardVector = XMVector3Normalize(forwardVector);
-
-		dotProduct = XMVector3AngleBetweenNormals(-cameraRight, forwardVector);
-		XMStoreFloat3(&dotValue, dotProduct);
-		rotation += XMQuaternionRotationAxis(normalVector, dotValue.x * 0.005f);*/
+		dotProduct2 = XMVector3Dot(-cameraRight, rightVector);
+		XMStoreFloat3(&dotValue2, dotProduct2);
+		if (dotValue2.z < -0.005f)
+		{
+			rotation *= XMMatrixRotationAxis(normalVector, -0.02f);
+		}
+		else if (dotValue2.z > 0.005f)
+		{
+			rotation *= XMMatrixRotationAxis(normalVector, 0.02f);
+		}
+		else if (!XMVector3Equal(-cameraUp, -rightVector))
+		{
+			rotation *= XMMatrixRotationAxis(normalVector, -0.02f);
+		}
 	}
 
 	//Help keys
@@ -179,7 +219,7 @@ void Player::releasePickup()
 
 DirectX::XMVECTOR Player::getUpVec() const
 {
-	return this->normalVector;
+	return this->upVector;
 }
 
 DirectX::XMVECTOR Player::getForwardVec() const

@@ -48,7 +48,7 @@ void Game::loadObjects()
 	meshes_Dynamic[0].scale = DirectX::SimpleMath::Vector3(1, 1, 1);
 	meshes_Dynamic[0].position = DirectX::SimpleMath::Vector3(22, 22, -22);
 	meshes_Dynamic[0].rotation = DirectX::XMMatrixRotationRollPitchYaw(0, 0, 0);
-	
+	rotationMX = meshes_Dynamic[0].rotation;
 }
 
 void Game::drawObjects()
@@ -130,14 +130,14 @@ GAMESTATE Game::Update()
 	float zpos = meshes_Dynamic[0].position.z;
 
 	grav = normalizeXMFLOAT3(grav);
-	player.move(camera.getForwardVector(), camera.getUpVector(), camera.getRightVector(), meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, grav, dt);
+	player.move(camera.getForwardVector(), camera.getUpVector(), camera.getRightVector(), meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, rotationMX, grav, dt);
 	player.setPos({ meshes_Dynamic[0].position.x, meshes_Dynamic[0].position.y , meshes_Dynamic[0].position.z });
 	grav = planetGravityField.calcGravFactor(meshes_Dynamic[0].position);
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(meshes_Dynamic[0].position));
 	if (getLength(meshes_Dynamic[0].position) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); newNormalizeXMFLOAT3(meshes_Dynamic[0].position); scalarMultiplicationXMFLOAT3(22, meshes_Dynamic[0].position); }
 	additionXMFLOAT3(meshes_Dynamic[0].position, getScalarMultiplicationXMFLOAT3(dt, velocity));
 
-	camera.moveCamera(meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, player.getUpVec(), player.getForwardVec(), player.getRightVec(), dt);
+	camera.moveCamera(meshes_Dynamic[0].position, rotationMX, player.getUpVec(), player.getForwardVec(), player.getRightVec(), dt);
 
 
 	//KLARA DONT LOOK HERE!

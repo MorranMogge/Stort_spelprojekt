@@ -58,14 +58,18 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];		
 		
-		meshes.emplace_back(readNodes(mesh, scene));
-		
 		readNodes2(mesh, scene);
 
 		aiMaterial* material = scene->mMaterials[scene->mMeshes[i]->mMaterialIndex];
 		//här srv inläsning
 
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+		{
+			
+		}
+
 		aiString Path;
+		//if(material->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		if(material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
 			if (this->bank.hasItem(Path.data))
@@ -176,33 +180,9 @@ void ModelManager::readNodes2(aiMesh* mesh, const aiScene* scene)
 		}
 	}
 	
-	ID3D11Buffer* indexBuffer = {};
-
-	D3D11_BUFFER_DESC indexBufferDesc = {};
-	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * indexTriangle.size();
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
-	indexBufferDesc.StructureByteStride = 0;
-
-	D3D11_SUBRESOURCE_DATA indexBufferData;
-	indexBufferData.pSysMem = indexTriangle.data();
-	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
-
-	this->vecIndexBuff.emplace_back(indexBuffer);
-
-	std::cout << "StructVertexDataSize: " << dataForMesh.vertexTriangle.size() << "\n";
-	std::cout << "StructIndexDataSize: " << dataForMesh.indexTriangle.size() << "\n";
-
 	this->submeshRanges.emplace_back(dataForMesh.indexTriangle.size());
 	this->amountOfvertices.emplace_back(vertexTriangle.size());
 
-	for (int i = 0; i < submeshRanges.size(); i++)
-	{
-		std::cout << "submeshranges on index: " << i << " with range " << submeshRanges[i] << "\n";
-	}
 }
 
 std::vector<ID3D11Buffer*> ModelManager::getBuff() const
@@ -216,7 +196,9 @@ void ModelManager::setDevice(ID3D11Device* device)
 }
 
 ModelManager::ModelManager()
+	:device(nullptr)
 {
+
 }
 
 ModelManager::ModelManager(ID3D11Device* device)
@@ -292,14 +274,15 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	vertexBuffer = {};
 	this->submeshRanges.clear();
 	this->amountOfvertices.clear();
-	memset(&dataForMesh, 0, sizeof(dataForMesh));
+	this->dataForMesh.indexTriangle.clear();
+	this->dataForMesh.vertexTriangle.clear();
 
 	return true;
 }
 
-std::vector<Mesh2*> ModelManager::getMeshes() const
+ID3D11ShaderResourceView* ModelManager::getSrv(const std::string key)
 {
-	return meshes;
+	return bank.getSrv(key);
 }
 
 std::vector<ID3D11ShaderResourceView*> ModelManager::getTextureMaps() const

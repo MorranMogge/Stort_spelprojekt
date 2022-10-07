@@ -57,21 +57,21 @@ void Game::drawObjects(bool drawDebug)
 		gameObjects.at(i)->draw();
 	}
 
+	//MaterialLibrary::textures[]
+	UINT stride = sizeof(vertex);
+	UINT offset = 0;
+	
 	int startIndex = 0;
 	int startVertex = 0;
-	//GPU::immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-	//GPU::immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
-	//for (int i = 0; i < subMeshRanges.size(); i++)
-	//{
-	//
-	//	GPU::immediateContext->DrawIndexed(subMeshRanges[i], startIndex, startVertex);
-	//	startVertex += this->verticesRanges[i];
-	//	startIndex += subMeshRanges[i];
-	//}
-
+	GPU::immediateContext->PSSetShaderResources(0, 1, &tempSRV);
+	GPU::immediateContext->IASetVertexBuffers(0, 1, &vBuff, &stride, &offset);
+	GPU::immediateContext->IASetIndexBuffer(iBuff, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
 	for (int i = 0; i < subMeshRanges.size(); i++)
 	{
-
+	
+		GPU::immediateContext->DrawIndexed(subMeshRanges[i], startIndex, startVertex);
+		startVertex += this->verticies[i];
+		startIndex += subMeshRanges[i];
 	}
 
 	//Draw light debug meshes
@@ -177,6 +177,49 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->manager.getMeshData("../Meshes/gob.obj", vBuff, iBuff, subMeshRanges, verticies);
 
 
+
+
+	ID3D11Texture2D* texture;
+	D3D11_TEXTURE2D_DESC desc = {};
+	int width, height, channels;
+	unsigned char* image = stbi_load("../Textures/texture2.png", &width, &height, &channels, STBI_rgb_alpha);
+	if (!image)
+	{
+		stbi_image_free(image);
+		
+	}
+	desc.Width = width;
+	desc.Height = height;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.MiscFlags = 0;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_IMMUTABLE;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA data = {};
+	data.pSysMem = image;
+	data.SysMemPitch = width * 4; //RBGA - RGBA - ...
+
+	HRESULT hr = device->CreateTexture2D(&desc, &data, &texture);
+	stbi_image_free(image);
+	hr = device->CreateShaderResourceView(texture, NULL, &tempSRV);
+	
+	texture->Release();
+
+
+
+
+
+
+
+
+
+
+	//this->tempSRV = this->manager.getSrv();
 	MaterialLibrary::LoadDefault();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -207,6 +250,7 @@ Game::~Game()
 	}
 
 	wireBuffer->Release();
+	this->tempSRV->Release();
 }
 
 GAMESTATE Game::Update()

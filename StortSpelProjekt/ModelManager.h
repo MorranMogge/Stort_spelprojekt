@@ -46,7 +46,8 @@ public:
 	ModelManager(ID3D11Device* device);
 	~ModelManager();
 	bool loadMeshData(const std::string& filePath);
-	std::vector<Mesh2*> getMeshes() const;
+	ID3D11ShaderResourceView* getSrv(const std::string key);
+	//std::vector<Mesh2*> getMeshes() const;
 	std::vector<ID3D11ShaderResourceView*> getTextureMaps() const;
 	//fills the params with meshdata
 	bool getMeshData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces);

@@ -12,6 +12,14 @@ struct wirefameInfo
 class Game : public State
 {
 private:
+
+	ID3D11Buffer* vBuff;
+	ID3D11Buffer* iBuff;
+	std::vector<int> subMeshRanges;
+	std::vector<int> verticies;
+	ID3D11ShaderResourceView* tempSRV;
+
+
 	ID3D11DeviceContext* immediateContext;
 	ModelManager manager;
 	ImGuiHelper imGui;

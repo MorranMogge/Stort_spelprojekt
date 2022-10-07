@@ -82,7 +82,7 @@ SkyboxObj::SkyboxObj()
 		std::cerr << "error creating RenderTargets!" << std::endl;
 	}
 
-	this->skyBoxMesh = new GameObject("../Meshes/Skybox", DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 0, 0), 0, DirectX::XMFLOAT3(10, 10, 10));
+	this->skyBoxMesh = new GameObject("../Meshes/Skybox", DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 0, 0), 0);
 }
 
 SkyboxObj::~SkyboxObj()

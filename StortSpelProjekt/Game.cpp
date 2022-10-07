@@ -24,10 +24,7 @@ void Game::drawShadows()
 	}
 
 	basicRenderer.depthPrePass();
-	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
-	{
-		ltHandler.drawShadows(i, gameObjects, &camera);
-	}
+	ltHandler.drawShadows(0, gameObjects, &camera);
 	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
 }
 

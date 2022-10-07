@@ -4,7 +4,7 @@
 bool CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>&  PT_vertexBuffer, Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView>& particleUav, std::vector<particleStruct>& structVector)
 {
 	D3D11_BUFFER_DESC bufferDesc;													//create Vertex buffer
-	bufferDesc.ByteWidth = structVector.size() * sizeof(particleStruct);			//size of buffer
+	bufferDesc.ByteWidth = structVector.size() * (UINT)sizeof(particleStruct);			//size of buffer
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;											//sets interaction with gpu and cpu
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_UNORDERED_ACCESS;	//Specifies the type of buffer
 	bufferDesc.CPUAccessFlags = 0;													//Specifies cpu acess
@@ -23,7 +23,7 @@ bool CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>&  PT_vertexBuffer, Micros
 	uavDesc.Format = DXGI_FORMAT_R32_FLOAT;
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 	uavDesc.Buffer.FirstElement = 0;
-	uavDesc.Buffer.NumElements = size(structVector) * 8;//fel???
+	uavDesc.Buffer.NumElements = (UINT)size(structVector) * 8;//fel???
 	uavDesc.Buffer.Flags = 0;
 	
 	if (FAILED(GPU::device->CreateUnorderedAccessView(PT_vertexBuffer.Get(), &uavDesc, particleUav.GetAddressOf())))
@@ -41,7 +41,7 @@ bool CreatePosActiveBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& posBuffer, Dire
 	data.push_back(DirectX::XMFLOAT4(rotation.x, rotation.y, rotation.z, 0));
 
 	D3D11_BUFFER_DESC cBuffDesc = { 0 };
-	cBuffDesc.ByteWidth = sizeof(DirectX::XMFLOAT4) * data.size();						//size of buffer //Kolla senare funktion för att hitta närmaste multipel av 16 för int!
+	cBuffDesc.ByteWidth = (UINT)sizeof(DirectX::XMFLOAT4) * data.size();						//size of buffer //Kolla senare funktion för att hitta närmaste multipel av 16 för int!
 	cBuffDesc.Usage = D3D11_USAGE_DYNAMIC;										//sets interaction with gpu and cpu
 	cBuffDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;							//Specifies the type of buffer
 	cBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;							//Specifies cpu acess
@@ -125,7 +125,7 @@ ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XM
 		}
 
 		float lifeTime = minMaxTime.x + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (minMaxTime.y - minMaxTime.x)));
-		particleStruct tempStruct(DirectX::XMFLOAT3(Pos.x + x, Pos.y + y, Pos.z + z), i, lifeTime);
+		particleStruct tempStruct(DirectX::XMFLOAT3(Pos.x + x, Pos.y + y, Pos.z + z), (float)i, lifeTime);
 		this->PT_Data.push_back(tempStruct);
 	}
 
@@ -191,7 +191,7 @@ void ParticleEmitter::BindAndDraw()
 	GPU::immediateContext->IASetVertexBuffers(0, 1, &nullBuffer, &stride, &offset);								//unbind vertex shader
 
 	//Update positions on ComputeShader
-	GPU::immediateContext->CSSetConstantBuffers(0, tempBuff.size(), tempBuff.data());							//Set ConstBuffers CS (time & emitter position)
+	GPU::immediateContext->CSSetConstantBuffers(0, (UINT)tempBuff.size(), tempBuff.data());						//Set ConstBuffers CS (time & emitter position)
 	GPU::immediateContext->CSSetUnorderedAccessViews(0, 1, this->PT_UAV.GetAddressOf(), nullptr);				//Set UAV
 	GPU::immediateContext->Dispatch(nrOfPt, 1, 1);																//Dispatch
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Game.h"
 #include "DirectXMathHelper.h"
 
@@ -6,13 +7,35 @@
 void Game::loadObjects()
 {
 	//Here we can add base object we want in the beginning of the game
-	this->gameObjects.push_back(new GameObject("../Meshes/Planet", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f)));
-	planet = this->gameObjects.back();
-	this->gameObjects.push_back(new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0));
-	player = (Player*)this->gameObjects.back();
-	//potion = new Potion("../Meshes/player", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);	//Potion funkar inte!?
-	//potion = (Potion*)this->gameObjects.back();
-	gameObjects.push_back(new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 22, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0));
+	planet = new GameObject("../Meshes/Planet", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
+	player = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
+	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
+
+	//physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::BOX);
+	//planet->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
+
+	//skybox = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(-200.0f, 200.0f, 200.0f));
+	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+
+	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
+	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
+	testCube->getPhysComp()->setParent(testCube);
+
+	gameObjects.emplace_back(player);
+	gameObjects.emplace_back(planet);
+	gameObjects.emplace_back(potion);
+	gameObjects.emplace_back(testCube);
+
+	for (int i = 0; i < 10; i++)
+	{
+		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+		physWolrd.addPhysComponent(newObj, reactphysics3d::CollisionShapeName::BOX);
+		newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+i*10, 100));
+		gameObjects.emplace_back(newObj);
+	}
+
+	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
+	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 
 }
 
@@ -41,7 +64,6 @@ void Game::drawObjects(bool drawDebug)
 	//Draw light debug meshes
 	if (drawDebug)
 	{
-		basicRenderer.bindAmbientShader();
 		ltHandler.drawDebugMesh();
 	}
 
@@ -87,6 +109,14 @@ bool Game::setUpWireframe()
 
 void Game::updateBuffers()
 {
+	//Update GameObjects
+
+	for (int i = 0; i < gameObjects.size(); i++)
+	{
+		gameObjects.at(i)->updateBuffer();
+	}
+
+	//Update Wireframe buffer
 	ZeroMemory(&subData, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	immediateContext->Map(wireBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &subData);
 	memcpy(subData.pData, &reactWireframeInfo, sizeof(wirefameInfo));
@@ -99,9 +129,9 @@ void Game::handleKeybinds()
 
 	if (Input::KeyPress(KeyCode::T))
 	{
-		XMFLOAT3 test(this->ptEmitters.at(0).getPosition().x, this->ptEmitters.at(0).getPosition().y, this->ptEmitters.at(0).getPosition().z - 10);
+		DirectX::XMFLOAT3 test(this->ptEmitters.at(0).getPosition().x, this->ptEmitters.at(0).getPosition().y, this->ptEmitters.at(0).getPosition().z - 10);
 		this->ptEmitters.at(0).setPosition(test);
-		this->ptEmitters.at(0).setRotation(XMFLOAT3(-1, 0, 0));
+		this->ptEmitters.at(0).setRotation(DirectX::XMFLOAT3(-1, 0, 0));
 		this->ptEmitters.at(0).updateBuffer();
 	}
 	if (Input::KeyPress(KeyCode::Y))
@@ -133,10 +163,11 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->loadObjects();
 	this->setUpWireframe();
 	//camera.updateCamera(immediateContext);
-	
+	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
 	ltHandler.addLight(DirectX::XMFLOAT3(20, 30, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
 	ltHandler.addLight(DirectX::XMFLOAT3(10, -20, 30), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
+
 
 	this->mouse = &mouse;
 	this->window = &window;
@@ -180,17 +211,22 @@ GAMESTATE Game::Update()
 	physWolrd.updatePlayerBox(player->getPos());
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
-
-	for (int i = 0; i < gameObjects.size(); i++)
+	potion->update(); //getPhysComp()->updateParent();
+	testCube->update();//getPhysComp()->updateParent();
+	for (int i = 4; i < gameObjects.size(); i++)
 	{
-		gameObjects.at(i)->updateBuffer();
+		gameObjects[i]->update();//->getPhysComp()->updateParent();
 	}
-
 	//Here you can write client-server related functions?
 
 
-	//Debug keybinds
+	this->updateBuffers();
+	
+	if (player->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
+	
 	mouse->clearEvents();
+
+	//Debug keybinds
 	this->handleKeybinds();
 	return NOCHANGE;
 }
@@ -208,20 +244,21 @@ void Game::Render()
 
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
-	drawObjects(drawDebug);
+	if (objectDraw) drawObjects(drawDebug);
+
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();
 	this->skybox.draw();
 	basicRenderer.depthUnbind();
 
+	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
+	if (wireframe) { immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
+
+
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);
 	drawParticles();
 	this->ptEmitters.at(0).unbind();
-
-
-	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
-	//if (objectDraw) this->drawObjects();
-	//if (wireframe) { this->updateBuffers(); immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
 }
+

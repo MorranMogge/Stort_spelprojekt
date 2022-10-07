@@ -1,6 +1,6 @@
+#include "stdafx.h"
 #include "Texture.h"
 #include <filesystem>
-#include <string>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"

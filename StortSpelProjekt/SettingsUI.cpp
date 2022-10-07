@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "SettingsUI.h"
 #include "Input.h"
 #include "GuiHandler.h"
@@ -44,8 +45,6 @@ void SettingsUI::SpritePass()
 
 SettingsUI::SettingsUI()
 {
-
-	using namespace DirectX::SimpleMath;
 
 	settingsText = GUISprite(75 + 120, 100);
 	settingsText.Load(GPU::device, L"../Sprites/settingText.png");

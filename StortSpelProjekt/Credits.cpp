@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Credits.h"
 #include "Input.h"
 #include "GuiHandler.h"
@@ -41,8 +42,6 @@ void Credits::SpritePass()
 
 Credits::Credits()
 {
-	using namespace DirectX::SimpleMath;
-
 	GUI::Init();
 
 	creditsText = GUISprite(250 + 150, 150);

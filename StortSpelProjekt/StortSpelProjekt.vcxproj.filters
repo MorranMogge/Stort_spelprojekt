@@ -116,7 +116,7 @@
     <ClCompile Include="ParticleEmitter.cpp">
       <Filter>Particles</Filter>
     </ClCompile>
-    <ClCompile Include="SkyboxObj.cpp" />
+    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -351,7 +351,8 @@
     <ClInclude Include="ParticleEmitter.h">
       <Filter>Particles</Filter>
     </ClInclude>
-    <ClInclude Include="SkyboxObj.h" />
+    <ClInclude Include="GameInclude.h" />
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -425,15 +426,6 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PT_VertexShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="AmbientPixelShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Skybox_PS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Skybox_VS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

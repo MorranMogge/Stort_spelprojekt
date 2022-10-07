@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Light.h"
 #include "GPU.h"
 
@@ -106,5 +107,5 @@ void Light::updateMatrix(const DirectX::XMFLOAT3 &lightPos, const DirectX::XMFLO
 	DirectX::XMVECTOR upPos = DirectX::XMVectorSet(UpDir.x, UpDir.y, UpDir.z, 0);
 
 	this->position = lightPos;
-	this->view = { DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtLH(pos,focusPos, upPos) * DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PI / 2.0f, (float)GPU::windowWidth / (float)GPU::windowHeight, 0.1f, 200.0f)) };
+	this->view = { DirectX::XMMatrixLookToLH( pos, focusPos, upPos) * DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PI / 2.0f, 0.75f, 0.1f, 100.0f) };
 }

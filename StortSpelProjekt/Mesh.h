@@ -1,8 +1,9 @@
 #pragma once
 
-#include "OBJ.h"
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 
-#include <vector>
+#include "OBJ.h"
 
 #include "GPU.h"
 #include "MaterialLibrary.h"
@@ -13,7 +14,6 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "ConstantBuffer.h"
-#include <SimpleMath.h>
 
 
 class Mesh
@@ -47,7 +47,6 @@ public:
 
 	void Load(OBJ& obj)
 	{
-		using namespace DirectX::SimpleMath;
 #pragma region LoadObj
 
 		std::vector<Vertex> vertices;
@@ -214,7 +213,6 @@ public:
 	}
 	void UpdateCB()
 	{
-		using namespace DirectX::SimpleMath;
 		using namespace DirectX;
 
 		static MatrixS worldS;
@@ -231,7 +229,7 @@ public:
 		worldCB.Update(&worldS, sizeof(MatrixS));
 
 		static VectorS positionS;
-		positionS.vector = Vector4(position);
+		positionS.vector = DirectX::SimpleMath::Vector4(position);
 		positionCB.Update(&positionS, sizeof(VectorS));
 	}
 	void CreateCB()

@@ -1,11 +1,9 @@
+#include "stdafx.h"
 #include "GuiHandler.h"
 #include "GPU.h"
-#include<iostream>
 #include"Input.h"
 #include "SettingsUI.h"
 #include "Credits.h"
-
-using namespace DirectX::SimpleMath;
 
 void GuiHandler::SpritePass()
 {

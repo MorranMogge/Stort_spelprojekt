@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "BasicRenderer.h"
 
 bool BasicRenderer::setUpInputLayout(ID3D11Device* device, const std::string& vShaderByteCode)
@@ -77,7 +78,6 @@ BasicRenderer::~BasicRenderer()
 	inputLayout->Release();
 	vShader->Release();
 	pShader->Release();
-	ApShader->Release();
 
 	pt_inputLayout->Release();
 	pt_vShader->Release();
@@ -176,9 +176,4 @@ void BasicRenderer::skyboxPrePass()
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 	immediateContext->VSSetShader(vs_Skybox, nullptr, 0);								//SetVTXShader
 	immediateContext->PSSetShader(ps_Skybox, nullptr, 0);								//Set PSShader
-}
-
-void BasicRenderer::bindAmbientShader()
-{
-	immediateContext->PSSetShader(ApShader, nullptr, 0);
 }

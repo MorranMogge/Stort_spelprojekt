@@ -19,6 +19,7 @@
 #include "ParticleEmitter.h"
 #include "Potion.h"
 #include "SkyboxObj.h"
+#include "GameInclude.h"
 
 struct wirefameInfo
 {
@@ -54,6 +55,7 @@ private:
 	Camera camera;
 	Player* player;
 	GameObject* planet;
+	GameObject* testCube;
 	Potion* potion;			//not in use
 
 
@@ -73,7 +75,6 @@ private:
 	void updateBuffers();
 	void handleKeybinds();
 
-	float pos[3];
 
 	//Variables for the mouse movement
 	MouseClass* mouse;

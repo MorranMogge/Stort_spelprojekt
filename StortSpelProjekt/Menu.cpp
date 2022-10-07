@@ -1,11 +1,10 @@
+#include "stdafx.h"
 #include "Menu.h"
 #include "Input.h"
 #include "Console.h"
 #include "SoundCollection.h"
 #include "Topology.h"
 #include "GameObject.h"
-
-using namespace DirectX::SimpleMath;
 
 void Menu::UpdateConstanBuffer()
 {

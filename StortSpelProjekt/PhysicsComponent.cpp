@@ -1,6 +1,8 @@
+#include "stdafx.h"
 #include "PhysicsComponent.h"
+#include "GameObject.h"
 
-void PhysicsComponent::createRigidBody(reactphysics3d::Transform transform)
+void PhysicsComponent::createRigidBody(const reactphysics3d::Transform& transform)
 {
 	this->rigidBody = this->worldPtr->createRigidBody(transform);
 }
@@ -36,7 +38,7 @@ void PhysicsComponent::deallocate()
 }
 
 PhysicsComponent::PhysicsComponent()
-	:comPtr(nullptr), worldPtr(nullptr), 
+	:comPtr(nullptr), worldPtr(nullptr), parent(nullptr),
 	rigidBody(nullptr), shape(nullptr), collider(nullptr)
 {
 }
@@ -48,14 +50,14 @@ PhysicsComponent::~PhysicsComponent()
 	if (this->rigidBody != nullptr && this->shape != nullptr && this->collider != nullptr) this->deallocate();
 }
 
-void PhysicsComponent::initiateComponent(reactphysics3d::PhysicsCommon* com, reactphysics3d::PhysicsWorld* world)
+void PhysicsComponent::initiateComponent(reactphysics3d::PhysicsCommon* com, reactphysics3d::PhysicsWorld* world, reactphysics3d::CollisionShapeName shape)
 {
 	this->comPtr = com;
 	this->worldPtr = world;
 
 	//Creates basic physics component
 	this->createRigidBody();
-	this->setShape();
+	this->setShape(shape);
 	this->addCollider();
 
 	//Gives some values	
@@ -64,21 +66,21 @@ void PhysicsComponent::initiateComponent(reactphysics3d::PhysicsCommon* com, rea
 	this->rigidBody->enableGravity(false);
 }
 
-void PhysicsComponent::setType(reactphysics3d::BodyType physicsType)
+void PhysicsComponent::setType(const reactphysics3d::BodyType& physicsType)
 {
 	this->rigidBody->setType(physicsType);
 }
 
-void PhysicsComponent::setShape(reactphysics3d::CollisionShapeName shapeType)
+void PhysicsComponent::setShape(const reactphysics3d::CollisionShapeName& shapeType)
 {
 	reactphysics3d::Transform defaultTransform = reactphysics3d::Transform::identity();
 	switch (shapeType)
 	{
 	case reactphysics3d::CollisionShapeName::BOX:
-		this->shape = this->comPtr->createBoxShape(reactphysics3d::Vector3(4*0.5f, 4 * 0.5f, 4 * 0.5f));
+		this->shape = this->comPtr->createBoxShape(reactphysics3d::Vector3(4*0.35f, 4 * 0.35f, 4 * 0.35f));
 		break;
 	case reactphysics3d::CollisionShapeName::SPHERE:
-		this->shape = this->comPtr->createSphereShape(0.5f);
+		this->shape = this->comPtr->createSphereShape(4*0.5f);
 		break;
 	/*case reactphysics3d::CollisionShapeName::CONVEX_MESH:
 		this->comPtr->destroyConvexMeshShape(c);
@@ -92,32 +94,32 @@ void PhysicsComponent::setShape(reactphysics3d::CollisionShapeName shapeType)
 	}
 }
 
-void PhysicsComponent::addCollider(reactphysics3d::Transform transform)
+void PhysicsComponent::addCollider(const reactphysics3d::Transform& transform)
 {
 	this->collider = this->rigidBody->addCollider(this->shape, transform);
 }
 
-void PhysicsComponent::setMass(float mass)
+void PhysicsComponent::setMass(const float& mass)
 {
 	this->rigidBody->setMass(mass);
 }
 
-void PhysicsComponent::setLinearDampning(float factor)
+void PhysicsComponent::setLinearDampning(const float& factor)
 {
 	this->rigidBody->setLinearDamping(factor);
 }
 
-void PhysicsComponent::setAngularDampning(float factor)
+void PhysicsComponent::setAngularDampning(const float& factor)
 {
 	this->rigidBody->setAngularDamping(factor);
 }
 
-void PhysicsComponent::setIsAllowedToSleep(bool allowedToSleep)
+void PhysicsComponent::setIsAllowedToSleep(const bool& allowedToSleep)
 {
 	this->rigidBody->setIsAllowedToSleep(allowedToSleep);
 }
 
-void PhysicsComponent::setIsSleeping(bool sleep)
+void PhysicsComponent::setIsSleeping(const bool& sleep)
 {
 	this->rigidBody->setIsSleeping(sleep);
 }
@@ -130,6 +132,16 @@ void PhysicsComponent::applyForceToCenter(const reactphysics3d::Vector3& force)
 void PhysicsComponent::applyForceToPoint(const reactphysics3d::Vector3& force, const reactphysics3d::Vector3& point)
 {
 	this->rigidBody->applyWorldForceAtLocalPosition(force, point);
+}
+
+void PhysicsComponent::applyWorldTorque(const reactphysics3d::Vector3& force)
+{
+	this->rigidBody->applyWorldTorque(force);
+}
+
+void PhysicsComponent::applyLocalTorque(const reactphysics3d::Vector3& force)
+{
+	this->rigidBody->applyLocalTorque(force);
 }
 
 void PhysicsComponent::setPosition(const reactphysics3d::Vector3& position)
@@ -152,6 +164,12 @@ reactphysics3d::CollisionShapeName PhysicsComponent::getTypeName() const
 	return this->shape->getName();
 }
 
+DirectX::SimpleMath::Vector3 PhysicsComponent::getPosV3() const
+{
+	reactphysics3d::Vector3 temp = this->getPosition();
+	return {temp.x, temp.y, temp.z};
+}
+
 float PhysicsComponent::getMass() const
 {
 	return this->rigidBody->getMass();
@@ -164,7 +182,12 @@ float PhysicsComponent::getLinearDampning() const
 
 float PhysicsComponent::getAngularDampning() const
 {
-	return this->getAngularDampning();
+	return this->rigidBody->getAngularDamping();
+}
+
+void PhysicsComponent::setParent(GameObject* parent)
+{
+	this->parent = parent;
 }
 
 void PhysicsComponent::resetPhysicsObject()

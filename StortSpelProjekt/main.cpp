@@ -1,21 +1,18 @@
+#include "stdafx.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
-
-#include <string>
-#include <iostream>
 #include <time.h>
-//#include <reactphysics3d\reactphysics3d.h>
 
 #include "Console.h"
+#include "MemoryLeackChecker.h"
 #include "SoundCollection.h"
 #include "Client.h"
 #include "Game.h"
 #include "Menu.h"
 #include "WindowHelper.h"
 #include "D3D11Helper.h"
-#include "MemoryLeackChecker.h"
-#include "GuiHandler.h"
 
+#include "GuiHandler.h"
 #include "ImGuiHelper.h"
 
 
@@ -28,8 +25,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	Console::Activate(); // activate console for cout and cin, to destroy console call "Console::Destroy();" 
 	std::cout << "test print \n"; //test print
-
-	reactphysics3d::PhysicsCommon com;
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -95,13 +90,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 		{
 			switch (stateInfo)
 			{
-			case MENU:
-				delete currentState;
-				currentState = new Menu();
-				break;
 			case GAME:
 				delete currentState;
 				currentState = new Game(immediateContext, device, swapChain, mouse, window);
+				break;
+			case MENU:
+				delete currentState;
+				currentState = new Menu();
 				break;
 			default:
 				break;
@@ -130,7 +125,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
-	if (Console::IsOpen)
+	if (Console::IsOpen())
 		Console::Destroy();
 
 	device->Release();

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ParticleEmitter.h"
 
 
@@ -10,7 +11,7 @@ bool CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>&  PT_vertexBuffer, Micros
 	bufferDesc.CPUAccessFlags = 0;													//Specifies cpu acess
 	bufferDesc.MiscFlags = 0;														//Misc flags
 	bufferDesc.StructureByteStride = 0;												//Size of each element in structure
-	D3D11_SUBRESOURCE_DATA data;													//holds geometry data
+	D3D11_SUBRESOURCE_DATA data = {};													//holds geometry data
 	data.pSysMem = structVector.data();												//pointer to geometry data
 	data.SysMemPitch = 0;															//distance in bytes from the beginning of one line of a texture to the next
 	data.SysMemSlicePitch = 0;														//for 3d texture

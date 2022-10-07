@@ -1,14 +1,15 @@
 #pragma once
+
 #include "GameObject.h"
 #include "Input.h"
-#include "Potion.h"
-#include <iostream>
-using namespace DirectX;
+
+class Item;
 
 class Player: public GameObject
 {
 private:
 	const float speedConstant = 100.f;
+	int repairCount = 0;
 	//Olivers order
 	Item* holdingItem;
 	//Camera
@@ -18,16 +19,17 @@ private:
 	int health;
 
 public:
-	Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
-	Player(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
+	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
+	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
 	void handleInputs(); 
-	void move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, float deltaTime);
+	void move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, const float& deltaTime);
 	bool getPickup(GameObject *pickup);
 	bool pickupItem(Item *itemToPickup);
 	void releasePickup();
 	void addItem(Item* itemToHold);
 	void addHealth(const int& healthToIncrease);
 	void releaseItem();
-	bool withinRadius(Item* itemToLookWithinRadius, float radius) const;
-	void update();
+	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
+	bool repairedShip() const;
+	virtual void update() override;
 };

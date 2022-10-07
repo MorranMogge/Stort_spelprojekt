@@ -1,17 +1,20 @@
 #pragma once
-#include <reactphysics3d\reactphysics3d.h>
-#include <d3d11.h>
-#include <DirectXMath.h>
-#include <SimpleMath.h>
-#include "Vertex.h"
-#include "ImGuiHelper.h"
 #include "PhysicsComponent.h"
+
+#include "Vertex.h"	//Used for creating the rendering triangles
+
+class GameObject;
 
 class PhysicsWorld
 {
 private:
 	UINT stride;
 	UINT offset;
+	reactphysics3d::uint64 nrOfTriangles;
+
+	//Used for gravity
+	DirectX::XMFLOAT3 grav;
+	reactphysics3d::Vector3 temp;
 
 	std::vector<PhysicsComponent *> physObjects;
 
@@ -54,4 +57,5 @@ public:
 	void updatePlayerBox(const DirectX::SimpleMath::Vector3& pos);
 	void addBoxToWorld(DirectX::XMFLOAT3 dimensions = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f), float mass = 1.0f,  DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10, 00));
 	void addSphereToWorld(float radius = 0.5f, DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 0, 0));
+	void addPhysComponent(GameObject* gameObj, reactphysics3d::CollisionShapeName shape = reactphysics3d::CollisionShapeName::BOX);
 };

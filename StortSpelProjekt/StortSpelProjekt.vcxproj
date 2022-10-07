@@ -188,6 +188,7 @@
     <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerVectors.h" />
     <ClInclude Include="Potion.h" />
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderTargetView.h" />
@@ -264,6 +265,7 @@
     <ClCompile Include="MouseClass.cpp" />
     <ClCompile Include="MouseEvent.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerVectors.cpp" />
     <ClCompile Include="Potion.cpp" />
     <ClCompile Include="SettingsUI.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />

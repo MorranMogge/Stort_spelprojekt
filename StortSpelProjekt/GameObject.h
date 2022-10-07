@@ -10,10 +10,10 @@ private:
 
 	Mesh* mesh;
 	int objectID;
-	PhysicsComponent* physComp;
 	//float mass
 	//collider
 protected:
+	PhysicsComponent* physComp;
 	DirectX::SimpleMath::Vector3 position;
 	DirectX::XMFLOAT3 rotation;//ska �ndra till quaternion?
 	DirectX::XMFLOAT3 scale;

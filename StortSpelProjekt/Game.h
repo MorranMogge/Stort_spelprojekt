@@ -40,6 +40,7 @@ private:
 
 
 	LightHandler ltHandler;
+	PlayerVectors playerVec;
 
 	//Objects
 	std::vector<GameObject*> gameObjects;

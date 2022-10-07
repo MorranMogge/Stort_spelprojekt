@@ -15,6 +15,7 @@
 #include "BasicRenderer.h"
 #include "LightHandler.h"
 #include "ParticleEmitter.h"
+#include "PlayerVectors.h"
 
 //GameObjects
 #include "Player.h"

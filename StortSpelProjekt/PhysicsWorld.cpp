@@ -175,6 +175,11 @@ PhysicsWorld::PhysicsWorld(std::string worldName)
 	settings.defaultVelocitySolverNbIterations = 20;
 	settings.isSleepingEnabled = false;
 	settings.worldName = worldName;
+	settings.isSleepingEnabled = true;
+	settings.gravity = reactphysics3d::Vector3(0, 0, 0);
+	settings.defaultBounciness = 0.1f;
+	settings.defaultFrictionCoefficient = 0.1f;
+	settings.defaultTimeBeforeSleep = 1.f;
 
 	// Create the physics world with your settings 
 	world = com.createPhysicsWorld(settings);

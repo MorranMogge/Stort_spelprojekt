@@ -28,6 +28,10 @@ public:
 	void move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, const float& deltaTime);
 	bool getPickup(GameObject *pickup);
 	bool pickupItem(Item *itemToPickup);
+	DirectX::XMVECTOR getForwardVec()const;
+	DirectX::XMVECTOR getUpVec()const;
+	DirectX::XMVECTOR getRightVec()const;
+
 	void releasePickup();
 	void addItem(Item* itemToHold);
 	void addHealth(const int& healthToIncrease);

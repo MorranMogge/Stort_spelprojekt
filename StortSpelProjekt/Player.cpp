@@ -60,22 +60,22 @@ void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& camera
 
     if (Input::KeyDown(KeyCode::W))
     {
-         this->position += deltaTime * this->speedConstant * playerForwardVec;
+         this->position += playerForwardVec; //deltaTime * this->speedConstant * 
     }
 
     else if (Input::KeyDown(KeyCode::S))
     {
-        this->position -= deltaTime * this->speedConstant * playerForwardVec;
+        this->position -= playerForwardVec;
     }
 
     if (Input::KeyDown(KeyCode::D))
     {
-        this->position += deltaTime * this->speedConstant * playerRightVec;
+        this->position += playerRightVec;
     }
 
     else if (Input::KeyDown(KeyCode::A))
     {
-        this->position -= deltaTime * this->speedConstant * playerRightVec;
+        this->position -= playerRightVec;
     }
 
     if (Input::KeyDown(KeyCode::E))
@@ -93,21 +93,36 @@ bool Player::pickupItem(Item* itemToPickup)
 {
     bool successfulPickup = false;
 
-    if (Input::KeyDown(KeyCode::SPACE))
+    if (Input::KeyPress(KeyCode::SPACE))
     {
         if (this->withinRadius(itemToPickup, 5))
         {
             addItem(itemToPickup);
-
             Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
             if (tmp)
                 tmp->setPlayerptr(this);
                
             successfulPickup = true;
+            holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::KINEMATIC);
         }
     }
     
     return successfulPickup;
+}
+
+DirectX::XMVECTOR Player::getForwardVec() const
+{
+    return this->playerForwardVec;
+}
+
+DirectX::XMVECTOR Player::getUpVec() const
+{
+    return this->playerUpVec;
+}
+
+DirectX::XMVECTOR Player::getRightVec() const
+{
+    return this->playerRightVec;
 }
 
 void Player::addItem(Item* itemToHold)
@@ -158,20 +173,26 @@ void Player::update()
 {
     if (holdingItem != nullptr)
     {
-        holdingItem->setPos({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f });
-        holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f }));
+        //holdingItem->setPos({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f });
+        //holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f }));
+        DirectX::SimpleMath::Vector3 newPos = this->position; 
+        newPos += playerForwardVec * 40 + playerUpVec*4;
+        holdingItem->setPos(newPos);
+        holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z}));
         if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
         {
+            holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
             DirectX::XMFLOAT3 temp;
-            DirectX::XMStoreFloat3(&temp, this->playerForwardVec);
+            DirectX::XMStoreFloat3(&temp, (this->playerForwardVec+this->playerUpVec));
             newNormalizeXMFLOAT3(temp);
             holdingItem->getPhysComp()->applyLocalTorque(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z *1000));
             holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * 10000, temp.y * 10000, temp.z * 10000));
-            holdingItem->setPos({ this->getPos().x, this->getPos().y, this->getPos().z });
+            holdingItem->setPos({ newPos.x, newPos.y, newPos.z });
             holdingItem = nullptr;
         }
         else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
         {
+            holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
             holdingItem->useItem();
             repairCount++;
             std::cout << "Progress " << repairCount << "/4\n";

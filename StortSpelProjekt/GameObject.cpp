@@ -5,7 +5,6 @@
 GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale)
 	:position(pos), rotation(rot), mesh(useMesh), objectID(id), scale(scale), physComp(nullptr)
 {
-	std::cout << "Testin\n";
 	// set position
 	mesh->position = pos;
 
@@ -185,7 +184,7 @@ void GameObject::setMesh(Mesh* inMesh)
 		delete this->mesh;
 	}
 
-
+	this->mesh = inMesh;
 	// set position
 	this->mesh->position = inMesh->position;
 

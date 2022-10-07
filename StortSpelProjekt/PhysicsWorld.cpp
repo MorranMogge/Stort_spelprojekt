@@ -191,7 +191,7 @@ PhysicsWorld::PhysicsWorld(std::string worldName)
 
 void PhysicsWorld::renderReact3D()
 {
-	reactphysics3d::uint64 nrOfTriangles = this->debugRenderer->getTriangles().size();
+	nrOfTriangles = this->debugRenderer->getTriangles().size();
 	this->debugRenderer->reset();
 	this->debugRenderer->computeDebugRenderingPrimitives(*world);
 	if (nrOfTriangles != this->debugRenderer->getTriangles().size()) this->recreateVertexBuffer();
@@ -227,8 +227,6 @@ void PhysicsWorld::update(float dt)
 
 void PhysicsWorld::addForceToObjects()
 {
-	DirectX::XMFLOAT3 grav;
-	reactphysics3d::Vector3 temp;
 	for (int i = 0; i < this->physObjects.size(); i++)
 	{
 		temp = this->physObjects[i]->getPosition();

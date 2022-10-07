@@ -40,4 +40,10 @@ public:
 	const DirectX::XMVECTOR getRightVec();
 	ID3D11Buffer* getViewBuffer();
 	ID3D11Buffer* getPositionBuffer();
+	void VSbindPositionBuffer(const int &slot);
+	void VSbindViewBuffer(const int& slot);
+	void PSbindPositionBuffer(const int& slot);
+	void PSbindViewBuffer(const int& slot);
+	void GSbindPositionBuffer(const int& slot);
+	void GSbindViewBuffer(const int& slot);
 };

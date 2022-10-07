@@ -77,12 +77,12 @@ void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& camera
 
     if (Input::KeyDown(KeyCode::E))
     {
-        this->position.y += 0.1;
+        this->position.y += 0.1f;
     }
 
     else if (Input::KeyDown(KeyCode::Q))
     {
-        this->position.y -= 0.1;
+        this->position.y -= 0.1f;
     }
 }
 

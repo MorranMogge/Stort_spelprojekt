@@ -48,7 +48,7 @@ GameObject::GameObject()
 
 
 	// load all materials for Obj
-	int nrOfMat = testObj.mtl.materials.size();
+	int nrOfMat = (UINT)testObj.mtl.materials.size();
 	for (int i = 0; i < nrOfMat; i++)
 	{
 		MaterialLibrary::LoadMaterial(testObj.mtl.materials[i]);
@@ -145,7 +145,7 @@ void GameObject::setMesh(std::string meshPath)
 
 
 	// load all materials for Obj
-	int nrOfMat = testObj.mtl.materials.size();
+	int nrOfMat = (UINT)testObj.mtl.materials.size();
 	for (int i = 0; i < nrOfMat; i++)
 	{
 		MaterialLibrary::LoadMaterial(testObj.mtl.materials[i]);
@@ -158,7 +158,7 @@ void GameObject::setMesh(std::string meshPath)
 	this->mesh->rotation = this->rotation;
 }
 
-void GameObject::setMesh(Mesh*)
+void GameObject::setMesh(Mesh* newMesh)
 {
 
 	//delete current mesh ptr
@@ -167,6 +167,7 @@ void GameObject::setMesh(Mesh*)
 		delete this->mesh;
 	}
 
+	this->mesh = newMesh;
 
 	// set position
 	this->mesh->position = this->position;

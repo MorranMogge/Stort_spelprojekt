@@ -368,11 +368,8 @@ void LightHandler::drawShadows(const int &lightIndex, const std::vector<GameObje
 
 	if (stageCamera != nullptr)
 	{
-		ID3D11Buffer* tempBuff = stageCamera->getViewBuffer();
-
 		//Set view buffer
-		GPU::immediateContext->VSSetConstantBuffers(1, 1, &tempBuff);
-
+		stageCamera->VSbindViewBuffer(1);
 	}
 	else
 	{
@@ -385,8 +382,6 @@ void LightHandler::drawShadows(const int &lightIndex, const std::vector<GameObje
 		//Set render targets
 		GPU::immediateContext->OMSetRenderTargets(1, &nullRtv, this->depthViews.at(lightIndex).Get());
 	}
-
-
 
 	//Draw Objects
 	for (int i = 0; i < gameObjects.size(); i++)	

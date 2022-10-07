@@ -127,7 +127,6 @@ void Game::handleKeybinds()
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
-	
 	MaterialLibrary::LoadDefault();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -190,9 +189,6 @@ GAMESTATE Game::Update()
 	//Here you can write client-server related functions?
 
 
-	
-
-
 	//Debug keybinds
 	mouse->clearEvents();
 	this->handleKeybinds();
@@ -220,7 +216,7 @@ void Game::Render()
 	basicRenderer.depthUnbind();
 
 	//Render Particles
-	basicRenderer.geometryPass(camera);
+	basicRenderer.geometryPass(this->camera);
 	drawParticles();
 	this->ptEmitters.at(0).unbind();
 

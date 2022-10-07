@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "SettingsMenu.h"
 
 GAMESTATE SettingsMenu::Update()

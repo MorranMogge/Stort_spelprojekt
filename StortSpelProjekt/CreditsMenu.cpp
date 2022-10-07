@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "CreditsMenu.h"
 
 GAMESTATE CreditsMenu::Update()

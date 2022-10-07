@@ -47,8 +47,6 @@ GAMESTATE SettingsUI::GetGameState()
 SettingsUI::SettingsUI()
 {
 
-	using namespace DirectX::SimpleMath;
-
 	settingsText = GUISprite(75 + 120, 100);
 	settingsText.Load(GPU::device, L"../Sprites/settingText.png");
 
@@ -59,6 +57,11 @@ SettingsUI::SettingsUI()
 	container.Load(GPU::device, L"../Sprites/Container.png");
 
 	gameState = NOCHANGE;
+}
+
+SettingsUI::~SettingsUI()
+{
+
 }
 
 void SettingsUI::Draw()

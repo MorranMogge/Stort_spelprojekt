@@ -13,6 +13,7 @@ class CreditsMenu : public State
 public:
 
 	CreditsMenu();
+	virtual ~CreditsMenu() override;
 
 	// Inherited via State
 	virtual GAMESTATE Update() override;

@@ -5,8 +5,6 @@
 #include "GPU.h"
 
 
-using namespace DirectX::SimpleMath;
-
 Menu::Menu()
 {
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);

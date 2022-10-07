@@ -12,7 +12,7 @@ private:
 
 public:
 	Menu();
-	~Menu();
+	virtual ~Menu() override;
 
 	// Inherited via State
 	virtual GAMESTATE Update() override;

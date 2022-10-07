@@ -94,7 +94,7 @@ void GuiHandler::HandleInputs()
 
 void GuiHandler::TextPass()
 {
-	//testText.Draw();
+
 }
 
 GAMESTATE GuiHandler::GetGameState()
@@ -117,10 +117,6 @@ GuiHandler::GuiHandler()
 
 	exit = GUISprite(1000, 500);
 	exit.Load(GPU::device, L"../Sprites/exit.png");
-
-	//testText = GUIText(500, 400);
-	//testText.Load(GPU::device, L"../Sprites/GothenbergTextura.spritefont");
-	//testText.setText(L"Test Text");
 
 	gameState = NOCHANGE;
 }

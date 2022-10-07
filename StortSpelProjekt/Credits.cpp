@@ -45,7 +45,6 @@ GAMESTATE Credits::GetGameState()
 
 Credits::Credits()
 {
-	using namespace DirectX::SimpleMath;
 
 	GUI::Init();
 
@@ -60,6 +59,11 @@ Credits::Credits()
 	backText.Load(GPU::device, L"../Sprites/backText.png");
 
 	gameState = NOCHANGE;
+
+}
+
+Credits::~Credits()
+{
 
 }
 

@@ -21,6 +21,8 @@ public:
 	GAMESTATE GetGameState();
 
 	Credits();
+	~Credits();
+
 	void Draw();
 };
 

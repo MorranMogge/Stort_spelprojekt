@@ -11,6 +11,7 @@ class SettingsMenu : public State
 public:
 
 	SettingsMenu();
+	virtual ~SettingsMenu() override;
 
 	// Inherited via State
 	virtual GAMESTATE Update() override;

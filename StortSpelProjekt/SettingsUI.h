@@ -24,6 +24,8 @@ public:
 	GAMESTATE GetGameState();
 
 	SettingsUI();
+	~SettingsUI();
+
 	void Draw();
 };
 

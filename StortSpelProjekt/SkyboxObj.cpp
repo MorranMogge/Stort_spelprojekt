@@ -1,5 +1,7 @@
+#include "stdafx.h"
 #include "SkyboxObj.h"
 #include "stb_image.h"
+
 
 
 
@@ -82,7 +84,7 @@ SkyboxObj::SkyboxObj()
 		std::cerr << "error creating RenderTargets!" << std::endl;
 	}
 
-	this->skyBoxMesh = new GameObject("../Meshes/Skybox", DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 0, 0), 0);
+	this->skyBoxMesh = new GameObject("../Meshes/Skybox2", DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 0, 0), 0);
 }
 
 SkyboxObj::~SkyboxObj()

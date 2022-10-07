@@ -247,13 +247,15 @@ void Game::Render()
 	if (objectDraw) drawObjects(drawDebug);
 
 
+	//Render Imgui & wireframe
+	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
+	if (wireframe) { immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
+
+
 	//Render Skybox
 	basicRenderer.skyboxPrePass();
 	this->skybox.draw();
 	basicRenderer.depthUnbind();
-
-	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
-	if (wireframe) { immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
 
 
 	//Render Particles

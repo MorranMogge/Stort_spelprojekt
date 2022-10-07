@@ -68,25 +68,26 @@ BasicRenderer::~BasicRenderer()
 {
 	rtv->Release();
 	dsView->Release();
-	dsView2->Release();
-	dsTexture2->Release();
+	dsView2->Release();	//Used for binding as render target
+	dsTexture2->Release();		//	 ----------||------------
 	depthSrv->Release();
-	dsState->Release();
 	dsTexture->Release();
 	sampler->Release();
+	dsState->Release();
 
 	inputLayout->Release();
 	vShader->Release();
 	pShader->Release();
+	ApShader->Release();
+	vs_Skybox->Release();
+	ps_Skybox->Release();
+	inputLayout_Skybox->Release();
 
 	pt_inputLayout->Release();
 	pt_vShader->Release();
 	pt_pShader->Release();
 	pt_UpdateShader->Release();
 	pt_gShader->Release();
-	vs_Skybox->Release();
-	ps_Skybox->Release();
-	inputLayout_Skybox->Release();
 }
 
 void BasicRenderer::lightPrePass()

@@ -132,18 +132,18 @@ void BasicRenderer::setUpScene(Camera& stageCamera)
 	immediateContext->PSSetShader(pShader, nullptr, 0);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 
-	ID3D11Buffer* tempBuff = stageCamera.getPositionBuffer();
-	ID3D11Buffer* tempBuff2 = stageCamera.getViewBuffer();
-	GPU::immediateContext->PSSetConstantBuffers(1, 1, &tempBuff);			
-	GPU::immediateContext->VSSetConstantBuffers(1, 1, &tempBuff2);
+	//ID3D11Buffer* tempBuff = stageCamera.getPositionBuffer();
+	//ID3D11Buffer* tempBuff2 = stageCamera.getViewBuffer();
+	//GPU::immediateContext->PSSetConstantBuffers(1, 1, &tempBuff);			
+	//GPU::immediateContext->VSSetConstantBuffers(1, 1, &tempBuff2);
 }
 
 void BasicRenderer::geometryPass(Camera& stageCamera)
 {
 	//Variables
 	std::vector<ID3D11Buffer*> tempBuff;
-	tempBuff.push_back(stageCamera.getViewBuffer());
-	tempBuff.push_back(stageCamera.getPositionBuffer());
+	//tempBuff.push_back(stageCamera.getViewBuffer());
+	//tempBuff.push_back(stageCamera.getPositionBuffer());
 
 	//re-use same depth buffer as geometry pass.
 	immediateContext->CSSetShader(pt_UpdateShader, nullptr, 0);							//Set ComputeShader

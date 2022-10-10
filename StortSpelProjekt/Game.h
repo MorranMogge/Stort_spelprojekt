@@ -40,9 +40,7 @@ private:
 
 
 	LightHandler ltHandler;
-	PlayerVectors playerVecRenderer;
-
-	DirectX::XMMATRIX rotationMX;
+	//PlayerVectors playerVecRenderer;
 
 	//Objects
 	std::vector<GameObject*> gameObjects;

@@ -6,14 +6,12 @@
 using namespace DirectX;
 
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-    :GameObject(useMesh, pos, rot, id), health(69), holdingItem(nullptr), 
-    playerForwardVec(XMVectorSet(0,0,0,0)), playerRightVec(XMVectorSet(0, 0, 0, 0)), playerUpVec(XMVectorSet(0, 0, 0, 0))
+    :GameObject(useMesh, pos, rot, id), health(69), holdingItem(nullptr)
 {
 }
 
 Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-	:GameObject(objectPath, pos, rot, id), health(69), holdingItem(nullptr),
-    playerForwardVec(XMVectorSet(0, 0, 0, 0)), playerRightVec(XMVectorSet(0, 0, 0, 0)), playerUpVec(XMVectorSet(0, 0, 0, 0))
+	:GameObject(objectPath, pos, rot, id), health(69), holdingItem(nullptr)
 {
 }
 
@@ -52,7 +50,7 @@ void Player::handleInputs()
 
 }
 
-void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, DirectX::SimpleMath::Vector3& position, DirectX::XMMATRIX& rotation, DirectX::XMMATRIX& rotationMX, const DirectX::XMFLOAT3& grav, float& deltaTime)
+void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float& deltaTime)
 {
 	normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 
@@ -325,7 +323,7 @@ void Player::update()
         if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
         {
             DirectX::XMFLOAT3 temp;
-            DirectX::XMStoreFloat3(&temp, this->playerForwardVec);
+            DirectX::XMStoreFloat3(&temp, this->forwardVector);
             newNormalizeXMFLOAT3(temp);
             holdingItem->getPhysComp()->applyLocalTorque(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z *1000));
             holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * 10000, temp.y * 10000, temp.z * 10000));
@@ -358,4 +356,9 @@ DirectX::XMVECTOR Player::getForwardVec() const
 DirectX::XMVECTOR Player::getRightVec() const
 {
 	return this->rightVector;
+}
+
+DirectX::XMMATRIX Player::getRotationMX() const
+{
+	return this->rotationMX;
 }

@@ -167,7 +167,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
 
 	//this->setUpReact3D();
-	playerVecRenderer.setPlayer(&player);
+	//playerVecRenderer.setPlayer(&player);
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 }
@@ -188,13 +188,11 @@ Game::~Game()
 
 GAMESTATE Game::Update()
 {
-	mouse->handleEvents(this->window, camera);
-
 	//Do we want this?
 	grav = planetGravityField.calcGravFactor(player->getPosV3());
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(player->getPos()));
-	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), meshes_Dynamic[0].position, meshes_Dynamic[0].rotation, rotationMX, grav, dt);
-	
+	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
+
 	//Keeps player at the surface of the planet
 	if (getLength(player->getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(player->getPos()); player->setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
 	player->movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
@@ -203,7 +201,7 @@ GAMESTATE Game::Update()
 	player->pickupItem(potion);
 	player->update();
 	
-	camera.moveCamera(player->getPosV3(), rotationMX, dt);
+	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
 	
 	physWolrd.updatePlayerBox(player->getPos());
 	physWolrd.addForceToObjects();
@@ -220,8 +218,6 @@ GAMESTATE Game::Update()
 	
 	if (player->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
 	
-	mouse->clearEvents();
-
 	//Debug keybinds
 	this->handleKeybinds();
 	return NOCHANGE;

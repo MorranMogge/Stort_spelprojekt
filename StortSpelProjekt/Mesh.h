@@ -224,7 +224,7 @@ public:
 		//		0, 0, 1, position.z,
 		//		0, 0, 0, 1
 		//	};
-		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * (XMMatrixRotationZ(this->rotation.z * XM_PI) *  XMMatrixRotationX(this->rotation.x * XM_PI)) * XMMatrixRotationY(this->rotation.y * XM_PI) * XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
+		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * this->rotation * XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
 
 		worldCB.Update(&worldS, sizeof(MatrixS));
 
@@ -248,5 +248,4 @@ public:
 		bound.aabb.Center = bound.center + position;
 		bound.aabb.Extents = bound.width;
 	}
-
 };

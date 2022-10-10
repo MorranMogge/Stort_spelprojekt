@@ -13,6 +13,7 @@ private:
 	//Movement variables
 	DirectX::XMFLOAT3 dotValue;
 	DirectX::XMVECTOR dotProduct;
+	DirectX::XMMATRIX rotationMX;
 
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
@@ -23,11 +24,17 @@ private:
 	DirectX::XMVECTOR forwardVector = DEFAULT_FORWARD;
 	DirectX::XMVECTOR rightVector = DEFAULT_RIGHT;
 
+	//Other shit
+	const float speedConstant = 100.f;
+	int repairCount = 0;
+	Item* holdingItem;
+	int health;
+
 public:
 	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
 	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
 	void handleInputs(); 
-	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, DirectX::SimpleMath::Vector3& position, DirectX::XMMATRIX& rotation, DirectX::XMMATRIX& rotationMX, const DirectX::XMFLOAT3& grav, float& deltaTime);
+	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float& deltaTime);
 	bool getPickup(GameObject *pickup);
 	bool pickupItem(Item *itemToPickup);
 	void releasePickup();
@@ -35,6 +42,8 @@ public:
 	DirectX::XMVECTOR getUpVec() const;
 	DirectX::XMVECTOR getForwardVec() const;
 	DirectX::XMVECTOR getRightVec() const;
+	DirectX::XMMATRIX getRotationMX() const;
+
 	void addItem(Item* itemToHold);
 	void addHealth(const int& healthToIncrease);
 	void releaseItem();

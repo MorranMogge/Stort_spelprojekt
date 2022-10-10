@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Camera.h"
 #include <string>
 using namespace DirectX;
@@ -8,6 +9,12 @@ void Camera::updateCamera()
 	cameraBuffer.getData().viewProjMX = viewMatrix * projMatrix;
 	cameraBuffer.getData().viewProjMX = XMMatrixTranspose(cameraBuffer.getData().viewProjMX);
 
+	XMFLOAT3 position(0, 0, 0);
+	XMStoreFloat3(&position, this->cameraPos);
+	positionBuffer.getData().pos = position;
+	positionBuffer.getData().padding = 0;
+
+	this->positionBuffer.applyData();
 	cameraBuffer.applyData();
 	GPU::immediateContext->VSSetConstantBuffers(1, 1, cameraBuffer.getReferenceOf());
 }
@@ -15,6 +22,12 @@ void Camera::updateCamera()
 Camera::Camera()
 {
 	cameraBuffer.Initialize(GPU::device, GPU::immediateContext);
+	positionBuffer.Initialize(GPU::device, GPU::immediateContext);
+
+	XMFLOAT3 position(0, 0, 0);
+	XMStoreFloat3(&position, this->cameraPos);
+	positionBuffer.getData().pos = position;
+	positionBuffer.getData().padding = 0;
 
 	rotationMX = DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f);
 	viewMatrix = DirectX::XMMatrixLookAtLH(cameraPos, lookAtPos, upVector);
@@ -22,6 +35,7 @@ Camera::Camera()
 	cameraBuffer.getData().viewProjMX = viewMatrix * projMatrix;
 	cameraBuffer.getData().viewProjMX = XMMatrixTranspose(cameraBuffer.getData().viewProjMX);
 
+	this->positionBuffer.applyData();
 	cameraBuffer.applyData();
 	GPU::immediateContext->VSSetConstantBuffers(1, 1, cameraBuffer.getReferenceOf());
 }

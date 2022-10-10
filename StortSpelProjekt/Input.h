@@ -1,6 +1,5 @@
 #pragma once
-#include <unordered_map>
-#include <windows.h>
+#include "stdafx.h"
 #include <WinUser.h>
 
 enum class KeyCode

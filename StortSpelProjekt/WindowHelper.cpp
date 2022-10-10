@@ -1,5 +1,5 @@
+#include "stdafx.h"
 #include "WindowHelper.h"
-#include <iostream>
 #include "GPU.h"
 #include "resource.h"
 #include "imGUI\imconfig.h"
@@ -53,7 +53,7 @@ bool SetupWindow(HINSTANCE instance, UINT& width, UINT& height, int nCmdShow, HW
 
 	RegisterClassEx(&wc);
 
-	RECT wr = { 0, 0, width, height };
+	RECT wr = { 0, 0, LONG(width), LONG(height) };
 
 	window = CreateWindowEx(
 		0, //style, 0, not need style

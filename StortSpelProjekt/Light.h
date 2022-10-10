@@ -1,6 +1,5 @@
 #pragma once
-#include <DirectXMath.h>
-#include <d3d11.h>
+#include "stdafx.h"
 
 class Light
 {
@@ -17,21 +16,23 @@ private:
 
 public:
 
-	Light(DirectX::XMFLOAT3 lightColor, DirectX::XMFLOAT3 lightPos, DirectX::XMFLOAT3 FocusPos, DirectX::XMFLOAT3 UpDir, float coneAngle = 0.5f, int type = 0);
+	Light(const DirectX::XMFLOAT3 &lightColor, const DirectX::XMFLOAT3 &lightPos, const DirectX::XMFLOAT3 &FocusPos, const DirectX::XMFLOAT3 &UpDir, float coneAngle = 0.5f, int type = 0, float range = 50, float falloff = 1);
 	DirectX::XMFLOAT3 getPosition()		const;
 	DirectX::XMFLOAT3 getColor()		const;
 	DirectX::XMFLOAT3 getUpDir()		const;
 	DirectX::XMFLOAT3 getDirection()	const;
 	DirectX::XMMATRIX getViewMatrix()	const;
-	void setPosition(DirectX::XMFLOAT3 position);		
-	void setUpDirection(DirectX::XMFLOAT3 direction);
-	void setDirection(DirectX::XMFLOAT3 direction);
-	void setColor(DirectX::XMFLOAT3 color);
-	void setConeAngle(float angle);
-	void setLightType(float type);
-	void setRange(float range);
-	void setFalloff(float falloff);
+	void setPosition(const DirectX::XMFLOAT3 &position);
+	void setUpDirection(const DirectX::XMFLOAT3 &direction);
+	void setDirection(const DirectX::XMFLOAT3 &direction);
+	void setColor(const DirectX::XMFLOAT3 &color);
+	void setConeAngle(const float &angle);
+	void setLightType(const int &type);
+	void setRange(const float &range);
+	void setFalloff(const float &falloff);
 	float getConeAngle()	const;
 	int getType()			const;
-	void updateMatrix(DirectX::XMFLOAT3 lightPos, DirectX::XMFLOAT3 FocusPos, DirectX::XMFLOAT3 UpDir);
+	float getFalloff()		const;
+	float getRange()		const;
+	void updateMatrix(const DirectX::XMFLOAT3 &lightPos, const DirectX::XMFLOAT3 &FocusPos, const DirectX::XMFLOAT3 &UpDir);
 };

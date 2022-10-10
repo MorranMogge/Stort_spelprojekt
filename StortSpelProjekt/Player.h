@@ -1,7 +1,9 @@
 #pragma once
+
 #include "GameObject.h"
 #include "Input.h"
-#include <iostream>
+
+class Item;
 
 class Player: public GameObject
 {
@@ -22,14 +24,21 @@ private:
 	DirectX::XMVECTOR rightVector = DEFAULT_RIGHT;
 
 public:
-	Player(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
-	Player(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
+	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
+	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
 	void handleInputs(); 
 	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, DirectX::SimpleMath::Vector3& position, DirectX::XMMATRIX& rotation, DirectX::XMMATRIX& rotationMX, const DirectX::XMFLOAT3& grav, float& deltaTime);
 	bool getPickup(GameObject *pickup);
+	bool pickupItem(Item *itemToPickup);
 	void releasePickup();
 
 	DirectX::XMVECTOR getUpVec() const;
 	DirectX::XMVECTOR getForwardVec() const;
 	DirectX::XMVECTOR getRightVec() const;
+	void addItem(Item* itemToHold);
+	void addHealth(const int& healthToIncrease);
+	void releaseItem();
+	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
+	bool repairedShip() const;
+	virtual void update() override;
 };

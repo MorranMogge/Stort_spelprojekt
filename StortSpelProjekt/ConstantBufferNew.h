@@ -1,5 +1,4 @@
 #pragma once
-#include <d3d11.h>
 #include <wrl/client.h>
 #include "BufferTypes.h"
 
@@ -66,7 +65,7 @@ ID3D11Buffer* const* ConstantBufferNew<T>::getReferenceOf()
 template<class T>
 ID3D11Buffer* ConstantBufferNew<T>::Get() const
 {
-	return buffer.GetAddressOf();
+	return buffer.Get();
 }
 
 template<class T>

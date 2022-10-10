@@ -1,24 +1,24 @@
 #pragma once
-#include <reactphysics3d\reactphysics3d.h>
-#include "PlayerVectors.h"
-#include "State.h"
-#include "BasicRenderer.h"
-#include "Mesh.h"
-#include "Input.h"
-#include "GravityField.h"
-#include <chrono>
-#include "Player.h"
-#include "Camera.h"
-#include "LightHandler.h"
-#include "Light.h"
-#include "StructuredBuffer.h"
-#include "BufferTypes.h"
-#include "LightHandler.h"
+#include "GameInclude.h"
+
+struct wirefameInfo
+{
+	DirectX::XMFLOAT3 wireframeClr;
+	float padding;
+};
 
 class Game : public State
 {
 private:
 	ID3D11DeviceContext* immediateContext;
+
+	ImGuiHelper imGui;
+	bool wireframe = true;
+	bool objectDraw = true;
+	bool drawDebug = true;
+	wirefameInfo reactWireframeInfo;
+	ID3D11Buffer* wireBuffer;
+	D3D11_MAPPED_SUBRESOURCE subData;
 
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> start;
@@ -30,41 +30,34 @@ private:
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
 
-	reactphysics3d::PhysicsCommon com;
-	reactphysics3d::PhysicsWorld* world;
-
-	reactphysics3d::RigidBody* rigid;
-
-	reactphysics3d::SphereShape* planetShape;
-	reactphysics3d::Collider* planetCollider;
-	reactphysics3d::BoxShape* playerShape;
-	reactphysics3d::Collider* playerCollider;
-
-	reactphysics3d::RigidBody* playerRigidBody;
-	reactphysics3d::RigidBody* planetRigidBody;
+	PhysicsWorld physWolrd;
 
 	Camera camera;
-	Player player;
+	Player* player;
+	GameObject* planet;
+	GameObject* testCube;
+	Potion* potion;			//not in use
+
+
 	LightHandler ltHandler;
 	PlayerVectors playerVecRenderer;
 
 	DirectX::XMMATRIX rotationMX;
 
 	//Objects
-	std::vector<Mesh> meshes_Static;
-	std::vector<Mesh> meshes_Dynamic;
-	std::vector<GameObject> gameObjects;
+	std::vector<GameObject*> gameObjects;
+	std::vector<ParticleEmitter> ptEmitters;
+	
+	
 
 	void loadObjects();
-	void drawObjects();
-	void setUpReact3D();
+	void drawShadows();
+	void drawObjects(bool drawDebug);
+	void drawParticles();
+	bool setUpWireframe();
+	void updateBuffers();
+	void handleKeybinds();
 
-	//Create Shape
-	//Create Rigidbody
-	//Create transform
-	//Create collider, rigidbody->createCollider(&shape, transform)
-
-	float pos[3];
 
 public:
 	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window);

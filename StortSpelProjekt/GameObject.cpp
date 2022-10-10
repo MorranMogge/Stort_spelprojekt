@@ -1,26 +1,31 @@
+#include "stdafx.h"
+#include "PhysicsComponent.h"
 #include "GameObject.h"
 
-GameObject::GameObject(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
-	:position(pos), mesh(useMesh), objectID(id)
+GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale)
+	:position(pos), rotation(rot), mesh(useMesh), objectID(id), scale(scale), physComp(nullptr)
 {
 	// set position
 	mesh->position = pos;
 
 	// set rotation
-	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMVectorSet(rot.x, rot.y, rot.z, 1.0f));
-	this->mesh->rotation = this->rotation;
+	mesh->rotation = rot;
+
+	// set scale
+	mesh->scale = scale;
+	this->scale = scale;
 }
 
-GameObject::GameObject(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
-	:position(pos), objectID(id)
+GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale)
+	:position(pos), rotation(rot), objectID(id), scale(scale), physComp(nullptr)
 {
 	// load obj file
-	OBJ testObj(objectPath);
+	OBJ testObj(meshPath);
 	this->mesh = new Mesh(testObj);
 
 
 	// load all materials for Obj
-	int nrOfMat = testObj.mtl.materials.size();
+	int nrOfMat = (int)testObj.mtl.materials.size();
 	for (int i = 0; i < nrOfMat; i++)
 	{
 		MaterialLibrary::LoadMaterial(testObj.mtl.materials[i]);
@@ -30,8 +35,11 @@ GameObject::GameObject(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::X
 	this->mesh->position = pos;
 
 	// set rotation
-	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMVectorSet(rot.x, rot.y, rot.z, 1.0f));
-	this->mesh->rotation = this->rotation;
+	this->mesh->rotation = rot;
+
+	// set scale
+	this->mesh->scale = scale;
+	this->scale = scale;
 }
 
 GameObject::GameObject()
@@ -42,8 +50,8 @@ GameObject::GameObject()
 
 
 	// load all materials for Obj
-	int nrOfMat = testObj.mtl.materials.size();
-	for (int i = 0; i < nrOfMat; i++)
+	UINT nrOfMat = UINT(testObj.mtl.materials.size());
+	for (UINT i = 0; i < nrOfMat; i++)
 	{
 		MaterialLibrary::LoadMaterial(testObj.mtl.materials[i]);
 	}
@@ -56,6 +64,7 @@ GameObject::GameObject()
 	this->rotation = DirectX::XMMatrixIdentity();
 
 	//Update constantbuffer
+	this->updateBuffer();
 }
 
 GameObject::~GameObject()
@@ -66,26 +75,33 @@ GameObject::~GameObject()
 	}
 }
 
-void GameObject::setPos(DirectX::XMFLOAT3 pos)
+void GameObject::movePos(const DirectX::XMFLOAT3& offset)
+{
+	this->position.x += offset.x;
+	this->position.y += offset.y;
+	this->position.z += offset.z;
+}
+
+void GameObject::setPos(const DirectX::XMFLOAT3& pos)
 {
 	this->position = pos;
 }
 
-void GameObject::setRot(DirectX::XMMATRIX rot)
-{
-	this->mesh->rotation = rot;
-	this->rotation = rot;
-}
-
-void GameObject::setRot(DirectX::XMFLOAT3 rot)
+void GameObject::setRot(const DirectX::XMFLOAT3& rot)
 {
 	this->mesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMVectorSet(rot.x, rot.y, rot.z, 1.0f));
 	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMVectorSet(rot.x, rot.y, rot.z, 1.0f));
 }
 
+void GameObject::setRot(const DirectX::XMVECTOR& rot)
+{
+	DirectX::XMStoreFloat3(&this->rotation, rot);
+}
+
 void GameObject::setScale(DirectX::XMFLOAT3 scale)
 {
 	this->mesh->scale = scale;
+	this->scale = scale;
 }
 
 DirectX::XMFLOAT3 GameObject::getPos() const
@@ -93,9 +109,19 @@ DirectX::XMFLOAT3 GameObject::getPos() const
 	return this->position;
 }
 
-DirectX::XMMATRIX GameObject::getRot() const
+DirectX::SimpleMath::Vector3 GameObject::getPosV3() const
+{
+	return this->position;
+}
+
+DirectX::XMFLOAT3 GameObject::getRot() const
 {
 	return this->rotation;
+}
+
+DirectX::XMFLOAT3 GameObject::getScale() const
+{
+	return this->scale;
 }
 
 Bound* GameObject::getBounds() const
@@ -103,17 +129,28 @@ Bound* GameObject::getBounds() const
 	return &this->mesh->bound; //funkar??
 }
 
+void GameObject::setPhysComp(PhysicsComponent* comp)
+{
+	this->physComp = comp;
+}
+
+PhysicsComponent* GameObject::getPhysComp() const
+{
+	return this->physComp;
+}
+
 void GameObject::updateBuffer()
 {
 	//Set mesh pos & rot to current member variable pos/rot
 	this->mesh->position = this->position;
 	this->mesh->rotation = this->rotation;
+	this->mesh->scale = this->scale;
 
 	//Update constantbuffer
 	this->mesh->UpdateCB();
 }
 
-void GameObject::setMesh(std::string meshPath)
+void GameObject::setMesh(const  std::string& meshPath)
 {
 	//delete current mesh ptr
 	if (this->mesh != nullptr)
@@ -127,8 +164,8 @@ void GameObject::setMesh(std::string meshPath)
 
 
 	// load all materials for Obj
-	int nrOfMat = testObj.mtl.materials.size();
-	for (int i = 0; i < nrOfMat; i++)
+	UINT nrOfMat = UINT(testObj.mtl.materials.size());
+	for (UINT i = 0; i < nrOfMat; i++)
 	{
 		MaterialLibrary::LoadMaterial(testObj.mtl.materials[i]);
 	}
@@ -140,7 +177,7 @@ void GameObject::setMesh(std::string meshPath)
 	this->mesh->rotation = this->rotation;
 }
 
-void GameObject::setMesh(Mesh*)
+void GameObject::setMesh(Mesh* inMesh)
 {
 
 	//delete current mesh ptr
@@ -149,12 +186,12 @@ void GameObject::setMesh(Mesh*)
 		delete this->mesh;
 	}
 
-
+	this->mesh = inMesh;
 	// set position
-	this->mesh->position = this->position;
+	this->mesh->position = inMesh->position;
 
 	// set rotation
-	this->mesh->rotation = this->rotation;
+	this->mesh->rotation = inMesh->rotation;
 }
 
 bool GameObject::withinRadious(GameObject* object, float radius) const
@@ -187,4 +224,8 @@ void GameObject::draw()
 	this->mesh->DrawWithMat();
 }
 
-
+void GameObject::update()
+{
+	this->position = this->physComp->getPosV3();
+	this->rotation = DirectX::XMFLOAT3(this->physComp->getRotation().x, this->physComp->getRotation().y, this->physComp->getRotation().z);
+}

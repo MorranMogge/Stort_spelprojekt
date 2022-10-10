@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "DirectXMathHelper.h"
 
 void subtractionXMFLOAT3(DirectX::XMFLOAT3& argOne, DirectX::XMFLOAT3 argTwo)
@@ -20,6 +21,7 @@ DirectX::XMFLOAT3 normalizeXMFLOAT3(DirectX::XMFLOAT3 argOne)
     float y = argOne.y;
     float z = argOne.z;
     float length = sqrt(x * x + y * y + z * z);
+    if (length == 0) return argOne;
     float factor = 1 / length;
     argOne.x *= factor;
     argOne.y *= factor;

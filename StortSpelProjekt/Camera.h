@@ -9,6 +9,7 @@ class Camera
 private:
 	float deltaTime;
 	ConstantBufferNew<cameraStruct> cameraBuffer;
+	ConstantBufferNew<posStruct> positionBuffer;
 
 	DirectX::XMMATRIX viewMatrix;
 	DirectX::XMMATRIX projMatrix;

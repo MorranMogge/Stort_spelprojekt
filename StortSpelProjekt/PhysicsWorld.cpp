@@ -10,14 +10,6 @@
 
 void PhysicsWorld::setUpBaseScenario()
 {
-	//Create Player
-	//playerShape = com.createBoxShape(reactphysics3d::Vector3(4*0.35f, 4 * 0.35f, 4 * 0.35f));
-	//reactphysics3d::Transform playerTransform = reactphysics3d::Transform(reactphysics3d::Vector3(1, 1, 1), reactphysics3d::Quaternion::identity());
-	//playerRigidBody = world->createRigidBody(playerTransform);
-	//playerCollider = playerRigidBody->addCollider(playerShape, reactphysics3d::Transform(reactphysics3d::Vector3(0, 0, 0), reactphysics3d::Quaternion::identity()));
-	//playerRigidBody->setType(reactphysics3d::BodyType::KINEMATIC);
-	//playerRigidBody->enableGravity(false);
-	//playerRigidBody->setTransform(reactphysics3d::Transform(reactphysics3d::Vector3(-10, 10, -20), reactphysics3d::Quaternion::identity()));
 	playerBox = new PhysicsComponent();
 	playerBox->initiateComponent(&this->com, this->world);
 	playerBox->setType(reactphysics3d::BodyType::KINEMATIC);
@@ -33,6 +25,7 @@ void PhysicsWorld::setUpBaseScenario()
 	world->setIsDebugRenderingEnabled(true);
 	debugRenderer = &world->getDebugRenderer();
 	debugRenderer->setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, true);
+	//debugRenderer->setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_BROADPHASE_AABB, true);
 
 	debugRenderer->computeDebugRenderingPrimitives(*world);
 }

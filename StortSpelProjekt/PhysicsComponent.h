@@ -48,6 +48,7 @@ public:
 	void setPosition(const reactphysics3d::Vector3& position);
 
 	//Get information
+	reactphysics3d::BodyType getType()const;
 	reactphysics3d::Vector3 getPosition()const;
 	reactphysics3d::Quaternion getRotation()const;
 	reactphysics3d::CollisionShapeName getTypeName()const;

@@ -41,7 +41,7 @@ void Game::loadObjects()
 	}
 
 	testBat->setPlayer(player);
-	testBat->setTestObj(potion);
+	testBat->setTestObj(gameObjects);
 	player->setPhysComp(physWolrd.getPlayerBox());
 }
 

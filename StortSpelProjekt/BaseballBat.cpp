@@ -19,27 +19,39 @@ void BaseballBat::setPlayer(Player* player)
 	this->player = player;
 }
 
-void BaseballBat::setTestObj(GameObject* testObj)
+void BaseballBat::setTestObj(const std::vector<GameObject*>& objects)
 {
-	this->testObj = testObj;
+	this->objects = objects;
 }
 
 void BaseballBat::useItem()
 {
 	SimpleMath::Vector3 batPos = this->player->getPos();
 	batPos += this->player->getForwardVec() * 10;
-	this->player->getPhysComp()->setPosition(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
-	
-	bool collided = this->player->getPhysComp()->testBodiesOverlap(this->testObj->getPhysComp());
-	std::cout << "result: " << collided << "\n";
-	if (collided)
+
+	PhysicsComponent* playerComp = this->player->getPhysComp();
+	playerComp->setPosition(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+	PhysicsComponent* physComp;
+	for (int i = 2; i < objects.size(); i++)
 	{
-		float force = this->player->getPhysComp()->getMass() * FORCECONSTANT;
-		batPos = this->player->getForwardVec() * 10 + this->player->getUpVec();
-		newNormalizeXMFLOAT3(batPos);
-		scalarMultiplicationXMFLOAT3(force, batPos);
-		this->testObj->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+		physComp = objects[i]->getPhysComp();
+		//if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue;
+
+		bool collided = playerComp->testBodiesOverlap(physComp);
+		std::cout << "result: " << collided << "\n";
+		if (collided)
+		{
+			//Calculate the force vector
+			float force = playerComp->getMass() * FORCECONSTANT;
+			batPos = this->player->getForwardVec() * 10 + this->player->getUpVec();
+			newNormalizeXMFLOAT3(batPos);
+			scalarMultiplicationXMFLOAT3(force, batPos);
+
+			//Add force to object
+			physComp->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+		}
 	}
+	
 
 }
 

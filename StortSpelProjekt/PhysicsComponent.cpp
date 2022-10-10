@@ -152,6 +152,11 @@ void PhysicsComponent::setPosition(const reactphysics3d::Vector3& position)
 	this->rigidBody->setTransform(reactphysics3d::Transform(position, this->rigidBody->getTransform().getOrientation()));
 }
 
+reactphysics3d::BodyType PhysicsComponent::getType() const
+{
+	return this->rigidBody->getType();
+}
+
 reactphysics3d::Vector3 PhysicsComponent::getPosition() const
 {
 	return this->rigidBody->getTransform().getPosition();

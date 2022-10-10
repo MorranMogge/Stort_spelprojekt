@@ -143,6 +143,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	device->Release();
 	immediateContext->Release();
 	swapChain->Release();
+
 	#pragma endregion
 	
 	return 0;

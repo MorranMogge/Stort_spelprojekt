@@ -91,10 +91,11 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
         {
             case DIRECTIONAL_LIGHT:
                 lightDir = -lights[i].direction.xyz;
-                result = DoDirectionalLight(lights[i], viewDir, normal, mat.specularPower, lightDir);
+                //result = DoDirectionalLight(lights[i], viewDir, normal, mat.specularPower, lightDir);
+                result = GetDirL(lights[i], normal, viewDir, specular, mat.specularPower, lightDir);
                 break;
             case POINT_LIGHT:
-                lightDir = (lights[i].position - worldPosition).xyz;
+                lightDir = normalize(lights[i].position - worldPosition).xyz;
                 //result = DoPointLight(lights[i], viewDir, worldPosition, normal, mat.specularPower, lightDir);
                 result = GetPointL(lights[i], worldPosition.xyz, normal, viewDirection,specular, mat.specularPower, lightDir);
                 break;

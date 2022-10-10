@@ -40,6 +40,23 @@ LightResult GetPointL(Light light, float3 worldPosition, float3 normal, float3 v
     return result;
 }
 
+LightResult GetDirL(Light light, float3 normal, float3 viewDirection, float3 specularColor, float specularPower, float3 lightDirection)
+{
+    LightResult result = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
+
+    float dirLIntesity = saturate(dot(normal, lightDirection));
+    if (dirLIntesity > 0.0f)
+    {
+        result.Diffuse = saturate(light.color.xyz * dirLIntesity);
+        float3 reflection = normalize(2 * dirLIntesity * normal - lightDirection);
+        result.Specular = light.color.xyz;
+        result.Specular = pow(saturate(dot(reflection * specularColor, viewDirection)),
+        specularPower);
+    }
+
+    return result;
+}
+
 
 float3 DoDiffuse(Light light, float3 lightDir, float3 normal)
 {
@@ -256,7 +273,7 @@ float ShadowFactor2(float4 lightWorldPosition, Texture2DArray shadowMap, Sampler
 {
     lightWorldPosition.xyz /= lightWorldPosition.w;
     float2 smTex = float2(0.5f * lightWorldPosition.x + 0.5f, -0.5f * lightWorldPosition.y + 0.5f);
-    const float bias = 0.0006f;/*max(0.000005f * (1.0 - dot(normal, lightDirection)), 0.0000005f);*/ // 0.000003f
+    const float bias = max(0.0005f * (1.0 - dot(normal, lightDirection)), 0.0005f); // 0.000003f
     const float depth = lightWorldPosition.z - bias;
 
     const float dx = 1.0f / 2048.0f;

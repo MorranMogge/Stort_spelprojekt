@@ -50,8 +50,7 @@ LightResult GetDirL(Light light, float3 normal, float3 viewDirection, float3 spe
         result.Diffuse = saturate(light.color.xyz * dirLIntesity);
         float3 reflection = normalize(2 * dirLIntesity * normal - lightDirection);
         result.Specular = light.color.xyz;
-        result.Specular = pow(saturate(dot(reflection * specularColor, viewDirection)),
-        specularPower);
+        result.Specular = pow(saturate(dot(reflection * specularColor, viewDirection)), specularPower);
     }
 
     return result;

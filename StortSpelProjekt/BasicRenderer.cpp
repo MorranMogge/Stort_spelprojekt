@@ -178,3 +178,8 @@ void BasicRenderer::skyboxPrePass()
 	immediateContext->VSSetShader(vs_Skybox, nullptr, 0);								//SetVTXShader
 	immediateContext->PSSetShader(ps_Skybox, nullptr, 0);								//Set PSShader
 }
+
+void BasicRenderer::bindAmbientShader()
+{
+	immediateContext->PSSetShader(ApShader, nullptr, 0);
+}

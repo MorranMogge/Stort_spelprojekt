@@ -117,6 +117,9 @@
       <Filter>Particles</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="SkyboxObj.cpp">
+      <Filter>Skybox</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -353,6 +356,9 @@
     </ClInclude>
     <ClInclude Include="GameInclude.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SkyboxObj.h">
+      <Filter>Skybox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -403,6 +409,9 @@
     <Filter Include="Particles">
       <UniqueIdentifier>{1fe17447-53de-446c-a837-95b1c590f2f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Skybox">
+      <UniqueIdentifier>{62f9e9b5-3e39-45cd-8b93-d997529a61e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl" />
@@ -426,6 +435,15 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PT_VertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Skybox_PS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Skybox_VS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="AmbientPixelShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

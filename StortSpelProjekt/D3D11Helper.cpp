@@ -2,7 +2,7 @@
 #include "D3D11Helper.h"
 #include "GPU.h"
 
-bool CreateInterfaces(UINT width, UINT height, HWND window, ID3D11Device*& device, ID3D11DeviceContext*& immediateContext, IDXGISwapChain*& swapChain)
+bool CreateInterfaces(const UINT& width, const UINT& height, HWND window, ID3D11Device*& device, ID3D11DeviceContext*& immediateContext, IDXGISwapChain*& swapChain)
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 
@@ -61,7 +61,7 @@ bool CreateRenderTargetView(ID3D11Device* device, IDXGISwapChain* swapChain, ID3
 	return !FAILED(hr);
 }
 
-bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, ID3D11Texture2D*& dsTexture, ID3D11DepthStencilView*& dsView)
+bool CreateDepthStencil(ID3D11Device* device, const UINT &width,const  UINT &height, ID3D11Texture2D*& dsTexture, ID3D11DepthStencilView*& dsView)
 {
 	D3D11_TEXTURE2D_DESC textureDesc;
 	textureDesc.Width = width;
@@ -76,9 +76,6 @@ bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, ID3D11Tex
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	//	textureDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;	//binda till depth stencil
-	// 	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;									//MapUsageTypless(usage);
-
 	if (FAILED(device->CreateTexture2D(&textureDesc, nullptr, &dsTexture)))
 	{
 		std::cerr << "Failed to create depth stencil texture!" << std::endl;
@@ -89,7 +86,7 @@ bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, ID3D11Tex
 	return !FAILED(hr);
 }
 
-bool CreateDepthStencilAndSrv(ID3D11Device* device, UINT width, UINT height, ID3D11Texture2D*& dsTexture, ID3D11DepthStencilView*& dsView, ID3D11ShaderResourceView*& shaderResource)
+bool CreateDepthStencilAndSrv(ID3D11Device* device, const UINT& width, const UINT& height, ID3D11Texture2D*& dsTexture, ID3D11DepthStencilView*& dsView, ID3D11ShaderResourceView*& shaderResource)
 {
 	D3D11_TEXTURE2D_DESC textureDesc;
 	textureDesc.Width = width;
@@ -142,7 +139,7 @@ bool CreateDSState(ID3D11DepthStencilState*&dss)
 	return !FAILED(hr);
 }
 
-void SetViewport(D3D11_VIEWPORT& viewport, UINT width, UINT height)
+void SetViewport(D3D11_VIEWPORT& viewport, const UINT& width, const UINT& height)
 {
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
@@ -152,7 +149,7 @@ void SetViewport(D3D11_VIEWPORT& viewport, UINT width, UINT height)
 	viewport.MaxDepth = 1;
 }
 
-bool SetupD3D11(UINT width, UINT height, HWND window, ID3D11Device*& device, ID3D11DeviceContext*& immediateContext, IDXGISwapChain*& swapChain, ID3D11RenderTargetView*& rtv, ID3D11Texture2D*& dsTexture, ID3D11DepthStencilView*& dsView, D3D11_VIEWPORT& viewport)
+bool SetupD3D11(const UINT& width, const UINT& height, HWND window, ID3D11Device*& device, ID3D11DeviceContext*& immediateContext, IDXGISwapChain*& swapChain, ID3D11RenderTargetView*& rtv, ID3D11Texture2D*& dsTexture, ID3D11DepthStencilView*& dsView, D3D11_VIEWPORT& viewport)
 {
 	if (!CreateInterfaces(width, height, window, device, immediateContext, swapChain))
 	{

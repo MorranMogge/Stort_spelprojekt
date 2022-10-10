@@ -30,7 +30,7 @@ void Game::loadObjects()
 	{
 		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 		physWolrd.addPhysComponent(newObj, reactphysics3d::CollisionShapeName::BOX);
-		newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+i*10, 100));
+		newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+(float)i*10, 100));
 		gameObjects.emplace_back(newObj);
 	}
 
@@ -64,6 +64,7 @@ void Game::drawObjects(bool drawDebug)
 	//Draw light debug meshes
 	if (drawDebug)
 	{
+		basicRenderer.bindAmbientShader();
 		ltHandler.drawDebugMesh();
 	}
 
@@ -247,15 +248,15 @@ void Game::Render()
 	if (objectDraw) drawObjects(drawDebug);
 
 
-	//Render Imgui & wireframe
-	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
-	if (wireframe) { immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
-
-
 	//Render Skybox
 	basicRenderer.skyboxPrePass();
 	this->skybox.draw();
 	basicRenderer.depthUnbind();
+
+
+	//Render Imgui & wireframe
+	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
+	if (wireframe) { immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
 
 
 	//Render Particles

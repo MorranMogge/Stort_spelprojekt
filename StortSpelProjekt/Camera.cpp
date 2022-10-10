@@ -66,3 +66,33 @@ DirectX::XMVECTOR Camera::getRightVector() const
 {
 	return this->rightVector;
 }
+
+void Camera::VSbindPositionBuffer(const int& slot)
+{
+	GPU::immediateContext->VSSetConstantBuffers(slot, 1, this->positionBuffer.getReferenceOf());
+}
+
+void Camera::VSbindViewBuffer(const int& slot)
+{
+	GPU::immediateContext->VSSetConstantBuffers(slot, 1, this->cameraBuffer.getReferenceOf());
+}
+
+void Camera::PSbindPositionBuffer(const int& slot)
+{
+	GPU::immediateContext->PSSetConstantBuffers(slot, 1, this->positionBuffer.getReferenceOf());
+}
+
+void Camera::PSbindViewBuffer(const int& slot)
+{
+	GPU::immediateContext->PSSetConstantBuffers(slot, 1, this->cameraBuffer.getReferenceOf());
+}
+
+void Camera::GSbindPositionBuffer(const int& slot)
+{
+	GPU::immediateContext->GSSetConstantBuffers(slot, 1, this->positionBuffer.getReferenceOf());
+}
+
+void Camera::GSbindViewBuffer(const int& slot)
+{
+	GPU::immediateContext->GSSetConstantBuffers(slot, 1, this->cameraBuffer.getReferenceOf());
+}

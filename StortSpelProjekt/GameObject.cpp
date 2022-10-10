@@ -52,6 +52,7 @@ GameObject::GameObject()
 
 
 	// load all materials for Obj
+
 	UINT nrOfMat = UINT(testObj.mtl.materials.size());
 	for (UINT i = 0; i < nrOfMat; i++)
 	{
@@ -180,6 +181,7 @@ void GameObject::setMesh(const  std::string& meshPath)
 	this->mesh->rotation = this->rotation;
 }
 
+
 void GameObject::setMesh(Mesh* inMesh)
 {
 
@@ -190,6 +192,7 @@ void GameObject::setMesh(Mesh* inMesh)
 	}
 
 	this->mesh = inMesh;
+
 	// set position
 	this->mesh->position = inMesh->position;
 

@@ -35,7 +35,15 @@ public:
 
 	void updateCamera();
 	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const float& deltaTime);
-
+	void AdjustRotation(float x, float y);
 	DirectX::XMVECTOR getForwardVector() const;
 	DirectX::XMVECTOR getRightVector() const;
+	ID3D11Buffer* getViewBuffer();
+	ID3D11Buffer* getPositionBuffer();
+	void VSbindPositionBuffer(const int &slot);
+	void VSbindViewBuffer(const int& slot);
+	void PSbindPositionBuffer(const int& slot);
+	void PSbindViewBuffer(const int& slot);
+	void GSbindPositionBuffer(const int& slot);
+	void GSbindViewBuffer(const int& slot);
 };

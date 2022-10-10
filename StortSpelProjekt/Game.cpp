@@ -30,7 +30,7 @@ void Game::loadObjects()
 	{
 		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 		physWolrd.addPhysComponent(newObj, reactphysics3d::CollisionShapeName::BOX);
-		newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+i*10, 100));
+		newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+(float)i*10, 100));
 		gameObjects.emplace_back(newObj);
 	}
 
@@ -45,6 +45,10 @@ void Game::drawShadows()
 	{
 		ltHandler.drawShadows(i, gameObjects);
 	}
+
+	basicRenderer.depthPrePass();
+	ltHandler.drawShadows(0, gameObjects, &camera);
+	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
 }
 
 void Game::drawObjects(bool drawDebug)
@@ -57,10 +61,10 @@ void Game::drawObjects(bool drawDebug)
 	{
 		gameObjects.at(i)->draw();
 	}
-
 	//Draw light debug meshes
 	if (drawDebug)
 	{
+		basicRenderer.bindAmbientShader();
 		ltHandler.drawDebugMesh();
 	}
 
@@ -154,7 +158,6 @@ void Game::handleKeybinds()
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
-	
 	MaterialLibrary::LoadDefault();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -214,7 +217,8 @@ GAMESTATE Game::Update()
 	}
 	//Here you can write client-server related functions?
 
-		this->updateBuffers();
+
+	this->updateBuffers();
 	
 	if (player->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
 	
@@ -238,13 +242,21 @@ void Game::Render()
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
 
+
+	//Render Skybox
+	basicRenderer.skyboxPrePass();
+	this->skybox.draw();
+	basicRenderer.depthUnbind();
+
+
+	//Render Imgui & wireframe
 	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
 	if (wireframe) { immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
 
+
 	//Render Particles
-	basicRenderer.geometryPass(camera);
+	basicRenderer.geometryPass(this->camera);
 	drawParticles();
 	this->ptEmitters.at(0).unbind();
-
-
 }
+

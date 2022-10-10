@@ -6,13 +6,21 @@
 using namespace DirectX;
 
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-    :GameObject(useMesh, pos, rot, id), health(69), holdingItem(nullptr)
+    :GameObject(useMesh, pos, rot, id), health(70), holdingItem(nullptr)
 {
+	this->rotationMX = XMMatrixIdentity();
+	dotValue = { 0.0f, 0.0f, 0.0f };
+	dotProduct = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	normalVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-	:GameObject(objectPath, pos, rot, id), health(69), holdingItem(nullptr)
+	:GameObject(objectPath, pos, rot, id), health(70), holdingItem(nullptr)
 {
+	this->rotationMX = XMMatrixIdentity();
+	dotValue = { 0.0f, 0.0f, 0.0f };
+	dotProduct = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	normalVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void Player::handleInputs()
@@ -98,7 +106,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 
 	if (Input::KeyDown(KeyCode::W))
 	{
-		position += forwardVector * deltaTime * 40.0f;
+		position += forwardVector * deltaTime * 25.0f;
 		dotProduct = DirectX::XMVector3Dot(cameraForward, rightVector);
 		XMStoreFloat3(&dotValue, dotProduct);
 
@@ -127,13 +135,13 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		}
 
 		//Walking normally
-		else if (dotValue.x < -0.005f)
+		else if (dotValue.x < -0.05f)
 		{
-			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.02f);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.05f);
 		}
-		else if (dotValue.x > 0.005f)
+		else if (dotValue.x > 0.05f)
 		{
-			rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.05f);
 		}
 		else
 		{
@@ -149,7 +157,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 
 	else if (Input::KeyDown(KeyCode::S))
 	{
-		position += forwardVector * deltaTime * 40.0f;
+		position += forwardVector * deltaTime * 25.0f;
 		dotProduct = DirectX::XMVector3Dot(-cameraForward, rightVector);
 		XMStoreFloat3(&dotValue, dotProduct);
 
@@ -178,13 +186,13 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		}
 
 		//Walking normally
-		else if (dotValue.x < -0.005f)
+		else if (dotValue.x < -0.05f)
 		{
-			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.02f);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.05f);
 		}
-		else if (dotValue.x > 0.005f)
+		else if (dotValue.x > 0.05f)
 		{
-			rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.05f);
 		}
 		else
 		{
@@ -200,17 +208,17 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 
 	else if (Input::KeyDown(KeyCode::D))
 	{
-		position += forwardVector * deltaTime * 40.0f;
+		position += forwardVector * deltaTime * 25.0f;
 		dotProduct = DirectX::XMVector3Dot(cameraRight, rightVector);
 		XMStoreFloat3(&dotValue, dotProduct);
 
-		if (dotValue.x < -0.005f)
+		if (dotValue.x < -0.05f)
 		{
-			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.02f);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.05f);
 		}
-		else if (dotValue.z > 0.005f)
+		else if (dotValue.z > 0.05f)
 		{
-			rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.05f);
 		}
 		else
 		{
@@ -225,17 +233,17 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 
 	else if (Input::KeyDown(KeyCode::A))
 	{
-		position += forwardVector * deltaTime * 40.0f;
+		position += forwardVector * deltaTime * 25.0f;
 		dotProduct = DirectX::XMVector3Dot(-cameraRight, rightVector);
 		XMStoreFloat3(&dotValue, dotProduct);
 
-		if (dotValue.x < -0.005f)
+		if (dotValue.x < -0.05f)
 		{
-			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.02f);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.05f);
 		}
-		else if (dotValue.x > 0.005f)
+		else if (dotValue.x > 0.05f)
 		{
-			rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.05f);
 		}
 		else
 		{

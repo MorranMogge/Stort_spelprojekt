@@ -9,7 +9,6 @@ void Camera::updateCamera()
 	cameraBuffer.getData().viewProjMX = viewMatrix * projMatrix;
 	cameraBuffer.getData().viewProjMX = XMMatrixTranspose(cameraBuffer.getData().viewProjMX);
 
-	XMFLOAT3 position(0, 0, 0);
 	XMStoreFloat3(&position, this->cameraPos);
 	positionBuffer.getData().pos = position;
 	positionBuffer.getData().padding = 0;

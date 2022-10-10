@@ -8,8 +8,6 @@ class Item;
 class Player: public GameObject
 {
 private:
-	GameObject* pickup;
-
 	//Movement variables
 	DirectX::XMFLOAT3 dotValue;
 	DirectX::XMVECTOR dotProduct;

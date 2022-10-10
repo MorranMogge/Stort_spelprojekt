@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "PlayerVectors.h"
 #include "GPU.h"
 #include "ShaderLoader.h"
@@ -94,4 +95,5 @@ void PlayerVectors::drawLines()
 	GPU::immediateContext->VSSetShader(vShader, nullptr, 0);
 	GPU::immediateContext->PSSetShader(pShader, nullptr, 0);
 	GPU::immediateContext->Draw(6, 0);
+	GPU::immediateContext->PSSetShader(nullptr, nullptr, 0);
 }

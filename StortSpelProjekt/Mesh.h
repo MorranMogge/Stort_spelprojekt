@@ -34,7 +34,7 @@ public:
 	std::vector<std::string> matKey;
 
 	DirectX::SimpleMath::Vector3 position;
-	DirectX::XMMATRIX rotation;
+	DirectX::XMMATRIX rotation = DirectX::XMMatrixIdentity();
 	DirectX::SimpleMath::Vector3 scale{ 1.0f, 1.0f, 1.0f };
 
 	Bound bound;

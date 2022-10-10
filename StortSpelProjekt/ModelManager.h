@@ -57,7 +57,6 @@ private:
 	void addBoneData(const int vertexID, const int boneId, const float weight);
 	void loadBones(const aiMesh* mesh, const int mesh_index);
 	std::map<std::string, int> boneIndexTraslator;
-	std::map<std::string, int>::iterator boneIndexTraslatorIT;
 	int numberBones;
 	void numberBone(aiNode* node, int parentNode, DirectX::XMMATRIX& prevOffsets);
 	int findAndAddBoneID(std::string name);

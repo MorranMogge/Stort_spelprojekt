@@ -11,9 +11,6 @@
 class AnimatedMesh : public Mesh2
 {
 private:
-
-	aiNode rootNode;
-	std::vector<aiAnimation> animationData;
 	aiScene* scene;
 
 	std::unordered_map<std::string, int> boneNameToIndex;
@@ -32,6 +29,15 @@ private:
 	};
 	std::vector<boneInfo> boneVector;
 
+	struct IndexBoneData
+	{
+		//int boneName;
+		int BoneIDs[4] = { -1 };
+		float Weights[4] = { 0 };
+	};
+	std::vector<IndexBoneData> boneDataVec;
+
+
 	void uppdateMatrices(int animationIndex, float animationTime, const aiNode* node, const DirectX::XMMATRIX& parentTrasform);
 
 	void findlowRotationNode(int& out, const float& AnimationTimeTicks, const aiNodeAnim* nodeAnm);
@@ -49,6 +55,8 @@ private:
 	void render(ID3D11DeviceContext* devCon, float dt);
 public:
 	AnimatedMesh(ID3D11Device* device, std::vector<vertex> vertexTriangle, std::vector<DWORD> indexTriangle);
+
+	void addData(std::vector<IndexBoneData> boneDataVec, std::vector<boneInfo> boneVector, std::unordered_map<std::string, int> boneNameToIndex, aiScene* scene);
 
 	void Draw(ID3D11DeviceContext* immediateContext, int animationIndex);
 };

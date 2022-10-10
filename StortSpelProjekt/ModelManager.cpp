@@ -64,10 +64,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene*& scene)
 			printf("has bones \n");
 			this->loadBones(scene->mMeshes[i], i);
 		}
-		else
-		{
-			printf("model has no bones\n");
-		}
+
 		//printf("Number of bones: %d\n number vert: %d", scene->mMeshes()->)
 		aiMaterial* material = scene->mMaterials[scene->mMeshes[i]->mMaterialIndex];
 		//här srv inläsning
@@ -158,16 +155,13 @@ Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene*& scene)
 
 	//smallestCoord = XMVectorSet(smallestX, smallestY, smallestZ, 0.0f);
 	//biggestCoord = XMVectorSet(biggestX, biggestY, biggestZ, 0.0f);
-	
-	
-	
-	
+
 	return new Mesh2(GPU::device, vertexTriangle, indexTriangle);
 }
 
 void ModelManager::aiMatrixToXMmatrix(const aiMatrix4x4& in, DirectX::XMMATRIX& out)
 {
-	DirectX::XMFLOAT4X4 hej = 
+	DirectX::XMFLOAT4X4 res = 
 	DirectX::XMFLOAT4X4(
 		float(in.a1),
 		float(in.a2),
@@ -190,7 +184,7 @@ void ModelManager::aiMatrixToXMmatrix(const aiMatrix4x4& in, DirectX::XMMATRIX& 
 		float(in.d4)
 	);
 
-	out = DirectX::XMLoadFloat4x4(&hej);
+	out = DirectX::XMLoadFloat4x4(&res);
 }
 
 void ModelManager::normalizeWeights(float weights[])
@@ -268,36 +262,36 @@ void ModelManager::loadBones(const aiMesh* mesh, const int mesh_index)
 	}
 }
 
-void ModelManager::numberBone(aiNode* node, int parentNode, DirectX::XMMATRIX& prevOffsets)
-{
-	int boneID = this->findBoneID(node->mName.data);
-	bool realNode = true;
-	if (boneID == -1)
-	{
-		realNode = false;
-		boneID = parentNode;
-	}
-	if (realNode)
-	{
-		this->boneVec[boneID].parentID = parentNode;
-
-	}
-	
-	DirectX::XMMATRIX temp;
-	this->aiMatrixToXMmatrix(node->mTransformation, temp);
-	DirectX::XMMatrixMultiply(prevOffsets, temp);
-
-	if (boneID != -1)
-	{
-		this->boneVec[boneID].finalTransform = prevOffsets;
-	}
-	
-	for (int i = 0; i < node->mNumChildren; i++)
-	{
-		this->numberBone(node->mChildren[i], boneID, prevOffsets);
-	}
-
-}
+//void ModelManager::numberBone(aiNode* node, int parentNode, DirectX::XMMATRIX& prevOffsets)
+//{
+//	int boneID = this->findBoneID(node->mName.data);
+//	bool realNode = true;
+//	if (boneID == -1)
+//	{
+//		realNode = false;
+//		boneID = parentNode;
+//	}
+//	if (realNode)
+//	{
+//		this->boneVec[boneID].parentID = parentNode;
+//
+//	}
+//	
+//	DirectX::XMMATRIX temp;
+//	this->aiMatrixToXMmatrix(node->mTransformation, temp);
+//	DirectX::XMMatrixMultiply(prevOffsets, temp);
+//
+//	if (boneID != -1)
+//	{
+//		this->boneVec[boneID].finalTransform = prevOffsets;
+//	}
+//	
+//	for (int i = 0; i < node->mNumChildren; i++)
+//	{
+//		this->numberBone(node->mChildren[i], boneID, prevOffsets);
+//	}
+//
+//}
 
 int ModelManager::findAndAddBoneID(std::string name)
 {

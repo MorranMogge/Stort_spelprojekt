@@ -178,6 +178,14 @@ AnimatedMesh::AnimatedMesh(ID3D11Device* device, std::vector<vertex> vertexTrian
 {
 }
 
+void AnimatedMesh::addData(std::vector<IndexBoneData> boneDataVec, std::vector<boneInfo> boneVector, std::unordered_map<std::string, int> boneNameToIndex, aiScene* scene)
+{
+	this->boneDataVec = boneDataVec;
+	this->scene = scene;
+	this->boneVector = boneVector;
+	this->boneNameToIndex = boneNameToIndex;
+}
+
 void AnimatedMesh::Draw(ID3D11DeviceContext* immediateContext, int animationIndex)
 {
 }

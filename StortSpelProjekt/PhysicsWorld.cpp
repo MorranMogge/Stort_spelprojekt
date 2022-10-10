@@ -20,6 +20,7 @@ void PhysicsWorld::setUpBaseScenario()
 	//playerRigidBody->setTransform(reactphysics3d::Transform(reactphysics3d::Vector3(-10, 10, -20), reactphysics3d::Quaternion::identity()));
 	playerBox = new PhysicsComponent();
 	playerBox->initiateComponent(&this->com, this->world);
+	playerBox->setType(reactphysics3d::BodyType::KINEMATIC);
 
 	//Planet
 	planetShape = com.createSphereShape(reactphysics3d::decimal(20));
@@ -214,6 +215,7 @@ PhysicsWorld::~PhysicsWorld()
 	{
 		delete physObjects[i];
 	}
+	delete playerBox;
 	if (world != nullptr) com.destroyPhysicsWorld(world);
 	debuggerBuffer->Release();
 	dpShader->Release();

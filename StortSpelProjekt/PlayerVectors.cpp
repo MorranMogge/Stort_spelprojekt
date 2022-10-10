@@ -59,9 +59,9 @@ void PlayerVectors::setPlayer(Player* player)
 	vectors[0].position = vectors[1].position = vectors[2].position =
 		vectors[3].position = vectors[4].position = vectors[5].position = this->player->getPosV3();
 
-	vectors[1].position += this->player->getForwardVec() * 100;
-	vectors[3].position += this->player->getUpVec() * 100;
-	vectors[5].position += this->player->getRightVec() * 100;
+	vectors[1].position += this->player->getForwardVec() * 5;
+	vectors[3].position += this->player->getUpVec() * 5;
+	vectors[5].position += this->player->getRightVec() * 5;
 
 	this->setUpVertexBuffer();
 }

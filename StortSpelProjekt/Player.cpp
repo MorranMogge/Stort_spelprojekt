@@ -136,6 +136,7 @@ void Player::addItem(Item* itemToHold)
 {
     if (!this->holdingItem)
         this->holdingItem = itemToHold;
+    holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 }
 
 void Player::addHealth(const int& healthToIncrease)
@@ -183,12 +184,14 @@ void Player::update()
         //holdingItem->setPos({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f });
         //holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f }));
         DirectX::SimpleMath::Vector3 newPos = this->position; 
-        newPos += playerForwardVec * 40;// +playerUpVec * 4;
+        newPos += playerForwardVec * -40;// +playerUpVec * 4;
         holdingItem->setPos(newPos);
         holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z}));
+        
+        //Thorw the Item
         if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
         {
-            holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
+            holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC); 
             DirectX::XMFLOAT3 temp;
             DirectX::XMStoreFloat3(&temp, (this->playerForwardVec+this->playerUpVec));
             newNormalizeXMFLOAT3(temp);
@@ -197,13 +200,13 @@ void Player::update()
             holdingItem->setPos({ newPos.x, newPos.y, newPos.z });
             holdingItem = nullptr;
         }
+        //Use the Item
         else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
         {
             holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
             holdingItem->useItem();
             repairCount++;
             std::cout << "Progress " << repairCount << "/4\n";
-            //holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ 50.f, 50.f, 50.f }));
             holdingItem->getPhysComp()->setIsAllowedToSleep(true);
             holdingItem->getPhysComp()->setIsSleeping(true);
             holdingItem = nullptr;

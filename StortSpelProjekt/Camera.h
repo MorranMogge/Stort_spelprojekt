@@ -33,10 +33,8 @@ public:
 	~Camera();
 
 	void updateCamera();
-	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const DirectX::XMVECTOR& playerUp, const DirectX::XMVECTOR& playerForward, const DirectX::XMVECTOR& playerRight, const float& deltaTime);
-	void AdjustRotation(float x, float y);
+	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const float& deltaTime);
 
-	DirectX::XMVECTOR getUpVector();
-	DirectX::XMVECTOR getForwardVector();
-	DirectX::XMVECTOR getRightVector();
+	DirectX::XMVECTOR getForwardVector() const;
+	DirectX::XMVECTOR getRightVector() const;
 };

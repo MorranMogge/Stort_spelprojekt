@@ -11,37 +11,17 @@
 #include "imGUI\imstb_truetype.h"
 #include "imGUI\imgui_impl_win32.h"
 
-MouseClass* mouse;
-
-//extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	//if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam)) return true;
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam)) return true;
 	switch (message)
 	{
 	case WM_DESTROY:
 	{
 		PostQuitMessage(0);
 		return 0;
-	}
-	case WM_INPUT:
-	{
-		UINT dataSize = 0;
-		GetRawInputData(reinterpret_cast<HRAWINPUT>(lParam), RID_INPUT, NULL, &dataSize, sizeof(RAWINPUTHEADER));
-		if (dataSize > 0)
-		{
-			std::unique_ptr<BYTE[]> rawdata = std::make_unique<BYTE[]>(dataSize);
-			if (GetRawInputData(reinterpret_cast<HRAWINPUT>(lParam), RID_INPUT, rawdata.get(), &dataSize, sizeof(RAWINPUTHEADER)) == dataSize);
-			{
-				RAWINPUT* raw = reinterpret_cast<RAWINPUT*>(rawdata.get());
-				if (raw->header.dwType == RIM_TYPEMOUSE)
-				{
-					mouse->onMouseRaw(raw->data.mouse.lLastX, raw->data.mouse.lLastY);
-				}
-			}
-		}
-		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	default:
 		break;
@@ -52,23 +32,6 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 bool SetupWindow(HINSTANCE instance, UINT& width, UINT& height, int nCmdShow, HWND& window)
 {
-	static bool raw_input_initialized = false;
-	if (raw_input_initialized == false)
-	{
-		RAWINPUTDEVICE rid;
-
-		rid.usUsagePage = 0x01; // mouse
-		rid.usUsage = 0x02;
-		rid.dwFlags = 0;
-		rid.hwndTarget = NULL;
-		if (RegisterRawInputDevices(&rid, 1, sizeof(rid)) == FALSE)
-		{
-			//ErrorClass::Log(GetLastError(), "Failed to register raw input devices");
-			exit(-1);
-		}
-		raw_input_initialized = true;
-	}
-
 	const wchar_t CLASS_NAME[] = L"Window Class";
 
 	WNDCLASSEX wc = {};
@@ -123,9 +86,4 @@ bool SetupWindow(HINSTANCE instance, UINT& width, UINT& height, int nCmdShow, HW
 
 	ShowWindow(window, nCmdShow);
 	return true;
-}
-
-void SetUpMouse(MouseClass& mouseTo)
-{
-	mouse = &mouseTo;
 }

@@ -59,10 +59,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX11_Init(device, immediateContext);
-	MouseClass mouse;
-	SetUpMouse(mouse);
 
-	State* currentState = new Game(immediateContext, device, swapChain, mouse, window);
+	State* currentState = new Game(immediateContext, device, swapChain, window);
 	GAMESTATE stateInfo = NOCHANGE;
 
 	MSG msg = {};
@@ -94,7 +92,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 				break;
 			case GAME:
 				delete currentState;
-				currentState = new Game(immediateContext, device, swapChain, mouse, window);
+				currentState = new Game(immediateContext, device, swapChain, window);
 				break;
 			default:
 				break;

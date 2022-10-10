@@ -7,7 +7,14 @@ Light::Light(const DirectX::XMFLOAT3 &lightColor, const DirectX::XMFLOAT3 &light
 	DirectX::XMVECTOR pos = DirectX::XMVectorSet(this->position.x, this->position.y, this->position.z, 0);
 	DirectX::XMVECTOR focusPos = DirectX::XMVectorSet(FocusPos.x, FocusPos.y, FocusPos.z, 0);
 	DirectX::XMVECTOR upPos = DirectX::XMVectorSet(UpDir.x, UpDir.y, UpDir.z, 0);
-	this->view = { DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtLH(pos,focusPos, upPos) * DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PI / 2.0f, (float)GPU::windowWidth/ (float)GPU::windowHeight, 0.1f, 200.0f)) };
+
+	static const DirectX::XMMATRIX t(
+		0.5f, 0.0f, 0.0f, 0.0f,
+		0.0f, -0.5f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.0f, 1.0f);
+
+	this->view = { DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtLH(pos,focusPos, upPos) * DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PI / 2.0f, 1.0f /*(float)GPU::windowWidth/ (float)GPU::windowHeight*/, 0.1f, 200.0f)) };
 }
 
 DirectX::XMFLOAT3 Light::getPosition() const
@@ -105,6 +112,12 @@ void Light::updateMatrix(const DirectX::XMFLOAT3 &lightPos, const DirectX::XMFLO
 	DirectX::XMVECTOR focusPos = DirectX::XMVectorSet(FocusPos.x, FocusPos.y, FocusPos.z, 0);
 	DirectX::XMVECTOR upPos = DirectX::XMVectorSet(UpDir.x, UpDir.y, UpDir.z, 0);
 
+	static const DirectX::XMMATRIX t(
+		0.5f, 0.0f, 0.0f, 0.0f,
+		0.0f, -0.5f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.0f, 1.0f);
+
 	this->position = lightPos;
-	this->view = { DirectX::XMMatrixLookToLH( pos, focusPos, upPos) * DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PI / 2.0f, 0.75f, 0.1f, 100.0f) };
+	this->view = { DirectX::XMMatrixTranspose( DirectX::XMMatrixLookToLH( pos, focusPos, upPos) * DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PI / 2.0f, 1.0f, 0.1f, 100.0f) ) };
 }

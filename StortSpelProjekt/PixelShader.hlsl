@@ -19,6 +19,7 @@ Texture2D screenDepth : register(t5);
 TextureCube texCube : register(t6);
 
 SamplerState samplerState : register(s0);
+SamplerComparisonState shadowSampler : register(s1);
 
 cbuffer Mat : register(b0)
 {
@@ -52,7 +53,7 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
     
     float3 ambient = ambientTex.Sample(samplerState, uv).xyz * mat.ambient.xyz;
     float3 diffuseColor = diffuseTex.Sample(samplerState, uv).xyz;
-    float3 specular = specularTex.Sample(samplerState, uv).xyz * mat.specular;
+    float3 specular = float3(0, 0, 0);//    specularTex.Sample(samplerState, uv).xyz * mat.specular;
 
     float3 viewDir = normalize(cameraPosition.xyz - worldPosition.xyz);
 
@@ -83,22 +84,40 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
         #define SPOT_LIGHT 2
         
         LightResult result = { { 0, 0, 0}, { 0, 0, 0 } };
+        float3 lightDir;
+        const float3 viewDirection = normalize(cameraPosition.xyz - worldPosition.xyz);
+        
         switch (lights[i].type)
         {
             case DIRECTIONAL_LIGHT:
-                result = DoDirectionalLight(lights[i], viewDir, normal, mat.specularPower); break;
+                lightDir = -lights[i].direction.xyz;
+                result = DoDirectionalLight(lights[i], viewDir, normal, mat.specularPower, lightDir);
+                break;
             case POINT_LIGHT:
-                result = DoPointLight(lights[i], viewDir, worldPosition, normal, mat.specularPower); break;
+                lightDir = (lights[i].position - worldPosition).xyz;
+                //result = DoPointLight(lights[i], viewDir, worldPosition, normal, mat.specularPower, lightDir);
+                result = GetPointL(lights[i], worldPosition.xyz, normal, viewDirection,specular, mat.specularPower, lightDir);
+                break;
             case SPOT_LIGHT:
-                result = DoSpotLight(lights[i], viewDir, worldPosition, normal, mat.specularPower); break;
+                lightDir = (lights[i].position - worldPosition).xyz;
+                result = DoSpotLight(lights[i], viewDir, worldPosition, normal, mat.specularPower, lightDir);
+                break;
         }
-        litResult.Diffuse += result.Diffuse;
-        litResult.Specular += result.Specular;
+        
+        float shadowFactor = ShadowFactor2(lightWorldPosition, shadowMaps, shadowSampler, i, normal, lightDir);
+        
+        litResult.Diffuse += result.Diffuse * shadowFactor;
+        litResult.Specular += result.Specular * shadowFactor;
     }
     
-    float fres = FresnelEffect(normal, viewDir, 5);
+    //float fres = FresnelEffect(normal, viewDir, 5);
+    //return float4(saturate(ambient + mat.diffuse.xyz * litResult.Diffuse/* + specular * (litResult.Specular/* * shadow*/) * diffuseColor/* + fres*/, 1.0f);
     
-    return float4(saturate(ambient + mat.diffuse.xyz * litResult.Diffuse + specular * (litResult.Specular/* * shadow*/)) * diffuseColor/* + fres*/, 1.0f);
+    float3 finalColor = max(mat.ambient.xyz, 0.2f);
+    finalColor = saturate((litResult.Diffuse + finalColor) * diffuseColor); //multiply light result with texture color
+    finalColor = saturate(finalColor + litResult.Specular); //not multiply to put on top and not affect color of image
+
+    return float4(finalColor, 1.0f);
 
 }
 

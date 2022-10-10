@@ -17,7 +17,28 @@ struct LightResult
     float3 Specular;
 };
 
+float FallOff(float range, float distance)
+{
+    //return 1.0f / (1.0f + 1.0f * distance + 1.0f * distance * distance);
+    return saturate(1 - distance / range); // normalize distance in range, linear falloff
+}
 
+LightResult GetPointL(Light light, float3 worldPosition, float3 normal, float3 viewDirection, float3 specularColor, float specularPower, float3 lightDirection)
+{
+    LightResult result = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
+
+    float intesity = saturate(dot(normal, lightDirection)); // dot(normal,lightDirection) ger vinkeln emellan vector och normal
+    float distance = length(worldPosition - light.position.xyz);
+    if (distance < light.range && intesity > 0.0f)
+    {
+        result.Diffuse = saturate(intesity * light.color.xyz) * FallOff(light.range, distance);
+
+        float3 reflectionVector = normalize(2 * intesity * normal - lightDirection);
+        result.Specular = light.color.xyz;
+        result.Specular = pow(saturate(dot(reflectionVector*specularColor, viewDirection)),specularPower);
+    }
+    return result;
+}
 
 
 float3 DoDiffuse(Light light, float3 lightDir, float3 normal)
@@ -43,9 +64,9 @@ float DoAttenuation(Light light, float d)
     return saturate(1 - d / light.range);
 }
 
-LightResult DoPointLight(Light light, float3 ViewDir, float4 worldPosition, float3 normal, float specularPower)
+LightResult DoPointLight(Light light, float3 ViewDir, float4 worldPosition, float3 normal, float specularPower, float3 L)
 {
-    float3 L = (light.position - worldPosition).xyz;
+    //float3 L = (light.position - worldPosition).xyz;
     float distance = length(L);
     L = L / distance;
 
@@ -58,11 +79,11 @@ LightResult DoPointLight(Light light, float3 ViewDir, float4 worldPosition, floa
 
     return result;
 }
-LightResult DoDirectionalLight(Light light, float3 ViewDir, float3 normal, float specularPower)
+LightResult DoDirectionalLight(Light light, float3 ViewDir, float3 normal, float specularPower, float3 lightDir)
 {
     LightResult result;
 
-    float3 lightDir = -light.direction.xyz;
+    //float3 lightDir = -light.direction.xyz;
 
     result.Diffuse = DoDiffuse(light, lightDir, normal);
     result.Specular = DoSpecular(light, ViewDir, lightDir, normal, specularPower);
@@ -77,11 +98,11 @@ float DoSpotCone(Light light, float3 lightDir)
     float cosAngle = dot(light.direction.xyz, -lightDir);
     return smoothstep(minCos, maxCos, cosAngle);
 }
-LightResult DoSpotLight(Light light, float3 ViewDir, float4 worldPosition, float3 normal, float specularPower)
+LightResult DoSpotLight(Light light, float3 ViewDir, float4 worldPosition, float3 normal, float specularPower, float3 L)
 {
     LightResult result;
 
-    float3 L = (light.position - worldPosition).xyz;
+    //float3 L = (light.position - worldPosition).xyz;
     float distance = length(L);
     L = L / distance;
 
@@ -231,3 +252,28 @@ float ShadowIntensity3(float4 lightWorldPosition, Light light, float3 LightDir, 
     return percentLit /= 9.0f;
 }
 
+float ShadowFactor2(float4 lightWorldPosition, Texture2DArray shadowMap, SamplerComparisonState shadowMapSampler, int index, float3 normal, float3 lightDirection)
+{
+    lightWorldPosition.xyz /= lightWorldPosition.w;
+    float2 smTex = float2(0.5f * lightWorldPosition.x + 0.5f, -0.5f * lightWorldPosition.y + 0.5f);
+    const float bias = 0.0006f;/*max(0.000005f * (1.0 - dot(normal, lightDirection)), 0.0000005f);*/ // 0.000003f
+    const float depth = lightWorldPosition.z - bias;
+
+    const float dx = 1.0f / 2048.0f;
+    const float2 offsets[9] =
+    {
+        float2(-dx, -dx), float2(0.0f, -dx), float2(dx, -dx),
+        float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
+        float2(-dx, +dx), float2(0.0f, +dx), float2(dx, +dx)
+    };
+
+    //PCF(percentage-closer filtering)
+    float percentLit = 0.0f;
+    [unroll]
+    for (int i = 0; i < 9; ++i)
+    {
+        percentLit += shadowMap.SampleCmpLevelZero(shadowMapSampler, float3(smTex/*lightWorldPosition.xy*/ + offsets[i], index), depth).r;
+    }
+
+    return percentLit /= 9.0f;
+}

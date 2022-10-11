@@ -107,42 +107,38 @@ LightResult DoDirectionalLight(Light light, float3 ViewDir, float3 normal, float
     return result;
 }
 
-LightResult ComputeDirectionalLight(Light L, float3 normal, float3 toEye, float3 diffuse, float3 specular, float spacularPower)
+LightResult ComputeDirectionalLight(Light L, float3 lightDir, float3 normal, float3 toEye, float3 diffuse, float3 specular, float spacularPower)
 {
     LightResult result = { { 0, 0, 0 }, { 0, 0, 0 } };
-    float3 lightVec = -L.direction;
-    float diffuseFactor = dot(lightVec, normal);
-
+    float diffuseFactor = dot(lightDir, normal);
     [flatten]
     if (diffuseFactor > 0.0f)
     {
-        float3 v = reflect(-lightVec, normal);
+        float3 v = reflect(-lightDir, normal);
         float specFactor = pow(max(dot(v, toEye), 0.0f), spacularPower);
 
-        result.Diffuse = diffuseFactor * diffuse * L.color;
+        result.Diffuse = diffuseFactor * diffuse * L.color.xyz;
         result.Specular = specFactor * specular /* * L.specular*/;
     }
     return result;
 }
-LightResult ComputePointLight(Light L, float3 pos, float3 normal, float3 toEye, float4 diffuse, float3 specular, float spacularPower)
+LightResult ComputePointLight(Light L, float3 lightDir, float3 normal, float3 toEye, float3 diffuse, float3 specular, float spacularPower)
 {
     LightResult result = { { 0, 0, 0 }, { 0, 0, 0 } };
-    
-    float3 lightVec = L.position.xyz - pos;
 
-    float d = length(lightVec);
+    float d = length(lightDir);
 
     if (d > L.range)
         return result;
 
-    lightVec /= d;
+    lightDir /= d;
 
-    float diffuseFactor = dot(lightVec, normal);
+    float diffuseFactor = dot(lightDir, normal);
 
     [flatten]
     if (diffuseFactor > 0.0f)
     {
-        float3 v = reflect(-lightVec, normal);
+        float3 v = reflect(-lightDir, normal);
         float specFactor = pow(max(dot(v, toEye), 0.0f), spacularPower);
 
         result.Diffuse = diffuseFactor * diffuse /* * L.diffuse*/;
@@ -323,7 +319,7 @@ float ShadowFactor2(float4 lightWorldPosition, Texture2DArray shadowMap, Sampler
 {
     lightWorldPosition.xyz /= lightWorldPosition.w;
     float2 smTex = float2(0.5f * lightWorldPosition.x + 0.5f, -0.5f * lightWorldPosition.y + 0.5f);
-    const float bias = max(0.0005f * (1.0 - dot(normal, lightDirection)), 0.0005f); // 0.000003f
+    const float bias = max(0.0006f * (1.0 - dot(normal, normalize(lightDirection))), 0.00006f); // 0.000003f
     const float depth = lightWorldPosition.z - bias;
 
     const float dx = 1.0f / 2048.0f;

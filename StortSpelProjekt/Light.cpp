@@ -13,8 +13,16 @@ Light::Light(const DirectX::XMFLOAT3 &lightColor, const DirectX::XMFLOAT3 &light
 		0.0f, -0.5f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.5f, 0.5f, 0.0f, 1.0f);
+	
+	DirectX::XMMATRIX viewM = DirectX::XMMatrixLookAtLH(pos, focusPos, upPos);
+	
+	DirectX::SimpleMath::Vector3 lightDir = DirectX::SimpleMath::Vector3(position) - direction;
+	lightDir.Normalize();
+	direction = lightDir * -1;
 
-	this->view = { DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtLH(pos,focusPos, upPos) * DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PI / 2.0f, 1.0f /*(float)GPU::windowWidth/ (float)GPU::windowHeight*/, 0.1f, 200.0f)) };
+	DirectX::XMMATRIX projM = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PI / 2.0f, 1.0f, 0.1f, 200.0f);
+
+	this->view = { DirectX::XMMatrixTranspose(viewM * projM) };
 }
 
 DirectX::XMFLOAT3 Light::getPosition() const

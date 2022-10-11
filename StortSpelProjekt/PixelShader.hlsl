@@ -88,43 +88,41 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
         
         switch (lights[i].type)
         {
-        case DIRECTIONAL_LIGHT:
-            lightDir = -lights[i].direction.xyz;
-            //result = DoDirectionalLight(lights[i], viewDir, normal, mat.specularPower, lightDir);
-            //result = GetDirL(lights[i], normal, viewDir, specular, mat.specularPower, lightDir);
-            //result = GetDirL(lights[i], normal, viewDirection, specular, mat.specularPower, lightDir);
-            result = ComputeDirectionalLight(lights[i], normal, viewDir, diffuseColor, specular, 0 /*mat.specularPower*/);
-            break;
-        case POINT_LIGHT:
-            lightDir = normalize(lights[i].position - worldPosition).xyz;
-            //result = DoPointLight(lights[i], viewDir, worldPosition, normal, mat.specularPower, lightDir);
-            result = GetPointL(lights[i], worldPosition.xyz, normal, viewDirection, specular, mat.specularPower, lightDir);
-            //result = ComputePointLight(lights[i], normal, viewDir, diffuseColor, specular, mat.specularPower);
-            break;
-        case SPOT_LIGHT:
-            lightDir = (lights[i].position - worldPosition).xyz;
-            result = DoSpotLight(lights[i], viewDir, worldPosition, normal, mat.specularPower, lightDir);
-            break;
+            case DIRECTIONAL_LIGHT:
+                lightDir = normalize(-lights[i].direction.xyz);
+                //result = DoDirectionalLight(lights[i], viewDir, normal, mat.specularPower, lightDir);
+                //result = GetDirL(lights[i], normal, viewDir, specular, mat.specularPower, lightDir);
+                //result = GetDirL(lights[i], normal, viewDirection, specular, mat.specularPower, lightDir);
+                result = ComputeDirectionalLight(lights[i], lightDir, normal, viewDir, diffuseColor, specular, 0 /*mat.specularPower*/);
+                break;
+            
+            case POINT_LIGHT:
+                lightDir = (lights[i].position - worldPosition).xyz;
+                //result = DoPointLight(lights[i], viewDir, worldPosition, normal, mat.specularPower, lightDir);
+                //result = GetPointL(lights[i], worldPosition.xyz, normal, viewDirection, specular, mat.specularPower, lightDir);
+                result = ComputePointLight(lights[i], lightDir, normal, viewDir, diffuseColor, specular, 0 /*mat.specularPower*/);
+                break;
+            
+            case SPOT_LIGHT:
+                lightDir = (lights[i].position - worldPosition).xyz;
+                result = DoSpotLight(lights[i], viewDir, worldPosition, normal, mat.specularPower, lightDir);
+                break;
         }
         
         float shadowFactor = ShadowFactor2(lightWorldPosition, shadowMaps, shadowSampler, i, normal, lightDir);
         
-        litResult.Diffuse += result.Diffuse/* * shadowFactor*/;
-        litResult.Specular += result.Specular/* * shadowFactor*/;
+        litResult.Diffuse += result.Diffuse * shadowFactor;
+        litResult.Specular += result.Specular * shadowFactor;
     }
     
     //float fres = FresnelEffect(normal, viewDir, 5);
     //return float4(saturate(ambient + mat.diffuse.xyz * litResult.Diffuse/* + specular * (litResult.Specular/* * shadow*/) * diffuseColor/* + fres*/, 1.0f);
     
-    //float3 finalColor = max(mat.ambient.xyz, 0.2f);
-    //finalColor = saturate((litResult.Diffuse + finalColor) * diffuseColor); //multiply light result with texture color
-    //finalColor = saturate(finalColor + litResult.Specular); //not multiply to put on top and not affect color of image
+    float3 finalColor = saturate(saturate(litResult.Diffuse + max(mat.ambient.xyz, 0.2f) + litResult.Specular) * diffuseColor); //multiply light result with texture color
 
-    //return float4(finalColor, 1.0f);
+    return float4(finalColor, 1.0f);
     
-    float3 litColor = (litResult.Diffuse + litResult.Specular) * diffuseColor;
-    //litColor.a = g_Material.diffuse.a * pIn.color.a;
-    return float4(litColor, 1);
+    //return float4(saturate(ambient + mat.diffuse.xyz * litResult.Diffuse + specular * litResult.Specular) * diffuseColor, 1.0f);
 
 }
 

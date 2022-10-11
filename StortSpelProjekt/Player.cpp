@@ -58,7 +58,7 @@ void Player::handleInputs()
 
 }
 
-void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float& deltaTime)
+void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float& deltaTime)
 {
 	normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 
@@ -98,95 +98,12 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, -0.01f);
 	}
 
-	//Movement
+	//PC movement
 	if (Input::KeyDown(KeyCode::SHIFT))
 	{
 		deltaTime *= 2.0f;
 	}
 
-    else if (Input::KeyDown(KeyCode::Q))
-    {
-        this->position.y -= 0.1;
-    }
-
-
-    auto state = gamePad->GetState(0);
-
-    if (state.IsConnected())
-    {
-        float posx = state.thumbSticks.leftX;
-        float posy = state.thumbSticks.leftY;
-        // These values are normalized to -1 to 1
-
-        if (posy >= 1)
-        {
-            //std::cout << "Y >= 1\n";
-            position += playerForwardVec;
-        }
-        else if (posy <= -1)
-        {
-            //std::cout << "Y >= -1\n";
-            position -= playerForwardVec;
-        }
-
-        if (posx >= 1)
-        {
-            position += playerRightVec;
-
-        }
-        else if (posx <= -1)
-        {
-            position -= playerRightVec;
-        }
-
-        if (posy <= 0.90 && 0.50 <= posy && 0.1 <= posx && posx <= 0.90)
-        {
-            position += playerForwardVec;
-            position += playerRightVec;
-            //std::cout << "diagonal\n";
-        }
-        
-        if (posy <= 0.90 && 0.50 <= posy && -1 <= posx && posx <= 0)
-        {
-            position += playerForwardVec;
-            position -= playerRightVec;
-        }
-      
-        //if (posy <= -1 && 0.f <= posy/* && 1.f <= posx && posx <= 0*/)
-        //{
-        //    position -= playerForwardVec;
-        //    position -= playerRightVec;
-        //}
-
-        if (posy <= 0.0 && -0.50 <= posy && 0.1 <= posx && posx <= 0.90)
-        {
-            position += playerForwardVec;
-            position += playerRightVec;
-        }
-
-        
-
-        std::cout << "Posx: " << posx << "\t" << "Posy: " << posy << "\n";
-
-        float throttle = state.triggers.right;
-        // This value is normalized 0 -> 1
-
-        if (state.IsLeftTriggerPressed())
-        {
-            std::cout << "Left trigger pressed\n";
-        }
-        // Do action based on a left trigger pressed more than halfway
-
-        if (state.IsViewPressed())
-        {
-            std::cout << "backbutton is pressed\n";
-        }
-
-        if (state.IsLeftStickPressed())
-        {
-            std::cout << "Left stick down\n";
-        }
-    }
 	if (Input::KeyDown(KeyCode::W))
 	{
 		position += forwardVector * deltaTime * 25.0f;
@@ -336,6 +253,82 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 			{
 				rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
 			}
+		}
+	}
+}
+
+void Player::moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float& deltaTime)
+{
+	//Controller movement
+	auto state = gamePad->GetState(0);
+
+	if (state.IsConnected())
+	{
+		posx = state.thumbSticks.leftX;
+		posy = state.thumbSticks.leftY;
+
+		//Forward
+		if (posy >= 1.0f)
+		{
+			position += forwardVector * deltaTime * 25.0f;
+		}
+
+		//Backward
+		else if (posy <= -1.0f)
+		{
+			position += forwardVector * deltaTime * 25.0f;
+		}
+
+		//Right
+		if (posx >= 1.0f)
+		{
+			position += forwardVector * deltaTime * 25.0f;
+
+		}
+
+		//Left
+		else if (posx <= -1)
+		{
+			position += forwardVector * deltaTime * 25.0f;
+		}
+
+		//Diagonal
+		if (posy <= 0.90f && 0.50f <= posy && 0.1f <= posx && posx <= 0.90f)
+		{
+			position += forwardVector * deltaTime * 25.0f;
+		}
+
+		//Diagonal
+		if (posy <= 0.90 && 0.50 <= posy && -1 <= posx && posx <= 0)
+		{
+			position += forwardVector * deltaTime * 25.0f;
+		}
+
+		//Diagonal
+		if (posy <= 0.0 && -0.50 <= posy && 0.1 <= posx && posx <= 0.90)
+		{
+			position += forwardVector * deltaTime * 25.0f;
+		}
+
+
+
+		std::cout << "Posx: " << posx << "\t" << "Posy: " << posy << "\n";
+
+		throttle = state.triggers.right;
+
+		if (state.IsLeftTriggerPressed())
+		{
+			std::cout << "Left trigger pressed\n";
+		}
+
+		if (state.IsViewPressed())
+		{
+			std::cout << "backbutton is pressed\n";
+		}
+
+		if (state.IsLeftStickPressed())
+		{
+			std::cout << "Left stick down\n";
 		}
 	}
 }

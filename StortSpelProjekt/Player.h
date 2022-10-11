@@ -32,11 +32,17 @@ private:
 	Item* holdingItem;
 	int health;
 
+	//Controller shits
+	float posx;
+	float posy;
+	float throttle;
+
 public:
 	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
 	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
 	void handleInputs(); 
-	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float& deltaTime);
+	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float& deltaTime);
+	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float& deltaTime);
 	bool getPickup(GameObject *pickup);
 	bool pickupItem(Item *itemToPickup, const std::unique_ptr<DirectX::GamePad>& gamePad);
 	void releasePickup();
@@ -51,5 +57,5 @@ public:
 	void releaseItem();
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	bool repairedShip() const;
-	virtual void update(const std::unique_ptr<DirectX::GamePad>& gamePad) override;
+	void update(const std::unique_ptr<DirectX::GamePad>& gamePad);
 };

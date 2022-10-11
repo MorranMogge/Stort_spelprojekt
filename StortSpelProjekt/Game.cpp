@@ -199,7 +199,7 @@ GAMESTATE Game::Update()
 	player->movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
 	
 	//Player functions
-	player->pickupItem(&potion, gamePad);
+	player->pickupItem(potion, gamePad);
 	player->update(gamePad);
 	
 	physWolrd.updatePlayerBox(player->getPos());
@@ -212,6 +212,7 @@ GAMESTATE Game::Update()
 		gameObjects[i]->update();//->getPhysComp()->updateParent();
 	}
 	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
+	player->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
 	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
 	//Here you can write client-server related functions?
 

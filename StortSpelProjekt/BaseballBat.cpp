@@ -7,7 +7,7 @@
 using namespace DirectX;
 
 BaseballBat::BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-	:Item(objectPath, pos, rot, id), player(nullptr), testObj(nullptr)
+	:Item(objectPath, pos, rot, id), player(nullptr), force(0.f)
 {
 }
 
@@ -27,23 +27,24 @@ void BaseballBat::setTestObj(const std::vector<GameObject*>& objects)
 
 void BaseballBat::useItem()
 {
-	SimpleMath::Vector3 batPos = this->player->getPos();
+	batPos = this->player->getPos();
 	batPos += this->player->getForwardVec() * 10;
 
 	PhysicsComponent* playerComp = this->player->getPhysComp();
 	playerComp->setPosition(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
 	PhysicsComponent* physComp;
+	bool collided = false;
 	for (int i = 2; i < objects.size(); i++)
 	{
 		physComp = objects[i]->getPhysComp();
-		//if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue;
+		//if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue; This can be used to check whether it's a player or planet
 
-		bool collided = playerComp->testBodiesOverlap(physComp);
+		collided = playerComp->testBodiesOverlap(physComp);
 		std::cout << "Result for id: " << i << ": " << collided << "\n";
 		if (collided)
 		{
 			//Calculate the force vector
-			float force = playerComp->getMass() * FORCECONSTANT;
+			force = playerComp->getMass() * FORCECONSTANT;
 			batPos = this->player->getForwardVec() * 10 + this->player->getUpVec();
 			newNormalizeXMFLOAT3(batPos);
 			scalarMultiplicationXMFLOAT3(force, batPos);

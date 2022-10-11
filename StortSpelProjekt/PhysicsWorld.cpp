@@ -237,13 +237,13 @@ void PhysicsWorld::addForceToObjects()
 	}
 }
 
-DirectX::SimpleMath::Vector3 PhysicsWorld::getPos()
+DirectX::SimpleMath::Vector3 PhysicsWorld::getPos() const
 {
 	//return { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y , playerRigidBody->getTransform().getPosition().z };
 	return playerBox->getPosV3();
 }
 
-DirectX::SimpleMath::Vector3 PhysicsWorld::getRot()
+DirectX::SimpleMath::Vector3 PhysicsWorld::getRot() const
 {
 	//return { playerRigidBody->getTransform().getOrientation().x, playerRigidBody->getTransform().getOrientation().y, playerRigidBody->getTransform().getOrientation().z };
 	return { playerBox->getRotation().x, playerBox->getRotation().y, playerBox->getRotation().z };

@@ -10,6 +10,7 @@ void PhysicsComponent::createRigidBody(const reactphysics3d::Transform& transfor
 void PhysicsComponent::deallocate()
 {
 	this->worldPtr->destroyRigidBody(this->rigidBody);
+	this->worldPtr->destroyCollisionBody(this->collisionBody);
 
 	//Now we need to destroy the correct shape, and to get the shape we get the name and destroy accordingly
 	reactphysics3d::CollisionShapeName shapeType = this->shape->getName();
@@ -50,7 +51,7 @@ PhysicsComponent::~PhysicsComponent()
 	if (this->rigidBody != nullptr && this->shape != nullptr && this->collider != nullptr) this->deallocate();
 }
 
-void PhysicsComponent::initiateComponent(reactphysics3d::PhysicsCommon* com, reactphysics3d::PhysicsWorld* world, reactphysics3d::CollisionShapeName shape)
+void PhysicsComponent::initiateComponent(reactphysics3d::PhysicsCommon* com, reactphysics3d::PhysicsWorld* world, const reactphysics3d::CollisionShapeName& shape)
 {
 	this->comPtr = com;
 	this->worldPtr = world;
@@ -64,6 +65,9 @@ void PhysicsComponent::initiateComponent(reactphysics3d::PhysicsCommon* com, rea
 	this->setType();
 	this->setMass();
 	this->rigidBody->enableGravity(false);
+
+	this->collisionBody = this->worldPtr->createCollisionBody(reactphysics3d::Transform::identity());
+	this->collisionBody->addCollider(this->shape, reactphysics3d::Transform::identity());
 }
 
 void PhysicsComponent::setType(const reactphysics3d::BodyType& physicsType)
@@ -149,6 +153,11 @@ void PhysicsComponent::setPosition(const reactphysics3d::Vector3& position)
 	this->rigidBody->setTransform(reactphysics3d::Transform(position, this->rigidBody->getTransform().getOrientation()));
 }
 
+reactphysics3d::BodyType PhysicsComponent::getType() const
+{
+	return this->rigidBody->getType();
+}
+
 reactphysics3d::Vector3 PhysicsComponent::getPosition() const
 {
 	return this->rigidBody->getTransform().getPosition();
@@ -164,10 +173,33 @@ reactphysics3d::CollisionShapeName PhysicsComponent::getTypeName() const
 	return this->shape->getName();
 }
 
+reactphysics3d::Collider* PhysicsComponent::getCollider() const
+{
+	return this->collider;
+}
+
+reactphysics3d::CollisionBody* PhysicsComponent::getCollisionBody()
+{
+	this->collisionBody->setTransform(this->rigidBody->getTransform());
+	return this->collisionBody;
+}
+
 DirectX::SimpleMath::Vector3 PhysicsComponent::getPosV3() const
 {
 	reactphysics3d::Vector3 temp = this->getPosition();
 	return {temp.x, temp.y, temp.z};
+}
+
+bool PhysicsComponent::testPointInside(const reactphysics3d::Vector3& point)
+{
+	this->collisionBody->setTransform(this->rigidBody->getTransform());
+	return this->collisionBody->testPointInside(point);
+}
+
+bool PhysicsComponent::testBodiesOverlap(PhysicsComponent* other)
+{
+	this->collisionBody->setTransform(this->rigidBody->getTransform());
+	return this->collisionBody->testAABBOverlap(other->getCollisionBody()->getAABB());
 }
 
 float PhysicsComponent::getMass() const

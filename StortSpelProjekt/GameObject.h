@@ -9,10 +9,10 @@ class GameObject
 private:
 	Mesh* mesh;
 	int objectID;
-	PhysicsComponent* physComp;
 	//float mass
 	//collider
 protected:
+	PhysicsComponent* physComp;
 	DirectX::SimpleMath::Vector3 position;
 	DirectX::XMMATRIX rotation;
 	DirectX::XMFLOAT3 scale;

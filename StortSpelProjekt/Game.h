@@ -37,7 +37,7 @@ private:
 	GameObject* planet;
 	GameObject* testCube;
 	Potion* potion;			//not in use
-
+	BaseballBat* testBat;
 
 	LightHandler ltHandler;
 	PlayerVectors playerVecRenderer;

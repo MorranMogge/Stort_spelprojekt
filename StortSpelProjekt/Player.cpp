@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "DirectXMathHelper.h"
 #include "Potion.h"
+#include "BaseballBat.h"
 using namespace DirectX;
 
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
@@ -261,17 +262,23 @@ bool Player::pickupItem(Item* itemToPickup)
 {
     bool successfulPickup = false;
 
-    if (Input::KeyDown(KeyCode::SPACE))
+    if (Input::KeyPress(KeyCode::SPACE))
     {
         if (this->withinRadius(itemToPickup, 5))
         {
             addItem(itemToPickup);
-
-            Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
-            if (tmp)
-                tmp->setPlayerptr(this);
-               
+            
+            //Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
+            //if (tmp)
+            //    tmp->setPlayerptr(this);
+            //else
+            //{
+            //    BaseballBat* bat = dynamic_cast<BaseballBat*>(itemToPickup);
+            //   /* if (bat)
+            //        bat->setPlayerptr(this);*/
+            //}
             successfulPickup = true;
+            holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::KINEMATIC);
         }
     }
     
@@ -282,6 +289,7 @@ void Player::addItem(Item* itemToHold)
 {
     if (!this->holdingItem)
         this->holdingItem = itemToHold;
+    holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 }
 
 void Player::addHealth(const int& healthToIncrease)
@@ -326,26 +334,40 @@ void Player::update()
 {
     if (holdingItem != nullptr)
     {
-        holdingItem->setPos({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f });
-        holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f }));
+        DirectX::SimpleMath::Vector3 newPos = this->position; 
+        newPos += 4*forwardVector;// +playerUpVec * 4;
+        
+        PhysicsComponent* itemPhysComp = holdingItem->getPhysComp();
+        holdingItem->setPos(newPos);
+        itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z}));
+        
+        //Thorw the Item
         if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
         {
+            //Set dynamic so it can be affected by forces
+            itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+
+            //Calculate the force vector
             DirectX::XMFLOAT3 temp;
-            DirectX::XMStoreFloat3(&temp, this->forwardVector);
+            DirectX::XMStoreFloat3(&temp, (this->forwardVector*5+this->upVector));
             newNormalizeXMFLOAT3(temp);
-            holdingItem->getPhysComp()->applyLocalTorque(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z *1000));
-            holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * 10000, temp.y * 10000, temp.z * 10000));
-            holdingItem->setPos({ this->getPos().x, this->getPos().y, this->getPos().z });
+
+            //Apply the force
+            itemPhysComp->applyLocalTorque(reactphysics3d::Vector3(temp.x * 500, temp.y * 500, temp.z * 500));
+            itemPhysComp->applyForceToCenter(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z * 1000));
+            
+            //You no longer "own" the item
             holdingItem = nullptr;
         }
+        //Use the Item
         else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
         {
+            itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
             holdingItem->useItem();
             repairCount++;
             std::cout << "Progress " << repairCount << "/4\n";
-            //holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ 50.f, 50.f, 50.f }));
-            holdingItem->getPhysComp()->setIsAllowedToSleep(true);
-            holdingItem->getPhysComp()->setIsSleeping(true);
+            itemPhysComp->setIsAllowedToSleep(true);
+            itemPhysComp->setIsSleeping(true);
             holdingItem = nullptr;
         }
     }

@@ -127,6 +127,7 @@
       <Filter>Skybox</Filter>
     </ClCompile>
     <ClCompile Include="PlayerVectors.cpp" />
+    <ClCompile Include="BaseballBat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -373,6 +374,7 @@
       <Filter>Skybox</Filter>
     </ClInclude>
     <ClInclude Include="PlayerVectors.h" />
+    <ClInclude Include="BaseballBat.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

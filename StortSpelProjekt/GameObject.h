@@ -7,7 +7,6 @@ class PhysicsComponent;
 class GameObject
 {
 private:
-
 	Mesh* mesh;
 	int objectID;
 	PhysicsComponent* physComp;
@@ -15,7 +14,7 @@ private:
 	//collider
 protected:
 	DirectX::SimpleMath::Vector3 position;
-	DirectX::XMFLOAT3 rotation;//ska �ndra till quaternion?
+	DirectX::XMMATRIX rotation;
 	DirectX::XMFLOAT3 scale;
 
 public:
@@ -32,7 +31,7 @@ public:
 	void setMesh(Mesh* inMesh);
 	DirectX::XMFLOAT3 getPos() const;
 	DirectX::SimpleMath::Vector3 getPosV3()const;
-	DirectX::XMFLOAT3 getRot() const;
+	DirectX::XMMATRIX getRot() const;
 	DirectX::XMFLOAT3 getScale() const;
 	Bound* getBounds() const;
 	void setPhysComp(PhysicsComponent* comp);

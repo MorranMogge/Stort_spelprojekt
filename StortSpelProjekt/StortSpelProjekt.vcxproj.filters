@@ -126,6 +126,7 @@
     <ClCompile Include="SkyboxObj.cpp">
       <Filter>Skybox</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerVectors.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -371,6 +372,7 @@
     <ClInclude Include="SkyboxObj.h">
       <Filter>Skybox</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerVectors.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -458,6 +460,8 @@
     <FxCompile Include="AmbientPixelShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="plaverVectorPixel.hlsl" />
+    <FxCompile Include="playerVectorVertex.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico">

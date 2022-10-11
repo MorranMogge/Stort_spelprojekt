@@ -16,11 +16,11 @@ int main()
 	sf::TcpSocket socket;
 	std::string connectionType, mode;
 
-	char buffer[2000];
-	size_t recieved;
+	char buffer[2000] = {};
+	size_t recieved = 0;
 	std::string text = "Connect to: ";
 
-	std::string receivedstring;
+	std::string receivedstring = "";
 
 	std::cout << "Starting server!\n";
 
@@ -96,7 +96,7 @@ int main()
 	}*/
 
 
-    getchar();
+    (void)getchar();
     return 0;
 }
 

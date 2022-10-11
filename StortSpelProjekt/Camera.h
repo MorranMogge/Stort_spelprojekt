@@ -8,15 +8,12 @@ class Camera
 {
 private:
 	float deltaTime;
+	DirectX::XMFLOAT3 position;
 	ConstantBufferNew<cameraStruct> cameraBuffer;
 	ConstantBufferNew<posStruct> positionBuffer;
 
 	DirectX::XMMATRIX viewMatrix;
 	DirectX::XMMATRIX projMatrix;
-
-	DirectX::XMFLOAT3 rotation;
-	DirectX::XMVECTOR rotVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-
 	DirectX::XMMATRIX rotationMX;
 	DirectX::XMVECTOR cameraPos = DirectX::XMVectorSet(0.0f, 0.0f, -25.0f, 0.0f);
 	DirectX::XMVECTOR lookAtPos = DirectX::XMVectorSet(0.0f, 0.0f, -20.0f, 0.0f);
@@ -25,8 +22,8 @@ private:
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 
-	DirectX::XMVECTOR rightVec = DEFAULT_RIGHT;
-	DirectX::XMVECTOR forwardVec = DEFAULT_FORWARD;
+	DirectX::XMVECTOR rightVector = DEFAULT_RIGHT;
+	DirectX::XMVECTOR forwardVector = DEFAULT_FORWARD;
 	DirectX::XMVECTOR upVector = DEFAULT_UP;
 
 public:
@@ -34,12 +31,12 @@ public:
 	~Camera();
 
 	void updateCamera();
-	void moveCamera(const DirectX::XMVECTOR& playerPosition, const float& deltaTime);
-	void AdjustRotation(float x, float y);
-	const DirectX::XMVECTOR getForwardVec();
-	const DirectX::XMVECTOR getRightVec();
+	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const float& deltaTime);
+	DirectX::XMVECTOR getForwardVector() const;
+	DirectX::XMVECTOR getRightVector() const;
 	ID3D11Buffer* getViewBuffer();
 	ID3D11Buffer* getPositionBuffer();
+
 	void VSbindPositionBuffer(const int &slot);
 	void VSbindViewBuffer(const int& slot);
 	void PSbindPositionBuffer(const int& slot);

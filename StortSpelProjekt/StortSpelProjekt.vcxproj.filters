@@ -116,8 +116,8 @@
     <ClCompile Include="ParticleEmitter.cpp">
       <Filter>Particles</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerVectors.cpp" />
     <ClCompile Include="BaseballBat.cpp" />
+    <ClCompile Include="PlayerVectors.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -353,8 +353,8 @@
       <Filter>Particles</Filter>
     </ClInclude>
     <ClInclude Include="GameInclude.h" />
-    <ClInclude Include="PlayerVectors.h" />
     <ClInclude Include="BaseballBat.h" />
+    <ClInclude Include="PlayerVectors.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -430,6 +430,8 @@
     <FxCompile Include="PT_VertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="plaverVectorPixel.hlsl" />
+    <FxCompile Include="playerVectorVertex.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico">

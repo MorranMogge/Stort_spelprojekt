@@ -1,6 +1,16 @@
+//#include "stdafx.h"
 #include "PlayerVectors.h"
 #include "GPU.h"
+#include "ShaderLoader.h"
 using namespace DirectX;
+
+bool PlayerVectors::setUpShaders()
+{
+	std::string temp;
+	LoadVertexShader(GPU::device, vShader, temp, "playerVectorVertex");
+	LoadPixelShader(GPU::device, pShader, "plaverVectorPixel");
+	return true;
+}
 
 bool PlayerVectors::setUpVertexBuffer()
 {
@@ -30,7 +40,7 @@ void PlayerVectors::updateVertexBuffer()
 {
 	
 		vectors[0].position = vectors[1].position = vectors[2].position = 
-			vectors[3].position = vectors[4].position = vectors[5].position = this->player->getPosV3();
+			vectors[3].position = vectors[4].position = vectors[5].position = this->player->getPos();
 		
 		vectors[1].position += this->player->getForwardVec() * 50;
 		vectors[3].position += this->player->getUpVec() * 50;
@@ -44,12 +54,14 @@ void PlayerVectors::updateVertexBuffer()
 
 PlayerVectors::PlayerVectors()
 {
-	
+	this->setUpShaders();
 }
 
 PlayerVectors::~PlayerVectors()
 {
 	if (vBuffer != nullptr) vBuffer->Release();
+	vShader->Release();
+	pShader->Release();
 }
 
 void PlayerVectors::setPlayer(Player* player)
@@ -57,11 +69,20 @@ void PlayerVectors::setPlayer(Player* player)
 	this->player = player;
 
 	vectors[0].position = vectors[1].position = vectors[2].position =
-		vectors[3].position = vectors[4].position = vectors[5].position = this->player->getPosV3();
+		vectors[3].position = vectors[4].position = vectors[5].position = this->player->getPos();
 
-	vectors[1].position += this->player->getForwardVec() * 5;
-	vectors[3].position += this->player->getUpVec() * 5;
-	vectors[5].position += this->player->getRightVec() * 5;
+	vectors[1].position += this->player->getForwardVec() * 100;
+	vectors[3].position += this->player->getUpVec() * 100;
+	vectors[5].position += this->player->getRightVec() * 100;
+
+	
+	vectors[0].normal = DirectX::SimpleMath::Vector3(1, 0, 0);
+	vectors[1].normal = DirectX::SimpleMath::Vector3(1, 0, 0);
+	vectors[2].normal = DirectX::SimpleMath::Vector3(0, 1, 0);
+	vectors[3].normal = DirectX::SimpleMath::Vector3(0, 1, 0);
+	vectors[4].normal = DirectX::SimpleMath::Vector3(0, 0, 1);
+	vectors[5].normal = DirectX::SimpleMath::Vector3(0, 0, 1);
+
 
 	this->setUpVertexBuffer();
 }
@@ -71,6 +92,8 @@ void PlayerVectors::drawLines()
 	this->updateVertexBuffer();
 	GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 	GPU::immediateContext->IASetVertexBuffers(0, 1, &vBuffer, &stride, &offset);
-	//GPU::immediateContext->PSSetShader(pShader, nullptr, 0);
+	GPU::immediateContext->VSSetShader(vShader, nullptr, 0);
+	GPU::immediateContext->PSSetShader(pShader, nullptr, 0);
 	GPU::immediateContext->Draw(6, 0);
+	GPU::immediateContext->PSSetShader(nullptr, nullptr, 0);
 }

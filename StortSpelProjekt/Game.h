@@ -15,9 +15,11 @@ private:
 
 	ID3D11Buffer* vBuff;
 	ID3D11Buffer* iBuff;
+	Mesh* tmpMesh;
 	std::vector<int> subMeshRanges;
 	std::vector<int> verticies;
 	ID3D11ShaderResourceView* tempSRV;
+	ID3D11ShaderResourceView* tempSRV2;
 
 
 	ID3D11DeviceContext* immediateContext;
@@ -44,6 +46,8 @@ private:
 
 	Camera camera;
 	Player* player;
+	Player* tmp;
+	Player* tmp2;
 	GameObject* planet;
 	GameObject* testCube;
 	Potion* potion;			//not in use

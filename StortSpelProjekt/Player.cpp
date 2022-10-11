@@ -7,6 +7,9 @@ using namespace DirectX;
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
     :GameObject(useMesh, pos, rot, id), health(69), holdingItem(nullptr)
 {
+    std::cout << useMesh->amountOfVertices.size() << "\n";
+    std::cout << useMesh->submeshRanges.size() << "\n";
+    
 }
 
 Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
@@ -16,37 +19,7 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 
 void Player::handleInputs()
 {
-    ////return true ONCE key press, trigger only ONCE
-    //if (Input::KeyPress(KeyCode::W))
-    //{
-    //    std::cout << "W pressed \n";
-    //}
-    ////return true ONCE key release, trigger only ONCE
-    //if (Input::KeyUp(KeyCode::A))
-    //{
-    //    std::cout << "A key released \n";
-    //}
-
-    //return true as long as key holding down, trigger every frame
-    /*if (Input::KeyDown(KeyCode::W))
-    {
-        std::cout << "W key is holding down \n";
-    }
-    if (Input::KeyDown(KeyCode::S))
-    {
-        std::cout << "S key is holding down \n";
-    }
-
-
-    if (Input::KeyDown(KeyCode::A))
-    {
-        std::cout << "A key is holding down \n";
-    }
-    if (Input::KeyDown(KeyCode::D))
-    {
-        std::cout << "D key is holding down \n";
-    }*/
-
+    
 }
 
 void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& cameraRight, const float& deltaTime)

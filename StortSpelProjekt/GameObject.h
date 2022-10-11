@@ -11,6 +11,7 @@ private:
 	Mesh* mesh;
 	int objectID;
 	PhysicsComponent* physComp;
+	ID3D11ShaderResourceView* srv;
 	//float mass
 	//collider
 protected:
@@ -41,4 +42,6 @@ public:
 	bool withinRadious(GameObject *object ,float radius) const;
 	virtual void draw();
 	virtual void update(); //This updates the hitboxes
+	void tmpDraw();
+	void setSrv(ID3D11ShaderResourceView* srv);
 };

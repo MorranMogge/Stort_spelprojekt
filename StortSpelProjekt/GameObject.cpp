@@ -4,6 +4,11 @@
 GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale)
 	:position(pos), rotation(rot), mesh(useMesh), objectID(id), scale(scale)
 {
+
+	std::cout << mesh->amountOfVertices.size() << "\n";
+	std::cout << mesh->submeshRanges.size() << "\n";
+	
+
 	// set position
 	mesh->position = pos;
 
@@ -225,6 +230,16 @@ void GameObject::update()
 {
 	this->position = this->physComp->getPosV3();
 	this->rotation = DirectX::XMFLOAT3(this->physComp->getRotation().x, this->physComp->getRotation().y, this->physComp->getRotation().z);
+}
+
+void GameObject::tmpDraw()
+{
+	this->mesh->draw(this->srv);
+}
+
+void GameObject::setSrv(ID3D11ShaderResourceView* srv)
+{
+	this->srv = srv;
 }
 
 

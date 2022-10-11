@@ -58,7 +58,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];		
 		
-		readNodes2(mesh, scene);
+		readNodes(mesh, scene);
 
 		aiMaterial* material = scene->mMaterials[scene->mMeshes[i]->mMaterialIndex];
 		//här srv inläsning
@@ -68,6 +68,10 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 			
 		}
 
+		aiString diffuseName;
+		material->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0), diffuseName);
+		
+		std::cout << diffuseName.C_Str() << "\n";
 		aiString Path;
 		//if(material->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		if(material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
@@ -98,51 +102,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 	}
 }
 
-Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
-{
-	std::vector<vertex> vertexTriangle;
-	std::vector<DWORD> indexTriangle;
-
-	vertex vertex;
-
-	for (UINT i = 0; i < mesh->mNumVertices; i++)
-	{
-		vertex.pos.x = mesh->mVertices[i].x;
-		vertex.pos.y = mesh->mVertices[i].y;
-		vertex.pos.z = mesh->mVertices[i].z;
-
-		vertex.nor.x = mesh->mNormals[i].x;
-		vertex.nor.y = mesh->mNormals[i].y;
-		vertex.nor.z = mesh->mNormals[i].z;
-
-		if (mesh->mTextureCoords[0])
-		{
-			vertex.uv.x = (float)mesh->mTextureCoords[0][i].x;
-			vertex.uv.y = (float)mesh->mTextureCoords[0][i].y;
-		}
-
-		vertexTriangle.emplace_back(vertex);
-		//dataForMesh.vertexTriangle.emplace_back(vertex);
-	}
-
-	for (UINT i = 0; i < mesh->mNumFaces; i++)
-	{
-		aiFace face = mesh->mFaces[i];
-
-		for (UINT j = 0; j < face.mNumIndices; j++)
-		{
-			indexTriangle.emplace_back(face.mIndices[j]);
-			//dataForMesh.indexTriangle.emplace_back(face.mIndices[j]);
-		}
-	}
-	
-	std::cout << "Old way mesh vertex count: " << vertexTriangle.size() << "\n";
-	std::cout << "Old way mesh index count: " << indexTriangle.size() << "\n";
-	
-	return new Mesh2(GPU::device, vertexTriangle, indexTriangle);
-}
-
-void ModelManager::readNodes2(aiMesh* mesh, const aiScene* scene)
+void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<vertex> vertexTriangle;
 	std::vector<DWORD> indexTriangle;

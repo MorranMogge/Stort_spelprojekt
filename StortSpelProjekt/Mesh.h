@@ -25,11 +25,29 @@ class Mesh
 private:
 
 	std::vector<unsigned int> submeshVerCounts;
+	struct vertex
+	{
+		DirectX::XMFLOAT3 pos; // Position
+		DirectX::XMFLOAT2 uv; // UV coordination
+		DirectX::XMFLOAT3 nor; // Normal
 
+		vertex() {
+			pos = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };
+			uv = DirectX::XMFLOAT2{ 0.0f,0.0f };
+			nor = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };
+		};
+		vertex(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT2& uv, DirectX::XMFLOAT3& nor) : pos(pos), uv(uv), nor(nor) {};
+	};
 public:
 
 	VertexBuffer vertexBuffer;
 	IndexBuffer indexBuffer;
+
+	ID3D11Buffer* vertexBuff = nullptr;
+	ID3D11Buffer* indexBuff = nullptr;
+	std::vector<int> submeshRanges;
+	std::vector<int> amountOfVertices;
+
 
 	ConstantBuffer worldCB;
 	ConstantBuffer positionCB;
@@ -47,6 +65,14 @@ public:
 	{
 		Load(obj);
 	}
+	Mesh(ID3D11Buffer* vertexBuff, ID3D11Buffer* indexBuff, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertices)
+	{
+		this->amountOfVertices = amountOfVertices;
+		this->submeshRanges = submeshRanges;
+		this->vertexBuff = vertexBuff;
+		this->indexBuff = indexBuff;
+	}
+	
 
 	void Load(OBJ& obj)
 	{
@@ -141,6 +167,31 @@ public:
 		vertexBuffer.Create(finalVertices);
 		is16bit ? indexBuffer.Create(indices16) : indexBuffer.Create(indices32);
 		CreateCB();
+	}
+	Mesh(Mesh* other)
+	{
+		this->amountOfVertices = other->amountOfVertices;
+		this->submeshRanges = other->submeshRanges;
+		this->vertexBuff = other->vertexBuff;
+		this->indexBuff = other->indexBuff;
+	}
+
+	void draw(ID3D11ShaderResourceView* srv)
+	{
+		UINT stride = sizeof(vertex);
+		UINT offset = 0;
+
+		int startIndex = 0;
+		int startVertex = 0;
+		GPU::immediateContext->PSSetShaderResources(0, 1, &srv);
+		GPU::immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuff, &stride, &offset);
+		GPU::immediateContext->IASetIndexBuffer(this->indexBuff, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+		for (int i = 0; i < submeshRanges.size(); i++)
+		{
+			GPU::immediateContext->DrawIndexed(submeshRanges[i], startIndex, startVertex);
+			startIndex += submeshRanges[i];
+			startVertex += this->amountOfVertices[i];
+		}
 	}
 
 	// without material

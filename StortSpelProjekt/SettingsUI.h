@@ -2,6 +2,7 @@
 
 #include "GUISprite.h"
 #include "GUIText.h"
+#include "State.h"
 
 class SettingsUI final
 {
@@ -10,14 +11,21 @@ class SettingsUI final
 	GUISprite backText;
 	GUISprite container;
 
+	GAMESTATE gameState;
+
 	void HandleInputs();
 
 	void TextPass();
 	void SpritePass();
 
+
 public:
-	inline static bool show = false;
+
+	GAMESTATE GetGameState();
+
 	SettingsUI();
+	~SettingsUI();
+
 	void Draw();
 };
 

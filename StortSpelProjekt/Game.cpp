@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Game.h"
 #include "DirectXMathHelper.h"
 
@@ -36,7 +37,7 @@ void Game::loadObjects()
 	{
 		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 		physWolrd.addPhysComponent(newObj, reactphysics3d::CollisionShapeName::BOX);
-		newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+i*10, 100));
+		newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+(float)i*10, 100));
 		gameObjects.emplace_back(newObj);
 	}
 
@@ -51,6 +52,10 @@ void Game::drawShadows()
 	{
 		ltHandler.drawShadows(i, gameObjects);
 	}
+
+	basicRenderer.depthPrePass();
+	ltHandler.drawShadows(0, gameObjects, &camera);
+	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
 }
 
 void Game::drawObjects(bool drawDebug)
@@ -63,10 +68,10 @@ void Game::drawObjects(bool drawDebug)
 	{
 		gameObjects.at(i)->draw();
 	}
-
 	//Draw light debug meshes
 	if (drawDebug)
 	{
+		basicRenderer.bindAmbientShader();
 		ltHandler.drawDebugMesh();
 	}
 
@@ -157,25 +162,20 @@ void Game::handleKeybinds()
 	}
 }
 
-Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
+Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
-	
 	MaterialLibrary::LoadDefault();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
 	this->setUpWireframe();
-	playerVec.setPlayer(this->player);
-	//camera.updateCamera(immediateContext);
 	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
 	ltHandler.addLight(DirectX::XMFLOAT3(20, 30, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
 	ltHandler.addLight(DirectX::XMFLOAT3(10, -20, 30), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
 
-
-	this->mouse = &mouse;
-	this->window = &window;
+	playerVecRenderer.setPlayer(player);
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 }
@@ -196,13 +196,10 @@ Game::~Game()
 
 GAMESTATE Game::Update()
 {
-	mouse->handleEvents(this->window, camera);
-
 	//Do we want this?
 	grav = planetGravityField.calcGravFactor(player->getPosV3());
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(player->getPos()));
-	player->move(grav, camera.getRightVec(), dt);
-	
+
 	//Keeps player at the surface of the planet
 	if (getLength(player->getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(player->getPos()); player->setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
 	player->movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
@@ -211,8 +208,6 @@ GAMESTATE Game::Update()
 	player->pickupItem(testBat);
 	player->pickupItem(potion);
 	player->update();
-	
-	camera.moveCamera(player->getPosV3(), dt);
 	
 	physWolrd.updatePlayerBox(player->getPos());
 	physWolrd.addForceToObjects();
@@ -224,14 +219,15 @@ GAMESTATE Game::Update()
 	{
 		gameObjects[i]->update();//->getPhysComp()->updateParent();
 	}
+	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
+	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
 	//Here you can write client-server related functions?
 
-		this->updateBuffers();
+
+	this->updateBuffers();
 	
 	if (player->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
 	
-	mouse->clearEvents();
-
 	//Debug keybinds
 	this->handleKeybinds();
 	return NOCHANGE;
@@ -252,13 +248,17 @@ void Game::Render()
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
 
+	//Render Skybox
+	basicRenderer.skyboxPrePass();
+	this->skybox.draw();
+	basicRenderer.depthUnbind();
+
 	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
 	if (wireframe) { immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); playerVec.drawLines(); }
 
 	//Render Particles
-	basicRenderer.geometryPass(camera);
+	basicRenderer.geometryPass(this->camera);
 	drawParticles();
 	this->ptEmitters.at(0).unbind();
-
-
 }
+

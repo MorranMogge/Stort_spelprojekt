@@ -1,4 +1,4 @@
-//#include "stdafx.h"
+#include "stdafx.h"
 #include "PlayerVectors.h"
 #include "GPU.h"
 #include "ShaderLoader.h"

@@ -1,34 +1,14 @@
 #pragma once
 #include "State.h"
-
 #include "GuiHandler.h"
-#include "SettingsUI.h"
-#include "Credits.h"
-#include "D3D11Helper.h"
+#include "BasicRenderer.h"
 
 class Menu : public State
 {
 private:
 
-	GuiHandler startUI;
-	SettingsUI settingsUI;
-	Credits creditsUI;
-
-	ID3D11RenderTargetView* rtv;
-	ID3D11Texture2D* dsTexture;
-	ID3D11DepthStencilView* dsView;
-	D3D11_VIEWPORT viewport;
-
-	float clearColour[4]{ 0.0f,0.0f,0.0f,0.0f };
-
-#pragma region Functions
-
-	void UpdateConstanBuffer();
-
-	void ShadowPass();
-	void GeometryPass();
-
-#pragma endregion
+	GuiHandler ui;
+	BasicRenderer basicRenderer;
 
 public:
 	Menu();
@@ -37,5 +17,5 @@ public:
 	// Inherited via State
 	virtual GAMESTATE Update() override;
 	virtual void Render() override;
-	virtual void DrawUI() override;
 };
+

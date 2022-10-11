@@ -31,7 +31,7 @@ private:
 	GravityField planetGravityField;
 
 	PhysicsWorld physWolrd;
-
+	SkyboxObj skybox;
 	Camera camera;
 	Player* player;
 	GameObject* planet;
@@ -40,7 +40,7 @@ private:
 	BaseballBat* testBat;
 
 	LightHandler ltHandler;
-	PlayerVectors playerVec;
+	PlayerVectors playerVecRenderer;
 
 	//Objects
 	std::vector<GameObject*> gameObjects;
@@ -57,12 +57,8 @@ private:
 	void handleKeybinds();
 
 
-	//Variables for the mouse movement
-	MouseClass* mouse;
-	HWND* window;
-
 public:
-	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window);
+	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window);
 	virtual ~Game() override;
 
 	// Inherited via State

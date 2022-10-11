@@ -1,12 +1,8 @@
 #pragma once
-#include <reactphysics3d\reactphysics3d.h>
-#include <d3d11.h>
-#include <SimpleMath.h>
+#include "PhysicsComponent.h"
 
-#include "Vertex.h"
-#include "ImGuiHelper.h"
+#include "Vertex.h"	//Used for creating the rendering triangles
 
-class PhysicsComponent;
 class GameObject;
 
 class PhysicsWorld
@@ -14,6 +10,11 @@ class PhysicsWorld
 private:
 	UINT stride;
 	UINT offset;
+	reactphysics3d::uint64 nrOfTriangles;
+
+	//Used for gravity
+	DirectX::XMFLOAT3 grav;
+	reactphysics3d::Vector3 temp;
 
 	std::vector<PhysicsComponent *> physObjects;
 

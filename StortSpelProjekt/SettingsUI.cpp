@@ -1,30 +1,28 @@
+#include "stdafx.h"
 #include "SettingsUI.h"
 #include "Input.h"
 #include "GuiHandler.h"
 
 void SettingsUI::HandleInputs()
 {
-	if (show)
-	{
+
 #pragma region backText
 
-		if (backText.IntersectMouse())
-		{
-			backText.SetTint(DirectX::Colors::Green.v);
+	if (backText.IntersectMouse())
+	{
+		backText.SetTint(DirectX::Colors::Green.v);
 
-			if (Input::KeyPress(KeyCode::MOUSE_L))
-			{
-				show = false;
-				GuiHandler::show = true;
-			}
-		}
-		else
+		if (Input::KeyPress(KeyCode::MOUSE_L))
 		{
-			backText.SetTint(DirectX::Colors::White.v);
+			gameState = MENU;
 		}
+	}
+	else
+	{
+		backText.SetTint(DirectX::Colors::White.v);
+	}
 
 #pragma endregion
-	}
 
 
 
@@ -42,6 +40,11 @@ void SettingsUI::SpritePass()
 	container.Draw();
 }
 
+GAMESTATE SettingsUI::GetGameState()
+{
+	return gameState;
+}
+
 SettingsUI::SettingsUI()
 {
 
@@ -53,6 +56,12 @@ SettingsUI::SettingsUI()
 
 	container = GUISprite(350 + 420, 75 + 300);
 	container.Load(GPU::device, L"../Sprites/Container.png");
+
+	gameState = NOCHANGE;
+}
+
+SettingsUI::~SettingsUI()
+{
 
 }
 

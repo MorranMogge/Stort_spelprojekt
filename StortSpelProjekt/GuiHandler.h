@@ -1,6 +1,7 @@
 #pragma once
 #include "GUISprite.h"
 #include "GUIText.h"
+#include "State.h"
 
 class GuiHandler final
 {
@@ -11,6 +12,7 @@ class GuiHandler final
 	GUISprite credits;
 	GUISprite exit;
 
+	GAMESTATE gameState;
 
 	GUIText testText;
 
@@ -21,9 +23,10 @@ class GuiHandler final
 
 public:
 
-	inline static bool show = true;
-	inline static bool isExit = false;
+	GAMESTATE GetGameState();
+
 	GuiHandler();
 	void Draw();
 
 };
+

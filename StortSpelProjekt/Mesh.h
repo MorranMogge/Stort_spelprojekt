@@ -5,8 +5,6 @@
 
 #include "OBJ.h"
 
-#include <vector>
-
 #include "GPU.h"
 #include "MaterialLibrary.h"
 
@@ -16,7 +14,6 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "ConstantBuffer.h"
-#include <SimpleMath.h>
 
 
 class Mesh
@@ -37,7 +34,7 @@ public:
 	std::vector<std::string> matKey;
 
 	DirectX::SimpleMath::Vector3 position;
-	DirectX::SimpleMath::Vector3 rotation;
+	DirectX::XMMATRIX rotation = DirectX::XMMatrixIdentity();
 	DirectX::SimpleMath::Vector3 scale{ 1.0f, 1.0f, 1.0f };
 
 	Bound bound;
@@ -227,7 +224,7 @@ public:
 		//		0, 0, 1, position.z,
 		//		0, 0, 0, 1
 		//	};
-		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * (XMMatrixRotationZ(this->rotation.z * XM_PI) *  XMMatrixRotationX(this->rotation.x * XM_PI)) * XMMatrixRotationY(this->rotation.y * XM_PI) * XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
+		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * this->rotation * XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
 
 		worldCB.Update(&worldS, sizeof(MatrixS));
 
@@ -251,5 +248,4 @@ public:
 		bound.aabb.Center = bound.center + position;
 		bound.aabb.Extents = bound.width;
 	}
-
 };

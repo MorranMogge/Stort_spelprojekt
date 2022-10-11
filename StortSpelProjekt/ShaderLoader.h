@@ -1,5 +1,4 @@
-#include <d3d11.h>
-#include <iostream>
+#include "stdafx.h"
 #include <fstream>
 #include "ErrorLog.h"
 

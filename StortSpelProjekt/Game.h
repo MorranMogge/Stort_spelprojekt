@@ -20,6 +20,7 @@
 #include "Potion.h"
 #include "SkyboxObj.h"
 #include "GameInclude.h"
+#include "SpaceShip.h"
 
 struct wirefameInfo
 {
@@ -56,6 +57,7 @@ private:
 	Player* player;
 	GameObject* planet;
 	GameObject* testCube;
+	SpaceShip* spaceShip;
 	Potion* potion;			//not in use
 
 

@@ -195,7 +195,7 @@ void GameObject::setMesh(Mesh* inMesh)
 	this->mesh->rotation = inMesh->rotation;
 }
 
-bool GameObject::withinRadious(GameObject* object, float radius) const
+bool GameObject::withinBox(GameObject* object, float xRange, float yRange, float zRange) const
 {
 	using namespace DirectX;
 
@@ -204,17 +204,37 @@ bool GameObject::withinRadious(GameObject* object, float radius) const
 	bool inRange = false;
 
 	//X range
-	if (objPos.x <= selfPos.x + radius && objPos.x >= selfPos.x - radius)
+	if (objPos.x <= selfPos.x + xRange && objPos.x >= selfPos.x - xRange)
 	{
 		//Y range
-		if (objPos.y <= selfPos.y + radius && objPos.y >= selfPos.y - radius)
+		if (objPos.y <= selfPos.y + yRange && objPos.y >= selfPos.y - yRange)
 		{
 			//Z range
-			if (objPos.z <= selfPos.z + radius && objPos.z >= selfPos.z - radius)
+			if (objPos.z <= selfPos.z + zRange && objPos.z >= selfPos.z - zRange)
 			{
 				inRange = true;
 			}
 		}
+	}
+
+	return inRange;
+}
+
+bool GameObject::withinRadious(GameObject* object, float radius) const
+{
+	using namespace DirectX;
+
+	XMFLOAT3 objPos = object->getPos();
+	XMFLOAT3 selfPos = this->getPos();
+	bool inRange = false;
+
+	float xRange = sqrt((selfPos.x * selfPos.x) + (objPos.x * objPos.x));
+	float yRange = sqrt((selfPos.y * selfPos.y) + (objPos.y * objPos.y));
+	float zRange = sqrt((selfPos.z * selfPos.z) + (objPos.z * objPos.z));
+
+	if (xRange < radius || yRange < radius || zRange < radius)
+	{
+		inRange = true;
 	}
 
 	return inRange;

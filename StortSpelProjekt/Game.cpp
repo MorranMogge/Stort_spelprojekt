@@ -10,12 +10,58 @@ void Game::loadObjects()
 	planet = new GameObject("../Meshes/Planet", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
 	player = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
 	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
-
-	//physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::BOX);
-	//planet->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
-
-	//skybox = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(-200.0f, 200.0f, 200.0f));
 	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+	DirectX::SimpleMath::Vector3 downVector = planetGravityField.calcGravFactor(DirectX::XMFLOAT3(10, 20, 10));
+	
+	////downVector *= -1;
+
+	//DirectX::SimpleMath::Vector4 column1;
+	//DirectX::SimpleMath::Vector4 column2;
+	//DirectX::SimpleMath::Vector4 column3;
+	//DirectX::SimpleMath::Vector4 column4;
+
+	//DirectX::SimpleMath::Vector3 up(0, 1, 0);
+	//DirectX::SimpleMath::Vector3 xaxis = downVector;
+	//xaxis.Cross(up, xaxis);
+	//xaxis.Normalize();
+
+	//DirectX::SimpleMath::Vector3 yaxis = xaxis;
+	//yaxis.Cross(downVector, yaxis);
+	//yaxis.Normalize();
+
+
+	//column1.x = xaxis.x;
+	//column1.y = yaxis.x;
+	//column1.z = downVector.x;
+	//column1.w = 0;
+
+	//column2.x = xaxis.y;
+	//column2.y = yaxis.y;
+	//column2.z = downVector.y;
+	//column1.w = 0;
+
+	//column3.x = xaxis.z;
+	//column3.y = yaxis.z;
+	//column3.z = downVector.z;
+	//column1.w = 0;
+
+	//column4.x = 0;
+	//column4.y = 0;
+	//column4.z = 0;(column1, column2, column3, column4);
+	//column4.w = 1;
+	
+
+	DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixLookAtLH(DirectX::SimpleMath::Vector3(10, 20, 10), DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0, 1, 0));
+
+	DirectX::XMFLOAT3 finRot(0, 0, 0);
+	DirectX::XMVECTOR orientation = DirectX::XMQuaternionRotationMatrix(DirectX::XMMatrixInverse(nullptr, rotationMatrix));
+	DirectX::XMStoreFloat3(&finRot, orientation);
+
+	
+
+
+	spaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(10, 20, 10), DirectX::SimpleMath::Vector3(finRot.x, finRot.y, finRot.z), 1);
+
 
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
@@ -25,6 +71,7 @@ void Game::loadObjects()
 	gameObjects.emplace_back(planet);
 	gameObjects.emplace_back(potion);
 	gameObjects.emplace_back(testCube);
+	gameObjects.emplace_back(spaceShip);
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -36,7 +83,7 @@ void Game::loadObjects()
 
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
-
+	
 }
 
 void Game::drawShadows()
@@ -214,10 +261,7 @@ GAMESTATE Game::Update()
 	physWolrd.update(dt);
 	potion->update(); //getPhysComp()->updateParent();
 	testCube->update();//getPhysComp()->updateParent();
-	for (int i = 4; i < gameObjects.size(); i++)
-	{
-		gameObjects[i]->update();//->getPhysComp()->updateParent();
-	}
+
 	//Here you can write client-server related functions?
 
 

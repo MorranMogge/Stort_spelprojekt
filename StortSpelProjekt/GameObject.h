@@ -7,15 +7,13 @@ class PhysicsComponent;
 class GameObject
 {
 private:
-
 	Mesh* mesh;
 	int objectID;
 	PhysicsComponent* physComp;
-	//float mass
-	//collider
+
 protected:
 	DirectX::SimpleMath::Vector3 position;
-	DirectX::XMFLOAT3 rotation;//ska �ndra till quaternion?
+	DirectX::XMFLOAT3 rotation;
 	DirectX::XMFLOAT3 scale;
 
 public:
@@ -38,7 +36,8 @@ public:
 	void setPhysComp(PhysicsComponent* comp);
 	PhysicsComponent* getPhysComp()const;
 	void updateBuffer();
-	bool withinRadious(GameObject *object ,float radius) const;
+	bool withinBox(GameObject *object ,float x, float y, float z) const;
+	bool withinRadious(GameObject* object, float radius) const;
 	virtual void draw();
 	virtual void update(); //This updates the hitboxes
 };

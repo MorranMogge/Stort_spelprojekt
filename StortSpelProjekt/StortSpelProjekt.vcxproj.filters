@@ -120,6 +120,7 @@
     <ClCompile Include="SkyboxObj.cpp">
       <Filter>Skybox</Filter>
     </ClCompile>
+    <ClCompile Include="SpaceShip.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -359,6 +360,7 @@
     <ClInclude Include="SkyboxObj.h">
       <Filter>Skybox</Filter>
     </ClInclude>
+    <ClInclude Include="SpaceShip.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

@@ -14,7 +14,6 @@ private:
 	reactphysics3d::CollisionShape* shape;	//Can be capsule, box, sphere and other shapes
 	reactphysics3d::RigidBody* rigidBody;	//Used to give body correct physics calculations
 	reactphysics3d::Collider* collider;		//Used to make collisions happen
-	reactphysics3d::CollisionBody* collisionBody; //Used for collision checks
 
 	void createRigidBody(const reactphysics3d::Transform& transform = reactphysics3d::Transform::identity());
 	void setShape(const reactphysics3d::CollisionShapeName& shapeType = reactphysics3d::CollisionShapeName::BOX);
@@ -31,6 +30,10 @@ public:
 	//Change properties of the physics component
 	void setType(const reactphysics3d::BodyType& physicsType = reactphysics3d::BodyType::DYNAMIC);
 	void setMass(const float& mass = 1.0f);
+	void setScale(const float& scale = 0.5f);
+	void setScale(const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1.f,1.f,1.f));
+	void setScale(const DirectX::SimpleMath::Vector3& scale = DirectX::SimpleMath::Vector3(1.f, 1.f, 1.f));
+
 
 	void setLinearDampning(const float& factor = 0.0f);
 	void setAngularDampning(const float& factor = 0.0f);
@@ -52,11 +55,10 @@ public:
 	reactphysics3d::Quaternion getRotation()const;
 	reactphysics3d::CollisionShapeName getTypeName()const;
 	reactphysics3d::Collider* getCollider()const;
-	reactphysics3d::CollisionBody* getCollisionBody();
 	DirectX::SimpleMath::Vector3 getPosV3()const;
 
-	bool testPointInside(const reactphysics3d::Vector3& point);	//Can be used instead of "testBodiesOverlap()", check point instead of AABB
-	bool testBodiesOverlap(PhysicsComponent* other);			//Better collision detection
+	bool testPointInside(const reactphysics3d::Vector3& point)const;	//Can be used instead of "testBodiesOverlap()", check point instead of AABB
+	bool testBodiesOverlap(PhysicsComponent* other)const;			//Better collision detection
 
 	float getMass()const;
 	float getLinearDampning()const;

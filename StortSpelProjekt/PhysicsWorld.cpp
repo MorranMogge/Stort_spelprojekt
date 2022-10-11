@@ -192,10 +192,10 @@ PhysicsWorld::PhysicsWorld(std::string worldName)
 
 void PhysicsWorld::renderReact3D()
 {
-	nrOfTriangles = this->debugRenderer->getTriangles().size();
+	nrOfTriangles = this->triangles.size();
 	this->debugRenderer->reset();
 	this->debugRenderer->computeDebugRenderingPrimitives(*world);
-	if (nrOfTriangles != this->debugRenderer->getTriangles().size()) this->recreateVertexBuffer();
+	if (3*nrOfTriangles != this->debugRenderer->getTriangles().size()) this->recreateVertexBuffer();
 	else this->updateVertexBuffer();
 	
 	GPU::immediateContext->VSSetConstantBuffers(0, 1, &identityMatrix);

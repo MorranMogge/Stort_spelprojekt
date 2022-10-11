@@ -33,8 +33,9 @@ private:
 	int health;
 
 	//Controller shits
-	float posx;
-	float posy;
+	float posX;
+	float posY;
+	float totalPos;
 	float throttle;
 
 public:

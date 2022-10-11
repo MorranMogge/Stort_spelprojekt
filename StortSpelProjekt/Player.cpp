@@ -6,7 +6,7 @@
 using namespace DirectX;
 
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-    :GameObject(useMesh, pos, rot, id), health(70), holdingItem(nullptr)
+	:GameObject(useMesh, pos, rot, id), health(70), holdingItem(nullptr)
 {
 	this->rotationMX = XMMatrixIdentity();
 	dotValue = { 0.0f, 0.0f, 0.0f };
@@ -273,75 +273,144 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 
 	if (state.IsConnected())
 	{
-		posx = state.thumbSticks.leftX;
-		posy = state.thumbSticks.leftY;
+		posX = state.thumbSticks.leftX;
+		posY = state.thumbSticks.leftY;
 
 		//Walk forward
-		if (posy >= 1.0f)
+		if (posY > 0.0f)
 		{
-			position += forwardVector * deltaTime * 25.0f;
 			dotProduct = DirectX::XMVector3Dot(cameraForward, rightVector);
 			XMStoreFloat3(&dotValue, dotProduct);
 
-			if (dotValue.x < -0.05f)
+			//Walking cross
+			if (posX > 0.0f)
 			{
-				rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.1f);
-			}
-			else if (dotValue.x > 0.05f)
-			{
-				rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.1f);
-			}
-			else
-			{
-				dotProduct = DirectX::XMVector3AngleBetweenNormalsEst(cameraForward, forwardVector);
-				XMStoreFloat3(&dotValue, dotProduct);
-				if (dotValue.x > DirectX::XM_PIDIV2)
+				totalPos = posX + posY;
+				position += forwardVector * totalPos * deltaTime * 25.0f;
+
+				if (dotValue.x < -0.45f)
+				{
+					rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.02f);
+				}
+				else if (dotValue.x > -0.55f)
 				{
 					rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
+				}
+			}
+			else if (posX < 0.0f)
+			{
+				totalPos = abs(posX) + posY;
+				position += forwardVector * totalPos * deltaTime * 25.0f;
+
+				if (dotValue.x < 0.45f)
+				{
+					rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.02f);
+				}
+				else if (dotValue.x > 0.55f)
+				{
+					rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
+				}
+			}
+			//Walking normally
+			else
+			{
+				position += forwardVector * posY * deltaTime * 25.0f;
+				if (dotValue.x < -0.05f)
+				{
+					rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.07f);
+				}
+				else if (dotValue.x > 0.05f)
+				{
+					rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.07f);
+				}
+				else
+				{
+					//Checking where it is
+					dotProduct = DirectX::XMVector3AngleBetweenNormalsEst(cameraForward, forwardVector);
+					XMStoreFloat3(&dotValue, dotProduct);
+					if (dotValue.x > DirectX::XM_PIDIV2)
+					{
+						rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
+					}
 				}
 			}
 		}
 
 		//Walk backward
-		else if (posy <= -1.0f)
+		else if (posY < 0.0f)
 		{
-			position += forwardVector * deltaTime * 25.0f;
 			dotProduct = DirectX::XMVector3Dot(-cameraForward, rightVector);
 			XMStoreFloat3(&dotValue, dotProduct);
 
-			if (dotValue.x < -0.05f)
+			//Walking cross
+			if (posX > 0.0f)
 			{
-				rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.1f);
-			}
-			else if (dotValue.x > 0.05f)
-			{
-				rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.1f);
-			}
-			else
-			{
-				dotProduct = DirectX::XMVector3AngleBetweenNormalsEst(-cameraForward, forwardVector);
-				XMStoreFloat3(&dotValue, dotProduct);
-				if (dotValue.x > DirectX::XM_PIDIV2)
+				totalPos = posX + abs(posY);
+				position += forwardVector * totalPos * deltaTime * 25.0f;
+
+				if (dotValue.x < 0.45f)
+				{
+					rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.02f);
+				}
+				else if (dotValue.x > 0.55f)
 				{
 					rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
+				}
+			}
+			else if (posX < 0.0f)
+			{
+				totalPos = abs(posX) + abs(posY);
+				position += forwardVector * totalPos * deltaTime * 25.0f;
+
+				if (dotValue.x < -0.45f)
+				{
+					rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.02f);
+				}
+				else if (dotValue.x > -0.55f)
+				{
+					rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
+				}
+			}
+			//Walking normally
+			else
+			{
+				position += forwardVector * posY * deltaTime * -25.0f;
+
+				if (dotValue.x < -0.05f)
+				{
+					rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.07f);
+				}
+				else if (dotValue.x > 0.05f)
+				{
+					rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.07f);
+				}
+				else
+				{
+					//Checking where it is
+					dotProduct = DirectX::XMVector3AngleBetweenNormalsEst(-cameraForward, forwardVector);
+					XMStoreFloat3(&dotValue, dotProduct);
+					if (dotValue.x > DirectX::XM_PIDIV2)
+					{
+						rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
+					}
 				}
 			}
 		}
 
 		//Walk right
-		if (posx >= 1.0f)
+		else if (posX > 0.0f)
 		{
-			position += forwardVector * deltaTime * 25.0f;
+			position += forwardVector * posX * deltaTime * 25.0f;
 			dotProduct = DirectX::XMVector3Dot(cameraRight, rightVector);
 			XMStoreFloat3(&dotValue, dotProduct);
 
 			if (dotValue.x < -0.05f)
 			{
-				rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.1f);
+				rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.07f);
 			}
 			else if (dotValue.z > 0.05f)
 			{
-				rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.1f);
+				rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.07f);
 			}
 			else
 			{
@@ -355,19 +424,19 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		}
 
 		//Walk left
-		else if (posx <= -1.0f)
+		else if (posX < 0.0f)
 		{
-			position += forwardVector * deltaTime * 25.0f;
+			position += forwardVector * posX * deltaTime * -25.0f;
 			dotProduct = DirectX::XMVector3Dot(-cameraRight, rightVector);
 			XMStoreFloat3(&dotValue, dotProduct);
 
 			if (dotValue.x < -0.05f)
 			{
-				rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.1f);
+				rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.07f);
 			}
-			else if (dotValue.x > 0.05f)
+			else if (dotValue.z > 0.05f)
 			{
-				rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.1f);
+				rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.07f);
 			}
 			else
 			{
@@ -380,25 +449,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 			}
 		}
 
-		//Diagonal
-		if (posy <= 0.90f && 0.50f <= posy && 0.1f <= posx && posx <= 0.90f)
-		{
-			position += forwardVector * deltaTime * 25.0f;
-		}
-
-		//Diagonal
-		if (posy <= 0.90 && 0.50 <= posy && -1 <= posx && posx <= 0)
-		{
-			position += forwardVector * deltaTime * 25.0f;
-		}
-
-		//Diagonal
-		if (posy <= 0.0 && -0.50 <= posy && 0.1 <= posx && posx <= 0.90)
-		{
-			position += forwardVector * deltaTime * 25.0f;
-		}
-
-		std::cout << "Posx: " << posx << "\t" << "Posy: " << posy << "\n";
+		//std::cout << "Posx: " << posX << "\t" << "Posy: " << posY << "\n";
 
 		throttle = state.triggers.right;
 
@@ -421,95 +472,95 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 
 bool Player::pickupItem(Item* itemToPickup, const std::unique_ptr<DirectX::GamePad>& gamePad)
 {
-    bool successfulPickup = false;
+	bool successfulPickup = false;
 
-    auto state = gamePad->GetState(0);
+	auto state = gamePad->GetState(0);
 
-    if (Input::KeyDown(KeyCode::SPACE) || state.IsAPressed())
-    {
-        if (this->withinRadius(itemToPickup, 5))
-        {
-            addItem(itemToPickup);    
-            successfulPickup = true;
-        }
-    }
-    
-    return successfulPickup;
+	if (Input::KeyDown(KeyCode::SPACE) || state.IsAPressed())
+	{
+		if (this->withinRadius(itemToPickup, 5))
+		{
+			addItem(itemToPickup);
+			successfulPickup = true;
+		}
+	}
+
+	return successfulPickup;
 }
 
 void Player::addItem(Item* itemToHold)
 {
-    if (!this->holdingItem)
-        this->holdingItem = itemToHold;
+	if (!this->holdingItem)
+		this->holdingItem = itemToHold;
 }
 
 void Player::addHealth(const int& healthToIncrease)
 {
-    this->health += healthToIncrease;
-    //Prototyp f�r en cap s� man inte kan f� mer liv �n en kapacitet
-    if (this->health > 100)
-    {
-        this->health = 100;
-    }
+	this->health += healthToIncrease;
+	//Prototyp f�r en cap s� man inte kan f� mer liv �n en kapacitet
+	if (this->health > 100)
+	{
+		this->health = 100;
+	}
 }
 
 void Player::releaseItem()
 {
-    this->holdingItem = nullptr;
+	this->holdingItem = nullptr;
 }
 
 bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) const
 {
-    DirectX::XMFLOAT3 objPos = itemToLookWithinRadius->getPos();
-    DirectX::XMFLOAT3 selfPos = this->getPos();
-    bool inRange = false;
+	DirectX::XMFLOAT3 objPos = itemToLookWithinRadius->getPos();
+	DirectX::XMFLOAT3 selfPos = this->getPos();
+	bool inRange = false;
 
-    DirectX::XMFLOAT3 vecToObject = selfPos;
-    subtractionXMFLOAT3(vecToObject, objPos);
+	DirectX::XMFLOAT3 vecToObject = selfPos;
+	subtractionXMFLOAT3(vecToObject, objPos);
 
-    float lengthToVec = getLength(vecToObject);
-    if (lengthToVec<=radius)
-    {
-        inRange = true;
-    }
+	float lengthToVec = getLength(vecToObject);
+	if (lengthToVec <= radius)
+	{
+		inRange = true;
+	}
 
-    return inRange;
+	return inRange;
 }
 
 bool Player::repairedShip() const
 {
-    return repairCount>=4;
+	return repairCount >= 4;
 }
 
 void Player::update(const std::unique_ptr<DirectX::GamePad>& gamePad)
 {
-    if (holdingItem != nullptr)
-    {
-        auto state = gamePad->GetState(0);
+	if (holdingItem != nullptr)
+	{
+		auto state = gamePad->GetState(0);
 
-        holdingItem->setPos({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f });
-        holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f }));
-        if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
-        {
-            DirectX::XMFLOAT3 temp;
-            DirectX::XMStoreFloat3(&temp, this->forwardVector);
-            newNormalizeXMFLOAT3(temp);
-            holdingItem->getPhysComp()->applyLocalTorque(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z *1000));
-            holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * 10000, temp.y * 10000, temp.z * 10000));
-            holdingItem->setPos({ this->getPos().x, this->getPos().y, this->getPos().z });
-            holdingItem = nullptr;
-        }
-        else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T) || state.IsYPressed() && state.IsYPressed())
-        {
-            holdingItem->useItem();
-            repairCount++;
-            std::cout << "Progress " << repairCount << "/4\n";
-            //holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ 50.f, 50.f, 50.f }));
-            holdingItem->getPhysComp()->setIsAllowedToSleep(true);
-            holdingItem->getPhysComp()->setIsSleeping(true);
-            holdingItem = nullptr;
-        }
-    }
+		holdingItem->setPos({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f });
+		holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ this->getPos().x + 1.0f, this->getPos().y + 0.5f, this->getPos().z + 0.5f }));
+		if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
+		{
+			DirectX::XMFLOAT3 temp;
+			DirectX::XMStoreFloat3(&temp, this->forwardVector);
+			newNormalizeXMFLOAT3(temp);
+			holdingItem->getPhysComp()->applyLocalTorque(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z * 1000));
+			holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * 10000, temp.y * 10000, temp.z * 10000));
+			holdingItem->setPos({ this->getPos().x, this->getPos().y, this->getPos().z });
+			holdingItem = nullptr;
+		}
+		else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T) || state.IsYPressed() && state.IsYPressed())
+		{
+			holdingItem->useItem();
+			repairCount++;
+			std::cout << "Progress " << repairCount << "/4\n";
+			//holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ 50.f, 50.f, 50.f }));
+			holdingItem->getPhysComp()->setIsAllowedToSleep(true);
+			holdingItem->getPhysComp()->setIsSleeping(true);
+			holdingItem = nullptr;
+		}
+	}
 }
 
 DirectX::XMVECTOR Player::getUpVec() const

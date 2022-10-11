@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "DirectXMathHelper.h"
 
 void subtractionXMFLOAT3(DirectX::XMFLOAT3& argOne, DirectX::XMFLOAT3 argTwo)

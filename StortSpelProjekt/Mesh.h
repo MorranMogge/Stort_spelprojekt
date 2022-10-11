@@ -1,8 +1,9 @@
 #pragma once
 
-#include "OBJ.h"
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 
-#include <vector>
+#include "OBJ.h"
 
 #include "GPU.h"
 #include "MaterialLibrary.h"
@@ -13,7 +14,6 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "ConstantBuffer.h"
-#include <SimpleMath.h>
 
 
 class Mesh
@@ -34,7 +34,7 @@ public:
 	std::vector<std::string> matKey;
 
 	DirectX::SimpleMath::Vector3 position;
-	DirectX::SimpleMath::Vector3 rotation;
+	DirectX::XMMATRIX rotation = DirectX::XMMatrixIdentity();
 	DirectX::SimpleMath::Vector3 scale{ 1.0f, 1.0f, 1.0f };
 
 	Bound bound;
@@ -47,7 +47,6 @@ public:
 
 	void Load(OBJ& obj)
 	{
-		using namespace DirectX::SimpleMath;
 #pragma region LoadObj
 
 		std::vector<Vertex> vertices;
@@ -82,7 +81,7 @@ public:
 		std::vector<unsigned int> indices32;
 		std::vector<unsigned short> indices16;
 
-		const bool is16bit = vertices.size() > 65535;
+		const bool is16bit = vertices.size() < 65535;
 
 		//foreach vertex in submesh
 		for (auto& vertex : vertices)
@@ -214,7 +213,6 @@ public:
 	}
 	void UpdateCB()
 	{
-		using namespace DirectX::SimpleMath;
 		using namespace DirectX;
 
 		static MatrixS worldS;
@@ -226,12 +224,12 @@ public:
 		//		0, 0, 1, position.z,
 		//		0, 0, 0, 1
 		//	};
-		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * (XMMatrixRotationZ(this->rotation.z * XM_PI) *  XMMatrixRotationX(this->rotation.x * XM_PI)) * XMMatrixRotationY(this->rotation.y * XM_PI) * XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
+		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * this->rotation * XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
 
 		worldCB.Update(&worldS, sizeof(MatrixS));
 
 		static VectorS positionS;
-		positionS.vector = Vector4(position);
+		positionS.vector = DirectX::SimpleMath::Vector4(position);
 		positionCB.Update(&positionS, sizeof(VectorS));
 	}
 	void CreateCB()
@@ -250,5 +248,4 @@ public:
 		bound.aabb.Center = bound.center + position;
 		bound.aabb.Extents = bound.width;
 	}
-
 };

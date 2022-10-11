@@ -1,8 +1,7 @@
+#include "stdafx.h"
 #include "MouseClass.h"
-#include <string>
 #include "GPU.h"
 #include <directxmath.h>
-#include <d3d11.h>
 
 MouseClass::MouseClass()
 {
@@ -66,7 +65,6 @@ void MouseClass::handleEvents(HWND* window, Camera& camera)
 
 		if (me.GetType() == MouseEvent::EventType::RAW_MOVE)
 		{
-			camera.AdjustRotation((float)me.GetPosY() * .0025f, (float)me.GetPosX() * .0025f);
 			GetClientRect(*window, &rect);
 			ul.x = rect.left;
 			ul.y = rect.top;

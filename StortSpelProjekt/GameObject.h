@@ -1,18 +1,20 @@
 #pragma once
-#include <DirectXMath.h>
+
 #include "Mesh.h"
-#include <string>
+
+class PhysicsComponent;
 
 class GameObject
 {
 private:
 	Mesh* mesh;
 	int objectID;
+	PhysicsComponent* physComp;
 	//float mass
 	//collider
 protected:
 	DirectX::SimpleMath::Vector3 position;
-	DirectX::XMFLOAT3 rotation;//ska ändra till quaternion?
+	DirectX::XMMATRIX rotation;
 	DirectX::XMFLOAT3 scale;
 
 public:
@@ -22,16 +24,20 @@ public:
 	virtual ~GameObject();
 	void movePos(const DirectX::XMFLOAT3& offset);
 	void setPos(const DirectX::XMFLOAT3& pos);
+	void setRot(const DirectX::XMVECTOR& rot);
 	void setRot(const DirectX::XMFLOAT3& rot);
-	void setScale(const DirectX::XMFLOAT3& scale);
+	void setScale(DirectX::XMFLOAT3 scale);
+	void setMesh(const std::string& meshPath);
+	void setMesh(Mesh* inMesh);
 	DirectX::XMFLOAT3 getPos() const;
 	DirectX::SimpleMath::Vector3 getPosV3()const;
-	DirectX::XMFLOAT3 getRot() const;
+	DirectX::XMMATRIX getRot() const;
 	DirectX::XMFLOAT3 getScale() const;
 	Bound* getBounds() const;
+	void setPhysComp(PhysicsComponent* comp);
+	PhysicsComponent* getPhysComp()const;
 	void updateBuffer();
-	void setMesh(const std::string& meshPath);
-	void setMesh(Mesh*);
-	bool withinRadious(GameObject *object , const float& radius) const;
+	bool withinRadious(GameObject *object ,float radius) const;
 	virtual void draw();
+	virtual void update(); //This updates the hitboxes
 };

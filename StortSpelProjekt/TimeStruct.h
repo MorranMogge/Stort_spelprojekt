@@ -1,4 +1,4 @@
-#pragma once#
+#pragma once
 #include <chrono>
 
 struct TimeStruct
@@ -15,6 +15,7 @@ struct TimeStruct
 	float getDt()
 	{
 		this->dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - this->startTime)).count();
+		return this->dt;
 	}
 
 	void resetStartTime()

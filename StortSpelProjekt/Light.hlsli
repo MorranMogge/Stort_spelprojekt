@@ -107,6 +107,57 @@ LightResult DoDirectionalLight(Light light, float3 ViewDir, float3 normal, float
     return result;
 }
 
+LightResult ComputeDirectionalLight(Light L, float3 normal, float3 toEye, float3 diffuse, float3 specular, float spacularPower)
+{
+    LightResult result = { { 0, 0, 0 }, { 0, 0, 0 } };
+    float3 lightVec = -L.direction;
+    float diffuseFactor = dot(lightVec, normal);
+
+    [flatten]
+    if (diffuseFactor > 0.0f)
+    {
+        float3 v = reflect(-lightVec, normal);
+        float specFactor = pow(max(dot(v, toEye), 0.0f), spacularPower);
+
+        result.Diffuse = diffuseFactor * diffuse * L.color;
+        result.Specular = specFactor * specular /* * L.specular*/;
+    }
+    return result;
+}
+LightResult ComputePointLight(Light L, float3 pos, float3 normal, float3 toEye, float4 diffuse, float3 specular, float spacularPower)
+{
+    LightResult result = { { 0, 0, 0 }, { 0, 0, 0 } };
+    
+    float3 lightVec = L.position.xyz - pos;
+
+    float d = length(lightVec);
+
+    if (d > L.range)
+        return result;
+
+    lightVec /= d;
+
+    float diffuseFactor = dot(lightVec, normal);
+
+    [flatten]
+    if (diffuseFactor > 0.0f)
+    {
+        float3 v = reflect(-lightVec, normal);
+        float specFactor = pow(max(dot(v, toEye), 0.0f), spacularPower);
+
+        result.Diffuse = diffuseFactor * diffuse /* * L.diffuse*/;
+        result.Specular = specFactor * specular /* * L.specular*/;
+    }
+
+    float att = DoAttenuation(L, d); //1.0f / dot(L.att, float3(1.0f, d, d * d));
+
+    result.Diffuse *= att;
+    result.Specular *= att;
+    
+    return result;
+
+}
+
 float DoSpotCone(Light light, float3 lightDir)
 {
     float minCos = cos(light.angle);

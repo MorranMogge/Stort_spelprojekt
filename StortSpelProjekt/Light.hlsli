@@ -122,7 +122,7 @@ LightResult ComputeDirectionalLight(Light L, float3 lightDir, float3 normal, flo
     }
     return result;
 }
-LightResult ComputePointLight(Light L, float3 lightDir, float3 normal, float3 toEye, float3 diffuse, float3 specular, float spacularPower)
+LightResult ComputePointLight(Light L, float3 lightDir, float3 normal, float3 toEye, float3 specular, float spacularPower)
 {
     LightResult result = { { 0, 0, 0 }, { 0, 0, 0 } };
 
@@ -141,8 +141,8 @@ LightResult ComputePointLight(Light L, float3 lightDir, float3 normal, float3 to
         float3 v = reflect(-lightDir, normal);
         float specFactor = pow(max(dot(v, toEye), 0.0f), spacularPower);
 
-        result.Diffuse = diffuseFactor * diffuse /* * L.diffuse*/;
-        result.Specular = specFactor * specular /* * L.specular*/;
+        result.Diffuse = diffuseFactor * L.color.xyz;
+        result.Specular = specFactor * specular;
     }
 
     float att = DoAttenuation(L, d); //1.0f / dot(L.att, float3(1.0f, d, d * d));

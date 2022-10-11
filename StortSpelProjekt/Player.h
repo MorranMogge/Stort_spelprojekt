@@ -35,9 +35,6 @@ public:
 	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float& deltaTime);
 	bool getPickup(GameObject *pickup);
 	bool pickupItem(Item *itemToPickup);
-	DirectX::XMVECTOR getForwardVec()const;
-	DirectX::XMVECTOR getUpVec()const;
-	DirectX::XMVECTOR getRightVec()const;
 
 	void releasePickup();
 

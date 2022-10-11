@@ -285,21 +285,6 @@ bool Player::pickupItem(Item* itemToPickup)
     return successfulPickup;
 }
 
-DirectX::XMVECTOR Player::getForwardVec() const
-{
-    return this->playerForwardVec;
-}
-
-DirectX::XMVECTOR Player::getUpVec() const
-{
-    return this->playerUpVec;
-}
-
-DirectX::XMVECTOR Player::getRightVec() const
-{
-    return this->playerRightVec;
-}
-
 void Player::addItem(Item* itemToHold)
 {
     if (!this->holdingItem)
@@ -350,7 +335,7 @@ void Player::update()
     if (holdingItem != nullptr)
     {
         DirectX::SimpleMath::Vector3 newPos = this->position; 
-        newPos += playerForwardVec * -40;// +playerUpVec * 4;
+        newPos += 4*forwardVector;// +playerUpVec * 4;
         
         PhysicsComponent* itemPhysComp = holdingItem->getPhysComp();
         holdingItem->setPos(newPos);
@@ -364,12 +349,12 @@ void Player::update()
 
             //Calculate the force vector
             DirectX::XMFLOAT3 temp;
-            DirectX::XMStoreFloat3(&temp, (this->playerForwardVec*10+this->playerUpVec));
+            DirectX::XMStoreFloat3(&temp, (this->forwardVector*5+this->upVector));
             newNormalizeXMFLOAT3(temp);
 
             //Apply the force
-            itemPhysComp->applyLocalTorque(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z *1000));
-            itemPhysComp->applyForceToCenter(reactphysics3d::Vector3(temp.x * 10000, temp.y * 10000, temp.z * 10000));
+            itemPhysComp->applyLocalTorque(reactphysics3d::Vector3(temp.x * 500, temp.y * 500, temp.z * 500));
+            itemPhysComp->applyForceToCenter(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z * 1000));
             
             //You no longer "own" the item
             holdingItem = nullptr;

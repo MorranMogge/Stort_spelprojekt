@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "BaseballBat.h"
 #include "Player.h"
 #include "PhysicsComponent.h"
@@ -38,7 +39,7 @@ void BaseballBat::useItem()
 		//if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue;
 
 		bool collided = playerComp->testBodiesOverlap(physComp);
-		std::cout << "result: " << collided << "\n";
+		std::cout << "Result for id: " << i << ": " << collided << "\n";
 		if (collided)
 		{
 			//Calculate the force vector

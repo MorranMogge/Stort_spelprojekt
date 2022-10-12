@@ -36,11 +36,6 @@ cbuffer numLightBuffer : register(b2)
     int nrOfLights;
 };
 
-float FresnelEffect(float3 Normal, float3 ViewDir, float Power)
-{
-    return pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
-}
-
 float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : UV, float4 worldPosition : WorldPosition, float3 localPosition : LocalPosition) : SV_TARGET
 {
     
@@ -86,15 +81,12 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
             case DIRECTIONAL_LIGHT:
                 lightDir = normalize(-lights[i].direction.xyz);
                 //result = DoDirectionalLight(lights[i], viewDir, normal, mat.specularPower, lightDir);
-                //result = GetDirL(lights[i], normal, viewDir, specular, mat.specularPower, lightDir);
-                //result = GetDirL(lights[i], normal, viewDir, specular, mat.specularPower, lightDir);
                 result = ComputeDirectionalLight(lights[i], lightDir, normal, viewDir, diffuseColor, specular, mat.specularPower);
                 break;
             
             case POINT_LIGHT:
                 lightDir = lights[i].position.xyz - worldPosition.xyz;
                 //result = DoPointLight(lights[i], viewDir, worldPosition, normal, mat.specularPower, lightDir);
-                //result = GetPointL(lights[i], worldPosition.xyz, normal, viewDir, specular, mat.specularPower, lightDir);
                 result = ComputePointLight(lights[i], lightDir, normal, viewDir, specular, mat.specularPower);
                 break;
             
@@ -104,7 +96,8 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
                 break;
         }
         
-        float shadowFactor = ShadowFactor2(lightWorldPosition, shadowMaps, shadowSampler, i, normal, lightDir);
+        float shadowFactor = HardShadow(lightWorldPosition, shadowMaps, shadowSampler, i, normal, lightDir,9);
+        //float shadowFactor = SoftShadow(lightWorldPosition, 6.0, shadowMaps, shadowSampler,samplerState, i);
         
         litResult.Diffuse += result.Diffuse * shadowFactor;
         litResult.Specular += result.Specular * shadowFactor;

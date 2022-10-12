@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include "Vertex.h"
 
 class GameObject;
 
@@ -33,7 +34,10 @@ public:
 	void setScale(const float& scale = 0.5f);
 	void setScale(const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1.f,1.f,1.f));
 	void setScale(const DirectX::SimpleMath::Vector3& scale = DirectX::SimpleMath::Vector3(1.f, 1.f, 1.f));
-
+	
+	void setBoxShape(const DirectX::XMFLOAT3& dimensions = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+	void setSphereShape(const float& radius = 0.5f);
+	void setConvexMeshShape(const std::vector<Vertex>& vertices); //Implement this later
 
 	void setLinearDampning(const float& factor = 0.0f);
 	void setAngularDampning(const float& factor = 0.0f);

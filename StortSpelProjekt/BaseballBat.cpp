@@ -43,6 +43,7 @@ void BaseballBat::useItem()
 		std::cout << "Result for id: " << i << ": " << collided << "\n";
 		if (collided)
 		{
+			physComp->setType(reactphysics3d::BodyType::DYNAMIC);
 			//Calculate the force vector
 			force = playerComp->getMass() * FORCECONSTANT;
 			batPos = this->player->getForwardVec() * 10 + this->player->getUpVec();

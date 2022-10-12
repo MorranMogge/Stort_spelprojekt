@@ -135,6 +135,66 @@ void PhysicsComponent::setScale(const DirectX::SimpleMath::Vector3& scale)
 	this->setScale(DirectX::XMFLOAT3(scale.x, scale.y, scale.z));
 }
 
+void PhysicsComponent::setBoxShape(const DirectX::XMFLOAT3& dimensions)
+{
+	this->rigidBody->removeCollider(this->collider);
+	reactphysics3d::CollisionShapeName shapeType = this->shape->getName();
+	switch (shapeType)
+	{
+	case reactphysics3d::CollisionShapeName::SPHERE:
+		this->comPtr->destroySphereShape(dynamic_cast<reactphysics3d::SphereShape*>(this->shape));
+		break;
+	case reactphysics3d::CollisionShapeName::CONVEX_MESH:
+		this->comPtr->destroyConvexMeshShape(dynamic_cast<reactphysics3d::ConvexMeshShape *>(this->shape));
+		break;
+	default:
+		break;
+	}
+	this->shape = this->comPtr->createBoxShape(reactphysics3d::Vector3(dimensions.x, dimensions.y, dimensions.z));
+	this->collider = this->rigidBody->addCollider(this->shape, reactphysics3d::Transform::identity());
+}
+
+void PhysicsComponent::setSphereShape(const float& radius)
+{
+	this->rigidBody->removeCollider(this->collider);
+	reactphysics3d::CollisionShapeName shapeType = this->shape->getName();
+	switch (shapeType)
+	{
+	case reactphysics3d::CollisionShapeName::BOX:
+		this->comPtr->destroyBoxShape(dynamic_cast<reactphysics3d::BoxShape*>(this->shape));
+		break;
+	case reactphysics3d::CollisionShapeName::CONVEX_MESH:
+		this->comPtr->destroyConvexMeshShape(dynamic_cast<reactphysics3d::ConvexMeshShape*>(this->shape));
+		break;
+	default:
+		break;
+	}
+	this->shape = this->comPtr->createSphereShape(radius);
+	this->collider = this->rigidBody->addCollider(this->shape, reactphysics3d::Transform::identity());
+}
+
+void PhysicsComponent::setConvexMeshShape(const std::vector<Vertex>& vertices)
+{
+	//This function is yet to be implemented
+	std::cout << "FUNCTION NOT FOUND, PLEASE USE OTHER FUNCTION\n";
+	return;
+
+	this->rigidBody->removeCollider(this->collider);
+	reactphysics3d::CollisionShapeName shapeType = this->shape->getName();
+	switch (shapeType)
+	{
+	case reactphysics3d::CollisionShapeName::BOX:
+		this->comPtr->destroyBoxShape(dynamic_cast<reactphysics3d::BoxShape*>(this->shape));
+		break;
+	case reactphysics3d::CollisionShapeName::SPHERE:
+		this->comPtr->destroySphereShape(dynamic_cast<reactphysics3d::SphereShape*>(this->shape));
+		break;
+	default:
+		break;
+	}
+	this->collider = this->rigidBody->addCollider(this->shape, reactphysics3d::Transform::identity());
+}
+
 void PhysicsComponent::setLinearDampning(const float& factor)
 {
 	this->rigidBody->setLinearDamping(factor);

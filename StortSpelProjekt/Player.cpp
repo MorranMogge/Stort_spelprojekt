@@ -265,6 +265,7 @@ bool Player::pickupItem(Item* itemToPickup)
     if (Input::KeyPress(KeyCode::SPACE))
     {
 		this->getPhysComp()->setScale(DirectX::XMFLOAT3(rand()%5+1.f, rand() % 5+1.f, rand() % 5+1.f));
+		//this->getPhysComp()->setSphereShape(5.f);
         if (this->withinRadius(itemToPickup, 5))
         {
             addItem(itemToPickup);

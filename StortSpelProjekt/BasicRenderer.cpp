@@ -68,7 +68,7 @@ BasicRenderer::~BasicRenderer()
 {
 	rtv->Release();
 	dsView->Release();
-	dsView2->Release();	//Used for binding as render target
+	dsView2->Release();			//Used for binding as render target
 	dsTexture2->Release();		//	 ----------||------------
 	depthSrv->Release();
 	dsTexture->Release();

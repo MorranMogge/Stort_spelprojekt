@@ -128,6 +128,9 @@
     </ClCompile>
     <ClCompile Include="PlayerVectors.cpp" />
     <ClCompile Include="BaseballBat.cpp" />
+    <ClCompile Include="SpaceShip.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -375,6 +378,9 @@
     </ClInclude>
     <ClInclude Include="PlayerVectors.h" />
     <ClInclude Include="BaseballBat.h" />
+    <ClInclude Include="SpaceShip.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -462,8 +468,12 @@
     <FxCompile Include="AmbientPixelShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="plaverVectorPixel.hlsl" />
-    <FxCompile Include="playerVectorVertex.hlsl" />
+    <FxCompile Include="plaverVectorPixel.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="playerVectorVertex.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico">

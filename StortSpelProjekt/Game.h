@@ -1,6 +1,5 @@
 #pragma once
 #include "GameInclude.h"
-#include "SpaceShip.h"
 
 struct wirefameInfo
 {
@@ -57,7 +56,7 @@ private:
 	bool setUpWireframe();
 	void updateBuffers();
 	void handleKeybinds();
-	DirectX::SimpleMath::Vector3 orientToPlanet(DirectX::XMFLOAT3 position);
+	DirectX::SimpleMath::Vector3 orientToPlanet(const DirectX::XMFLOAT3 &position);
 
 
 public:

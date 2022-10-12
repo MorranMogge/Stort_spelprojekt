@@ -110,10 +110,12 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
         litResult.Specular += result.Specular * shadowFactor;
     }
     
-    //float fres = FresnelEffect(normal, viewDir, 5);
+    //float fres = FresnelEffect(normal, viewDir, 3);
+    //float3 frescolor = { 0 * fres, 0.75 * fres, 1 * fres };
+    
     //return float4(saturate(ambient + mat.diffuse.xyz * litResult.Diffuse/* + specular * (litResult.Specular/* * shadow*/) * diffuseColor/* + fres*/, 1.0f);
     
-    return float4((max(mat.ambient.xyz, 0.2f) + litResult.Specular) * diffuseColor + litResult.Diffuse, 1.0f);
+    return float4(((max(mat.ambient.xyz, 0.2f) /* + litResult.Specular*/) * diffuseColor + litResult.Diffuse)/* + frescolor*/, 1.0f);
     
     //return float4(saturate(ambient + mat.diffuse.xyz * litResult.Diffuse + specular * litResult.Specular) * diffuseColor, 1.0f);
 

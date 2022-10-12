@@ -1,6 +1,6 @@
 #pragma once
 #include<iostream>
-#include"PacketsDataTypes.h"
+#include"../Server/PacketsDataTypes.h"
 
 static const unsigned int SIZEOFBUFFER = 400;
 
@@ -36,4 +36,5 @@ public:
 
 	//returns if there are packets left to read 
 	bool getIfPacketsLeftToRead();
+
 };

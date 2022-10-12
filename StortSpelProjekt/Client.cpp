@@ -30,8 +30,6 @@ void clientFunction(void* param)
 {
 	ThreadInfo* data = (ThreadInfo*)param;
 
-	data->mp_Event.isActive = false;
-
 	std::string temp;
 	sf::Packet receivedPacket;
 	while (!data->endThread)
@@ -39,59 +37,55 @@ void clientFunction(void* param)
 		char receivedData[256];
 		std::size_t recvSize;
 		data->socket.receive(receivedData, 256, recvSize); //Receives the packet
-		int packetid = extractPacketId(receivedData);//extract the id of the packet
+		//int packetid = extractPacketId(receivedData);//extract the id of the packet
+		//
+		//void* dataStruct = extractData(receivedData, recvSize);
+		//testPosition *tst = nullptr;
+		//idProtocol* protocol = nullptr;
+
+		data->circularBuffer->addData(receivedData, recvSize);
+
+		//std::string receivedString;
+		////unsigned short packetId;
+		//int playerid;
+		//float x = 0.0f;
+		//float y = 0.0f;
+		//float z = 0.0f;
+
+		//switch (packetid)
+		//{
+		//default:
+		//	break;
+		//case 1:
+		//	break;
+		//case 2:
+		//	break;
+		//case 3:
+		//	
+
+		//	break;
+		//case 4:
+		//	tst = (testPosition*)dataStruct;
+
+		//	std::cout << "TCP received data from address: " << data->socket.getRemoteAddress().toString() << std::endl;
+		//	//receivedPacket >> packetId >> playerid >> data->mp_Event.pos[0] >> data->mp_Event.pos[1] >> data->mp_Event.pos[2];
+		//	std::cout << "data received from server: Packet id: " << std::to_string(packetid) <<
+		//		" x : " << std::to_string(tst->x) << " y: " << std::to_string(tst->y) <<
+		//		" z: " << std::to_string(tst->z) << std::endl;
+		//	//free(tst);
+		//	break;
+		//case 10://receiving id in player vector from server side
+		//	protocol = (idProtocol*)dataStruct;
+
+		//	std::cout << "received player id: " << std::to_string(protocol->assignedPlayerId) << std::endl;
+		//	//std::cout << "player id recv: " << std::to_string(data->playerId) << std::endl;
+		//	break;
 		
-		void* dataStruct = extractData(receivedData, recvSize);
-		testPosition *tst = nullptr;
-		idProtocol* protocol = nullptr;
-
-		std::string receivedString;
-		//unsigned short packetId;
-		int playerid;
-		float x = 0.0f;
-		float y = 0.0f;
-		float z = 0.0f;
-
-		switch (packetid)
-		{
-		default:
-			break;
-		case 1:
-			break;
-		case 2:
-			break;
-		case 3:
-			
-			data->mp_Event.isActive = true;
-			data->mp_Event.pos[0] = 0.0f;
-			data->mp_Event.pos[1] = 0.0f;
-			data->mp_Event.pos[2] = 0.0f;
-			
-
-			break;
-		case 4:
-			tst = (testPosition*)dataStruct;
-
-			std::cout << "TCP received data from address: " << data->socket.getRemoteAddress().toString() << std::endl;
-			//receivedPacket >> packetId >> playerid >> data->mp_Event.pos[0] >> data->mp_Event.pos[1] >> data->mp_Event.pos[2];
-			std::cout << "data received from server: Packet id: " << std::to_string(packetid) <<
-				" x : " << std::to_string(tst->x) << " y: " << std::to_string(tst->y) <<
-				" z: " << std::to_string(tst->z) << std::endl;
-			//free(tst);
-			break;
-		case 10://receiving id in player vector from server side
-			protocol = (idProtocol*)dataStruct;
-
-			std::cout << "received player id: " << std::to_string(protocol->assignedPlayerId) << std::endl;
-			//std::cout << "player id recv: " << std::to_string(data->playerId) << std::endl;
-			break;
-		}
 			
 		
 		receivedPacket.clear();
 	}
 }
-//tempPack << packId << playerName << x << y << z;
 
 Client::Client()
 {
@@ -118,6 +112,11 @@ Client::~Client()
 		clientThread->join();
 		delete clientThread;
 	}
+}
+
+void Client::initializeCircularBuffer(CircularBuffer*& circularBuffer)
+{
+	this->data.circularBuffer = circularBuffer;
 }
 
 void Client::connectToServer(std::string ipAddress, int port)
@@ -320,16 +319,6 @@ void Client::tempwrite()
 	std::cout << id << std::endl;
 }
 
-movePlayerEvent Client::getMovePlayerEvent() const
-{
-	return data.mp_Event;
-}
-
-bool Client::getChangePlayerPos() const
-{
-	return data.mp_Event.isActive;
-}
-
 int Client::getport() const
 {
 	return this->port;
@@ -343,9 +332,4 @@ int Client::getPlayerId() const
 std::string Client::getipAdress() const
 {
 	return this->ip;
-}
-
-void Client::setPlayerRecv(const bool value)
-{
-	this->data.mp_Event.isActive = value;
 }

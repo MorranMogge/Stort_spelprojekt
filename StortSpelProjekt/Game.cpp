@@ -52,6 +52,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	MaterialLibrary::LoadDefault();
 
 	this->client = client;
+	//måste raderas******************
+	circularBuffer = new CircularBuffer();
+	client->initializeCircularBuffer(circularBuffer);
 
 	this->imguiHelper = &imguiHelper;
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -86,6 +89,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 Game::~Game()
 {
+	//delete client;
 	wireBuffer->Release();
 	delete planet;
 }
@@ -123,6 +127,22 @@ GAMESTATE Game::Update()
 		client->sendToServerTEMPTCP(currentPlayer);
 		serverStart = std::chrono::system_clock::now();
 	}
+
+	//circbuffer tests
+	
+	std::string packetsLeft = "false";
+	if (circularBuffer->getIfPacketsLeftToRead())packetsLeft = "true";
+	//std::cout << "check if circbuffer have packets = " << packetsLeft << std::endl;
+
+	if (circularBuffer->getIfPacketsLeftToRead())
+	{
+		testPosition* tst = (testPosition*)circularBuffer->getData();
+		circularBuffer->advancePointer();
+
+		std::cout << "Checking return value from circular buffer testPosition.x: " << std::to_string(tst->x) << std::endl;
+	}
+	
+	//end of tests
 
 	potion.updateBuffer();
 	currentPlayer->updateBuffer();

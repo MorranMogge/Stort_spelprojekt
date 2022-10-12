@@ -9,6 +9,7 @@
 #include "player.h"
 #include "PacketsDataTypes.h"
 #include "Packethandler.h"
+#include "CircularBuffer.h"
 
 const short MAXNUMBEROFPLAYERS = 1;
 
@@ -272,16 +273,20 @@ float exfloatTest(char* pointerToData[], const std::size_t& recvSize)
 {
 	float position = -1.0;
 	//to move the pointer
-	int bytesToMove = sizeof(int) + sizeof(int);
+	int bytesToMove = sizeof(int) + sizeof(int) + sizeof(float);
 	char* test = pointerToData[0];
-	test += bytesToMove;
-
+	char init = ' ';
+	//test =  test +  bytesToMove;
+	test++;
+	test++;
+	test++;
+	test++;
 	
 	//void* vp = malloc(recvSize);
 	//memcpy(vp, pointerToData, recvSize);
 	//vp = (char*)vp + bytesToMove;
 
-	memcpy(&position, (pointerToData + 1), sizeof(float));
+	memcpy(&position, test, sizeof(int));
 	
 	//radera minnet 
 
@@ -306,45 +311,28 @@ void recvData(void* param, userData* user)//thread to recv data
 		}
 		else
 		{
-			//checks what id the packet is
-			//int packetId = extractPacketId(packet);
-			//std::cout << "thread from recvData got a packet from: " << user->tcpSocket.getRemoteAddress().toString() << ", Packet id: " << std::to_string(packetId) << std::endl;
-
-			////if id is 3, player sets position 
-			//if (packetId == 3)
-			//{
-			//	packet >> data->pos[0] >> data->pos[1] >> data->pos[2];
-			//	std::cout << "Position recv: " << std::to_string(data->pos[0]) << ", " << std::to_string(data->pos[1]) << ", " << std::to_string(data->pos[2]) << std::endl;
-			//}
-
-			//kopierar datan till en void pekare
-			void* dta = extractData(datapointer, recv);
-			memcpy(dta, datapointer, recv);
 			
-			//kopierar datan från den originala char arrayen som vi recv
-			char* charData[sizeof(testPosition)];
-			memcpy(charData, datapointer, sizeof(testPosition));
-
-			
-
-			//typercastar void pekaren till en struct för enklare användning
-			testPosition* tstPosition = (testPosition*)dta;
-
-			//typercastar char pekaren till en struct för enklare användning
-			testPosition* tst = (testPosition*)charData;
-
-			float packId = extractBinaryPacketId(charData);
-			float tstPos = exfloatTest(charData, recv);
+			//circBuffer.addData(datapointer, recv);
 			
 			//std::cout << "size_t: " << std::to_string(sizeof(testPosition)) << std::endl;
-			std::cout << "testing tstpos.x: " << std::to_string(tstPos) << std::endl;
-
-			data->pos[0] = tst->x;
-			data->pos[1] = tst->y;
-			data->pos[2] = tst->z;
+			//std::cout << "testing exfloatTest(): " << std::to_string(testc) << std::endl;
 			
 			//data->user->playa.setPosition(wow->x, wow->y, wow->z);
 
+			std::string packetsLeft = "false";
+			//if (circBuffer.getIfPacketsLeftToRead())packetsLeft = "true";
+
+
+
+			std::cout << "check if circbuffer have packets = " << packetsLeft << std::endl;
+			//testPosition* tst = (testPosition*)circBuffer.getData();
+			//circBuffer.advancePointer();
+
+			std::cout << "Checking return value from circular buffer testPosition.x: " << std::to_string(2) << std::endl;
+
+			//data->pos[0] = tst->x;
+			//data->pos[1] = tst->y;
+			//data->pos[2] = tst->z;
 		}
 		
 		//std::cout << "userName: " << data->user->userName << std::endl;

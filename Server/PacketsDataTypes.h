@@ -1,5 +1,6 @@
 #pragma once
 
+//enum = 4
 struct testPosition
 {
 	int packetId;
@@ -10,6 +11,7 @@ struct testPosition
 };
 
 //assign the player with an id that the server has created
+//enum = 10
 struct idProtocol
 {
 	int packetId;

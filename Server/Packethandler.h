@@ -2,9 +2,9 @@
 #include <iostream>
 
 //extracts the data thats been received
-void* extractData(const char data[], const std::size_t& recvSize)
+void allocateDataForPackets(const char data[], void*& dataPointer, const std::size_t& recvSize)
 {
-	void* d = malloc(recvSize);
-	memcpy(d, data, recvSize);
-	return d;
+	dataPointer = malloc(recvSize);
+	memcpy(dataPointer, data, recvSize);
 }
+

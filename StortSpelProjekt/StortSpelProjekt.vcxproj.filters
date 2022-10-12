@@ -114,6 +114,7 @@
       <Filter>MouseClass</Filter>
     </ClCompile>
     <ClCompile Include="ClientHandler.cpp" />
+    <ClCompile Include="CircularBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -352,6 +353,9 @@
       <Filter>User</Filter>
     </ClInclude>
     <ClInclude Include="..\Server\PacketsDataTypes.h" />
+    <ClInclude Include="PacketEnum.h" />
+    <ClInclude Include="packetEvent.h" />
+    <ClInclude Include="CircularBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

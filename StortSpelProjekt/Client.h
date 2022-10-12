@@ -6,21 +6,20 @@
 
 #include "Player.h"
 #include "../Server/PacketsDataTypes.h"
-
-struct movePlayerEvent
-{
-	float pos[3];
-	int affectedPlayerId;
-	bool isActive;
-};
+#include "CircularBuffer.h"
 
 struct ThreadInfo
 {
 	sf::TcpSocket socket;
 	std::string receivedstring;
 	int playerId;
-	movePlayerEvent mp_Event;
+	CircularBuffer* circularBuffer;
 	bool endThread = false;
+	ThreadInfo(const CircularBuffer*& circBuffer)
+	{
+		circularBuffer = circularBuffer;
+	}
+	ThreadInfo(){}
 };
 
 class Client
@@ -51,6 +50,9 @@ public:
 	Client();
 	Client(std::string ipAddress, int port = 2001);
 	~Client();
+
+	void initializeCircularBuffer(CircularBuffer*& circularBuffer);
+
 	void connectToServer(std::string ipAddress, int port);
 	void connectToServer();
 	void joinThread();
@@ -74,10 +76,8 @@ public:
 	void saveMsg(std::string text);
 	void tempwrite();
 
-	//returns move player struct
-	movePlayerEvent getMovePlayerEvent()const;
-
 	//returns if a player position has been received
+	bool getIfConnected();
 	bool getChangePlayerPos()const;
 	int getport()const;
 	int getPlayerId()const;

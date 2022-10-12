@@ -18,6 +18,7 @@
 #include "LightHandler.h"
 #include "Potion.h"
 #include "Client.h"
+#include "CircularBuffer.h"
 
 struct wirefameInfo
 {
@@ -58,6 +59,10 @@ private:
 
 	Player* currentPlayer;
 	std::vector<Player*> players;
+
+	//variables to handle packets
+	CircularBuffer* circularBuffer;
+
 
 	Camera camera;
 	GameObject* planet;

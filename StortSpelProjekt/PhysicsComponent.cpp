@@ -105,6 +105,11 @@ void PhysicsComponent::setMass(const float& mass)
 	this->rigidBody->setMass(mass);
 }
 
+void PhysicsComponent::setScale(const float& scale)
+{
+	return;
+}
+
 void PhysicsComponent::setScale(const DirectX::XMFLOAT3& scale)
 {
 	reactphysics3d::CollisionShapeName shapeType = this->shape->getName();

@@ -273,7 +273,7 @@ void PhysicsWorld::addBoxToWorld(DirectX::XMFLOAT3 dimensions, float mass, Direc
 	physObjects.emplace_back(new PhysicsComponent());
 	physObjects[vectorSize]->initiateComponent(&this->com, this->world);
 	physObjects[vectorSize]->setPosition(reactphysics3d::Vector3(position.x, position.y, position.z));
-	physObjects[vectorSize]->setLinearDampning(0.3f);
+	physObjects[vectorSize]->setLinearDampning(1.3f);
 	//UPDATE THE VERTEX BUFFER TO BE ABLE TO DRAW THE NEW PHYSOBJECTS
 	this->recreateVertexBuffer();
 }

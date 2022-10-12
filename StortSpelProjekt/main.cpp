@@ -15,6 +15,9 @@
 #include "GuiHandler.h"
 #include "ImGuiHelper.h"
 
+#include "SettingsMenu.h"
+#include "CreditsMenu.h"
+
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace, _In_ LPWSTR lpCmdLine, _In_ int nCmdShhow)
 {
@@ -55,10 +58,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX11_Init(device, immediateContext);
-	MouseClass mouse;
-	SetUpMouse(mouse);
 
-	State* currentState = new Game(immediateContext, device, swapChain, mouse, window);
+	//State* currentState = new Game(immediateContext, device, swapChain, mouse, window);
+	State* currentState = new Menu();
 	GAMESTATE stateInfo = NOCHANGE;
 
 	MSG msg = {};
@@ -92,7 +94,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			{
 			case GAME:
 				delete currentState;
-				currentState = new Game(immediateContext, device, swapChain, mouse, window);
+				currentState = new Game(immediateContext, device, swapChain, window);
+				break;
+			case SETTINGS:
+				delete currentState;
+				currentState = new SettingsMenu();
+				break;
+			case CREDITS:
+				delete currentState;
+				currentState = new CreditsMenu();
 				break;
 			case MENU:
 				delete currentState;

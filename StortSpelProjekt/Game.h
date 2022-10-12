@@ -1,24 +1,4 @@
 #pragma once
-#include "PhysicsWorld.h"
-#include "State.h"
-#include "BasicRenderer.h"
-#include "Mesh.h"
-#include "Input.h"
-#include "MouseClass.h"
-#include "GravityField.h"
-#include <chrono>
-#include "ShaderLoader.h"
-#include "ImGuiHelper.h"
-#include "Player.h"
-#include "Camera.h"
-#include "LightHandler.h"
-#include "Light.h"
-#include "StructuredBuffer.h"
-#include "BufferTypes.h"
-#include "LightHandler.h"
-#include "ParticleEmitter.h"
-#include "Potion.h"
-#include "SkyboxObj.h"
 #include "GameInclude.h"
 #include "SpaceShip.h"
 
@@ -59,9 +39,10 @@ private:
 	GameObject* testCube;
 	SpaceShip* spaceShip;
 	Potion* potion;			//not in use
-
+	BaseballBat* testBat;
 
 	LightHandler ltHandler;
+	PlayerVectors playerVecRenderer;
 
 	//Objects
 	std::vector<GameObject*> gameObjects;
@@ -79,12 +60,8 @@ private:
 	DirectX::SimpleMath::Vector3 orientToPlanet(DirectX::XMFLOAT3 position);
 
 
-	//Variables for the mouse movement
-	MouseClass* mouse;
-	HWND* window;
-
 public:
-	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window);
+	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window);
 	virtual ~Game() override;
 
 	// Inherited via State

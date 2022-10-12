@@ -6,8 +6,8 @@ bool BasicRenderer::setUpInputLayout(ID3D11Device* device, const std::string& vS
 	D3D11_INPUT_ELEMENT_DESC inputDesc[3] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	HRESULT hr = device->CreateInputLayout(inputDesc, (UINT)std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &inputLayout);
@@ -124,6 +124,25 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadPixelShader(device, ps_Skybox, "Skybox_PS"))									return false;
 	SetViewport(viewport, WIDTH, HEIGHT);
 	return true;
+}
+
+void BasicRenderer::setUpScene()
+{
+	immediateContext->ClearRenderTargetView(rtv, clearColour);
+	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+
+	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	immediateContext->IASetInputLayout(inputLayout);
+	immediateContext->VSSetShader(vShader, nullptr, 0);
+	immediateContext->RSSetViewports(1, &viewport);
+	immediateContext->PSSetShader(pShader, nullptr, 0);
+	immediateContext->PSSetSamplers(0, 1, &sampler);
+
+	//Unbind shadowmap & structuredBuffer srv
+	ID3D11ShaderResourceView* nullRsv{ nullptr };
+	immediateContext->PSSetShaderResources(3, 1, &nullRsv);
+	immediateContext->PSSetShaderResources(4, 1, &nullRsv);
 }
 
 void BasicRenderer::setUpScene(Camera& stageCamera)

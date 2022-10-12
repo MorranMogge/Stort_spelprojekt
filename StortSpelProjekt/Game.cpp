@@ -10,19 +10,25 @@ void Game::loadObjects()
 	planet = new GameObject("../Meshes/Planet", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
 	player = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
 	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
-	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 	spaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 1, DirectX::SimpleMath::Vector3(2, 2, 2));
-
+	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
+	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
+	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
+	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
+
 	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
-	testCube->getPhysComp()->setParent(testCube);
+	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
+	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
 
 	gameObjects.emplace_back(player);
 	gameObjects.emplace_back(planet);
 	gameObjects.emplace_back(potion);
 	gameObjects.emplace_back(testCube);
 	gameObjects.emplace_back(spaceShip);
+	gameObjects.emplace_back(testBat);
+
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -34,7 +40,10 @@ void Game::loadObjects()
 
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
-	
+	testBat->setPlayer(player);
+	testBat->setTestObj(gameObjects);
+	player->setPhysComp(physWolrd.getPlayerBox());
+
 }
 
 void Game::drawShadows()
@@ -112,7 +121,7 @@ void Game::updateBuffers()
 
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		gameObjects.at(i)->updateBuffer();
+		gameObjects[i]->updateBuffer();
 	}
 
 	//Update Wireframe buffer
@@ -153,6 +162,7 @@ void Game::handleKeybinds()
 	}
 }
 
+
 DirectX::SimpleMath::Vector3 Game::orientToPlanet(DirectX::XMFLOAT3 position)
 {
 	using namespace DirectX;
@@ -178,22 +188,8 @@ DirectX::SimpleMath::Vector3 Game::orientToPlanet(DirectX::XMFLOAT3 position)
 	XMFLOAT3 dotValue;
 	XMFLOAT3 dotValue2;
 
-	/*	DirectX::SimpleMath::Vector3 downVector = planetGravityField.calcGravFactor(DirectX::SimpleMath::Vector3(10, 20, 10));
-	downVector *= -1;
-	downVector.Normalize();
 
-	float angle = std::atan2(downVector.y, downVector.x);
-	DirectX::SimpleMath::Matrix glmrotXY = DirectX::SimpleMath::Matrix::CreateRotationZ(angle);
-
-	float angleZ = -std::asin(downVector.z);
-	DirectX::SimpleMath::Matrix glmrotZ = DirectX::SimpleMath::Matrix::CreateRotationY(angleZ);
-
-	DirectX::SimpleMath::Matrix rotation = glmrotXY* glmrotZ;
-	DirectX::SimpleMath::Quaternion qua = DirectX::SimpleMath::Quaternion::CreateFromRotationMatrix(rotation);
-	DirectX::SimpleMath::Vector3 rot = qua.ToEuler();*/
-
-	//X rotation
-
+	//rotation
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
 	rightVector = DirectX::XMVector3Normalize(rightVector);
@@ -214,78 +210,7 @@ DirectX::SimpleMath::Vector3 Game::orientToPlanet(DirectX::XMFLOAT3 position)
 }
 
 
-/*DirectX::SimpleMath::Vector3 Game::orientToPlanet(DirectX::XMFLOAT3 position)
-{
-	using namespace DirectX;
-	DirectX::SimpleMath::Vector3 downVector = planetGravityField.calcGravFactor(position);
-	downVector *= -1;
-	downVector.Normalize();
-
-	XMMATRIX rotation = XMMatrixIdentity();
-
-
-	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-
-	
-	DirectX::XMVECTOR upVector = downVector;
-	DirectX::XMVECTOR forwardVector = DEFAULT_FORWARD;
-	DirectX::XMVECTOR rightVector = DEFAULT_RIGHT;
-	
-	bool rotationDone = false;
-
-	XMVECTOR dotProduct;
-	XMFLOAT3 dotValue;
-	XMFLOAT3 dotValue2;
-
-
-
-	//X rotation
-while (!rotationDone)
-{
-	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-	rightVector = DirectX::XMVector3Normalize(rightVector);
-	forwardVector = DirectX::XMVector3Normalize(forwardVector);
-
-	dotProduct = DirectX::XMVector3Dot(upVector, forwardVector);
-	XMStoreFloat3(&dotValue, dotProduct);
-
-	if (dotValue.x < -0.1f)
-	{
-		rotation *= DirectX::XMMatrixRotationAxis(rightVector, -0.1f);
-	}
-	else if (dotValue.x > 0.1f)
-	{
-		rotation *= DirectX::XMMatrixRotationAxis(rightVector, 0.1f);
-	}
-
-	dotProduct = DirectX::XMVector3Dot(upVector, rightVector);
-	XMStoreFloat3(&dotValue2, dotProduct);
-	if (dotValue2.z < -0.1f)
-	{
-		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, 0.1f);
-	}
-	else if (dotValue2.z > 0.1f)
-	{
-		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -0.1f);
-	}
-
-	if ((dotValue.x >= -0.1f && dotValue.x <= 0.1f) && (dotValue2.x >= -0.1f && dotValue2.x <= 0.1f))
-	{
-		rotationDone = true;
-	}
-}
-
-DirectX::SimpleMath::Quaternion test = DirectX::SimpleMath::Quaternion::CreateFromRotationMatrix(rotation);
-DirectX::SimpleMath::Vector3 finalRotation = test.ToEuler();
-
-return finalRotation;
-}*/
-
-
-Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
+Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
 	MaterialLibrary::LoadDefault();
@@ -293,15 +218,12 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
 	this->setUpWireframe();
-	//camera.updateCamera(immediateContext);
 	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
 	ltHandler.addLight(DirectX::XMFLOAT3(20, 30, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
 	ltHandler.addLight(DirectX::XMFLOAT3(10, -20, 30), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
 
-
-	this->mouse = &mouse;
-	this->window = &window;
+	playerVecRenderer.setPlayer(player);
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 }
@@ -322,28 +244,31 @@ Game::~Game()
 
 GAMESTATE Game::Update()
 {
-	mouse->handleEvents(this->window, camera);
-
 	//Do we want this?
 	grav = planetGravityField.calcGravFactor(player->getPosV3());
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(player->getPos()));
-	player->move(grav, camera.getRightVec(), dt);
-	
+
 	//Keeps player at the surface of the planet
 	if (getLength(player->getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(player->getPos()); player->setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
 	player->movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
 	
 	//Player functions
+	player->pickupItem(testBat);
 	player->pickupItem(potion);
 	player->update();
-	
-	camera.moveCamera(player->getPosV3(), dt);
 	
 	physWolrd.updatePlayerBox(player->getPos());
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
 	potion->update(); //getPhysComp()->updateParent();
 	testCube->update();//getPhysComp()->updateParent();
+	testBat->update();
+	for (int i = 5; i < gameObjects.size(); i++)
+	{
+		gameObjects[i]->update();//->getPhysComp()->updateParent();
+	}
+	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
+	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
 
 	//Here you can write client-server related functions?
 	
@@ -354,8 +279,6 @@ GAMESTATE Game::Update()
 	
 	if (player->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
 	
-	mouse->clearEvents();
-
 	//Debug keybinds
 	this->handleKeybinds();
 	return NOCHANGE;
@@ -376,17 +299,13 @@ void Game::Render()
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
 
-
 	//Render Skybox
 	basicRenderer.skyboxPrePass();
 	this->skybox.draw();
 	basicRenderer.depthUnbind();
 
-
-	//Render Imgui & wireframe
 	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
-	if (wireframe) { immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
-
+	if (wireframe) { immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); playerVecRenderer.drawLines(); }
 
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);

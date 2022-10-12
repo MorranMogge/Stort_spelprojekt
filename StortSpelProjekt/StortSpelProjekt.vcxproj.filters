@@ -116,11 +116,18 @@
     <ClCompile Include="ParticleEmitter.cpp">
       <Filter>Particles</Filter>
     </ClCompile>
+    <ClCompile Include="CreditsMenu.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsMenu.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="SkyboxObj.cpp">
       <Filter>Skybox</Filter>
     </ClCompile>
-    <ClCompile Include="SpaceShip.cpp" />
+    <ClCompile Include="PlayerVectors.cpp" />
+    <ClCompile Include="BaseballBat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -356,11 +363,18 @@
       <Filter>Particles</Filter>
     </ClInclude>
     <ClInclude Include="GameInclude.h" />
+    <ClInclude Include="CreditsMenu.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsMenu.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SkyboxObj.h">
       <Filter>Skybox</Filter>
     </ClInclude>
-    <ClInclude Include="SpaceShip.h" />
+    <ClInclude Include="PlayerVectors.h" />
+    <ClInclude Include="BaseballBat.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -448,6 +462,8 @@
     <FxCompile Include="AmbientPixelShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="plaverVectorPixel.hlsl" />
+    <FxCompile Include="playerVectorVertex.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico">

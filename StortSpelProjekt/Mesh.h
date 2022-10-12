@@ -34,7 +34,7 @@ public:
 	std::vector<std::string> matKey;
 
 	DirectX::SimpleMath::Vector3 position;
-	DirectX::SimpleMath::Vector3 rotation;
+	DirectX::XMMATRIX rotation = DirectX::XMMatrixIdentity();
 	DirectX::SimpleMath::Vector3 scale{ 1.0f, 1.0f, 1.0f };
 
 	Bound bound;
@@ -224,8 +224,8 @@ public:
 		//		0, 0, 1, position.z,
 		//		0, 0, 0, 1
 		//	};
-		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * (XMMatrixRotationZ(this->rotation.z) *  XMMatrixRotationX(this->rotation.x)) * XMMatrixRotationY(this->rotation.y) * XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
 
+		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * this->rotation * XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
 		worldCB.Update(&worldS, sizeof(MatrixS));
 
 		static VectorS positionS;
@@ -248,5 +248,4 @@ public:
 		bound.aabb.Center = bound.center + position;
 		bound.aabb.Extents = bound.width;
 	}
-
 };

@@ -31,6 +31,8 @@ private:
 	reactphysics3d::RigidBody* playerRigidBody;
 	reactphysics3d::RigidBody* planetRigidBody;
 
+	PhysicsComponent* playerBox;
+
 	std::vector<Vertex> triangles;
 
 	ID3D11Buffer* debuggerBuffer;
@@ -52,8 +54,9 @@ public:
 	void update(float dt);
 	void renderReact3D();
 	void addForceToObjects();
-	DirectX::SimpleMath::Vector3 getPos();
-	DirectX::SimpleMath::Vector3 getRot();
+	DirectX::SimpleMath::Vector3 getPos() const;
+	DirectX::SimpleMath::Vector3 getRot() const;
+	PhysicsComponent* getPlayerBox()const;
 	void updatePlayerBox(const DirectX::SimpleMath::Vector3& pos);
 	void addBoxToWorld(DirectX::XMFLOAT3 dimensions = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f), float mass = 1.0f,  DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10, 00));
 	void addSphereToWorld(float radius = 0.5f, DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 0, 0));

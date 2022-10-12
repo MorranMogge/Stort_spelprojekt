@@ -15,10 +15,13 @@
 #include "BasicRenderer.h"
 #include "LightHandler.h"
 #include "ParticleEmitter.h"
+#include "SkyboxObj.h"
+#include "PlayerVectors.h"
 
 //GameObjects
 #include "Player.h"
 #include "Potion.h"
+#include "BaseballBat.h"
 
 //User
 #include "Input.h"

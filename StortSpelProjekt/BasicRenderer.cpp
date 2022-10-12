@@ -168,6 +168,7 @@ void BasicRenderer::depthUnbind()
 	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
 	immediateContext->PSSetShader(pShader, nullptr, 0);
+	immediateContext->IASetInputLayout(inputLayout);
 }
 
 void BasicRenderer::skyboxPrePass()

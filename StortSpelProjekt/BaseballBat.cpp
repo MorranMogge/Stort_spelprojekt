@@ -37,16 +37,18 @@ void BaseballBat::useItem()
 	for (int i = 2; i < objects.size(); i++)
 	{
 		physComp = objects[i]->getPhysComp();
-		//if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue; This can be used to check whether it's a player or planet
 
 		collided = playerComp->testBodiesOverlap(physComp);
 		std::cout << "Result for id: " << i << ": " << collided << "\n";
+		Player* otherPlayer = dynamic_cast<Player*>(physComp->getParent()); //If we add a function "isPlayer()" in GameObject we do not have to type cast
+		if (otherPlayer != nullptr) std::cout << "You hit another Player!!!\n";
 		if (collided)
 		{
 			physComp->setType(reactphysics3d::BodyType::DYNAMIC);
 			//Calculate the force vector
 			force = playerComp->getMass() * FORCECONSTANT;
-			batPos = this->player->getForwardVec() * 10 + this->player->getUpVec();
+			batPos = objects[i]->getPosV3() - this->player->getPosV3();
+			batPos += this->player->getUpVec();
 			newNormalizeXMFLOAT3(batPos);
 			scalarMultiplicationXMFLOAT3(force, batPos);
 

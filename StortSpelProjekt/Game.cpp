@@ -205,8 +205,8 @@ GAMESTATE Game::Update()
 	player->movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
 	
 	//Player functions
-	player->pickupItem(testBat);
 	player->pickupItem(potion);
+	player->pickupItem(testBat);
 	player->update();
 	
 	physWolrd.updatePlayerBox(player->getPos());

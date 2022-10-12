@@ -262,17 +262,17 @@ bool Player::pickupItem(Item* itemToPickup)
 {
     bool successfulPickup = false;
 
-    if (Input::KeyPress(KeyCode::SPACE))
+    if (Input::KeyDown(KeyCode::SPACE))
     {
-		this->getPhysComp()->setScale(DirectX::XMFLOAT3(rand()%5+1.f, rand() % 5+1.f, rand() % 5+1.f));
+		//this->getPhysComp()->setScale(DirectX::XMFLOAT3(rand()%5+1.f, rand() % 5+1.f, rand() % 5+1.f));
 		//this->getPhysComp()->setSphereShape(5.f);
         if (this->withinRadius(itemToPickup, 5))
         {
             addItem(itemToPickup);
             
-            //Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
-            //if (tmp)
-            //    tmp->setPlayerptr(this);
+            Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
+            if (tmp)
+                tmp->setPlayerptr(this);
             //else
             //{
             //    BaseballBat* bat = dynamic_cast<BaseballBat*>(itemToPickup);
@@ -366,8 +366,8 @@ void Player::update()
         {
             itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
             holdingItem->useItem();
-            repairCount++;
-            std::cout << "Progress " << repairCount << "/4\n";
+            //repairCount++;
+            //std::cout << "Progress " << repairCount << "/4\n";
             itemPhysComp->setIsAllowedToSleep(true);
             itemPhysComp->setIsSleeping(true);
             holdingItem = nullptr;

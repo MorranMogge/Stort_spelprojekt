@@ -301,6 +301,11 @@ void PhysicsComponent::setParent(GameObject* parent)
 	this->parent = parent;
 }
 
+GameObject* PhysicsComponent::getParent() const
+{
+	return this->parent;
+}
+
 void PhysicsComponent::resetPhysicsObject()
 {
 	this->deallocate();	//After this we can re-define a new physics component

@@ -38,14 +38,6 @@ cbuffer numLightBuffer : register(b2)
 
 float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : UV, float4 worldPosition : WorldPosition, float3 localPosition : LocalPosition) : SV_TARGET
 {
-    
-    if (screenDepth.Sample(samplerState, uv).r == 1.0f)
-    {
-        float3 reflectVector = normalize(cameraPosition.xyz - localPosition);
-        reflectVector = reflect(reflectVector, normal);
-        return texCube.Sample(samplerState, reflectVector);
-    }
-    
     float3 ambient = ambientTex.Sample(samplerState, uv).xyz * mat.ambient.xyz;
     float3 diffuseColor = diffuseTex.Sample(samplerState, uv).xyz;
     float3 specular = specularTex.Sample(samplerState, uv).xyz * mat.specular;
@@ -57,17 +49,7 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
     LightResult litResult = { { 0, 0, 0 }, { 0, 0, 0 } };
     for (int i = 0; i < nrOfLights; ++i)
     {
-        //if (!lights[i].enabled)
-        //    continue;
-        
         float4 lightWorldPosition = mul(worldPosition, lights[i].view);
-        
-        //shadow += ShadowIntensity(lightWorldPosition, lights[i], lightDirection, worldPosition.xyz, normal, i, shadowMaps, samplerState);
-        //float shadowIntensity = ShadowIntensity(lightWorldPosition, lights[i], lightDirection, worldPosition.xyz, normal, i, shadowStrenth, shadowMaps, samplerState);
-        //float shadowIntensity = ShadowIntensity(lightWorldPosition, lights[i], lightDirection, worldPosition.xyz, normal, i, shadowStrenth, shadowMaps, samplerState);
-        //shadow += ShadowIntensity(lightWorldPosition, lights[i], lightDirection, worldPosition.xyz, normal, i, shadowStrenth, shadowMaps, samplerState);
-        //float shadowIntensity = ShadowIntensity2(lightWorldPosition, lights[i], lightDirection, worldPosition.xyz, normal, i, shadowMaps, samplerState);
-        //float shadowFactor = ShadowFactor(lightWorldPosition, i, normal, lightDirection, shadowMaps, samplerState);
         
         #define POINT_LIGHT 0
         #define DIRECTIONAL_LIGHT 1
@@ -109,8 +91,6 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
     //return float4(saturate(ambient + mat.diffuse.xyz * litResult.Diffuse/* + specular * (litResult.Specular/* * shadow*/) * diffuseColor/* + fres*/, 1.0f);
     
     return float4(((max(mat.ambient.xyz, 0.2f) /* + litResult.Specular*/) * diffuseColor + litResult.Diffuse)/* + frescolor*/, 1.0f);
-    
-    //return float4(saturate(ambient + mat.diffuse.xyz * litResult.Diffuse + specular * litResult.Specular) * diffuseColor, 1.0f);
 
 }
 

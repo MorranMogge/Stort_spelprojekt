@@ -185,21 +185,21 @@ float FindBlocker(float2 uv, float4 Lpos, float searchWidth, float numSamples, T
 {
     float stepSize = 2.0 * searchWidth / numSamples;
 	// Starting point uv coords for search
-    uv = uv - float2(searchWidth, searchWidth);
+    uv -= searchWidth;
     float blockerSum = 0.0;
     float blockerCount = 0.0;
     float receiver = Lpos.z;
     // iterate through search region and add up depth values
-    for (float i = 0.0; i < numSamples; i += 1.0) // FIXME
+    for (int i = 0; i < numSamples; i++)
     {
-        for (float j = 0.0; j < numSamples; j += 1.0) // FIXME
+        for (int j = 0; j < numSamples; j++)
         {
             float shadMapDepth = shadowMap.SampleLevel(shadowMapSampler, float3(uv + float2(i * stepSize, j * stepSize), index), Lpos.z).r;
             
             if (shadMapDepth < receiver)
             {
                 blockerSum += shadMapDepth;
-                blockerCount += 1.0;
+                blockerCount++;
             }
         }
     }

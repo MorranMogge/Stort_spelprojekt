@@ -57,9 +57,9 @@ void Player::move(const DirectX::XMFLOAT3& grav, const DirectX::XMVECTOR& camera
     //Variables
     float rotationConstant = 0;
     
-    playerUpVec = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);
-    playerForwardVec = DirectX::XMVector3Cross(cameraRight, playerUpVec);
-    playerRightVec = DirectX::XMVector3Cross(playerUpVec, playerForwardVec);
+    playerUpVec = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);//inv down
+    playerForwardVec = DirectX::XMVector3Cross(cameraRight, playerUpVec);// z orien
+    playerRightVec = DirectX::XMVector3Cross(playerUpVec, playerForwardVec);//x orien 
 
     if (Input::KeyDown(KeyCode::W))
     {

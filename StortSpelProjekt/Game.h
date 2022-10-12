@@ -76,6 +76,7 @@ private:
 	bool setUpWireframe();
 	void updateBuffers();
 	void handleKeybinds();
+	DirectX::SimpleMath::Vector3 orientToPlanet(DirectX::XMFLOAT3 position);
 
 
 	//Variables for the mouse movement

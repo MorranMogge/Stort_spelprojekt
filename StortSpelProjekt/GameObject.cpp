@@ -40,6 +40,8 @@ GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos
 	// set scale
 	this->mesh->scale = scale;
 	this->scale = scale;
+
+	this->mesh->UpdateCB();
 }
 
 GameObject::GameObject()

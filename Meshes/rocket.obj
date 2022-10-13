@@ -1,6 +1,6 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib spaceship.mtl
+mtllib rocket.mtl
 g default
 v -0.107476 1.404455 0.107476
 v -0.035825 1.404455 0.107480

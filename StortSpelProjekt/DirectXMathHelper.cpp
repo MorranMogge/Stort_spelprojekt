@@ -35,7 +35,7 @@ void newNormalizeXMFLOAT3(DirectX::XMFLOAT3& argOne)
     float y = argOne.y;
     float z = argOne.z;
     float length = sqrt(x * x + y * y + z * z);
-    float factor = 1 / length;
+    float factor = 1.f / length;
     argOne.x *= factor;
     argOne.y *= factor;
     argOne.z *= factor;

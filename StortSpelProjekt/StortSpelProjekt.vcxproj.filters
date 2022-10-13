@@ -128,6 +128,7 @@
     </ClCompile>
     <ClCompile Include="PlayerVectors.cpp" />
     <ClCompile Include="BaseballBat.cpp" />
+    <ClCompile Include="Component.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -375,6 +376,7 @@
     </ClInclude>
     <ClInclude Include="PlayerVectors.h" />
     <ClInclude Include="BaseballBat.h" />
+    <ClInclude Include="Component.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

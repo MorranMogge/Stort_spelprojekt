@@ -70,6 +70,7 @@ public:
 	reactphysics3d::Quaternion getRotation()const;
 	reactphysics3d::CollisionShapeName getTypeName()const;
 	reactphysics3d::Collider* getCollider()const;
+	reactphysics3d::RigidBody* getRigidBody()const;
 	DirectX::SimpleMath::Vector3 getPosV3()const;
 
 	bool testPointInside(const reactphysics3d::Vector3& point)const;	//Can be used instead of "testBodiesOverlap()", check point instead of AABB

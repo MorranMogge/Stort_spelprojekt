@@ -265,6 +265,11 @@ reactphysics3d::Collider* PhysicsComponent::getCollider() const
 	return this->collider;
 }
 
+reactphysics3d::RigidBody* PhysicsComponent::getRigidBody() const
+{
+	return this->rigidBody;
+}
+
 DirectX::SimpleMath::Vector3 PhysicsComponent::getPosV3() const
 {
 	reactphysics3d::Vector3 temp = this->getPosition();

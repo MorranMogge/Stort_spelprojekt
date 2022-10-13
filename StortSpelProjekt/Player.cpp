@@ -4,6 +4,7 @@
 #include "DirectXMathHelper.h"
 #include "Potion.h"
 #include "BaseballBat.h"
+#include "Component.h"
 using namespace DirectX;
 
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
@@ -264,8 +265,6 @@ bool Player::pickupItem(Item* itemToPickup)
 
     if (Input::KeyDown(KeyCode::SPACE))
     {
-		//this->getPhysComp()->setScale(DirectX::XMFLOAT3(rand()%5+1.f, rand() % 5+1.f, rand() % 5+1.f));
-		//this->getPhysComp()->setSphereShape(5.f);
         if (this->withinRadius(itemToPickup, 5))
         {
             addItem(itemToPickup);
@@ -273,14 +272,12 @@ bool Player::pickupItem(Item* itemToPickup)
             Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
             if (tmp)
                 tmp->setPlayerptr(this);
-            //else
-            //{
-            //    BaseballBat* bat = dynamic_cast<BaseballBat*>(itemToPickup);
-            //   /* if (bat)
-            //        bat->setPlayerptr(this);*/
-            //}
-            successfulPickup = true;
+
+			successfulPickup = true;
+			holdingItem->getPhysComp()->getRigidBody()->resetForce();
+			holdingItem->getPhysComp()->getRigidBody()->resetTorque();
             holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::KINEMATIC);
+
         }
     }
     
@@ -347,7 +344,7 @@ void Player::update()
         if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
         {
             //Set dynamic so it can be affected by forces
-            itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+	        itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 
             //Calculate the force vector
             DirectX::XMFLOAT3 temp;

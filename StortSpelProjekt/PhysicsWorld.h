@@ -8,6 +8,7 @@ class GameObject;
 class PhysicsWorld
 {
 private:
+	int testingWarnings;
 	UINT stride;
 	UINT offset;
 	reactphysics3d::uint64 nrOfTriangles;
@@ -17,7 +18,7 @@ private:
 	reactphysics3d::Vector3 temp;
 
 	std::vector<PhysicsComponent *> physObjects;
-
+		
 	reactphysics3d::PhysicsCommon com;
 	reactphysics3d::PhysicsWorld* world;
 

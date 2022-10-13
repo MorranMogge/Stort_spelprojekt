@@ -9,28 +9,27 @@ void Game::loadObjects()
 	//Here we can add base object we want in the beginning of the game
 	planet = new GameObject("../Meshes/Planet", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
 	player = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
+	otherPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
 	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
 	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
 	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 
-	//physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::BOX);
-	//planet->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
-
-	//skybox = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(-200.0f, 200.0f, 200.0f));
-
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
+	physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
 
 	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
+	otherPlayer->getPhysComp()->setPosition(reactphysics3d::Vector3(otherPlayer->getPosV3().x, otherPlayer->getPosV3().y, otherPlayer->getPosV3().z));
 
-	gameObjects.emplace_back(player);
 	gameObjects.emplace_back(planet);
+	gameObjects.emplace_back(player);
 	gameObjects.emplace_back(potion);
 	gameObjects.emplace_back(testCube);
 	gameObjects.emplace_back(testBat);
+	gameObjects.emplace_back(otherPlayer);
 
 
 	for (int i = 0; i < 10; i++)
@@ -205,17 +204,14 @@ GAMESTATE Game::Update()
 	player->movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
 	
 	//Player functions
-	player->pickupItem(testBat);
 	player->pickupItem(potion);
-	player->update();
+	player->pickupItem(testBat);
 	
 	physWolrd.updatePlayerBox(player->getPos());
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
-	potion->update(); //getPhysComp()->updateParent();
-	testCube->update();//getPhysComp()->updateParent();
-	testBat->update();
-	for (int i = 5; i < gameObjects.size(); i++)
+
+	for (int i = 1; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->update();//->getPhysComp()->updateParent();
 	}

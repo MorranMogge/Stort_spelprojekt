@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include "Vertex.h"
 
 class GameObject;
 
@@ -14,7 +15,6 @@ private:
 	reactphysics3d::CollisionShape* shape;	//Can be capsule, box, sphere and other shapes
 	reactphysics3d::RigidBody* rigidBody;	//Used to give body correct physics calculations
 	reactphysics3d::Collider* collider;		//Used to make collisions happen
-	reactphysics3d::CollisionBody* collisionBody; //Used for collision checks
 
 	void createRigidBody(const reactphysics3d::Transform& transform = reactphysics3d::Transform::identity());
 	void setShape(const reactphysics3d::CollisionShapeName& shapeType = reactphysics3d::CollisionShapeName::BOX);
@@ -26,11 +26,29 @@ public:
 	~PhysicsComponent();
 	
 	//Important to do this function first, since it allows us to access the common and world
+
+	//Initialises the variables: rigidbody, shape and collider
 	void initiateComponent(reactphysics3d::PhysicsCommon* com, reactphysics3d::PhysicsWorld* world, const reactphysics3d::CollisionShapeName& shape = reactphysics3d::CollisionShapeName::BOX);
 
 	//Change properties of the physics component
+
+	//Set the Physcics Type of the component
 	void setType(const reactphysics3d::BodyType& physicsType = reactphysics3d::BodyType::DYNAMIC);
+	//Set the mass of the component
 	void setMass(const float& mass = 1.0f);
+	//Set the scale of the Sphere
+	void setScale(const float& scale = 0.5f);
+	//Set the scale of the Box
+	void setScale(const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1.f,1.f,1.f));
+	//Set the scale of the Box
+	void setScale(const DirectX::SimpleMath::Vector3& scale = DirectX::SimpleMath::Vector3(1.f, 1.f, 1.f));
+	
+	//Set the shape to Box
+	void setBoxShape(const DirectX::XMFLOAT3& dimensions = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+	//Set the shape to Sphere
+	void setSphereShape(const float& radius = 0.5f);
+	//Set the shape to Convex Mesh
+	void setConvexMeshShape(const std::vector<Vertex>& vertices); //Implement this later
 
 	void setLinearDampning(const float& factor = 0.0f);
 	void setAngularDampning(const float& factor = 0.0f);
@@ -52,15 +70,16 @@ public:
 	reactphysics3d::Quaternion getRotation()const;
 	reactphysics3d::CollisionShapeName getTypeName()const;
 	reactphysics3d::Collider* getCollider()const;
-	reactphysics3d::CollisionBody* getCollisionBody();
+	reactphysics3d::RigidBody* getRigidBody()const;
 	DirectX::SimpleMath::Vector3 getPosV3()const;
 
-	bool testPointInside(const reactphysics3d::Vector3& point);	//Can be used instead of "testBodiesOverlap()", check point instead of AABB
-	bool testBodiesOverlap(PhysicsComponent* other);			//Better collision detection
+	bool testPointInside(const reactphysics3d::Vector3& point)const;	//Can be used instead of "testBodiesOverlap()", check point instead of AABB
+	bool testBodiesOverlap(PhysicsComponent* other)const;				//Better collision detection
 
 	float getMass()const;
 	float getLinearDampning()const;
 	float getAngularDampning()const;
+	GameObject* getParent()const;
 
 	void setParent(GameObject* parent);
 	void resetPhysicsObject(); //This might be used when transfering to a different world

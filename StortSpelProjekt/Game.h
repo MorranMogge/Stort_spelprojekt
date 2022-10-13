@@ -38,6 +38,7 @@ private:
 	GameObject* testCube;
 	Potion* potion;			//not in use
 	BaseballBat* testBat;
+	Player* otherPlayer;
 
 	LightHandler ltHandler;
 	PlayerVectors playerVecRenderer;

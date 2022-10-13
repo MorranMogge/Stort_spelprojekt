@@ -4,6 +4,7 @@
 #include "DirectXMathHelper.h"
 #include "Potion.h"
 #include "BaseballBat.h"
+#include "Component.h"
 using namespace DirectX;
 
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
@@ -263,23 +264,21 @@ bool Player::pickupItem(Item* itemToPickup)
 {
     bool successfulPickup = false;
 
-    if (Input::KeyPress(KeyCode::SPACE))
+    if (Input::KeyDown(KeyCode::SPACE))
     {
         if (this->withinRadius(itemToPickup, 5))
         {
             addItem(itemToPickup);
             
-            //Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
-            //if (tmp)
-            //    tmp->setPlayerptr(this);
-            //else
-            //{
-            //    BaseballBat* bat = dynamic_cast<BaseballBat*>(itemToPickup);
-            //   /* if (bat)
-            //        bat->setPlayerptr(this);*/
-            //}
-            successfulPickup = true;
-            holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::KINEMATIC);
+            Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
+            if (tmp)
+                tmp->setPlayerptr(this);
+
+			successfulPickup = true;
+			holdingItem->getPhysComp()->getRigidBody()->resetForce();
+			holdingItem->getPhysComp()->getRigidBody()->resetTorque();
+            holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+
         }
     }
     
@@ -336,7 +335,7 @@ void Player::update()
     if (holdingItem != nullptr)
     {
         DirectX::SimpleMath::Vector3 newPos = this->position; 
-        newPos += 4*forwardVector;// +playerUpVec * 4;
+        newPos += 4*forwardVector;
         
         PhysicsComponent* itemPhysComp = holdingItem->getPhysComp();
         holdingItem->setPos(newPos);
@@ -346,7 +345,7 @@ void Player::update()
         if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
         {
             //Set dynamic so it can be affected by forces
-            itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+	        itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 
             //Calculate the force vector
             DirectX::XMFLOAT3 temp;
@@ -365,8 +364,6 @@ void Player::update()
         {
             itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
             holdingItem->useItem();
-            repairCount++;
-            std::cout << "Progress " << repairCount << "/4\n";
             itemPhysComp->setIsAllowedToSleep(true);
             itemPhysComp->setIsSleeping(true);
             holdingItem = nullptr;

@@ -13,15 +13,17 @@ void Game::loadObjects()
 	spaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
 	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4);
 	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-
+	otherPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6);
 
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
+	physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
 
 	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
+	otherPlayer->getPhysComp()->setPosition(reactphysics3d::Vector3(otherPlayer->getPosV3().x, otherPlayer->getPosV3().y, otherPlayer->getPosV3().z));
 
 
 	gameObjects.emplace_back(player);
@@ -30,12 +32,13 @@ void Game::loadObjects()
 	gameObjects.emplace_back(potion);
 	gameObjects.emplace_back(testCube);
 	gameObjects.emplace_back(testBat);
-	
+	gameObjects.emplace_back(otherPlayer);
+
 
 
 	for (int i = 0; i < 10; i++)
 	{
-		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5+ i, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6+ i, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 		physWolrd.addPhysComponent(newObj, reactphysics3d::CollisionShapeName::BOX);
 		newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+(float)i*10, 100));
 		gameObjects.emplace_back(newObj);
@@ -252,17 +255,14 @@ GAMESTATE Game::Update()
 	player->movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
 	
 	//Player functions
-	player->pickupItem(testBat);
 	player->pickupItem(potion);
-	player->update();
+	player->pickupItem(testBat);
 	
 	physWolrd.updatePlayerBox(player->getPos());
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
-	potion->update(); //getPhysComp()->updateParent();
-	testCube->update();//getPhysComp()->updateParent();
-	//testBat->update();
-	for (int i = 5; i < gameObjects.size(); i++)
+
+	for (int i = 1; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->update();//->getPhysComp()->updateParent();
 	}

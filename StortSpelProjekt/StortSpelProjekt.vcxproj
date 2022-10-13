@@ -159,6 +159,7 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="BufferTypes.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferNew.h" />
     <ClInclude Include="Credits.h" />
@@ -247,6 +248,7 @@
     <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="Credits.cpp" />
     <ClCompile Include="CreditsMenu.cpp" />
     <ClCompile Include="D3D11Helper.cpp" />

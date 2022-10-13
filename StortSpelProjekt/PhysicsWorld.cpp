@@ -192,10 +192,10 @@ PhysicsWorld::PhysicsWorld(std::string worldName)
 
 void PhysicsWorld::renderReact3D()
 {
-	nrOfTriangles = this->debugRenderer->getTriangles().size();
+	nrOfTriangles = this->triangles.size();
 	this->debugRenderer->reset();
 	this->debugRenderer->computeDebugRenderingPrimitives(*world);
-	if (nrOfTriangles != this->debugRenderer->getTriangles().size()) this->recreateVertexBuffer();
+	if (3*nrOfTriangles != this->debugRenderer->getTriangles().size()) this->recreateVertexBuffer();
 	else this->updateVertexBuffer();
 	
 	GPU::immediateContext->VSSetConstantBuffers(0, 1, &identityMatrix);
@@ -245,7 +245,6 @@ DirectX::SimpleMath::Vector3 PhysicsWorld::getPos() const
 
 DirectX::SimpleMath::Vector3 PhysicsWorld::getRot() const
 {
-	//return { playerRigidBody->getTransform().getOrientation().x, playerRigidBody->getTransform().getOrientation().y, playerRigidBody->getTransform().getOrientation().z };
 	return { playerBox->getRotation().x, playerBox->getRotation().y, playerBox->getRotation().z };
 }
 
@@ -256,7 +255,6 @@ PhysicsComponent* PhysicsWorld::getPlayerBox() const
 
 void PhysicsWorld::updatePlayerBox(const DirectX::SimpleMath::Vector3& pos)
 {
-	//playerRigidBody->setTransform(reactphysics3d::Transform(reactphysics3d::Vector3({ pos.x, pos.y, pos.z }), playerRigidBody->getTransform().getOrientation()));
 	playerBox->setPosition(reactphysics3d::Vector3({ pos.x, pos.y, pos.z }));
 }
 
@@ -273,7 +271,7 @@ void PhysicsWorld::addBoxToWorld(DirectX::XMFLOAT3 dimensions, float mass, Direc
 	physObjects.emplace_back(new PhysicsComponent());
 	physObjects[vectorSize]->initiateComponent(&this->com, this->world);
 	physObjects[vectorSize]->setPosition(reactphysics3d::Vector3(position.x, position.y, position.z));
-	physObjects[vectorSize]->setLinearDampning(0.3f);
+	physObjects[vectorSize]->setLinearDampning(1.3f);
 	//UPDATE THE VERTEX BUFFER TO BE ABLE TO DRAW THE NEW PHYSOBJECTS
 	this->recreateVertexBuffer();
 }

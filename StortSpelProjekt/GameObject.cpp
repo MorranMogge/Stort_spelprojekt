@@ -263,6 +263,9 @@ int GameObject::getId()
 void GameObject::update()
 {
 	this->position = this->physComp->getPosV3();
-	this->mesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMVectorSet(this->physComp->getRotation().x, this->physComp->getRotation().y, this->physComp->getRotation().z, 1.0f));
-	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMVectorSet(this->physComp->getRotation().x, this->physComp->getRotation().y, this->physComp->getRotation().z, 1.0f));
+	this->reactQuaternion = this->physComp->getRotation();
+	this->dx11Quaternion = DirectX::SimpleMath::Quaternion(DirectX::SimpleMath::Vector4(reactQuaternion.x, reactQuaternion.y, reactQuaternion.z, reactQuaternion.w));
+	this->mesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
+	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
+
 }

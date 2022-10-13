@@ -10,7 +10,6 @@ void PhysicsComponent::createRigidBody(const reactphysics3d::Transform& transfor
 void PhysicsComponent::deallocate()
 {
 	this->worldPtr->destroyRigidBody(this->rigidBody);
-	this->worldPtr->destroyCollisionBody(this->collisionBody);
 
 	//Now we need to destroy the correct shape, and to get the shape we get the name and destroy accordingly
 	reactphysics3d::CollisionShapeName shapeType = this->shape->getName();
@@ -66,8 +65,6 @@ void PhysicsComponent::initiateComponent(reactphysics3d::PhysicsCommon* com, rea
 	this->setMass();
 	this->rigidBody->enableGravity(false);
 
-	this->collisionBody = this->worldPtr->createCollisionBody(reactphysics3d::Transform::identity());
-	this->collisionBody->addCollider(this->shape, reactphysics3d::Transform::identity());
 }
 
 void PhysicsComponent::setType(const reactphysics3d::BodyType& physicsType)
@@ -106,6 +103,96 @@ void PhysicsComponent::addCollider(const reactphysics3d::Transform& transform)
 void PhysicsComponent::setMass(const float& mass)
 {
 	this->rigidBody->setMass(mass);
+}
+
+void PhysicsComponent::setScale(const float& scale)
+{
+	return;
+}
+
+void PhysicsComponent::setScale(const DirectX::XMFLOAT3& scale)
+{
+	reactphysics3d::CollisionShapeName shapeType = this->shape->getName();
+	this->rigidBody->removeCollider(this->collider);
+	switch (shapeType)
+	{
+	case reactphysics3d::CollisionShapeName::BOX:
+		this->comPtr->destroyBoxShape(dynamic_cast<reactphysics3d::BoxShape *>(this->shape));
+		this->shape = this->comPtr->createBoxShape(reactphysics3d::Vector3(scale.x, scale.y, scale.z));
+		break;
+	case reactphysics3d::CollisionShapeName::SPHERE:
+		this->comPtr->destroySphereShape(dynamic_cast<reactphysics3d::SphereShape*>(this->shape));
+		this->shape = this->comPtr->createSphereShape(scale.x);
+		break;
+	default:
+		break;
+	}
+	this->collider = this->rigidBody->addCollider(this->shape, reactphysics3d::Transform::identity());
+}
+
+void PhysicsComponent::setScale(const DirectX::SimpleMath::Vector3& scale)
+{
+	this->setScale(DirectX::XMFLOAT3(scale.x, scale.y, scale.z));
+}
+
+void PhysicsComponent::setBoxShape(const DirectX::XMFLOAT3& dimensions)
+{
+	this->rigidBody->removeCollider(this->collider);
+	reactphysics3d::CollisionShapeName shapeType = this->shape->getName();
+	switch (shapeType)
+	{
+	case reactphysics3d::CollisionShapeName::SPHERE:
+		this->comPtr->destroySphereShape(dynamic_cast<reactphysics3d::SphereShape*>(this->shape));
+		break;
+	case reactphysics3d::CollisionShapeName::CONVEX_MESH:
+		this->comPtr->destroyConvexMeshShape(dynamic_cast<reactphysics3d::ConvexMeshShape *>(this->shape));
+		break;
+	default:
+		break;
+	}
+	this->shape = this->comPtr->createBoxShape(reactphysics3d::Vector3(dimensions.x, dimensions.y, dimensions.z));
+	this->collider = this->rigidBody->addCollider(this->shape, reactphysics3d::Transform::identity());
+}
+
+void PhysicsComponent::setSphereShape(const float& radius)
+{
+	this->rigidBody->removeCollider(this->collider);
+	reactphysics3d::CollisionShapeName shapeType = this->shape->getName();
+	switch (shapeType)
+	{
+	case reactphysics3d::CollisionShapeName::BOX:
+		this->comPtr->destroyBoxShape(dynamic_cast<reactphysics3d::BoxShape*>(this->shape));
+		break;
+	case reactphysics3d::CollisionShapeName::CONVEX_MESH:
+		this->comPtr->destroyConvexMeshShape(dynamic_cast<reactphysics3d::ConvexMeshShape*>(this->shape));
+		break;
+	default:
+		break;
+	}
+	this->shape = this->comPtr->createSphereShape(radius);
+	this->collider = this->rigidBody->addCollider(this->shape, reactphysics3d::Transform::identity());
+}
+
+void PhysicsComponent::setConvexMeshShape(const std::vector<Vertex>& vertices)
+{
+	//This function is yet to be implemented
+	std::cout << "FUNCTION NOT FOUND, PLEASE USE OTHER FUNCTION\n";
+	return;
+
+	this->rigidBody->removeCollider(this->collider);
+	reactphysics3d::CollisionShapeName shapeType = this->shape->getName();
+	switch (shapeType)
+	{
+	case reactphysics3d::CollisionShapeName::BOX:
+		this->comPtr->destroyBoxShape(dynamic_cast<reactphysics3d::BoxShape*>(this->shape));
+		break;
+	case reactphysics3d::CollisionShapeName::SPHERE:
+		this->comPtr->destroySphereShape(dynamic_cast<reactphysics3d::SphereShape*>(this->shape));
+		break;
+	default:
+		break;
+	}
+	this->collider = this->rigidBody->addCollider(this->shape, reactphysics3d::Transform::identity());
 }
 
 void PhysicsComponent::setLinearDampning(const float& factor)
@@ -178,10 +265,9 @@ reactphysics3d::Collider* PhysicsComponent::getCollider() const
 	return this->collider;
 }
 
-reactphysics3d::CollisionBody* PhysicsComponent::getCollisionBody()
+reactphysics3d::RigidBody* PhysicsComponent::getRigidBody() const
 {
-	this->collisionBody->setTransform(this->rigidBody->getTransform());
-	return this->collisionBody;
+	return this->rigidBody;
 }
 
 DirectX::SimpleMath::Vector3 PhysicsComponent::getPosV3() const
@@ -190,16 +276,14 @@ DirectX::SimpleMath::Vector3 PhysicsComponent::getPosV3() const
 	return {temp.x, temp.y, temp.z};
 }
 
-bool PhysicsComponent::testPointInside(const reactphysics3d::Vector3& point)
+bool PhysicsComponent::testPointInside(const reactphysics3d::Vector3& point) const
 {
-	this->collisionBody->setTransform(this->rigidBody->getTransform());
-	return this->collisionBody->testPointInside(point);
+	return this->collider->testPointInside(point);
 }
 
-bool PhysicsComponent::testBodiesOverlap(PhysicsComponent* other)
+bool PhysicsComponent::testBodiesOverlap(PhysicsComponent* other) const
 {
-	this->collisionBody->setTransform(this->rigidBody->getTransform());
-	return this->collisionBody->testAABBOverlap(other->getCollisionBody()->getAABB());
+	return this->collider->testAABBOverlap(other->getCollider()->getWorldAABB());
 }
 
 float PhysicsComponent::getMass() const
@@ -220,6 +304,11 @@ float PhysicsComponent::getAngularDampning() const
 void PhysicsComponent::setParent(GameObject* parent)
 {
 	this->parent = parent;
+}
+
+GameObject* PhysicsComponent::getParent() const
+{
+	return this->parent;
 }
 
 void PhysicsComponent::resetPhysicsObject()

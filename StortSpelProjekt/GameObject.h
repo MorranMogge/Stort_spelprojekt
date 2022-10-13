@@ -9,11 +9,15 @@ class GameObject
 private:
 	Mesh* mesh;
 	int objectID;
+	reactphysics3d::Quaternion reactQuaternion;
+	DirectX::SimpleMath::Quaternion dx11Quaternion;
+
 protected:
 	PhysicsComponent* physComp;
 	DirectX::SimpleMath::Vector3 position;
 	DirectX::XMMATRIX rotation;
 	DirectX::XMFLOAT3 scale;
+
 
 public:
 	GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));

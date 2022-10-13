@@ -130,9 +130,8 @@
     <ClCompile Include="SpaceShip.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="BaseballBat.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
+    <ClCompile Include="BaseballBat.cpp" />
+    <ClCompile Include="Component.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -382,9 +381,8 @@
     <ClInclude Include="SpaceShip.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="BaseballBat.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
+    <ClInclude Include="BaseballBat.h" />
+    <ClInclude Include="Component.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

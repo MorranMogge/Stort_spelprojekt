@@ -409,7 +409,7 @@ int main()
 	
 	std::chrono::time_point<std::chrono::system_clock> start;
 	start = std::chrono::system_clock::now();
-	float timerLength = 1.2f;
+	float timerLength = 1.f / 60.0f;
 
 
 	setupTcp(data);

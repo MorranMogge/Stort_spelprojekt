@@ -3,7 +3,7 @@
 #include<string>
 #include"PacketsDataTypes.h"
 
-static const unsigned int SIZEOFBUFFER = 2000;
+static const unsigned int SIZEOFBUFFER = 200000;
 
 class CircularBuffer
 {
@@ -42,23 +42,16 @@ public:
 	T* readData(int nr = 1);
 
 	void debugWriteMemoryAdress();
-
-	template<typename T>
-	void advancePointer(const T& type);
 };
 
 template<typename T>
 inline T* CircularBuffer::readData(int nr)
 {
+	if ((read + sizeof(T)) >= endOfBuffer)
+	{
+		read = startOfBuffer;
+	}
 	T* ptr = (T*)read;
 	read += sizeof(T) * nr;
 	return ptr;
-}
-
-//advance the read pointer with the data type that has been read
-//first getPacketId() to identify the struct the data is then T = packetStruct
-template<typename T>
-inline void CircularBuffer::advancePointer(const T& type)
-{
-	read += sizeof(T);
 }

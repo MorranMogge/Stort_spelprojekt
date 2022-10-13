@@ -39,15 +39,16 @@ bool CircularBuffer::addData(const char incomingData[], const std::size_t& recvS
 
 bool CircularBuffer::addData(const void*& incomingData, const std::size_t& recvSize)
 {
-	if ((write + recvSize) < endOfBuffer) // the write* wont go outside of the circular buffer
+	if ((write + recvSize) >= endOfBuffer) // the write* wont go outside of the circular buffer
 	{
+		write = startOfBuffer;
 		memcpy(write, incomingData, recvSize);
 		write += recvSize;
 		return true;
 	}
 	else// reset the write* to be written to the start of the circular buffer
 	{
-		write = startOfBuffer;
+		
 		memcpy(write, incomingData, recvSize);
 		write += recvSize;
 		return false;
@@ -69,11 +70,6 @@ void* CircularBuffer::getData()
 	startOfData = (void*)this->read;
 	return startOfData;
 }
-
-//void CircularBuffer::advancePointer()
-//{
-//	read += sizeof(testPosition);
-//}
 
 bool CircularBuffer::getIfPacketsLeftToRead()
 {

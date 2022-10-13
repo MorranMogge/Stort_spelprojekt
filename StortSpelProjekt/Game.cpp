@@ -173,7 +173,12 @@ GAMESTATE Game::Update()
 		}
 	}
 	
+	for (int i = 0; i < NROFPLAYERS; i++)
+	{
+		players[i]->updateBuffer();
+	}
 	//end of circBuffer tests
+
 
 	potion.updateBuffer();
 	currentPlayer->updateBuffer();

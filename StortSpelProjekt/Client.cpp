@@ -304,6 +304,8 @@ int Client::initTEMPPLAYERS()
 	memcpy(charData, receivedData, sizeof(idProtocol));
 	idProtocol* idProto = (idProtocol*)charData;
 	temp = idProto->assignedPlayerId;
+
+	std::cout << "Client.cpp, ASSIGNED ID BY SERVER: " << std::to_string(idProto->assignedPlayerId) << std::endl;
 	
 	return temp;
 }

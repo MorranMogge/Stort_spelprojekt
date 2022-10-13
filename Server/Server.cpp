@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <mutex>
 #include "../StortSpelProjekt/PackageTypes.h"
 
 #include <SFML/Network.hpp>
@@ -12,6 +13,7 @@
 #include "CircularBuffer.h"
 
 const short MAXNUMBEROFPLAYERS = 2;
+std::mutex mutex;
 
 struct acceptMePacketData
 {
@@ -312,9 +314,9 @@ void recvData(void* param, userData* user)//thread to recv data
 		}
 		else
 		{
-			
+			mutex.lock();
 			data->circBuffer->addData(datapointer, recv);
-			
+			mutex.unlock();
 			//std::cout << "size_t: " << std::to_string(sizeof(testPosition)) << std::endl;
 			//std::cout << "testing exfloatTest(): " << std::to_string(testc) << std::endl;
 			

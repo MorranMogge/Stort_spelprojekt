@@ -165,6 +165,8 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadGeometryShader(device, pt_gShader, "PT_GeometryShader"))						return false;
 	if (!LoadComputeShader(device, pt_UpdateShader, "PT_UpdateShader"))						return false;
 	if (!setUpSampler(device))																return false;
+	if (!setUpShadowSampler(device))														return false;
+	if (!setUpShadowRastirizer(device))   													return false;
 	if (!LoadVertexShader(device, vs_Skybox, vShaderByteCode, "Skybox_VS"))					return false;
 	if (!setUp_Sky_InputLayout(device, vShaderByteCode))									return false;
 	if (!LoadPixelShader(device, ps_Skybox, "Skybox_PS"))									return false;

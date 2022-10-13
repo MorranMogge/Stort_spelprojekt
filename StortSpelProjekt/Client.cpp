@@ -86,10 +86,9 @@ void Client::connectToServer(std::string ipAddress, int port)
 	{
 		std::cout << "Was able to connect\n";
 	}
-	data.playerId = -1;
 	data.endThread = false;
-	this->isConnected = true;
 	this->setupThread();
+	this->isConnected = true;
 
 }
 
@@ -104,7 +103,6 @@ void Client::connectToServer()
 		std::cout << "Was able to connect\n";
 	}
 
-	data.playerId = 0;
 	data.endThread = false;
 	this->setupThread();
 	this->isConnected = true;

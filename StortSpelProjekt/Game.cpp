@@ -13,7 +13,10 @@ void Game::drawObjects()
 {
 	potion.draw();
 	currentPlayer->draw();
-	planet->draw();
+	for (int i = 0; i < NROFPLAYERS; i++)
+	{
+		players[i]->draw();
+	}
 }
 
 bool Game::setUpWireframe()
@@ -168,7 +171,7 @@ GAMESTATE Game::Update()
 			/*testPosition* tst = (testPosition*)circularBuffer->getData();
 			circularBuffer->advancePointer(*tst);*/
 
-			std::cout << "Checking return value from circular buffer testPosition.x: " << std::to_string(tst->x) << " y: " << std::to_string(tst->y) << std::endl;
+			std::cout << "Checking return value from circular buffer player id.x: " << std::to_string(tst->playerId) << " y: " << std::to_string(tst->y) << std::endl;
 			//std::cout << "Player id: " << std::to_string(tst->playerId) << std::endl;
 		}
 	}

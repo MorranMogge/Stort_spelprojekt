@@ -48,7 +48,7 @@ private:
 
 	std::chrono::time_point<std::chrono::system_clock> serverStart;
 	
-	float serverTimerLength = 1.2f;
+	float serverTimerLength = 0.5f;
 	Client* client;
 
 	BasicRenderer basicRenderer;

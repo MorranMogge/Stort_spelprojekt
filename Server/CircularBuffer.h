@@ -3,7 +3,7 @@
 #include<string>
 #include"PacketsDataTypes.h"
 
-static const unsigned int SIZEOFBUFFER = 400;
+static const unsigned int SIZEOFBUFFER = 2000;
 
 class CircularBuffer
 {

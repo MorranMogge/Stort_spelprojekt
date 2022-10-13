@@ -190,11 +190,11 @@ void sendDataAllPlayers(testPosition &posData, serverData& serverData)
 		if (serverData.users[i].tcpSocket.send(&posData, sizeof(testPosition), recvSize) != sf::Socket::Done)
 		{
 			//error
-			//std::cout << "Couldnt send data to player from array slot: " << std::to_string(i) << std::endl;
+			std::cout << "Couldnt send data to player from array slot: " << std::to_string(i) << std::endl;
 		}
 		else
 		{
-			//std::cout << "sent data to player: " << data.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
+			std::cout << "sent data to player: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
 		}
 	}
 };

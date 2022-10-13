@@ -22,7 +22,13 @@ SpaceShip::~SpaceShip()
 	}
 }
 
-bool SpaceShip::detectedComponent(const GameObject& objectToCheck)
+bool SpaceShip::detectedComponent(GameObject* objectToCheck)
 {
-	return false;
+	bool didDetect = false;
+
+	if (this->withinRadious(objectToCheck, 8.0f))
+	{
+		didDetect = true;
+	}
+	return didDetect;
 }

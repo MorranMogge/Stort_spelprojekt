@@ -35,6 +35,7 @@ public:
 	void setPhysComp(PhysicsComponent* comp);
 	PhysicsComponent* getPhysComp()const;
 	void updateBuffer();
+	int getId();
 	bool withinBox(GameObject *object ,float x, float y, float z) const;
 	bool withinRadious(GameObject* object, float radius) const;
 	virtual void draw();

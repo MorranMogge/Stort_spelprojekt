@@ -232,14 +232,17 @@ bool GameObject::withinRadious(GameObject* object, float radius) const
 	using namespace DirectX;
 
 	XMFLOAT3 objPos = object->getPos();
-	XMFLOAT3 selfPos = this->getPos();
+	XMFLOAT3 selfPos = this->position;
 	bool inRange = false;
 
-	float xRange = sqrt((selfPos.x * selfPos.x) + (objPos.x * objPos.x));
-	float yRange = sqrt((selfPos.y * selfPos.y) + (objPos.y * objPos.y));
-	float zRange = sqrt((selfPos.z * selfPos.z) + (objPos.z * objPos.z));
+	float x = (selfPos.x - objPos.x) * (selfPos.x - objPos.x);
+	float y = (selfPos.y - objPos.y) * (selfPos.y - objPos.y);
+	float z = (selfPos.z - objPos.z) * (selfPos.z - objPos.z);
 
-	if (xRange < radius || yRange < radius || zRange < radius)
+	float sum = std::sqrt(x + y + z);
+
+	//DirectX::SimpleMath::Vector3 vector(x, y, z);
+	if (abs(sum)/*vector.Length()*/ < radius)
 	{
 		inRange = true;
 	}
@@ -250,6 +253,11 @@ bool GameObject::withinRadious(GameObject* object, float radius) const
 void GameObject::draw()
 {
 	this->mesh->DrawWithMat();
+}
+
+int GameObject::getId()
+{
+	return this->objectID;
 }
 
 void GameObject::update()

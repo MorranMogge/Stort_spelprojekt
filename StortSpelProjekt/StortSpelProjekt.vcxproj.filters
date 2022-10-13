@@ -127,8 +127,10 @@
       <Filter>Skybox</Filter>
     </ClCompile>
     <ClCompile Include="PlayerVectors.cpp" />
-    <ClCompile Include="BaseballBat.cpp" />
     <ClCompile Include="SpaceShip.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseballBat.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -377,8 +379,10 @@
       <Filter>Skybox</Filter>
     </ClInclude>
     <ClInclude Include="PlayerVectors.h" />
-    <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="SpaceShip.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseballBat.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
   </ItemGroup>

@@ -276,7 +276,7 @@ bool Player::pickupItem(Item* itemToPickup)
 			successfulPickup = true;
 			holdingItem->getPhysComp()->getRigidBody()->resetForce();
 			holdingItem->getPhysComp()->getRigidBody()->resetTorque();
-            holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::KINEMATIC);
+            holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 
         }
     }

@@ -249,8 +249,7 @@ void Game::Render()
 	basicRenderer.depthUnbind();
 
 	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
-	if (wireframe) { immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
-	playerVecRenderer.drawLines();
+	if (wireframe) { immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); playerVecRenderer.drawLines();}
 
 	//basicRenderer.setUpScene(this->camera);
 	//Render Imgui & wireframe

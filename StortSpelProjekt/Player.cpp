@@ -62,11 +62,8 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 {
 	normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 
-	upVector = XMVector3TransformCoord(DEFAULT_UP, rotation);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-
-	upVector = DirectX::XMVector3Normalize(upVector);
 	rightVector = DirectX::XMVector3Normalize(rightVector);
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
@@ -75,13 +72,13 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	XMStoreFloat3(&dotValue, dotProduct);
 	if (dotValue.x < -0.1f)
 	{
-		rotation *= DirectX::XMMatrixRotationAxis(rightVector, -0.01f);
-		rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, -0.01f);
+		rotation *= DirectX::XMMatrixRotationAxis(rightVector, -0.007f);
+		rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, -0.007f);
 	}
 	else if (dotValue.x > 0.1f)
 	{
-		rotation *= DirectX::XMMatrixRotationAxis(rightVector, 0.01f);
-		rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, 0.01f);
+		rotation *= DirectX::XMMatrixRotationAxis(rightVector, 0.007f);
+		rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, 0.007f);
 	}
 
 	//Z-Rotation
@@ -89,19 +86,19 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	XMStoreFloat3(&dotValue, dotProduct);
 	if (dotValue.z < -0.1f)
 	{
-		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, 0.01f);
-		rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, 0.01f);
+		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, 0.007f);
+		rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, 0.007f);
 	}
 	else if (dotValue.z > 0.1f)
 	{
-		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -0.01f);
-		rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, -0.01f);
+		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -0.007f);
+		rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, -0.007f);
 	}
 
 	//PC movement
 	if (Input::KeyDown(KeyCode::SHIFT))
 	{
-		deltaTime *= 2.0f;
+		deltaTime *= 1.5f;
 	}
 
 	if (Input::KeyDown(KeyCode::W))
@@ -209,11 +206,8 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 
 		normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 
-		upVector = XMVector3TransformCoord(DEFAULT_UP, rotation);
 		forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
 		rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-
-		upVector = DirectX::XMVector3Normalize(upVector);
 		rightVector = DirectX::XMVector3Normalize(rightVector);
 		forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
@@ -333,13 +327,6 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 				XMStoreFloat3(&dotValue, dotProduct);
 				if (dotValue.x > DirectX::XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
 			}
-		}
-
-		if (posX != 0.0f || posY != 0.0f)
-		{
-			std::cout << "Posx: " << posX << "\t" << "Posy: " << posY << "\n";
-			//totalPos = posX + posY;
-			//std::cout << "TOTAL " << totalPos << "\n";
 		}
 
 		throttle = state.triggers.right;

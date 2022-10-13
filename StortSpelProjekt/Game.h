@@ -18,7 +18,7 @@
 #include "LightHandler.h"
 #include "Potion.h"
 #include "Client.h"
-#include "CircularBuffer.h"
+#include "../Server/CircularBuffer.h"
 
 struct wirefameInfo
 {

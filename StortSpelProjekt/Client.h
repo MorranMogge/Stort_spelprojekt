@@ -6,7 +6,7 @@
 
 #include "Player.h"
 #include "../Server/PacketsDataTypes.h"
-#include "CircularBuffer.h"
+#include "../Server/CircularBuffer.h"
 
 struct ThreadInfo
 {
@@ -15,11 +15,6 @@ struct ThreadInfo
 	int playerId;
 	CircularBuffer* circularBuffer;
 	bool endThread = false;
-	ThreadInfo(const CircularBuffer*& circBuffer)
-	{
-		circularBuffer = circularBuffer;
-	}
-	ThreadInfo(){}
 };
 
 class Client
@@ -51,16 +46,11 @@ public:
 	Client(std::string ipAddress, int port = 2001);
 	~Client();
 
-	void initializeCircularBuffer(CircularBuffer*& circularBuffer);
-
 	void connectToServer(std::string ipAddress, int port);
 	void connectToServer();
 	void joinThread();
 	void setIpAndPort(std::string ipAddress, int port);
 	void setIdentifier(std::string id);
-
-	bool checkIfPacketReadyReceive();
-	void addselector();
 
 	bool setupThread();
 	std::string receive();
@@ -78,9 +68,14 @@ public:
 
 	//returns if a player position has been received
 	bool getIfConnected();
-	bool getChangePlayerPos()const;
 	int getport()const;
 	int getPlayerId()const;
+
+	//returns the players id on the server
+	int initTEMPPLAYERS();
+
+	CircularBuffer*& getCircularBuffer();
+
 	std::string getipAdress()const;
 
 	void setPlayerRecv(const bool value);

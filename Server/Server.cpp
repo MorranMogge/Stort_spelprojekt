@@ -11,7 +11,7 @@
 #include "Packethandler.h"
 #include "CircularBuffer.h"
 
-const short MAXNUMBEROFPLAYERS = 1;
+const short MAXNUMBEROFPLAYERS = 2;
 
 struct acceptMePacketData
 {
@@ -43,6 +43,7 @@ struct threadInfo
 	userData* user;
 	float pos[3];
 	bool ifUserRecv;
+	CircularBuffer* circBuffer;
 };
 
 struct serverData
@@ -312,23 +313,23 @@ void recvData(void* param, userData* user)//thread to recv data
 		else
 		{
 			
-			//circBuffer.addData(datapointer, recv);
+			data->circBuffer->addData(datapointer, recv);
 			
 			//std::cout << "size_t: " << std::to_string(sizeof(testPosition)) << std::endl;
 			//std::cout << "testing exfloatTest(): " << std::to_string(testc) << std::endl;
 			
 			//data->user->playa.setPosition(wow->x, wow->y, wow->z);
 
-			std::string packetsLeft = "false";
-			//if (circBuffer.getIfPacketsLeftToRead())packetsLeft = "true";
+			//std::string packetsLeft = "false";
+			//if (data->circBuffer->getIfPacketsLeftToRead())packetsLeft = "true";
 
 
 
-			std::cout << "check if circbuffer have packets = " << packetsLeft << std::endl;
-			//testPosition* tst = (testPosition*)circBuffer.getData();
-			//circBuffer.advancePointer();
+			//std::cout << "check if circbuffer have packets = " << packetsLeft << std::endl;
+			//testPosition* tst = data->circBuffer->readData<testPosition>();
 
-			std::cout << "Checking return value from circular buffer testPosition.x: " << std::to_string(2) << std::endl;
+			//std::cout << "Checking return value from circular buffer testPosition.x: " << std::to_string(tst->x) << std::endl;
+			//std::cout << "Memory adress: " << circBuffer.getData() << std::endl;
 
 			//data->pos[0] = tst->x;
 			//data->pos[1] = tst->y;
@@ -341,13 +342,14 @@ void recvData(void* param, userData* user)//thread to recv data
 
 void sendIdToAllPlayers(serverData& data)
 {
-	unsigned short packetid = 10;
+	int packetid = 10;
 
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
 		idProtocol protocol;
+		protocol.packetId = 4;
 		protocol.assignedPlayerId = data.users[i].playerId;
-		protocol.packetId = 10;
+
 
 		std::size_t sentSize;
 
@@ -414,6 +416,7 @@ int main()
 
 	sendIdToAllPlayers(data);
 
+	CircularBuffer* circBuffer = new CircularBuffer();
 	std::thread* recvThread[MAXNUMBEROFPLAYERS];
 	threadInfo threadData[MAXNUMBEROFPLAYERS];
 	//threadData.ifUserRecv = false;
@@ -423,6 +426,7 @@ int main()
 		threadData[i].pos[0] = 22.0f;
 		threadData[i].pos[1] = 12.0f;
 		threadData[i].pos[2] = -22.0f;
+		threadData[i].circBuffer = circBuffer;
 		recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
 	}
 	
@@ -450,10 +454,24 @@ int main()
 			std::string packString = "server data XDXDDX";
 			pack << packString;
 			sendDataAllPlayers(pack, data);*/
-		for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+		while (circBuffer->getIfPacketsLeftToRead())
 		{
-			data.users[i].playa.setPosition(threadData[i].pos);
+			int packetId = circBuffer->getPacketId();
+
+			if (packetId == 10)
+			{
+				testPosition* tst = circBuffer->readData<testPosition>();
+				for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+				{
+					if (i == tst->playerId)
+					{
+						data.users[i].playa.setPosition(tst->x, tst->y, tst->z);
+						break;
+					}
+				}
+			}
 		}
+
 
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
 		{
@@ -462,15 +480,17 @@ int main()
 			{
 				testPosition pos;
 				
+				pos.packetId = 10;
 				pos.x = data.users[i].playa.getposition('x');
 				pos.y = data.users[i].playa.getposition('y');
 				pos.z = data.users[i].playa.getposition('z');
 				pos.playerId = i;
-				pos.packetId = 4;
+				
 				//sending position data to all players
 				//tempPack << packId << playerid << x << y << z;
 				
 				std::cout << "data to send x: " << std::to_string(pos.x) << ", y: " << std::to_string(pos.y) << ", z: " << std::to_string(pos.z) << std::endl;
+				//std::cout << "packet id sent: " << std::to_string(pos.packetId) << std::endl;
 
 				sendDataAllPlayers(pos, data);
 			}

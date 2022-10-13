@@ -53,8 +53,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	this->client = client;
 	//måste raderas******************
-	circularBuffer = new CircularBuffer();
-	client->initializeCircularBuffer(circularBuffer);
+	circularBuffer = client->getCircularBuffer();
+
 
 	this->imguiHelper = &imguiHelper;
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -66,7 +66,11 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	//this->setUpReact3D();
 
 	currentPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
-	int playerid = client->getPlayerId();
+
+	//TEMPORÄR GÖRA MER DYNAMISK SENARE
+	client->connectToServer();
+	int playerid = client->initTEMPPLAYERS();
+
 	for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
 	{
 		Player *tmpPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
@@ -122,7 +126,7 @@ GAMESTATE Game::Update()
 		players.at(tmpMovePlayer.affectedPlayerId)->setPos(DirectX::XMFLOAT3(tmpMovePlayer.pos[0], tmpMovePlayer.pos[1], tmpMovePlayer.pos[2]));
 		client->setPlayerRecv(false);
 	}*/
-	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength)
+	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
 	{
 		client->sendToServerTEMPTCP(currentPlayer);
 		serverStart = std::chrono::system_clock::now();
@@ -131,18 +135,45 @@ GAMESTATE Game::Update()
 	//circbuffer tests
 	
 	std::string packetsLeft = "false";
+	
 	if (circularBuffer->getIfPacketsLeftToRead())packetsLeft = "true";
 	//std::cout << "check if circbuffer have packets = " << packetsLeft << std::endl;
 
-	if (circularBuffer->getIfPacketsLeftToRead())
+	//körs till det inte finns packet kvar att läsa
+	while (circularBuffer->getIfPacketsLeftToRead())
 	{
-		testPosition* tst = (testPosition*)circularBuffer->getData();
-		circularBuffer->advancePointer();
+		int packetId = circularBuffer->getPacketId();
+		//std::cout << "Game.cpp packet id: " << std::to_string(packetId) << std::endl;
 
-		std::cout << "Checking return value from circular buffer testPosition.x: " << std::to_string(tst->x) << std::endl;
+		if (packetId == 4)
+		{
+			idProtocol* protocol = circularBuffer->readData<idProtocol>();
+			//idProtocol* protocol = (idProtocol*)circularBuffer->getData();
+			//circularBuffer->advancePointer(*protocol);
+			std::cout << "received player id: " << std::to_string(protocol->assignedPlayerId) << std::endl;
+		}
+		else if (packetId == 10)
+		{
+			testPosition* tst = circularBuffer->readData<testPosition>();
+			for (int i = 0; i < NROFPLAYERS; i++)
+			{
+				if (i == tst->playerId)
+				{
+					if (client->getPlayerId() != i)
+					{
+						players[i]->setPos(DirectX::XMFLOAT3(tst->x, tst->y, tst->z));
+					}
+				}
+			}
+			/*testPosition* tst = (testPosition*)circularBuffer->getData();
+			circularBuffer->advancePointer(*tst);*/
+
+			std::cout << "Checking return value from circular buffer testPosition.x: " << std::to_string(tst->x) << " y: " << std::to_string(tst->y) << std::endl;
+			//std::cout << "Player id: " << std::to_string(tst->playerId) << std::endl;
+		}
 	}
 	
-	//end of tests
+	//end of circBuffer tests
 
 	potion.updateBuffer();
 	currentPlayer->updateBuffer();
@@ -163,6 +194,11 @@ void Game::Render()
 		ltHandler.drawShadows(i, gameObjects);
 	}
 	ltHandler.bindLightBuffers();
+
+	for (int i = 0; i < NROFPLAYERS; i++)
+	{
+		players[i]->draw();
+	}
 
 	basicRenderer.setUpScene();
 	if (objectDraw) this->drawObjects();

@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Server\CircularBuffer.h" />
     <ClInclude Include="..\Server\PacketsDataTypes.h" />
     <ClInclude Include="BasicRenderer.h" />
     <ClInclude Include="BlendState.h" />
@@ -158,7 +159,6 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="BufferTypes.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="ClientHandler.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferNew.h" />
@@ -239,9 +239,9 @@
     <ClInclude Include="WindowHelper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Server\CircularBuffer.cpp" />
     <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="Credits.cpp" />

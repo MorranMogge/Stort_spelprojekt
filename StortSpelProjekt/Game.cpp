@@ -22,12 +22,14 @@ void Game::loadObjects()
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
 
+
 	gameObjects.emplace_back(player);
 	gameObjects.emplace_back(planet);
+	gameObjects.emplace_back(spaceShip);
 	gameObjects.emplace_back(potion);
 	gameObjects.emplace_back(testCube);
-	gameObjects.emplace_back(spaceShip);
 	gameObjects.emplace_back(testBat);
+	
 
 
 	for (int i = 0; i < 10; i++)
@@ -255,7 +257,7 @@ GAMESTATE Game::Update()
 	physWolrd.update(dt);
 	potion->update(); //getPhysComp()->updateParent();
 	testCube->update();//getPhysComp()->updateParent();
-	testBat->update();
+	//testBat->update();
 	for (int i = 5; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->update();//->getPhysComp()->updateParent();

@@ -34,7 +34,7 @@ void BaseballBat::useItem()
 	playerComp->setPosition(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
 	PhysicsComponent* physComp;
 	bool collided = false;
-	for (int i = 2; i < objects.size(); i++)
+	for (int i = 3; i < objects.size(); i++)
 	{
 		physComp = objects[i]->getPhysComp();
 		//if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue; This can be used to check whether it's a player or planet
@@ -53,7 +53,5 @@ void BaseballBat::useItem()
 			physComp->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
 		}
 	}
-	
-
 }
 

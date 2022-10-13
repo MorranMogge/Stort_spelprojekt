@@ -30,12 +30,14 @@ void BaseballBat::useItem()
 {
 	batPos = this->player->getPos();
 	batPos += this->player->getForwardVec() * 10;
-	savedPos = this->getPosV3();
+	savedPos = this->getPosV3(); //Used to reset the baseball bats position at the end of the function
 
 	PhysicsComponent* batComp = this->getPhysComp();
+	PhysicsComponent* physComp;
+
 	batComp->setPosition(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
 	batComp->setScale(DirectX::XMFLOAT3(4.0f, 4.0f, 4.0f));
-	PhysicsComponent* physComp;
+
 	bool collided = false;
 	for (int i = 2; i < objects.size(); i++)
 	{
@@ -43,7 +45,6 @@ void BaseballBat::useItem()
 		physComp = objects[i]->getPhysComp();
 
 		collided = batComp->testBodiesOverlap(physComp);
-		//std::cout << "Result for id: " << i << ": " << collided << "\n";
 		
 		if (collided)
 		{

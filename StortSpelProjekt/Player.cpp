@@ -334,7 +334,7 @@ void Player::update()
     if (holdingItem != nullptr)
     {
         DirectX::SimpleMath::Vector3 newPos = this->position; 
-        newPos += 4*forwardVector;// +playerUpVec * 4;
+        newPos += 4*forwardVector;
         
         PhysicsComponent* itemPhysComp = holdingItem->getPhysComp();
         holdingItem->setPos(newPos);
@@ -363,8 +363,6 @@ void Player::update()
         {
             itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
             holdingItem->useItem();
-            //repairCount++;
-            //std::cout << "Progress " << repairCount << "/4\n";
             itemPhysComp->setIsAllowedToSleep(true);
             itemPhysComp->setIsSleeping(true);
             holdingItem = nullptr;

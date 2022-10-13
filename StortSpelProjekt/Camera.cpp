@@ -54,7 +54,7 @@ void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation * DirectX::XM_PI);
 	upVector = XMVector3TransformCoord(DEFAULT_UP, playerRotation * DirectX::XM_PI);
 
-	cameraPos = playerPosition - forwardVector * 10.0f + upVector * 40.0f;
+	cameraPos = playerPosition + upVector * 40.0f - forwardVector;
 	lookAtPos = playerPosition;
 	updateCamera();
 }

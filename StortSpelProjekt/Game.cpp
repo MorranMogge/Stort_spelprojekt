@@ -211,6 +211,8 @@ GAMESTATE Game::Update()
 	{
 		gameObjects[i]->update();//->getPhysComp()->updateParent();
 	}
+
+	grav = normalizeXMFLOAT3(grav);
 	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
 	player->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
 	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);

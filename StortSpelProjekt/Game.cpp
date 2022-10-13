@@ -264,7 +264,7 @@ GAMESTATE Game::Update()
 
 	for (int i = 1; i < gameObjects.size(); i++)
 	{
-		gameObjects[i]->update();//->getPhysComp()->updateParent();
+		//gameObjects[i]->update();//->getPhysComp()->updateParent();
 	}
 	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
 	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);

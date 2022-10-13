@@ -42,12 +42,14 @@ bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBu
 
 bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, Microsoft::WRL::ComPtr<ID3D11Texture2D>& dsTexture, std::vector<Microsoft::WRL::ComPtr<ID3D11DepthStencilView>>& dsViews, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& shaderView, int nrOfLights)
 {
+	int WidthAndHeight = 2048;
+
 	D3D11_TEXTURE2D_DESC textureDesc = {};											//skapa svartvit textur som representerar djup i en scen
-	textureDesc.Width = width;
-	textureDesc.Height = height;
+	textureDesc.Width = WidthAndHeight;
+	textureDesc.Height = WidthAndHeight;
 	textureDesc.MipLevels = 1u;														//olika nivååer av kompression
 	textureDesc.ArraySize = nrOfLights;												//en buffer
-	textureDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;								// MapUsageTypless(usage);
+	textureDesc.Format = DXGI_FORMAT_R32_TYPELESS;								// MapUsageTypless(usage);
 	textureDesc.SampleDesc.Count = 1;												// defaultvärden
 	textureDesc.SampleDesc.Quality = 0;												//Sample quality
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;										//säger hur den ska användas när vi kommer åt den ()
@@ -67,7 +69,7 @@ bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, Microsoft
 	for (int i = 0; i < nrOfLights; i++)
 	{
 		D3D11_DEPTH_STENCIL_VIEW_DESC descView = {};
-		descView.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		descView.Format = DXGI_FORMAT_D32_FLOAT;
 		descView.Flags = 0;
 		descView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
 		descView.Texture2DArray.MipSlice = 0;
@@ -90,7 +92,7 @@ bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, Microsoft
 
 	//ShaderResource view 
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
-	shaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;//DXGI_FORMAT_R24G8_TYPELESS
+	shaderResourceViewDesc.Format = DXGI_FORMAT_R32_FLOAT;//DXGI_FORMAT_R24G8_TYPELESS
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
 	shaderResourceViewDesc.Texture2DArray.ArraySize = nrOfLights;
 	shaderResourceViewDesc.Texture2DArray.FirstArraySlice = 0;

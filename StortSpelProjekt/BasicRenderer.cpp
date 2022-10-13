@@ -59,6 +59,46 @@ bool BasicRenderer::setUpSampler(ID3D11Device* device)
 	return !FAILED(hr);
 }
 
+bool BasicRenderer::setUpShadowSampler(ID3D11Device* device)
+{
+	//filter Nearst Neighbhor or Bilinear for 2D textures, linear get a smoother then zoom in to the texture
+	//min is minification, mag is bigger, mip is mipmapping
+
+	D3D11_SAMPLER_DESC desc = {};
+	desc.Filter = D3D11_FILTER::D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+	desc.AddressU = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_BORDER;
+	desc.AddressV = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_BORDER;
+	desc.AddressW = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_BORDER;
+	desc.ComparisonFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS;
+	desc.MaxAnisotropy = 1;
+	desc.BorderColor[0] = 1.0f;
+	desc.MinLOD = 0;
+	desc.MaxLOD = 0;
+
+	HRESULT hr = device->CreateSamplerState(&desc, &shadowSampler);
+	return !FAILED(hr);
+}
+
+bool BasicRenderer::setUpShadowRastirizer(ID3D11Device* device)
+{
+	//control over how polygons are rendered, do things like render in wireframe or draw both the front and back faces. 
+
+	D3D11_RASTERIZER_DESC desc = {};
+	desc.AntialiasedLineEnable = false;
+	desc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+	desc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+	desc.DepthBias = 0;
+	desc.DepthBiasClamp = 0.0f;
+	desc.SlopeScaledDepthBias = 1.0f;
+	desc.DepthClipEnable = true;
+	desc.FrontCounterClockwise = false;
+	desc.MultisampleEnable = false;
+	desc.ScissorEnable = false;
+
+	HRESULT hr = GPU::device->CreateRasterizerState(&desc, &shadowRastirizer);
+	return !FAILED(hr);
+}
+
 BasicRenderer::BasicRenderer()
 	:clearColour{ 0.0f, 0.0f, 0.0f, 0.0f }
 {
@@ -88,6 +128,8 @@ BasicRenderer::~BasicRenderer()
 	pt_pShader->Release();
 	pt_UpdateShader->Release();
 	pt_gShader->Release();
+	shadowSampler->Release();
+	shadowRastirizer->Release();
 }
 
 void BasicRenderer::lightPrePass()
@@ -95,15 +137,19 @@ void BasicRenderer::lightPrePass()
 	ID3D11PixelShader* nullShader(nullptr);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	immediateContext->IASetInputLayout(this->inputLayout);
-	immediateContext->RSSetViewports(1, &viewport);
+	immediateContext->RSSetViewports(1, &shadowViewport);
+	
 	immediateContext->VSSetShader(vShader, nullptr, 0);
 	immediateContext->PSSetShader(nullShader, nullptr, 0);
 }
 
 bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT)
 {
+	int WidthAndHeight = 2048;
+
 	std::string vShaderByteCode;
 	this->immediateContext = immediateContext;
+
 	if (this->immediateContext == nullptr)													return false;
 	if (!CreateRenderTargetView(device, swapChain, rtv))									return false;
 	if (!CreateDepthStencil(device, WIDTH, HEIGHT, dsTexture, dsView))						return false;
@@ -122,20 +168,26 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadVertexShader(device, vs_Skybox, vShaderByteCode, "Skybox_VS"))					return false;
 	if (!setUp_Sky_InputLayout(device, vShaderByteCode))									return false;
 	if (!LoadPixelShader(device, ps_Skybox, "Skybox_PS"))									return false;
+
 	SetViewport(viewport, WIDTH, HEIGHT);
+	SetViewport(shadowViewport, WidthAndHeight, WidthAndHeight);
+	
 	return true;
 }
 
+
 void BasicRenderer::setUpScene()
 {
+
 	immediateContext->ClearRenderTargetView(rtv, clearColour);
 	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
-
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	immediateContext->IASetInputLayout(inputLayout);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
 	immediateContext->RSSetViewports(1, &viewport);
+	immediateContext->RSSetState(shadowRastirizer);
+	immediateContext->PSSetSamplers(1, 1 ,&shadowSampler);
 	immediateContext->PSSetShader(pShader, nullptr, 0);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 

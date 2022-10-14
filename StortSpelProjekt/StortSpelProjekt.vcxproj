@@ -152,12 +152,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="BasicRenderer.h" />
     <ClInclude Include="BlendState.h" />
     <ClInclude Include="Bound.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="BufferTypes.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferNew.h" />
     <ClInclude Include="Credits.h" />
@@ -225,6 +227,7 @@
     <ClInclude Include="Menu.h" />
     <ClInclude Include="PackageTypes.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_resize.h" />
@@ -241,9 +244,11 @@
     <ClInclude Include="WindowHelper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseballBat.cpp" />
     <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="Credits.cpp" />
     <ClCompile Include="CreditsMenu.cpp" />
     <ClCompile Include="D3D11Helper.cpp" />
@@ -299,6 +304,7 @@
     <ClCompile Include="SettingsUI.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="SkyboxObj.cpp" />
+    <ClCompile Include="SpaceShip.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

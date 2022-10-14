@@ -42,6 +42,8 @@ GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos
 	// set scale
 	this->mesh->scale = scale;
 	this->scale = scale;
+
+	this->mesh->UpdateCB();
 }
 
 GameObject::GameObject()
@@ -200,7 +202,7 @@ void GameObject::setMesh(Mesh* inMesh)
 	this->mesh->rotation = inMesh->rotation;
 }
 
-bool GameObject::withinRadious(GameObject* object, const float& radius) const
+bool GameObject::withinBox(GameObject* object, float xRange, float yRange, float zRange) const
 {
 	using namespace DirectX;
 
@@ -209,17 +211,40 @@ bool GameObject::withinRadious(GameObject* object, const float& radius) const
 	bool inRange = false;
 
 	//X range
-	if (objPos.x <= selfPos.x + radius && objPos.x >= selfPos.x - radius)
+	if (objPos.x <= selfPos.x + xRange && objPos.x >= selfPos.x - xRange)
 	{
 		//Y range
-		if (objPos.y <= selfPos.y + radius && objPos.y >= selfPos.y - radius)
+		if (objPos.y <= selfPos.y + yRange && objPos.y >= selfPos.y - yRange)
 		{
 			//Z range
-			if (objPos.z <= selfPos.z + radius && objPos.z >= selfPos.z - radius)
+			if (objPos.z <= selfPos.z + zRange && objPos.z >= selfPos.z - zRange)
 			{
 				inRange = true;
 			}
 		}
+	}
+
+	return inRange;
+}
+
+bool GameObject::withinRadious(GameObject* object, float radius) const
+{
+	using namespace DirectX;
+
+	XMFLOAT3 objPos = object->getPos();
+	XMFLOAT3 selfPos = this->position;
+	bool inRange = false;
+
+	float x = (selfPos.x - objPos.x) * (selfPos.x - objPos.x);
+	float y = (selfPos.y - objPos.y) * (selfPos.y - objPos.y);
+	float z = (selfPos.z - objPos.z) * (selfPos.z - objPos.z);
+
+	float sum = std::sqrt(x + y + z);
+
+	//DirectX::SimpleMath::Vector3 vector(x, y, z);
+	if (abs(sum)/*vector.Length()*/ < radius)
+	{
+		inRange = true;
 	}
 
 	return inRange;
@@ -230,9 +255,17 @@ void GameObject::draw()
 	this->mesh->DrawWithMat();
 }
 
+int GameObject::getId()
+{
+	return this->objectID;
+}
+
 void GameObject::update()
 {
 	this->position = this->physComp->getPosV3();
-	this->mesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMVectorSet(this->physComp->getRotation().x, this->physComp->getRotation().y, this->physComp->getRotation().z, 1.0f));
-	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMVectorSet(this->physComp->getRotation().x, this->physComp->getRotation().y, this->physComp->getRotation().z, 1.0f));
+	this->reactQuaternion = this->physComp->getRotation();
+	this->dx11Quaternion = DirectX::SimpleMath::Quaternion(DirectX::SimpleMath::Vector4(reactQuaternion.x, reactQuaternion.y, reactQuaternion.z, reactQuaternion.w));
+	this->mesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
+	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
+
 }

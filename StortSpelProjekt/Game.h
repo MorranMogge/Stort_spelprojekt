@@ -38,8 +38,10 @@ private:
 	Player* player;
 	GameObject* planet;
 	GameObject* testCube;
+	SpaceShip* spaceShip;
 	Potion* potion;			//not in use
-
+	BaseballBat* testBat;
+	Player* otherPlayer;
 
 	LightHandler ltHandler;
 	PlayerVectors playerVecRenderer;
@@ -57,6 +59,7 @@ private:
 	bool setUpWireframe();
 	void updateBuffers();
 	void handleKeybinds();
+	DirectX::SimpleMath::Vector3 orientToPlanet(const DirectX::XMFLOAT3 &position);
 
 
 public:

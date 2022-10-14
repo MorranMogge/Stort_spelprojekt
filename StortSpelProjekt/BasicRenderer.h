@@ -36,11 +36,17 @@ private:
 	ID3D11GeometryShader* pt_gShader;
 
 	D3D11_VIEWPORT viewport;
+	D3D11_VIEWPORT shadowViewport;
+	ID3D11SamplerState* shadowSampler;
+	ID3D11RasterizerState* shadowRastirizer;
+
 
 	bool setUpInputLayout(ID3D11Device* device, const std::string &vShaderByteCode);
 	bool setUp_PT_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode);
 	bool setUp_Sky_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode);
 	bool setUpSampler(ID3D11Device* device);
+	bool setUpShadowSampler(ID3D11Device* device);
+	bool setUpShadowRastirizer(ID3D11Device* device);
 
 public:
 	BasicRenderer();

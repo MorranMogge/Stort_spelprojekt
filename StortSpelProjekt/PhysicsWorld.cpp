@@ -11,14 +11,9 @@
 
 void PhysicsWorld::setUpBaseScenario()
 {
-	//Create Player
-	playerShape = com.createBoxShape(reactphysics3d::Vector3(4*0.35f, 4 * 0.35f, 4 * 0.35f));
-	reactphysics3d::Transform playerTransform = reactphysics3d::Transform(reactphysics3d::Vector3(1, 1, 1), reactphysics3d::Quaternion::identity());
-	playerRigidBody = world->createRigidBody(playerTransform);
-	playerCollider = playerRigidBody->addCollider(playerShape, reactphysics3d::Transform(reactphysics3d::Vector3(0, 0, 0), reactphysics3d::Quaternion::identity()));
-	playerRigidBody->setType(reactphysics3d::BodyType::KINEMATIC);
-	playerRigidBody->enableGravity(false);
-	playerRigidBody->setTransform(reactphysics3d::Transform(reactphysics3d::Vector3(-10, 10, -20), reactphysics3d::Quaternion::identity()));
+	playerBox = new PhysicsComponent();
+	playerBox->initiateComponent(&this->com, this->world);
+	playerBox->setType(reactphysics3d::BodyType::KINEMATIC);
 
 	//Planet
 	planetShape = com.createSphereShape(reactphysics3d::decimal(20));
@@ -31,6 +26,7 @@ void PhysicsWorld::setUpBaseScenario()
 	world->setIsDebugRenderingEnabled(true);
 	debugRenderer = &world->getDebugRenderer();
 	debugRenderer->setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, true);
+	//debugRenderer->setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_BROADPHASE_AABB, true);
 
 	debugRenderer->computeDebugRenderingPrimitives(*world);
 }
@@ -181,6 +177,11 @@ PhysicsWorld::PhysicsWorld(std::string worldName)
 	settings.defaultVelocitySolverNbIterations = 20;
 	settings.isSleepingEnabled = false;
 	settings.worldName = worldName;
+	settings.isSleepingEnabled = true;
+	settings.gravity = reactphysics3d::Vector3(0, 0, 0);
+	settings.defaultBounciness = 0.1f;
+	settings.defaultFrictionCoefficient = 0.1f;
+	settings.defaultTimeBeforeSleep = 1.f;
 
 	// Create the physics world with your settings 
 	world = com.createPhysicsWorld(settings);
@@ -191,10 +192,10 @@ PhysicsWorld::PhysicsWorld(std::string worldName)
 
 void PhysicsWorld::renderReact3D()
 {
-	nrOfTriangles = this->debugRenderer->getTriangles().size();
+	nrOfTriangles = this->triangles.size();
 	this->debugRenderer->reset();
 	this->debugRenderer->computeDebugRenderingPrimitives(*world);
-	if (nrOfTriangles != this->debugRenderer->getTriangles().size()) this->recreateVertexBuffer();
+	if (3*nrOfTriangles != this->debugRenderer->getTriangles().size()) this->recreateVertexBuffer();
 	else this->updateVertexBuffer();
 	
 	GPU::immediateContext->VSSetConstantBuffers(0, 1, &identityMatrix);
@@ -213,6 +214,7 @@ PhysicsWorld::~PhysicsWorld()
 	{
 		delete physObjects[i];
 	}
+	delete playerBox;
 	if (world != nullptr) com.destroyPhysicsWorld(world);
 	debuggerBuffer->Release();
 	dpShader->Release();
@@ -235,19 +237,25 @@ void PhysicsWorld::addForceToObjects()
 	}
 }
 
-DirectX::SimpleMath::Vector3 PhysicsWorld::getPos()
+DirectX::SimpleMath::Vector3 PhysicsWorld::getPos() const
 {
-	return { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y , playerRigidBody->getTransform().getPosition().z };
+	//return { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y , playerRigidBody->getTransform().getPosition().z };
+	return playerBox->getPosV3();
 }
 
-DirectX::SimpleMath::Vector3 PhysicsWorld::getRot()
+DirectX::SimpleMath::Vector3 PhysicsWorld::getRot() const
 {
-	return { playerRigidBody->getTransform().getOrientation().x, playerRigidBody->getTransform().getOrientation().y, playerRigidBody->getTransform().getOrientation().z };
+	return { playerBox->getRotation().x, playerBox->getRotation().y, playerBox->getRotation().z };
+}
+
+PhysicsComponent* PhysicsWorld::getPlayerBox() const
+{
+	return this->playerBox;
 }
 
 void PhysicsWorld::updatePlayerBox(const DirectX::SimpleMath::Vector3& pos)
 {
-	playerRigidBody->setTransform(reactphysics3d::Transform(reactphysics3d::Vector3({ pos.x, pos.y, pos.z }), playerRigidBody->getTransform().getOrientation()));
+	playerBox->setPosition(reactphysics3d::Vector3({ pos.x, pos.y, pos.z }));
 }
 
 void PhysicsWorld::addBoxToWorld(DirectX::XMFLOAT3 dimensions, float mass, DirectX::XMFLOAT3 position)
@@ -263,7 +271,7 @@ void PhysicsWorld::addBoxToWorld(DirectX::XMFLOAT3 dimensions, float mass, Direc
 	physObjects.emplace_back(new PhysicsComponent());
 	physObjects[vectorSize]->initiateComponent(&this->com, this->world);
 	physObjects[vectorSize]->setPosition(reactphysics3d::Vector3(position.x, position.y, position.z));
-	physObjects[vectorSize]->setLinearDampning(0.3f);
+	physObjects[vectorSize]->setLinearDampning(1.3f);
 	//UPDATE THE VERTEX BUFFER TO BE ABLE TO DRAW THE NEW PHYSOBJECTS
 	this->recreateVertexBuffer();
 }

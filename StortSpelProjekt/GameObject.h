@@ -9,13 +9,15 @@ class GameObject
 private:
 	Mesh* mesh;
 	int objectID;
-	PhysicsComponent* physComp;
-	//float mass
-	//collider
+	reactphysics3d::Quaternion reactQuaternion;
+	DirectX::SimpleMath::Quaternion dx11Quaternion;
+
 protected:
+	PhysicsComponent* physComp;
 	DirectX::SimpleMath::Vector3 position;
 	DirectX::XMMATRIX rotation;
 	DirectX::XMFLOAT3 scale;
+
 
 public:
 	GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
@@ -37,7 +39,9 @@ public:
 	void setPhysComp(PhysicsComponent* comp);
 	PhysicsComponent* getPhysComp()const;
 	void updateBuffer();
-	bool withinRadious(GameObject* object, const float& radius) const;
+	int getId();
+	bool withinBox(GameObject *object ,float x, float y, float z) const;
+	bool withinRadious(GameObject* object, float radius) const;
 	virtual void draw();
 	virtual void update(); //This updates the hitboxes
 };

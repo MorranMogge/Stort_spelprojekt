@@ -7,12 +7,13 @@
 void Game::loadObjects()
 {
 	//Here we can add base object we want in the beginning of the game
-	planet = new GameObject("../Meshes/Planet", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
-	player = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
-	otherPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
-	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
-	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
-	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+	planet = new GameObject("../Meshes/Sphere", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
+	player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
+	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2);
+	spaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
+	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4);
+	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+	otherPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6);
 
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
@@ -27,6 +28,7 @@ void Game::loadObjects()
 	gameObjects.emplace_back(planet);
 	gameObjects.emplace_back(player);
 	gameObjects.emplace_back(potion);
+	gameObjects.emplace_back(spaceShip);
 	gameObjects.emplace_back(testCube);
 	gameObjects.emplace_back(testBat);
 	gameObjects.emplace_back(otherPlayer);
@@ -34,15 +36,18 @@ void Game::loadObjects()
 
 	for (int i = 0; i < 10; i++)
 	{
-		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6+ i, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 		physWolrd.addPhysComponent(newObj, reactphysics3d::CollisionShapeName::BOX);
 		newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+(float)i*10, 100));
 		gameObjects.emplace_back(newObj);
 	}
 
+	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
+	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	testBat->setPlayer(player);
 	testBat->setTestObj(gameObjects);
 	player->setPhysComp(physWolrd.getPlayerBox());
+
 }
 
 void Game::drawShadows()
@@ -161,6 +166,47 @@ void Game::handleKeybinds()
 	}
 }
 
+
+DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3 &position)
+{
+	using namespace DirectX; using namespace SimpleMath;
+
+	//Default vectors
+	const XMVECTOR DEFAULT_RIGHT = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	const XMVECTOR DEFAULT_FORWARD = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	
+	//Modified vectors
+	XMVECTOR upVector = (planetGravityField.calcGravFactor(position) * -1);
+	XMVECTOR forwardVector = DEFAULT_FORWARD;
+	XMVECTOR rightVector = DEFAULT_RIGHT;
+	XMVECTOR dotProduct;
+	XMFLOAT3 dotValue;
+
+	//Rotation matrix
+	XMMATRIX rotation = XMMatrixIdentity();
+
+	//rotation
+	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
+	rightVector =	XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
+	rightVector =	XMVector3Normalize(rightVector);
+	forwardVector = XMVector3Normalize(forwardVector);
+	dotProduct = DirectX::XMVector3Dot(upVector, forwardVector);
+	XMStoreFloat3(&dotValue, dotProduct);
+	
+	//creating matrix
+	Matrix z = XMMatrixRotationAxis(forwardVector, -std::atan(dotValue.z));
+	Matrix x = XMMatrixRotationAxis(rightVector, std::asin(dotValue.x));
+	Matrix y = DirectX::XMMatrixRotationAxis(upVector, std::asin(dotValue.y));
+	Matrix f = z * x * y;
+	
+	//Extracting rotation
+	Quaternion quaterRot = Quaternion::CreateFromRotationMatrix(f);
+	Vector3 finalRotation = quaterRot.ToEuler();
+
+	return finalRotation;
+}
+
+
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
@@ -169,9 +215,12 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
 	this->setUpWireframe();
-	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
-	ltHandler.addLight(DirectX::XMFLOAT3(20, 30, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
-	ltHandler.addLight(DirectX::XMFLOAT3(10, -20, 30), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
+
+	//camera.updateCamera(immediateContext);
+	ltHandler.addLight(DirectX::XMFLOAT3(-57, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0),1);
+	ltHandler.addLight(DirectX::XMFLOAT3(20, 30, 0), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 0);
+	ltHandler.addLight(DirectX::XMFLOAT3(10, -20, 30), DirectX::XMFLOAT3(0, 0, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
+
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
 
 	playerVecRenderer.setPlayer(player);
@@ -203,25 +252,44 @@ GAMESTATE Game::Update()
 	if (getLength(player->getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(player->getPos()); player->setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
 	player->movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
 	
-	//Player functions
+	//Player, camera & physworld functions
 	player->pickupItem(potion);
 	player->pickupItem(testBat);
-	
 	physWolrd.updatePlayerBox(player->getPos());
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
-
-	for (int i = 1; i < gameObjects.size(); i++)
-	{
-		gameObjects[i]->update();//->getPhysComp()->updateParent();
-	}
 	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
 	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
+
+
 	//Here you can write client-server related functions?
 
 
+	//Updates gameObject physics components
+	for (int i = 1; i < gameObjects.size(); i++)
+	{
+		if (gameObjects.at(i)->getId() != this->spaceShip->getId())
+		{
+			gameObjects[i]->update();//->getPhysComp()->updateParent();
+		}
+		
+	}
+
+	//Updates gameObject buffers
 	this->updateBuffers();
 	
+	//Check winstate
+	for (int i = 0; i < gameObjects.size(); i++)
+	{
+		if (i > 0 && spaceShip->detectedComponent(gameObjects.at(i)))
+		{
+			if (gameObjects.at(i)->getId() == this->testBat->getId())
+			{
+				std::cout << "detected: " << gameObjects.at(i)->getId() << std::endl;
+				std::cout << "detected: Bat!" << std::endl;
+			}
+		}
+	}
 	if (player->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
 	
 	//Debug keybinds

@@ -22,6 +22,7 @@
 #include "Player.h"
 #include "Potion.h"
 #include "BaseballBat.h"
+#include "SpaceShip.h"
 
 //User
 #include "Input.h"

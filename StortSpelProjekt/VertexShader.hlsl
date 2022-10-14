@@ -37,5 +37,7 @@ VSout main(VSin input)
 
     //Calculate the normal vector against the world matrix only.
     output.normal = normalize(mul(input.normal, (float3x3) worldM));
+    
+    output.localPosition = input.position;
     return output;
 }

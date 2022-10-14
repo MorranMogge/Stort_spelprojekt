@@ -62,8 +62,9 @@ void Player::handleInputs()
 
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float& deltaTime)
 {
-	normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 
+    //Variables
+	normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 	upVector = XMVector3TransformCoord(DEFAULT_UP, rotation);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotation);

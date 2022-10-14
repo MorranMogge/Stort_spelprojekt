@@ -11,8 +11,7 @@ private:
 	int objectID;
 	reactphysics3d::Quaternion reactQuaternion;
 	DirectX::SimpleMath::Quaternion dx11Quaternion;
-	//float mass
-	//collider
+
 protected:
 	PhysicsComponent* physComp;
 	DirectX::SimpleMath::Vector3 position;
@@ -40,7 +39,9 @@ public:
 	void setPhysComp(PhysicsComponent* comp);
 	PhysicsComponent* getPhysComp()const;
 	void updateBuffer();
-	bool withinRadious(GameObject *object ,float radius) const;
+	int getId();
+	bool withinBox(GameObject *object ,float x, float y, float z) const;
+	bool withinRadious(GameObject* object, float radius) const;
 	virtual void draw();
 	virtual void update(); //This updates the hitboxes
 };

@@ -32,3 +32,7 @@ bool SpaceShip::detectedComponent(GameObject* objectToCheck)
 	}
 	return didDetect;
 }
+
+void SpaceShip::update()
+{
+}

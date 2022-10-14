@@ -25,11 +25,10 @@ void Game::loadObjects()
 	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
 	otherPlayer->getPhysComp()->setPosition(reactphysics3d::Vector3(otherPlayer->getPosV3().x, otherPlayer->getPosV3().y, otherPlayer->getPosV3().z));
 
-
-	gameObjects.emplace_back(player);
 	gameObjects.emplace_back(planet);
-	gameObjects.emplace_back(spaceShip);
+	gameObjects.emplace_back(player);
 	gameObjects.emplace_back(potion);
+	gameObjects.emplace_back(spaceShip);
 	gameObjects.emplace_back(testCube);
 	gameObjects.emplace_back(testBat);
 	gameObjects.emplace_back(otherPlayer);
@@ -269,7 +268,11 @@ GAMESTATE Game::Update()
 	//Updates gameObject physics components
 	for (int i = 1; i < gameObjects.size(); i++)
 	{
-		//gameObjects[i]->update();//->getPhysComp()->updateParent();
+		if (gameObjects.at(i)->getId() != this->spaceShip->getId())
+		{
+			gameObjects[i]->update();//->getPhysComp()->updateParent();
+		}
+		
 	}
 
 	//Updates gameObject buffers

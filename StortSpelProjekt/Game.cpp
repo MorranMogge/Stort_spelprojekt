@@ -35,7 +35,6 @@ void Game::loadObjects()
 	gameObjects.emplace_back(otherPlayer);
 
 
-
 	for (int i = 0; i < 10; i++)
 	{
 		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6+ i, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
@@ -254,42 +253,40 @@ GAMESTATE Game::Update()
 	if (getLength(player->getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(player->getPos()); player->setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
 	player->movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
 	
-	//Player functions
+	//Player, camera & physworld functions
 	player->pickupItem(potion);
 	player->pickupItem(testBat);
-	
 	physWolrd.updatePlayerBox(player->getPos());
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
-
-	for (int i = 1; i < gameObjects.size(); i++)
-	{
-		//gameObjects[i]->update();//->getPhysComp()->updateParent();
-	}
 	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
 	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
+
 
 	//Here you can write client-server related functions?
 
 
+	//Updates gameObject physics components
+	for (int i = 1; i < gameObjects.size(); i++)
+	{
+		//gameObjects[i]->update();//->getPhysComp()->updateParent();
+	}
+
+	//Updates gameObject buffers
 	this->updateBuffers();
 	
+	//Check winstate
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		if (i > 0)//avoid planet
+		if (i > 0 && spaceShip->detectedComponent(gameObjects.at(i)))
 		{
-			if (spaceShip->detectedComponent(gameObjects.at(i)))
+			if (gameObjects.at(i)->getId() == this->testBat->getId())
 			{
-				if (gameObjects.at(i)->getId() == this->testBat->getId())
-				{
-					std::cout << "detected: " << gameObjects.at(i)->getId() << std::endl;
-					std::cout << "detected: Bat!" << std::endl;
-				}
+				std::cout << "detected: " << gameObjects.at(i)->getId() << std::endl;
+				std::cout << "detected: Bat!" << std::endl;
 			}
 		}
 	}
-	
-
 	if (player->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
 	
 	//Debug keybinds

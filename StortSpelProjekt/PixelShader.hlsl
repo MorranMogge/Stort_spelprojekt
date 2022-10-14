@@ -57,7 +57,7 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
         #define SPOT_LIGHT 2
         
         LightResult result = { { 0, 0, 0}, { 0, 0, 0 } };
-        float3 lightDir;
+        float3 lightDir = float3(0,0,0);
         
         switch (lights[i].type)
         {

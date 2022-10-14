@@ -5,7 +5,6 @@
 #include "Potion.h"
 #include <GamePad.h>
 #include <iostream>
-using namespace DirectX;
 
 class Item;
 
@@ -24,6 +23,7 @@ private:
 	DirectX::XMVECTOR rightVector = DEFAULT_RIGHT;
 	DirectX::XMVECTOR upVector = DEFAULT_UP;
 	DirectX::XMVECTOR normalVector;
+	bool keyboardMove = false;
 
 	//Other shit
 	const float speedConstant = 100.f;

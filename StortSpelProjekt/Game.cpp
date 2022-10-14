@@ -223,7 +223,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
 
-	gamePad = std::make_unique<GamePad>();
+	gamePad = std::make_unique<DirectX::GamePad>();
 	playerVecRenderer.setPlayer(player);
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();

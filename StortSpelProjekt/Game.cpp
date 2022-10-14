@@ -259,17 +259,13 @@ GAMESTATE Game::Update()
 	physWolrd.updatePlayerBox(player->getPos());
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
-	grav = normalizeXMFLOAT3(grav);
-	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
-	player->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
-	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
 
 
 	//Here you can write client-server related functions?
 
-
+	player->update();
 	//Updates gameObject physics components
-	for (int i = 1; i < gameObjects.size(); i++)
+	for (int i = 2; i < gameObjects.size(); i++)
 	{
 		if (gameObjects.at(i)->getId() != this->spaceShip->getId())
 		{
@@ -277,6 +273,11 @@ GAMESTATE Game::Update()
 		}
 		
 	}
+
+	grav = normalizeXMFLOAT3(grav);
+	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
+	player->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
+	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
 
 	//Updates gameObject buffers
 	this->updateBuffers();

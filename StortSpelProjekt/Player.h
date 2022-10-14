@@ -17,10 +17,12 @@ private:
 	DirectX::XMVECTOR dotProduct;
 	DirectX::XMMATRIX rotationMX;
 
+	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	DirectX::XMVECTOR forwardVector = DEFAULT_FORWARD;
 	DirectX::XMVECTOR rightVector = DEFAULT_RIGHT;
+	DirectX::XMVECTOR upVector = DEFAULT_UP;
 	DirectX::XMVECTOR normalVector;
 
 	//Other shit
@@ -56,5 +58,5 @@ public:
 	void releaseItem();
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	bool repairedShip() const;
-	void update(const std::unique_ptr<DirectX::GamePad>& gamePad);
+	void update();
 };

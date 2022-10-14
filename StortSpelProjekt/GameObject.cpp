@@ -242,7 +242,7 @@ bool GameObject::withinRadious(GameObject* object, float radius) const
 	float sum = std::sqrt(x + y + z);
 
 	//DirectX::SimpleMath::Vector3 vector(x, y, z);
-	if (abs(sum)/*vector.Length()*/ < radius)
+	if (abs(sum) < radius)
 	{
 		inRange = true;
 	}

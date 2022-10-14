@@ -35,6 +35,9 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
+	upVector = XMVector3TransformCoord(DEFAULT_UP, rotation);
+
+	upVector = DirectX::XMVector3Normalize(upVector);
 	rightVector = DirectX::XMVector3Normalize(rightVector);
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
@@ -43,13 +46,13 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	XMStoreFloat3(&dotValue, dotProduct);
 	if (dotValue.x < -0.1f)
 	{
-		rotation *= DirectX::XMMatrixRotationAxis(rightVector, -0.007f);
-		rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, -0.007f);
+		rotation *= DirectX::XMMatrixRotationAxis(rightVector, -0.009f);
+		rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, -0.009f);
 	}
 	else if (dotValue.x > 0.1f)
 	{
-		rotation *= DirectX::XMMatrixRotationAxis(rightVector, 0.007f);
-		rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, 0.007f);
+		rotation *= DirectX::XMMatrixRotationAxis(rightVector, 0.009f);
+		rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, 0.009f);
 	}
 
 	//Z-Rotation
@@ -57,13 +60,13 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	XMStoreFloat3(&dotValue, dotProduct);
 	if (dotValue.z < -0.1f)
 	{
-		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, 0.007f);
-		rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, 0.007f);
+		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, 0.009f);
+		rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, 0.009f);
 	}
 	else if (dotValue.z > 0.1f)
 	{
-		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -0.007f);
-		rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, -0.007f);
+		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -0.009f);
+		rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, -0.009f);
 	}
 
 	//PC movement
@@ -179,12 +182,15 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 
 		forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
 		rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
+		upVector = XMVector3TransformCoord(DEFAULT_UP, rotation);
+
+		upVector = DirectX::XMVector3Normalize(upVector);
 		rightVector = DirectX::XMVector3Normalize(rightVector);
 		forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
 		if (state.IsAPressed())
 		{
-			deltaTime *= 1.5f;
+			deltaTime *= 1.2f;
 		}
 
 		//Walk forward
@@ -302,7 +308,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 	}
 }
 
-bool Player::pickupItem(Item* itemToPickup, const std::unique_ptr<DirectX::GamePad>& gamePad)
+bool Player::pickupItem(Item* itemToPickup)
 {
 	bool successfulPickup = false;
 
@@ -372,7 +378,7 @@ bool Player::repairedShip() const
 	return repairCount >= 4;
 }
 
-void Player::update(const std::unique_ptr<DirectX::GamePad>& gamePad)
+void Player::update()
 {
     if (holdingItem != nullptr)
     {

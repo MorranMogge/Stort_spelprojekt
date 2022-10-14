@@ -46,6 +46,8 @@ public:
 	Client(std::string ipAddress, int port = 2001);
 	~Client();
 
+	void setClientId(int nr);
+
 	void connectToServer(std::string ipAddress, int port);
 	void connectToServer();
 	void joinThread();

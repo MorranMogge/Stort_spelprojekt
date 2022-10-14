@@ -141,7 +141,7 @@ GAMESTATE Game::Update()
 	
 	if (circularBuffer->getIfPacketsLeftToRead())packetsLeft = "true";
 	//std::cout << "check if circbuffer have packets = " << packetsLeft << std::endl;
-
+	circularBuffer->debugWriteMemoryAdress();
 	//körs till det inte finns packet kvar att läsa
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{

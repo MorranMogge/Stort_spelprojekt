@@ -76,6 +76,11 @@ Client::~Client()
 	}
 }
 
+void Client::setClientId(int nr)
+{
+	this->data.playerId = nr;
+}
+
 void Client::connectToServer(std::string ipAddress, int port)
 {
 	if (tcpSocket.connect(ipAddress, port) != sf::Socket::Done)

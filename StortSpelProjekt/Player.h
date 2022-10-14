@@ -30,10 +30,10 @@ private:
 	int health;
 
 	//Controller shits
-	float posX;
-	float posY;
-	float totalPos;
-	float throttle;
+	float posX = 0.0f;
+	float posY = 0.0f;
+	float totalPos = 0.0f;
+	float throttle = 0.0f;
 
 public:
 	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);

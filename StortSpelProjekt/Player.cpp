@@ -25,37 +25,6 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 
 void Player::handleInputs()
 {
-	////return true ONCE key press, trigger only ONCE
-	//if (Input::KeyPress(KeyCode::W))
-	//{
-	//    std::cout << "W pressed \n";
-	//}
-	////return true ONCE key release, trigger only ONCE
-	//if (Input::KeyUp(KeyCode::A))
-	//{
-	//    std::cout << "A key released \n";
-	//}
-
-	//return true as long as key holding down, trigger every frame
-	/*if (Input::KeyDown(KeyCode::W))
-	{
-		std::cout << "W key is holding down \n";
-	}
-	if (Input::KeyDown(KeyCode::S))
-	{
-		std::cout << "S key is holding down \n";
-	}
-
-
-	if (Input::KeyDown(KeyCode::A))
-	{
-		std::cout << "A key is holding down \n";
-	}
-	if (Input::KeyDown(KeyCode::D))
-	{
-		std::cout << "D key is holding down \n";
-	}*/
-
 }
 
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float& deltaTime)
@@ -328,23 +297,6 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 				if (dotValue.x > DirectX::XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
 			}
 		}
-
-		throttle = state.triggers.right;
-
-		if (state.IsLeftTriggerPressed())
-		{
-			std::cout << "Left trigger pressed\n";
-		}
-
-		if (state.IsViewPressed())
-		{
-			std::cout << "backbutton is pressed\n";
-		}
-
-		if (state.IsLeftStickPressed())
-		{
-			std::cout << "Left stick down\n";
-		}
 	}
 }
 
@@ -428,12 +380,11 @@ void Player::update(const std::unique_ptr<DirectX::GamePad>& gamePad)
 			holdingItem->setPos({ this->getPos().x, this->getPos().y, this->getPos().z });
 			holdingItem = nullptr;
 		}
-		else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T) || state.IsYPressed() && state.IsYPressed())
+		else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T) || state.IsYPressed() && state.IsYPressed()) //Yes needs to be here
 		{
 			holdingItem->useItem();
 			repairCount++;
 			std::cout << "Progress " << repairCount << "/4\n";
-			//holdingItem->getPhysComp()->setPosition(reactphysics3d::Vector3({ 50.f, 50.f, 50.f }));
 			holdingItem->getPhysComp()->setIsAllowedToSleep(true);
 			holdingItem->getPhysComp()->setIsSleeping(true);
 			holdingItem = nullptr;

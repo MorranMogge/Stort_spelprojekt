@@ -104,7 +104,7 @@ void GameObject::setRot(const DirectX::XMVECTOR& rot)
 	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(rot);
 }
 
-void GameObject::setScale(DirectX::XMFLOAT3 scale)
+void GameObject::setScale(const DirectX::XMFLOAT3& scale)
 {
 	this->mesh->scale = scale;
 	this->scale = scale;
@@ -156,7 +156,7 @@ void GameObject::updateBuffer()
 	this->mesh->UpdateCB();
 }
 
-void GameObject::setMesh(const  std::string& meshPath)
+void GameObject::setMesh(const std::string& meshPath)
 {
 	//delete current mesh ptr
 	if (this->mesh != nullptr)
@@ -242,7 +242,7 @@ bool GameObject::withinRadious(GameObject* object, float radius) const
 	float sum = std::sqrt(x + y + z);
 
 	//DirectX::SimpleMath::Vector3 vector(x, y, z);
-	if (abs(sum)/*vector.Length()*/ < radius)
+	if (abs(sum) < radius)
 	{
 		inRange = true;
 	}

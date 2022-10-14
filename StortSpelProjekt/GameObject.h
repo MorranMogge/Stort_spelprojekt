@@ -28,7 +28,7 @@ public:
 	void setPos(const DirectX::XMFLOAT3& pos);
 	void setRot(const DirectX::XMVECTOR& rot);
 	void setRot(const DirectX::XMFLOAT3& rot);
-	void setScale(DirectX::XMFLOAT3 scale);
+	void setScale(const DirectX::XMFLOAT3& scale);
 	void setMesh(const std::string& meshPath);
 	void setMesh(Mesh* inMesh);
 	DirectX::XMFLOAT3 getPos() const;

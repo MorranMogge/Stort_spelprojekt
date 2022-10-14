@@ -223,6 +223,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
 
+	gamePad = std::make_unique<DirectX::GamePad>();
 	playerVecRenderer.setPlayer(player);
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
@@ -258,15 +259,13 @@ GAMESTATE Game::Update()
 	physWolrd.updatePlayerBox(player->getPos());
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
-	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
-	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
 
 
 	//Here you can write client-server related functions?
 
-
+	player->update();
 	//Updates gameObject physics components
-	for (int i = 1; i < gameObjects.size(); i++)
+	for (int i = 2; i < gameObjects.size(); i++)
 	{
 		if (gameObjects.at(i)->getId() != this->spaceShip->getId())
 		{
@@ -274,6 +273,11 @@ GAMESTATE Game::Update()
 		}
 		
 	}
+
+	grav = normalizeXMFLOAT3(grav);
+	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
+	player->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
+	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
 
 	//Updates gameObject buffers
 	this->updateBuffers();

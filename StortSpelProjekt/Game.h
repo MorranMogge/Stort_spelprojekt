@@ -20,6 +20,8 @@ private:
 	ID3D11Buffer* wireBuffer;
 	D3D11_MAPPED_SUBRESOURCE subData;
 
+	std::unique_ptr<DirectX::GamePad> gamePad;
+
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> start;
 

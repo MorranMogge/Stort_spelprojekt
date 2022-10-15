@@ -248,7 +248,9 @@ void ModelManager::loadBones(const aiMesh* mesh, const int mesh_index)
 		{
 			DirectX::XMMATRIX temp;
 			this->aiMatrixToXMmatrix(mesh->mBones[i]->mOffsetMatrix, temp);
-			boneInfo bi(temp);
+			DirectX::XMFLOAT4X4 offset;
+			DirectX::XMStoreFloat4x4(&offset, temp);
+			boneInfo bi(offset);
 			boneVec.push_back(bi);
 			boneVec[boneVec.size() - 1].name = boneName;
 		}
@@ -262,38 +264,38 @@ void ModelManager::loadBones(const aiMesh* mesh, const int mesh_index)
 	}
 }
 
-//void ModelManager::numberBone(aiNode* node, int parentNode, DirectX::XMMATRIX& prevOffsets)
-//{
-//	int boneID = this->findBoneID(node->mName.data);
-//	bool realNode = true;
-//	if (boneID == -1)
-//	{
-//		realNode = false;
-//		boneID = parentNode;
-//	}
-//	if (realNode)
-//	{
-//		this->boneVec[boneID].parentID = parentNode;
-//
-//	}
-//	
-//	DirectX::XMMATRIX temp;
-//	this->aiMatrixToXMmatrix(node->mTransformation, temp);
-//	DirectX::XMMatrixMultiply(prevOffsets, temp);
-//
-//	if (boneID != -1)
-//	{
-//		this->boneVec[boneID].finalTransform = prevOffsets;
-//	}
-//	
-//	for (int i = 0; i < node->mNumChildren; i++)
-//	{
-//		this->numberBone(node->mChildren[i], boneID, prevOffsets);
-//	}
-//
-//}
+void ModelManager::numberBone(aiNode* node, int parentNode, DirectX::XMMATRIX& prevOffsets)
+{
+	int boneID = this->findBoneID(node->mName.data);
+	bool realNode = true;
+	if (boneID == -1)
+	{
+		realNode = false;
+		boneID = parentNode;
+	}
+	if (realNode)
+	{
+		this->boneVec[boneID].parentID = parentNode;
 
-int ModelManager::findAndAddBoneID(std::string name)
+	}
+	
+	DirectX::XMMATRIX temp;
+	this->aiMatrixToXMmatrix(node->mTransformation, temp);
+	DirectX::XMMatrixMultiply(prevOffsets, temp);
+
+	if (boneID != -1)
+	{
+		//this->boneVec[boneID].finalTransform = prevOffsets;
+	}
+	
+	for (int i = 0; i < node->mNumChildren; i++)
+	{
+		this->numberBone(node->mChildren[i], boneID, prevOffsets);
+	}
+
+}
+
+int ModelManager::findAndAddBoneID(const std::string& name)
 {
 	int bone_ID = 0;
 	std::string boneName = name;
@@ -330,7 +332,10 @@ void ModelManager::readAnimations(aiScene* scene)
 {
 	if (scene->HasAnimations())
 	{
-
+		for (int i = 0, end = scene->mNumAnimations; i < end; i++)
+		{
+			this->AnimationVec.push_back(scene->mAnimations[i]);
+		}
 	}
 }
 
@@ -344,9 +349,15 @@ ModelManager::ModelManager(ID3D11Device* device)
 
 bool ModelManager::loadMeshData(const std::string& filePath)
 {
+	this->boneDataVec.clear();
+	this->boneVec.clear();
+	this->boneIndexTraslator.clear();
+
 	Assimp::Importer importer;
-	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
+	const aiScene* pScene = this->assimpImp.ReadFile(filePath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
 		aiProcess_ConvertToLeftHanded);
+
+	this->scene = new aiScene();
 
 	if (pScene == nullptr)
 	{
@@ -371,6 +382,10 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	this->boneVec;
 	bp = 2;
 
+	this->scene->mAnimations = pScene->mAnimations;
+	this->scene->mNumAnimations = pScene->mNumAnimations;
+	this->scene->mRootNode = new aiNode(*pScene->mRootNode);
+
 	return true;
 }
 
@@ -382,4 +397,24 @@ std::vector<Mesh2*> ModelManager::getMeshes() const
 std::vector<ID3D11ShaderResourceView*> ModelManager::getTextureMaps() const
 {
 	return this->diffuseMaps;
+}
+
+bool ModelManager::loadMeshAndBoneData(const std::string& filePath, AnimatedMesh& gameObject)
+{
+	this->loadMeshData(filePath);
+	if (this->scene == nullptr)
+	{
+		return false;
+	}
+	if (scene->mNumAnimations == 0)
+	{
+		free(this->scene);
+		return false;
+	}
+	gameObject.addData(this->boneDataVec, this->boneVec, this->boneIndexTraslator, this->scene, this->AnimationVec, this->assimpImp);
+	this->boneDataVec.clear();
+	this->boneVec.clear();
+	this->boneIndexTraslator.clear();
+	this->scene == nullptr;
+	return true;
 }

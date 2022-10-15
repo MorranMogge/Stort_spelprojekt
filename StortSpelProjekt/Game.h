@@ -19,6 +19,7 @@
 #include "BufferTypes.h"
 #include "LightHandler.h"
 #include "Potion.h"
+#include "AnimatedMesh.h"
 
 struct wirefameInfo
 {
@@ -67,6 +68,8 @@ private:
 	void updateBuffers();
 
 	float pos[3];
+
+	AnimatedMesh test;
 
 	//Variables for the mouse movement
 	MouseClass* mouse;

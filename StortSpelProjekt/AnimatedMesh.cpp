@@ -1,15 +1,19 @@
 #include "AnimatedMesh.h"
+using namespace DirectX;
 
-void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, const aiNode* node, const DirectX::XMMATRIX& parentTrasform)
+void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, const aiNode* node, DirectX::XMFLOAT4X4& parentTrasform)
 {
 	aiAnimation* an = this->scene->mAnimations[animationIndex];
-	DirectX::XMMATRIX meshToBoneTransform = XMMatrixTranspose(DirectX::XMMATRIX(
+	DirectX::XMMATRIX currentNodeTrans = XMMatrixTranspose(DirectX::XMMATRIX(
 			node->mTransformation.a1, node->mTransformation.a2, node->mTransformation.a3, node->mTransformation.a4,
 			node->mTransformation.b1, node->mTransformation.b2, node->mTransformation.b3, node->mTransformation.b4,
 			node->mTransformation.c1, node->mTransformation.c2, node->mTransformation.c3, node->mTransformation.c4,
 			node->mTransformation.d1, node->mTransformation.d2, node->mTransformation.d3, node->mTransformation.d4));
 
+
 	const aiNodeAnim* amnNode = this->findNodeAnim(node->mName.data, an);
+
+	MySimp.animationData.mChannels = scene->mAnimations[0]->mChannels;
 
 	if (amnNode)
 	{
@@ -25,18 +29,23 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 		this->InterpolateTranslation(Translation, animationTime, amnNode);
 		DirectX::XMMATRIX TranslationM = DirectX::XMMatrixTranslation(Translation.x, Translation.y, Translation.z);
 
-		meshToBoneTransform = TranslationM * RotationM * ScalingM;
+		currentNodeTrans = TranslationM * RotationM * ScalingM;
 	}
-	DirectX::XMMATRIX globalTrasform = parentTrasform * meshToBoneTransform;
+	DirectX::XMMATRIX PrevNode = DirectX::XMLoadFloat4x4(&parentTrasform);
+
+	DirectX::XMMATRIX globalTrasform = PrevNode * currentNodeTrans;
+	DirectX::XMFLOAT4X4 meshToBoneTransform;
+	DirectX::XMStoreFloat4x4(&meshToBoneTransform, globalTrasform);
+
 
 	if (boneNameToIndex.find(node->mName.data) != boneNameToIndex.end())
 	{
 		int id = boneNameToIndex[node->mName.data];
-		boneVector[id].offsetMatrix = globalTrasform;
+		boneVector[id].offsetMatrix = meshToBoneTransform;
 	}
 	for (int i = 0, end = node->mNumChildren; i < end; i++)
 	{
-		uppdateMatrices(animationIndex, animationTime, node->mChildren[i], globalTrasform);
+		uppdateMatrices(animationIndex, animationTime, node->mChildren[i], meshToBoneTransform);
 	}
 }
 
@@ -164,28 +173,53 @@ void AnimatedMesh::getTimeInTicks(float dt)
 	{
 		timeInTicks -= scene->mAnimations[0]->mDuration;
 	}
-	DirectX::XMMATRIX startMatrix = DirectX::XMMatrixIdentity();
+	DirectX::XMMATRIX temp = DirectX::XMMatrixIdentity();
+	DirectX::XMFLOAT4X4 startMatrix;
+	DirectX::XMStoreFloat4x4(&startMatrix, temp);
 	this->uppdateMatrices(0, timeInTicks, this->scene->mRootNode, startMatrix);
 }
 
-void AnimatedMesh::render(ID3D11DeviceContext* devCon, float dt)
+AnimatedMesh::AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
+	:GameObject(useMesh, pos, rot, id)
 {
-
+	InputLayoutAndVertexShader();
 }
 
-AnimatedMesh::AnimatedMesh(ID3D11Device* device, std::vector<vertex> vertexTriangle, std::vector<DWORD> indexTriangle)
-	:Mesh2(device, vertexTriangle, indexTriangle)
+AnimatedMesh::AnimatedMesh()
 {
 }
 
-void AnimatedMesh::addData(std::vector<IndexBoneData> boneDataVec, std::vector<boneInfo> boneVector, std::unordered_map<std::string, int> boneNameToIndex, aiScene* scene)
+AnimatedMesh::~AnimatedMesh()
+{
+	free(this->scene->mAnimations);
+	free(this->scene->mRootNode);
+	free(this->scene);
+}
+
+void AnimatedMesh::addData(std::vector<IndexBoneData> boneDataVec, std::vector<boneInfo> boneVector, std::map<std::string, int> boneNameToIndex, aiScene* scene, std::vector<aiAnimation*> anmVec
+)
 {
 	this->boneDataVec = boneDataVec;
 	this->scene = scene;
 	this->boneVector = boneVector;
 	this->boneNameToIndex = boneNameToIndex;
+
+	std::vector<DirectX::XMFLOAT4X4> structVector(boneVector.size());
+	this->boneStrucBuf.Initialize(GPU::device, GPU::immediateContext, structVector);
 }
 
-void AnimatedMesh::Draw(ID3D11DeviceContext* immediateContext, int animationIndex)
+void AnimatedMesh::uppdate(ID3D11DeviceContext* immediateContext, int animationIndex, const float dt)
 {
+	DirectX::XMMATRIX start = DirectX::XMMatrixIdentity();
+	this->getTimeInTicks(dt);
+
+	this->boneVector;
+	int bp = 2;
+
+	//for (int i = 0, end = this->boneVector.size(); i < end; i++)
+	//{
+	//	DirectX::XMStoreFloat4x4(&this->boneStrucBuf.getData(i), boneVector[i].offsetMatrix);
+	//}
+	//this->boneStrucBuf.applyData();
+	//this->boneStrucBuf.BindToVS(0);
 }

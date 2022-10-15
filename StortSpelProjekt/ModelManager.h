@@ -13,8 +13,9 @@
 
 //#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-
+#include "AnimatedMesh.h"
 #include "mesh2.h"
+#include <assimp/cimport.h>
 //#include "../DirectXTK-main/Src/SDKMesh.h"
 
 
@@ -30,36 +31,24 @@ private:
 	ModelDataContainer bank;
 	ID3D11Device* device;
 
+	//bones 
+	
 	aiMatrix4x4 globalInverseTransform;
-	struct IndexBoneData
-	{
-		//int boneName;
-		int BoneIDs[4] = {-1};
-		float Weights[4] = {0};
-	};
-	struct boneInfo
-	{
-		int parentID;
-		std::string name;
-		DirectX::XMMATRIX offsetMatrix;
+	aiScene* scene;
+	Assimp::Importer assimpImp;
 
-		boneInfo(const DirectX::XMMATRIX& offset)
-		{
-			offsetMatrix = offset;
-			parentID = -1;
-			name = "";
-		}
-	};
-	void aiMatrixToXMmatrix(const aiMatrix4x4& in, DirectX::XMMATRIX& out);
 	std::vector<boneInfo> boneVec;
 	std::vector<IndexBoneData> boneDataVec;
+	std::map<std::string, int> boneIndexTraslator;
+	std::vector<aiAnimation*> AnimationVec;
+	//int numberBones;
+
+	void aiMatrixToXMmatrix(const aiMatrix4x4& in, DirectX::XMMATRIX& out);
 	void normalizeWeights(float weights[]);
 	void addBoneData(const int vertexID, const int boneId, const float weight);
 	void loadBones(const aiMesh* mesh, const int mesh_index);
-	std::map<std::string, int> boneIndexTraslator;
-	int numberBones;
 	void numberBone(aiNode* node, int parentNode, DirectX::XMMATRIX& prevOffsets);
-	int findAndAddBoneID(std::string name);
+	int findAndAddBoneID(const std::string& name);
 	int findBoneID(const std::string& name);
 
 	void readAnimations(aiScene* scene);
@@ -68,4 +57,6 @@ public:
 	bool loadMeshData(const std::string& filePath);
 	std::vector<Mesh2*> getMeshes() const;
 	std::vector<ID3D11ShaderResourceView*> getTextureMaps() const;
+
+	bool loadMeshAndBoneData(const std::string& filePath, AnimatedMesh& gameObject);
 };

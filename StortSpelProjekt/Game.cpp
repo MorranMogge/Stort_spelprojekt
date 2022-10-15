@@ -64,7 +64,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 	ModelManager MM(device);
-	MM.loadMeshData("../Meshes/gobbb.fbx");
+	MM.loadMeshAndBoneData("../Meshes/fly.fbx", this->test);
 }
 
 Game::~Game()
@@ -96,6 +96,7 @@ GAMESTATE Game::Update()
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
 	
+	this->test.uppdate(GPU::immediateContext, 0, dt);
 
 	//Here you can write client-server related functions?
 

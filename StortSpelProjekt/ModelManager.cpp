@@ -246,6 +246,7 @@ void ModelManager::loadBones(const aiMesh* mesh, const int mesh_index)
 		int bone_ID = this->findAndAddBoneID(boneName);
 		if (bone_ID == boneVec.size())
 		{
+			//new bone
 			DirectX::XMMATRIX temp;
 			this->aiMatrixToXMmatrix(mesh->mBones[i]->mOffsetMatrix, temp);
 			DirectX::XMFLOAT4X4 offset;
@@ -411,7 +412,7 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath, AnimatedMesh
 		free(this->scene);
 		return false;
 	}
-	gameObject.addData(this->boneDataVec, this->boneVec, this->boneIndexTraslator, this->scene, this->AnimationVec, this->assimpImp);
+	//gameObject.addData(this->boneDataVec, this->boneVec, this->boneIndexTraslator, this->scene, this->AnimationVec, this->assimpImp);
 	this->boneDataVec.clear();
 	this->boneVec.clear();
 	this->boneIndexTraslator.clear();

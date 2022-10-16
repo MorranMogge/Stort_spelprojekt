@@ -177,7 +177,7 @@ public:
 	~AnimatedMesh();
 
 
-	void addData(std::vector<IndexBoneData> boneDataVec, std::vector<boneInfo> boneVector, std::map<std::string, int> boneNameToIndex, aiScene* scene, std::vector<aiAnimation*> anmVec);
+	void addData(const AnimationData& data);
 
 	void uppdate(ID3D11DeviceContext* immediateContext, int animationIndex, const float dt);
 };

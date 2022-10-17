@@ -17,6 +17,7 @@
 #include "ParticleEmitter.h"
 #include "SkyboxObj.h"
 #include "PlayerVectors.h"
+#include "BilboardObject.h"
 
 //GameObjects
 #include "Player.h"

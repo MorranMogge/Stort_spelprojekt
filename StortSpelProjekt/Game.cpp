@@ -5,17 +5,18 @@
 
 void Game::loadObjects()
 {
-
+	this->manager.getMeshData("../Meshes/player.obj", vBuff, iBuff, subMeshRanges, verticies);
+	
 	tmpMesh = new Mesh(this->vBuff, this->iBuff, this->subMeshRanges, this->verticies);
-	
-	std::cout << subMeshRanges.size() << "\n";
-	std::cout << verticies.size() << "\n";
-
 	tmp = new Player(tmpMesh, DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),0);
-	
-	
-
+	this->tempSRV3 = this->manager.getSrv("playerTexture.png");
+	this->tmp->setSrv(tempSRV3);
 	//Here we can add base object we want in the beginning of the game
+	//this->manager.getMeshData("../Meshes/Baseball.obj", vBuff, iBuff, subMeshRanges, verticies);
+	//tmp2 = new Potion(tmpMesh, DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
+	//this->tempSRV3 = this->manager.getSrv("planetTexture.png");
+	//tmp2->setSrv(tempSRV3);
+
 	planet = new GameObject("../Meshes/Planet", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
 	player = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
 	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
@@ -62,39 +63,15 @@ void Game::drawObjects(bool drawDebug)
 	ltHandler.bindLightBuffers();
 
 	//Draw Game objects
-	//for (int i = 0; i < gameObjects.size(); i++)
-	//{
-	//	gameObjects.at(i)->draw();
-	//}
+	/*for (int i = 0; i < gameObjects.size(); i++)
+	{
+		gameObjects.at(i)->draw();
+	}*/
 
 	this->tmp->tmpDraw();
 	
 
-	//MaterialLibrary::textures[]
-	//UINT stride = sizeof(vertex);
-	//UINT offset = 0;
-	//
-	//int startIndex = 0;
-	//int startVertex = 0;
-	//GPU::immediateContext->PSSetShaderResources(0, 1, &tempSRV);
-	//GPU::immediateContext->IASetVertexBuffers(0, 1, &vBuff, &stride, &offset);
-	//GPU::immediateContext->IASetIndexBuffer(iBuff, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
-	//for (int i = 0; i < subMeshRanges.size(); i++)
-	//{
-	//
-	//	if (i == 0)
-	//	{
-	//		GPU::immediateContext->PSSetShaderResources(0, 1, &tempSRV2);
-	//	}
-	//	else
-	//	{
-	//		GPU::immediateContext->PSSetShaderResources(0, 1, &tempSRV);
-	//	}
-	//	
-	//	GPU::immediateContext->DrawIndexed(subMeshRanges[i], startIndex, startVertex);
-	//	startIndex += subMeshRanges[i];
-	//	startVertex += this->verticies[i];
-	//}
+	
 
 	//Draw light debug meshes
 	if (drawDebug)
@@ -195,85 +172,16 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->vBuff = {};
 	this->iBuff = {};
 	this->manager.setDevice(device);
-	this->manager.loadMeshData("../Meshes/gob.obj");
-	this->manager.getMeshData("../Meshes/gob.obj", vBuff, iBuff, subMeshRanges, verticies);
-
-
-
-
-	ID3D11Texture2D* texture;
-	D3D11_TEXTURE2D_DESC desc = {};
-	int width, height, channels;
-	unsigned char* image = stbi_load("../Textures/texture2.png", &width, &height, &channels, STBI_rgb_alpha);
-	if (!image)
-	{
-		stbi_image_free(image);
-		
-	}
-	desc.Width = width;
-	desc.Height = height;
-	desc.MipLevels = 1;
-	desc.ArraySize = 1;
-	desc.MiscFlags = 0;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	desc.SampleDesc.Count = 1;
-	desc.SampleDesc.Quality = 0;
-	desc.Usage = D3D11_USAGE_IMMUTABLE;
-	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	desc.CPUAccessFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA data = {};
-	data.pSysMem = image;
-	data.SysMemPitch = width * 4; //RBGA - RGBA - ...
-
-	HRESULT hr = device->CreateTexture2D(&desc, &data, &texture);
-	stbi_image_free(image);
-	hr = device->CreateShaderResourceView(texture, NULL, &tempSRV);
-	
-	texture->Release();
-
-
-
-	
-	image = stbi_load("../Textures/Missing.png", &width, &height, &channels, STBI_rgb_alpha);
-	if (!image)
-	{
-		stbi_image_free(image);
-
-	}
-	desc.Width = width;
-	desc.Height = height;
-	desc.MipLevels = 1;
-	desc.ArraySize = 1;
-	desc.MiscFlags = 0;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	desc.SampleDesc.Count = 1;
-	desc.SampleDesc.Quality = 0;
-	desc.Usage = D3D11_USAGE_IMMUTABLE;
-	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	desc.CPUAccessFlags = 0;
-
-	data = {};
-	data.pSysMem = image;
-	data.SysMemPitch = width * 4; //RBGA - RGBA - ...
-
-	hr = device->CreateTexture2D(&desc, &data, &texture);
-	stbi_image_free(image);
-	hr = device->CreateShaderResourceView(texture, NULL, &tempSRV2);
-
-	texture->Release();
-
-
-
-
-
+	this->manager.loadMeshData("../Meshes/player.obj");
+	this->manager.loadMeshData("../Meshes/Planet.obj");
+	this->manager.loadMeshData("../Meshes/Baseball.obj");
 
 	//this->tempSRV = this->manager.getSrv();
 	MaterialLibrary::LoadDefault();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
-	this->tmp->setSrv(tempSRV2);
+	
 	
 	this->setUpWireframe();
 	//camera.updateCamera(immediateContext);
@@ -302,10 +210,9 @@ Game::~Game()
 	
 	//delete tmpMesh;
 	delete tmp;
+	/*delete tmp2;*/
 	
 	wireBuffer->Release();
-	this->tempSRV->Release();
-	this->tempSRV2->Release();
 }
 
 GAMESTATE Game::Update()

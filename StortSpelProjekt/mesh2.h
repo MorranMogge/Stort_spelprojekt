@@ -11,13 +11,15 @@ struct vertex
     DirectX::XMFLOAT3 pos; // Position
     DirectX::XMFLOAT2 uv; // UV coordination
     DirectX::XMFLOAT3 nor; // Normal
+   /* DirectX::XMFLOAT3 tangent;*/
 
     vertex() {
         pos = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };
         uv = DirectX::XMFLOAT2{ 0.0f,0.0f };
         nor = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };
+        /*tangent = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };*/
     };
-    vertex(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT2& uv, DirectX::XMFLOAT3& nor) : pos(pos), uv(uv), nor(nor) {};
+    vertex(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT2& uv, DirectX::XMFLOAT3& nor, DirectX::XMFLOAT3& tangent) : pos(pos), uv(uv), nor(nor)/*, tangent(tangent)*/ {};
 };
 
 class Mesh2

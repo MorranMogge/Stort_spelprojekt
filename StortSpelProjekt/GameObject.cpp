@@ -5,8 +5,7 @@ GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const Direct
 	:position(pos), rotation(rot), mesh(useMesh), objectID(id), scale(scale)
 {
 
-	std::cout << mesh->amountOfVertices.size() << "\n";
-	std::cout << mesh->submeshRanges.size() << "\n";
+
 	
 
 	// set position

@@ -108,6 +108,7 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 	std::vector<DWORD> indexTriangle;
 
 	vertex vertex;
+	
 
 	for (UINT i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -119,6 +120,12 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 		vertex.nor.y = mesh->mNormals[i].y;
 		vertex.nor.z = mesh->mNormals[i].z;
 
+		//vertex.tangent.x = mesh->mTangents[i].x;
+		//vertex.tangent.y = mesh->mTangents[i].y;
+		//vertex.tangent.z = mesh->mTangents[i].z;
+		
+
+
 		if (mesh->mTextureCoords[0])
 		{
 			vertex.uv.x = (float)mesh->mTextureCoords[0][i].x;
@@ -128,6 +135,41 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 		vertexTriangle.emplace_back(vertex);
 		dataForMesh.vertexTriangle.emplace_back(vertex);
 	}
+	
+	/*for (int i = 0; i < dataForMesh.vertexTriangle.size(); i += 3)
+	{
+		DirectX::XMFLOAT2 UV1 = dataForMesh.vertexTriangle[i].uv;
+		DirectX::XMFLOAT2 UV2 = dataForMesh.vertexTriangle[i+1].uv;
+		DirectX::XMFLOAT2 UV3 = dataForMesh.vertexTriangle[i+2].uv;
+
+		DirectX::XMFLOAT3 Pos1 = dataForMesh.vertexTriangle[i].pos;
+		DirectX::XMFLOAT3 Pos2 = dataForMesh.vertexTriangle[i+1].pos;
+		DirectX::XMFLOAT3 Pos3 = dataForMesh.vertexTriangle[i+2].pos;
+
+		DirectX::SimpleMath::Vector2 dAB = UV2;
+		dAB.x - UV1.x;
+		dAB.y - UV1.y;
+		
+		DirectX::SimpleMath::Vector2 dAC = UV3;
+		dAC.x - UV1.x;
+		dAC.y - UV1.y;
+
+		DirectX::XMFLOAT3 edge1 = Pos2;
+		edge1.x - Pos1.x;
+		edge1.y - Pos1.y;
+		edge1.z - Pos1.z;
+
+		DirectX::XMFLOAT3 edge2 = Pos3;
+		edge2.x - Pos1.x;
+		edge2.y - Pos1.y;
+		edge2.z - Pos1.z;
+
+		float f = 1.0f / (dAB.x * dAC.y - dAC.x * dAB.y);
+
+		DirectX::XMFLOAT3 tangent;
+		tangent.x = f * (dAC.y * edge1.x - dAB.y * edge2);
+	}*/
+
 
 	for (UINT i = 0; i < mesh->mNumFaces; i++)
 	{
@@ -140,7 +182,7 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 		}
 	}
 	
-	this->submeshRanges.emplace_back(dataForMesh.indexTriangle.size());
+	this->submeshRanges.emplace_back(indexTriangle.size());
 	this->amountOfvertices.emplace_back(vertexTriangle.size());
 
 }
@@ -216,7 +258,6 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	ID3D11Buffer* indexBuffer = {};
 
 	D3D11_BUFFER_DESC indexBufferDesc = {};
-	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	indexBufferDesc.ByteWidth = sizeof(DWORD) * dataForMesh.indexTriangle.size();
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;

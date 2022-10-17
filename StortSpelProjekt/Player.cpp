@@ -7,8 +7,7 @@ using namespace DirectX;
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
     :GameObject(useMesh, pos, rot, id), health(69), holdingItem(nullptr)
 {
-    std::cout << useMesh->amountOfVertices.size() << "\n";
-    std::cout << useMesh->submeshRanges.size() << "\n";
+ 
     
 }
 

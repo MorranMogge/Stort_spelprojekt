@@ -21,6 +21,8 @@ private:
 	ID3D11ShaderResourceView* tempSRV;
 	ID3D11ShaderResourceView* tempSRV2;
 
+	ID3D11ShaderResourceView* tempSRV3;
+
 
 	ID3D11DeviceContext* immediateContext;
 	ModelManager manager;
@@ -47,7 +49,7 @@ private:
 	Camera camera;
 	Player* player;
 	Player* tmp;
-	Player* tmp2;
+	Potion* tmp2;
 	GameObject* planet;
 	GameObject* testCube;
 	Potion* potion;			//not in use

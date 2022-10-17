@@ -302,5 +302,4 @@ public:
 		bound.aabb.Center = bound.center + position;
 		bound.aabb.Extents = bound.width;
 	}
-
 };

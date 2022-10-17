@@ -1,22 +1,24 @@
 #pragma once
-#include <reactphysics3d\reactphysics3d.h>
-#include <d3d11.h>
-#include <SimpleMath.h>
+#include "PhysicsComponent.h"
 
-#include "Vertex.h"
-#include "ImGuiHelper.h"
+#include "Vertex.h"	//Used for creating the rendering triangles
 
-class PhysicsComponent;
 class GameObject;
 
 class PhysicsWorld
 {
 private:
+	int testingWarnings;
 	UINT stride;
 	UINT offset;
+	reactphysics3d::uint64 nrOfTriangles;
+
+	//Used for gravity
+	DirectX::XMFLOAT3 grav;
+	reactphysics3d::Vector3 temp;
 
 	std::vector<PhysicsComponent *> physObjects;
-
+		
 	reactphysics3d::PhysicsCommon com;
 	reactphysics3d::PhysicsWorld* world;
 
@@ -29,6 +31,8 @@ private:
 
 	reactphysics3d::RigidBody* playerRigidBody;
 	reactphysics3d::RigidBody* planetRigidBody;
+
+	PhysicsComponent* playerBox;
 
 	std::vector<Vertex> triangles;
 
@@ -51,8 +55,9 @@ public:
 	void update(float dt);
 	void renderReact3D();
 	void addForceToObjects();
-	DirectX::SimpleMath::Vector3 getPos();
-	DirectX::SimpleMath::Vector3 getRot();
+	DirectX::SimpleMath::Vector3 getPos() const;
+	DirectX::SimpleMath::Vector3 getRot() const;
+	PhysicsComponent* getPlayerBox()const;
 	void updatePlayerBox(const DirectX::SimpleMath::Vector3& pos);
 	void addBoxToWorld(DirectX::XMFLOAT3 dimensions = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f), float mass = 1.0f,  DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10, 00));
 	void addSphereToWorld(float radius = 0.5f, DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 0, 0));

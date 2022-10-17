@@ -1,7 +1,6 @@
 #pragma once
 #define NOMINMAX
-#include <Windows.h>
-#include <string>
+#include "stdafx.h"
 
 class Console final
 {

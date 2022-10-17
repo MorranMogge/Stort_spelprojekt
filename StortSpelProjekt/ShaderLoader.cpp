@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ShaderLoader.h"
 
 bool LoadVertexShader(ID3D11Device* device, ID3D11VertexShader*& vShader, std::string& vShaderByteCode, const std::string path)

@@ -1,24 +1,28 @@
+#include "stdafx.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
-
-#include <string>
-#include <iostream>
 #include <time.h>
 
 #include "Console.h"
+#include "MemoryLeackChecker.h"
 #include "SoundCollection.h"
 #include "Client.h"
 #include "Game.h"
 #include "Menu.h"
 #include "WindowHelper.h"
 #include "D3D11Helper.h"
-#include "MemoryLeackChecker.h"
-#include "GuiHandler.h"
 
+#include "GuiHandler.h"
 #include "ImGuiHelper.h"
+
+//Ta bort innan merge med main?
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
+
+#include "SettingsMenu.h"
+#include "CreditsMenu.h"
+
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace, _In_ LPWSTR lpCmdLine, _In_ int nCmdShhow)
 {
@@ -65,10 +69,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX11_Init(device, immediateContext);
-	MouseClass mouse;
-	SetUpMouse(mouse);
 
-	State* currentState = new Game(immediateContext, device, swapChain, mouse, window);
+	//State* currentState = new Game(immediateContext, device, swapChain, mouse, window);
+	State* currentState = new Menu();
 	GAMESTATE stateInfo = NOCHANGE;
 
 	MSG msg = {};
@@ -102,7 +105,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			{
 			case GAME:
 				delete currentState;
-				currentState = new Game(immediateContext, device, swapChain, mouse, window);
+				currentState = new Game(immediateContext, device, swapChain, window);
+				break;
+			case SETTINGS:
+				delete currentState;
+				currentState = new SettingsMenu();
+				break;
+			case CREDITS:
+				delete currentState;
+				currentState = new CreditsMenu();
 				break;
 			case MENU:
 				delete currentState;
@@ -135,12 +146,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
-	if (Console::IsOpen)
+	if (Console::IsOpen())
 		Console::Destroy();
 
 	device->Release();
 	immediateContext->Release();
 	swapChain->Release();
+
 	#pragma endregion
 	
 	return 0;

@@ -1,14 +1,11 @@
 #pragma once
 
-#include <vector>
-#include <string>
+#include "stdafx.h"
 
 #include <fstream>
 #include <sstream>
-#include <unordered_map>
-
-#include <SimpleMath.h>
 #include "MTL.h"
+
 
 struct OBJ
 {

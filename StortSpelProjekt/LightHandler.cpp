@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "LightHandler.h"
 
 
@@ -41,12 +42,14 @@ bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBu
 
 bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, Microsoft::WRL::ComPtr<ID3D11Texture2D>& dsTexture, std::vector<Microsoft::WRL::ComPtr<ID3D11DepthStencilView>>& dsViews, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& shaderView, int nrOfLights)
 {
+	int WidthAndHeight = 2048;
+
 	D3D11_TEXTURE2D_DESC textureDesc = {};											//skapa svartvit textur som representerar djup i en scen
-	textureDesc.Width = width;
-	textureDesc.Height = height;
+	textureDesc.Width = WidthAndHeight;
+	textureDesc.Height = WidthAndHeight;
 	textureDesc.MipLevels = 1u;														//olika nivååer av kompression
 	textureDesc.ArraySize = nrOfLights;												//en buffer
-	textureDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;								// MapUsageTypless(usage);
+	textureDesc.Format = DXGI_FORMAT_R32_TYPELESS;								// MapUsageTypless(usage);
 	textureDesc.SampleDesc.Count = 1;												// defaultvärden
 	textureDesc.SampleDesc.Quality = 0;												//Sample quality
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;										//säger hur den ska användas när vi kommer åt den ()
@@ -66,7 +69,7 @@ bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, Microsoft
 	for (int i = 0; i < nrOfLights; i++)
 	{
 		D3D11_DEPTH_STENCIL_VIEW_DESC descView = {};
-		descView.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		descView.Format = DXGI_FORMAT_D32_FLOAT;
 		descView.Flags = 0;
 		descView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
 		descView.Texture2DArray.MipSlice = 0;
@@ -89,7 +92,7 @@ bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, Microsoft
 
 	//ShaderResource view 
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
-	shaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;//DXGI_FORMAT_R24G8_TYPELESS
+	shaderResourceViewDesc.Format = DXGI_FORMAT_R32_FLOAT;//DXGI_FORMAT_R24G8_TYPELESS
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
 	shaderResourceViewDesc.Texture2DArray.ArraySize = nrOfLights;
 	shaderResourceViewDesc.Texture2DArray.FirstArraySlice = 0;
@@ -212,7 +215,9 @@ void LightHandler::addLight(const DirectX::XMFLOAT3 &position, const DirectX::XM
 		this->viewBuffers.push_back(tempBuffer);
 
 		//Create Debug Mesh
-		this->boundingSphere.push_back(new GameObject("../Meshes/Cone", position, direction, lightID));//Id does nothing yet!
+		this->boundingSphere.push_back(new GameObject("../Meshes/Cone", position, direction, lightID));
+		this->boundingSphere.back()->updateBuffer();
+
 	}
 	else
 	{
@@ -359,21 +364,28 @@ int LightHandler::getNrOfLights() const
 	return (UINT)this->lights.size();
 }
 
-void LightHandler::drawShadows(const int &lightIndex, const std::vector<GameObject*> &gameObjects)
+void LightHandler::drawShadows(const int &lightIndex, const std::vector<GameObject*> &gameObjects, Camera* stageCamera)
 {
 	//Variables
 	ID3D11RenderTargetView* nullRtv{ nullptr };
 	ID3D11DepthStencilView* nullDsView{ nullptr };
 
-	//Set view buffer
-	GPU::immediateContext->VSSetConstantBuffers(1, 1, this->viewBuffers.at(lightIndex).GetAddressOf());
+	if (stageCamera != nullptr)
+	{
+		//Set view buffer
+		stageCamera->VSbindViewBuffer(1);
+	}
+	else
+	{
+		//Set view buffer
+		GPU::immediateContext->VSSetConstantBuffers(1, 1, this->viewBuffers.at(lightIndex).GetAddressOf());
 
-	//Clear Depth Stencil
-	GPU::immediateContext->ClearDepthStencilView(this->depthViews.at(lightIndex).Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+		//Clear Depth Stencil
+		GPU::immediateContext->ClearDepthStencilView(this->depthViews.at(lightIndex).Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 
-	//Set render targets
-	GPU::immediateContext->OMSetRenderTargets(1, &nullRtv, this->depthViews.at(lightIndex).Get());
-
+		//Set render targets
+		GPU::immediateContext->OMSetRenderTargets(1, &nullRtv, this->depthViews.at(lightIndex).Get());
+	}
 
 	//Draw Objects
 	for (int i = 0; i < gameObjects.size(); i++)	
@@ -406,4 +418,5 @@ void LightHandler::unbindSrv()
 	ID3D11ShaderResourceView* nullsrv{ nullptr };
 	GPU::immediateContext->PSSetShaderResources(3, 1, &nullsrv);
 	GPU::immediateContext->PSSetShaderResources(4, 1, &nullsrv);
+	GPU::immediateContext->PSSetShaderResources(5, 1, &nullsrv);
 }

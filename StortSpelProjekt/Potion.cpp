@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Potion.h"
 #include "Player.h"
 

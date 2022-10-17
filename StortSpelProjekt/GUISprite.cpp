@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "GUISprite.h"
 #include <DDSTextureLoader.h>
 #include <WICTextureLoader.h>

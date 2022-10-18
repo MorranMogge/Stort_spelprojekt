@@ -24,13 +24,6 @@ private:
 
 	reactphysics3d::RigidBody* rigid;
 	reactphysics3d::DebugRenderer* debugRenderer;
-	reactphysics3d::SphereShape* planetShape;
-	reactphysics3d::Collider* planetCollider;
-	reactphysics3d::BoxShape* playerShape;
-	reactphysics3d::Collider* playerCollider;
-
-	reactphysics3d::RigidBody* playerRigidBody;
-	reactphysics3d::RigidBody* planetRigidBody;
 
 	PhysicsComponent* playerBox;
 
@@ -61,5 +54,5 @@ public:
 	void updatePlayerBox(const DirectX::SimpleMath::Vector3& pos);
 	void addBoxToWorld(DirectX::XMFLOAT3 dimensions = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f), float mass = 1.0f,  DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10, 00));
 	void addSphereToWorld(float radius = 0.5f, DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 0, 0));
-	void addPhysComponent(GameObject* gameObj, reactphysics3d::CollisionShapeName shape = reactphysics3d::CollisionShapeName::BOX);
+	void addPhysComponent(GameObject* gameObj, reactphysics3d::CollisionShapeName shape = reactphysics3d::CollisionShapeName::BOX, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f));
 };

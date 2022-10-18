@@ -50,14 +50,14 @@ PhysicsComponent::~PhysicsComponent()
 	if (this->rigidBody != nullptr && this->shape != nullptr && this->collider != nullptr) this->deallocate();
 }
 
-void PhysicsComponent::initiateComponent(reactphysics3d::PhysicsCommon* com, reactphysics3d::PhysicsWorld* world, const reactphysics3d::CollisionShapeName& shape)
+void PhysicsComponent::initiateComponent(reactphysics3d::PhysicsCommon* com, reactphysics3d::PhysicsWorld* world, const reactphysics3d::CollisionShapeName& shape, const DirectX::XMFLOAT3& scale)
 {
 	this->comPtr = com;
 	this->worldPtr = world;
 
 	//Creates basic physics component
 	this->createRigidBody();
-	this->setShape(shape);
+	this->setShape(shape, scale);
 	this->addCollider();
 
 	//Gives some values	
@@ -72,16 +72,16 @@ void PhysicsComponent::setType(const reactphysics3d::BodyType& physicsType)
 	this->rigidBody->setType(physicsType);
 }
 
-void PhysicsComponent::setShape(const reactphysics3d::CollisionShapeName& shapeType)
+void PhysicsComponent::setShape(const reactphysics3d::CollisionShapeName& shapeType, const DirectX::XMFLOAT3& scale)
 {
 	reactphysics3d::Transform defaultTransform = reactphysics3d::Transform::identity();
 	switch (shapeType)
 	{
 	case reactphysics3d::CollisionShapeName::BOX:
-		this->shape = this->comPtr->createBoxShape(reactphysics3d::Vector3(4*0.35f, 4 * 0.35f, 4 * 0.35f));
+		this->shape = this->comPtr->createBoxShape(reactphysics3d::Vector3(3 * scale.x, 3 * scale.x, 3 * scale.x));
 		break;
 	case reactphysics3d::CollisionShapeName::SPHERE:
-		this->shape = this->comPtr->createSphereShape(4*0.5f);
+		this->shape = this->comPtr->createSphereShape(scale.x);
 		break;
 	/*case reactphysics3d::CollisionShapeName::CONVEX_MESH:
 		this->comPtr->destroyConvexMeshShape(c);

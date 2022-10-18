@@ -17,7 +17,7 @@ private:
 	reactphysics3d::Collider* collider;		//Used to make collisions happen
 
 	void createRigidBody(const reactphysics3d::Transform& transform = reactphysics3d::Transform::identity());
-	void setShape(const reactphysics3d::CollisionShapeName& shapeType = reactphysics3d::CollisionShapeName::BOX);
+	void setShape(const reactphysics3d::CollisionShapeName& shapeType = reactphysics3d::CollisionShapeName::BOX, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f));
 	void addCollider(const reactphysics3d::Transform& transform = reactphysics3d::Transform::identity());
 	void deallocate();
 
@@ -28,7 +28,7 @@ public:
 	//Important to do this function first, since it allows us to access the common and world
 
 	//Initialises the variables: rigidbody, shape and collider
-	void initiateComponent(reactphysics3d::PhysicsCommon* com, reactphysics3d::PhysicsWorld* world, const reactphysics3d::CollisionShapeName& shape = reactphysics3d::CollisionShapeName::BOX);
+	void initiateComponent(reactphysics3d::PhysicsCommon* com, reactphysics3d::PhysicsWorld* world, const reactphysics3d::CollisionShapeName& shape = reactphysics3d::CollisionShapeName::BOX, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f));
 
 	//Change properties of the physics component
 

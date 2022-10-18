@@ -6,18 +6,22 @@
 
 void Game::loadObjects()
 {
+	float planetSize = 50.f;
 	//Here we can add base object we want in the beginning of the game
-	planet = new GameObject("../Meshes/Planet", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
-	player = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
+	planet = new GameObject("../Meshes/Planet", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(planetSize, planetSize, planetSize));
+	player = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22*3, 12*3, -22*3), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
 	otherPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
 	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
 	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
 	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+	maxDistance = planet->getScale().x + 2.f;
 
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
+	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
+	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 
 	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
@@ -201,7 +205,6 @@ GAMESTATE Game::Update()
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
-	//Restart counter
 
 	grav = planetGravityField.calcGravFactor(player->getPosV3());
 	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
@@ -210,7 +213,7 @@ GAMESTATE Game::Update()
 	additionXMFLOAT3(velocity, grav);
 	
 	//Keeps player at the surface of the planet
-	if (getLength(player->getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(player->getPos()); player->setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
+	if (getLength(player->getPos()) <= maxDistance) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(player->getPos()); player->setPos(getScalarMultiplicationXMFLOAT3(maxDistance, tempPos)); }
 	player->movePos(velocity);
 
 	//Player functions
@@ -218,13 +221,12 @@ GAMESTATE Game::Update()
 	player->pickupItem(testBat);
 	
 	physWolrd.updatePlayerBox(player->getPos());
-	if (wireframe) physWolrd.update(dt);
-	//physWolrd.addForceToObjects();
+	physWolrd.update(dt);
 
 	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
 	for (int i = 1; i < gameObjects.size(); i++)
 	{
-		gameObjects[i]->update();//->getPhysComp()->updateParent();
+		gameObjects[i]->update();
 	}
 	//Here you can write client-server related functions?
 
@@ -240,14 +242,10 @@ GAMESTATE Game::Update()
 
 void Game::Render()
 {
-
-
-
 	//Render shadow maps
 	basicRenderer.lightPrePass();
 	drawShadows();
 	
-
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);

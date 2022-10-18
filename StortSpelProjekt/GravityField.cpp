@@ -2,8 +2,8 @@
 #include "GravityField.h"
 #include "DirectXMathHelper.h"
 
-GravityField::GravityField(float gravityConstant, DirectX::XMFLOAT3 planetCenterPoint)
-    :gravityConstant(gravityConstant), planetCenterPoint(planetCenterPoint)
+GravityField::GravityField(float gravityConstant, DirectX::XMFLOAT3 planetCenterPoint, float radius)
+    :gravityConstant(gravityConstant), planetCenterPoint(planetCenterPoint), radius(radius)
 {
 }
 

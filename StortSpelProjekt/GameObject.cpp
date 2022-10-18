@@ -106,6 +106,9 @@ void GameObject::setScale(DirectX::XMFLOAT3 scale)
 {
 	this->mesh->scale = scale;
 	this->scale = scale;
+	
+	//if (this->physComp->getTypeName() == reactphysics3d::CollisionShapeName::BOX) 
+	this->physComp->setScale(scale);
 }
 
 DirectX::XMFLOAT3 GameObject::getPos() const

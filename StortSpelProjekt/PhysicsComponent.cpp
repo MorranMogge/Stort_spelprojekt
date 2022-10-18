@@ -278,6 +278,11 @@ DirectX::SimpleMath::Vector3 PhysicsComponent::getPosV3() const
 	return {temp.x, temp.y, temp.z};
 }
 
+bool PhysicsComponent::raycast(const reactphysics3d::Ray& ray, reactphysics3d::RaycastInfo& rayInfo) const
+{
+	return this->collider->raycast(ray, rayInfo);
+}
+
 bool PhysicsComponent::testPointInside(const reactphysics3d::Vector3& point) const
 {
 	return this->collider->testPointInside(point);

@@ -206,14 +206,28 @@ GAMESTATE Game::Update()
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 
+	
 	grav = planetGravityField.calcGravFactor(player->getPosV3());
 	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
 	
 	scalarMultiplicationXMFLOAT3(dt, grav);
 	additionXMFLOAT3(velocity, grav);
 	
+	//reactphysics3d::Ray ray(reactphysics3d::Vector3(this->player->getPosV3().x, this->player->getPosV3().y, this->player->getPosV3().z), reactphysics3d::Vector3(player->getRayCastPos()));
+	reactphysics3d::Ray ray(reactphysics3d::Vector3(player->getRayCastPos()), reactphysics3d::Vector3(0,0,0));
+	reactphysics3d::RaycastInfo rayInfo;
+	DirectX::XMFLOAT3 tempp(1,1,1);
+	int gameObjSize = gameObjects.size();
+	for (int i = 1; i < gameObjSize; i++)
+	{
+		if (gameObjects[i]->getPhysComp()->raycast(ray, rayInfo)) { velocity = DirectX::XMFLOAT3(0, 0, 0); std::cout << "GameObj ID:" << i << "\n"; tempp = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z); break; }
+	}
+
+	//if (tempp.x != 1.f) std::cout << "RayCast length: " << getLength(tempp) << "\n";
+	subtractionXMFLOAT3(tempp, this->player->getPos());
+
 	//Keeps player at the surface of the planet
-	if (getLength(player->getPos()) <= maxDistance) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(player->getPos()); player->setPos(getScalarMultiplicationXMFLOAT3(maxDistance, tempPos)); }
+	if (getLength(tempp) <= 0.1f) { velocity = DirectX::XMFLOAT3(0, 0, 0); }
 	player->movePos(velocity);
 
 	//Player functions

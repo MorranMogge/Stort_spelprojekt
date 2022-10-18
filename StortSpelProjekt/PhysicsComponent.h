@@ -72,6 +72,7 @@ public:
 	reactphysics3d::Collider* getCollider()const;
 	reactphysics3d::RigidBody* getRigidBody()const;
 	DirectX::SimpleMath::Vector3 getPosV3()const;
+	bool raycast(const reactphysics3d::Ray& ray, reactphysics3d::RaycastInfo& rayInfo)const;
 
 	bool testPointInside(const reactphysics3d::Vector3& point)const;	//Can be used instead of "testBodiesOverlap()", check point instead of AABB
 	bool testBodiesOverlap(PhysicsComponent* other)const;				//Better collision detection

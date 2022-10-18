@@ -43,6 +43,7 @@ public:
 	DirectX::XMVECTOR getForwardVec() const;
 	DirectX::XMVECTOR getRightVec() const;
 	DirectX::XMMATRIX getRotationMX() const;
+	reactphysics3d::Vector3 getRayCastPos()const;
 
 	void addItem(Item* itemToHold);
 	void addHealth(const int& healthToIncrease);

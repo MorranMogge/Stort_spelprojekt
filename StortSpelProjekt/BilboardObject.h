@@ -16,7 +16,8 @@ public:
 	DirectX::XMFLOAT3 getPosition();
 	int getNrOfTextures();
 	void PSbindSrv(const int& textureIndex, const int& slot);
-	void bindVtxBuffer(const int& textureIndex, const int& slot);
+	void VSbindVTXBuffer();
+	void bindAndDraw(const int& textureIndex, const int& slot);
 
 private:
 	void updateBuffer();

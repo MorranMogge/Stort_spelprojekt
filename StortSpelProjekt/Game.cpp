@@ -321,8 +321,13 @@ void Game::Render()
 	this->skybox.draw();
 	basicRenderer.depthUnbind();
 
+	//Render imgui & wireframe
 	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
 	if (wireframe) { immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); playerVecRenderer.drawLines(); }
+
+	//render billboard objects
+	basicRenderer.bilboardPrePass(this->camera);
+	testBilboard->bindAndDraw(0,0);
 
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);

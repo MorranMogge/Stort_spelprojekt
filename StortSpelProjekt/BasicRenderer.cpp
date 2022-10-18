@@ -268,10 +268,10 @@ void BasicRenderer::bilboardPrePass(Camera& stageCamera)
 	immediateContext->VSSetShader(bill_vShader, nullptr, 0);
 	immediateContext->PSSetShader(bill_pShader, nullptr, 0);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
-	//immediateContext->PSSetShaderResources(0, 1, );
 	immediateContext->GSSetShader(bill_gShader, nullptr, 0);
-	stageCamera.GSbindViewBuffer(0);													//Set matrix [world],[view]
-	stageCamera.GSbindPositionBuffer(1);												//Set camera pos for 
+	stageCamera.GSbindViewBuffer(1);													//Set matrix [world],[view]
+	stageCamera.GSbindPositionBuffer(2);												//Set camera pos for 
+	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
 }
 
 void BasicRenderer::bindAmbientShader()

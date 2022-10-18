@@ -80,7 +80,7 @@ bool CreateShaderResources(const std::vector<std::string>& filenames, std::vecto
 		//ShaderResource view 
 		D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
 		shaderResourceViewDesc.Format = textureDesc.Format;
-		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		shaderResourceViewDesc.TextureCube.MipLevels = 1;
 		shaderResourceViewDesc.TextureCube.MostDetailedMip = 0;
 
@@ -141,11 +141,20 @@ void BilboardObject::PSbindSrv(const int& textureIndex, const int& slot)
 	GPU::immediateContext->PSSetShaderResources(slot, 1, this->bilboardTXView.at(textureIndex).GetAddressOf());
 }
 
-void BilboardObject::bindVtxBuffer(const int& textureIndex, const int& slot)
+void BilboardObject::VSbindVTXBuffer()
 {
 	UINT stride = sizeof(DirectX::XMFLOAT3);
 	UINT offset = 0;
 	GPU::immediateContext->IASetVertexBuffers(0,1, this->vertexBuffer.GetAddressOf(), &stride, &offset);
+}
+
+void BilboardObject::bindAndDraw(const int& textureIndex, const int& slot)
+{
+	UINT stride = sizeof(DirectX::XMFLOAT3);
+	UINT offset = 0;
+	GPU::immediateContext->IASetVertexBuffers(0, 1, this->vertexBuffer.GetAddressOf(), &stride, &offset);
+	GPU::immediateContext->PSSetShaderResources(slot, 1, this->bilboardTXView.at(textureIndex).GetAddressOf());
+	GPU::immediateContext->Draw(1, 0);
 }
 
 void BilboardObject::updateBuffer()

@@ -186,7 +186,7 @@ void ParticleEmitter::BindAndDraw()
 	
 	//Draw
 	GPU::immediateContext->IASetVertexBuffers(0, 1, this->PT_vertexBuffer.GetAddressOf(), &stride, &offset);	//Set VtxBuffer
-	GPU::immediateContext->Draw(nrOfPt, 0);																		//Draw (once per primitive?)
+	GPU::immediateContext->Draw(nrOfPt, 0);																		//Draw once per primitive
 
 	//Unbind UAV
 	GPU::immediateContext->IASetVertexBuffers(0, 1, &nullBuffer, &stride, &offset);								//unbind vertex shader

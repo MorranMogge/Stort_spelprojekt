@@ -12,7 +12,7 @@
 #include "Packethandler.h"
 #include "CircularBuffer.h"
 
-const short MAXNUMBEROFPLAYERS = 2;
+const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
 
 struct acceptMePacketData
@@ -60,26 +60,6 @@ struct serverData
 	sf::Packet packet;
 };
 
-//example
-/*
-struct MyStruct
-{
-	float       number;
-	sf::Int8    integer;
-	std::string str;
-};
-
-
-sf::Packet& operator <<(sf::Packet& packet, const MyStruct& m)
-{
-	return packet << m.number << m.integer << m.str;
-}
-
-sf::Packet& operator >>(sf::Packet& packet, MyStruct& m)
-{
-	return packet >> m.number >> m.integer >> m.str;
-}
-*/
 //void handleReceivedData(void* param)
 //{
 //	serverData* data = (serverData*)param;
@@ -171,6 +151,7 @@ void acceptPlayers(serverData& data)
 
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
+
 		if (data.tcpListener.accept(data.users[i].tcpSocket) == sf::TcpListener::Done)
 		{
 			std::cout << "TCP Accepted new player ipAdress: " << data.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
@@ -375,6 +356,8 @@ int main()
 	sf::Packet packet;
 	sf::Packet receivedPacket;
 
+	
+
 	float frequency = 30.f;
 
 
@@ -413,6 +396,7 @@ int main()
 
 
 	setupTcp(data);
+
 	
 	acceptPlayers(data);
 
@@ -438,27 +422,9 @@ int main()
 	while (true)
 	{
 
-
-		/*sf::Packet receivedPacket;
-		unsigned short packetIdentifier;
-		if (receiveDataUdp(receivedPacket, data, packetIdentifier))
-		{
-			std::string s;
-			receivedPacket >> s;
-			std::cout << "Received string from packet: " << s << std::endl;
-		}*/
-
-
-		//std::cout << "first connection: " << data.users[0].ipAdress.toString() << " second connection: " << data.users[1].ipAdress.toString() << std::endl;
-
-
-			/*sf::Packet pack;
-			std::string packString = "server data XDXDDX";
-			pack << packString;
-			sendDataAllPlayers(pack, data);*/
 		while (circBuffer->getIfPacketsLeftToRead())
 		{
-			int packetId = circBuffer->getPacketId();
+			int packetId = circBuffer->peekPacketId();
 
 			if (packetId == 10)
 			{
@@ -500,53 +466,6 @@ int main()
 		}
 		
 	}
-	/*if (connectionType == "s")
-	{
-		sf::TcpListener listener;
-		listener.listen(2001);
-		listener.accept(socket);
-		while (true)
-		{
-			std::getline(std::cin, s);
-			packet << s;
-
-			socket.send(packet);
-
-			socket.receive(receivedPacket);
-			if (receivedPacket >> receivedstring)
-			{
-				// Data extracted successfully...
-				std::cout << receivedstring << std::endl;
-				receivedstring.clear();
-				packet.clear();
-				receivedPacket.clear();
-			}
-		}
-	}
-	else if (connectionType == "c")
-	{
-		socket.setBlocking(false);
-		socket.connect(ip, 2001);
-
-		while (true)
-		{
-			std::getline(std::cin, s);
-			packet << s;
-
-			socket.send(packet);
-			socket.receive(receivedPacket);
-			if (receivedPacket >> receivedstring)
-			{
-				// Data extracted successfully...
-				std::cout << receivedstring << std::endl;
-				receivedstring.clear();
-				packet.clear();
-				receivedPacket.clear();
-			}
-		}
-	}*/
-
-
     //(void*)getchar();
     return 0;
 }

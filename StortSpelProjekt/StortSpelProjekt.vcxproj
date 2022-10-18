@@ -191,6 +191,7 @@
     <ClInclude Include="OBJ.h" />
     <ClInclude Include="PacketEnum.h" />
     <ClInclude Include="packetEvent.h" />
+    <ClInclude Include="PacketEventManager.h" />
     <ClInclude Include="PacketHandler.h" />
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="PhysicsComponent.h" />
@@ -271,6 +272,7 @@
     <ClCompile Include="MouseClass.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="PacketEventManager.cpp" />
     <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="MouseEvent.cpp">

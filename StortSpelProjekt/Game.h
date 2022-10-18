@@ -19,6 +19,7 @@
 #include "Potion.h"
 #include "Client.h"
 #include "../Server/CircularBuffer.h"
+//#include "PacketEventManager.h"
 
 struct wirefameInfo
 {
@@ -57,6 +58,7 @@ private:
 	PhysicsWorld physWolrd;
 
 
+	//PacketEventManager packetEventManager;
 	Player* currentPlayer;
 	std::vector<Player*> players;
 

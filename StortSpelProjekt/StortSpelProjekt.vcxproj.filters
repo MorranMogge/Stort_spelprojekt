@@ -115,6 +115,7 @@
     </ClCompile>
     <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="..\Server\CircularBuffer.cpp" />
+    <ClCompile Include="PacketEventManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -356,6 +357,7 @@
     <ClInclude Include="PacketEnum.h" />
     <ClInclude Include="packetEvent.h" />
     <ClInclude Include="..\Server\CircularBuffer.h" />
+    <ClInclude Include="PacketEventManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

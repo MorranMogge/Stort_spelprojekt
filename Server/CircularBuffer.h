@@ -28,7 +28,7 @@ public:
 	bool addData(const void*& incomingData, const std::size_t& recvSize);
 
 	//returns an int enum that is the identifier for the packet type
-	int getPacketId();//peek
+	int peekPacketId();//peek
 
 	//returns a char* that points to the packet
 	void* getData();

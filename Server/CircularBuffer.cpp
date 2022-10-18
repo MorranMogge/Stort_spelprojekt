@@ -59,7 +59,7 @@ bool CircularBuffer::addData(const void*& incomingData, const std::size_t& recvS
 }
 
 //returns the packet id 
-int CircularBuffer::getPacketId()
+int CircularBuffer::peekPacketId()
 {
 	int value = -1;
 	memcpy(&value, read, sizeof(int));

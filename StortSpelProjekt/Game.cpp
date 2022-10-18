@@ -135,46 +135,9 @@ GAMESTATE Game::Update()
 		serverStart = std::chrono::system_clock::now();
 	}
 
-	//circbuffer tests
-	
-	std::string packetsLeft = "false";
-	
-	if (circularBuffer->getIfPacketsLeftToRead())packetsLeft = "true";
-	//std::cout << "check if circbuffer have packets = " << packetsLeft << std::endl;
 	circularBuffer->debugWriteMemoryAdress();
-	//körs till det inte finns packet kvar att läsa
-	while (circularBuffer->getIfPacketsLeftToRead())
-	{
-		int packetId = circularBuffer->getPacketId();
-		//std::cout << "Game.cpp packet id: " << std::to_string(packetId) << std::endl;
-
-		if (packetId == 4)
-		{
-			idProtocol* protocol = circularBuffer->readData<idProtocol>();
-			//idProtocol* protocol = (idProtocol*)circularBuffer->getData();
-			//circularBuffer->advancePointer(*protocol);
-			std::cout << "received player id: " << std::to_string(protocol->assignedPlayerId) << std::endl;
-		}
-		else if (packetId == 10)
-		{
-			testPosition* tst = circularBuffer->readData<testPosition>();
-			for (int i = 0; i < NROFPLAYERS; i++)
-			{
-				if (i == tst->playerId)
-				{
-					if (client->getPlayerId() != i)
-					{
-						players[i]->setPos(DirectX::XMFLOAT3(tst->x, tst->y, tst->z));
-					}
-				}
-			}
-			/*testPosition* tst = (testPosition*)circularBuffer->getData();
-			circularBuffer->advancePointer(*tst);*/
-
-			std::cout << "Checking return value from circular buffer player id.x: " << std::to_string(tst->playerId) << " y: " << std::to_string(tst->y) << std::endl;
-			//std::cout << "Player id: " << std::to_string(tst->playerId) << std::endl;
-		}
-	}
+	//packetEventManager.PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client);
+	
 	
 	for (int i = 0; i < NROFPLAYERS; i++)
 	{

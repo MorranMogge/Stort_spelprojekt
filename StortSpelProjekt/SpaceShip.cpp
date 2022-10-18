@@ -4,7 +4,7 @@
 SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale, const int& nrofComp)
 	:GameObject(useMesh, pos, rot, id, scale), nrOfComponents(nrofComp)
 {
-
+	//this->rocketStatusQuad = new BilboardObject();
 }
 
 SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale, const int& nrofComp)

@@ -225,7 +225,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
 
 	//Bilboard test
-	std::vector<std::string> filenames{ "0.png", "1.png", "2.png", "3.png", "4.png", "5.png" };// "boxTest.jpg", "boxTest.jpg", "boxTest.jpg", "boxTest.jpg", "boxTest.jpg", "boxTest.jpg" 
+	std::vector<std::string> filenames{ "p0.png", "p1.png", "p2.png", "p3.png", "p4.png" };
 	testBilboard = new BilboardObject(filenames, DirectX::XMFLOAT3(10, 22, 10));
 
 	playerVecRenderer.setPlayer(player);

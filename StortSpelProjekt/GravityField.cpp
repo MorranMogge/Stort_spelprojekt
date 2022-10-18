@@ -26,7 +26,7 @@ DirectX::XMFLOAT3 GravityField::calcGravFactor(DirectX::XMFLOAT3 objectPosition)
 
     using namespace DirectX::SimpleMath;
 
-    Vector3 result((Vector3(objectPosition) - Vector3(planetCenterPoint)) * -1);
+    Vector3 result((Vector3(objectPosition) - planetCenterPoint) * -1);
     result.Normalize();
     return result;
 }

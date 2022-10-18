@@ -170,7 +170,7 @@ void Game::handleKeybinds()
 
 DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3 &position)
 {
-	using namespace DirectX; using namespace SimpleMath;
+	using namespace DirectX::SimpleMath;
 	
 	Vector3 yAxis(planetGravityField.calcGravFactor(position) * -1);
 

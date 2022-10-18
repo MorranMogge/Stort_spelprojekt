@@ -11,6 +11,7 @@ private:
 	DirectX::XMFLOAT3 position;
 	ConstantBufferNew<cameraStruct> cameraBuffer;
 	ConstantBufferNew<posStruct> positionBuffer;
+	ConstantBufferNew<posStruct> upVectorBuffer;
 
 	DirectX::XMMATRIX viewMatrix;
 	DirectX::XMMATRIX projMatrix;
@@ -43,4 +44,5 @@ public:
 	void PSbindViewBuffer(const int& slot);
 	void GSbindPositionBuffer(const int& slot);
 	void GSbindViewBuffer(const int& slot);
+	void GSbindUpBuffer(const int& slot);
 };

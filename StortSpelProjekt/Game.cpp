@@ -171,37 +171,24 @@ void Game::handleKeybinds()
 DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3 &position)
 {
 	using namespace DirectX; using namespace SimpleMath;
-
-	//Default vectors
-	const XMVECTOR DEFAULT_RIGHT = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-	const XMVECTOR DEFAULT_FORWARD = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	
 	//Modified vectors
-	XMVECTOR upVector = (planetGravityField.calcGravFactor(position) * -1);
-	XMVECTOR forwardVector = DEFAULT_FORWARD;
-	XMVECTOR rightVector = DEFAULT_RIGHT;
-	XMVECTOR dotProduct;
-	XMFLOAT3 dotValue;
+	Vector3 upVector(planetGravityField.calcGravFactor(position) * -1);
 
-	//Rotation matrix
-	XMMATRIX rotation = XMMatrixIdentity();
+	Vector3 forwardVector(0, 0, 1);
+	forwardVector = upVector.Cross(forwardVector);
+	forwardVector.Normalize();
 
-	//rotation
-	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-	rightVector =	XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-	rightVector =	XMVector3Normalize(rightVector);
-	forwardVector = XMVector3Normalize(forwardVector);
-	dotProduct = DirectX::XMVector3Dot(upVector, forwardVector);
-	XMStoreFloat3(&dotValue, dotProduct);
-	
-	//creating matrix
-	Matrix z = XMMatrixRotationAxis(forwardVector, -std::atan(dotValue.z));
-	Matrix x = XMMatrixRotationAxis(rightVector, std::asin(dotValue.x));
-	Matrix y = DirectX::XMMatrixRotationAxis(upVector, std::asin(dotValue.y));
-	Matrix f = z * x * y;
+	Vector3 rightVector(1, 0, 0);
+	rightVector = upVector.Cross(forwardVector);
+	rightVector.Normalize();
+
+	Vector3 pos(position);
+
+	Matrix rotation = Matrix(Vector4(rightVector), Vector4(upVector), Vector4(forwardVector), Vector4(pos));
 	
 	//Extracting rotation
-	Quaternion quaterRot = Quaternion::CreateFromRotationMatrix(f);
+	Quaternion quaterRot = Quaternion::CreateFromRotationMatrix(rotation);
 	Vector3 finalRotation = quaterRot.ToEuler();
 
 	return finalRotation;

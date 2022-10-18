@@ -28,7 +28,7 @@ void main(point float3 input[1] : Position, inout TriangleStream<Output> outputS
     
     float3 zAxis = normalize(input[0] - camPos.xyz);
     float3 xAxis = normalize(cross(-zAxis, camUp.xyz));
-#define yAxis cross(zAxis, xAxis) // maybe not need normalize?
+    #define yAxis cross(zAxis, xAxis) // maybe not need normalize?
     
 #define WorldMatrix float4x4(float4(xAxis, 0), float4(yAxis, 0), float4(zAxis, 0), float4(input[0], 1))
     const float4x4 worldViewProj = mul(WorldMatrix, camViewProj);

@@ -172,26 +172,15 @@ DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3 &posit
 {
 	using namespace DirectX; using namespace SimpleMath;
 	
-	//Modified vectors
-	Vector3 upVector(planetGravityField.calcGravFactor(position) * -1);
+	Vector3 yAxis(planetGravityField.calcGravFactor(position) * -1);
 
-	Vector3 forwardVector(0, 0, 1);
-	forwardVector = upVector.Cross(forwardVector);
-	forwardVector.Normalize();
+	Vector3 zAxis = yAxis.Cross({ 0, 0, 1 });
+	zAxis.Normalize();
 
-	Vector3 rightVector(1, 0, 0);
-	rightVector = upVector.Cross(forwardVector);
-	rightVector.Normalize();
+	Vector3 xAxis = yAxis.Cross(zAxis);
+	xAxis.Normalize();
 
-	Vector3 pos(position);
-
-	Matrix rotation = Matrix(Vector4(rightVector), Vector4(upVector), Vector4(forwardVector), Vector4(pos));
-	
-	//Extracting rotation
-	Quaternion quaterRot = Quaternion::CreateFromRotationMatrix(rotation);
-	Vector3 finalRotation = quaterRot.ToEuler();
-
-	return finalRotation;
+	return Quaternion::CreateFromRotationMatrix(Matrix(xAxis, yAxis, zAxis)).ToEuler();
 }
 
 

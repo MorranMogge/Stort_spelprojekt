@@ -179,7 +179,7 @@ PhysicsWorld::PhysicsWorld(std::string worldName)
 	settings.worldName = worldName;
 	settings.isSleepingEnabled = true;
 	settings.gravity = reactphysics3d::Vector3(0, 0, 0);
-	settings.defaultBounciness = 0.1f;
+	settings.defaultBounciness = 0.0f;
 	settings.defaultFrictionCoefficient = 0.1f;
 	settings.defaultTimeBeforeSleep = 1.f;
 
@@ -222,24 +222,24 @@ PhysicsWorld::~PhysicsWorld()
 	wireframeMode->Release();
 }
 
-void PhysicsWorld::update(float dt)
+void PhysicsWorld::update(const float& dt)
 {
+	this->addForceToObjects(dt);
 	world->update(dt);
 }
 
-void PhysicsWorld::addForceToObjects()
+void PhysicsWorld::addForceToObjects(const float& dt)
 {
 	for (int i = 0; i < this->physObjects.size(); i++)
 	{
 		temp = this->physObjects[i]->getPosition();
 		grav = normalizeXMFLOAT3(DirectX::XMFLOAT3(-temp.x, -temp.y, -temp.z));
-		this->physObjects[i]->applyForceToCenter(this->physObjects[i]->getMass() * reactphysics3d::Vector3(9.82f * grav.x, 9.82f * grav.y, 9.82f * grav.z));
+		this->physObjects[i]->applyForceToCenter(this->physObjects[i]->getMass() * reactphysics3d::Vector3(9820.f * grav.x * dt, 9820.f * grav.y * dt, 9820.f * grav.z * dt));
 	}
 }
 
 DirectX::SimpleMath::Vector3 PhysicsWorld::getPos() const
 {
-	//return { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y , playerRigidBody->getTransform().getPosition().z };
 	return playerBox->getPosV3();
 }
 
@@ -285,8 +285,7 @@ void PhysicsWorld::addPhysComponent(GameObject* gameObj, reactphysics3d::Collisi
 	PhysicsComponent* newComp = new PhysicsComponent();
 	newComp->initiateComponent(&this->com, this->world, shape);
 	newComp->setPosition({ gameObj->getPos().x, gameObj->getPos().y, gameObj->getPos().z });
-	newComp->setLinearDampning(0.3f);
-	newComp->applyWorldTorque(reactphysics3d::Vector3(10000000, 0, 0));
+	newComp->setLinearDampning(1.3f);
 	gameObj->setPhysComp(newComp);
 	newComp->setParent(gameObj);
 	physObjects.emplace_back(newComp);

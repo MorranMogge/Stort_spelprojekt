@@ -217,12 +217,14 @@ void PhysicsComponent::setIsSleeping(const bool& sleep)
 
 void PhysicsComponent::applyForceToCenter(const reactphysics3d::Vector3& force)
 {
+	//this->rigidBody->applyWorldForceAtCenterOfMass(force);
 	this->rigidBody->applyWorldForceAtCenterOfMass(force);
 }
 
 void PhysicsComponent::applyForceToPoint(const reactphysics3d::Vector3& force, const reactphysics3d::Vector3& point)
 {
 	this->rigidBody->applyWorldForceAtLocalPosition(force, point);
+	//this->rigidBody->applyLocalForceAtWorldPosition(force, point);
 }
 
 void PhysicsComponent::applyWorldTorque(const reactphysics3d::Vector3& force)
@@ -232,7 +234,7 @@ void PhysicsComponent::applyWorldTorque(const reactphysics3d::Vector3& force)
 
 void PhysicsComponent::applyLocalTorque(const reactphysics3d::Vector3& force)
 {
-	this->rigidBody->applyLocalTorque(force);
+	this->rigidBody->applyWorldTorque(force);
 }
 
 void PhysicsComponent::setPosition(const reactphysics3d::Vector3& position)

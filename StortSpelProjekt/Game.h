@@ -21,7 +21,8 @@ private:
 	D3D11_MAPPED_SUBRESOURCE subData;
 
 	float dt;
-	std::chrono::time_point<std::chrono::system_clock> start;
+	std::chrono::time_point<std::chrono::system_clock> currentTime;
+	std::chrono::time_point<std::chrono::system_clock> lastUpdate;
 
 	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
 	DirectX::XMFLOAT3 velocity;

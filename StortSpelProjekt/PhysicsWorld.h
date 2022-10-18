@@ -52,9 +52,9 @@ private:
 public:
 	PhysicsWorld(std::string worldName = "Planet SIS");
 	~PhysicsWorld();
-	void update(float dt);
+	void update(const float& dt);
 	void renderReact3D();
-	void addForceToObjects();
+	void addForceToObjects(const float& dt);
 	DirectX::SimpleMath::Vector3 getPos() const;
 	DirectX::SimpleMath::Vector3 getRot() const;
 	PhysicsComponent* getPlayerBox()const;

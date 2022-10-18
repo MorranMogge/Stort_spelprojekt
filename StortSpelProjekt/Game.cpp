@@ -174,9 +174,11 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ltHandler.addLight(DirectX::XMFLOAT3(10, -20, 30), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0));
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
 
+	currentTime = std::chrono::system_clock::now();
+	lastUpdate = currentTime;
 	playerVecRenderer.setPlayer(player);
-	start = std::chrono::system_clock::now();
-	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
+	currentTime = std::chrono::system_clock::now();
+	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 }
 
 Game::~Game()
@@ -195,28 +197,35 @@ Game::~Game()
 
 GAMESTATE Game::Update()
 {
-	//Do we want this?
-	grav = planetGravityField.calcGravFactor(player->getPosV3());
-	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(player->getPos()));
+	//Get newest delta time
+	lastUpdate = currentTime;
+	currentTime = std::chrono::system_clock::now();
+	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
+	//Restart counter
 
+	grav = planetGravityField.calcGravFactor(player->getPosV3());
+	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
+	
+	scalarMultiplicationXMFLOAT3(dt, grav);
+	additionXMFLOAT3(velocity, grav);
+	
 	//Keeps player at the surface of the planet
 	if (getLength(player->getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(player->getPos()); player->setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
-	player->movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
-	
+	player->movePos(velocity);
+
 	//Player functions
 	player->pickupItem(potion);
 	player->pickupItem(testBat);
 	
 	physWolrd.updatePlayerBox(player->getPos());
-	physWolrd.addForceToObjects();
-	physWolrd.update(dt);
+	if (wireframe) physWolrd.update(dt);
+	//physWolrd.addForceToObjects();
 
+	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
 	for (int i = 1; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->update();//->getPhysComp()->updateParent();
 	}
-	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
-	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
 	//Here you can write client-server related functions?
 
 
@@ -231,8 +240,7 @@ GAMESTATE Game::Update()
 
 void Game::Render()
 {
-	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
-	start = std::chrono::system_clock::now();
+
 
 
 	//Render shadow maps

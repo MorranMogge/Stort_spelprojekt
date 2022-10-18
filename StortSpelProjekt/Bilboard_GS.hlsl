@@ -12,10 +12,6 @@ cbuffer CamPosCB : register(b2)
 {
     float4 camPos;
 }
-cbuffer CamUpPos : register(b3)
-{
-    float4 camUpPos;
-}
 
 
 cbuffer CamUp : register(b3)

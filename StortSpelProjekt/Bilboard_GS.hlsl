@@ -13,6 +13,11 @@ cbuffer CamPosCB : register(b2)
     float4 camPos;
 }
 
+cbuffer CamUp : register(b3)
+{
+    float4 camUp;
+}
+
 [maxvertexcount(4)]
 void main(point float3 input[1] : Position, inout TriangleStream<Output> outputStream)
 {
@@ -20,9 +25,8 @@ void main(point float3 input[1] : Position, inout TriangleStream<Output> outputS
     static const float4 localPosition[4] = { float4(-Size, Size, 0, 1), float4(Size, Size, 0, 1), float4(-Size, -Size, 0, 1), float4(Size, -Size, 0, 1) };
     static const float2 uv[4] = { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } };
     
-#define CameraUp float3(0, 1, 0)
-    const float3 zAxis = normalize(input[0] - camPos.xyz);
-    const float3 xAxis = normalize(cross(-zAxis, CameraUp));
+    float3 zAxis = normalize(input[0] - camPos.xyz);
+    float3 xAxis = normalize(cross(-zAxis, camUp.xyz));
 #define yAxis cross(zAxis, xAxis) // maybe not need normalize?
     
 #define WorldMatrix float4x4(float4(xAxis, 0), float4(yAxis, 0), float4(zAxis, 0), float4(input[0], 1))

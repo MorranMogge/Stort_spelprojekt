@@ -36,7 +36,7 @@ bool CreateShaderResources(const std::vector<std::string>& filenames, std::vecto
 
 	for (int i = 0; i < filenames.size(); i++)
 	{
-		unsigned char* img = stbi_load(("../Textures/" + filenames.at(i)).c_str(), &wth, &hth, &channels, STBI_rgb_alpha);
+		unsigned char* img = stbi_load(("../Sprites/" + filenames.at(i)).c_str(), &wth, &hth, &channels, STBI_rgb_alpha);
 		if (img == NULL)
 		{
 			return 0;

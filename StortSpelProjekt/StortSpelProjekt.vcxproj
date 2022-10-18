@@ -154,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="BasicRenderer.h" />
+    <ClInclude Include="BilboardObject.h" />
     <ClInclude Include="BlendState.h" />
     <ClInclude Include="Bound.h" />
     <ClInclude Include="Buffer.h" />
@@ -246,6 +247,7 @@
   <ItemGroup>
     <ClCompile Include="BaseballBat.cpp" />
     <ClCompile Include="BasicRenderer.cpp" />
+    <ClCompile Include="BilboardObject.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Component.cpp" />

@@ -130,6 +130,9 @@ BasicRenderer::~BasicRenderer()
 	pt_gShader->Release();
 	shadowSampler->Release();
 	shadowRastirizer->Release();
+	bill_vShader->Release();
+	bill_pShader->Release();
+	bill_gShader->Release();
 }
 
 void BasicRenderer::lightPrePass()
@@ -170,6 +173,11 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadVertexShader(device, vs_Skybox, vShaderByteCode, "Skybox_VS"))					return false;
 	if (!setUp_Sky_InputLayout(device, vShaderByteCode))									return false;
 	if (!LoadPixelShader(device, ps_Skybox, "Skybox_PS"))									return false;
+	if (!LoadVertexShader(device, bill_vShader, vShaderByteCode, "Bilboard_VS"))			return false;
+	if (!LoadPixelShader(device, bill_pShader, "Bilboard_PS"))								return false;
+	if (!LoadGeometryShader(device, bill_gShader, "Bilboard_GS"))							return false;
+
+	
 
 	SetViewport(viewport, WIDTH, HEIGHT);
 	SetViewport(shadowViewport, WidthAndHeight, WidthAndHeight);
@@ -251,6 +259,19 @@ void BasicRenderer::skyboxPrePass()
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 	immediateContext->VSSetShader(vs_Skybox, nullptr, 0);								//SetVTXShader
 	immediateContext->PSSetShader(ps_Skybox, nullptr, 0);								//Set PSShader
+}
+
+void BasicRenderer::bilboardPrePass(Camera& stageCamera)
+{
+	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	immediateContext->IASetInputLayout(inputLayout_Skybox);
+	immediateContext->VSSetShader(bill_vShader, nullptr, 0);
+	immediateContext->PSSetShader(bill_pShader, nullptr, 0);
+	immediateContext->PSSetSamplers(0, 1, &sampler);
+	//immediateContext->PSSetShaderResources(0, 1, );
+	immediateContext->GSSetShader(bill_gShader, nullptr, 0);
+	stageCamera.GSbindViewBuffer(0);													//Set matrix [world],[view]
+	stageCamera.GSbindPositionBuffer(1);												//Set camera pos for 
 }
 
 void BasicRenderer::bindAmbientShader()

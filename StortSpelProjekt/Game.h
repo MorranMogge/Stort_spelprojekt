@@ -47,7 +47,7 @@ private:
 	//Objects
 	std::vector<GameObject*> gameObjects;
 	std::vector<ParticleEmitter> ptEmitters;
-	
+	BilboardObject* testBilboard;
 	
 
 	void loadObjects();

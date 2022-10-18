@@ -1,13 +1,14 @@
+#include "stdafx.h"
 #include "DirectXMathHelper.h"
 
-void subtractionXMFLOAT3(DirectX::XMFLOAT3& argOne, DirectX::XMFLOAT3 argTwo)
+void subtractionXMFLOAT3(DirectX::XMFLOAT3& argOne, const DirectX::XMFLOAT3& argTwo)
 {
     argOne.x -= argTwo.x;
     argOne.y -= argTwo.y;
     argOne.z -= argTwo.z;
 }
 
-void additionXMFLOAT3(DirectX::XMFLOAT3& argOne, DirectX::XMFLOAT3 argTwo)
+void additionXMFLOAT3(DirectX::XMFLOAT3& argOne, const DirectX::XMFLOAT3& argTwo)
 {
     argOne.x += argTwo.x;
     argOne.y += argTwo.y;
@@ -34,20 +35,20 @@ void newNormalizeXMFLOAT3(DirectX::XMFLOAT3& argOne)
     float y = argOne.y;
     float z = argOne.z;
     float length = sqrt(x * x + y * y + z * z);
-    float factor = 1 / length;
+    float factor = 1.f / length;
     argOne.x *= factor;
     argOne.y *= factor;
     argOne.z *= factor;
 }
 
-void scalarMultiplicationXMFLOAT3(float scalar, DirectX::XMFLOAT3& argOne)
+void scalarMultiplicationXMFLOAT3(const float& scalar, DirectX::XMFLOAT3& argOne)
 {
     argOne.x *= scalar;
     argOne.y *= scalar;
     argOne.z *= scalar;
 }
 
-DirectX::XMFLOAT3 getScalarMultiplicationXMFLOAT3(float scalar, DirectX::XMFLOAT3 argOne)
+DirectX::XMFLOAT3 getScalarMultiplicationXMFLOAT3(const float& scalar, DirectX::XMFLOAT3 argOne)
 {
     argOne.x *= scalar;
     argOne.y *= scalar;

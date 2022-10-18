@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Client.h"
 
 //returns the id of the packet

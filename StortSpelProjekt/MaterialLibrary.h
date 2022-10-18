@@ -1,6 +1,6 @@
 #pragma once
-#include <unordered_map>
-#include <SimpleMath.h>
+#include "stdafx.h"
+
 #include "ShaderResourceTexture.h"
 #include "ConstantBuffer.h"
 #include "MTL.h"
@@ -40,8 +40,6 @@ struct MaterialLibrary
 	}
 	static void LoadDefault()
 	{
-		using namespace DirectX::SimpleMath;
-
 		MaterialInfo mat;
 		mat.ambientKey = "default_Ambient.png";
 		mat.specularKey = "default_Diffuse.png";
@@ -53,9 +51,9 @@ struct MaterialLibrary
 
 		struct MaterialS
 		{
-			Vector4 ambient{ 0.0f, 0.0f, 0.0f, 0.0f };
-			Vector4 diffuse{ 1.0f, 1.0f, 1.0f, 1.0f };
-			Vector3 specular{ 0.0f, 0.0f, 0.0f };
+			DirectX::SimpleMath::Vector4 ambient{ 0.0f, 0.0f, 0.0f, 0.0f };
+			DirectX::SimpleMath::Vector4 diffuse{ 1.0f, 1.0f, 1.0f, 1.0f };
+			DirectX::SimpleMath::Vector3 specular{ 0.0f, 0.0f, 0.0f };
 			float specularPower = 16.0f;
 		};
 
@@ -70,8 +68,6 @@ struct MaterialLibrary
 	}
 	static void LoadMaterial(const MTL::Material& mtlMat)
 	{
-		using namespace DirectX::SimpleMath;
-
 		//if empty
 		if (mtlMat.name.empty())
 			return;
@@ -88,17 +84,17 @@ struct MaterialLibrary
 			AddTexture(mat.specularKey);
 			AddTexture(mat.diffuseKey);
 
-			mat.ambient = Vector4(mtlMat.ambient);
-			mat.diffuse = Vector4(mtlMat.diffuse);
+			mat.ambient = DirectX::SimpleMath::Vector4(mtlMat.ambient);
+			mat.diffuse = DirectX::SimpleMath::Vector4(mtlMat.diffuse);
 			mat.specular = mtlMat.specular;
 			mat.specularPower = mtlMat.specularHighlight;
 			info.emplace(mtlMat.name, mat);
 
 			struct MaterialS
 			{
-				Vector4 ambient{ 0.0f, 0.0f, 0.0f, 0.0f };
-				Vector4 diffuse{ 1.0f, 1.0f, 1.0f, 1.0f };
-				Vector3 specular{ 0.0f, 0.0f, 0.0f };
+				DirectX::SimpleMath::Vector4 ambient{ 0.0f, 0.0f, 0.0f, 0.0f };
+				DirectX::SimpleMath::Vector4 diffuse{ 1.0f, 1.0f, 1.0f, 1.0f };
+				DirectX::SimpleMath::Vector3 specular{ 0.0f, 0.0f, 0.0f };
 				float specularPower = 16.0f;
 			};
 			MaterialS matS{

@@ -1,6 +1,5 @@
 #pragma once
-#include <unordered_map>
-#include <windows.h>
+#include "stdafx.h"
 #include <WinUser.h>
 
 enum class KeyCode
@@ -102,13 +101,13 @@ public:
 	//return true ONCE key press
 	static bool KeyPress(const KeyCode key)
 	{
-		return (KeyDown(key) && !state[key].trigged) ? state[key].trigged = true : false;
+		return (KeyDown(key) && !state[key].trigged) ? (state[key].trigged = true) : false;
 	}
 
 	//return true ONCE key release
 	static bool KeyUp(const KeyCode key)
 	{
-		return (!KeyDown(key) && !state[key].upTrigged) ? state[key].upTrigged = true : false;
+		return (!KeyDown(key) && !state[key].upTrigged) ? (state[key].upTrigged = true) : false;
 	}
 
 private:

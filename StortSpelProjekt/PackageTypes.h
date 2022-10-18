@@ -1,5 +1,5 @@
-#include <iostream>
-#include <string.h>
+#pragma once
+#include "stdafx.h"
 
 struct textPackage
 {

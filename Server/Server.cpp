@@ -252,7 +252,7 @@ int extractBinaryPacketId(char* pointerToData[])
 	return idPacket;
 }
 
-//test för att flytta pekaren
+//test fï¿½r att flytta pekaren
 float exfloatTest(char* pointerToData[], const std::size_t& recvSize)
 {
 	float position = -1.0;
@@ -443,7 +443,7 @@ int main()
 
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
 		{
-			//för varje spelare så skicka deras position till alla klienter
+			//fï¿½r varje spelare sï¿½ skicka deras position till alla klienter
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{
 				testPosition pos;

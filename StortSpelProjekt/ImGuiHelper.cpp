@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ImGuiHelper.h"
 
 ImGuiHelper::ImGuiHelper(Client*& client)

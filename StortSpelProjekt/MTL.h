@@ -1,13 +1,8 @@
 #pragma once
-
-#include <string>
-#include <vector>
+#include "stdafx.h"
 
 #include <fstream>
 #include <sstream>
-#include <unordered_map>
-
-#include <SimpleMath.h>
 
 struct MTL final
 {
@@ -60,7 +55,6 @@ struct MTL final
 
 	void Load(const std::string loadPath)
 	{
-		using namespace DirectX::SimpleMath;
 
 		std::ifstream in(loadPath);
 
@@ -116,7 +110,7 @@ struct MTL final
 					}; break;
 
 					case(Key::Ambient): {
-						Vector3 value;
+						DirectX::SimpleMath::Vector3 value;
 						line >> value.x >> value.y >> value.z;
 						materials.back().ambient = value;
 					}; break;
@@ -130,7 +124,7 @@ struct MTL final
 					}; break;
 
 					case(Key::Diffuse): {
-						Vector3 value;
+						DirectX::SimpleMath::Vector3 value;
 						line >> value.x >> value.y >> value.z;
 						//if (value.x == 0.0f && value.y == 0.0f && value.z == 0.0f)
 						//{
@@ -147,7 +141,7 @@ struct MTL final
 					}; break;
 
 					case(Key::Specular): {
-						Vector3 value;
+						DirectX::SimpleMath::Vector3 value;
 						line >> value.x >> value.y >> value.z;
 						materials.back().specular = value;
 					}; break;
@@ -160,7 +154,7 @@ struct MTL final
 					}; break;
 
 					case(Key::Transmission): {
-						Vector3 value;
+						DirectX::SimpleMath::Vector3 value;
 						line >> value.x >> value.y >> value.z;
 						materials.back().transmission = value;
 					}; break;

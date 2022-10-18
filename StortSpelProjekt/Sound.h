@@ -1,8 +1,6 @@
 #pragma once
 #include <Audio.h>
-#include <vector>
-#include <string>
-#include <unordered_map>
+#include "stdafx.h"
 
 class Sound final
 {

@@ -1,37 +1,47 @@
 #pragma once
-#include <DirectXMath.h>
+
 #include "Mesh.h"
-#include <string>
+
+class PhysicsComponent;
 
 class GameObject
 {
 private:
 	Mesh* mesh;
 	int objectID;
-	//float mass
-	//collider
+	reactphysics3d::Quaternion reactQuaternion;
+	DirectX::SimpleMath::Quaternion dx11Quaternion;
+
 protected:
+	PhysicsComponent* physComp;
 	DirectX::SimpleMath::Vector3 position;
-	DirectX::XMFLOAT3 rotation;//ska ändra till quaternion?
+	DirectX::XMMATRIX rotation;
 	DirectX::XMFLOAT3 scale;
 
+
 public:
-	GameObject(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, DirectX::XMFLOAT3 scale = DirectX::XMFLOAT3(1, 1, 1));
-	GameObject(std::string meshPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, DirectX::XMFLOAT3 scale = DirectX::XMFLOAT3(1, 1, 1));
+	GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
+	GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
 	GameObject();
 	virtual ~GameObject();
-	void movePos(DirectX::XMFLOAT3 offset);
-	void setPos(DirectX::XMFLOAT3 pos);
-	void setRot(DirectX::XMFLOAT3 rot);
-	void setScale(DirectX::XMFLOAT3 scale);
+	void movePos(const DirectX::XMFLOAT3& offset);
+	void setPos(const DirectX::XMFLOAT3& pos);
+	void setRot(const DirectX::XMVECTOR& rot);
+	void setRot(const DirectX::XMFLOAT3& rot);
+	void setScale(const DirectX::XMFLOAT3& scale);
+	void setMesh(const std::string& meshPath);
+	void setMesh(Mesh* inMesh);
 	DirectX::XMFLOAT3 getPos() const;
 	DirectX::SimpleMath::Vector3 getPosV3()const;
-	DirectX::XMFLOAT3 getRot() const;
+	DirectX::XMMATRIX getRot() const;
 	DirectX::XMFLOAT3 getScale() const;
 	Bound* getBounds() const;
+	void setPhysComp(PhysicsComponent* comp);
+	PhysicsComponent* getPhysComp()const;
 	void updateBuffer();
-	void setMesh(std::string meshPath);
-	void setMesh(Mesh*);
-	bool withinRadious(GameObject *object ,float radius) const;
+	int getId();
+	bool withinBox(GameObject *object ,float x, float y, float z) const;
+	bool withinRadious(GameObject* object, float radius) const;
 	virtual void draw();
+	virtual void update(); //This updates the hitboxes
 };

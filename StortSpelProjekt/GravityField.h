@@ -1,7 +1,5 @@
 #pragma once
-#include <DirectXMath.h>
-#include <SimpleMath.h>
-#include "Player.h"
+#include "stdafx.h"
 
 class GravityField
 {

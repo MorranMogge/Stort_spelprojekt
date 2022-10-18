@@ -1,19 +1,19 @@
+#include "stdafx.h"
 #include "PhysicsWorld.h"
+
+#include <time.h>
 #include "GPU.h"
 #include "ShaderLoader.h"
-#include <time.h>
 #include "DirectXMathHelper.h"
+
+#include "GameObject.h"
+#include "PhysicsComponent.h"
 
 void PhysicsWorld::setUpBaseScenario()
 {
-	//Create Player
-	playerShape = com.createBoxShape(reactphysics3d::Vector3(4*0.35f, 4 * 0.35f, 4 * 0.35f));
-	reactphysics3d::Transform playerTransform = reactphysics3d::Transform(reactphysics3d::Vector3(1, 1, 1), reactphysics3d::Quaternion::identity());
-	playerRigidBody = world->createRigidBody(playerTransform);
-	playerCollider = playerRigidBody->addCollider(playerShape, reactphysics3d::Transform(reactphysics3d::Vector3(0, 0, 0), reactphysics3d::Quaternion::identity()));
-	playerRigidBody->setType(reactphysics3d::BodyType::KINEMATIC);
-	playerRigidBody->enableGravity(false);
-	playerRigidBody->setTransform(reactphysics3d::Transform(reactphysics3d::Vector3(-10, 10, -20), reactphysics3d::Quaternion::identity()));
+	playerBox = new PhysicsComponent();
+	playerBox->initiateComponent(&this->com, this->world);
+	playerBox->setType(reactphysics3d::BodyType::KINEMATIC);
 
 	//Planet
 	planetShape = com.createSphereShape(reactphysics3d::decimal(20));
@@ -26,6 +26,7 @@ void PhysicsWorld::setUpBaseScenario()
 	world->setIsDebugRenderingEnabled(true);
 	debugRenderer = &world->getDebugRenderer();
 	debugRenderer->setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, true);
+	//debugRenderer->setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLIDER_BROADPHASE_AABB, true);
 
 	debugRenderer->computeDebugRenderingPrimitives(*world);
 }
@@ -36,9 +37,14 @@ void PhysicsWorld::updateVertexBuffer()
 	const reactphysics3d::DebugRenderer::DebugTriangle* debugTriangles = this->debugRenderer->getTrianglesArray(); //If save points (Vector3) as pointer maybe you do not have to copy every frame
 	for (int i = 0; i < this->debugRenderer->getTriangles().size(); i++) //We copy the triangle data every frame
 	{
-		this->triangles[3 * i + 0].position = DirectX::SimpleMath::Vector3(debugTriangles[i].point1.x, debugTriangles[i].point1.y, debugTriangles[i].point1.z);
-		this->triangles[3 * i + 1].position = DirectX::SimpleMath::Vector3(debugTriangles[i].point2.x, debugTriangles[i].point2.y, debugTriangles[i].point2.z);
-		this->triangles[3 * i + 2].position = DirectX::SimpleMath::Vector3(debugTriangles[i].point3.x, debugTriangles[i].point3.y, debugTriangles[i].point3.z);
+		int first	=	3 * i + 0;
+		int second	=	3 * i + 1;
+		int third	=	3 * i + 2;
+
+
+		this->triangles[first].position = DirectX::SimpleMath::Vector3(debugTriangles[i].point1.x, debugTriangles[i].point1.y, debugTriangles[i].point1.z);
+		this->triangles[second].position = DirectX::SimpleMath::Vector3(debugTriangles[i].point2.x, debugTriangles[i].point2.y, debugTriangles[i].point2.z);
+		this->triangles[third].position = DirectX::SimpleMath::Vector3(debugTriangles[i].point3.x, debugTriangles[i].point3.y, debugTriangles[i].point3.z);
 	}
 
 	D3D11_MAPPED_SUBRESOURCE resource;
@@ -53,7 +59,7 @@ bool PhysicsWorld::recreateVertexBuffer()
 	this->debugRenderer->reset();
 	this->debugRenderer->computeDebugRenderingPrimitives(*world);
 	const reactphysics3d::DebugRenderer::DebugTriangle* debugTriangles = this->debugRenderer->getTrianglesArray();
-	int iterations = this->debugRenderer->getTriangles().size();
+	reactphysics3d::uint64 iterations = this->debugRenderer->getTriangles().size();
 	for (int i = 0; i < iterations; i++)
 	{
 		Vertex newVertex[3];
@@ -68,7 +74,7 @@ bool PhysicsWorld::recreateVertexBuffer()
 	debuggerBuffer->Release();
 
 	D3D11_BUFFER_DESC bufferDesc = {};
-	bufferDesc.ByteWidth = sizeof(Vertex) * this->triangles.size();
+	bufferDesc.ByteWidth = UINT(sizeof(Vertex) * reactphysics3d::uint64(this->triangles.size()));
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -90,7 +96,7 @@ bool PhysicsWorld::recreateVertexBuffer()
 
 bool PhysicsWorld::setUpWireframe()
 {
-	D3D11_RASTERIZER_DESC wireframedesc;
+	D3D11_RASTERIZER_DESC wireframedesc = {};
 	wireframedesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
 	wireframedesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 	wireframedesc.FrontCounterClockwise = false;
@@ -141,7 +147,7 @@ bool PhysicsWorld::setVertexBuffer()
 	}
 
 	bufferDesc = {};
-	bufferDesc.ByteWidth = sizeof(Vertex) * this->triangles.size();
+	bufferDesc.ByteWidth = UINT(sizeof(Vertex) * reactphysics3d::uint64(this->triangles.size()));
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -171,6 +177,11 @@ PhysicsWorld::PhysicsWorld(std::string worldName)
 	settings.defaultVelocitySolverNbIterations = 20;
 	settings.isSleepingEnabled = false;
 	settings.worldName = worldName;
+	settings.isSleepingEnabled = true;
+	settings.gravity = reactphysics3d::Vector3(0, 0, 0);
+	settings.defaultBounciness = 0.1f;
+	settings.defaultFrictionCoefficient = 0.1f;
+	settings.defaultTimeBeforeSleep = 1.f;
 
 	// Create the physics world with your settings 
 	world = com.createPhysicsWorld(settings);
@@ -181,10 +192,10 @@ PhysicsWorld::PhysicsWorld(std::string worldName)
 
 void PhysicsWorld::renderReact3D()
 {
-	int nrOfTriangles = this->debugRenderer->getTriangles().size();
+	nrOfTriangles = this->triangles.size();
 	this->debugRenderer->reset();
 	this->debugRenderer->computeDebugRenderingPrimitives(*world);
-	if (nrOfTriangles != this->debugRenderer->getTriangles().size()) this->recreateVertexBuffer();
+	if (3*nrOfTriangles != this->debugRenderer->getTriangles().size()) this->recreateVertexBuffer();
 	else this->updateVertexBuffer();
 	
 	GPU::immediateContext->VSSetConstantBuffers(0, 1, &identityMatrix);
@@ -193,7 +204,7 @@ void PhysicsWorld::renderReact3D()
 	GPU::immediateContext->RSSetState(wireframeMode);
 	GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	GPU::immediateContext->PSSetShader(dpShader, nullptr, 0);
-	GPU::immediateContext->Draw(this->triangles.size(), 0);
+	GPU::immediateContext->Draw(UINT(reactphysics3d::uint64(this->triangles.size())), 0);
 	GPU::immediateContext->RSSetState(nullptr);
 }
 
@@ -203,6 +214,7 @@ PhysicsWorld::~PhysicsWorld()
 	{
 		delete physObjects[i];
 	}
+	delete playerBox;
 	if (world != nullptr) com.destroyPhysicsWorld(world);
 	debuggerBuffer->Release();
 	dpShader->Release();
@@ -217,50 +229,68 @@ void PhysicsWorld::update(float dt)
 
 void PhysicsWorld::addForceToObjects()
 {
-	DirectX::XMFLOAT3 grav;
-	reactphysics3d::Vector3 temp;
 	for (int i = 0; i < this->physObjects.size(); i++)
 	{
 		temp = this->physObjects[i]->getPosition();
 		grav = normalizeXMFLOAT3(DirectX::XMFLOAT3(-temp.x, -temp.y, -temp.z));
-		this->physObjects[i]->applyForceToCenter(this->physObjects[i]->getMass() * reactphysics3d::Vector3(9.82 * grav.x, 9.82 * grav.y, 9.82 * grav.z));
+		this->physObjects[i]->applyForceToCenter(this->physObjects[i]->getMass() * reactphysics3d::Vector3(9.82f * grav.x, 9.82f * grav.y, 9.82f * grav.z));
 	}
 }
 
-DirectX::SimpleMath::Vector3 PhysicsWorld::getPos()
+DirectX::SimpleMath::Vector3 PhysicsWorld::getPos() const
 {
-	return { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y , playerRigidBody->getTransform().getPosition().z };
+	//return { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y , playerRigidBody->getTransform().getPosition().z };
+	return playerBox->getPosV3();
 }
 
-DirectX::SimpleMath::Vector3 PhysicsWorld::getRot()
+DirectX::SimpleMath::Vector3 PhysicsWorld::getRot() const
 {
-	return { playerRigidBody->getTransform().getOrientation().x, playerRigidBody->getTransform().getOrientation().y, playerRigidBody->getTransform().getOrientation().z };
+	return { playerBox->getRotation().x, playerBox->getRotation().y, playerBox->getRotation().z };
+}
+
+PhysicsComponent* PhysicsWorld::getPlayerBox() const
+{
+	return this->playerBox;
 }
 
 void PhysicsWorld::updatePlayerBox(const DirectX::SimpleMath::Vector3& pos)
 {
-	playerRigidBody->setTransform(reactphysics3d::Transform(reactphysics3d::Vector3({ pos.x, pos.y, pos.z }), playerRigidBody->getTransform().getOrientation()));
+	playerBox->setPosition(reactphysics3d::Vector3({ pos.x, pos.y, pos.z }));
 }
 
 void PhysicsWorld::addBoxToWorld(DirectX::XMFLOAT3 dimensions, float mass, DirectX::XMFLOAT3 position)
 {
 	if (position.x == 0 && position.y == 10 && position.z == 0)
 	{
-		float x = 30.f - 2.f * (float)(rand() % 31);
-		float y = 30.f - 2.f * (float)(rand() % 31);
-		float z = 30.f - 2.f * (float)(rand() % 31);
+		float x = 50.f - 2.f * (float)(rand() % 61);
+		float y = 50.f - 2.f * (float)(rand() % 61);
+		float z = 50.f - 2.f * (float)(rand() % 61);
 		position = DirectX::XMFLOAT3(x, y, z);
 	}
-	int vectorSize = this->physObjects.size();
+	UINT vectorSize = UINT(this->physObjects.size());
 	physObjects.emplace_back(new PhysicsComponent());
 	physObjects[vectorSize]->initiateComponent(&this->com, this->world);
 	physObjects[vectorSize]->setPosition(reactphysics3d::Vector3(position.x, position.y, position.z));
-	physObjects[vectorSize]->setLinearDampning(1.f);
+	physObjects[vectorSize]->setLinearDampning(1.3f);
 	//UPDATE THE VERTEX BUFFER TO BE ABLE TO DRAW THE NEW PHYSOBJECTS
 	this->recreateVertexBuffer();
 }
 
 void PhysicsWorld::addSphereToWorld(float radius, DirectX::XMFLOAT3 position)
 {
+}
+
+void PhysicsWorld::addPhysComponent(GameObject* gameObj, reactphysics3d::CollisionShapeName shape)
+{
+	PhysicsComponent* newComp = new PhysicsComponent();
+	newComp->initiateComponent(&this->com, this->world, shape);
+	newComp->setPosition({ gameObj->getPos().x, gameObj->getPos().y, gameObj->getPos().z });
+	newComp->setLinearDampning(0.3f);
+	newComp->applyWorldTorque(reactphysics3d::Vector3(10000000, 0, 0));
+	gameObj->setPhysComp(newComp);
+	newComp->setParent(gameObj);
+	physObjects.emplace_back(newComp);
+
+	this->recreateVertexBuffer();
 }
 

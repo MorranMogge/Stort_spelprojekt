@@ -1,6 +1,6 @@
+#include "stdafx.h"
 #include "GuiHandler.h"
 #include "GPU.h"
-#include<iostream>
 #include"Input.h"
 #include "SettingsUI.h"
 #include "Credits.h"
@@ -17,90 +17,89 @@ void GuiHandler::SpritePass()
 
 void GuiHandler::HandleInputs()
 {
-	if (show)
-	{
+
 #pragma region start
 
-		if (start.IntersectMouse())
-		{
-			start.SetTint(DirectX::Colors::Green.v);
+	if (start.IntersectMouse())
+	{
+		start.SetTint(DirectX::Colors::Green.v);
 
-			if (Input::KeyPress(KeyCode::MOUSE_L))
-			{
-				std::cout << "start\n";
-			}
-		}
-		else
+		if (Input::KeyPress(KeyCode::MOUSE_L))
 		{
-			start.SetTint(DirectX::Colors::White.v);
+			gameState = GAME;
 		}
+	}
+	else
+	{
+		start.SetTint(DirectX::Colors::White.v);
+	}
 
 #pragma endregion
 
 #pragma region settings
 
-		if (settings.IntersectMouse())
-		{
-			settings.SetTint(DirectX::Colors::Green.v);
+	if (settings.IntersectMouse())
+	{
+		settings.SetTint(DirectX::Colors::Green.v);
 
-			if (Input::KeyPress(KeyCode::MOUSE_L))
-			{
-				show = false;
-				SettingsUI::show = true;
-			}
-		}
-		else
+		if (Input::KeyPress(KeyCode::MOUSE_L))
 		{
-			settings.SetTint(DirectX::Colors::White.v);
+			gameState = SETTINGS;
 		}
+	}
+	else
+	{
+		settings.SetTint(DirectX::Colors::White.v);
+	}
 
 #pragma endregion
 
 #pragma region credits
 
-		if (credits.IntersectMouse())
-		{
-			credits.SetTint(DirectX::Colors::Green.v);
+	if (credits.IntersectMouse())
+	{
+		credits.SetTint(DirectX::Colors::Green.v);
 
-			if (Input::KeyPress(KeyCode::MOUSE_L))
-			{
-				show = false;
-				Credits::show = true;
-			}
-		}
-		else
+		if (Input::KeyPress(KeyCode::MOUSE_L))
 		{
-			credits.SetTint(DirectX::Colors::White.v);
+			gameState = CREDITS;
 		}
+	}
+	else
+	{
+		credits.SetTint(DirectX::Colors::White.v);
+	}
 
 #pragma endregion
 
 #pragma region exit
 
-		if (exit.IntersectMouse())
-		{
-			exit.SetTint(DirectX::Colors::Green.v);
+	if (exit.IntersectMouse())
+	{
+		exit.SetTint(DirectX::Colors::Green.v);
 
-			if (Input::KeyPress(KeyCode::MOUSE_L))
-			{
-				isExit = true;
-			}
-		}
-		else
+		if (Input::KeyPress(KeyCode::MOUSE_L))
 		{
-			exit.SetTint(DirectX::Colors::White.v);
+			gameState = EXIT;
 		}
-
-#pragma endregion
+	}
+	else
+	{
+		exit.SetTint(DirectX::Colors::White.v);
 	}
 
-
+#pragma endregion
 
 }
 
 void GuiHandler::TextPass()
 {
-	testText.Draw();
+
+}
+
+GAMESTATE GuiHandler::GetGameState()
+{
+	return gameState;
 }
 
 GuiHandler::GuiHandler()
@@ -119,10 +118,7 @@ GuiHandler::GuiHandler()
 	exit = GUISprite(1000, 500);
 	exit.Load(GPU::device, L"../Sprites/exit.png");
 
-	testText = GUIText(500, 400);
-	testText.Load(GPU::device, L"../Sprites/GothenbergTextura.spritefont");
-	testText.setText(L"Test Text");
-
+	gameState = NOCHANGE;
 }
 
 void GuiHandler::Draw()

@@ -1,5 +1,5 @@
+#include "stdafx.h"
 #include "WindowHelper.h"
-#include <iostream>
 #include "GPU.h"
 #include "resource.h"
 #include "imGUI\imconfig.h"
@@ -32,23 +32,6 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 bool SetupWindow(HINSTANCE instance, UINT& width, UINT& height, int nCmdShow, HWND& window)
 {
-	//static bool raw_input_initialized = false;
-	//if (raw_input_initialized == false)
-	//{
-	//	RAWINPUTDEVICE rid;
-
-	//	rid.usUsagePage = 0x01; // mouse
-	//	rid.usUsage = 0x02;
-	//	rid.dwFlags = 0;
-	//	rid.hwndTarget = NULL;
-	//	if (RegisterRawInputDevices(&rid, 1, sizeof(rid)) == FALSE)
-	//	{
-	//		//ErrorClass::Log(GetLastError(), "Failed to register raw input devices");
-	//		exit(-1);
-	//	}
-	//	raw_input_initialized = true;
-	//}
-
 	const wchar_t CLASS_NAME[] = L"Window Class";
 
 	WNDCLASSEX wc = {};
@@ -70,7 +53,7 @@ bool SetupWindow(HINSTANCE instance, UINT& width, UINT& height, int nCmdShow, HW
 
 	RegisterClassEx(&wc);
 
-	RECT wr = { 0, 0, width, height };
+	RECT wr = { 0, 0, LONG(width), LONG(height) };
 
 	window = CreateWindowEx(
 		0, //style, 0, not need style

@@ -148,7 +148,7 @@ void BasicRenderer::lightPrePass()
 
 bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT)
 {
-	int WidthAndHeight = 2048;
+	int WidthAndHeight = 1024;
 
 	std::string vShaderByteCode;
 	this->immediateContext = immediateContext;

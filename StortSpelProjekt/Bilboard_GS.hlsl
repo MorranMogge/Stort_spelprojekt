@@ -12,6 +12,11 @@ cbuffer CamPosCB : register(b2)
 {
     float4 camPos;
 }
+cbuffer CamUpPos : register(b3)
+{
+    float4 camUpPos;
+}
+
 
 [maxvertexcount(4)]
 void main(point float3 input[1] : Position, inout TriangleStream<Output> outputStream)

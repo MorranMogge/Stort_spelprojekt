@@ -271,6 +271,7 @@ void BasicRenderer::bilboardPrePass(Camera& stageCamera)
 	immediateContext->GSSetShader(bill_gShader, nullptr, 0);
 	stageCamera.GSbindViewBuffer(1);													//Set matrix [world],[view]
 	stageCamera.GSbindPositionBuffer(2);												//Set camera pos for 
+	stageCamera.GSbindUpBuffer(3);
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
 }
 

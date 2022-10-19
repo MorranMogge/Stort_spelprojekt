@@ -14,7 +14,6 @@ void Game::loadObjects()
 	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
 	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
 	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-	maxDistance = planet->getScale().x + 2.f;
 
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
@@ -206,44 +205,28 @@ GAMESTATE Game::Update()
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 
-	reactphysics3d::Ray ray(reactphysics3d::Vector3(this->player->getPosV3().x, this->player->getPosV3().y, this->player->getPosV3().z), reactphysics3d::Vector3(player->getRayCastPos()));
-	reactphysics3d::RaycastInfo rayInfo;
-
-	DirectX::XMFLOAT3 tempp(1,1,1);
+	//Calculate gravity factor
 	grav = planetGravityField.calcGravFactor(player->getPosV3());
-	DirectX::XMFLOAT3 newVec(grav.x, grav.y, grav.z);
-	
-	bool testingVec = false;
-	int gameObjSize = gameObjects.size();
-	for (int i = 1; i < gameObjSize; i++)
-	{
-		if (gameObjects[i]->getPhysComp()->raycast(ray, rayInfo)) 
-		{ 
-			velocity = DirectX::XMFLOAT3(0, 0, 0);
-			tempp = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z); 
-			newVec = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
-			testingVec = true;
-			break; 
-		}
-	}
+	additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
 
-	subtractionXMFLOAT3(tempp, this->player->getPos());
+	//Player functions
+	//Raycasting
+	DirectX::XMFLOAT3 hitPos(0.f, 0.f, 0.f);
+	DirectX::XMFLOAT3 hitNormal(grav.x, grav.y, grav.z);
+	bool testingVec = this->player->raycast(gameObjects, hitPos, hitNormal);
+	if (testingVec) velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 
-	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), newVec, dt, testingVec);
+	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), hitNormal, dt, testingVec);
 	player->movePos(velocity);
 	
-	scalarMultiplicationXMFLOAT3(dt, grav);
-	additionXMFLOAT3(velocity, grav);
-	
-	//Player functions
 	player->pickupItem(potion);
 	player->pickupItem(testBat);
 	
-	physWolrd.updatePlayerBox(player->getPos());
+	//Physics related functions
 	physWolrd.update(dt);
 
 	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
-	for (int i = 1; i < gameObjects.size(); i++)
+	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->update();
 	}

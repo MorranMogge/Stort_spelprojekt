@@ -231,24 +231,9 @@ void PhysicsWorld::addForceToObjects(const float& dt)
 	}
 }
 
-DirectX::SimpleMath::Vector3 PhysicsWorld::getPos() const
-{
-	return playerBox->getPosV3();
-}
-
-DirectX::SimpleMath::Vector3 PhysicsWorld::getRot() const
-{
-	return { playerBox->getRotation().x, playerBox->getRotation().y, playerBox->getRotation().z };
-}
-
 PhysicsComponent* PhysicsWorld::getPlayerBox() const
 {
 	return this->playerBox;
-}
-
-void PhysicsWorld::updatePlayerBox(const DirectX::SimpleMath::Vector3& pos)
-{
-	playerBox->setPosition(reactphysics3d::Vector3({ pos.x, pos.y, pos.z }));
 }
 
 void PhysicsWorld::addBoxToWorld(DirectX::XMFLOAT3 dimensions, float mass, DirectX::XMFLOAT3 position)
@@ -267,10 +252,6 @@ void PhysicsWorld::addBoxToWorld(DirectX::XMFLOAT3 dimensions, float mass, Direc
 	physObjects[vectorSize]->setLinearDampning(1.3f);
 	//UPDATE THE VERTEX BUFFER TO BE ABLE TO DRAW THE NEW PHYSOBJECTS
 	this->recreateVertexBuffer();
-}
-
-void PhysicsWorld::addSphereToWorld(float radius, DirectX::XMFLOAT3 position)
-{
 }
 
 void PhysicsWorld::addPhysComponent(GameObject* gameObj, reactphysics3d::CollisionShapeName shape, const DirectX::XMFLOAT3& scale)

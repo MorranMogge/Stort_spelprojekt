@@ -309,6 +309,26 @@ void Player::releaseItem()
     this->holdingItem = nullptr;
 }
 
+bool Player::raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
+{
+	reactphysics3d::Ray ray(reactphysics3d::Vector3(this->position.x, this->position.y, this->position.z), reactphysics3d::Vector3(this->getRayCastPos()));
+	reactphysics3d::RaycastInfo rayInfo;
+
+	bool testingVec = false;
+	int gameObjSize = gameObjects.size();
+	for (int i = 1; i < gameObjSize; i++)
+	{
+		if (gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
+		{
+			//Maybe somehow return the index of the triangle hit to calculate new Normal
+			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
+			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
+			return true;
+		}
+	}
+	return false;
+}
+
 bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) const
 {
     DirectX::XMFLOAT3 objPos = itemToLookWithinRadius->getPos();
@@ -334,6 +354,7 @@ bool Player::repairedShip() const
 
 void Player::update()
 {
+	physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
     if (holdingItem != nullptr)
     {
         DirectX::SimpleMath::Vector3 newPos = this->position; 

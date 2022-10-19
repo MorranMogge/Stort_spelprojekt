@@ -21,7 +21,6 @@ private:
 	D3D11_MAPPED_SUBRESOURCE subData;
 
 	float dt;
-	float maxDistance;
 	std::chrono::time_point<std::chrono::system_clock> currentTime;
 	std::chrono::time_point<std::chrono::system_clock> lastUpdate;
 

@@ -8,7 +8,7 @@ struct wirefameInfo
 	float padding;
 };
 
-const int NROFPLAYERS = 2;
+const int NROFPLAYERS = 3;
 
 class Game : public State
 {

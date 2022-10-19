@@ -12,7 +12,7 @@
 #include "Packethandler.h"
 #include "CircularBuffer.h"
 
-const short MAXNUMBEROFPLAYERS = 3;
+const short MAXNUMBEROFPLAYERS = 7;
 std::mutex mutex;
 
 struct acceptMePacketData

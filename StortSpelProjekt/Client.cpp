@@ -75,6 +75,7 @@ Client::~Client()
 		clientThread->join();
 		delete clientThread;
 	}
+	delete this->data.circularBuffer;
 }
 
 void Client::setClientId(int nr)

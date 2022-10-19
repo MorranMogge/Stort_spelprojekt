@@ -54,7 +54,7 @@ void Game::drawShadows()
 {
 	potion->draw();
 	currentPlayer->draw();
-	for (int i = 0; i < NROFPLAYERS; i++)
+	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->draw();
 	}
@@ -78,7 +78,7 @@ void Game::drawObjects(bool drawDebug)
 	{
 		gameObjects.at(i)->draw();
 	}
-	for (int i = 0; i < NROFPLAYERS; i++)
+	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->draw();
 	}
@@ -137,7 +137,7 @@ void Game::updateBuffers()
 	{
 		gameObjects[i]->updateBuffer();
 	}
-	for (int i = 0; i < NROFPLAYERS; i++)
+	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->updateBuffer();
 	}
@@ -231,7 +231,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	client = new Client("192.168.43.251");
 	circularBuffer = client->getCircularBuffer();
 
-
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
 	this->setUpWireframe();
@@ -244,29 +243,31 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
 
 
-	//TEMPOR�R G�RA MER DYNAMISK SENARE
-	client->connectToServer();
-	int playerId = -1;
-	while (playerId <= -1 || playerId >= 9)
+	if (IFONLINE)
 	{
-		playerId = packetEventManager->handleId(client->getCircularBuffer());
-		//std::cout << "Game.cpp, playerId: " << std::to_string(playerId) << std::endl;
-	}
-	//int playerid = client->initTEMPPLAYERS();
-
-	this->client->setClientId(playerId);
-
-	for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
-	{
-		Player *tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
-		if (playerId != i)
+		client->connectToServer();
+		int playerId = -1;
+		while (playerId <= -1 || playerId >= 9)
 		{
-			players.push_back(tmpPlayer);
+			playerId = packetEventManager->handleId(client->getCircularBuffer());
+			//std::cout << "Game.cpp, playerId: " << std::to_string(playerId) << std::endl;
 		}
-		else
+		//int playerid = client->initTEMPPLAYERS();
+
+		this->client->setClientId(playerId);
+
+		for (int i = 0; i < players.size(); i++)//initialize players 
 		{
-			players.push_back(currentPlayer);
-			delete tmpPlayer;
+			Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
+			if (playerId != i)
+			{
+				players.push_back(tmpPlayer);
+			}
+			else
+			{
+				players.push_back(currentPlayer);
+				delete tmpPlayer;
+			}
 		}
 	}
 
@@ -280,7 +281,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 Game::~Game()
 {
-	//delete client;
+	delete client;
+	delete packetEventManager;
 
 	for (int i = 0; i < this->gameObjects.size(); i++)
 	{
@@ -313,7 +315,7 @@ GAMESTATE Game::Update()
 	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId());
 	
 	
-	for (int i = 0; i < NROFPLAYERS; i++)
+	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->updateBuffer();
 	}
@@ -370,7 +372,7 @@ void Game::Render()
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 	start = std::chrono::system_clock::now();
 
-	for (int i = 0; i < NROFPLAYERS; i++)
+	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->draw();
 	}

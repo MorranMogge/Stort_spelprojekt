@@ -5,6 +5,10 @@ PacketEventManager::PacketEventManager()
 {
 }
 
+PacketEventManager::~PacketEventManager()
+{
+}
+
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int &NROFPLAYERS, std::vector<Player*>& players, const int& playerId)
 {
 	//handles the online events

@@ -12,7 +12,7 @@
 #include "Packethandler.h"
 #include "CircularBuffer.h"
 
-const short MAXNUMBEROFPLAYERS = 7;
+const short MAXNUMBEROFPLAYERS = 3;
 std::mutex mutex;
 
 struct acceptMePacketData
@@ -59,35 +59,6 @@ struct serverData
 	unsigned short port;
 	sf::Packet packet;
 };
-
-//void handleReceivedData(void* param)
-//{
-//	serverData* data = (serverData*)param;
-//	sf::Packet packet;
-//	sf::IpAddress remoteAddress;
-//
-//	while (!data->endServer)
-//	{
-//		if (data->socket.receive(packet, data->users[0].ipAdress, data->port))
-//		{
-//			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-//			{
-//				if (data->users[i].ipAdress == remoteAddress)
-//				{
-//					std::string receivedString;
-//					std::cout << "received data from address: " << remoteAddress.toString() << std::endl;
-//
-//					packet >> receivedString;
-//					std::cout << "Received string from client: " << receivedString << std::endl;
-//
-//					data->packet = packet;
-//					packet.clear();
-//				}
-//			}
-//		}
-//	}
-//
-//};
 
 bool receiveDataUdp(sf::Packet& receivedPacket, serverData &data, unsigned short& packetIdentifier)
 {

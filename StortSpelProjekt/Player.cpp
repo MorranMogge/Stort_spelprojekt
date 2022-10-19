@@ -60,9 +60,10 @@ void Player::handleInputs()
 
 }
 
-void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime)
+void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime, const bool& testingVec)
 {
-	normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
+	if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
+	else normalVector = DirectX::XMVectorSet(grav.x, grav.y, grav.z, 1.0f);
 
 	upVector = XMVector3TransformCoord(DEFAULT_UP, rotation);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
@@ -395,6 +396,6 @@ DirectX::XMMATRIX Player::getRotationMX() const
 reactphysics3d::Vector3 Player::getRayCastPos() const
 {
 	SimpleMath::Vector3 returnValue = this->position;
-	returnValue -= this->upVector * -2.f;
+	returnValue += this->upVector * -2.f;
 	return reactphysics3d::Vector3(returnValue.x, returnValue.y, returnValue.z);
 }

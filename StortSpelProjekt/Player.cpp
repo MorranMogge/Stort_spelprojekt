@@ -7,6 +7,44 @@
 #include "Component.h"
 using namespace DirectX;
 
+void Player::handleItems()
+{
+	DirectX::SimpleMath::Vector3 newPos = this->position;
+	newPos += 4 * forwardVector;
+
+	PhysicsComponent* itemPhysComp = holdingItem->getPhysComp();
+	holdingItem->setPos(newPos);
+	itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z }));
+
+	//Thorw the Item
+	if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
+	{
+		//Set dynamic so it can be affected by forces
+		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+
+		//Calculate the force vector
+		DirectX::XMFLOAT3 temp;
+		DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5 + this->upVector));
+		newNormalizeXMFLOAT3(temp);
+
+		//Apply the force
+		itemPhysComp->applyLocalTorque(reactphysics3d::Vector3(temp.x * 500, temp.y * 500, temp.z * 500));
+		itemPhysComp->applyForceToCenter(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z * 1000));
+
+		//You no longer "own" the item
+		holdingItem = nullptr;
+	}
+	//Use the Item
+	else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
+	{
+		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+		holdingItem->useItem();
+		itemPhysComp->setIsAllowedToSleep(true);
+		itemPhysComp->setIsSleeping(true);
+		holdingItem = nullptr;
+	}
+}
+
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
     :GameObject(useMesh, pos, rot, id), health(70), holdingItem(nullptr), speed(2.f)
 {
@@ -357,40 +395,7 @@ void Player::update()
 	physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
     if (holdingItem != nullptr)
     {
-        DirectX::SimpleMath::Vector3 newPos = this->position; 
-        newPos += 4*forwardVector;
-        
-        PhysicsComponent* itemPhysComp = holdingItem->getPhysComp();
-        holdingItem->setPos(newPos);
-        itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z}));
-        
-        //Thorw the Item
-        if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
-        {
-            //Set dynamic so it can be affected by forces
-	        itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
-
-            //Calculate the force vector
-            DirectX::XMFLOAT3 temp;
-            DirectX::XMStoreFloat3(&temp, (this->forwardVector*5+this->upVector));
-            newNormalizeXMFLOAT3(temp);
-
-            //Apply the force
-            itemPhysComp->applyLocalTorque(reactphysics3d::Vector3(temp.x * 500, temp.y * 500, temp.z * 500));
-            itemPhysComp->applyForceToCenter(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z * 1000));
-            
-            //You no longer "own" the item
-            holdingItem = nullptr;
-        }
-        //Use the Item
-        else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
-        {
-            itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
-            holdingItem->useItem();
-            itemPhysComp->setIsAllowedToSleep(true);
-            itemPhysComp->setIsSleeping(true);
-            holdingItem = nullptr;
-        }
+		this->handleItems();
     }
 }
 

@@ -29,6 +29,8 @@ private:
 	int health;
 	float speed;
 
+	void handleItems();
+
 public:
 	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
 	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);

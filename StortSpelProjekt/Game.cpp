@@ -6,15 +6,25 @@
 
 void Game::loadObjects()
 {
+	player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
 	this->manager.getMeshData("../Meshes/player.obj", vBuff, iBuff, subMeshRanges, verticies);
 	
 	tmpMesh = new Mesh(this->vBuff, this->iBuff, this->subMeshRanges, this->verticies);
 	tmp = new Player(tmpMesh, DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),0);
 	this->tempSRV3 = this->manager.getSrv("playerTexture.png");
 	this->tmp->setSrv(tempSRV3);
-	//Here we can add base object we want in the beginning of the game
+	
+
+	this->manager.getMeshData("../Meshes/planet.obj", vBuff, iBuff, subMeshRanges, verticies);
+	//tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	//this->tempSRV3 = this->manager.getSrv("planetTexture.png");
+
+
+	
 	planet = new GameObject("../Meshes/Sphere", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
-	player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
+	
+	
+	//Here we can add base object we want in the beginning of the game
 	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2);
 	spaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
 	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4);
@@ -38,7 +48,7 @@ void Game::loadObjects()
 	gameObjects.emplace_back(testCube);
 	gameObjects.emplace_back(testBat);
 	gameObjects.emplace_back(otherPlayer);
-
+	gameObjects.emplace_back(tmp);
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -79,7 +89,11 @@ void Game::drawObjects(bool drawDebug)
 		gameObjects.at(i)->draw();
 	}*/
 
-	this->tmp->tmpDraw();
+	for (int i = 0; i < gameObjects.size(); i++)
+	{
+		this->gameObjects[i]->tmpDraw();
+
+	}
 	
 
 	
@@ -263,7 +277,7 @@ Game::~Game()
 	}
 	
 	//delete tmpMesh;
-	delete tmp;
+	//delete tmp;
 	/*delete tmp2;*/
 	
 	wireBuffer->Release();

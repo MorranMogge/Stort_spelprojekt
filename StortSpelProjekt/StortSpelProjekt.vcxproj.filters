@@ -2,15 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClInclude Include="ModelManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mesh2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelDataContainer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClCompile Include="ImGui\imgui.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
@@ -125,15 +116,6 @@
     <ClCompile Include="ParticleEmitter.cpp">
       <Filter>Particles</Filter>
     </ClCompile>
-    <ClCompile Include="ModelManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mesh2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelDataContainer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CreditsMenu.cpp">
       <Filter>Game-States</Filter>
     </ClCompile>
@@ -150,6 +132,9 @@
     </ClCompile>
     <ClCompile Include="BaseballBat.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="mesh2.cpp" />
+    <ClCompile Include="ModelDataContainer.cpp" />
+    <ClCompile Include="ModelManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -401,6 +386,9 @@
     </ClInclude>
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="mesh2.h" />
+    <ClInclude Include="ModelDataContainer.h" />
+    <ClInclude Include="ModelManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

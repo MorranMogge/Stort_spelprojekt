@@ -68,6 +68,7 @@ public:
 		this->submeshRanges = submeshRanges;
 		this->vertexBuff = vertexBuff;
 		this->indexBuff = indexBuff;
+		CreateCB();
 	}
 	
 

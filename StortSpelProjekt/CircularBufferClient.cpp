@@ -17,7 +17,7 @@ CircularBufferClient::CircularBufferClient()
 CircularBufferClient::~CircularBufferClient()
 {
 	//kanske inte funkar
-	memset(data, 0, SIZEOFBUFFER);
+	memset(startOfBuffer, 0, SIZEOFBUFFER);
 	free(data);
 }
 

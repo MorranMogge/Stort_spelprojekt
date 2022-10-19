@@ -1,7 +1,7 @@
+
 #include <iostream>
 #include <string>
 #include <mutex>
-#include "../StortSpelProjekt/PackageTypes.h"
 
 #include <SFML/Network.hpp>
 #include <chrono>
@@ -171,11 +171,11 @@ void sendDataAllPlayers(testPosition &posData, serverData& serverData)
 		if (serverData.users[i].tcpSocket.send(&posData, sizeof(testPosition), recvSize) != sf::Socket::Done)
 		{
 			//error
-			std::cout << "Couldnt send data to player from array slot: " << std::to_string(i) << std::endl;
+			std::cout << "Couldnt send data to currentPlayer from array slot: " << std::to_string(i) << std::endl;
 		}
 		else
 		{
-			std::cout << "sent data to player: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
+			std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
 		}
 	}
 };
@@ -188,12 +188,12 @@ void sendPositionDataToPlayers(sf::Packet& packet, serverData& data)
 		if (data.users[i].tcpSocket.send(packet) != sf::Socket::Done)
 		{
 			//error
-			//std::cout << "Couldnt send data to player from array slot: " << std::to_string(i) << std::endl;
+			//std::cout << "Couldnt send data to currentPlayer from array slot: " << std::to_string(i) << std::endl;
 		}
 		else
 		{
 
-			std::cout << "sent data to player: " << data.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
+			std::cout << "sent data to currentPlayer: " << data.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
 		}
 	}
 };
@@ -339,11 +339,11 @@ void sendIdToAllPlayers(serverData& data)
 		if (data.users[i].tcpSocket.send(&protocol, sizeof(protocol), sentSize) != sf::Socket::Done)
 		{
 			//error
-			std::cout << "sendIdToAllPlayers(), couldnt send id to player: " << std::to_string(i) << std::endl;
+			std::cout << "sendIdToAllPlayers(), couldnt send id to currentPlayer: " << std::to_string(i) << std::endl;
 		}
 		else
 		{
-			std::cout << "sendIdToAllPlayers() sent to player nr: " << std::to_string(data.users[i].playerId) << std::endl;
+			std::cout << "sendIdToAllPlayers() sent to currentPlayer nr: " << std::to_string(data.users[i].playerId) << std::endl;
 		}
 	}
 };
@@ -356,12 +356,8 @@ int main()
 	sf::Packet packet;
 	sf::Packet receivedPacket;
 
-	
 
-	float frequency = 30.f;
-
-
-	std::cout << std::to_string(sizeof(float)) << std::endl;
+	std::cout << "Nr of players for the game: " << std::to_string(MAXNUMBEROFPLAYERS) << std::endl;
 
 	std::vector<player> players;
 
@@ -392,7 +388,7 @@ int main()
 	
 	std::chrono::time_point<std::chrono::system_clock> start;
 	start = std::chrono::system_clock::now();
-	float timerLength = 1.f / 60.0f;
+	float timerLength = 1.f / 30.0f;
 
 
 	setupTcp(data);

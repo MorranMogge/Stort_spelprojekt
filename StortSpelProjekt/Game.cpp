@@ -8,7 +8,7 @@ void Game::loadObjects()
 {
 	//Here we can add base object we want in the beginning of the game
 	planet = new GameObject("../Meshes/Sphere", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
-	player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
+	currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
 	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2);
 	spaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
 	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4);
@@ -26,7 +26,7 @@ void Game::loadObjects()
 	otherPlayer->getPhysComp()->setPosition(reactphysics3d::Vector3(otherPlayer->getPosV3().x, otherPlayer->getPosV3().y, otherPlayer->getPosV3().z));
 
 	gameObjects.emplace_back(planet);
-	gameObjects.emplace_back(player);
+	gameObjects.emplace_back(currentPlayer);
 	gameObjects.emplace_back(potion);
 	gameObjects.emplace_back(spaceShip);
 	gameObjects.emplace_back(testCube);
@@ -44,15 +44,15 @@ void Game::loadObjects()
 
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
-	testBat->setPlayer(player);
+	testBat->setPlayer(currentPlayer);
 	testBat->setTestObj(gameObjects);
-	player->setPhysComp(physWolrd.getPlayerBox());
+	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
 
 }
 
 void Game::drawShadows()
 {
-	potion.draw();
+	potion->draw();
 	currentPlayer->draw();
 	for (int i = 0; i < NROFPLAYERS; i++)
 	{
@@ -77,6 +77,10 @@ void Game::drawObjects(bool drawDebug)
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects.at(i)->draw();
+	}
+	for (int i = 0; i < NROFPLAYERS; i++)
+	{
+		players[i]->draw();
 	}
 	//Draw light debug meshes
 	if (drawDebug)
@@ -132,6 +136,10 @@ void Game::updateBuffers()
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->updateBuffer();
+	}
+	for (int i = 0; i < NROFPLAYERS; i++)
+	{
+		players[i]->updateBuffer();
 	}
 
 	//Update Wireframe buffer
@@ -218,12 +226,12 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 {
 	MaterialLibrary::LoadDefault();
 
-	this->client = client;
+	this->packetEventManager = new PacketEventManager();
 	//m�ste raderas******************
+	client = new Client("192.168.43.251");
 	circularBuffer = client->getCircularBuffer();
 
 
-	this->imguiHelper = &imguiHelper;
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
 	this->setUpWireframe();
@@ -235,16 +243,21 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
 
-	currentPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
 
 	//TEMPOR�R G�RA MER DYNAMISK SENARE
 	client->connectToServer();
-	int playerid = client->initTEMPPLAYERS();
+	int playerId = -1;
+	while (playerId <= -1 || playerId >= 9)
+	{
+		playerId = packetEventManager->handleId(client->getCircularBuffer());
+		//std::cout << "Game.cpp, playerId: " << std::to_string(playerId) << std::endl;
+	}
+	//int playerid = client->initTEMPPLAYERS();
 
 	for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
 	{
 		Player *tmpPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
-		if (playerid != i)
+		if (playerId != i)
 		{
 			players.push_back(tmpPlayer);
 		}
@@ -258,7 +271,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	serverStart = std::chrono::system_clock::now();
 	this->window = &window;
 	gamePad = std::make_unique<DirectX::GamePad>();
-	playerVecRenderer.setPlayer(player);
+	playerVecRenderer.setPlayer(currentPlayer);
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 }
@@ -281,21 +294,21 @@ Game::~Game()
 GAMESTATE Game::Update()
 {
 	//Do we want this?
-	grav = planetGravityField.calcGravFactor(player->getPosV3());
-	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(player->getPos()));
+	grav = planetGravityField.calcGravFactor(currentPlayer->getPosV3());
+	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(currentPlayer->getPos()));
 
-	//Keeps player at the surface of the planet
-	if (getLength(player->getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(player->getPos()); player->setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
-	player->movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
+	//Keeps currentPlayer at the surface of the planet
+	if (getLength(currentPlayer->getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(currentPlayer->getPos()); currentPlayer->setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
+	currentPlayer->movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
 
-		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
+	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
 	{
 		client->sendToServerTEMPTCP(currentPlayer);
 		serverStart = std::chrono::system_clock::now();
 	}
 
-	circularBuffer->debugWriteMemoryAdress();
-	//packetEventManager.PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client);
+	//circularBuffer->debugWriteMemoryAdress();
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId());
 	
 	
 	for (int i = 0; i < NROFPLAYERS; i++)
@@ -304,15 +317,15 @@ GAMESTATE Game::Update()
 	}
 	
 	//Player, camera & physworld functions
-	player->pickupItem(potion);
-	player->pickupItem(testBat);
-	physWolrd.updatePlayerBox(player->getPos());
+	currentPlayer->pickupItem(potion);
+	currentPlayer->pickupItem(testBat);
+	physWolrd.updatePlayerBox(currentPlayer->getPos());
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
 
 
 
-	player->update();
+	currentPlayer->update();
 	//Updates gameObject physics components
 	for (int i = 2; i < gameObjects.size(); i++)
 	{
@@ -324,9 +337,9 @@ GAMESTATE Game::Update()
 	}
 
 	grav = normalizeXMFLOAT3(grav);
-	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
-	player->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
-	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
+	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
+	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
+	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
 
 	//Updates gameObject buffers
 	this->updateBuffers();
@@ -343,7 +356,7 @@ GAMESTATE Game::Update()
 			}
 		}
 	}
-	if (player->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
+	if (currentPlayer->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
 	
 	//Debug keybinds
 	this->handleKeybinds();
@@ -361,7 +374,7 @@ void Game::Render()
 	}
 
 	basicRenderer.setUpScene();
-	if (objectDraw) this->drawObjects();
+	if (objectDraw) this->drawObjects(false);
 	if (wireframe) { this->updateBuffers(); immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); }
 
 	//imguiHelper->drawInterface("test");

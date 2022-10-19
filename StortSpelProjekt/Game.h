@@ -1,6 +1,7 @@
 #pragma once
 #include "GameInclude.h"
 
+
 struct wirefameInfo
 {
 	DirectX::XMFLOAT3 wireframeClr;
@@ -13,6 +14,8 @@ class Game : public State
 {
 private:
 	ID3D11DeviceContext* immediateContext;
+
+	ImGuiHelper imGui;
 
 	bool wireframe = true;
 	bool objectDraw = true;
@@ -32,7 +35,7 @@ private:
 
 	std::chrono::time_point<std::chrono::system_clock> serverStart;
 	
-	float serverTimerLength =  1.f / 60.0f;
+	float serverTimerLength =  1.f / 30.0f;
 	Client* client;
 
 	BasicRenderer basicRenderer;
@@ -41,16 +44,15 @@ private:
 	PhysicsWorld physWolrd;
 
 
-	//PacketEventManager packetEventManager;
+	PacketEventManager* packetEventManager;
 	std::vector<Player*> players;
 
 	//variables to handle packets
-	CircularBuffer* circularBuffer;
+	CircularBufferClient* circularBuffer;
 
 
 	Camera camera;
 	SkyboxObj skybox;
-	Camera camera;
 	Player* currentPlayer;
 	GameObject* planet;
 	GameObject* testCube;

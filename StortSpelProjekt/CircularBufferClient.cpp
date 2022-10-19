@@ -1,7 +1,8 @@
-#include "CircularBuffer.h"
+#include "stdafx.h"
+#include "CircularBufferClient.h"
 
 
-CircularBuffer::CircularBuffer()
+CircularBufferClient::CircularBufferClient()
 {
 	this->data = malloc(SIZEOFBUFFER);
 	memset(data, 0, SIZEOFBUFFER);
@@ -13,14 +14,14 @@ CircularBuffer::CircularBuffer()
 	looped = false;
 }
 
-CircularBuffer::~CircularBuffer()
+CircularBufferClient::~CircularBufferClient()
 {
 	//kanske inte funkar
 	memset(data, 0, SIZEOFBUFFER);
 	free(data);
 }
 
-bool CircularBuffer::addData(const char incomingData[], const std::size_t& recvSize)
+bool CircularBufferClient::addData(const char incomingData[], const std::size_t& recvSize)
 {
 	if ((write + recvSize) >= endOfBuffer) // the write* wont go outside of the circular buffer
 	{
@@ -40,7 +41,7 @@ bool CircularBuffer::addData(const char incomingData[], const std::size_t& recvS
 
 }
 
-bool CircularBuffer::addData(const void*& incomingData, const std::size_t& recvSize)
+bool CircularBufferClient::addData(const void*& incomingData, const std::size_t& recvSize)
 {
 	if ((write + recvSize) >= endOfBuffer) // the write* wont go outside of the circular buffer
 	{
@@ -60,7 +61,7 @@ bool CircularBuffer::addData(const void*& incomingData, const std::size_t& recvS
 }
 
 //returns the packet id 
-int CircularBuffer::peekPacketId()
+int CircularBufferClient::peekPacketId()
 {
 	int value = -1;
 	memcpy(&value, read, sizeof(int));
@@ -68,16 +69,15 @@ int CircularBuffer::peekPacketId()
 	return value;
 }
 
-void* CircularBuffer::getData()
+void* CircularBufferClient::getData()
 {
 	void* startOfData;
 	startOfData = (void*)this->read;
 	return startOfData;
 }
 
-bool CircularBuffer::getIfPacketsLeftToRead()
+bool CircularBufferClient::getIfPacketsLeftToRead()
 {
-	//lägg till en check som kollar om buffern är full ex. om den är looped och read är större än write OCH TESTA DEN
 	if (looped)
 	{
 		read = startOfBuffer;
@@ -87,7 +87,7 @@ bool CircularBuffer::getIfPacketsLeftToRead()
 	return write > read;
 }
 
-void CircularBuffer::debugWriteMemoryAdress()
+void CircularBufferClient::debugWriteMemoryAdress()
 {
 	std::cout << "write:  " << std::to_string((size_t)write) << " read: " << std::to_string((size_t)read) << std::endl;
 }

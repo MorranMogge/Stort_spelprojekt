@@ -53,7 +53,7 @@ Client::Client()
 	this->port = 2001;
 	this->tmp = "empty String UwU";
 	this->isConnected = false;
-	this->data.circularBuffer = new CircularBuffer();
+	this->data.circularBuffer = new CircularBufferClient();
 	this->data.playerId = 0;
 }
 
@@ -64,7 +64,7 @@ Client::Client(std::string ipAddress, int port)
 	this->tmp = "empty";
 	this->port = 2001;
 	this->isConnected = false;
-	this->data.circularBuffer = new CircularBuffer();
+	this->data.circularBuffer = new CircularBufferClient();
 }
 
 Client::~Client()
@@ -229,9 +229,6 @@ void Client::sendToServerTEMPTCP( Player*& currentPlayer)
 	testStruct.z = currentPlayer->getPos().z;
 	//int playerid = data.users[i].playerId;
 
-	
-
-	sendPacket.clear();
 	//unsigned short packetIdentifier = 3;
 	
 	//returns the nr of bytes sent
@@ -240,12 +237,10 @@ void Client::sendToServerTEMPTCP( Player*& currentPlayer)
 	if (data.socket.send(&testStruct,sizeof(testStruct), sentSize) != sf::Socket::Done)
 	{
 		//error
-		std::cout << "TCP Couldnt send packet\n";
+		//std::cout << "TCP Couldnt send packet\n";
 	}
 	else
 	{
-
-		sendPacket.clear();
 	}
 	
 }
@@ -314,7 +309,7 @@ int Client::initTEMPPLAYERS()
 	return temp;
 }
 
-CircularBuffer*& Client::getCircularBuffer()
+CircularBufferClient*& Client::getCircularBuffer()
 {
 	return data.circularBuffer;
 }

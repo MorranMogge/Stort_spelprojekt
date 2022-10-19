@@ -152,7 +152,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Server\CircularBuffer.h" />
     <ClInclude Include="..\Server\PacketsDataTypes.h" />
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="BasicRenderer.h" />
@@ -161,6 +160,7 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="BufferTypes.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CircularBufferClient.h" />
     <ClInclude Include="ClientHandler.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ConstantBuffer.h" />
@@ -198,6 +198,7 @@
     <ClInclude Include="packetEvent.h" />
     <ClInclude Include="PacketEventManager.h" />
     <ClInclude Include="PacketHandler.h" />
+    <ClInclude Include="PacketsDataTypes.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="PhysicsComponent.h" />
@@ -251,7 +252,7 @@
     <ClInclude Include="WindowHelper.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Server\CircularBuffer.cpp" />
+    <ClCompile Include="CircularBufferClient.cpp" />
     <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="BaseballBat.cpp" />
     <ClCompile Include="BasicRenderer.cpp" />

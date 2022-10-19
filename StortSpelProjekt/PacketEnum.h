@@ -1,4 +1,4 @@
-enum class PacketType
+enum PacketType
 {
 	ERROR1 = -1,
 

@@ -5,15 +5,15 @@
 #include "Player.h"
 
 #include "Player.h"
-#include "../Server/PacketsDataTypes.h"
-#include "../Server/CircularBuffer.h"
+#include "PacketsDataTypes.h"
+#include "CircularBufferClient.h"
 
 struct ThreadInfo
 {
 	sf::TcpSocket socket;
 	std::string receivedstring;
 	int playerId;
-	CircularBuffer* circularBuffer;
+	CircularBufferClient* circularBuffer;
 	bool endThread = false;
 };
 
@@ -76,7 +76,7 @@ public:
 	//returns the players id on the server
 	int initTEMPPLAYERS();
 
-	CircularBuffer*& getCircularBuffer();
+	CircularBufferClient*& getCircularBuffer();
 
 	std::string getipAdress()const;
 

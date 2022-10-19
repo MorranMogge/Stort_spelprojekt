@@ -1,8 +1,8 @@
 #pragma once
-#include"../Server/CircularBuffer.h"
 #include"PacketEnum.h"
 #include"Player.h"
-#include"Client.h"
+#include"PacketsDataTypes.h"
+#include"CircularBufferClient.h"
 
 class PacketEventManager
 {
@@ -12,5 +12,6 @@ public:
 	PacketEventManager();
 	~PacketEventManager();
 
-	void PacketHandleEvents(CircularBuffer*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, Client*& client);
+	void PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId);
+	int handleId(CircularBufferClient*& circularBuffer);
 };

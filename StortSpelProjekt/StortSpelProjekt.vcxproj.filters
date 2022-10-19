@@ -129,6 +129,10 @@
     </ClCompile>
     <ClCompile Include="BaseballBat.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="ClientHandler.cpp" />
+    <ClCompile Include="MouseClass.cpp" />
+    <ClCompile Include="PacketEventManager.cpp" />
+    <ClCompile Include="CircularBufferClient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -377,6 +381,15 @@
     </ClInclude>
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="..\Server\PacketsDataTypes.h" />
+    <ClInclude Include="ClientHandler.h" />
+    <ClInclude Include="MouseClass.h" />
+    <ClInclude Include="PacketEnum.h" />
+    <ClInclude Include="packetEvent.h" />
+    <ClInclude Include="PacketEventManager.h" />
+    <ClInclude Include="PacketHandler.h" />
+    <ClInclude Include="CircularBufferClient.h" />
+    <ClInclude Include="PacketsDataTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

@@ -13,7 +13,7 @@ void PhysicsWorld::setUpBaseScenario()
 {
 	playerBox = new PhysicsComponent();
 	playerBox->initiateComponent(&this->com, this->world);
-	playerBox->setType(reactphysics3d::BodyType::DYNAMIC);
+	playerBox->setType(reactphysics3d::BodyType::KINEMATIC);
 
 	world->setIsDebugRenderingEnabled(true);
 	debugRenderer = &world->getDebugRenderer();

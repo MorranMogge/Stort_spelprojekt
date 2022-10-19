@@ -63,6 +63,7 @@ public:
 	void applyWorldTorque(const reactphysics3d::Vector3& force);
 	void applyLocalTorque(const reactphysics3d::Vector3& force);
 	void setPosition(const reactphysics3d::Vector3& position);
+	void setRotation(const reactphysics3d::Quaternion& rotation);
 
 	//Get information
 	reactphysics3d::BodyType getType()const;

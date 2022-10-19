@@ -242,6 +242,11 @@ void PhysicsComponent::setPosition(const reactphysics3d::Vector3& position)
 	this->rigidBody->setTransform(reactphysics3d::Transform(position, this->rigidBody->getTransform().getOrientation()));
 }
 
+void PhysicsComponent::setRotation(const reactphysics3d::Quaternion& rotation)
+{
+	this->rigidBody->setTransform(reactphysics3d::Transform(this->getPosition(), rotation));
+}
+
 reactphysics3d::BodyType PhysicsComponent::getType() const
 {
 	return this->rigidBody->getType();

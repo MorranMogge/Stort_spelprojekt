@@ -392,8 +392,11 @@ bool Player::repairedShip() const
 
 void Player::update()
 {
+	DirectX::SimpleMath::Quaternion dx11Quaternion = DirectX::XMQuaternionRotationMatrix(this->rotation);
+	reactphysics3d::Quaternion reactQuaternion = reactphysics3d::Quaternion(dx11Quaternion.x, dx11Quaternion.y, dx11Quaternion.z, dx11Quaternion.w);
+	this->physComp->setRotation(reactQuaternion);
 	physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
-    if (holdingItem != nullptr)
+	if (holdingItem != nullptr)
     {
 		this->handleItems();
     }

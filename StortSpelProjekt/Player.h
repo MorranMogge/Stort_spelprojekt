@@ -23,7 +23,9 @@ private:
 	DirectX::XMVECTOR rightVector = DEFAULT_RIGHT;
 	DirectX::XMVECTOR upVector = DEFAULT_UP;
 	DirectX::XMVECTOR normalVector;
-	bool keyboardMove = false;
+	bool controllerConnected = true;
+
+	float counter = 0.0f;
 
 	//Other shit
 	const float speedConstant = 100.f;

@@ -306,7 +306,6 @@ void Game::Render()
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 	start = std::chrono::system_clock::now();
 
-
 	//Render shadow maps
 	basicRenderer.lightPrePass();
 	drawShadows();

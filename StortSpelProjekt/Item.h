@@ -23,4 +23,6 @@ public:
 	//void drawParticles();
 	//virtual void useItem();
 	void throwItem();
+	virtual void update() override;
+
 };

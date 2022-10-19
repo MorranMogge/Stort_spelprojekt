@@ -4,6 +4,7 @@
 Item::Item(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
 	:GameObject(useMesh, pos, rot, id), pickedUp(false), itemIcon(nullptr), particles(nullptr)
 {
+	this->particles = new ParticleEmitter(pos, rot, 10, DirectX::XMFLOAT2(1, 3), 5);
 }
 
 Item::Item(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
@@ -38,4 +39,13 @@ void Item::setPickedUp(bool pickedUp)
 
 void Item::throwItem()
 {
+}
+
+void Item::update()
+{
+	if (this->itemIcon != nullptr)
+	{
+		this->updateRotation();
+		this->itemIcon->setPosition(this->position);
+	}
 }

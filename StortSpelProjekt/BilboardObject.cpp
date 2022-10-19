@@ -10,9 +10,9 @@ bool CreateVTXBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& vertexBuffer,const Di
 {
 	D3D11_BUFFER_DESC bufferDesc;													//create Vertex buffer
 	bufferDesc.ByteWidth = sizeof(DirectX::XMFLOAT3);								//size of buffer
-	bufferDesc.Usage = D3D11_USAGE_DEFAULT;											//sets interaction with gpu and cpu
+	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;											//sets interaction with gpu and cpu
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;								//Specifies the type of buffer
-	bufferDesc.CPUAccessFlags = 0;													//Specifies cpu acess
+	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;								//Specifies cpu acess
 	bufferDesc.MiscFlags = 0;														//Misc flags
 	bufferDesc.StructureByteStride = 0;												//Size of each element in structure
 	D3D11_SUBRESOURCE_DATA data = {};												//holds geometry data

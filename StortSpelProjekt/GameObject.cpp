@@ -255,6 +255,15 @@ void GameObject::draw()
 	this->mesh->DrawWithMat();
 }
 
+void GameObject::updateRotation()
+{
+	this->position = this->physComp->getPosV3();
+	this->reactQuaternion = this->physComp->getRotation();
+	this->dx11Quaternion = DirectX::SimpleMath::Quaternion(DirectX::SimpleMath::Vector4(reactQuaternion.x, reactQuaternion.y, reactQuaternion.z, reactQuaternion.w));
+	this->mesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
+	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
+}
+
 int GameObject::getId()
 {
 	return this->objectID;
@@ -262,10 +271,5 @@ int GameObject::getId()
 
 void GameObject::update()
 {
-	this->position = this->physComp->getPosV3();
-	this->reactQuaternion = this->physComp->getRotation();
-	this->dx11Quaternion = DirectX::SimpleMath::Quaternion(DirectX::SimpleMath::Vector4(reactQuaternion.x, reactQuaternion.y, reactQuaternion.z, reactQuaternion.w));
-	this->mesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
-	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
-
+	this->updateRotation();
 }

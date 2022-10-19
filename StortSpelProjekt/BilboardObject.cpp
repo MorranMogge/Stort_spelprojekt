@@ -118,6 +118,25 @@ BilboardObject::BilboardObject(const std::vector<std::string>& textureNames, con
 
 }
 
+BilboardObject::BilboardObject(const std::string& textureName, const DirectX::XMFLOAT3& position)
+{
+	std::vector<std::string> tempStr{textureName};
+
+	//Create texture & Srv
+	if (!CreateShaderResources(tempStr, this->bilboardTX, this->bilboardTXView))
+	{
+		std::cout << "error creating lightBuffer!" << std::endl;
+	}
+
+	//Create vertex buffer
+	if (!CreateVTXBuffer(this->vertexBuffer, position))
+	{
+		std::cout << "error creating lightBuffer!" << std::endl;
+	}
+
+}
+
+
 //----------------------------------------------- Functions ------------------------------------------------//
 
 void BilboardObject::setPosition(const DirectX::XMFLOAT3& position)

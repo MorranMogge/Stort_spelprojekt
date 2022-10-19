@@ -12,6 +12,7 @@ private:
 
 public:
 	BilboardObject(const std::vector<std::string>& textureNames, const DirectX::XMFLOAT3& position);
+	BilboardObject(const std::string& textureName, const DirectX::XMFLOAT3& position);
 	void setPosition(const DirectX::XMFLOAT3& position);
 	DirectX::XMFLOAT3 getPosition();
 	int getNrOfTextures();

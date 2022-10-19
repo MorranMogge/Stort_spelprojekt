@@ -5,13 +5,13 @@
 Potion::Potion(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
 	:Item(useMesh, pos, rot, id), playerPtr(nullptr), restoringAmount(10)
 {
-	
+	this->itemIcon = new BilboardObject("p1.png", this->position);
 }
 
 Potion::Potion(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
 	:Item(objectPath, pos, rot, id), playerPtr(nullptr), restoringAmount(10)
 {
-
+	this->itemIcon = new BilboardObject("p1.png", this->position);
 }
 
 Potion::~Potion()

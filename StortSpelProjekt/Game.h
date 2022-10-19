@@ -37,7 +37,7 @@ private:
 	GameObject* planet;
 	GameObject* testCube;
 	SpaceShip* spaceShip;
-	Potion* potion;			//not in use
+	Potion* potion;
 	BaseballBat* testBat;
 	Player* otherPlayer;
 

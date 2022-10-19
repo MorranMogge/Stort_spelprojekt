@@ -302,6 +302,7 @@ void Game::Render()
 
 	//render billboard objects
 	basicRenderer.bilboardPrePass(this->camera);
+	this->potion->drawIcon();
 	this->spaceShip->drawQuad();
 
 	//Render Particles

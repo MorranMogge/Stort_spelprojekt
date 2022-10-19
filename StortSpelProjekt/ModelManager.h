@@ -34,24 +34,19 @@ private:
 	//bones 
 	
 	aiMatrix4x4 globalInverseTransform;
-	aiScene* scene;
-	Assimp::Importer assimpImp;
+	AnimationData aniData;
 
-	std::vector<boneInfo> boneVec;
-	std::vector<IndexBoneData> boneDataVec;
-	std::map<std::string, int> boneIndexTraslator;
-	std::vector<aiAnimation*> AnimationVec;
-	//int numberBones;
-
-	void aiMatrixToXMmatrix(const aiMatrix4x4& in, DirectX::XMMATRIX& out);
+	void aiMatrixToXMmatrix(const aiMatrix4x4& in, DirectX::XMFLOAT4X4& out);
 	void normalizeWeights(float weights[]);
 	void addBoneData(const int vertexID, const int boneId, const float weight);
 	void loadBones(const aiMesh* mesh, const int mesh_index);
-	void numberBone(aiNode* node, int parentNode, DirectX::XMMATRIX& prevOffsets);
+	void numberBone(aiNode* node, int parentNode, const DirectX::XMFLOAT4X4& prevOffsets);
 	int findAndAddBoneID(const std::string& name);
 	int findBoneID(const std::string& name);
+	void recParseNodes(nodes* node, const aiNode* ainode);
+	void parseNode(const aiScene* scene);
+	void parseAnimation(const aiScene* scene);
 
-	void readAnimations(aiScene* scene);
 public:
 	ModelManager(ID3D11Device* device);
 	bool loadMeshData(const std::string& filePath);

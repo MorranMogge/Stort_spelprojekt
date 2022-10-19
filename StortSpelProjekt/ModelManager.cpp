@@ -159,32 +159,35 @@ Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene*& scene)
 	return new Mesh2(GPU::device, vertexTriangle, indexTriangle);
 }
 
-void ModelManager::aiMatrixToXMmatrix(const aiMatrix4x4& in, DirectX::XMMATRIX& out)
+void ModelManager::aiMatrixToXMmatrix(const aiMatrix4x4& in, DirectX::XMFLOAT4X4& out)
 {
-	DirectX::XMFLOAT4X4 res = 
-	DirectX::XMFLOAT4X4(
-		float(in.a1),
-		float(in.a2),
-		float(in.a3),
-		float(in.a4),
+	out = 
+		//DirectX::XMFLOAT4X4(
+		//	float(in.a1),
+		//	float(in.a2),
+		//	float(in.a3),
+		//	float(in.a4),
 
-		float(in.b1),
-		float(in.b2),
-		float(in.b3),
-		float(in.b4),
+		//	float(in.b1),
+		//	float(in.b2),
+		//	float(in.b3),
+		//	float(in.b4),
 
-		float(in.c1),
-		float(in.c2),
-		float(in.c3),
-		float(in.c4),
+		//	float(in.c1),
+		//	float(in.c2),
+		//	float(in.c3),
+		//	float(in.c4),
 
-		float(in.d1),
-		float(in.d2),
-		float(in.d3),
-		float(in.d4)
-	);
-
-	out = DirectX::XMLoadFloat4x4(&res);
+		//	float(in.d1),
+		//	float(in.d2),
+		//	float(in.d3),
+		//	float(in.d4)
+		//);
+		DirectX::XMFLOAT4X4(
+		float(in.a1), float(in.b1), float(in.c1), float(in.d1),
+		float(in.a2), float(in.b2), float(in.c2), float(in.d2),
+		float(in.a3), float(in.b3), float(in.c3), float(in.d3),
+		float(in.a4), float(in.b4), float(in.c4), float(in.d4));
 }
 
 void ModelManager::normalizeWeights(float weights[])
@@ -205,16 +208,16 @@ void ModelManager::normalizeWeights(float weights[])
 
 void ModelManager::addBoneData(const int vertexID, const int boneId, const float weight)
 {
-	while (vertexID >= boneDataVec.size())
+	while (vertexID >= this->aniData.boneDataVec.size())
 	{
-		boneDataVec.emplace_back();
+		this->aniData.boneDataVec.emplace_back();
 	}
 	for (int j = 0; j < 4; j++)
 	{
-		if (boneDataVec[vertexID].Weights[j] == 0.0)
+		if (this->aniData.boneDataVec[vertexID].Weights[j] == 0.0)
 		{
-			boneDataVec[vertexID].BoneIDs[j] = boneId;
-			boneDataVec[vertexID].Weights[j] = weight;
+			this->aniData.boneDataVec[vertexID].BoneIDs[j] = boneId;
+			this->aniData.boneDataVec[vertexID].Weights[j] = weight;
 			//printf("Bone: %d weight: %f index: %i\n", boneId, weight, j);
 			return;
 		}
@@ -223,13 +226,13 @@ void ModelManager::addBoneData(const int vertexID, const int boneId, const float
 	int indexOfSmallest = 0;
 	for (int i = 1; i < 4; i++)
 	{
-		if (boneDataVec[vertexID].Weights[indexOfSmallest] > boneDataVec[vertexID].Weights[i])
+		if (this->aniData.boneDataVec[vertexID].Weights[indexOfSmallest] > this->aniData.boneDataVec[vertexID].Weights[i])
 		{
 			indexOfSmallest = i;
 		}
 	}
-	boneDataVec[vertexID].BoneIDs[indexOfSmallest] = boneId;
-	boneDataVec[vertexID].Weights[indexOfSmallest] = weight;
+	this->aniData.boneDataVec[vertexID].BoneIDs[indexOfSmallest] = boneId;
+	this->aniData.boneDataVec[vertexID].Weights[indexOfSmallest] = weight;
 	//norm
 	//assert(0);
 }
@@ -244,16 +247,14 @@ void ModelManager::loadBones(const aiMesh* mesh, const int mesh_index)
 		}
 		std::string boneName = (mesh->mBones[i]->mName.data);
 		int bone_ID = this->findAndAddBoneID(boneName);
-		if (bone_ID == boneVec.size())
+		if (bone_ID == this->aniData.boneVector.size())
 		{
 			//new bone
-			DirectX::XMMATRIX temp;
-			this->aiMatrixToXMmatrix(mesh->mBones[i]->mOffsetMatrix, temp);
 			DirectX::XMFLOAT4X4 offset;
-			DirectX::XMStoreFloat4x4(&offset, temp);
+			this->aiMatrixToXMmatrix(mesh->mBones[i]->mOffsetMatrix, offset);
 			boneInfo bi(offset);
-			boneVec.push_back(bi);
-			boneVec[boneVec.size() - 1].name = boneName;
+			this->aniData.boneVector.push_back(bi);
+			this->aniData.boneVector[this->aniData.boneVector.size() - 1].name = boneName;
 		}
 
 		for (int j = 0; j < mesh->mBones[i]->mNumWeights; j++)
@@ -265,7 +266,7 @@ void ModelManager::loadBones(const aiMesh* mesh, const int mesh_index)
 	}
 }
 
-void ModelManager::numberBone(aiNode* node, int parentNode, DirectX::XMMATRIX& prevOffsets)
+void ModelManager::numberBone(aiNode* node, int parentNode, const DirectX::XMFLOAT4X4& prevOffsets)
 {
 	int boneID = this->findBoneID(node->mName.data);
 	bool realNode = true;
@@ -276,22 +277,25 @@ void ModelManager::numberBone(aiNode* node, int parentNode, DirectX::XMMATRIX& p
 	}
 	if (realNode)
 	{
-		this->boneVec[boneID].parentID = parentNode;
+		this->aniData.boneVector[boneID].parentID = parentNode;
 
 	}
 	
-	DirectX::XMMATRIX temp;
-	this->aiMatrixToXMmatrix(node->mTransformation, temp);
-	DirectX::XMMatrixMultiply(prevOffsets, temp);
+	DirectX::XMFLOAT4X4 floatMatrix;
+	this->aiMatrixToXMmatrix(node->mTransformation, floatMatrix);
+	DirectX::XMMATRIX tempMatrix = DirectX::XMLoadFloat4x4(&floatMatrix);
+	DirectX::XMMATRIX prevNodeOffMatrix = DirectX::XMLoadFloat4x4(&prevOffsets);
+	tempMatrix = DirectX::XMMatrixMultiply(prevNodeOffMatrix, tempMatrix);
+	DirectX::XMStoreFloat4x4(&floatMatrix, tempMatrix);
 
 	if (boneID != -1)
 	{
-		//this->boneVec[boneID].finalTransform = prevOffsets;
+		this->aniData.boneVector[boneID].offsetMatrix = floatMatrix;
 	}
 	
 	for (int i = 0; i < node->mNumChildren; i++)
 	{
-		this->numberBone(node->mChildren[i], boneID, prevOffsets);
+		this->numberBone(node->mChildren[i], boneID, floatMatrix);
 	}
 
 }
@@ -301,14 +305,14 @@ int ModelManager::findAndAddBoneID(const std::string& name)
 	int bone_ID = 0;
 	std::string boneName = name;
 
-	if (boneIndexTraslator.find(boneName) == boneIndexTraslator.end())
+	if (this->aniData.boneNameToIndex.find(boneName) == this->aniData.boneNameToIndex.end())
 	{
-		bone_ID = boneIndexTraslator.size();
-		boneIndexTraslator.insert(std::pair<std::string, int>(boneName, bone_ID));
+		bone_ID = this->aniData.boneNameToIndex.size();
+		this->aniData.boneNameToIndex.insert(std::pair<std::string, int>(boneName, bone_ID));
 	}
 	else
 	{
-		bone_ID = boneIndexTraslator[boneName];
+		bone_ID = this->aniData.boneNameToIndex[boneName];
 	}
 	return bone_ID;
 }
@@ -318,27 +322,106 @@ int ModelManager::findBoneID(const std::string& name)
 	int bone_ID = 0;
 	std::string boneName = name;
 
-	if (boneIndexTraslator.find(boneName) == boneIndexTraslator.end())
+	if (this->aniData.boneNameToIndex.find(boneName) == this->aniData.boneNameToIndex.end())
 	{
 		return -1;
 	}
 	else
 	{
-		bone_ID = boneIndexTraslator[boneName];
+		bone_ID = this->aniData.boneNameToIndex[boneName];
 	}
 	return bone_ID;
 }
 
-void ModelManager::readAnimations(aiScene* scene)
+void ModelManager::recParseNodes(nodes* node, const aiNode* ainode)
 {
-	if (scene->HasAnimations())
+	node->nodeName = ainode->mName.C_Str();
+	this->aiMatrixToXMmatrix(ainode->mTransformation, node->trasformation);
+	if(ainode->mNumChildren > 0)
 	{
-		for (int i = 0, end = scene->mNumAnimations; i < end; i++)
+		node->children.reserve(ainode->mNumChildren);
+		if (ainode->mNumChildren == 3)
 		{
-			this->AnimationVec.push_back(scene->mAnimations[i]);
+			int bp = 2;
+		}
+		for (int i = 0, end = ainode->mNumChildren; i < end; i++)
+		{
+			node->children.push_back(new nodes);
+			node->children[i]->parent = node;
+			recParseNodes(node->children[i], ainode->mChildren[i]);
 		}
 	}
 }
+
+void ModelManager::parseNode(const aiScene* scene)
+{
+	this->aniData.rootNode = new nodes;
+	this->aniData.rootNode->parent = nullptr;
+	
+	this->aniData.rootNode->nodeName = scene->mRootNode->mName.C_Str();
+	this->aiMatrixToXMmatrix(scene->mRootNode->mTransformation, this->aniData.rootNode->trasformation);
+
+	aniData.rootNode->children.reserve(scene->mRootNode->mNumChildren);
+	for (size_t i = 0; i < scene->mRootNode->mNumChildren; i++)
+	{
+		aniData.rootNode->children.push_back(new nodes);
+		aniData.rootNode->children[aniData.rootNode->children.size() - 1]->parent = aniData.rootNode;
+		recParseNodes(aniData.rootNode->children[aniData.rootNode->children.size() - 1], scene->mRootNode->mChildren[i]);
+	}
+}
+
+void ModelManager::parseAnimation(const aiScene* scene)
+{
+	this->aniData.animation.reserve(scene->mNumAnimations);
+	for (int i = 0, end = scene->mNumAnimations; i < end; i++)
+	{
+		this->aniData.animation.emplace_back();
+		this->aniData.animation[i].mName = scene->mAnimations[i]->mName.C_Str();
+		this->aniData.animation[i].duration = scene->mAnimations[i]->mDuration;
+		this->aniData.animation[i].ticksPerSecond = scene->mAnimations[i]->mTicksPerSecond;
+
+		this->aniData.animation[i].mChannels.reserve(scene->mAnimations[i]->mNumChannels);
+		for (int j = 0, length = scene->mAnimations[i]->mNumChannels; j < length; j++)
+		{
+			this->aniData.animation[i].mChannels.emplace_back();
+			this->aniData.animation[i].mChannels[j].mNodeName = scene->mAnimations[i]->mChannels[j]->mNodeName.C_Str();
+
+			this->aniData.animation[i].mChannels[j].posKeyFrames.reserve(scene->mAnimations[i]->mChannels[j]->mNumPositionKeys);
+			this->aniData.animation[i].mChannels[j].rotKeyFrame.reserve(scene->mAnimations[i]->mChannels[j]->mNumRotationKeys);
+			this->aniData.animation[i].mChannels[j].scalKeyFrames.reserve(scene->mAnimations[i]->mChannels[j]->mNumScalingKeys);
+
+			for (int k = 0, length = scene->mAnimations[i]->mChannels[j]->mNumPositionKeys; k < length; k++)
+			{
+				this->aniData.animation[i].mChannels[j].posKeyFrames.emplace_back();
+				this->aniData.animation[i].mChannels[j].posKeyFrames[k].Time = scene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mTime;
+				this->aniData.animation[i].mChannels[j].posKeyFrames[k].addAiVector3D(scene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mValue);
+			}
+			for (int k = 0, length = scene->mAnimations[i]->mChannels[j]->mNumRotationKeys; k < length; k++)
+			{
+				this->aniData.animation[i].mChannels[j].rotKeyFrame.emplace_back();
+				this->aniData.animation[i].mChannels[j].rotKeyFrame[k].Time = scene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mTime;
+				this->aniData.animation[i].mChannels[j].rotKeyFrame[k].addAiQuaternion(scene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue);
+			}
+			for (int k = 0, length = scene->mAnimations[i]->mChannels[j]->mNumScalingKeys; k < length; k++)
+			{
+				this->aniData.animation[i].mChannels[j].scalKeyFrames.emplace_back();
+				this->aniData.animation[i].mChannels[j].scalKeyFrames[k].Time = scene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mTime;
+				this->aniData.animation[i].mChannels[j].scalKeyFrames[k].addAiVector3D(scene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mValue);
+			}
+		}
+	}
+}
+
+//void ModelManager::readAnimations(aiScene* scene)
+//{
+//	if (scene->HasAnimations())
+//	{
+//		for (int i = 0, end = scene->mNumAnimations; i < end; i++)
+//		{
+//			this->AnimationVec.push_back(scene->mAnimations[i]);
+//		}
+//	}
+//}
 
 ModelManager::ModelManager(ID3D11Device* device)
 {
@@ -350,15 +433,8 @@ ModelManager::ModelManager(ID3D11Device* device)
 
 bool ModelManager::loadMeshData(const std::string& filePath)
 {
-	this->boneDataVec.clear();
-	this->boneVec.clear();
-	this->boneIndexTraslator.clear();
-
 	Assimp::Importer importer;
-	const aiScene* pScene = this->assimpImp.ReadFile(filePath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
-		aiProcess_ConvertToLeftHanded);
-
-	this->scene = new aiScene();
+	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
 
 	if (pScene == nullptr)
 	{
@@ -368,24 +444,26 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 
 	processNodes(pScene->mRootNode, pScene);
 
-	for (int i = 0; i < boneDataVec.size(); i++)
+	for (int i = 0; i < this->aniData.boneDataVec.size(); i++)
 	{
-		this->normalizeWeights(this->boneDataVec[i].Weights);
+		this->normalizeWeights(this->aniData.boneDataVec[i].Weights);
 	}
+	
+	this->parseNode(pScene);
+	this->parseAnimation(pScene);
+	aniData.rootNode;
+	aniData.animation;
 
 	DirectX::XMMATRIX startMatrix = DirectX::XMMatrixIdentity();
-
-	this->boneVec;
+	DirectX::XMFLOAT4X4 startFloat;
+	DirectX::XMStoreFloat4x4(&startFloat, startMatrix);
+	this->aniData.boneVector;
 	int bp = 2;
 
-	this->numberBone(pScene->mRootNode, -1, startMatrix);
+	this->numberBone(pScene->mRootNode, -1, startFloat);
 
-	this->boneVec;
+	this->aniData.boneVector;
 	bp = 2;
-
-	this->scene->mAnimations = pScene->mAnimations;
-	this->scene->mNumAnimations = pScene->mNumAnimations;
-	this->scene->mRootNode = new aiNode(*pScene->mRootNode);
 
 	return true;
 }
@@ -403,19 +481,17 @@ std::vector<ID3D11ShaderResourceView*> ModelManager::getTextureMaps() const
 bool ModelManager::loadMeshAndBoneData(const std::string& filePath, AnimatedMesh& gameObject)
 {
 	this->loadMeshData(filePath);
-	if (this->scene == nullptr)
+	this->aniData.boneVector;
+	for (int i = 0, end = this->aniData.boneVector.size(); i < end; i++)
 	{
-		return false;
+		std::cout << "Bone: " << this->aniData.boneVector[i].name << "\n	"
+			<< this->aniData.boneVector[i].offsetMatrix._11 << " " << this->aniData.boneVector[i].offsetMatrix._12 << " " << this->aniData.boneVector[i].offsetMatrix._13 << " " << this->aniData.boneVector[i].offsetMatrix._14 << "\n	"
+			<< this->aniData.boneVector[i].offsetMatrix._21 << " " << this->aniData.boneVector[i].offsetMatrix._22 << " " << this->aniData.boneVector[i].offsetMatrix._23 << " " << this->aniData.boneVector[i].offsetMatrix._24 << "\n	"
+			<< this->aniData.boneVector[i].offsetMatrix._31 << " " << this->aniData.boneVector[i].offsetMatrix._32 << " " << this->aniData.boneVector[i].offsetMatrix._33 << " " << this->aniData.boneVector[i].offsetMatrix._34 << "\n	"
+			<< this->aniData.boneVector[i].offsetMatrix._41 << " " << this->aniData.boneVector[i].offsetMatrix._42 << " " << this->aniData.boneVector[i].offsetMatrix._43 << " " << this->aniData.boneVector[i].offsetMatrix._44 << "\n";
 	}
-	if (scene->mNumAnimations == 0)
-	{
-		free(this->scene);
-		return false;
-	}
+	this->aniData.boneDataVec;
 	//gameObject.addData(this->boneDataVec, this->boneVec, this->boneIndexTraslator, this->scene, this->AnimationVec, this->assimpImp);
-	this->boneDataVec.clear();
-	this->boneVec.clear();
-	this->boneIndexTraslator.clear();
-	this->scene == nullptr;
+
 	return true;
 }

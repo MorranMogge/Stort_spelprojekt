@@ -33,12 +33,54 @@ struct IndexBoneData
 	float Weights[4] = { 0 };
 };
 
+
+struct nodes
+{
+	std::vector<nodes*> children;
+	std::string nodeName;
+	nodes* parent;
+	DirectX::XMFLOAT4X4 trasformation;
+	~nodes()
+	{
+		for (int i = 0; i < children.size(); i++)
+		{
+			delete children[i];
+		}
+		delete parent;
+	}
+};
+
+struct float3KeyFrame
+{
+	DirectX::XMFLOAT3 Value;
+	double Time;
+	void addAiVector3D(const aiVector3D& other)
+	{
+		Value.x = other.x;
+		Value.y = other.y;
+		Value.z = other.z;
+	}
+};
+
+struct float4KeyFrame
+{
+	DirectX::XMFLOAT4 Value;
+	double Time;
+	void addAiQuaternion(const aiQuaternion& other)
+	{
+		Value.x = other.x;
+		Value.y = other.y;
+		Value.z = other.z;
+		Value.w = other.w;
+	}
+};
+
 struct channels
 {
 	std::string mNodeName;
-	aiVectorKey* mPostionKey;
-	aiQuatKey* mRotationKey;
-	aiVectorKey* mScalingKey;
+	std::vector<float3KeyFrame> posKeyFrames;
+	std::vector<float4KeyFrame> rotKeyFrame;
+	std::vector<float3KeyFrame> scalKeyFrames;
 };
 
 struct animation
@@ -50,8 +92,9 @@ struct animation
 };
 
 struct AnimationData
-{
-	animation animation;
+{	
+	nodes* rootNode;
+	std::vector<animation> animation;
 	std::map<std::string, int> boneNameToIndex;
 	std::vector<boneInfo> boneVector;
 	std::vector<IndexBoneData> boneDataVec;

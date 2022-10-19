@@ -64,7 +64,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 	ModelManager MM(device);
-	MM.loadMeshAndBoneData("../Meshes/fly.fbx", this->test);
+	MM.loadMeshAndBoneData("../Meshes/two_bones_translation.fbx", this->test);
 }
 
 Game::~Game()

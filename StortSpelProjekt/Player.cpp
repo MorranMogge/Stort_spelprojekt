@@ -24,12 +24,12 @@ void Player::handleItems()
 
 		//Calculate the force vector
 		DirectX::XMFLOAT3 temp;
-		DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5 + this->upVector));
+		DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5.f + this->upVector * 2.f));
 		newNormalizeXMFLOAT3(temp);
 
 		//Apply the force
-		itemPhysComp->applyLocalTorque(reactphysics3d::Vector3(temp.x * 500, temp.y * 500, temp.z * 500));
-		itemPhysComp->applyForceToCenter(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z * 1000));
+		//itemPhysComp->applyLocalTorque(reactphysics3d::Vector3(temp.x * FORCE/2, temp.y * FORCE/2, temp.z * FORCE/2));
+		itemPhysComp->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
 
 		//You no longer "own" the item
 		holdingItem = nullptr;

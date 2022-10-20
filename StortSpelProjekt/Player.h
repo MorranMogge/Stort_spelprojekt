@@ -3,6 +3,8 @@
 #include "GameObject.h"
 #include "Input.h"
 
+#define FORCE 2500
+
 class Item;
 
 class Player: public GameObject

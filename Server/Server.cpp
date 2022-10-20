@@ -30,7 +30,7 @@ struct userData
 	sf::IpAddress ipAdress;
 	std::string userName;
 	sf::TcpSocket tcpSocket;
-	int playerId;
+	int playerId = -1;
 
 	player playa;
 };
@@ -51,7 +51,7 @@ struct serverData
 	sf::TcpListener tcpListener;
 	sf::TcpSocket tcpSocket;
 	userData users[MAXNUMBEROFPLAYERS];
-	unsigned short port;
+	unsigned short port = 2001;
 	sf::Packet packet;
 };
 

@@ -56,7 +56,6 @@ public:
 
 	void sendToServerTcp();
 	void sendToServerTcp(std::string buf);
-	void sendToServerTEMPTCP(Player*& currentPlayer);
 	void receiveFromServerTcp();
 
 	void tempwrite();

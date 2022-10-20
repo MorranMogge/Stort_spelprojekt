@@ -127,35 +127,6 @@ bool Client::setupThread()
 	return clientThread!=nullptr;
 }
 
-
-void Client::sendToServerTEMPTCP(Player*& currentPlayer)
-{
-
-	testPosition testStruct;
-
-	testStruct.packetId = 4;
-	testStruct.playerId = this->getPlayerId();
-	testStruct.x = currentPlayer->getPos().x;
-	testStruct.y = currentPlayer->getPos().y;
-	testStruct.z = currentPlayer->getPos().z;
-	//int playerid = data.users[i].playerId;
-
-	//unsigned short packetIdentifier = 3;
-	
-	//returns the nr of bytes sent
-	std::size_t sentSize;
-
-	if (data.socket.send(&testStruct,sizeof(testStruct), sentSize) != sf::Socket::Done)
-	{
-		//error
-		//std::cout << "TCP Couldnt send packet\n";
-	}
-	else
-	{
-	}
-	
-}
-
 void Client::receiveFromServerTcp()
 {
 	receivedPacket.clear();

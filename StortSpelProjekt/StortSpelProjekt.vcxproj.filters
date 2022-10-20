@@ -133,6 +133,7 @@
     <ClCompile Include="MouseClass.cpp" />
     <ClCompile Include="PacketEventManager.cpp" />
     <ClCompile Include="CircularBufferClient.cpp" />
+    <ClCompile Include="SendingDataEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -385,11 +386,10 @@
     <ClInclude Include="ClientHandler.h" />
     <ClInclude Include="MouseClass.h" />
     <ClInclude Include="PacketEnum.h" />
-    <ClInclude Include="packetEvent.h" />
     <ClInclude Include="PacketEventManager.h" />
-    <ClInclude Include="PacketHandler.h" />
     <ClInclude Include="CircularBufferClient.h" />
     <ClInclude Include="PacketsDataTypes.h" />
+    <ClInclude Include="SendingDataEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

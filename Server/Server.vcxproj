@@ -140,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CircularBuffer.h" />
+    <ClInclude Include="PacketEnum.h" />
     <ClInclude Include="Packethandler.h" />
     <ClInclude Include="PacketsDataTypes.h" />
     <ClInclude Include="player.h" />

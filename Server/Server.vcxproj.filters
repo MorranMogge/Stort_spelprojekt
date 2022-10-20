@@ -38,5 +38,8 @@
     <ClInclude Include="CircularBuffer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="PacketEnum.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

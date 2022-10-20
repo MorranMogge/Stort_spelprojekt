@@ -8,8 +8,8 @@ struct wirefameInfo
 	float padding;
 };
 
-const int NROFPLAYERS = 3;
-static bool IFONLINE = false;
+const int NROFPLAYERS = 1;
+static bool IFONLINE = true;
 
 class Game : public State
 {

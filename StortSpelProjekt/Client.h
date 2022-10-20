@@ -39,8 +39,6 @@ private:
 	std::string id;
 
 	std::thread* clientThread;
-
-	int extractPacketId();
 public:
 	Client();
 	Client(std::string ipAddress, int port = 2001);
@@ -55,17 +53,12 @@ public:
 	void setIdentifier(std::string id);
 
 	bool setupThread();
-	std::string receive();
-	void sendToServerUdp(std::string stringToSend);
-	void sendToServerUdp();
 
 	void sendToServerTcp();
 	void sendToServerTcp(std::string buf);
 	void sendToServerTEMPTCP(Player*& currentPlayer);
 	void receiveFromServerTcp();
 
-	void saveText(std::string text);
-	void saveMsg(std::string text);
 	void tempwrite();
 
 	//returns if a player position has been received
@@ -81,4 +74,26 @@ public:
 	std::string getipAdress()const;
 
 	void setPlayerRecv(const bool value);
+
+	template <typename T>
+	void sendStuff( T& dataToSend);
 };
+
+template <typename T>
+inline void Client::sendStuff( T& dataToSend)
+{
+	//returns the nr of bytes sent
+	std::size_t sentSize;
+	
+	
+
+	if (data.socket.send(&dataToSend, sizeof(dataToSend), sentSize) != sf::Socket::Done)
+	{
+		//error
+		//std::cout << "TCP Couldnt send packet\n";
+	}
+	else 
+	{
+		//succeded to send
+	}
+}

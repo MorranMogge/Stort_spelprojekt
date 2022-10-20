@@ -11,14 +11,6 @@ int extractPacketId(sf::Packet& packet)
 	return packetIdentifier;
 }
 
-int extractPacketId(const char data[])
-{
-	int idPacket;
-	memcpy(&idPacket, data, sizeof(int));
-
-	return idPacket;
-}
-
 //extracts the data thats been received
 void* extractData(const char data[], const std::size_t& recvSize)
 {
@@ -36,12 +28,6 @@ void clientFunction(void* param)
 		char receivedData[256];
 		std::size_t recvSize;
 		data->socket.receive(receivedData, 256, recvSize); //Receives the packet
-		//int packetid = extractPacketId(receivedData);//extract the id of the packet
-		//
-		//void* dataStruct = extractData(receivedData, recvSize);
-		//testPosition *tst = nullptr;
-		//idProtocol* protocol = nullptr;
-
 		
 		data->circularBuffer->addData(receivedData, recvSize);
 	}
@@ -141,89 +127,13 @@ bool Client::setupThread()
 	return clientThread!=nullptr;
 }
 
-std::string Client::receive()
-{
-	return data.receivedstring;
-}
 
-//used for sending string
-void Client::sendToServerUdp(std::string stringToSend)
-{
-	sendPacket << stringToSend;
-
-	
-	if (sendSocket.send(sendPacket, this->ip, port) == sf::Socket::Done)
-	{
-		//sent
-		std::cout << "sent data to server\n";
-	}
-	else
-	{
-		std::cout << "failed to send data to server\n";
-	}
-	sendPacket.clear();
-}
-
-//used for sending already saved MSG
-void Client::sendToServerUdp()
-{
-	sendPacket << this->tmp;
-
-
-	if (sendSocket.send(sendPacket, this->ip, port) == sf::Socket::Done)
-	{
-		//sent
-		std::cout << "sent data to server\n";
-	}
-	else
-	{
-		std::cout << "failed to send data to server\n";
-	}
-	sendPacket.clear();
-}
-
-void Client::sendToServerTcp()
-{
-	sendPacket.clear();
-	unsigned short packetIdentifier = 1;
-	sendPacket << packetIdentifier << this->tmp;
-
-	if(data.socket.send(sendPacket) != sf::Socket::Done)
-	{
-		//error
-		std::cout << "TCP Couldnt send packet\n";
-	}
-
-	std::string s;
-	unsigned short id;
-	sendPacket >> id >> s;
-	std::cout << "TCP sent packet: " << id << s << std::endl;
-	sendPacket.clear();
-}
-
-void Client::sendToServerTcp(std::string buf)
-{
-	sendPacket << buf;
-
-	if (tcpSocket.send(this->sendPacket) != sf::Socket::Done)
-	{
-		//error
-		std::cout << "TCP Couldnt send packet\n";
-	}
-	else
-	{
-		std::string s;
-		sendPacket >> s;
-		std::cout << "TCP sent packet: " << s << std::endl;
-	}
-}
-
-void Client::sendToServerTEMPTCP( Player*& currentPlayer)
+void Client::sendToServerTEMPTCP(Player*& currentPlayer)
 {
 
 	testPosition testStruct;
 
-	testStruct.packetId = 10;
+	testStruct.packetId = 4;
 	testStruct.playerId = this->getPlayerId();
 	testStruct.x = currentPlayer->getPos().x;
 	testStruct.y = currentPlayer->getPos().y;
@@ -260,21 +170,6 @@ void Client::receiveFromServerTcp()
 		receivedPacket << receivedString;
 		std::cout << "data received from server: " << receivedString << std::endl;
 	}
-}
-
-void Client::saveText(std::string text)
-{
-	id = text;
-}
-
-void Client::saveMsg(std::string text)
-{
-	this->tmp = text;
-}
-
-void Client::tempwrite()
-{
-	std::cout << id << std::endl;
 }
 
 bool Client::getIfConnected()

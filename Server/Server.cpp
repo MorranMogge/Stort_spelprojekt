@@ -11,15 +11,10 @@
 #include "PacketsDataTypes.h"
 #include "Packethandler.h"
 #include "CircularBuffer.h"
+#include "PacketEnum.h"
 
-const short MAXNUMBEROFPLAYERS = 3;
+const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
-
-struct acceptMePacketData
-{
-	std::string identifier;
-	std::string s;
-};
 
 struct wow
 {
@@ -79,36 +74,6 @@ bool receiveDataUdp(sf::Packet& receivedPacket, serverData &data, unsigned short
 	}
 };
 
-
-void sendDataUdp(sf::Packet& sentPacket, serverData& data, std::string remoteIpAdress, unsigned short remotePort)
-{
-	if (data.sendSocket.send(sentPacket, remoteIpAdress, remotePort) == sf::Socket::Done)
-	{
-		//sent
-		std::cout << "UDP sent data to server\n";
-	}
-	else
-	{
-		std::cout << "UDP failed to send data to server\n";
-	}
-};
-
-bool receiveDataTcp(sf::Packet& receivedPacket, serverData& data, const int playerid)
-{
-	if (data.users[playerid].tcpSocket.receive(receivedPacket) != sf::Socket::Done)
-	{
-		//std::cout << "failed to receive TCP\n";
-		return false;
-	}
-	else
-	{
-		std::string receivedString;
-		std::cout << "TCP received data from address: " << data.tcpSocket.getRemoteAddress().toString() << std::endl;
-
-		return true;
-	}
-};
-
 void setupTcp(serverData& data)
 {
 	unsigned short listenport = 2001;
@@ -151,69 +116,23 @@ void sendDataAllPlayers(testPosition &posData, serverData& serverData)
 	}
 };
 
-void sendPositionDataToPlayers(sf::Packet& packet, serverData& data)
-{
-	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-	{
-
-		if (data.users[i].tcpSocket.send(packet) != sf::Socket::Done)
-		{
-			//error
-			//std::cout << "Couldnt send data to currentPlayer from array slot: " << std::to_string(i) << std::endl;
-		}
-		else
-		{
-
-			std::cout << "sent data to currentPlayer: " << data.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
-		}
-	}
-};
-
-void packetId(sf::Packet& packet)
-{
-	//sendPacket >> id >> n >> s;
-	unsigned short packetIdentifier;
-	int nr;
-	std::string s;
-
-	packet >> packetIdentifier;
-	std::cout << "packetId: " << std::to_string(packetIdentifier) << std::endl;
-	
-	float x = 0.0f;
-	float y = 0.0f;
-	float z = 0.0f;
-	int playerid = -1;
-	unsigned short packId = 3;
-
-
-	switch (packetIdentifier)
-	{
-	case 1:
-		packet >> s;
-		std::cout << "Packet identifier: " << packetIdentifier << ", received string: " << s << std::endl;
-	
-		break;
-	case 2:
-		packet >> nr >> s;
-		std::cout << "packet ID: " << packetIdentifier << ", Nr: " << nr << ", string: " << s << std::endl;
-		break;
-
-	case 3:
-		//sending position data to all players
-		packet << packId << playerid << x << y << z;
-		//TA EMOT POSITION
-		break;
-	}
-};
-
-int extractPacketId(sf::Packet& packet)
-{
-	unsigned short packetIdentifier;
-	
-	packet >> packetIdentifier;
-	//std::cout << "packetId: " << std::to_string(packetIdentifier) << std::endl;
-	return packetIdentifier;
-};
+//template <typename T>
+//void sendDataAllPlayets(const T& data, serverData& serverData)
+//{
+//	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+//	{
+//		std::size_t recvSize;
+//		if (serverData.users[i].tcpSocket.send(&data, sizeof(data), recvSize) != sf::Socket::Done)
+//		{
+//			//error
+//			std::cout << "Couldnt send data to currentPlayer from array slot: " << std::to_string(i) << std::endl;
+//		}
+//		else
+//		{
+//			std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
+//		}
+//	}
+//}
 
 int extractBinaryPacketId(char* pointerToData[])
 {
@@ -221,31 +140,6 @@ int extractBinaryPacketId(char* pointerToData[])
 	memcpy(&idPacket, pointerToData, sizeof(int));
 	
 	return idPacket;
-}
-
-//test f�r att flytta pekaren
-float exfloatTest(char* pointerToData[], const std::size_t& recvSize)
-{
-	float position = -1.0;
-	//to move the pointer
-	int bytesToMove = sizeof(int) + sizeof(int) + sizeof(float);
-	char* test = pointerToData[0];
-	char init = ' ';
-	//test =  test +  bytesToMove;
-	test++;
-	test++;
-	test++;
-	test++;
-	
-	//void* vp = malloc(recvSize);
-	//memcpy(vp, pointerToData, recvSize);
-	//vp = (char*)vp + bytesToMove;
-
-	memcpy(&position, test, sizeof(int));
-	
-	//radera minnet 
-
-	return position;
 }
 
 void recvData(void* param, userData* user)//thread to recv data
@@ -301,7 +195,7 @@ void sendIdToAllPlayers(serverData& data)
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
 		idProtocol protocol;
-		protocol.packetId = 4;
+		protocol.packetId = PacketType::PACKETID;
 		protocol.assignedPlayerId = data.users[i].playerId;
 
 
@@ -372,7 +266,6 @@ int main()
 	CircularBuffer* circBuffer = new CircularBuffer();
 	std::thread* recvThread[MAXNUMBEROFPLAYERS];
 	threadInfo threadData[MAXNUMBEROFPLAYERS];
-	//threadData.ifUserRecv = false;
 	
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
@@ -393,7 +286,7 @@ int main()
 		{
 			int packetId = circBuffer->peekPacketId();
 
-			if (packetId == 10)
+			if (packetId == PacketType::POSITION)
 			{
 				testPosition* tst = circBuffer->readData<testPosition>();
 				for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
@@ -415,14 +308,11 @@ int main()
 			{
 				testPosition pos;
 				
-				pos.packetId = 10;
+				pos.packetId = PacketType::POSITION;
 				pos.x = data.users[i].playa.getposition('x');
 				pos.y = data.users[i].playa.getposition('y');
 				pos.z = data.users[i].playa.getposition('z');
 				pos.playerId = i;
-				
-				//sending position data to all players
-				//tempPack << packId << playerid << x << y << z;
 				
 				std::cout << "data to send x: " << std::to_string(pos.x) << ", y: " << std::to_string(pos.y) << ", z: " << std::to_string(pos.z) << std::endl;
 				//std::cout << "packet id sent: " << std::to_string(pos.packetId) << std::endl;
@@ -433,7 +323,6 @@ int main()
 		}
 		
 	}
-    //(void*)getchar();
     return 0;
 }
 

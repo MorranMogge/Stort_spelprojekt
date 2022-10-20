@@ -31,7 +31,7 @@ void ImGuiHelper::drawInterface(std::string message)
 			
 		}
 
-		ImGui::Text("port: %d", client->getport());
+		ImGui::Text("My port: %d", client->getport());
 
 
 
@@ -41,49 +41,8 @@ void ImGuiHelper::drawInterface(std::string message)
 		{
 			client->setIpAndPort(buf, 2001);
 		}
-		//if (ImGui::Button("start receive thread"))
-		//{
-		//	client->connectToServer();
-		//	client->setupThread();
-		//}
-
-		char idBuf[255]{};// used to save identifier string for client
-		if (ImGui::InputText("identifier", idBuf, sizeof(idBuf)))
-		{
-			client->saveText(idBuf);
-		}
-
-		char sendbuf[255]{};
-		if (ImGui::InputText("save text to send to server", sendbuf, sizeof(sendbuf)))
-		{
-			//client->sendToServer(sendbuf);
-			client->saveMsg(sendbuf);
-		}
-
-		/*if (ImGui::Button("send msg"))
-		{
-			client->sendToServerUdp();
-		}*/
-
-		if (ImGui::Button("connect TCP"))
-		{
-			client->connectToServer();
-		}
-
-		if (ImGui::Button("send message to server TCP"))
-		{
-			client->sendToServerTcp();
-		}
-
-		if (ImGui::Button("receive from server"))
-		{
-			client->receiveFromServerTcp();
-		}
-		
 
 		//selector.add(tcpSocket);
-
-		ImGui::Text(client->receive().c_str());
 
 		ImGui::End();
 	}

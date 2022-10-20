@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Game.h"
 #include "DirectXMathHelper.h"
+#include "SendingDataEvent.h"
 
 
 
@@ -242,6 +243,12 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
 
+	serverStart = std::chrono::system_clock::now();
+	this->window = &window;
+	gamePad = std::make_unique<DirectX::GamePad>();
+	playerVecRenderer.setPlayer(currentPlayer);
+	start = std::chrono::system_clock::now();
+	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 
 	if (IFONLINE)
 	{
@@ -256,7 +263,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 		this->client->setClientId(playerId);
 
-		for (int i = 0; i < players.size(); i++)//initialize players 
+		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
 		{
 			Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
 			if (playerId != i)
@@ -270,13 +277,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			}
 		}
 	}
-
-	serverStart = std::chrono::system_clock::now();
-	this->window = &window;
-	gamePad = std::make_unique<DirectX::GamePad>();
-	playerVecRenderer.setPlayer(currentPlayer);
-	start = std::chrono::system_clock::now();
-	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 }
 
 Game::~Game()
@@ -305,13 +305,14 @@ GAMESTATE Game::Update()
 	if (getLength(currentPlayer->getPos()) <= 22) { velocity = DirectX::XMFLOAT3(0, 0, 0); DirectX::XMFLOAT3 tempPos = normalizeXMFLOAT3(currentPlayer->getPos()); currentPlayer->setPos(getScalarMultiplicationXMFLOAT3(22, tempPos)); }
 	currentPlayer->movePos(getScalarMultiplicationXMFLOAT3(dt, velocity));
 
+	//sending data to server
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
 	{
-		client->sendToServerTEMPTCP(currentPlayer);
+		//client->sendToServerTEMPTCP(currentPlayer);
+		SendingDataEvent(client, currentPlayer, players);
 		serverStart = std::chrono::system_clock::now();
 	}
 
-	//circularBuffer->debugWriteMemoryAdress();
 	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId());
 	
 	

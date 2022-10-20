@@ -195,9 +195,7 @@
     <ClInclude Include="MTL.h" />
     <ClInclude Include="OBJ.h" />
     <ClInclude Include="PacketEnum.h" />
-    <ClInclude Include="packetEvent.h" />
     <ClInclude Include="PacketEventManager.h" />
-    <ClInclude Include="PacketHandler.h" />
     <ClInclude Include="PacketsDataTypes.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="PerspectiveCamera.h" />
@@ -209,6 +207,7 @@
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderTargetView.h" />
     <ClInclude Include="SamplerState.h" />
+    <ClInclude Include="SendingDataEvent.h" />
     <ClInclude Include="SettingsMenu.h" />
     <ClInclude Include="SettingsUI.h" />
     <ClInclude Include="ShaderLoader.h" />
@@ -311,6 +310,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerVectors.cpp" />
     <ClCompile Include="Potion.cpp" />
+    <ClCompile Include="SendingDataEvent.cpp" />
     <ClCompile Include="SettingsMenu.cpp" />
     <ClCompile Include="SettingsUI.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />

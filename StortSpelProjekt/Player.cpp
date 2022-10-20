@@ -67,6 +67,14 @@ void Player::handleInputs()
 {
 }
 
+void Player::updatePhysCompRotation()
+{
+	DirectX::SimpleMath::Quaternion dx11Quaternion = DirectX::XMQuaternionRotationMatrix(this->rotation);
+	reactphysics3d::Quaternion reactQuaternion = reactphysics3d::Quaternion(dx11Quaternion.x, dx11Quaternion.y, dx11Quaternion.z, dx11Quaternion.w);
+	this->physComp->setRotation(reactQuaternion);
+	if (holdingItem != nullptr) this->holdingItem->getPhysComp()->setRotation(reactQuaternion);
+}
+
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime, const bool& testingVec)
 {
 	if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
@@ -406,13 +414,14 @@ void Player::releaseItem()
 
 bool Player::raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
 {
-	this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
+	this->updatePhysCompRotation();
+
 	reactphysics3d::Ray ray(reactphysics3d::Vector3(this->position.x, this->position.y, this->position.z), reactphysics3d::Vector3(this->getRayCastPos()));
 	reactphysics3d::RaycastInfo rayInfo;
 
 	bool testingVec = false;
 	int gameObjSize = gameObjects.size();
-	for (int i = 1; i < gameObjSize; i++)
+	for (int i = 2; i < gameObjSize; i++)
 	{
 		if (gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
 		{
@@ -450,13 +459,10 @@ bool Player::repairedShip() const
 
 void Player::update()
 {
-	DirectX::SimpleMath::Quaternion dx11Quaternion = DirectX::XMQuaternionRotationMatrix(this->rotation);
-	reactphysics3d::Quaternion reactQuaternion = reactphysics3d::Quaternion(dx11Quaternion.x, dx11Quaternion.y, dx11Quaternion.z, dx11Quaternion.w);
-	this->physComp->setRotation(reactQuaternion);
+	this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 	
 	if (holdingItem != nullptr)
     {
-		this->holdingItem->getPhysComp()->setRotation(reactQuaternion);
 		this->handleItems();
     }
 }

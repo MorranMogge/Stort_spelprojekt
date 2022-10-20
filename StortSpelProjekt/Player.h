@@ -35,6 +35,7 @@ private:
 	float speed;
 
 	void handleItems();
+	void updatePhysCompRotation();
 
 	//Controller shits
 	float posX = 0.0f;

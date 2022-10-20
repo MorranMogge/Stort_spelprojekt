@@ -6,7 +6,7 @@
 
 void Game::loadObjects()
 {
-	float planetSize = 25.f;
+	float planetSize = 20.f;
 	//Here we can add base object we want in the beginning of the game
 	planet = new GameObject("../Meshes/Sphere", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(planetSize, planetSize, planetSize));
 	player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
@@ -29,9 +29,9 @@ void Game::loadObjects()
 	otherPlayer->getPhysComp()->setPosition(reactphysics3d::Vector3(otherPlayer->getPosV3().x, otherPlayer->getPosV3().y, otherPlayer->getPosV3().z));
 
 	gameObjects.emplace_back(player);
+	gameObjects.emplace_back(spaceShip);
 	gameObjects.emplace_back(planet);
 	gameObjects.emplace_back(potion);
-	gameObjects.emplace_back(spaceShip);
 	gameObjects.emplace_back(testCube);
 	gameObjects.emplace_back(testBat);
 	gameObjects.emplace_back(otherPlayer);
@@ -45,7 +45,6 @@ void Game::loadObjects()
 		gameObjects.emplace_back(newObj);
 	}
 
-	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	testBat->setPlayer(player);
 	testBat->setTestObj(gameObjects);
@@ -267,6 +266,7 @@ GAMESTATE Game::Update()
 	if (testingVec) velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 
 	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), hitNormal, dt, testingVec);
+	player->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
 	player->movePos(velocity);
 	
 	player->pickupItem(potion);
@@ -282,21 +282,17 @@ GAMESTATE Game::Update()
 	}
 	//Here you can write client-server related functions?
 
-	player->update();
 	//Updates gameObject physics components
-	for (int i = 2; i < gameObjects.size(); i++)
+	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
+	for (int i = 1; i < gameObjects.size(); i++)
 	{
-		if (gameObjects.at(i)->getId() != this->spaceShip->getId())
+		if (gameObjects[i]->getId() != this->spaceShip->getId())
 		{
 			gameObjects[i]->update();//->getPhysComp()->updateParent();
 		}
 		
 	}
 
-	grav = normalizeXMFLOAT3(grav);
-	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
-	player->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
-	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
 
 	//Updates gameObject buffers
 	this->updateBuffers();

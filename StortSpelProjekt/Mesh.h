@@ -64,6 +64,7 @@ public:
 	}
 	Mesh(ID3D11Buffer* vertexBuff, ID3D11Buffer* indexBuff, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertices)
 	{
+		CalcBound();
 		this->amountOfVertices = amountOfVertices;
 		this->submeshRanges = submeshRanges;
 		this->vertexBuff = vertexBuff;
@@ -176,6 +177,9 @@ public:
 
 	void draw(ID3D11ShaderResourceView* srv)
 	{
+
+		worldCB.BindToVS(0u);
+
 		UINT stride = sizeof(vertex);
 		UINT offset = 0;
 

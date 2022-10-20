@@ -349,6 +349,7 @@ void Player::releaseItem()
 
 bool Player::raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
 {
+	this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 	reactphysics3d::Ray ray(reactphysics3d::Vector3(this->position.x, this->position.y, this->position.z), reactphysics3d::Vector3(this->getRayCastPos()));
 	reactphysics3d::RaycastInfo rayInfo;
 
@@ -395,9 +396,10 @@ void Player::update()
 	DirectX::SimpleMath::Quaternion dx11Quaternion = DirectX::XMQuaternionRotationMatrix(this->rotation);
 	reactphysics3d::Quaternion reactQuaternion = reactphysics3d::Quaternion(dx11Quaternion.x, dx11Quaternion.y, dx11Quaternion.z, dx11Quaternion.w);
 	this->physComp->setRotation(reactQuaternion);
-	physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
+	
 	if (holdingItem != nullptr)
     {
+		this->holdingItem->getPhysComp()->setRotation(reactQuaternion);
 		this->handleItems();
     }
 }

@@ -66,4 +66,5 @@ public:
 	void skyboxPrePass();
 	void bilboardPrePass(Camera& stageCamera);
 	void bindAmbientShader();
+	void geometryUnbind();
 };

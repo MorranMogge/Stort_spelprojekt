@@ -2,16 +2,19 @@
 #include "Potion.h"
 #include "Player.h"
 
-Potion::Potion(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-	:Item(useMesh, pos, rot, id), playerPtr(nullptr), restoringAmount(10)
+Potion::Potion(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
+	:Item(useMesh, pos, rot, id, field), playerPtr(nullptr), restoringAmount(10)
 {
 	this->itemIcon = new BilboardObject("p1.png", this->position);
 }
 
-Potion::Potion(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-	:Item(objectPath, pos, rot, id), playerPtr(nullptr), restoringAmount(10)
+Potion::Potion(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
+	:Item(objectPath, pos, rot, id, field), playerPtr(nullptr), restoringAmount(10)
 {
-	this->itemIcon = new BilboardObject("p1.png", this->position);
+	float constant = 15.0f;
+	DirectX::XMFLOAT3 upDir = this->getUpDirection();
+	DirectX::XMFLOAT3 billPos(upDir.x* constant, upDir.y* constant, upDir.z* constant);
+	this->itemIcon = new BilboardObject("p1.png", billPos);
 }
 
 Potion::~Potion()

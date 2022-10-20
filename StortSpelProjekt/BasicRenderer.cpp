@@ -279,3 +279,17 @@ void BasicRenderer::bindAmbientShader()
 {
 	immediateContext->PSSetShader(ApShader, nullptr, 0);
 }
+
+void BasicRenderer::geometryUnbind()
+{
+	//Variables
+	ID3D11GeometryShader* nullShader{ nullptr };
+	ID3D11UnorderedAccessView* nullUav{ nullptr };
+	ID3D11BlendState* nullBlendstate{ nullptr };
+
+	//Unbind shader & UAV, Reset Topology
+	GPU::immediateContext->GSSetShader(nullShader, nullptr, 0);													//Unbinding
+	GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);						//Reset Topology
+	GPU::immediateContext->CSSetUnorderedAccessViews(0, 1, &nullUav, nullptr);									//Unbind UAV
+	GPU::immediateContext->OMSetBlendState(nullBlendstate, nullptr, 0xffffffffu);								//Unbind blendstate
+}

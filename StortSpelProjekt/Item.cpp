@@ -1,15 +1,16 @@
 #include "stdafx.h"
 #include "Item.h"
 
-Item::Item(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
-	:GameObject(useMesh, pos, rot, id), pickedUp(false), itemIcon(nullptr), particles(nullptr)
+Item::Item(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field)
+	:GameObject(useMesh, pos, rot, id, field), pickedUp(false), itemIcon(nullptr), particles(nullptr)
 {
-	this->particles = new ParticleEmitter(pos, rot, 10, DirectX::XMFLOAT2(1, 3), 5);
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5));
 }
 
-Item::Item(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
-	:GameObject(objectPath, pos, rot, id), pickedUp(false), itemIcon(nullptr), particles(nullptr)
+Item::Item(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field)
+	:GameObject(objectPath, pos, rot, id, field), pickedUp(false), itemIcon(nullptr), particles(nullptr)
 {
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5));
 }
 
 Item::~Item()
@@ -37,15 +38,39 @@ void Item::setPickedUp(bool pickedUp)
 	this->pickedUp = pickedUp;
 }
 
+void Item::drawParticles()
+{
+	if (this->particles != nullptr && !pickedUp)
+	{
+		this->particles->BindAndDraw();
+	}
+}
+
 void Item::throwItem()
 {
 }
 
 void Item::update()
 {
+	//Update movement
+	this->updateRotation();
+
+	//Update icon movement
 	if (this->itemIcon != nullptr)
 	{
-		this->updateRotation();
-		this->itemIcon->setPosition(this->position);
+		float constant = 1.0f;
+		DirectX::XMFLOAT3 upDir = this->getUpDirection();
+		DirectX::XMFLOAT3 billPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
+		
+		this->itemIcon->setPosition(this->position + billPos);
+	}
+
+	//Update particle movement
+	if (this->particles != nullptr)
+	{
+		this->particles->setPosition(this->position);
+		this->particles->setRotation(this->getRotOrientedToGrav());
+		this->particles->updateBuffer();
 	}
 }
+

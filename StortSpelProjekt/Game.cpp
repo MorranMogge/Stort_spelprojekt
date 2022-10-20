@@ -6,15 +6,18 @@
 
 void Game::loadObjects()
 {
+	using namespace DirectX;
+	using namespace DirectX::SimpleMath;
+
 	//Here we can add base object we want in the beginning of the game
-	planet = new GameObject("../Meshes/Sphere", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
-	player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
-	potion = new Potion("../Meshes/potion", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2);
-	DirectX::SimpleMath::Vector3 shipPos(10, 14, 10);
-	spaceShip = new SpaceShip(shipPos, orientToPlanet(shipPos), planetGravityField.calcGravFactor(shipPos), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
-	testBat = new BaseballBat("../Meshes/bat", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4);
-	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-	otherPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6);
+	planet = new GameObject("../Meshes/Sphere", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 0,nullptr, XMFLOAT3(20.0f, 20.0f, 20.0f));
+	player = new Player("../Meshes/pinto", Vector3(22, 12, -22), Vector3(0.0f, 0.0f, 0.0f), 1);
+	potion = new Potion("../Meshes/potion", Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), 2, &planetGravityField);
+	Vector3 shipPos(10, 14, 10);
+	spaceShip = new SpaceShip(shipPos, orientToPlanet(shipPos), 3, &planetGravityField, Vector3(2, 2, 2));
+	testBat = new BaseballBat("../Meshes/bat", Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), 4);
+	testCube = new GameObject("../Meshes/Player", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
+	otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), 6);
 	
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
@@ -37,7 +40,7 @@ void Game::loadObjects()
 
 	for (int i = 0; i < 10; i++)
 	{
-		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6+ i, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6+ i, nullptr, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 		physWolrd.addPhysComponent(newObj, reactphysics3d::CollisionShapeName::BOX);
 		newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+(float)i*10, 100));
 		gameObjects.emplace_back(newObj);
@@ -307,7 +310,9 @@ void Game::Render()
 
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);
-	drawParticles();
-	this->ptEmitters.at(0).unbind();
+	//drawParticles();
+	this->potion->drawParticles();
+	//this->ptEmitters.at(0).BindAndDraw();
+	basicRenderer.geometryUnbind();
 }
 

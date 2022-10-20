@@ -1,23 +1,27 @@
 #include "stdafx.h"
 #include "SpaceShip.h"
 
-SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const DirectX::XMFLOAT3& direction, const int& id, const DirectX::XMFLOAT3& scale, const int& nrofComp)
-	:GameObject(useMesh, pos, rot, id, scale), nrOfComponents(nrofComp)
+SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
+	:GameObject(useMesh, pos, rot, id, field, scale), nrOfComponents(nrofComp)
 {
 	//Bilboard test
 	int constant = 19;
-	DirectX::XMFLOAT3 test(-direction.x * constant, -direction.y * constant, -direction.z * constant);
 	std::vector<std::string> filenames{ "p0.png", "p1.png", "p2.png", "p3.png", "p4.png" };
+	DirectX::XMFLOAT3 upDir = this->getUpDirection();
+	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
+
 	this->rocketStatusQuad = new BilboardObject(filenames, test);
 }
 
-SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const DirectX::XMFLOAT3& direction, const int& id, const DirectX::XMFLOAT3& scale, const int& nrofComp)
-	:GameObject("../Meshes/rocket", pos, rot, id, scale), nrOfComponents(nrofComp)
+SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
+	:GameObject("../Meshes/rocket", pos, rot, id, field, scale), nrOfComponents(nrofComp)
 {
 	//Bilboard test
 	int constant = 19;
-	DirectX::XMFLOAT3 test(-direction.x * constant, -direction.y * constant, -direction.z * constant);
 	std::vector<std::string> filenames{ "p0.png", "p1.png", "p2.png", "p3.png", "p4.png" };
+	DirectX::XMFLOAT3 upDir = this->getUpDirection();
+	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
+
 	this->rocketStatusQuad = new BilboardObject(filenames, test);
 }
 
@@ -48,7 +52,7 @@ void SpaceShip::update()
 
 void SpaceShip::drawQuad()
 {
-	rocketStatusQuad->bindAndDraw(this->components.size(), 0);//Changes texture depending on components
+	rocketStatusQuad->bindAndDraw((int)this->components.size(), 0);//Changes texture depending on components
 }
 
 bool SpaceShip::isFinished()

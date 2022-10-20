@@ -14,15 +14,14 @@ protected:
 	ParticleEmitter* particles;
 
 public:
-	Item(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
-	Item(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
+	Item(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field = nullptr);
+	Item(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field = nullptr);
 	virtual ~Item();
 	virtual void useItem() = 0;
 	void drawIcon();
 	void setPickedUp(bool pickedUp);
-	//void drawParticles();
+	void drawParticles();
 	//virtual void useItem();
 	void throwItem();
 	virtual void update() override;
-
 };

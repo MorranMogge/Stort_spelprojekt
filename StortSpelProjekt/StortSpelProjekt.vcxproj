@@ -406,6 +406,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Light.hlsli" />
+    <None Include="Math.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -509,5 +509,8 @@
     <None Include="Light.hlsli">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Math.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

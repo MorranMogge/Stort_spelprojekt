@@ -42,6 +42,8 @@ GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos
 	// set scale
 	this->mesh->scale = scale;
 	this->scale = scale;
+
+	this->mesh->UpdateCB();
 }
 
 GameObject::GameObject()
@@ -102,7 +104,7 @@ void GameObject::setRot(const DirectX::XMVECTOR& rot)
 	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(rot);
 }
 
-void GameObject::setScale(DirectX::XMFLOAT3 scale)
+void GameObject::setScale(const DirectX::XMFLOAT3& scale)
 {
 	this->mesh->scale = scale;
 	this->scale = scale;
@@ -157,7 +159,7 @@ void GameObject::updateBuffer()
 	this->mesh->UpdateCB();
 }
 
-void GameObject::setMesh(const  std::string& meshPath)
+void GameObject::setMesh(const std::string& meshPath)
 {
 	//delete current mesh ptr
 	if (this->mesh != nullptr)
@@ -203,7 +205,7 @@ void GameObject::setMesh(Mesh* inMesh)
 	this->mesh->rotation = inMesh->rotation;
 }
 
-bool GameObject::withinRadious(GameObject* object, float radius) const
+bool GameObject::withinBox(GameObject* object, float xRange, float yRange, float zRange) const
 {
 	using namespace DirectX;
 
@@ -212,13 +214,13 @@ bool GameObject::withinRadious(GameObject* object, float radius) const
 	bool inRange = false;
 
 	//X range
-	if (objPos.x <= selfPos.x + radius && objPos.x >= selfPos.x - radius)
+	if (objPos.x <= selfPos.x + xRange && objPos.x >= selfPos.x - xRange)
 	{
 		//Y range
-		if (objPos.y <= selfPos.y + radius && objPos.y >= selfPos.y - radius)
+		if (objPos.y <= selfPos.y + yRange && objPos.y >= selfPos.y - yRange)
 		{
 			//Z range
-			if (objPos.z <= selfPos.z + radius && objPos.z >= selfPos.z - radius)
+			if (objPos.z <= selfPos.z + zRange && objPos.z >= selfPos.z - zRange)
 			{
 				inRange = true;
 			}
@@ -228,9 +230,37 @@ bool GameObject::withinRadious(GameObject* object, float radius) const
 	return inRange;
 }
 
+bool GameObject::withinRadious(GameObject* object, float radius) const
+{
+	using namespace DirectX;
+
+	XMFLOAT3 objPos = object->getPos();
+	XMFLOAT3 selfPos = this->position;
+	bool inRange = false;
+
+	float x = (selfPos.x - objPos.x) * (selfPos.x - objPos.x);
+	float y = (selfPos.y - objPos.y) * (selfPos.y - objPos.y);
+	float z = (selfPos.z - objPos.z) * (selfPos.z - objPos.z);
+
+	float sum = std::sqrt(x + y + z);
+
+	//DirectX::SimpleMath::Vector3 vector(x, y, z);
+	if (abs(sum) < radius)
+	{
+		inRange = true;
+	}
+
+	return inRange;
+}
+
 void GameObject::draw()
 {
 	this->mesh->DrawWithMat();
+}
+
+int GameObject::getId()
+{
+	return this->objectID;
 }
 
 void GameObject::update()

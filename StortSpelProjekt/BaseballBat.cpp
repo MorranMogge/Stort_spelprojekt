@@ -39,7 +39,7 @@ void BaseballBat::useItem()
 	batComp->setScale(DirectX::XMFLOAT3(4.0f, 4.0f, 4.0f));
 
 	bool collided = false;
-	for (int i = 2; i < objects.size(); i++)
+	for (int i = 4; i < objects.size(); i++)
 	{
 		if (this == objects[i]) continue;
 		physComp = objects[i]->getPhysComp();
@@ -63,8 +63,10 @@ void BaseballBat::useItem()
 			physComp->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
 		}
 	}
+
 	batComp->setScale(DirectX::XMFLOAT3(4 * 0.35f, 4 * 0.35f, 4 * 0.35f));
 	this->setPos(savedPos);
 	batComp->setPosition(reactphysics3d::Vector3(savedPos.x, savedPos.y, savedPos.z));
+
 }
 

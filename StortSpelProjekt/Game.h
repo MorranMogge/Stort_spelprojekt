@@ -20,6 +20,8 @@ private:
 	ID3D11Buffer* wireBuffer;
 	D3D11_MAPPED_SUBRESOURCE subData;
 
+	std::unique_ptr<DirectX::GamePad> gamePad;
+
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> currentTime;
 	std::chrono::time_point<std::chrono::system_clock> lastUpdate;
@@ -37,6 +39,7 @@ private:
 	Player* player;
 	GameObject* planet;
 	GameObject* testCube;
+	SpaceShip* spaceShip;
 	Potion* potion;			//not in use
 	BaseballBat* testBat;
 	Player* otherPlayer;
@@ -57,6 +60,7 @@ private:
 	bool setUpWireframe();
 	void updateBuffers();
 	void handleKeybinds();
+	DirectX::SimpleMath::Vector3 orientToPlanet(const DirectX::XMFLOAT3 &position);
 
 
 public:

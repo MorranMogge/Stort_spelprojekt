@@ -227,6 +227,7 @@
     <ClInclude Include="Menu.h" />
     <ClInclude Include="PackageTypes.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_resize.h" />
@@ -303,6 +304,7 @@
     <ClCompile Include="SettingsUI.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="SkyboxObj.cpp" />
+    <ClCompile Include="SpaceShip.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

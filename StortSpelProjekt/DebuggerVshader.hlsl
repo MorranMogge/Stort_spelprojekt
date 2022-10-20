@@ -10,34 +10,25 @@ cbuffer CamCB : register(b1)
 struct VSin
 {
     float3 position : POSITION;
-    float3 normal : NORMAL;
-    float2 uv : UV;
+    float3 colour : COLOUR;
 };
 
 struct VSout
 {
     float4 position : SV_POSITION;
-    float3 normal : NORMAL;
-    float2 uv : UV;
     float4 worldPosition : WorldPosition;
-    float3 localPosition : LocalPosition;
+    float4 colour : Colour;
 };
 
 VSout main(VSin input)
 {
     VSout output;
-
-    output.uv = input.uv;
-
     //Calculate position of vertex in world
-    output.worldPosition = mul(float4(input.position, 1.0f), worldM);
+    output.worldPosition = float4(input.position,1.0f);
     output.position = mul(output.worldPosition, camViewProjM);
-    output.localPosition = input.position;
-
 
     //Calculate the normal vector against the world matrix only.
-    output.normal = normalize(mul(input.normal, (float3x3) worldM));
-    
-    output.localPosition = input.position;
+    output.colour = float4(input.colour,1.0f);
+    //output.normal = normalize(mul(input.normal, (float3x3) worldM));
     return output;
 }

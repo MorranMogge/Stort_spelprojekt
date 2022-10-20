@@ -412,6 +412,24 @@ void Player::releaseItem()
 	this->holdingItem = nullptr;
 }
 
+bool Player::checkForStaticCollision(const std::vector<GameObject*>& gameObjects)
+{
+	SimpleMath::Vector3 vecPoint = this->position;
+	vecPoint += 1.f * forwardVector;
+	reactphysics3d::Vector3 point(vecPoint.x, vecPoint.y, vecPoint.z);
+
+	int gameObjSize = gameObjects.size();
+	for (int i = 2; i < gameObjSize; i++)
+	{
+		if (gameObjects[i]->getPhysComp()->testPointInside(point)) 
+		{
+			if (gameObjects[i]->getPhysComp()->getType() == reactphysics3d::BodyType::STATIC) this->position -= 1.f * forwardVector;
+			return true;
+		}
+	}
+	return false;
+}
+
 bool Player::raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
 {
 	this->updatePhysCompRotation();
@@ -457,16 +475,6 @@ bool Player::repairedShip() const
 	return repairCount >= 4;
 }
 
-void Player::update()
-{
-	this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
-	
-	if (holdingItem != nullptr)
-    {
-		this->handleItems();
-    }
-}
-
 DirectX::XMVECTOR Player::getUpVec() const
 {
 	return this->normalVector;
@@ -492,4 +500,14 @@ reactphysics3d::Vector3 Player::getRayCastPos() const
 	SimpleMath::Vector3 returnValue = this->position;
 	returnValue += this->upVector * -2.f;
 	return reactphysics3d::Vector3(returnValue.x, returnValue.y, returnValue.z);
+}
+
+void Player::update()
+{
+	this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
+	
+	if (holdingItem != nullptr)
+    {
+		this->handleItems();
+    }
 }

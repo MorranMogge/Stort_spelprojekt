@@ -22,6 +22,9 @@ void Game::loadObjects()
 	physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
 	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+	potion->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+	potion->setScale(DirectX::XMFLOAT3(5.f, 5.f, 5.f));
+
 
 	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
@@ -268,6 +271,7 @@ GAMESTATE Game::Update()
 	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), hitNormal, dt, testingVec);
 	player->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
 	player->movePos(velocity);
+	player->checkForStaticCollision(gameObjects);
 	
 	player->pickupItem(potion);
 	player->pickupItem(testBat);

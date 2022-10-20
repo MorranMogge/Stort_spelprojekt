@@ -63,6 +63,7 @@ public:
 	void addItem(Item* itemToHold);
 	void addHealth(const int& healthToIncrease);
 	void releaseItem();
+	bool checkForStaticCollision(const std::vector<GameObject*>& gameObjects);
 	bool raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	bool repairedShip() const;

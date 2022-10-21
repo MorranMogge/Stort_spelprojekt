@@ -310,7 +310,6 @@ void Game::Render()
 
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);
-	//drawParticles();
 	this->potion->drawParticles();
 	//this->ptEmitters.at(0).BindAndDraw();
 	basicRenderer.geometryUnbind();

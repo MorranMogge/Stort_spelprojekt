@@ -21,11 +21,11 @@ Potion::Potion(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5),3);
 	
-	//Item Icon
-	float constant = 15.0f;
+	//Bilboard test
+	int constant = 19;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
-	DirectX::XMFLOAT3 billPos(upDir.x* constant, upDir.y* constant, upDir.z* constant);
-	this->itemIcon = new BilboardObject("icon_potion.png", billPos);
+	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
+	this->itemIcon = new BilboardObject("icon_potion.png", test);
 }
 
 Potion::~Potion()

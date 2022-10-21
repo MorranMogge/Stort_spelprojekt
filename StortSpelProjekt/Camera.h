@@ -45,4 +45,5 @@ public:
 	void GSbindPositionBuffer(const int& slot);
 	void GSbindViewBuffer(const int& slot);
 	void GSbindUpBuffer(const int& slot);
+	void CSbindUpBuffer(const int& slot);
 };

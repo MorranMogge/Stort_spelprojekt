@@ -5,16 +5,27 @@
 Potion::Potion(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
 	:Item(useMesh, pos, rot, id, field), playerPtr(nullptr), restoringAmount(10)
 {
-	this->itemIcon = new BilboardObject("p1.png", this->position);
+	//Particles
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
+
+	//Item Icon
+	float constant = 15.0f;
+	DirectX::XMFLOAT3 upDir = this->getUpDirection();
+	DirectX::XMFLOAT3 billPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
+	this->itemIcon = new BilboardObject("icon_potion.png", billPos);
 }
 
 Potion::Potion(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
 	:Item(objectPath, pos, rot, id, field), playerPtr(nullptr), restoringAmount(10)
 {
+	//Particles
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5),3);
+	
+	//Item Icon
 	float constant = 15.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 billPos(upDir.x* constant, upDir.y* constant, upDir.z* constant);
-	this->itemIcon = new BilboardObject("p1.png", billPos);
+	this->itemIcon = new BilboardObject("icon_potion.png", billPos);
 }
 
 Potion::~Potion()

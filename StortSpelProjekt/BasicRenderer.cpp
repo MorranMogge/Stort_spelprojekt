@@ -29,12 +29,14 @@ bool BasicRenderer::setUp_Sky_InputLayout(ID3D11Device* device, const std::strin
 
 bool BasicRenderer::setUp_PT_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode)
 {
-	D3D11_INPUT_ELEMENT_DESC inputDesc[4] =
+	D3D11_INPUT_ELEMENT_DESC inputDesc[6] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"DELTA", 0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"START_POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"LIFETIME", 0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{"LIFETIME", 0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"DIRECTION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BASE_OFFSET", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	HRESULT hr = device->CreateInputLayout(inputDesc, (UINT)std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &pt_inputLayout);
@@ -234,6 +236,7 @@ void BasicRenderer::geometryPass(Camera& stageCamera)
 	immediateContext->IASetInputLayout(pt_inputLayout);									//Input layout = float3 position for each vertex
 	stageCamera.GSbindViewBuffer(0);													//Set matrix [world],[view]
 	stageCamera.GSbindPositionBuffer(1);												//Set camera pos for 
+	stageCamera.CSbindUpBuffer(2);
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
 }
 

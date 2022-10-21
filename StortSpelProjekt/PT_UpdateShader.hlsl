@@ -10,9 +10,18 @@ cbuffer posValue : register(b1)
     float3 offsetFromOrigin;
     float enable;
     float3 orientation;
+    float lifetime;
+    float3 ptdirection;
+    float3 baseofset;
 };
 
-#define Offset 8
+cbuffer camUp : register(b2)
+{
+    float3 camUpDirection;
+    float padding;
+};
+
+#define Offset 14
     
 #define PositionX rawBuffer[DTid.x * Offset]
 #define PositionY rawBuffer[DTid.x * Offset + 1]
@@ -49,7 +58,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
     // if SimulateTime bigger than LifeTime or not enabled, reset it to 0, else add delta time
     SimulateTime = SimulateTime > LifeTime || !enable ? 0.0f : SimulateTime + deltaTime;
     
-    const float3 eulerZ = normalize(cross(orientation, CameraUpVector)); // rotation Z
+    const float3 eulerZ = normalize(cross(orientation, camUpDirection)); // rotation Z
     const float3 eulerX = normalize(cross(orientation, eulerZ)); // rotation X
     
 #define EulerRotation float3x3(eulerX, orientation, eulerZ) // rotation matrix, 3x3 without translation

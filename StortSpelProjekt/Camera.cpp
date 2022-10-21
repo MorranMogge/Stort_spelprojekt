@@ -111,3 +111,8 @@ void Camera::GSbindUpBuffer(const int& slot)
 {
 	GPU::immediateContext->GSSetConstantBuffers(slot, 1, this->upVectorBuffer.getReferenceOf());
 }
+
+void Camera::CSbindUpBuffer(const int& slot)
+{
+	GPU::immediateContext->CSSetConstantBuffers(slot, 1, this->upVectorBuffer.getReferenceOf());
+}

@@ -180,7 +180,7 @@ DirectX::XMFLOAT3 GameObject::getUpDirection() const
 	}
 	else
 	{
-		std::cout << "Gravity field was nullptr, directionn was not given" << std::endl;
+		std::cout << "Gravity field was nullptr, direction was not given" << std::endl;
 	}
 	return upDir;
 }
@@ -199,6 +199,10 @@ DirectX::XMFLOAT3 GameObject::getRotOrientedToGrav() const
 		Vector3 xAxis = yAxis.Cross(zAxis);
 		xAxis.Normalize();
 		finalRot = Quaternion::CreateFromRotationMatrix(Matrix(xAxis, yAxis, zAxis)).ToEuler();
+	}
+	else
+	{
+		std::cout << "Gravity field was nullptr, rotation was not given" << std::endl;
 	}
 
 	return finalRot;

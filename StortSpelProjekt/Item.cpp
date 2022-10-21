@@ -4,13 +4,11 @@
 Item::Item(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field)
 	:GameObject(useMesh, pos, rot, id, field), pickedUp(false), itemIcon(nullptr), particles(nullptr)
 {
-	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5));
 }
 
 Item::Item(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field)
 	:GameObject(objectPath, pos, rot, id, field), pickedUp(false), itemIcon(nullptr), particles(nullptr)
 {
-	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5));
 }
 
 Item::~Item()
@@ -68,8 +66,10 @@ void Item::update()
 	//Update particle movement
 	if (this->particles != nullptr)
 	{
+		DirectX::XMFLOAT3 rot= this->getRotOrientedToGrav();
+
 		this->particles->setPosition(this->position);
-		this->particles->setRotation(this->getRotOrientedToGrav());
+		this->particles->setRotation(this->getUpDirection());
 		this->particles->updateBuffer();
 	}
 }

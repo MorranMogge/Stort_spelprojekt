@@ -21,9 +21,10 @@ void Game::loadObjects()
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
-	physWolrd.addPhysComponent(spaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(2*0.75f, 6*0.75f, 2*0.75f));
+	physWolrd.addPhysComponent(spaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3*0.75f, 0.75f));
 	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 	spaceShip->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+	spaceShip->updatePhysCompRotation();
 
 	spaceShip->getPhysComp()->setPosition(reactphysics3d::Vector3(spaceShip->getPosV3().x, spaceShip->getPosV3().y, spaceShip->getPosV3().z));
 	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
@@ -266,7 +267,8 @@ GAMESTATE Game::Update()
 	DirectX::XMFLOAT3 hitPos(0.f, 0.f, 0.f);
 	DirectX::XMFLOAT3 hitNormal(grav.x, grav.y, grav.z);
 	bool testingVec = this->player->raycast(gameObjects, hitPos, hitNormal);
-	if (testingVec) velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
+	if (testingVec || player->getHitByBat()) velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f); 
+	
 
 	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), hitNormal, dt, testingVec);
 	player->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
@@ -292,7 +294,7 @@ GAMESTATE Game::Update()
 	{
 		if (gameObjects[i]->getId() != this->spaceShip->getId())
 		{
-			gameObjects[i]->update();//->getPhysComp()->updateParent();
+			gameObjects[i]->update();
 		}
 		
 	}

@@ -49,7 +49,6 @@ void BaseballBat::useItem()
 		if (collided)
 		{
 			Player* otherPlayer = dynamic_cast<Player*>(physComp->getParent()); //If we add a function "isPlayer()" in GameObject we do not have to type cast
-			if (otherPlayer != nullptr) std::cout << "You hit another Player!!!\n";
 
 			physComp->setType(reactphysics3d::BodyType::DYNAMIC);
 			//Calculate the force vector
@@ -60,7 +59,8 @@ void BaseballBat::useItem()
 			scalarMultiplicationXMFLOAT3(force, batPos);
 
 			//Add force to object
-			physComp->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+			if (otherPlayer != nullptr) otherPlayer->hitByBat(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+			else physComp->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
 		}
 	}
 

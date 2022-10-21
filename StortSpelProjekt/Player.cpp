@@ -65,18 +65,20 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 
 void Player::handleInputs()
 {
-}
-
-void Player::updatePhysCompRotation()
-{
-	DirectX::SimpleMath::Quaternion dx11Quaternion = DirectX::XMQuaternionRotationMatrix(this->rotation);
-	reactphysics3d::Quaternion reactQuaternion = reactphysics3d::Quaternion(dx11Quaternion.x, dx11Quaternion.y, dx11Quaternion.z, dx11Quaternion.w);
-	this->physComp->setRotation(reactQuaternion);
-	if (holdingItem != nullptr) this->holdingItem->getPhysComp()->setRotation(reactQuaternion);
+	if (Input::KeyPress(KeyCode::P))
+	{
+		timer.resetStartTime();
+		std::cout << "Hit yourself\n";
+		this->physComp->setType(reactphysics3d::BodyType::DYNAMIC);
+		DirectX::SimpleMath::Vector3 tempForce(0, 0, 0);
+		tempForce += 0.5f*upVector + forwardVector;
+		this->hitByBat(reactphysics3d::Vector3(tempForce.x * FORCE, tempForce.y * FORCE, tempForce.z * FORCE));
+	}
 }
 
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime, const bool& testingVec)
 {
+	if (dedge) return;
 	if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 	else normalVector = DirectX::XMVectorSet(grav.x, grav.y, grav.z, 1.0f);
 
@@ -390,6 +392,14 @@ bool Player::pickupItem(Item* itemToPickup)
     return successfulPickup;
 }
 
+void Player::hitByBat(const reactphysics3d::Vector3& force)
+{
+	this->dedge = true;
+	this->physComp->applyForceToCenter(force);
+	this->physComp->applyWorldTorque(force);
+
+}
+
 void Player::addItem(Item* itemToHold)
 {
     if (!this->holdingItem)
@@ -432,8 +442,13 @@ bool Player::checkForStaticCollision(const std::vector<GameObject*>& gameObjects
 
 bool Player::raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
 {
-	this->updatePhysCompRotation();
-
+	if (!dedge)
+	{
+		DirectX::SimpleMath::Quaternion dx11Quaternion = DirectX::XMQuaternionRotationMatrix(this->rotation);
+		reactphysics3d::Quaternion reactQuaternion = reactphysics3d::Quaternion(dx11Quaternion.x, dx11Quaternion.y, dx11Quaternion.z, dx11Quaternion.w);
+		this->physComp->setRotation(reactQuaternion);
+		if (holdingItem != nullptr) this->holdingItem->getPhysComp()->setRotation(reactQuaternion);
+	}
 	reactphysics3d::Ray ray(reactphysics3d::Vector3(this->position.x, this->position.y, this->position.z), reactphysics3d::Vector3(this->getRayCastPos()));
 	reactphysics3d::RaycastInfo rayInfo;
 
@@ -475,6 +490,11 @@ bool Player::repairedShip() const
 	return repairCount >= 4;
 }
 
+bool Player::getHitByBat() const
+{
+	return dedge;
+}
+
 DirectX::XMVECTOR Player::getUpVec() const
 {
 	return this->normalVector;
@@ -504,10 +524,29 @@ reactphysics3d::Vector3 Player::getRayCastPos() const
 
 void Player::update()
 {
-	this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
-	
+	this->handleInputs();
 	if (holdingItem != nullptr)
-    {
+	{
 		this->handleItems();
-    }
+	}
+	if (!dedge) this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
+	else if (dedge)
+	{
+		this->position = this->physComp->getPosV3();
+		reactphysics3d::Quaternion reactQuaternion;
+		DirectX::SimpleMath::Quaternion dx11Quaternion;
+		reactQuaternion = this->physComp->getRotation();
+		dx11Quaternion = DirectX::SimpleMath::Quaternion(DirectX::SimpleMath::Vector4(reactQuaternion.x, reactQuaternion.y, reactQuaternion.z, reactQuaternion.w));
+		this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
+		if (timer.getTimePassed(7.f)) 
+		{ 
+			dedge = false; 
+			this->physComp->resetForce();
+			this->physComp->resetTorque();
+			this->physComp->setType(reactphysics3d::BodyType::STATIC); 
+			this->position = SimpleMath::Vector3(22, 10, 20);
+			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
+			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
+		}
+	}
 }

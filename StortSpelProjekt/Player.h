@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Input.h"
 #include "Potion.h"
+#include "TimeStruct.h"
 #include <GamePad.h>
 #include <iostream>
 
@@ -33,9 +34,8 @@ private:
 	Item* holdingItem;
 	int health;
 	float speed;
-
-	void handleItems();
-	void updatePhysCompRotation();
+	bool dedge = false;
+	TimeStruct timer;
 
 	//Controller shits
 	float posX = 0.0f;
@@ -43,6 +43,7 @@ private:
 	float totalPos = 0.0f;
 	float throttle = 0.0f;
 
+	void handleItems();
 public:
 	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
 	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
@@ -60,6 +61,7 @@ public:
 	DirectX::XMMATRIX getRotationMX() const;
 	reactphysics3d::Vector3 getRayCastPos()const;
 
+	void hitByBat(const reactphysics3d::Vector3& force);
 	void addItem(Item* itemToHold);
 	void addHealth(const int& healthToIncrease);
 	void releaseItem();
@@ -67,5 +69,6 @@ public:
 	bool raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	bool repairedShip() const;
+	bool getHitByBat()const;
 	void update();
 };

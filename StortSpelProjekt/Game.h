@@ -69,7 +69,7 @@ private:
 	//Objects
 	std::vector<GameObject*> gameObjects;
 	std::vector<ParticleEmitter> ptEmitters;
-	
+	ItemSpawn itemSpawner;
 	
 
 	void loadObjects();

@@ -22,6 +22,7 @@ void Game::loadObjects()
 	physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
 
 	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
+	this->itemSpawner.randomizeItemPos(potion);
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
 	otherPlayer->getPhysComp()->setPosition(reactphysics3d::Vector3(otherPlayer->getPosV3().x, otherPlayer->getPosV3().y, otherPlayer->getPosV3().z));
@@ -34,14 +35,13 @@ void Game::loadObjects()
 	gameObjects.emplace_back(testBat);
 	gameObjects.emplace_back(otherPlayer);
 
-
-	for (int i = 0; i < 10; i++)
-	{
-		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6+ i, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-		physWolrd.addPhysComponent(newObj, reactphysics3d::CollisionShapeName::BOX);
-		newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+(float)i*10, 100));
-		gameObjects.emplace_back(newObj);
-	}
+	//for (int i = 0; i < 10; i++)
+	//{
+	//	GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6+ i, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+	//	physWolrd.addPhysComponent(newObj, reactphysics3d::CollisionShapeName::BOX);
+	//	newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+(float)i*10, 100));
+	//	gameObjects.emplace_back(newObj);
+	//}
 
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
@@ -178,6 +178,10 @@ void Game::handleKeybinds()
 	if (Input::KeyPress(KeyCode::O))
 	{
 		drawDebug = false;
+	}
+	if (Input::KeyPress(KeyCode::K))
+	{
+		itemSpawner.randomizeItemPos(potion);
 	}
 }
 
@@ -344,7 +348,8 @@ GAMESTATE Game::Update()
 	grav = normalizeXMFLOAT3(grav);
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
-	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
+	//camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
+	camera.moveCamera(potion->getPosV3(), potion->getRot(), dt);
 
 	//Updates gameObject buffers
 	this->updateBuffers();

@@ -419,7 +419,7 @@ bool Player::checkForStaticCollision(const std::vector<GameObject*>& gameObjects
 	reactphysics3d::Vector3 point(vecPoint.x, vecPoint.y, vecPoint.z);
 
 	int gameObjSize = gameObjects.size();
-	for (int i = 2; i < gameObjSize; i++)
+	for (int i = 1; i < gameObjSize; i++)
 	{
 		if (gameObjects[i]->getPhysComp()->testPointInside(point)) 
 		{
@@ -439,7 +439,7 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLO
 
 	bool testingVec = false;
 	int gameObjSize = gameObjects.size();
-	for (int i = 2; i < gameObjSize; i++)
+	for (int i = 1; i < gameObjSize; i++)
 	{
 		if (gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
 		{

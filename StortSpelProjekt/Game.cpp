@@ -21,11 +21,11 @@ void Game::loadObjects()
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
+	physWolrd.addPhysComponent(spaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(2*0.75f, 6*0.75f, 2*0.75f));
 	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-	potion->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-	potion->setScale(DirectX::XMFLOAT3(5.f, 5.f, 5.f));
+	spaceShip->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 
-
+	spaceShip->getPhysComp()->setPosition(reactphysics3d::Vector3(spaceShip->getPosV3().x, spaceShip->getPosV3().y, spaceShip->getPosV3().z));
 	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));

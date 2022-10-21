@@ -12,6 +12,12 @@ BaseballBat::BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3&
 	force = FORCECONSTANT;
 }
 
+BaseballBat::BaseballBat(Mesh* mesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
+	:Item(mesh, pos, rot, id), player(nullptr), force(0.f)
+{
+	force = FORCECONSTANT;
+}
+
 BaseballBat::~BaseballBat()
 {
 }

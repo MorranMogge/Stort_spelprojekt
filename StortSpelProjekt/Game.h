@@ -19,9 +19,6 @@ private:
 	std::vector<int> subMeshRanges;
 	std::vector<int> verticies;
 	ID3D11ShaderResourceView* tempSRV;
-	ID3D11ShaderResourceView* tempSRV2;
-
-	ID3D11ShaderResourceView* tempSRV3;
 
 
 	ID3D11DeviceContext* immediateContext;

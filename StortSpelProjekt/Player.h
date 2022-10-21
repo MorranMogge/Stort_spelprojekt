@@ -24,8 +24,8 @@ private:
 	DirectX::XMVECTOR rightVector = DEFAULT_RIGHT;
 	DirectX::XMVECTOR forwardVector = DEFAULT_FORWARD;
 
-	DirectX::XMVECTOR normalVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	DirectX::XMVECTOR oldForward = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	DirectX::XMVECTOR normalVector = DEFAULT_UP;
+	DirectX::XMVECTOR oldNormal = normalVector;
 	DirectX::XMVECTOR oldRight = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	//Other shit

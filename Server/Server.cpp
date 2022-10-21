@@ -12,6 +12,7 @@
 #include "Packethandler.h"
 #include "CircularBuffer.h"
 #include "PacketEnum.h"
+#include "Component.h"
 
 const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
@@ -192,6 +193,7 @@ int main()
 	std::cout << "Nr of players for the game: " << std::to_string(MAXNUMBEROFPLAYERS) << std::endl;
 
 	std::vector<player> players;
+	std::vector<Component> components;
 
 	//sf::UdpSocket socket;
 	std::string connectionType, mode;
@@ -252,9 +254,11 @@ int main()
 		while (circBuffer->getIfPacketsLeftToRead())
 		{
 			int packetId = circBuffer->peekPacketId();
-
-			if (packetId == PacketType::POSITION)
+			switch (packetId)
 			{
+			default:
+				break;
+			case PacketType::POSITION:
 				testPosition* tst = circBuffer->readData<testPosition>();
 				for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 				{
@@ -264,7 +268,19 @@ int main()
 						break;
 					}
 				}
+				break;
+
+			case PacketType::COMPONENTPOSITION:
+				ComponentData* compData;
+				for (int i = 0; i < components.size(); i++)
+				{
+					components[i].setPosition(compData->x, compData->y, compData->z);
+					if (compData->inUseBy >= 0)components[i].setInUseBy(compData->inUseBy);
+				}
+					break;
 			}
+
+			
 		}
 
 
@@ -286,6 +302,19 @@ int main()
 
 				sendDataAllPlayers(pos, data);
 			}
+
+			//send component data to all players
+			for (int i = 0; i < components.size(); i++)
+			{
+				ComponentData compData;
+				
+				compData.packetId = PacketType::COMPONENTPOSITION;
+				compData.inUseBy = components[i].getInUseById();
+				compData.x = components[i].getposition('x');
+				compData.x = components[i].getposition('y');
+				compData.x = components[i].getposition('z');
+			}
+
 			start = std::chrono::system_clock::now();
 		}
 		
@@ -294,7 +323,7 @@ int main()
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+// Debug program: F5 or Debug > Start Debugging 
 
 // Tips for Getting Started: 
 //   1. Use the Solution Explorer window to add/manage files

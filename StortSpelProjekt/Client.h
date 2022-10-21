@@ -65,8 +65,6 @@ public:
 	int getport()const;
 	int getPlayerId()const;
 
-	//returns the players id on the server
-	int initTEMPPLAYERS();
 
 	CircularBufferClient*& getCircularBuffer();
 

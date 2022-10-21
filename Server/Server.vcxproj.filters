@@ -29,16 +29,16 @@
     <ClInclude Include="player.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="PacketsDataTypes.h">
+    <ClInclude Include="CircularBuffer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketEnum.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Packethandler.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="CircularBuffer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PacketEnum.h">
+    <ClInclude Include="PacketsDataTypes.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

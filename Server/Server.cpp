@@ -16,15 +16,6 @@
 const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
 
-struct wow
-{
-	unsigned short packetId;
-	unsigned short playerId;
-	float xPos;
-	float yPos;
-	float zPos;
-};
-
 struct userData
 {
 	sf::IpAddress ipAdress;
@@ -52,7 +43,6 @@ struct serverData
 	sf::TcpSocket tcpSocket;
 	userData users[MAXNUMBEROFPLAYERS];
 	unsigned short port = 2001;
-	sf::Packet packet;
 };
 
 bool receiveDataUdp(sf::Packet& receivedPacket, serverData &data, unsigned short& packetIdentifier)
@@ -116,23 +106,23 @@ void sendDataAllPlayers(testPosition &posData, serverData& serverData)
 	}
 };
 
-//template <typename T>
-//void sendDataAllPlayets(const T& data, serverData& serverData)
-//{
-//	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-//	{
-//		std::size_t recvSize;
-//		if (serverData.users[i].tcpSocket.send(&data, sizeof(data), recvSize) != sf::Socket::Done)
-//		{
-//			//error
-//			std::cout << "Couldnt send data to currentPlayer from array slot: " << std::to_string(i) << std::endl;
-//		}
-//		else
-//		{
-//			std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
-//		}
-//	}
-//}
+template <typename T>
+void sendBinaryDataAllPlayers(const T& data, serverData& serverData)
+{
+	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+	{
+		std::size_t recvSize;
+		if (serverData.users[i].tcpSocket.send(&data, sizeof(data), recvSize) != sf::Socket::Done)
+		{
+			//error
+			std::cout << "Couldnt send data to currentPlayer from array slot: " << std::to_string(i) << std::endl;
+		}
+		else
+		{
+			std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
+		}
+	}
+}
 
 int extractBinaryPacketId(char* pointerToData[])
 {
@@ -145,12 +135,10 @@ int extractBinaryPacketId(char* pointerToData[])
 void recvData(void* param, userData* user)//thread to recv data
 {
 	threadInfo* data = (threadInfo*)param;
-	sf::Packet packet;
 
 	std::cout << "ip from socket in thread: " << user->tcpSocket.getRemoteAddress().toString() << std::endl;
 	while (1)
 	{
-		//std::size_t recvSize;
 		std::size_t recv;
 		char datapointer[256];
 
@@ -163,28 +151,9 @@ void recvData(void* param, userData* user)//thread to recv data
 			mutex.lock();
 			data->circBuffer->addData(datapointer, recv);
 			mutex.unlock();
-			//std::cout << "size_t: " << std::to_string(sizeof(testPosition)) << std::endl;
-			//std::cout << "testing exfloatTest(): " << std::to_string(testc) << std::endl;
 			
-			//data->user->playa.setPosition(wow->x, wow->y, wow->z);
-
-			//std::string packetsLeft = "false";
-			//if (data->circBuffer->getIfPacketsLeftToRead())packetsLeft = "true";
-
-
-
-			//std::cout << "check if circbuffer have packets = " << packetsLeft << std::endl;
-			//testPosition* tst = data->circBuffer->readData<testPosition>();
-
-			//std::cout << "Checking return value from circular buffer testPosition.x: " << std::to_string(tst->x) << std::endl;
-			//std::cout << "Memory adress: " << circBuffer.getData() << std::endl;
-
-			//data->pos[0] = tst->x;
-			//data->pos[1] = tst->y;
-			//data->pos[2] = tst->z;
 		}
 		
-		//std::cout << "userName: " << data->user->userName << std::endl;
 	}
 };
 
@@ -218,8 +187,6 @@ int main()
 	std::string identifier;
 	std::string s = "empty";
 	// Group the variables to send into a packet
-	sf::Packet packet;
-	sf::Packet receivedPacket;
 
 
 	std::cout << "Nr of players for the game: " << std::to_string(MAXNUMBEROFPLAYERS) << std::endl;

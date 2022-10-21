@@ -158,24 +158,6 @@ int Client::getPlayerId() const
 	return this->data.playerId;
 }
 
-int Client::initTEMPPLAYERS()
-{
-	int temp = -1;
-
-	char receivedData[256];
-	std::size_t recvSize;
-	data.socket.receive(receivedData, 256, recvSize);
-
-	char* charData[sizeof(idProtocol)];
-	memcpy(charData, receivedData, sizeof(idProtocol));
-	idProtocol* idProto = (idProtocol*)charData;
-	temp = idProto->assignedPlayerId;
-
-	std::cout << "Client.cpp, ASSIGNED ID BY SERVER: " << std::to_string(idProto->assignedPlayerId) << std::endl;
-	
-	return temp;
-}
-
 CircularBufferClient*& Client::getCircularBuffer()
 {
 	return data.circularBuffer;

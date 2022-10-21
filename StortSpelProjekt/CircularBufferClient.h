@@ -32,9 +32,6 @@ public:
 	//returns a char* that points to the packet
 	void* getData();
 
-	//advance the read pointer for data that has been read
-	//void advancePointer();
-
 	//returns if there are packets left to read 
 	bool getIfPacketsLeftToRead();
 

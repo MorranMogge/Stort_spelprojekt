@@ -12,21 +12,17 @@ class Player: public GameObject
 {
 private:
 	//Movement variables
-	DirectX::XMFLOAT3 dotValue;
-	DirectX::XMVECTOR dotProduct;
+	DirectX::SimpleMath::Vector3 resultVector;
 	DirectX::XMMATRIX rotationMX;
 	bool controllerConnected = true;
 
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	DirectX::XMVECTOR upVector = DEFAULT_UP;
-	DirectX::XMVECTOR rightVector = DEFAULT_RIGHT;
-	DirectX::XMVECTOR forwardVector = DEFAULT_FORWARD;
-
-	DirectX::XMVECTOR normalVector = DEFAULT_UP;
-	DirectX::XMVECTOR oldNormal = normalVector;
-	DirectX::XMVECTOR oldRight = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	DirectX::SimpleMath::Vector3 normalVector = DEFAULT_UP;
+	DirectX::SimpleMath::Vector3 rightVector = DEFAULT_RIGHT;
+	DirectX::SimpleMath::Vector3 forwardVector = DEFAULT_FORWARD;
+	DirectX::SimpleMath::Vector3 oldNormal = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	//Other shit
 	const float speedConstant = 100.f;

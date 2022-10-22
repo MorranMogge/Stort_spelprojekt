@@ -14,6 +14,7 @@ private:
 	//Movement variables
 	DirectX::SimpleMath::Vector3 resultVector;
 	DirectX::XMMATRIX rotationMX;
+	float speed = 20.0f;
 	bool controllerConnected = true;
 
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);

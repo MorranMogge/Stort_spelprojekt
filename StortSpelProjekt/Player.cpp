@@ -32,8 +32,6 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		deltaTime *= 1.5f;
 	}
 
-	speed = 0.001f / deltaTime;
-
 	//Calculations
 	normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
@@ -41,48 +39,6 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	normalVector = DirectX::XMVector3Normalize(normalVector);
 	rightVector = DirectX::XMVector3Normalize(rightVector);
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
-
-	//X-Rotation
-	resultVector = DirectX::XMVector3Dot(normalVector, forwardVector);
-	if (resultVector.x < 0.0f)
-	{
-		resultVector = DirectX::XMVector3Cross(rightVector, normalVector);
-		resultVector = DirectX::XMVector3Normalize(resultVector);
-		resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, resultVector);
-
-		rotation *= DirectX::XMMatrixRotationAxis(rightVector, -resultVector.x);
-		rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, -resultVector.x);
-	}
-	else if (resultVector.x > 0.0f)
-	{
-		resultVector = DirectX::XMVector3Cross(rightVector, normalVector);
-		resultVector = DirectX::XMVector3Normalize(resultVector);
-		resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, resultVector);
-
-		rotation *= DirectX::XMMatrixRotationAxis(rightVector, resultVector.x);
-		rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, resultVector.x);
-	}
-
-	//Z-Rotation
-	resultVector = DirectX::XMVector3Dot(normalVector, rightVector);
-	if (resultVector.z < 0.0f)
-	{
-		resultVector = DirectX::XMVector3Cross(normalVector, forwardVector);
-		resultVector = DirectX::XMVector3Normalize(resultVector);
-		resultVector = DirectX::XMVector3AngleBetweenNormals(rightVector, resultVector);
-
-		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, resultVector.z);
-		rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, resultVector.z);
-	}
-	else if (resultVector.z > 0.0f)
-	{
-		resultVector = DirectX::XMVector3Cross(normalVector, forwardVector);
-		resultVector = DirectX::XMVector3Normalize(resultVector);
-		resultVector = DirectX::XMVector3AngleBetweenNormals(rightVector, resultVector);
-
-		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -resultVector.z);
-		rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, -resultVector.z);
-	}
 
 	//Jumping - Need to change
 	if (Input::KeyDown(KeyCode::SPACE))
@@ -93,15 +49,26 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//PC movement
 	if (Input::KeyDown(KeyCode::W))
 	{
-		controllerConnected = false;
 		position += forwardVector * deltaTime * 25.0f;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
 
 		//Walking cross
 		if (Input::KeyDown(KeyCode::D))
 		{
-			if (resultVector.x > -0.4f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, deltaTime * 10.f);
-			else if (resultVector.x < -0.6f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, deltaTime * -10.f);
+			if (resultVector.x > -0.4f)
+			{
+				resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, NORTH_EAST);
+				rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x * 0.05f);
+
+				std::cout << "Angles positiv " << resultVector.x << "\n";
+			}
+			else if (resultVector.x < -0.6f)
+			{
+				resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, NORTH_EAST);
+				rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x * 0.05f);
+
+				std::cout << "Angles negative " << resultVector.x << "\n";
+			}
 		}
 		else if (Input::KeyDown(KeyCode::A))
 		{
@@ -110,31 +77,26 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		}
 
 		//Walking normally
-		else if (resultVector.x < -0.1f)
+		else if (resultVector.x < -0.05f)
 		{
-			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -speed);
-
-			/*resultVector = DirectX::XMVector3AngleBetweenNormals(cameraForward, forwardVector);
-			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x * 0.5f);*/
+			resultVector = DirectX::XMVector3AngleBetweenNormals(cameraForward, forwardVector);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x * 0.5f);
 		}
-		else if (resultVector.x > 0.1f)
+		else if (resultVector.x > 0.05f)
 		{
-			rotation *= DirectX::XMMatrixRotationAxis(normalVector, speed);
-
-			/*resultVector = DirectX::XMVector3AngleBetweenNormals(cameraForward, forwardVector);
-			rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x * 0.5f);*/
+			resultVector = DirectX::XMVector3AngleBetweenNormals(cameraForward, forwardVector);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x * 0.5f);
 		}
 		else
 		{
-			//Checking where it is
 			resultVector = DirectX::XMVector3AngleBetweenNormalsEst(cameraForward, forwardVector);
-			//if (resultVector.x > DirectX::XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, deltaTime * 5.f);
+			if (resultVector.x > XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.5f);
 		}
+		rotate();
 	}
 
 	else if (Input::KeyDown(KeyCode::S))
 	{
-		controllerConnected = false;
 		position += forwardVector * deltaTime * 25.0f;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
 
@@ -151,44 +113,68 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		}
 
 		//Walking normally
-		else if (resultVector.x < -0.1f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, -speed);
-		else if (resultVector.x > 0.1f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, speed);
+		else if (resultVector.x < -0.05f)
+		{
+			resultVector = DirectX::XMVector3AngleBetweenNormals(-cameraForward, forwardVector);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x * 0.5f);
+		}
+		else if (resultVector.x > 0.05f)
+		{
+			resultVector = DirectX::XMVector3AngleBetweenNormals(-cameraForward, forwardVector);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x * 0.5f);
+		}
 		else
 		{
-			//Checking where it is
 			resultVector = DirectX::XMVector3AngleBetweenNormalsEst(-cameraForward, forwardVector);
-			//if (resultVector.x > DirectX::XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, deltaTime * 5.f);
+			if (resultVector.x > XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.5f);
 		}
+		rotate();
 	}
 
 	else if (Input::KeyDown(KeyCode::D))
 	{
-		controllerConnected = false;
 		position += forwardVector * deltaTime * 25.0f;
 		resultVector = DirectX::XMVector3Dot(cameraRight, rightVector);
 
-		if (resultVector.x < -0.1f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, -speed);
-		else if (resultVector.z > 0.1f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, speed);
+		if (resultVector.x < -0.05f)
+		{
+			resultVector = DirectX::XMVector3AngleBetweenNormals(cameraRight, forwardVector);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x * 0.5f);
+		}
+		else if (resultVector.z > 0.05f)
+		{
+			resultVector = DirectX::XMVector3AngleBetweenNormals(cameraRight, forwardVector);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x * 0.5f);
+		}
 		else
 		{
 			resultVector = DirectX::XMVector3AngleBetweenNormalsEst(cameraRight, forwardVector);
-			//if (resultVector.x > DirectX::XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, deltaTime * 5.f);
+			if (resultVector.x > XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.5f);
 		}
+		rotate();
 	}
 
 	else if (Input::KeyDown(KeyCode::A))
 	{
-		controllerConnected = false;
 		position += forwardVector * deltaTime * 25.0f;
 		resultVector = DirectX::XMVector3Dot(-cameraRight, rightVector);
 
-		if (resultVector.x < -0.1f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, -speed);
-		else if (resultVector.x > 0.1f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, speed);
+		if (resultVector.x < -0.05f)
+		{
+			resultVector = DirectX::XMVector3AngleBetweenNormals(-cameraRight, forwardVector);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x * 0.5f);
+		}
+		else if (resultVector.x > 0.05f)
+		{
+			resultVector = DirectX::XMVector3AngleBetweenNormals(-cameraRight, forwardVector);
+			rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x * 0.5f);
+		}
 		else
 		{
 			resultVector = DirectX::XMVector3AngleBetweenNormalsEst(-cameraRight, forwardVector);
-			//if (resultVector.x > DirectX::XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, deltaTime * 5.f);
+			if (resultVector.x > XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.5f);
 		}
+		rotate();
 	}
 }
 
@@ -312,6 +298,51 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 				if (resultVector.x > DirectX::XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
 			}
 		}
+	}
+}
+
+void Player::rotate()
+{
+	//X-Rotation
+	resultVector = DirectX::XMVector3Dot(normalVector, forwardVector);
+	if (resultVector.x < 0.0f)
+	{
+		resultVector = DirectX::XMVector3Cross(rightVector, normalVector);
+		resultVector = DirectX::XMVector3Normalize(resultVector);
+		resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, resultVector);
+
+		rotation *= DirectX::XMMatrixRotationAxis(rightVector, -resultVector.x);
+		rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, -resultVector.x);
+	}
+	else if (resultVector.x > 0.0f)
+	{
+		resultVector = DirectX::XMVector3Cross(rightVector, normalVector);
+		resultVector = DirectX::XMVector3Normalize(resultVector);
+		resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, resultVector);
+
+		rotation *= DirectX::XMMatrixRotationAxis(rightVector, resultVector.x);
+		rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, resultVector.x);
+	}
+
+	//Z-Rotation
+	resultVector = DirectX::XMVector3Dot(normalVector, rightVector);
+	if (resultVector.z < 0.0f)
+	{
+		resultVector = DirectX::XMVector3Cross(normalVector, forwardVector);
+		resultVector = DirectX::XMVector3Normalize(resultVector);
+		resultVector = DirectX::XMVector3AngleBetweenNormals(rightVector, resultVector);
+
+		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, resultVector.z);
+		rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, resultVector.z);
+	}
+	else if (resultVector.z > 0.0f)
+	{
+		resultVector = DirectX::XMVector3Cross(normalVector, forwardVector);
+		resultVector = DirectX::XMVector3Normalize(resultVector);
+		resultVector = DirectX::XMVector3AngleBetweenNormals(rightVector, resultVector);
+
+		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -resultVector.z);
+		rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, -resultVector.z);
 	}
 }
 

@@ -14,7 +14,6 @@ private:
 	//Movement variables
 	DirectX::SimpleMath::Vector3 resultVector;
 	DirectX::XMMATRIX rotationMX;
-	float speed = 20.0f;
 	bool controllerConnected = true;
 
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
@@ -23,7 +22,11 @@ private:
 	DirectX::SimpleMath::Vector3 normalVector = DEFAULT_UP;
 	DirectX::SimpleMath::Vector3 rightVector = DEFAULT_RIGHT;
 	DirectX::SimpleMath::Vector3 forwardVector = DEFAULT_FORWARD;
-	DirectX::SimpleMath::Vector3 oldNormal = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	const DirectX::XMVECTOR NORTH_EAST = DirectX::XMVectorSet(1.0f, 1.0f, 0.0f, 0.0f);
+
+	void rotate();
+	bool movingCross();
 
 	//Other shit
 	const float speedConstant = 100.f;
@@ -43,6 +46,7 @@ public:
 	void handleInputs(); 
 	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float& deltaTime);
 	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float& deltaTime);
+	
 	bool getPickup(GameObject *pickup);
 	bool pickupItem(Item *itemToPickup);
 

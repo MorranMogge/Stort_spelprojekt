@@ -29,7 +29,7 @@ private:
 
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> start;
-	std::chrono::time_point<std::chrono::system_clock> respawnItem;
+	float respawnTime;
 
 	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
 	DirectX::XMFLOAT3 velocity;

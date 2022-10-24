@@ -247,7 +247,7 @@ DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3 &posit
 
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), respawnTime(0.f)
 {
 	MaterialLibrary::LoadDefault();
 
@@ -321,6 +321,14 @@ Game::~Game()
 
 GAMESTATE Game::Update()
 {
+	respawnTime += dt;
+
+	if (respawnTime >= 30.f)
+	{
+		randomizeObjectPos(potion);
+		respawnTime = 0.f;
+	}
+
 	//Do we want this?
 	grav = planetGravityField.calcGravFactor(currentPlayer->getPosV3());
 	additionXMFLOAT3(velocity, planetGravityField.calcGravFactor(currentPlayer->getPos()));
@@ -431,6 +439,5 @@ void Game::Render()
 	drawParticles();
 	this->ptEmitters.at(0).unbind();
 
-	respawnItem = std::chrono::system_clock::now();
 }
 

@@ -6,6 +6,9 @@
 
 void Game::loadObjects()
 {
+	using namespace DirectX;
+	using namespace DirectX::SimpleMath;
+
 	//Here we can add base object we want in the beginning of the game
 	planet = new GameObject("../Meshes/Sphere", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
 	player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
@@ -40,7 +43,7 @@ void Game::loadObjects()
 
 	for (int i = 0; i < 10; i++)
 	{
-		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6+ i, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6+ i, nullptr, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 		physWolrd.addPhysComponent(newObj, reactphysics3d::CollisionShapeName::BOX);
 		newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+(float)i*10, 100));
 		gameObjects.emplace_back(newObj);
@@ -311,9 +314,13 @@ void Game::Render()
 
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);
+	
 	drawParticles();
-	this->ptEmitters.at(0).unbind();
 
+	this->potion->drawParticles();
+	//this->ptEmitters.at(0).BindAndDraw();
+	basicRenderer.geometryUnbind();
+	
 	//!!!!require last in passes
 	ui.Draw();
 }

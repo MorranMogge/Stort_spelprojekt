@@ -4,6 +4,8 @@ struct ParticleStruct
     float delta : DELTA;
     float3 stpos : START_POSITION;
     float lifeTime : LIFETIME;
+    float3 direction : DIRECTION;
+    float3 offset : BASE_OFFSET;
 };
 
 struct Particle

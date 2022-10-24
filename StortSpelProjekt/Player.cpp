@@ -272,9 +272,13 @@ bool Player::pickupItem(Item* itemToPickup)
             
             Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
             if (tmp)
-                tmp->setPlayerptr(this);
+			{
+				tmp->setPlayerptr(this);
+				successfulPickup = true;
+				tmp->setPickedUp(true);
+			}
 
-			successfulPickup = true;
+			
 			holdingItem->getPhysComp()->getRigidBody()->resetForce();
 			holdingItem->getPhysComp()->getRigidBody()->resetTorque();
             holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
@@ -288,7 +292,10 @@ bool Player::pickupItem(Item* itemToPickup)
 void Player::addItem(Item* itemToHold)
 {
     if (!this->holdingItem)
-        this->holdingItem = itemToHold;
+	{
+		this->holdingItem = itemToHold;
+		this->holdingItem->setPickedUp(true);
+	}
     holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 }
 
@@ -304,7 +311,11 @@ void Player::addHealth(const int& healthToIncrease)
 
 void Player::releaseItem()
 {
-    this->holdingItem = nullptr;
+	if (this->holdingItem != nullptr)
+	{
+		this->holdingItem->setPickedUp(false);
+		this->holdingItem = nullptr;
+	}
 }
 
 bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) const
@@ -355,7 +366,8 @@ void Player::update()
             //Apply the force
             itemPhysComp->applyLocalTorque(reactphysics3d::Vector3(temp.x * 500, temp.y * 500, temp.z * 500));
             itemPhysComp->applyForceToCenter(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z * 1000));
-            
+			holdingItem->setPickedUp(false);
+
             //You no longer "own" the item
             holdingItem = nullptr;
         }
@@ -366,6 +378,7 @@ void Player::update()
             holdingItem->useItem();
             itemPhysComp->setIsAllowedToSleep(true);
             itemPhysComp->setIsSleeping(true);
+			holdingItem->setPickedUp(false);
             holdingItem = nullptr;
         }
     }

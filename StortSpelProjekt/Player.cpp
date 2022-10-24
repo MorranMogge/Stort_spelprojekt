@@ -65,15 +65,6 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 
 void Player::handleInputs()
 {
-	if (Input::KeyPress(KeyCode::P))
-	{
-		timer.resetStartTime();
-		std::cout << "Hit yourself\n";
-		this->physComp->setType(reactphysics3d::BodyType::DYNAMIC);
-		DirectX::SimpleMath::Vector3 tempForce(0, 0, 0);
-		tempForce += 0.5f*upVector + forwardVector;
-		this->hitByBat(reactphysics3d::Vector3(tempForce.x * FORCE, tempForce.y * FORCE, tempForce.z * FORCE));
-	}
 }
 
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime, const bool& testingVec)

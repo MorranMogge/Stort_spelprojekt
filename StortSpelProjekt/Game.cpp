@@ -53,7 +53,7 @@ void Game::loadObjects()
 	testBat->setPlayer(player);
 	testBat->setTestObj(gameObjects);
 	player->setPhysComp(physWolrd.getPlayerBox());
-
+	player->getPhysComp()->setParent(player);
 }
 
 void Game::drawShadows()
@@ -274,7 +274,8 @@ GAMESTATE Game::Update()
 	player->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
 	player->movePos(velocity);
 	player->checkForStaticCollision(gameObjects);
-	
+
+
 	player->pickupItem(potion);
 	player->pickupItem(testBat);
 	

@@ -2,8 +2,8 @@
 #include "SpaceShip.h"
 
 
-SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const DirectX::XMFLOAT3& direction, const int& id, const int team, const DirectX::XMFLOAT3& scale, const int& nrofComp)
-	:GameObject(useMesh, pos, rot, id, scale), nrOfComponents(nrofComp)
+SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const DirectX::XMFLOAT3& direction, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
+	:GameObject(useMesh, pos, rot, id, field, scale), nrOfComponents(nrofComp)
 {
 	//Bilboard test
 	int constant = 19;
@@ -22,8 +22,8 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX:
 	}
 }
 
-SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const DirectX::XMFLOAT3& direction, const int& id, const int team, const DirectX::XMFLOAT3& scale, const int& nrofComp)
-	:GameObject("../Meshes/rocket", pos, rot, id, scale), nrOfComponents(nrofComp)
+SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const DirectX::XMFLOAT3& direction, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
+	:GameObject("../Meshes/rocket", pos, rot, id, field, scale), compToComplete(nrofComp)
 {
 	//Bilboard test
 	int constant = 19;

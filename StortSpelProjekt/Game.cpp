@@ -323,11 +323,11 @@ GAMESTATE Game::Update()
 {
 	respawnTime += dt;
 
-	if (respawnTime >= 30.f)
-	{
-		randomizeObjectPos(potion);
-		respawnTime = 0.f;
-	}
+	//if (respawnTime >= 30.f)
+	//{
+	//	randomizeObjectPos(potion);
+	//	respawnTime = 0.f;
+	//}
 
 	//Do we want this?
 	grav = planetGravityField.calcGravFactor(currentPlayer->getPosV3());

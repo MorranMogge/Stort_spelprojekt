@@ -122,7 +122,7 @@ GuiHandler::GuiHandler()
 	exit = GUISprite(1000, 500);
 	exit.Load(GPU::device, L"../Sprites/exit.png");
 
-	Loading = GUISprite(GPU::windowWidth/2, GPU::windowHeight / 2);
+	Loading = GUISprite(GPU::windowWidth/ 2.0f, GPU::windowHeight / 2.0f);
 	Loading.Load(GPU::device, L"../Sprites/Loading.bmp");
 
 	gameState = NOCHANGE;

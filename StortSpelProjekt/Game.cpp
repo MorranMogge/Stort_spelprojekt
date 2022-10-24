@@ -16,7 +16,7 @@ void Game::loadObjects()
 	Vector3 shipPos(10, 14, 10);
 	DirectX::SimpleMath::Vector3 shipPos2(14, 10, 10);
 	spaceShipRed = new SpaceShip(shipPos, orientToPlanet(shipPos), 3, 0, &planetGravityField, Vector3(2, 2, 2));
-	spaceShipBlue = new SpaceShip(shipPos2, orientToPlanet(shipPos2), planetGravityField.calcGravFactor(shipPos2), 3, 1, &planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
+	spaceShipBlue = new SpaceShip(shipPos2, orientToPlanet(shipPos2), 3, 1, &planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
 	testBat = new BaseballBat("../Meshes/bat", Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), 4, &planetGravityField);
 	testCube = new GameObject("../Meshes/Player", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), 6);

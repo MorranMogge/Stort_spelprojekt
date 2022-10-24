@@ -2,7 +2,7 @@
 #include "GravityField.h"
 #include "DirectXMathHelper.h"
 
-GravityField::GravityField(float gravityConstant, DirectX::XMFLOAT3 planetCenterPoint, float radius)
+GravityField::GravityField(const float& gravityConstant, const DirectX::XMFLOAT3& planetCenterPoint, const float& radius)
     :gravityConstant(gravityConstant), planetCenterPoint(planetCenterPoint), radius(radius)
 {
 }

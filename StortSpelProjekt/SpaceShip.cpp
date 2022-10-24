@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SpaceShip.h"
 
-SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const DirectX::XMFLOAT3& direction, const int& id, const DirectX::XMFLOAT3& scale, const int& nrofComp)
+SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const DirectX::XMFLOAT3& direction, const int& id, const int team, const DirectX::XMFLOAT3& scale, const int& nrofComp)
 	:GameObject(useMesh, pos, rot, id, scale), nrOfComponents(nrofComp)
 {
 	//Bilboard test
@@ -9,9 +9,17 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX:
 	DirectX::XMFLOAT3 test(-direction.x * constant, -direction.y * constant, -direction.z * constant);
 	std::vector<std::string> filenames{ "p0.png", "p1.png", "p2.png", "p3.png", "p4.png" };
 	this->rocketStatusQuad = new BilboardObject(filenames, test);
+
+	switch (team)
+	{
+	case 0: 
+		red = this; break;
+	case 1: 
+		blue = this; break;
+	}
 }
 
-SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const DirectX::XMFLOAT3& direction, const int& id, const DirectX::XMFLOAT3& scale, const int& nrofComp)
+SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const DirectX::XMFLOAT3& direction, const int& id, const int team, const DirectX::XMFLOAT3& scale, const int& nrofComp)
 	:GameObject("../Meshes/rocket", pos, rot, id, scale), nrOfComponents(nrofComp)
 {
 	//Bilboard test
@@ -19,6 +27,14 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot,
 	DirectX::XMFLOAT3 test(-direction.x * constant, -direction.y * constant, -direction.z * constant);
 	std::vector<std::string> filenames{ "p0.png", "p1.png", "p2.png", "p3.png", "p4.png" };
 	this->rocketStatusQuad = new BilboardObject(filenames, test);
+
+	switch (team)
+	{
+	case 0:
+		red = this; break;
+	case 1:
+		blue = this; break;
+	}
 }
 
 SpaceShip::~SpaceShip()

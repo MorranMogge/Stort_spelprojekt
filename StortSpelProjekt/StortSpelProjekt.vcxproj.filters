@@ -139,6 +139,9 @@
     <ClCompile Include="BilboardObject.cpp">
       <Filter>Particles</Filter>
     </ClCompile>
+    <ClCompile Include="HudUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -396,6 +399,9 @@
     </ClInclude>
     <ClInclude Include="BilboardObject.h">
       <Filter>Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="HudUI.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

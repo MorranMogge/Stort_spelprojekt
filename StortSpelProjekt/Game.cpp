@@ -11,7 +11,9 @@ void Game::loadObjects()
 	player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
 	potion = new Potion("../Meshes/potion", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2);
 	DirectX::SimpleMath::Vector3 shipPos(10, 14, 10);
-	spaceShip = new SpaceShip(shipPos, orientToPlanet(shipPos), planetGravityField.calcGravFactor(shipPos), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
+	DirectX::SimpleMath::Vector3 shipPos2(14, 10, 10);
+	spaceShipRed = new SpaceShip(shipPos, orientToPlanet(shipPos), planetGravityField.calcGravFactor(shipPos), 3, 0, DirectX::SimpleMath::Vector3(2, 2, 2));
+	spaceShipBlue = new SpaceShip(shipPos2, orientToPlanet(shipPos2), planetGravityField.calcGravFactor(shipPos2), 3, 1, DirectX::SimpleMath::Vector3(2, 2, 2));
 	testBat = new BaseballBat("../Meshes/bat", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4);
 	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 	otherPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6);
@@ -29,7 +31,8 @@ void Game::loadObjects()
 	gameObjects.emplace_back(planet);
 	gameObjects.emplace_back(player);
 	gameObjects.emplace_back(potion);
-	gameObjects.emplace_back(spaceShip);
+	gameObjects.emplace_back(spaceShipRed);
+	gameObjects.emplace_back(spaceShipBlue);
 	gameObjects.emplace_back(testCube);
 	gameObjects.emplace_back(testBat);
 	gameObjects.emplace_back(otherPlayer);
@@ -247,7 +250,7 @@ GAMESTATE Game::Update()
 	//Updates gameObject physics components
 	for (int i = 1; i < gameObjects.size(); i++)
 	{
-		if (gameObjects.at(i)->getId() != this->spaceShip->getId())
+		if (gameObjects.at(i)->getId() != this->spaceShipRed->getId())
 		{
 			gameObjects[i]->update();//->getPhysComp()->updateParent();
 		}
@@ -260,7 +263,7 @@ GAMESTATE Game::Update()
 	//Check winstate
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		if (i > 0 && spaceShip->detectedComponent(gameObjects.at(i)))
+		if (i > 0 && spaceShipRed->detectedComponent(gameObjects.at(i)))
 		{
 			if (gameObjects.at(i)->getId() == this->testBat->getId())
 			{
@@ -303,11 +306,15 @@ void Game::Render()
 	//render billboard objects
 	basicRenderer.bilboardPrePass(this->camera);
 	this->potion->drawIcon();
-	this->spaceShip->drawQuad();
+	this->spaceShipRed->drawQuad();
+	this->spaceShipBlue->drawQuad();
 
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);
 	drawParticles();
 	this->ptEmitters.at(0).unbind();
+
+	//!!!!require last in passes
+	ui.Draw();
 }
 

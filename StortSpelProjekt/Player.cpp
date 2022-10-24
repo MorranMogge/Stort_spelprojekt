@@ -25,7 +25,7 @@ void Player::handleInputs()
 {
 }
 
-bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float& deltaTime)
+bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime)
 {
 	//Calculations
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
@@ -175,13 +175,8 @@ void Player::rotate()
 	}
 }
 
-void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float& deltaTime)
+void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime)
 {
-	if (Input::KeyDown(KeyCode::SHIFT))
-	{
-		deltaTime *= 1.5f;
-	}
-
 	//Calculations
 	normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
@@ -191,9 +186,21 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
 	//Jumping
-	if (Input::KeyPress(KeyCode::SPACE))
+	if (jumpHeight < jumpAllowed)
 	{
-		position += normalVector * deltaTime * 100.0f;
+		position += normalVector * jumpHeight;
+		jumpHeight++;
+	}
+	else
+	{
+		if (jumpHeight > 70.f && Input::KeyPress(KeyCode::SPACE)) jumpHeight = 0.f;
+		else jumpHeight++;
+	}
+
+	//Running
+	if (Input::KeyDown(KeyCode::SHIFT))
+	{
+		deltaTime *= 1.5f;
 	}
 
 	//PC movement
@@ -296,7 +303,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	}
 }
 
-bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float& deltaTime)
+bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime)
 {
 	//Calculations
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
@@ -405,7 +412,7 @@ bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float& 
 	return false;
 }
 
-void Player::moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float& deltaTime)
+void Player::moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime)
 {
 	if (controllerConnected)
 	{

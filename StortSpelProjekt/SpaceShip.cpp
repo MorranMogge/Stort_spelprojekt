@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "SpaceShip.h"
 
-SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
+
+SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
 	:GameObject(useMesh, pos, rot, id, field, scale), compToComplete(nrofComp)
 {
 	//Bilboard test
@@ -11,9 +12,17 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX:
 	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
 
 	this->rocketStatusQuad = new BilboardObject(filenames, test);
+
+	switch (team)
+	{
+	case 0: 
+		red = this; break;
+	case 1: 
+		blue = this; break;
+	}
 }
 
-SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
+SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
 	:GameObject("../Meshes/rocket", pos, rot, id, field, scale), compToComplete(nrofComp)
 {
 	//Bilboard test
@@ -23,6 +32,14 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot,
 	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
 
 	this->rocketStatusQuad = new BilboardObject(filenames, test);
+
+	switch (team)
+	{
+	case 0:
+		red = this; break;
+	case 1:
+		blue = this; break;
+	}
 }
 
 SpaceShip::~SpaceShip()

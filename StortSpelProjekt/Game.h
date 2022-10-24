@@ -36,7 +36,8 @@ private:
 	Player* player;
 	GameObject* planet;
 	GameObject* testCube;
-	SpaceShip* spaceShip;
+	SpaceShip* spaceShipRed;
+	SpaceShip* spaceShipBlue;
 	Potion* potion;
 	BaseballBat* testBat;
 	Player* otherPlayer;
@@ -49,6 +50,8 @@ private:
 	std::vector<Item*> items;
 	std::vector<ParticleEmitter> ptEmitters;
 	BilboardObject* testBilboard;
+
+	HudUI ui;
 	
 
 	void loadObjects();

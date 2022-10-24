@@ -130,14 +130,17 @@
     <ClCompile Include="SpaceShip.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="BaseballBat.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>Game-States</Filter>
     </ClCompile>
     <ClCompile Include="BilboardObject.cpp">
       <Filter>Particles</Filter>
     </ClCompile>
-    <ClCompile Include="BaseballBat.cpp">
-      <Filter>GameObjects</Filter>
+    <ClCompile Include="HudUI.cpp">
+      <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -388,14 +391,17 @@
     <ClInclude Include="SpaceShip.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
+    <ClInclude Include="BaseballBat.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>Game-States</Filter>
     </ClInclude>
     <ClInclude Include="BilboardObject.h">
       <Filter>Particles</Filter>
     </ClInclude>
-    <ClInclude Include="BaseballBat.h">
-      <Filter>GameObjects</Filter>
+    <ClInclude Include="HudUI.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

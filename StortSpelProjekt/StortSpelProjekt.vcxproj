@@ -178,6 +178,7 @@
     <ClInclude Include="GUIObject.h" />
     <ClInclude Include="GUISprite.h" />
     <ClInclude Include="GUIText.h" />
+    <ClInclude Include="HudUI.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Light.h" />
@@ -263,6 +264,7 @@
     <ClCompile Include="GuiHandler.cpp" />
     <ClCompile Include="GUISprite.cpp" />
     <ClCompile Include="GUIText.cpp" />
+    <ClCompile Include="HudUI.cpp" />
     <ClCompile Include="ImGuiHelper.cpp" />
     <ClCompile Include="ImGui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

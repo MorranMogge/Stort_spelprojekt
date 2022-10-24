@@ -20,7 +20,7 @@ struct Particle
     float faloff : FALOFF;
 };
 
-#define Half 0.5f
+#define Half 1.5f
 
 [maxvertexcount(4)]
 void main(point Particle input[1], inout TriangleStream<Output> outputStream)

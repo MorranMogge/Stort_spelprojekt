@@ -42,16 +42,11 @@ void Item::setPickedUp(bool pickedUp)
 
 void Item::drawParticles()
 {
-	if (this->particles != nullptr && !pickedUp)
+	if (this->particles != nullptr && pickedUp)
 	{
-		//std::cout << "DTime: " << std::to_string(tStruct.getDt()) << std::endl;
-		if (tStruct.getDt() > 4)
+		if (tStruct.getDt() < 1)
 		{
-
-		}
-		else
-		{
-			this->particles->BindAndDraw();
+			this->particles->BindAndDraw(0);
 		}
 	}
 }
@@ -62,33 +57,22 @@ void Item::throwItem()
 
 void Item::update()
 {
-	if (this->pickedUp)
-	{
-		tStruct.resetStartTime();
-	}
-
 	//Update movement
 	this->updateRotation();
-
-
-	if (this->getId() != 4)
-	{
-		//std::cout << "Picked Up: " + std::to_string(this->pickedUp) << std::endl;
-	}
 
 	//Update icon movement
 	if (this->itemIcon != nullptr)
 	{
-		float constant = 2.0f;
+		float constant = itemIcon->getOffset();
 		DirectX::XMFLOAT3 upDir = this->getUpDirection();
-		DirectX::XMFLOAT3 billPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-		
-		this->itemIcon->setPosition(this->position + billPos);
+		DirectX::XMFLOAT3 itemPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);		
+		this->itemIcon->setPosition(this->position + itemPos);
 	}
 
 	//Update particle movement
-	if (this->particles != nullptr)
+	if (this->particles != nullptr && !this->pickedUp)
 	{
+		tStruct.resetStartTime();
 		DirectX::XMFLOAT3 rot= this->getRotOrientedToGrav();
 		this->particles->setPosition(this->position);
 		this->particles->setRotation(this->getUpDirection());

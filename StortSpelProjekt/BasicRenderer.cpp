@@ -228,6 +228,7 @@ void BasicRenderer::setUpScene(Camera& stageCamera)
 void BasicRenderer::geometryPass(Camera& stageCamera)
 {
 	//re-use same depth buffer as geometry pass.
+	immediateContext->PSSetSamplers(0, 1, &sampler);
 	immediateContext->CSSetShader(pt_UpdateShader, nullptr, 0);							//Set ComputeShader
 	immediateContext->VSSetShader(pt_vShader, nullptr, 0);								//SetVTXShader
 	immediateContext->PSSetShader(pt_pShader, nullptr, 0);								//Set PSShader

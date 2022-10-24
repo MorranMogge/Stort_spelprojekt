@@ -32,7 +32,6 @@ bool CreateShaderResources(const std::vector<std::string>& filenames, std::vecto
 	int wth = 0;
 	int hth = 0;
 	int channels = 0;
-	HRESULT hr;
 
 	for (int i = 0; i < filenames.size(); i++)
 	{
@@ -86,39 +85,45 @@ bool CreateShaderResources(const std::vector<std::string>& filenames, std::vecto
 
 		//create shader resource view 
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> tempSrv;
-		hr = GPU::device->CreateShaderResourceView(Textures.at(i).Get(), &shaderResourceViewDesc, tempSrv.GetAddressOf());
+		if (FAILED(GPU::device->CreateShaderResourceView(Textures.at(i).Get(), &shaderResourceViewDesc, tempSrv.GetAddressOf())))
+		{
+			std::cerr << "failed to create texture view" << std::endl;
+			return false;
+		}
 		renderedTextureView.push_back(tempSrv);
 	}
 
-	
+
 	for (int i = 0; i < filenames.size(); i++)
 	{
 		stbi_image_free(images[i]);
 	}
 
-	return !FAILED(hr);
+	return true;
 }
 
 //----------------------------------------------- Constructor ------------------------------------------------//
 
-BilboardObject::BilboardObject(const std::vector<std::string>& textureNames, const DirectX::XMFLOAT3& position)
+BilboardObject::BilboardObject(const std::vector<std::string>& textureNames, const DirectX::XMFLOAT3& position, const float & offset)
+	:offset(offset), position(position)
 {
 
 	//Create texture & Srv
 	if (!CreateShaderResources(textureNames, this->bilboardTX, this->bilboardTXView))
 	{
-		std::cout << "error creating lightBuffer!" << std::endl;
+		std::cout << "error creating texture & srv!" << std::endl;
 	}
 	
 	//Create vertex buffer
 	if (!CreateVTXBuffer(this->vertexBuffer, position))
 	{
-		std::cout << "error creating lightBuffer!" << std::endl;
+		std::cout << "error creating vtxBuffer!" << std::endl;
 	}
 
 }
 
-BilboardObject::BilboardObject(const std::string& textureName, const DirectX::XMFLOAT3& position)
+BilboardObject::BilboardObject(const std::string& textureName, const DirectX::XMFLOAT3& position, const float& offset)
+	:offset(offset), position(position)
 {
 	std::vector<std::string> tempStr{textureName};
 
@@ -136,7 +141,6 @@ BilboardObject::BilboardObject(const std::string& textureName, const DirectX::XM
 
 }
 
-
 //----------------------------------------------- Functions ------------------------------------------------//
 
 void BilboardObject::setPosition(const DirectX::XMFLOAT3& position)
@@ -145,14 +149,24 @@ void BilboardObject::setPosition(const DirectX::XMFLOAT3& position)
 	this->updateBuffer();
 }
 
-DirectX::XMFLOAT3 BilboardObject::getPosition()
+DirectX::XMFLOAT3 BilboardObject::getPosition() const
 {
 	return this->position;
 }
 
-int BilboardObject::getNrOfTextures()
+int BilboardObject::getNrOfTextures() const
 {
-	return this->bilboardTX.size();
+	return (int)this->bilboardTX.size();
+}
+
+float BilboardObject::getOffset() const
+{
+	return this->offset;
+}
+
+void BilboardObject::setOffset(const float & offset)
+{
+	this->offset = offset;
 }
 
 void BilboardObject::PSbindSrv(const int& textureIndex, const int& slot)

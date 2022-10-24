@@ -15,7 +15,7 @@ void Game::loadObjects()
 	potion = new Potion("../Meshes/potion", Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), 2, &planetGravityField);
 	Vector3 shipPos(10, 14, 10);
 	spaceShip = new SpaceShip(shipPos, orientToPlanet(shipPos), 3, &planetGravityField, Vector3(2, 2, 2));
-	testBat = new BaseballBat("../Meshes/bat", Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), 4);
+	testBat = new BaseballBat("../Meshes/bat", Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), 4, &planetGravityField);
 	testCube = new GameObject("../Meshes/Player", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), 6);
 	
@@ -97,7 +97,7 @@ void Game::drawParticles()
 		}
 		else
 		{
-			this->ptEmitters.at(i).BindAndDraw();
+			this->ptEmitters.at(i).BindAndDraw(0);
 		}
 	}
 }
@@ -306,11 +306,13 @@ void Game::Render()
 	//render billboard objects
 	basicRenderer.bilboardPrePass(this->camera);
 	this->potion->drawIcon();
+	this->testBat->drawIcon();
 	this->spaceShip->drawQuad();
 
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);
 	this->potion->drawParticles();
+	this->testBat->drawParticles();
 	//this->ptEmitters.at(0).BindAndDraw();
 	basicRenderer.geometryUnbind();
 }

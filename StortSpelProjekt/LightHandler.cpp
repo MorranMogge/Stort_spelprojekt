@@ -13,8 +13,6 @@ bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBu
 		DirectX::XMFLOAT3 position = lights.at(i).getPosition();
 		DirectX::XMFLOAT3 color = lights.at(i).getColor();
 		DirectX::XMFLOAT3 direction = lights.at(i).getDirection();
-		
-	
 
 		//Change to XMFLOAT4
 		DirectX::XMFLOAT4X4 matrix;

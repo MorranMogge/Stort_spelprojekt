@@ -2,7 +2,7 @@
 #include "SpaceShip.h"
 
 SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
-	:GameObject(useMesh, pos, rot, id, field, scale), nrOfComponents(nrofComp)
+	:GameObject(useMesh, pos, rot, id, field, scale), compToComplete(nrofComp)
 {
 	//Bilboard test
 	int constant = 19;
@@ -14,7 +14,7 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX:
 }
 
 SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
-	:GameObject("../Meshes/rocket", pos, rot, id, field, scale), nrOfComponents(nrofComp)
+	:GameObject("../Meshes/rocket", pos, rot, id, field, scale), compToComplete(nrofComp)
 {
 	//Bilboard test
 	int constant = 19;

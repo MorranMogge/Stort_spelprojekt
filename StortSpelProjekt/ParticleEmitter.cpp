@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "ParticleEmitter.h"
+#include "stb_image.h"
 
+//----------------------------------------------- setUp Functions ------------------------------------------------//
 
 bool CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>&  PT_vertexBuffer, Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView>& particleUav, std::vector<particleStruct>& structVector)
 {
@@ -95,9 +97,91 @@ bool CreateBlendState(Microsoft::WRL::ComPtr <ID3D11BlendState> &blendState)
 	return !FAILED(hr);
 }
 
+bool CreateShaderResource(const std::vector<std::string>& filenames, std::vector<Microsoft::WRL::ComPtr<ID3D11Texture2D>>& Textures, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& renderedTextureView)
+{
+	//variables
+	std::vector<unsigned char*> images;
+	int wth = 0;
+	int hth = 0;
+	int channels = 0;
+
+	for (int i = 0; i < filenames.size(); i++)
+	{
+		unsigned char* img = stbi_load(("../Sprites/" + filenames.at(i)).c_str(), &wth, &hth, &channels, STBI_rgb_alpha);
+		if (img == NULL)
+		{
+			return 0;
+		}
+		else
+		{
+			images.push_back(img);
+		}
+	}
+
+	for (int i = 0; i < filenames.size(); i++)
+	{
+		D3D11_TEXTURE2D_DESC textureDesc = {};
+		textureDesc.Width = wth;
+		textureDesc.Height = hth;
+		textureDesc.MipLevels = 1u;
+		textureDesc.ArraySize = 1u;
+		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		textureDesc.SampleDesc.Count = 1u;
+		textureDesc.SampleDesc.Quality = 0;
+		textureDesc.Usage = D3D11_USAGE::D3D11_USAGE_IMMUTABLE;
+		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.CPUAccessFlags = 0u;
+		textureDesc.MiscFlags = 0u;
+
+		D3D11_SUBRESOURCE_DATA data;
+		data.pSysMem = images[i];
+		data.SysMemPitch = wth * 4;
+		data.SysMemSlicePitch = 0;
+
+
+		//create texture
+		Microsoft::WRL::ComPtr<ID3D11Texture2D > tempTexture;
+		if (FAILED(GPU::device->CreateTexture2D(&textureDesc, &data, tempTexture.GetAddressOf())))
+		{
+			std::cerr << "failed to create texture" << std::endl;
+			return false;
+		}
+		Textures.push_back(tempTexture);
+
+		//ShaderResource view 
+		D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
+		shaderResourceViewDesc.Format = textureDesc.Format;
+		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		shaderResourceViewDesc.TextureCube.MipLevels = 1;
+		shaderResourceViewDesc.TextureCube.MostDetailedMip = 0;
+
+		//create shader resource view 
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> tempSrv;
+		if (FAILED(GPU::device->CreateShaderResourceView(Textures.at(i).Get(), &shaderResourceViewDesc, tempSrv.GetAddressOf())))
+		{
+			std::cerr << "failed to create texture view" << std::endl;
+			return false;
+		}
+		renderedTextureView.push_back(tempSrv);
+	}
+
+
+	for (int i = 0; i < filenames.size(); i++)
+	{
+		stbi_image_free(images[i]);
+	}
+
+	return true;
+}
+
+//----------------------------------------------- Constructor ------------------------------------------------//
+
 ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XMFLOAT3& Rot, const int& nrOfPT, const DirectX::XMFLOAT2& minMaxTime, int randRange)
 	:Position(Pos), Rotation(Rot), nrOfParticles(nrOfPT), active(true), renderPassComplete(true), minMaxLifetime(minMaxTime)
 {
+	//particle types
+	std::vector<std::string> textureNames{ "smoke.png", "player2.png" , "player3.png" , "player4.png" };
+
 	//Initilize timer
 	tStruct.startTime;
 
@@ -130,6 +214,13 @@ ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XM
 		this->PT_Data.push_back(tempStruct);
 	}
 
+
+	//Create texture & Srv
+	if (!CreateShaderResource(textureNames, this->PT_texture, this->PT_TXView))
+	{
+		std::cout << "error creating texture & srv!" << std::endl;
+	}
+
 	//Create particle vertex buffer & uav
 	if (!CreateBuffer(this->PT_vertexBuffer, this->PT_UAV, this->PT_Data))
 	{
@@ -155,6 +246,7 @@ ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XM
 	}
 }
 
+//----------------------------------------------- Functions ------------------------------------------------//
 
 ID3D11Buffer * ParticleEmitter::getVTXBuffer() const
 {
@@ -166,7 +258,7 @@ ID3D11Buffer* ParticleEmitter::getPosBuffer() const
 	return this->emitterPosBuffer.Get();
 }
 
-void ParticleEmitter::BindAndDraw()
+void ParticleEmitter::BindAndDraw(int textureIndex)
 {
 	//Variables
 	ID3D11Buffer* nullBuffer{ nullptr };
@@ -183,7 +275,7 @@ void ParticleEmitter::BindAndDraw()
 	
 	//Bind blendstate
 	GPU::immediateContext->OMSetBlendState(this->blendState.Get(), nullptr, 0xffffffffu);
-	
+	GPU::immediateContext->PSSetShaderResources(0, 1, this->PT_TXView.at(textureIndex).GetAddressOf());
 	//Draw
 	GPU::immediateContext->IASetVertexBuffers(0, 1, this->PT_vertexBuffer.GetAddressOf(), &stride, &offset);	//Set VtxBuffer
 	GPU::immediateContext->Draw(nrOfPt, 0);																		//Draw once per primitive

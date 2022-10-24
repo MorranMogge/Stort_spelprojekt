@@ -28,3 +28,27 @@ struct idProtocol
 	int packetId;
 	int assignedPlayerId;
 };
+
+//the winner gets this package
+//enum = 11
+struct winner
+{
+	int packetId;
+};
+
+//the loser gets this package
+//enum = 12
+struct Loser
+{
+	int packetId;
+};
+
+//enum = 13
+struct SpawnComponent
+{
+	int packetId;
+	int ComponentId;
+	float x;
+	float y;
+	float z;
+};

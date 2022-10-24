@@ -18,6 +18,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 		idProtocol* protocol = nullptr;
 		testPosition* tst = nullptr;
+		ComponentData* compData = nullptr;
+		SpawnComponent* spawnComp = nullptr;
 
 		switch (packetId)
 		{
@@ -38,7 +40,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				}
 			}
 
-			std::cout << "Checking return value from circular buffer player id.x: " << std::to_string(tst->playerId) << " y: " << std::to_string(tst->y) << std::endl;
+			//std::cout << "Checking return value from circular buffer player id.x: " << std::to_string(tst->playerId) << " y: " << std::to_string(tst->y) << std::endl;
 			break;
 
 		case PacketType::PACKETID:
@@ -47,6 +49,16 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			std::cout << "PacketHandleEvents, received player id: " << std::to_string(protocol->assignedPlayerId) << std::endl;
 			break;
 
+		case PacketType::COMPONENTPOSITION:
+
+			compData = circularBuffer->readData<ComponentData>();
+			std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
+			break;
+
+		case PacketType::SPAWNCOMPONENT:
+			spawnComp = circularBuffer->readData<SpawnComponent>();
+			std::cout << "Received SpawnComponent id: " << std::to_string(spawnComp->ComponentId) << std::endl;
+			break;
 		
 		}
 	}
@@ -62,6 +74,8 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer)
 
 		idProtocol* protocol = nullptr;
 		testPosition* tst = nullptr;
+		ComponentData* compData = nullptr;
+		SpawnComponent* spawnComp = nullptr;
 
 		switch (packetId)
 		{
@@ -80,6 +94,17 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer)
 
 			std::cout << "throwing away position x: " << std::to_string(tst->playerId) << " y: " << std::to_string(tst->y) << std::endl;
 			return -2;
+			break;
+
+		case PacketType::COMPONENTPOSITION:
+
+			compData = circularBuffer->readData<ComponentData>();
+			std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
+			break;
+
+		case PacketType::SPAWNCOMPONENT:
+			spawnComp = circularBuffer->readData<SpawnComponent>();
+			std::cout << "Received SpawnComponent id: " << std::to_string(spawnComp->ComponentId) << std::endl;
 			break;
 		}
 

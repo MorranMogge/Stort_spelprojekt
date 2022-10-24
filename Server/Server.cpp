@@ -13,6 +13,7 @@
 #include "CircularBuffer.h"
 #include "PacketEnum.h"
 #include "Component.h"
+#include "SpawnComponent.h"
 
 const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
@@ -102,7 +103,7 @@ void sendDataAllPlayers(testPosition &posData, serverData& serverData)
 		}
 		else
 		{
-			std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
+			//std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
 		}
 	}
 };
@@ -120,7 +121,7 @@ void sendBinaryDataAllPlayers(const T& data, serverData& serverData)
 		}
 		else
 		{
-			std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
+			//std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
 		}
 	}
 }
@@ -220,14 +221,15 @@ int main()
 		std::cout << "UDP Successfully bound socket\n";
 	}
 	
-	std::chrono::time_point<std::chrono::system_clock> start;
+	std::chrono::time_point<std::chrono::system_clock> start, startComponentTimer;
 	start = std::chrono::system_clock::now();
+
 	float timerLength = 1.f / 30.0f;
+	float timerComponent = 20.0f;
 
 
 	setupTcp(data);
 
-	
 	acceptPlayers(data);
 
 	sendIdToAllPlayers(data);
@@ -246,6 +248,8 @@ int main()
 	}
 	
 
+	start = std::chrono::system_clock::now();
+	startComponentTimer = std::chrono::system_clock::now();
 
 	std::cout << "Starting while loop! \n";
 	while (true)
@@ -254,12 +258,16 @@ int main()
 		while (circBuffer->getIfPacketsLeftToRead())
 		{
 			int packetId = circBuffer->peekPacketId();
+			testPosition* tst = nullptr;
+			ComponentData* compData = nullptr;
+
+
 			switch (packetId)
 			{
 			default:
 				break;
 			case PacketType::POSITION:
-				testPosition* tst = circBuffer->readData<testPosition>();
+				tst = circBuffer->readData<testPosition>();
 				for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 				{
 					if (i == tst->playerId)
@@ -271,7 +279,8 @@ int main()
 				break;
 
 			case PacketType::COMPONENTPOSITION:
-				ComponentData* compData;
+				compData = circBuffer->readData<ComponentData>();
+				std::cout << "Received componentData\n";
 				for (int i = 0; i < components.size(); i++)
 				{
 					components[i].setPosition(compData->x, compData->y, compData->z);
@@ -283,6 +292,15 @@ int main()
 			
 		}
 
+		//spawns a component when the timer is done
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponent)
+		{
+			ComponentData cData = SpawnOneComponent(components);
+			for (int i = 0; i < components.size(); i++)
+			{
+				sendBinaryDataAllPlayers(cData, data);
+			}
+		}
 
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
 		{
@@ -297,7 +315,7 @@ int main()
 				pos.z = data.users[i].playa.getposition('z');
 				pos.playerId = i;
 				
-				std::cout << "data to send x: " << std::to_string(pos.x) << ", y: " << std::to_string(pos.y) << ", z: " << std::to_string(pos.z) << std::endl;
+				//std::cout << "data to send x: " << std::to_string(pos.x) << ", y: " << std::to_string(pos.y) << ", z: " << std::to_string(pos.z) << std::endl;
 				//std::cout << "packet id sent: " << std::to_string(pos.packetId) << std::endl;
 
 				sendDataAllPlayers(pos, data);
@@ -310,9 +328,20 @@ int main()
 				
 				compData.packetId = PacketType::COMPONENTPOSITION;
 				compData.inUseBy = components[i].getInUseById();
-				compData.x = components[i].getposition('x');
-				compData.x = components[i].getposition('y');
-				compData.x = components[i].getposition('z');
+				//if its in use by a player it will get the players position
+				if (compData.inUseBy >= 0 && compData.inUseBy <= MAXNUMBEROFPLAYERS)
+				{
+					compData.x = players[i].getposition('x');
+					compData.x = players[i].getposition('y');
+					compData.x = players[i].getposition('z');
+				}
+				else
+				{
+					compData.x = components[i].getposition('x');
+					compData.x = components[i].getposition('y');
+					compData.x = components[i].getposition('z');
+				}
+				sendBinaryDataAllPlayers<ComponentData>(compData, data);
 			}
 
 			start = std::chrono::system_clock::now();

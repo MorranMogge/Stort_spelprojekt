@@ -313,6 +313,7 @@ GAMESTATE Game::Update()
 		serverStart = std::chrono::system_clock::now();
 	}
 
+	//read the packets received from the server
 	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId());
 	
 	

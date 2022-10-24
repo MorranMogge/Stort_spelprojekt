@@ -41,6 +41,7 @@ private:
 	GameObject* testCube;
 	SpaceShip* spaceShip;
 	Potion* potion;			//not in use
+	Component* component;
 	BaseballBat* testBat;
 	Player* otherPlayer;
 

@@ -15,11 +15,14 @@ void Game::loadObjects()
 	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4);
 	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 	otherPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6);
+	component = new Component("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2);
+
 
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
+	physWolrd.addPhysComponent(component, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
 	physWolrd.addPhysComponent(spaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3*0.75f, 0.75f));
 	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
@@ -39,6 +42,7 @@ void Game::loadObjects()
 	gameObjects.emplace_back(testCube);
 	gameObjects.emplace_back(testBat);
 	gameObjects.emplace_back(otherPlayer);
+	gameObjects.emplace_back(component);
 
 
 	for (int i = 0; i < 10; i++)
@@ -278,6 +282,8 @@ GAMESTATE Game::Update()
 
 	player->pickupItem(potion);
 	player->pickupItem(testBat);
+	player->pickupItem(component);
+
 	
 	//Physics related functions
 	physWolrd.update(dt);
@@ -305,15 +311,12 @@ GAMESTATE Game::Update()
 	this->updateBuffers();
 	
 	//Check winstate
-	for (int i = 0; i < gameObjects.size(); i++)
+	for (int i = 1; i < gameObjects.size(); i++)
 	{
-		if (i > 0 && spaceShip->detectedComponent(gameObjects.at(i)))
+		Component* comp = dynamic_cast<Component*>(gameObjects[i]);
+		if (comp && spaceShip->detectedComponent(comp))
 		{
-			if (gameObjects.at(i)->getId() == this->testBat->getId())
-			{
-				std::cout << "detected: " << gameObjects.at(i)->getId() << std::endl;
-				std::cout << "detected: Bat!" << std::endl;
-			}
+			std::cout << "Detected Component!\nID: " << comp->getId() << "\n";
 		}
 	}
 	if (player->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }

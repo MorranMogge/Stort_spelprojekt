@@ -19,9 +19,14 @@ private:
 	ID3D11VertexShader* vShader;
 	ID3D11PixelShader* pShader;
 
+	ID3D11InputLayout* animLayout;
+	ID3D11VertexShader* vShaderAnim;
+
+
 	D3D11_VIEWPORT viewport;
 
-	bool setUpInputLayout(ID3D11Device* device, const std::string &vShaderByteCode);
+	bool setUpInputLayout(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout* iLayout);
+	bool setUpInputLayoutAnim(ID3D11Device* device, const std::string &vShaderByteCode, ID3D11InputLayout* iLayout);
 	bool setUpSampler(ID3D11Device* device);
 
 public:
@@ -31,4 +36,5 @@ public:
 	void lightPrePass();
 	bool initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT);
 	void setUpScene();
+	void changeToAnimation();
 };

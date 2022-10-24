@@ -43,3 +43,8 @@ struct particleStruct
 		this->lifeTime = lifeTime;
 	}
 };
+
+struct boneTransforms
+{
+	std::vector<DirectX::XMFLOAT4X4> finalTransforms;
+};

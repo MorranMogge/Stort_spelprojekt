@@ -59,9 +59,21 @@ void ModelManager::processNodes(aiNode* node, const aiScene*& scene)
 		meshes.push_back(readNodes(mesh, scene));
 		if (mesh->HasBones())
 		{
+			for (int j = 0, length = mesh->mNumBones; j < length; j++)
+			{
+				{
+					std::cout << "Bone: " << mesh->mBones[j]->mName.C_Str() << "\n	"
+						<< mesh->mBones[j]->mOffsetMatrix.a1 << " " << mesh->mBones[j]->mOffsetMatrix.a2 << " " << mesh->mBones[j]->mOffsetMatrix.a3 << " " << mesh->mBones[j]->mOffsetMatrix.a4 << "\n	"
+						<< mesh->mBones[j]->mOffsetMatrix.b1 << " " << mesh->mBones[j]->mOffsetMatrix.b2 << " " << mesh->mBones[j]->mOffsetMatrix.b3 << " " << mesh->mBones[j]->mOffsetMatrix.b4 << "\n	"
+						<< mesh->mBones[j]->mOffsetMatrix.c1 << " " << mesh->mBones[j]->mOffsetMatrix.c2 << " " << mesh->mBones[j]->mOffsetMatrix.c3 << " " << mesh->mBones[j]->mOffsetMatrix.c4 << "\n	"
+						<< mesh->mBones[j]->mOffsetMatrix.d1 << " " << mesh->mBones[j]->mOffsetMatrix.d2 << " " << mesh->mBones[j]->mOffsetMatrix.d3 << " " << mesh->mBones[j]->mOffsetMatrix.d4 << "\n";
+				}
+			}
+
 			this->globalInverseTransform = scene->mRootNode->mTransformation;
 			this->globalInverseTransform = this->globalInverseTransform.Inverse();
 			printf("has bones \n");
+
 			this->loadBones(scene->mMeshes[i], i);
 		}
 
@@ -490,7 +502,9 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath, AnimatedMesh
 			<< this->aniData.boneVector[i].offsetMatrix._31 << " " << this->aniData.boneVector[i].offsetMatrix._32 << " " << this->aniData.boneVector[i].offsetMatrix._33 << " " << this->aniData.boneVector[i].offsetMatrix._34 << "\n	"
 			<< this->aniData.boneVector[i].offsetMatrix._41 << " " << this->aniData.boneVector[i].offsetMatrix._42 << " " << this->aniData.boneVector[i].offsetMatrix._43 << " " << this->aniData.boneVector[i].offsetMatrix._44 << "\n";
 	}
+
 	this->aniData.boneDataVec;
+	gameObject.addData(this->aniData);
 	//gameObject.addData(this->boneDataVec, this->boneVec, this->boneIndexTraslator, this->scene, this->AnimationVec, this->assimpImp);
 
 	return true;

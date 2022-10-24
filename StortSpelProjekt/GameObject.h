@@ -6,11 +6,11 @@
 class GameObject
 {
 private:
-	Mesh* mesh;
 	int objectID;
 	//float mass
 	//collider
 protected:
+	Mesh* mesh;
 	DirectX::SimpleMath::Vector3 position;
 	DirectX::XMFLOAT3 rotation;//ska ändra till quaternion?
 	DirectX::XMFLOAT3 scale;

@@ -46,7 +46,9 @@ void Game::updateBuffers()
 }
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0), potion("../Meshes/player", DirectX::SimpleMath::Vector3(10,10,15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22),
+		DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0), potion("../Meshes/player", DirectX::SimpleMath::Vector3(10,10,15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0),
+	test()
 {
 	
 	MaterialLibrary::LoadDefault();
@@ -64,7 +66,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 	ModelManager MM(device);
-	MM.loadMeshAndBoneData("../Meshes/two_bones_translation.fbx", this->test);
+	MM.loadMeshAndBoneData("../Meshes/two_bones_translation_rotation.fbx", this->test);
 }
 
 Game::~Game()

@@ -83,7 +83,7 @@ struct channels
 	std::vector<float3KeyFrame> scalKeyFrames;
 };
 
-struct animation
+struct animationNode
 {
 	std::vector<channels> mChannels;
 	std::string mName;
@@ -94,7 +94,7 @@ struct animation
 struct AnimationData
 {	
 	nodes* rootNode;
-	std::vector<animation> animation;
+	std::vector<animationNode> animation;
 	std::map<std::string, int> boneNameToIndex;
 	std::vector<boneInfo> boneVector;
 	std::vector<IndexBoneData> boneDataVec;
@@ -104,22 +104,26 @@ struct AnimationData
 class AnimatedMesh : public GameObject
 {
 private:
-	aiScene* scene;
+	//aiScene* scene;
 
 	AnimationData MySimp;
 
-	void uppdateMatrices(int animationIndex, float animationTime, const aiNode* node, DirectX::XMFLOAT4X4& parentTrasform);
+	StructuredBuffer<DirectX::XMFLOAT4X4> strucBuff;
+	std::vector<DirectX::XMFLOAT4X4> finalTransforms;
 
-	void findlowRotationNode(int& out, const float& AnimationTimeTicks, const aiNodeAnim* nodeAnm);
-	void InterpolateRotation(aiQuaternion& res, float animationTime, const aiNodeAnim* animationNode);
+	void uppdateMatrices(int animationIndex, float animationTime, const nodes& node, DirectX::XMFLOAT4X4& parentTrasform);
 
-	void findlowScaleNode(int& out, const float& AnimationTimeTicks, const aiNodeAnim* nodeAnm);
-	void InterpolateScaling(aiVector3D& res, float animationTime, const aiNodeAnim* animationNode);
+	void findlowRotationNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm);
+	void InterpolateRotation(DirectX::XMFLOAT4& res, float animationTime, const channels& animationNode);
 
-	void findlowTransNode(int& out, const float& AnimationTimeTicks, const aiNodeAnim* nodeAnm);
-	void InterpolateTranslation(aiVector3D& res, float animationTime, const aiNodeAnim* animationNode);
+	void findlowScaleNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm);
+	void InterpolateScaling(DirectX::XMFLOAT3& res, float animationTime, const channels& animationNode);
 
-	const aiNodeAnim* findNodeAnim(const std::string& nodeName, const aiAnimation* pAnimation);
+	void findlowPosNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm);
+	void InterpolatePos(DirectX::XMFLOAT3& res, float animationTime, const channels& animationNode);
+
+	//const aiNodeAnim* findNodeAnim(const std::string& nodeName, const aiAnimation* pAnimation);
+	bool findNodeAnim(const std::string& nodeName, const animationNode pAnimation, channels& res);
 
 	void getTimeInTicks(float dt);
 
@@ -216,6 +220,7 @@ private:
 
 public:
 	AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id);
+	AnimatedMesh(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
 	AnimatedMesh();
 	~AnimatedMesh();
 
@@ -223,4 +228,6 @@ public:
 	void addData(const AnimationData& data);
 
 	void uppdate(ID3D11DeviceContext* immediateContext, int animationIndex, const float dt);
+
+	void draw(const float& dt, const int& animIndex);
 };

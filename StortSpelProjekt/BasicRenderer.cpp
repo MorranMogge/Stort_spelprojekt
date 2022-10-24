@@ -1,6 +1,6 @@
 #include "BasicRenderer.h"
 
-bool BasicRenderer::setUpInputLayout(ID3D11Device* device, const std::string& vShaderByteCode)
+bool BasicRenderer::setUpInputLayout(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout* iLayout)
 {
 	D3D11_INPUT_ELEMENT_DESC inputDesc[3] =
 	{
@@ -9,7 +9,24 @@ bool BasicRenderer::setUpInputLayout(ID3D11Device* device, const std::string& vS
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
-	HRESULT hr = device->CreateInputLayout(inputDesc, std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &inputLayout);
+	HRESULT hr = device->CreateInputLayout(inputDesc, std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &iLayout);
+
+	return !FAILED(hr);
+}
+
+bool BasicRenderer::setUpInputLayoutAnim(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout* iLayout)
+{
+	D3D11_INPUT_ELEMENT_DESC inputDesc[5] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BoneIndex", 0, DXGI_FORMAT_R32G32B32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"Weights", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+	};
+
+	HRESULT hr = device->CreateInputLayout(inputDesc, std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &iLayout);
 
 	return !FAILED(hr);
 }
@@ -58,14 +75,17 @@ void BasicRenderer::lightPrePass()
 bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT)
 {
 	std::string vShaderByteCode;
+	std::string vShaderByteCodeForAnim;
 	this->immediateContext = immediateContext;
 	if (this->immediateContext == nullptr)										return false;
 	if (!CreateRenderTargetView(device, swapChain, rtv))						return false;
 	if (!CreateDepthStencil(device, WIDTH, HEIGHT, dsTexture, dsView))			return false;
 	if (!LoadVertexShader(device, vShader, vShaderByteCode, "VertexShader"))	return false;
+	if (!LoadVertexShader(device, this->vShaderAnim, vShaderByteCodeForAnim, "vShaderSkinning"))	return false;
 	if (!LoadPixelShader(device, pShader, "PixelShader"))						return false;
-	if (!setUpInputLayout(device, vShaderByteCode))								return false;
-	if (!setUpSampler(device))		return false;
+	if (!setUpInputLayout(device, vShaderByteCode, this->inputLayout))			return false;
+	if (!setUpInputLayout(device, vShaderByteCodeForAnim, this->animLayout))	return false;
+	if (!setUpSampler(device))													return false;
 	SetViewport(viewport, WIDTH, HEIGHT);
 	return true;
 }
@@ -87,4 +107,10 @@ void BasicRenderer::setUpScene()
 	ID3D11ShaderResourceView* nullRsv{ nullptr };
 	immediateContext->PSSetShaderResources(3, 1, &nullRsv);
 	immediateContext->PSSetShaderResources(4, 1, &nullRsv);
+}
+
+void BasicRenderer::changeToAnimation()
+{
+	immediateContext->IASetInputLayout(this->animLayout);
+	immediateContext->VSSetShader(this->vShaderAnim, nullptr, 0);
 }

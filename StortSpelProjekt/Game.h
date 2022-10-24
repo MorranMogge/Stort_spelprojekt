@@ -29,6 +29,7 @@ private:
 
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> start;
+	std::chrono::time_point<std::chrono::system_clock> respawnItem;
 
 	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
 	DirectX::XMFLOAT3 velocity;
@@ -69,7 +70,7 @@ private:
 	//Objects
 	std::vector<GameObject*> gameObjects;
 	std::vector<ParticleEmitter> ptEmitters;
-	ItemSpawn itemSpawner;
+	
 	
 
 	void loadObjects();
@@ -79,6 +80,7 @@ private:
 	bool setUpWireframe();
 	void updateBuffers();
 	void handleKeybinds();
+	void randomizeObjectPos(GameObject* item);
 	DirectX::SimpleMath::Vector3 orientToPlanet(const DirectX::XMFLOAT3 &position);
 	HWND* window;
 

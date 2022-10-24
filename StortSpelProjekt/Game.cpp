@@ -22,7 +22,9 @@ void Game::loadObjects()
 	physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
 
 	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
-	this->itemSpawner.randomizeItemPos(potion);
+	
+	randomizeObjectPos(potion);
+	
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
 	otherPlayer->getPhysComp()->setPosition(reactphysics3d::Vector3(otherPlayer->getPosV3().x, otherPlayer->getPosV3().y, otherPlayer->getPosV3().z));
@@ -109,6 +111,24 @@ void Game::drawParticles()
 	}
 }
 
+void Game::randomizeObjectPos(GameObject* object)
+{
+	DirectX::SimpleMath::Vector3 randomPos = {};
+
+	int xPos = rand() % 201 - 100;
+	int yPos = rand() % 201 - 100;
+	int zPos = rand() % 201 - 100;
+
+	randomPos.x = xPos;
+	randomPos.y = yPos;
+	randomPos.z = zPos;
+
+	randomPos.Normalize();
+	randomPos *= 30;
+
+	object->setPos(randomPos);
+}
+
 bool Game::setUpWireframe()
 {
 	reactWireframeInfo.wireframeClr = DirectX::XMFLOAT3(1.f, 0.f, 0.f);
@@ -181,7 +201,7 @@ void Game::handleKeybinds()
 	}
 	if (Input::KeyPress(KeyCode::K))
 	{
-		itemSpawner.randomizeItemPos(potion);
+		randomizeObjectPos(potion);
 	}
 }
 
@@ -410,5 +430,7 @@ void Game::Render()
 	basicRenderer.geometryPass(this->camera);
 	drawParticles();
 	this->ptEmitters.at(0).unbind();
+
+	respawnItem = std::chrono::system_clock::now();
 }
 

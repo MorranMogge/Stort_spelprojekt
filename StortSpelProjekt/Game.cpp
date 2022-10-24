@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Game.h"
 #include "DirectXMathHelper.h"
+#include "SendingDataEvent.h"
 
 
 
@@ -8,8 +9,8 @@ void Game::loadObjects()
 {
 	float planetSize = 20.f;
 	//Here we can add base object we want in the beginning of the game
-	planet = new GameObject("../Meshes/Sphere", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(planetSize, planetSize, planetSize));
-	player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
+	planet = new GameObject("../Meshes/Sphere", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
+	currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
 	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2);
 	spaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
 	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4);
@@ -35,7 +36,7 @@ void Game::loadObjects()
 	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
 	otherPlayer->getPhysComp()->setPosition(reactphysics3d::Vector3(otherPlayer->getPosV3().x, otherPlayer->getPosV3().y, otherPlayer->getPosV3().z));
 
-	gameObjects.emplace_back(player);
+	gameObjects.emplace_back(currentPlayer);
 	gameObjects.emplace_back(spaceShip);
 	gameObjects.emplace_back(planet);
 	gameObjects.emplace_back(potion);
@@ -54,7 +55,7 @@ void Game::loadObjects()
 	}
 
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
-	testBat->setPlayer(player);
+	testBat->setPlayer(currentPlayer);
 	testBat->setTestObj(gameObjects);
 	player->setPhysComp(physWolrd.getPlayerBox());
 	player->getPhysComp()->setParent(player);
@@ -62,6 +63,12 @@ void Game::loadObjects()
 
 void Game::drawShadows()
 {
+	potion->draw();
+	currentPlayer->draw();
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->draw();
+	}
 	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
 	{
 		ltHandler.drawShadows(i, gameObjects);
@@ -81,6 +88,10 @@ void Game::drawObjects(bool drawDebug)
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects.at(i)->draw();
+	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->draw();
 	}
 	//Draw light debug meshes
 	if (drawDebug)
@@ -136,6 +147,10 @@ void Game::updateBuffers()
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->updateBuffer();
+	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->updateBuffer();
 	}
 
 	//Update Wireframe buffer
@@ -222,6 +237,11 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 {
 	MaterialLibrary::LoadDefault();
 
+	this->packetEventManager = new PacketEventManager();
+	//m�ste raderas******************
+	client = new Client("192.168.43.251");
+	circularBuffer = client->getCircularBuffer();
+
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 	this->loadObjects();
 	this->setUpWireframe();
@@ -239,10 +259,43 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	playerVecRenderer.setPlayer(player);
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
+	serverStart = std::chrono::system_clock::now();
+	this->window = &window;
+	start = std::chrono::system_clock::now();
+
+	if (IFONLINE)
+	{
+		client->connectToServer();
+		int playerId = -1;
+		while (playerId <= -1 || playerId >= 9)
+		{
+			playerId = packetEventManager->handleId(client->getCircularBuffer());
+			//std::cout << "Game.cpp, playerId: " << std::to_string(playerId) << std::endl;
+		}
+		//int playerid = client->initTEMPPLAYERS();
+
+		this->client->setClientId(playerId);
+
+		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
+		{
+			Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0);
+			if (playerId != i)
+			{
+				players.push_back(tmpPlayer);
+			}
+			else
+			{
+				players.push_back(currentPlayer);
+				delete tmpPlayer;
+			}
+		}
+	}
 }
 
 Game::~Game()
 {
+	delete client;
+	delete packetEventManager;
 
 	for (int i = 0; i < this->gameObjects.size(); i++)
 	{
@@ -274,16 +327,32 @@ GAMESTATE Game::Update()
 	if (testingVec || player->getHitByBat()) velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f); 
 	
 
-	player->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), hitNormal, dt, testingVec);
-	player->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
-	player->movePos(velocity);
-	player->checkForStaticCollision(gameObjects);
+	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), hitNormal, dt, testingVec);
+	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
+	currentPlayer->movePos(velocity);
+	currentPlayer->checkForStaticCollision(gameObjects);
 
 
-	player->pickupItem(potion);
-	player->pickupItem(testBat);
-	player->pickupItem(component);
+	currentPlayer->pickupItem(potion);
+	currentPlayer->pickupItem(testBat);
+	currentPlayer->pickupItem(component);
 
+
+	//sending data to server
+	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
+	{
+		//client->sendToServerTEMPTCP(currentPlayer);
+		SendingDataEvent(client, currentPlayer, players);
+		serverStart = std::chrono::system_clock::now();
+	}
+
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId());
+	
+	
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->updateBuffer();
+	}
 	
 	//Physics related functions
 	physWolrd.update(dt);
@@ -319,7 +388,7 @@ GAMESTATE Game::Update()
 			std::cout << "Detected Component!\nID: " << comp->getId() << "\n";
 		}
 	}
-	if (player->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
+	if (currentPlayer->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
 	
 	//Debug keybinds
 	this->handleKeybinds();
@@ -328,6 +397,10 @@ GAMESTATE Game::Update()
 
 void Game::Render()
 {
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->draw();
+	}
 	//Render shadow maps
 	basicRenderer.lightPrePass();
 	drawShadows();

@@ -64,11 +64,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	GAMESTATE stateInfo = NOCHANGE;
 
 	MSG msg = {};
-
-	float clearColour[4]{ 0,0,0,0 };
-
-	ImGuiHelper imGuiHelper(client);
-	imGuiHelper.setupImGui(clearColour);
+	
 
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{

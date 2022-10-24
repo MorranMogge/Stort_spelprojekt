@@ -38,9 +38,6 @@
     <ClCompile Include="ImGuiHelper.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="MouseClass.cpp">
-      <Filter>MouseClass</Filter>
-    </ClCompile>
     <ClCompile Include="MouseEvent.cpp">
       <Filter>MouseClass</Filter>
     </ClCompile>
@@ -132,6 +129,11 @@
     </ClCompile>
     <ClCompile Include="BaseballBat.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="ClientHandler.cpp" />
+    <ClCompile Include="MouseClass.cpp" />
+    <ClCompile Include="PacketEventManager.cpp" />
+    <ClCompile Include="CircularBufferClient.cpp" />
+    <ClCompile Include="SendingDataEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -179,9 +181,6 @@
     </ClInclude>
     <ClInclude Include="ImGuiHelper.h">
       <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="MouseClass.h">
-      <Filter>MouseClass</Filter>
     </ClInclude>
     <ClInclude Include="MouseEvent.h">
       <Filter>MouseClass</Filter>
@@ -383,6 +382,14 @@
     </ClInclude>
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="..\Server\PacketsDataTypes.h" />
+    <ClInclude Include="ClientHandler.h" />
+    <ClInclude Include="MouseClass.h" />
+    <ClInclude Include="PacketEnum.h" />
+    <ClInclude Include="PacketEventManager.h" />
+    <ClInclude Include="CircularBufferClient.h" />
+    <ClInclude Include="PacketsDataTypes.h" />
+    <ClInclude Include="SendingDataEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

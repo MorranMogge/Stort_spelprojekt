@@ -1,11 +1,15 @@
 #pragma once
 #include "GameInclude.h"
 
+
 struct wirefameInfo
 {
 	DirectX::XMFLOAT3 wireframeClr;
 	float padding;
 };
+
+const int NROFPLAYERS = 1;
+static bool IFONLINE = false;
 
 class Game : public State
 {
@@ -13,6 +17,7 @@ private:
 	ID3D11DeviceContext* immediateContext;
 
 	ImGuiHelper imGui;
+
 	bool wireframe = true;
 	bool objectDraw = true;
 	bool drawDebug = true;
@@ -30,13 +35,27 @@ private:
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT3 grav;
 
+	std::chrono::time_point<std::chrono::system_clock> serverStart;
+	
+	float serverTimerLength =  1.f / 30.0f;
+	Client* client;
+
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
 
 	PhysicsWorld physWolrd;
-	SkyboxObj skybox;
+
+
+	PacketEventManager* packetEventManager;
+	std::vector<Player*> players;
+
+	//variables to handle packets
+	CircularBufferClient* circularBuffer;
+
+
 	Camera camera;
-	Player* player;
+	SkyboxObj skybox;
+	Player* currentPlayer;
 	GameObject* planet;
 	GameObject* testCube;
 	SpaceShip* spaceShip;
@@ -46,6 +65,7 @@ private:
 	Player* otherPlayer;
 
 	LightHandler ltHandler;
+	ImGuiHelper* imguiHelper;
 	PlayerVectors playerVecRenderer;
 
 	//Objects
@@ -62,7 +82,7 @@ private:
 	void updateBuffers();
 	void handleKeybinds();
 	DirectX::SimpleMath::Vector3 orientToPlanet(const DirectX::XMFLOAT3 &position);
-
+	HWND* window;
 
 public:
 	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window);

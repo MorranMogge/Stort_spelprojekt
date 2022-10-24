@@ -15,16 +15,18 @@ public:
 
 	bool hasItem(const std::string key);
 	ID3D11ShaderResourceView* getSrv(const std::string key);
-	bool getIndexMeshBuffers(const std::string key, ID3D11Buffer*& indexBuff, ID3D11Buffer*& vertexBuff);
+	bool getIndexMeshBuffers(const std::string key, ID3D11Buffer*& indexBuff, ID3D11Buffer*& vertexBuff, std::vector<int>& subMeshRanges, std::vector<int>& amountOfVertces);
 
 	void addSrv(std::string key, ID3D11ShaderResourceView* srv);
-	void addMeshBuffers(std::string key, ID3D11Buffer* vertexBuf, ID3D11Buffer* indexBuf);
+	void addMeshBuffers(std::string key, ID3D11Buffer* vertexBuf, ID3D11Buffer* indexBuf, std::vector<int>& subMeshRanges, std::vector<int>& amountOfVertces);
 private:
 
 	enum tupelOrder
 	{
 		INDEXBUFFER,
-		VERTEXBUFFER
+		VERTEXBUFFER,
+		SUBMESHRANGES,
+		VERTICESRANGES
 	};
 
 	std::unordered_map<std::string, ID3D11ShaderResourceView*> srvMap;
@@ -32,6 +34,7 @@ private:
 
 	std::tuple <ID3D11Buffer*, ID3D11Buffer*> meshTupel;
 
-	std::unordered_map<std::string, std::tuple <ID3D11Buffer*, ID3D11Buffer*>> meshMap;
-	std::unordered_map<std::string, std::tuple <ID3D11Buffer*, ID3D11Buffer*>>::iterator meshIt;
+	std::unordered_map<std::string, std::tuple <ID3D11Buffer*, ID3D11Buffer*, std::vector<int>, std::vector<int>>> meshMap;
+	std::unordered_map<std::string, std::tuple <ID3D11Buffer*, ID3D11Buffer*, std::vector<int>, std::vector<int>>>::iterator meshIt;
+	
 };

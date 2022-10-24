@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "GravityField.h"
 #include "DirectXMathHelper.h"
 

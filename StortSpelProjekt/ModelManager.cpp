@@ -46,7 +46,7 @@ bool ModelManager::makeSRV(ID3D11ShaderResourceView*& srv, std::string finalFile
 	return true;
 }
 
-void ModelManager::processNodes(aiNode* node, const aiScene*& scene)
+void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::string& filePath)
 {
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
@@ -55,8 +55,11 @@ void ModelManager::processNodes(aiNode* node, const aiScene*& scene)
 			this->diffuseMaps.push_back(this->bank.getSrv("Missing.png"));
 		}
 
-		aiMesh* mesh = scene->mMeshes[i];
-		meshes.push_back(readNodes(mesh, scene));
+		//printf("Number of bones: %d\n number vert: %d", scene->mMeshes()->)
+		aiMaterial* material = scene->mMaterials[scene->mMeshes[i]->mMaterialIndex];
+		//hï¿½r srv inlï¿½sning
+		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];		
+
 		if (mesh->HasBones())
 		{
 			for (int j = 0, length = mesh->mNumBones; j < length; j++)
@@ -77,15 +80,28 @@ void ModelManager::processNodes(aiNode* node, const aiScene*& scene)
 			this->loadBones(scene->mMeshes[i], i);
 		}
 
-		//printf("Number of bones: %d\n number vert: %d", scene->mMeshes()->)
+		
+		readNodes(mesh, scene);
+
 		aiMaterial* material = scene->mMaterials[scene->mMeshes[i]->mMaterialIndex];
-		//här srv inläsning
+		//hï¿½r srv inlï¿½sning
+
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+		{
+			
+		}
+
+		aiString diffuseName;
+		material->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0), diffuseName);
+		
+		std::cout << diffuseName.C_Str() << "\n";
 		aiString Path;
+		//if(material->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		if(material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
 			if (this->bank.hasItem(Path.data))
 			{
-				this->diffuseMaps.push_back(this->bank.getSrv(Path.data));
+				this->diffuseMaps.emplace_back(this->bank.getSrv(Path.data));
 				continue;
 			};
 
@@ -99,30 +115,23 @@ void ModelManager::processNodes(aiNode* node, const aiScene*& scene)
 			}
 			//give to bank
 			this->bank.addSrv(Path.data, tempSRV);
-			this->diffuseMaps.push_back(tempSRV);
+			this->diffuseMaps.emplace_back(tempSRV);
 		}
 	}
 
 	for (UINT i = 0; i < node->mNumChildren; i++)
 	{
-		processNodes(node->mChildren[i], scene);
+		processNodes(node->mChildren[i], scene, filePath);
 	}
 }
 
-Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene*& scene)
+void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<vertex> vertexTriangle;
 	std::vector<DWORD> indexTriangle;
 
-	float smallestX = 0.0f;
-	float smallestY = 0.0f;
-	float smallestZ = 0.0f;
-
-	float biggestX = 0.0f;
-	float biggestY = 0.0f;
-	float biggestZ = 0.0f;
-
 	vertex vertex;
+	
 
 	for (UINT i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -134,41 +143,87 @@ Mesh2* ModelManager::readNodes(aiMesh* mesh, const aiScene*& scene)
 		vertex.nor.y = mesh->mNormals[i].y;
 		vertex.nor.z = mesh->mNormals[i].z;
 
+		//vertex.tangent.x = mesh->mTangents[i].x;
+		//vertex.tangent.y = mesh->mTangents[i].y;
+		//vertex.tangent.z = mesh->mTangents[i].z;
+		
+
+
 		if (mesh->mTextureCoords[0])
 		{
 			vertex.uv.x = (float)mesh->mTextureCoords[0][i].x;
 			vertex.uv.y = (float)mesh->mTextureCoords[0][i].y;
 		}
 
-		vertexTriangle.push_back(vertex);
-
-		if (vertex.pos.x < smallestX || vertex.pos.y < smallestY || vertex.pos.z < smallestZ)
-		{
-			if (vertex.pos.x < smallestX) smallestX = vertex.pos.x;
-			if (vertex.pos.y < smallestY) smallestY = vertex.pos.y;
-			if (vertex.pos.z < smallestZ) smallestZ = vertex.pos.z;
-		}
-
-		if (vertex.pos.x > biggestX || vertex.pos.y > biggestY || vertex.pos.z > biggestZ)
-		{
-			if (vertex.pos.x > biggestX) biggestX = vertex.pos.x;
-			if (vertex.pos.y > biggestY) biggestY = vertex.pos.y;
-			if (vertex.pos.z > biggestZ) biggestZ = vertex.pos.z;
-		}
+		vertexTriangle.emplace_back(vertex);
+		dataForMesh.vertexTriangle.emplace_back(vertex);
 	}
+	
+	/*for (int i = 0; i < dataForMesh.vertexTriangle.size(); i += 3)
+	{
+		DirectX::XMFLOAT2 UV1 = dataForMesh.vertexTriangle[i].uv;
+		DirectX::XMFLOAT2 UV2 = dataForMesh.vertexTriangle[i+1].uv;
+		DirectX::XMFLOAT2 UV3 = dataForMesh.vertexTriangle[i+2].uv;
+
+		DirectX::XMFLOAT3 Pos1 = dataForMesh.vertexTriangle[i].pos;
+		DirectX::XMFLOAT3 Pos2 = dataForMesh.vertexTriangle[i+1].pos;
+		DirectX::XMFLOAT3 Pos3 = dataForMesh.vertexTriangle[i+2].pos;
+
+		DirectX::SimpleMath::Vector2 dAB = UV2;
+		dAB.x - UV1.x;
+		dAB.y - UV1.y;
+		
+		DirectX::SimpleMath::Vector2 dAC = UV3;
+		dAC.x - UV1.x;
+		dAC.y - UV1.y;
+
+		DirectX::XMFLOAT3 edge1 = Pos2;
+		edge1.x - Pos1.x;
+		edge1.y - Pos1.y;
+		edge1.z - Pos1.z;
+
+		DirectX::XMFLOAT3 edge2 = Pos3;
+		edge2.x - Pos1.x;
+		edge2.y - Pos1.y;
+		edge2.z - Pos1.z;
+
+		float f = 1.0f / (dAB.x * dAC.y - dAC.x * dAB.y);
+
+		DirectX::XMFLOAT3 tangent;
+		tangent.x = f * (dAC.y * edge1.x - dAB.y * edge2);
+	}*/
+
 
 	for (UINT i = 0; i < mesh->mNumFaces; i++)
 	{
 		aiFace face = mesh->mFaces[i];
 
 		for (UINT j = 0; j < face.mNumIndices; j++)
-			indexTriangle.push_back(face.mIndices[j]);
+		{
+			indexTriangle.emplace_back(face.mIndices[j]);
+			dataForMesh.indexTriangle.emplace_back(face.mIndices[j]);
+		}
 	}
+	
+	this->submeshRanges.emplace_back(indexTriangle.size());
+	this->amountOfvertices.emplace_back(vertexTriangle.size());
 
-	//smallestCoord = XMVectorSet(smallestX, smallestY, smallestZ, 0.0f);
-	//biggestCoord = XMVectorSet(biggestX, biggestY, biggestZ, 0.0f);
+}
 
-	return new Mesh2(GPU::device, vertexTriangle, indexTriangle);
+std::vector<ID3D11Buffer*> ModelManager::getBuff() const
+{
+	return this->vecIndexBuff;
+}
+
+void ModelManager::setDevice(ID3D11Device* device)
+{
+	this->device = device;
+}
+
+ModelManager::ModelManager()
+	:device(nullptr)
+{
+
 }
 
 void ModelManager::aiMatrixToXMmatrix(const aiMatrix4x4& in, DirectX::XMFLOAT4X4& out)
@@ -443,6 +498,11 @@ ModelManager::ModelManager(ID3D11Device* device)
 	this->bank.addSrv("Missing.png", tempSRV);
 }
 
+ModelManager::~ModelManager()
+{
+	
+}
+
 bool ModelManager::loadMeshData(const std::string& filePath)
 {
 	Assimp::Importer importer;
@@ -454,35 +514,62 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 		return false;
 	}
 
-	processNodes(pScene->mRootNode, pScene);
-
-	for (int i = 0; i < this->aniData.boneDataVec.size(); i++)
+	if (bank.hasItem(filePath) == true)
 	{
-		this->normalizeWeights(this->aniData.boneDataVec[i].Weights);
+		return false;
 	}
+
 	
-	this->parseNode(pScene);
-	this->parseAnimation(pScene);
-	aniData.rootNode;
-	aniData.animation;
+	processNodes(pScene->mRootNode, pScene, filePath);
+	
+	//skapa vertexBuffer
 
-	DirectX::XMMATRIX startMatrix = DirectX::XMMatrixIdentity();
-	DirectX::XMFLOAT4X4 startFloat;
-	DirectX::XMStoreFloat4x4(&startFloat, startMatrix);
-	this->aniData.boneVector;
-	int bp = 2;
+	ID3D11Buffer* vertexBuffer = {};
 
-	this->numberBone(pScene->mRootNode, -1, startFloat);
+	D3D11_BUFFER_DESC bufferDesc;
+	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	bufferDesc.ByteWidth = sizeof(vertex) * dataForMesh.vertexTriangle.size();
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDesc.CPUAccessFlags = 0;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
 
-	this->aniData.boneVector;
-	bp = 2;
+	D3D11_SUBRESOURCE_DATA data;
+	data.pSysMem = dataForMesh.vertexTriangle.data();
+	data.SysMemPitch = 0;
+	data.SysMemSlicePitch = 0;
+	device->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
+
+	//skapa indexBuffer
+	ID3D11Buffer* indexBuffer = {};
+
+	D3D11_BUFFER_DESC indexBufferDesc = {};
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * dataForMesh.indexTriangle.size();
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA indexBufferData;
+	indexBufferData.pSysMem = dataForMesh.indexTriangle.data();
+	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
+
+	bank.addMeshBuffers(filePath, vertexBuffer, indexBuffer, submeshRanges, amountOfvertices);
+
+	indexBuffer = {};
+	vertexBuffer = {};
+	this->submeshRanges.clear();
+	this->amountOfvertices.clear();
+	this->dataForMesh.indexTriangle.clear();
+	this->dataForMesh.vertexTriangle.clear();
 
 	return true;
 }
 
-std::vector<Mesh2*> ModelManager::getMeshes() const
+ID3D11ShaderResourceView* ModelManager::getSrv(const std::string key)
 {
-	return meshes;
+	return bank.getSrv(key);
 }
 
 std::vector<ID3D11ShaderResourceView*> ModelManager::getTextureMaps() const
@@ -508,4 +595,8 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath, AnimatedMesh
 	//gameObject.addData(this->boneDataVec, this->boneVec, this->boneIndexTraslator, this->scene, this->AnimationVec, this->assimpImp);
 
 	return true;
+}
+bool ModelManager::getMeshData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces)
+{
+	return bank.getIndexMeshBuffers(filePath, indexBuffer, vertexBuffer, submeshRanges, amountOfVertces);
 }

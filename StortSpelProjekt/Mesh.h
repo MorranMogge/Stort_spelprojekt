@@ -1,8 +1,9 @@
 #pragma once
 
-#include "OBJ.h"
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 
-#include <vector>
+#include "OBJ.h"
 
 #include "GPU.h"
 #include "MaterialLibrary.h"
@@ -13,7 +14,6 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "ConstantBuffer.h"
-#include <SimpleMath.h>
 
 
 class Mesh
@@ -22,11 +22,29 @@ class Mesh
 private:
 
 	std::vector<unsigned int> submeshVerCounts;
+	struct vertex
+	{
+		DirectX::XMFLOAT3 pos; // Position
+		DirectX::XMFLOAT2 uv; // UV coordination
+		DirectX::XMFLOAT3 nor; // Normal
 
+		vertex() {
+			pos = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };
+			uv = DirectX::XMFLOAT2{ 0.0f,0.0f };
+			nor = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };
+		};
+		vertex(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT2& uv, DirectX::XMFLOAT3& nor) : pos(pos), uv(uv), nor(nor) {};
+	};
 public:
 
 	VertexBuffer vertexBuffer;
 	IndexBuffer indexBuffer;
+
+	ID3D11Buffer* vertexBuff = nullptr;
+	ID3D11Buffer* indexBuff = nullptr;
+	std::vector<int> submeshRanges;
+	std::vector<int> amountOfVertices;
+
 
 	ConstantBuffer worldCB;
 	ConstantBuffer positionCB;
@@ -34,7 +52,7 @@ public:
 	std::vector<std::string> matKey;
 
 	DirectX::SimpleMath::Vector3 position;
-	DirectX::SimpleMath::Vector3 rotation;
+	DirectX::XMMATRIX rotation = DirectX::XMMatrixIdentity();
 	DirectX::SimpleMath::Vector3 scale{ 1.0f, 1.0f, 1.0f };
 
 	Bound bound;
@@ -44,10 +62,19 @@ public:
 	{
 		Load(obj);
 	}
+	Mesh(ID3D11Buffer* vertexBuff, ID3D11Buffer* indexBuff, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertices)
+	{
+		CalcBound();
+		this->amountOfVertices = amountOfVertices;
+		this->submeshRanges = submeshRanges;
+		this->vertexBuff = vertexBuff;
+		this->indexBuff = indexBuff;
+		CreateCB();
+	}
+	
 
 	void Load(OBJ& obj)
 	{
-		using namespace DirectX::SimpleMath;
 #pragma region LoadObj
 
 		std::vector<Vertex> vertices;
@@ -82,7 +109,7 @@ public:
 		std::vector<unsigned int> indices32;
 		std::vector<unsigned short> indices16;
 
-		const bool is16bit = vertices.size() > 65535;
+		const bool is16bit = vertices.size() < 65535;
 
 		//foreach vertex in submesh
 		for (auto& vertex : vertices)
@@ -139,6 +166,34 @@ public:
 		vertexBuffer.Create(finalVertices);
 		is16bit ? indexBuffer.Create(indices16) : indexBuffer.Create(indices32);
 		CreateCB();
+	}
+	Mesh(Mesh* other)
+	{
+		this->amountOfVertices = other->amountOfVertices;
+		this->submeshRanges = other->submeshRanges;
+		this->vertexBuff = other->vertexBuff;
+		this->indexBuff = other->indexBuff;
+	}
+
+	void draw(ID3D11ShaderResourceView* srv)
+	{
+
+		worldCB.BindToVS(0u);
+
+		UINT stride = sizeof(vertex);
+		UINT offset = 0;
+
+		int startIndex = 0;
+		int startVertex = 0;
+		GPU::immediateContext->PSSetShaderResources(0, 1, &srv);
+		GPU::immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuff, &stride, &offset);
+		GPU::immediateContext->IASetIndexBuffer(this->indexBuff, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+		for (int i = 0; i < submeshRanges.size(); i++)
+		{
+			GPU::immediateContext->DrawIndexed(submeshRanges[i], startIndex, startVertex);
+			startIndex += submeshRanges[i];
+			startVertex += this->amountOfVertices[i];
+		}
 	}
 
 	// without material
@@ -214,7 +269,6 @@ public:
 	}
 	void UpdateCB()
 	{
-		using namespace DirectX::SimpleMath;
 		using namespace DirectX;
 
 		static MatrixS worldS;
@@ -226,12 +280,12 @@ public:
 		//		0, 0, 1, position.z,
 		//		0, 0, 0, 1
 		//	};
-		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * (XMMatrixRotationZ(this->rotation.z * XM_PI) *  XMMatrixRotationX(this->rotation.x * XM_PI)) * XMMatrixRotationY(this->rotation.y * XM_PI) * XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
 
+		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * this->rotation * XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
 		worldCB.Update(&worldS, sizeof(MatrixS));
 
 		static VectorS positionS;
-		positionS.vector = Vector4(position);
+		positionS.vector = DirectX::SimpleMath::Vector4(position);
 		positionCB.Update(&positionS, sizeof(VectorS));
 	}
 	void CreateCB()
@@ -250,5 +304,4 @@ public:
 		bound.aabb.Center = bound.center + position;
 		bound.aabb.Extents = bound.width;
 	}
-
 };

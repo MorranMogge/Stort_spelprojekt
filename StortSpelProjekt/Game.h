@@ -20,6 +20,8 @@
 #include "LightHandler.h"
 #include "Potion.h"
 #include "AnimatedMesh.h"
+#include "GameInclude.h"
+#include "ModelManager.h"
 
 struct wirefameInfo
 {
@@ -30,14 +32,26 @@ struct wirefameInfo
 class Game : public State
 {
 private:
-	ID3D11DeviceContext* immediateContext;
 
+	ID3D11Buffer* vBuff;
+	ID3D11Buffer* iBuff;
+	Mesh* tmpMesh;
+	std::vector<int> subMeshRanges;
+	std::vector<int> verticies;
+	ID3D11ShaderResourceView* tempSRV;
+
+
+	ID3D11DeviceContext* immediateContext;
+	ModelManager manager;
 	ImGuiHelper imGui;
 	bool wireframe = true;
 	bool objectDraw = true;
+	bool drawDebug = true;
 	wirefameInfo reactWireframeInfo;
 	ID3D11Buffer* wireBuffer;
 	D3D11_MAPPED_SUBRESOURCE subData;
+
+	std::unique_ptr<DirectX::GamePad> gamePad;
 
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> start;
@@ -50,37 +64,42 @@ private:
 	GravityField planetGravityField;
 
 	PhysicsWorld physWolrd;
-
+	SkyboxObj skybox;
 	Camera camera;
-	Player player;
+	Player* player;
+	Player* tmp;
+	Potion* tmp2;
 	GameObject* planet;
-	Potion potion;
-
+	GameObject* testCube;
+	SpaceShip* spaceShip;
+	Potion* potion;			//not in use
+	BaseballBat* testBat;
+	Player* otherPlayer;
 
 	LightHandler ltHandler;
+	PlayerVectors playerVecRenderer;
 
 	//Objects
-	std::vector<GameObject> gameObjects;
+	std::vector<GameObject*> gameObjects;
+	std::vector<ParticleEmitter> ptEmitters;
+	
+	
 
 	void loadObjects();
-	void drawObjects();
+	void drawShadows();
+	void drawObjects(bool drawDebug);
+	void drawParticles();
 	bool setUpWireframe();
 	void updateBuffers();
+	void handleKeybinds();
+	DirectX::SimpleMath::Vector3 orientToPlanet(const DirectX::XMFLOAT3 &position);
 
-	float pos[3];
-
-	AnimatedMesh test;
-
-	//Variables for the mouse movement
-	MouseClass* mouse;
-	HWND* window;
 
 public:
-	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window);
+	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window);
 	virtual ~Game() override;
 
 	// Inherited via State
 	virtual GAMESTATE Update() override;
 	virtual void Render() override;
 };
-

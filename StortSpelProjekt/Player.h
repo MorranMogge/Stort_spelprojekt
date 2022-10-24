@@ -24,17 +24,24 @@ private:
 	DirectX::SimpleMath::Vector3 forwardVector = DEFAULT_FORWARD;
 
 	const DirectX::XMVECTOR NORTH_EAST = DirectX::XMVectorSet(1.0f, 1.0f, 0.0f, 0.0f);
+	const DirectX::XMVECTOR NORTH_WEST = DirectX::XMVectorSet(-1.0f, 1.0f, 0.0f, 0.0f);
+	const DirectX::XMVECTOR SOUTH_EAST = DirectX::XMVectorSet(1.0f, -1.0f, 0.0f, 0.0f);
+	const DirectX::XMVECTOR SOUTH_WEST = DirectX::XMVectorSet(-1.0f, -1.0f, 0.0f, 0.0f);
+	DirectX::XMVECTOR northEastVector = NORTH_EAST;
+	DirectX::XMVECTOR northWestVector = NORTH_WEST;
+	DirectX::XMVECTOR southEastVector = SOUTH_EAST;
+	DirectX::XMVECTOR southWestVector = SOUTH_WEST;
 
 	void rotate();
-	bool movingCross();
+	bool movingCross(const DirectX::XMVECTOR& cameraForward, float& deltaTime);
 
-	//Other shit
+	//Other variables
 	const float speedConstant = 100.f;
 	int repairCount = 0;
 	Item* holdingItem;
 	int health;
 
-	//Controller shits
+	//Controller variables
 	float posX = 0.0f;
 	float posY = 0.0f;
 	float totalPos = 0.0f;

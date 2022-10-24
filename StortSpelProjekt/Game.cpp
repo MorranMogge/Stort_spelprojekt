@@ -7,12 +7,12 @@
 
 void Game::loadObjects()
 {
-	float planetSize = 20.f;
+	float planetSize = 40.f;
 	//Here we can add base object we want in the beginning of the game
-	planet = new GameObject("../Meshes/Sphere", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
+	planet = new GameObject("../Meshes/Sphere", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(planetSize, planetSize, planetSize));
 	currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
 	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2);
-	spaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
+	spaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(20, 29, 20), orientToPlanet(DirectX::SimpleMath::Vector3(20, 35, 20)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
 	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4);
 	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 	otherPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6);
@@ -57,8 +57,8 @@ void Game::loadObjects()
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	testBat->setPlayer(currentPlayer);
 	testBat->setTestObj(gameObjects);
-	player->setPhysComp(physWolrd.getPlayerBox());
-	player->getPhysComp()->setParent(player);
+	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
+	currentPlayer->getPhysComp()->setParent(currentPlayer);
 }
 
 void Game::drawShadows()
@@ -256,12 +256,11 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	currentTime = std::chrono::system_clock::now();
 	lastUpdate = currentTime;
 	gamePad = std::make_unique<DirectX::GamePad>();
-	playerVecRenderer.setPlayer(player);
+	playerVecRenderer.setPlayer(currentPlayer);
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 	serverStart = std::chrono::system_clock::now();
 	this->window = &window;
-	start = std::chrono::system_clock::now();
 
 	if (IFONLINE)
 	{
@@ -316,22 +315,20 @@ GAMESTATE Game::Update()
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 
 	//Calculate gravity factor
-	grav = planetGravityField.calcGravFactor(player->getPosV3());
+	grav = planetGravityField.calcGravFactor(currentPlayer->getPosV3());
 	additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
 
 	//Player functions
 	//Raycasting
 	DirectX::XMFLOAT3 hitPos(0.f, 0.f, 0.f);
 	DirectX::XMFLOAT3 hitNormal(grav.x, grav.y, grav.z);
-	bool testingVec = this->player->raycast(gameObjects, hitPos, hitNormal);
-	if (testingVec || player->getHitByBat()) velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f); 
+	bool testingVec = this->currentPlayer->raycast(gameObjects, hitPos, hitNormal);
+	if (testingVec || currentPlayer->getHitByBat()) velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 	
-
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), hitNormal, dt, testingVec);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
 	currentPlayer->movePos(velocity);
 	currentPlayer->checkForStaticCollision(gameObjects);
-
 
 	currentPlayer->pickupItem(potion);
 	currentPlayer->pickupItem(testBat);
@@ -357,7 +354,7 @@ GAMESTATE Game::Update()
 	//Physics related functions
 	physWolrd.update(dt);
 
-	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
+	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->update();
@@ -365,7 +362,7 @@ GAMESTATE Game::Update()
 	//Here you can write client-server related functions?
 
 	//Updates gameObject physics components
-	camera.moveCamera(player->getPosV3(), player->getRotationMX(), dt);
+	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
 	for (int i = 1; i < gameObjects.size(); i++)
 	{
 		if (gameObjects[i]->getId() != this->spaceShip->getId())

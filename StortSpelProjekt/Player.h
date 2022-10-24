@@ -3,8 +3,11 @@
 #include "GameObject.h"
 #include "Input.h"
 #include "Potion.h"
+#include "TimeStruct.h"
 #include <GamePad.h>
 #include <iostream>
+
+#define FORCE 2500
 
 class Item;
 
@@ -30,6 +33,9 @@ private:
 	int repairCount = 0;
 	Item* holdingItem;
 	int health;
+	float speed;
+	bool dedge = false;
+	TimeStruct timer;
 
 	//Controller shits
 	float posX = 0.0f;
@@ -37,11 +43,12 @@ private:
 	float totalPos = 0.0f;
 	float throttle = 0.0f;
 
+	void handleItems();
 public:
 	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
 	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
 	void handleInputs(); 
-	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float& deltaTime);
+	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime,  const bool& testingVec);
 	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float& deltaTime);
 	bool getPickup(GameObject *pickup);
 	bool pickupItem(Item *itemToPickup);
@@ -52,11 +59,16 @@ public:
 	DirectX::XMVECTOR getForwardVec() const;
 	DirectX::XMVECTOR getRightVec() const;
 	DirectX::XMMATRIX getRotationMX() const;
+	reactphysics3d::Vector3 getRayCastPos()const;
 
+	void hitByBat(const reactphysics3d::Vector3& force);
 	void addItem(Item* itemToHold);
 	void addHealth(const int& healthToIncrease);
 	void releaseItem();
+	bool checkForStaticCollision(const std::vector<GameObject*>& gameObjects);
+	bool raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	bool repairedShip() const;
+	bool getHitByBat()const;
 	void update();
 };

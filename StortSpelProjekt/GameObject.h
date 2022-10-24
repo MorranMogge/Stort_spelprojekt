@@ -42,6 +42,7 @@ public:
 	int getId();
 	bool withinBox(GameObject *object ,float x, float y, float z) const;
 	bool withinRadious(GameObject* object, float radius) const;
+	void updatePhysCompRotation();
 	virtual void draw();
 	virtual void update(); //This updates the hitboxes
 };

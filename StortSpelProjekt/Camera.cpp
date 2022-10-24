@@ -48,8 +48,6 @@ Camera::~Camera()
 
 void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const float& deltaTime)
 {
-	this->deltaTime = deltaTime;
-
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation * DirectX::XM_PI);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation * DirectX::XM_PI);
 	upVector = XMVector3TransformCoord(DEFAULT_UP, playerRotation * DirectX::XM_PI);

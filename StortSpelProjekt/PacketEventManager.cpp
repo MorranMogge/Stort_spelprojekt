@@ -20,6 +20,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		testPosition* tst = nullptr;
 		ComponentData* compData = nullptr;
 		SpawnComponent* spawnComp = nullptr;
+		PositionRotation* prMatrixData = nullptr;
 
 		switch (packetId)
 		{
@@ -60,6 +61,17 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			std::cout << "Received SpawnComponent id: " << std::to_string(spawnComp->ComponentId) << std::endl;
 			break;
 		
+		case PacketType::POSITIONROTATION:
+			prMatrixData = circularBuffer->readData<PositionRotation>();
+			for (int i = 0; i < players.size(); i++)
+			{
+				if (playerId != i)
+				{
+					players[i]->setMatrix(prMatrixData->matrix);
+				}
+			}
+
+			break;
 		}
 	}
 }

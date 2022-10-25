@@ -15,7 +15,7 @@
 #include "Component.h"
 #include "SpawnComponent.h"
 
-const short MAXNUMBEROFPLAYERS = 1;
+const short MAXNUMBEROFPLAYERS = 2;
 std::mutex mutex;
 
 struct userData
@@ -260,12 +260,26 @@ int main()
 			int packetId = circBuffer->peekPacketId();
 			testPosition* tst = nullptr;
 			ComponentData* compData = nullptr;
-
+			PositionRotation* prMatrixData = nullptr;
 
 			switch (packetId)
 			{
 			default:
 				break;
+
+			case PacketType::POSITIONROTATION:
+				prMatrixData = circBuffer->readData<PositionRotation>();
+
+				for (int i = 0; i < players.size(); i++)
+				{
+					if (i == prMatrixData->playerId)
+					{
+						data.users[i].playa.setMatrix(prMatrixData->matrix);
+						break;
+					}
+				}
+				break;
+
 			case PacketType::POSITION:
 				tst = circBuffer->readData<testPosition>();
 				for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
@@ -295,11 +309,10 @@ int main()
 		//spawns a component when the timer is done
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponent)
 		{
-			ComponentData cData = SpawnOneComponent(components);
-			for (int i = 0; i < components.size(); i++)
-			{
-				sendBinaryDataAllPlayers(cData, data);
-			}
+			SpawnComponent cData = SpawnOneComponent(components);
+			std::cout << "componentId: " << std::to_string(cData.ComponentId) << std::endl;
+			sendBinaryDataAllPlayers(cData, data);
+			startComponentTimer = std::chrono::system_clock::now();
 		}
 
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
@@ -310,6 +323,7 @@ int main()
 				testPosition pos;
 				
 				pos.packetId = PacketType::POSITION;
+				
 				pos.x = data.users[i].playa.getposition('x');
 				pos.y = data.users[i].playa.getposition('y');
 				pos.z = data.users[i].playa.getposition('z');
@@ -327,20 +341,24 @@ int main()
 				ComponentData compData;
 				
 				compData.packetId = PacketType::COMPONENTPOSITION;
+				compData.ComponentId = i;
 				compData.inUseBy = components[i].getInUseById();
+				compData.x = components[i].getposition('x');
+				compData.x = components[i].getposition('y');
+				compData.x = components[i].getposition('z');
 				//if its in use by a player it will get the players position
-				if (compData.inUseBy >= 0 && compData.inUseBy <= MAXNUMBEROFPLAYERS)
+				for (int j = 0; j < players.size(); j++)
 				{
-					compData.x = players[i].getposition('x');
-					compData.x = players[i].getposition('y');
-					compData.x = players[i].getposition('z');
+					if (compData.inUseBy >= 0 && compData.inUseBy <= MAXNUMBEROFPLAYERS)
+					{
+						compData.x = players[j].getposition('x');
+						compData.x = players[j].getposition('y');
+						compData.x = players[j].getposition('z');
+						break;
+					}
+					
 				}
-				else
-				{
-					compData.x = components[i].getposition('x');
-					compData.x = components[i].getposition('y');
-					compData.x = components[i].getposition('z');
-				}
+				
 				sendBinaryDataAllPlayers<ComponentData>(compData, data);
 			}
 

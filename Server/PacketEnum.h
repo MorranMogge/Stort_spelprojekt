@@ -2,7 +2,7 @@
 enum PacketType
 {
 	ERROR1 = -1,
-
+	POSITIONROTATION = 3,
 	POSITION = 4,
 	COMPONENTPOSITION = 5,
 	PACKETID = 10,

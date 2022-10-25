@@ -1,5 +1,13 @@
 #pragma once
 
+//enum = 3
+struct PositionRotation
+{
+	int packetId;
+	int playerId;
+	DirectX::XMFLOAT4X4 matrix;
+};
+
 //enum = 4
 struct testPosition
 {

@@ -14,6 +14,12 @@ void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Play
 	t.z = currentPlayer->getPos().z;
 	client->sendStuff<testPosition>(t);
 
+	PositionRotation pr;
+	pr.packetId = PacketType::POSITIONROTATION;
+	pr.playerId = client->getPlayerId();
+	pr.matrix = currentPlayer->getMatrix();
+	client->sendStuff<PositionRotation>(pr);
+
 	//ComponentData c;
 	//c.ComponentId = 0;
 	//c.inUseBy = -1;

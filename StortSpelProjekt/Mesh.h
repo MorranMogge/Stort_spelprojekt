@@ -22,7 +22,7 @@ class Mesh
 private:
 
 	std::vector<unsigned int> submeshVerCounts;
-
+	DirectX::XMFLOAT4X4 matrix;
 public:
 
 	VertexBuffer vertexBuffer;
@@ -210,6 +210,11 @@ public:
 	void AddSubmeshVertexCount(const unsigned int count)
 	{
 		submeshVerCounts.emplace_back(count);
+	}
+	void setMatrix(DirectX::XMFLOAT4X4 matrix)
+	{
+		this->matrix = matrix;
+		positionCB.Update(&this->matrix, sizeof(MatrixS));
 	}
 	void UpdateCB()
 	{

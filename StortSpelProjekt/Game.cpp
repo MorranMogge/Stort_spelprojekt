@@ -317,10 +317,10 @@ GAMESTATE Game::Update()
 	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId());
 	
 	
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->updateBuffer();
-	}
+	//for (int i = 0; i < players.size(); i++)
+	//{
+	//	players[i]->updateBuffer();
+	//}
 	
 	//Player, camera & physworld functions
 	currentPlayer->pickupItem(potion);

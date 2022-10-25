@@ -130,6 +130,24 @@ DirectX::XMFLOAT3 GameObject::getScale() const
 	return this->scale;
 }
 
+DirectX::XMFLOAT4X4 GameObject::getMatrix() const
+{
+	DirectX::XMFLOAT4X4 temp;
+	DirectX::XMStoreFloat4x4(&temp, DirectX::XMMatrixTranspose({ (DirectX::XMMatrixScaling(scale.x, scale.y, scale.z)
+		* this->rotation * DirectX::XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
+	return temp;
+}
+
+void GameObject::setMatrix(DirectX::XMFLOAT4X4 matrix)
+{
+	this->mesh->setMatrix(matrix);
+}
+
+void GameObject::updateMatrixOnline()
+{
+	
+}
+
 Bound* GameObject::getBounds() const
 {
 	return &this->mesh->bound; //funkar??

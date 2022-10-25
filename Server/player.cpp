@@ -27,6 +27,16 @@ float player::getposition(char whichPos) const
 	}
 }
 
+void player::setMatrix(DirectX::XMFLOAT4X4 matrix)
+{
+	this->matrix = matrix;
+}
+
+DirectX::XMFLOAT4X4 player::getMatrix() const
+{
+	return this->matrix;
+}
+
 void player::setPosition(float pos[3])
 {
 	this->xPos = pos[0];

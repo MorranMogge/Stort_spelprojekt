@@ -193,11 +193,14 @@ DirectX::XMFLOAT3 GameObject::getRotOrientedToGrav() const
 
 	if (this->activeField != nullptr)
 	{
-		Vector3 yAxis(this->activeField->calcGravFactor(this->position) * -1);
+		Vector3 yAxis( this->activeField->calcGravFactor(position) * -1);
+
 		Vector3 zAxis = yAxis.Cross({ 0, 0, 1 });
 		zAxis.Normalize();
+
 		Vector3 xAxis = yAxis.Cross(zAxis);
 		xAxis.Normalize();
+
 		finalRot = Quaternion::CreateFromRotationMatrix(Matrix(xAxis, yAxis, zAxis)).ToEuler();
 	}
 	else

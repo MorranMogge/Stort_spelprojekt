@@ -2,7 +2,17 @@
 #include "Game.h"
 #include "DirectXMathHelper.h"
 
+/*enum ObjID
+{
+	PLANET,
+	PLAYER,
+	ROCKET,
+	BAT,
+	POTION,
+	GRENADE,
+	COMPONENT,
 
+};*/
 
 void Game::loadObjects()
 {
@@ -14,9 +24,9 @@ void Game::loadObjects()
 	player = new Player("../Meshes/pinto", Vector3(22, 12, -22), Vector3(0.0f, 0.0f, 0.0f), 1);
 	potion = new Potion("../Meshes/potion", Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), 2, &planetGravityField);
 	Vector3 shipPos(10, 14, 10);
-	DirectX::SimpleMath::Vector3 shipPos2(14, 10, 10);
-	spaceShipRed = new SpaceShip(shipPos, orientToPlanet(shipPos), 3, 0, &planetGravityField, Vector3(2, 2, 2));
-	spaceShipBlue = new SpaceShip(shipPos2, orientToPlanet(shipPos2), 3, 1, &planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
+	Vector3 shipPos2(14, 10, 10);
+	spaceShipRed = new SpaceShip(shipPos, 3, 0, &planetGravityField, Vector3(2, 2, 2));
+	spaceShipBlue = new SpaceShip(shipPos2, 3, 1, &planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
 	testBat = new BaseballBat("../Meshes/bat", Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), 4, &planetGravityField);
 	testCube = new GameObject("../Meshes/Player", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), 6);
@@ -223,7 +233,6 @@ Game::~Game()
 			delete this->gameObjects.at(i);
 		}
 	}
-	delete testBilboard;
 	wireBuffer->Release();
 }
 
@@ -253,9 +262,13 @@ GAMESTATE Game::Update()
 	//Updates gameObject physics components
 	for (int i = 1; i < gameObjects.size(); i++)
 	{
-		if (gameObjects.at(i)->getId() != this->spaceShipRed->getId())
+		//get object id
+		int id = gameObjects.at(i)->getId();
+		std::cout << "obj id: " << id << std::endl;
+
+		if (id != this->spaceShipRed->getId())
 		{
-			gameObjects[i]->update();//->getPhysComp()->updateParent();
+			gameObjects[i]->update();
 		}
 		
 	}
@@ -266,14 +279,25 @@ GAMESTATE Game::Update()
 	//Check winstate
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		if (i > 0 && spaceShipRed->detectedComponent(gameObjects.at(i)))
+		//get object id
+		int id = gameObjects.at(i)->getId();
+
+		//If not spaceship & not planet
+		if (id != spaceShipRed->getId() && id > 0)
 		{
-			if (gameObjects.at(i)->getId() == this->testBat->getId())
-			{
-				std::cout << "detected: " << gameObjects.at(i)->getId() << std::endl;
-				std::cout << "detected: Bat!" << std::endl;
-			}
+
 		}
+
+
+
+		//if (i > 0 && spaceShipRed->detectedComponent(gameObjects.at(i)) && gameObjects.at(i)->getId() != spaceShipRed->getId())
+		//{
+		//	if (gameObjects.at(i)->getId() == this->testBat->getId())
+		//	{
+		//		std::cout << "detected: " << gameObjects.at(i)->getId() << std::endl;
+		//		std::cout << "detected: Bat!" << std::endl;
+		//	}
+		//}
 	}
 	if (player->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
 	
@@ -286,7 +310,6 @@ void Game::Render()
 {
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
 	start = std::chrono::system_clock::now();
-
 
 	//Render shadow maps
 	basicRenderer.lightPrePass();
@@ -315,15 +338,12 @@ void Game::Render()
 
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);
-	
-	//drawParticles();
-
+	//drawParticles();	//not in use, intended for drawing particles in game.cpp
 	this->potion->drawParticles();
 	this->testBat->drawParticles();
-	//this->ptEmitters.at(0).BindAndDraw();
 	basicRenderer.geometryUnbind();
 	
-	//!!!!require last in passes
+	//Render UI (needs to render last)
 	ui.Draw();
 }
 

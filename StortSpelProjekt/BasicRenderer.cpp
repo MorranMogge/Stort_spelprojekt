@@ -178,7 +178,7 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadVertexShader(device, bill_vShader, vShaderByteCode, "Bilboard_VS"))			return false;
 	if (!LoadPixelShader(device, bill_pShader, "Bilboard_PS"))								return false;
 	if (!LoadGeometryShader(device, bill_gShader, "Bilboard_GS"))							return false;
-
+	if (!CreatePT_DSState(PT_dsState))														return false;
 	
 
 	SetViewport(viewport, WIDTH, HEIGHT);
@@ -228,6 +228,7 @@ void BasicRenderer::setUpScene(Camera& stageCamera)
 void BasicRenderer::geometryPass(Camera& stageCamera)
 {
 	//re-use same depth buffer as geometry pass.
+	immediateContext->OMSetDepthStencilState(PT_dsState,0);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 	immediateContext->CSSetShader(pt_UpdateShader, nullptr, 0);							//Set ComputeShader
 	immediateContext->VSSetShader(pt_vShader, nullptr, 0);								//SetVTXShader
@@ -292,6 +293,7 @@ void BasicRenderer::geometryUnbind()
 	ID3D11BlendState* nullBlendstate{ nullptr };
 
 	//Unbind shader & UAV, Reset Topology
+	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
 	GPU::immediateContext->GSSetShader(nullShader, nullptr, 0);													//Unbinding
 	GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);						//Reset Topology
 	GPU::immediateContext->CSSetUnorderedAccessViews(0, 1, &nullUav, nullptr);									//Unbind UAV

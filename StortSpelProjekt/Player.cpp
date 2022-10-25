@@ -711,6 +711,7 @@ DirectX::XMVECTOR Player::getRightVec() const
 
 DirectX::XMFLOAT4X4 Player::getRotationMX()
 {
+	XMStoreFloat4x4(&rotationFloat, rotationMX);
 	return this->rotationFloat;
 }
 

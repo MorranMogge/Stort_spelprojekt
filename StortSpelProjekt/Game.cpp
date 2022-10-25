@@ -17,7 +17,8 @@ void Game::loadObjects()
 	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 	otherPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6);
 	component = new Component("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2);
-
+	grenade = new Grenade("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2);
+	
 
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
@@ -26,6 +27,7 @@ void Game::loadObjects()
 	physWolrd.addPhysComponent(component, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
 	physWolrd.addPhysComponent(spaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3*0.75f, 0.75f));
+	physWolrd.addPhysComponent(grenade, reactphysics3d::CollisionShapeName::BOX);
 	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 	spaceShip->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 	spaceShip->updatePhysCompRotation();
@@ -44,6 +46,7 @@ void Game::loadObjects()
 	gameObjects.emplace_back(testBat);
 	gameObjects.emplace_back(otherPlayer);
 	gameObjects.emplace_back(component);
+	gameObjects.emplace_back(grenade);
 
 
 	for (int i = 0; i < 10; i++)
@@ -57,6 +60,7 @@ void Game::loadObjects()
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	testBat->setPlayer(currentPlayer);
 	testBat->setTestObj(gameObjects);
+	grenade->setGameObjects(gameObjects);
 	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
 }
@@ -333,7 +337,9 @@ GAMESTATE Game::Update()
 	currentPlayer->pickupItem(potion);
 	currentPlayer->pickupItem(testBat);
 	currentPlayer->pickupItem(component);
+	currentPlayer->pickupItem(grenade);
 
+	grenade->updateExplosionCheck();
 
 	//sending data to server
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())

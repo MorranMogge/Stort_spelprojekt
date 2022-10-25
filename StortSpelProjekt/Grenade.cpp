@@ -6,6 +6,7 @@
 
 void Grenade::explode()
 {
+	std::cout << "THE GRENADE EXPLODED\n";
 	int iterations = (int)gameObjects.size();
 	for (int i = 0; i < iterations; i++)
 	{
@@ -21,11 +22,12 @@ void Grenade::explode()
 			scalarMultiplicationXMFLOAT3(newForce, explosionRange);
 
 			//Add force to object
-			Player* hitPlayer = dynamic_cast<Player*>(this->physComp->getParent());
+			Player* hitPlayer = dynamic_cast<Player*>(gameObjects[i]);
 			if (hitPlayer != nullptr) hitPlayer->hitByBat(reactphysics3d::Vector3(explosionRange.x, explosionRange.y, explosionRange.z));
-			else physComp->applyForceToCenter(reactphysics3d::Vector3(explosionRange.x, explosionRange.y, explosionRange.z));
+			else gameObjects[i]->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(explosionRange.x, explosionRange.y, explosionRange.z));
 		}
 	}
+	this->destructionIsImminent = false;
 }
 
 Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
@@ -50,4 +52,5 @@ void Grenade::setGameObjects(const std::vector<GameObject*>& gameObjects)
 void Grenade::useItem()
 {
 	this->destructionIsImminent = true;
+	timer.resetStartTime();
 }

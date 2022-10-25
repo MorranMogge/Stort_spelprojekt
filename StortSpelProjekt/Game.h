@@ -63,6 +63,7 @@ private:
 	Component* component;
 	BaseballBat* testBat;
 	Player* otherPlayer;
+	Grenade* grenade;
 
 	LightHandler ltHandler;
 	ImGuiHelper* imguiHelper;

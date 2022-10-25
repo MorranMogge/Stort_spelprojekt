@@ -20,6 +20,7 @@ private:
 	ID3D11Texture2D* dsTexture;
 	ID3D11SamplerState* sampler;
 	ID3D11DepthStencilState* dsState;
+	ID3D11DepthStencilState* PT_dsState;
 	
 	ID3D11InputLayout* inputLayout;
 	ID3D11VertexShader* vShader;

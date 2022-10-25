@@ -139,6 +139,17 @@ bool CreateDSState(ID3D11DepthStencilState*&dss)
 	return !FAILED(hr);
 }
 
+bool CreatePT_DSState(ID3D11DepthStencilState*& dss)
+{
+	D3D11_DEPTH_STENCIL_DESC dssdesc = {};
+	dssdesc.DepthEnable = true;
+	dssdesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
+	dssdesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_ALWAYS;
+	HRESULT hr = GPU::device->CreateDepthStencilState(&dssdesc, &dss);
+
+	return !FAILED(hr);
+}
+
 void SetViewport(D3D11_VIEWPORT& viewport, const UINT& width, const UINT& height)
 {
 	viewport.TopLeftX = 0;

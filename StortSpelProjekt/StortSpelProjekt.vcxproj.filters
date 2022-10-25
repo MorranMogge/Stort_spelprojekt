@@ -127,9 +127,6 @@
     <ClCompile Include="SpaceShip.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="BaseballBat.cpp">
-      <Filter>Game-States</Filter>
-    </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>Game-States</Filter>
     </ClCompile>
@@ -147,6 +144,8 @@
     </ClCompile>
     <ClCompile Include="GuiHandler.cpp">
       <Filter>GUI</Filter>
+    <ClCompile Include="BaseballBat.cpp">
+      <Filter>GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -394,9 +393,6 @@
     <ClInclude Include="SpaceShip.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="BaseballBat.h">
-      <Filter>Game-States</Filter>
-    </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>Game-States</Filter>
     </ClInclude>
@@ -414,6 +410,8 @@
     </ClInclude>
     <ClInclude Include="GuiHandler.h">
       <Filter>GUI</Filter>
+    <ClInclude Include="BaseballBat.h">
+      <Filter>GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,17 +2,20 @@
 #include "SpaceShip.h"
 
 
-SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
-	:GameObject(useMesh, pos, rot, id, field, scale), compToComplete(nrofComp)
+SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
+	:GameObject(useMesh, pos, DirectX::XMFLOAT3(0,0,0), id, field, scale), compToComplete(nrofComp)
 {
-	//Bilboard test
+	//Set rotation to gravity field
+	this->setRot(this->getRotOrientedToGrav());
+
+	//Icon initiation
 	int constant = 19;
 	std::vector<std::string> filenames{ "p0.png", "p1.png", "p2.png", "p3.png", "p4.png" };
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-
 	this->rocketStatusQuad = new BilboardObject(filenames, test);
 
+	//Team switch //should switch used texture!
 	switch (team)
 	{
 	case 0: 
@@ -22,17 +25,20 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX:
 	}
 }
 
-SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
-	:GameObject("../Meshes/rocket", pos, rot, id, field, scale), compToComplete(nrofComp)
+SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
+	:GameObject("../Meshes/rocket", pos, DirectX::XMFLOAT3(0, 0, 0), id, field, scale), compToComplete(nrofComp)
 {
-	//Bilboard test
+	//Set rotation to gravity field
+	this->setRot(this->getRotOrientedToGrav());
+
+	//Icon initiation
 	int constant = 19;
 	std::vector<std::string> filenames{ "p0.png", "p1.png", "p2.png", "p3.png", "p4.png" };
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-
 	this->rocketStatusQuad = new BilboardObject(filenames, test);
 
+	//Team switch
 	switch (team)
 	{
 	case 0:
@@ -50,6 +56,11 @@ SpaceShip::~SpaceShip()
 		delete this->components.at(i);
 	}
 	delete this->rocketStatusQuad;
+}
+
+int SpaceShip::getNrOfComponents()
+{
+	 return (int)components.size(); 
 }
 
 bool SpaceShip::detectedComponent(GameObject* objectToCheck)

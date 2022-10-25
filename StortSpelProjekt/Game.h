@@ -49,8 +49,8 @@ private:
 	std::vector<GameObject*> gameObjects;
 	std::vector<Item*> items;
 	std::vector<ParticleEmitter> ptEmitters;
-	BilboardObject* testBilboard;
-
+	
+	//HUD
 	HudUI ui;
 	
 

@@ -214,13 +214,17 @@ public:
 	void setMatrix(DirectX::XMFLOAT4X4 matrix)
 	{
 		this->matrix = matrix;
+
+
+
+	}
+	void updateONLINE()
+	{
 		static MatrixS worldS;
 		DirectX::XMMATRIX xm = DirectX::XMLoadFloat4x4(&matrix);
-		DirectX::XMStoreFloat4x4(&worldS.matrix,  xm );
+		DirectX::XMStoreFloat4x4(&worldS.matrix, xm);
+
 		worldCB.Update(&worldS, sizeof(MatrixS));
-
-
-
 	}
 	void UpdateCB()
 	{

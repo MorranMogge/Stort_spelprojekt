@@ -15,8 +15,8 @@ private:
 	DirectX::SimpleMath::Vector3 resultVector;
 	DirectX::XMMATRIX rotationMX;
 	bool controllerConnected = true;
-	float jumpAllowed = 10.f;
-	float jumpHeight = 10.f;
+	float jumpAllowed = 200.f;
+	float jumpHeight = 200.f;
 
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);

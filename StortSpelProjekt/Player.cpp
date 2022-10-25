@@ -186,15 +186,14 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
 	//Jumping
-	if (jumpHeight < jumpAllowed)
+	if (jumpHeight >= jumpAllowed && Input::KeyPress(KeyCode::SPACE))
 	{
-		position += normalVector * jumpHeight;
-		jumpHeight++;
+		jumpHeight = 0.f;
 	}
-	else
+	else if (jumpHeight < jumpAllowed)
 	{
-		if (jumpHeight > 70.f && Input::KeyPress(KeyCode::SPACE)) jumpHeight = 0.f;
-		else jumpHeight++;
+		position += normalVector * jumpHeight * deltaTime;
+		jumpHeight += 3000.f * deltaTime;
 	}
 
 	//Running
@@ -349,7 +348,7 @@ bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float d
 		totalPos = abs(posX) + posY;
 		position += forwardVector * totalPos * deltaTime * 20.0f;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
-		
+
 		if (resultVector.x < 0.6f)
 		{
 			resultVector = DirectX::XMVector3AngleBetweenNormalsEst(forwardVector, northWestVector);

@@ -17,6 +17,7 @@ private:
 	//Movement variables
 	DirectX::SimpleMath::Vector3 resultVector;
 	DirectX::XMMATRIX rotationMX;
+	DirectX::XMFLOAT4X4 rotationFloat;
 	bool controllerConnected = true;
 	float jumpAllowed = 200.f;
 	float jumpHeight = 200.f;
@@ -71,7 +72,7 @@ public:
 	DirectX::XMVECTOR getUpVec() const;
 	DirectX::XMVECTOR getForwardVec() const;
 	DirectX::XMVECTOR getRightVec() const;
-	DirectX::XMMATRIX getRotationMX() const;
+	DirectX::XMFLOAT4X4 getRotationMX();
 	reactphysics3d::Vector3 getRayCastPos()const;
 
 	void hitByBat(const reactphysics3d::Vector3& force);

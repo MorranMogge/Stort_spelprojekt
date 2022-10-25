@@ -709,9 +709,9 @@ DirectX::XMVECTOR Player::getRightVec() const
 	return this->rightVector;
 }
 
-DirectX::XMMATRIX Player::getRotationMX() const
+DirectX::XMFLOAT4X4 Player::getRotationMX()
 {
-	return this->rotationMX;
+	return this->rotationFloat;
 }
 
 reactphysics3d::Vector3 Player::getRayCastPos() const

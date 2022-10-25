@@ -45,11 +45,12 @@ Camera::~Camera()
 {
 }
 
-void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, float deltaTime)
+void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMFLOAT4X4& playerRotation, float deltaTime)
 {
-	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation);
-	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation);
-	upVector = XMVector3TransformCoord(DEFAULT_UP, playerRotation);
+	rotationMX = XMLoadFloat4x4(&playerRotation);
+	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
+	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
+	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
 
 	cameraPos = playerPosition + upVector * 60.0f - forwardVector;
 	lookAtPos = playerPosition;

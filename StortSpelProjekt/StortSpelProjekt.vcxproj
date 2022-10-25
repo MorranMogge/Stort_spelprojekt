@@ -244,6 +244,8 @@
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="ViewPort.h" />
     <ClInclude Include="WindowHelper.h" />
+    <ClInclude Include="WinMenu.h" />
+    <ClInclude Include="WinUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseballBat.cpp" />
@@ -315,6 +317,8 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="WindowHelper.cpp" />
+    <ClCompile Include="WinMenu.cpp" />
+    <ClCompile Include="WinUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

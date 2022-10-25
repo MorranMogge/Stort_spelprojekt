@@ -272,6 +272,7 @@ GAMESTATE Game::Update()
 			{
 				std::cout << "detected: " << gameObjects.at(i)->getId() << std::endl;
 				std::cout << "detected: Bat!" << std::endl;
+				return WIN;
 			}
 		}
 	}
@@ -279,6 +280,13 @@ GAMESTATE Game::Update()
 	
 	//Debug keybinds
 	this->handleKeybinds();
+
+	//// check if any team has won
+	//if (spaceShipRed->getNrOfComponents() >= 4 || spaceShipRed->getNrOfComponents() >= 4)
+	//{
+	//	
+	//}
+
 	return NOCHANGE;
 }
 

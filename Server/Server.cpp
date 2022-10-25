@@ -15,7 +15,7 @@
 #include "Component.h"
 #include "SpawnComponent.h"
 
-const short MAXNUMBEROFPLAYERS = 1;
+const short MAXNUMBEROFPLAYERS = 2;
 std::mutex mutex;
 
 struct userData

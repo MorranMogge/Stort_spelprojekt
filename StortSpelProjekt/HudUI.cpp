@@ -41,11 +41,6 @@ void HudUI::SpritePass()
 
 }
 
-GAMESTATE HudUI::GetGameState()
-{
-	return gameState;
-}
-
 HudUI::HudUI()
 {
 	using namespace DirectX::SimpleMath;
@@ -96,7 +91,6 @@ HudUI::HudUI()
 	blueTeam4.Load(GPU::device, L"../Sprites/team_b_4.png");
 	blueTeam4.SetScale(Scale, Scale);
 
-	gameState = NOCHANGE;
 }
 
 HudUI::~HudUI()

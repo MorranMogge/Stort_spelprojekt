@@ -1,11 +1,10 @@
 #include "stdafx.h"
-#include "SettingsUI.h"
+#include "WinUI.h"
 #include "Input.h"
-#include "GuiHandler.h"
+#include "GPU.h"
 
-void SettingsUI::HandleInputs()
+void WinUI::HandleInputs()
 {
-
 #pragma region backText
 
 	if (backText.IntersectMouse())
@@ -24,52 +23,40 @@ void SettingsUI::HandleInputs()
 
 #pragma endregion
 
-
-
 }
 
-void SettingsUI::TextPass()
+void WinUI::SpritePass()
 {
-
-}
-
-void SettingsUI::SpritePass()
-{
-	settingsText.Draw();
+	winText.Draw();
 	backText.Draw();
-	container.Draw();
+
 }
 
-GAMESTATE SettingsUI::GetGameState()
+GAMESTATE WinUI::GetGameState()
 {
 	return gameState;
 }
 
-SettingsUI::SettingsUI()
+WinUI::WinUI()
 {
-
-	settingsText = GUISprite(75 + 120, 100);
-	settingsText.Load(GPU::device, L"../Sprites/settingText.png");
+	winText = GUISprite(GPU::windowWidth / 2, 300);
+	winText.Load(GPU::device, L"../Sprites/winText.png");
 
 	backText = GUISprite(75 + 70, 600);
 	backText.Load(GPU::device, L"../Sprites/backText.png");
 
-	container = GUISprite(350 + 420, 75 + 300);
-	container.Load(GPU::device, L"../Sprites/Container.png");
-
 	gameState = NOCHANGE;
 }
 
-SettingsUI::~SettingsUI()
+WinUI::~WinUI()
 {
 
 }
 
-void SettingsUI::Draw()
+void WinUI::Draw()
 {
-	HandleInputs();
 	GUI::Begin();
+	HandleInputs();
 	SpritePass();
-	TextPass();
 	GUI::End();
 }

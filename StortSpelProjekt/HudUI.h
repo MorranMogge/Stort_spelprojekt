@@ -1,7 +1,6 @@
 
 #include "GUISprite.h"
 #include "GUIText.h"
-#include "State.h"
 #include "SpaceShip.h"
 
 class HudUI final
@@ -19,14 +18,10 @@ class HudUI final
 	GUISprite blueTeam3;
 	GUISprite blueTeam4;
 
-	GAMESTATE gameState;
-
 	void SpritePass();
 
 
 public:
-
-	GAMESTATE GetGameState();
 
 	HudUI();
 	~HudUI();

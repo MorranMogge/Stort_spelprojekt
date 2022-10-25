@@ -68,9 +68,6 @@
     <ClCompile Include="D3D11Helper.cpp">
       <Filter>Handler/Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="GuiHandler.cpp">
-      <Filter>Handler/Helpers</Filter>
-    </ClCompile>
     <ClCompile Include="GUISprite.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
@@ -139,6 +136,14 @@
     <ClCompile Include="HudUI.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="WinUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="WinMenu.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiHandler.cpp">
+      <Filter>GUI</Filter>
     <ClCompile Include="BaseballBat.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
@@ -218,9 +223,6 @@
       <Filter>Handler/Helpers</Filter>
     </ClInclude>
     <ClInclude Include="D3D11Helper.h">
-      <Filter>Handler/Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="GuiHandler.h">
       <Filter>Handler/Helpers</Filter>
     </ClInclude>
     <ClInclude Include="GUIObject.h">
@@ -400,6 +402,14 @@
     <ClInclude Include="HudUI.h">
       <Filter>GUI</Filter>
     </ClInclude>
+    <ClInclude Include="WinUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="WinMenu.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiHandler.h">
+      <Filter>GUI</Filter>
     <ClInclude Include="BaseballBat.h">
       <Filter>GameObjects</Filter>
     </ClInclude>

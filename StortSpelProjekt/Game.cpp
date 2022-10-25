@@ -272,17 +272,13 @@ GAMESTATE Game::Update()
 		int id = gameObjects.at(i)->getId();
 
 		//If not spaceship & not planet
-		if (id != spaceShipRed->getId() && id > 0)
-		{
-
-		}
-
 		if (i > 0 && spaceShipRed->detectedComponent(gameObjects.at(i)) && gameObjects.at(i)->getId() != spaceShipRed->getId())
 		{
 			if (gameObjects.at(i)->getId() == this->testBat->getId())
 			{
 				std::cout << "detected: " << gameObjects.at(i)->getId() << std::endl;
 				std::cout << "detected: Bat!" << std::endl;
+				return WIN;
 			}
 		}
 	}
@@ -290,6 +286,7 @@ GAMESTATE Game::Update()
 	
 	//Debug keybinds
 	this->handleKeybinds();
+
 	return NOCHANGE;
 }
 

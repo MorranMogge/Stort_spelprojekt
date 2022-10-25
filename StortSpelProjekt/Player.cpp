@@ -24,7 +24,7 @@ void Player::handleItems()
 
 		//Calculate the force vector
 		DirectX::XMFLOAT3 temp;
-		DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5.f + this->upVector * 2.f));
+		DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5.f + this->normalVector * 2.f));
 		newNormalizeXMFLOAT3(temp);
 
 		//Apply the force
@@ -45,18 +45,34 @@ void Player::handleItems()
 	}
 }
 
-Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
+Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& grav)
     :GameObject(useMesh, pos, rot, id), health(70), holdingItem(nullptr), speed(2.f)
 {
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
+	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
+	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
+	normalVector = DirectX::XMVector3Normalize(normalVector);
+	rightVector = DirectX::XMVector3Normalize(rightVector);
+	forwardVector = DirectX::XMVector3Normalize(forwardVector);
+	this->rotate();
 }
 
-Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
+Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& grav)
 	:GameObject(objectPath, pos, rot, id), health(70), holdingItem(nullptr), speed(2.f)
 {
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	normalVector = DirectX::XMVectorSet(grav.x, grav.y, grav.z, 1.0f);
+	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
+	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
+	normalVector = DirectX::XMVector3Normalize(normalVector);
+	rightVector = DirectX::XMVector3Normalize(rightVector);
+	forwardVector = DirectX::XMVector3Normalize(forwardVector);
+	this->rotate();
 }
 
 void Player::handleInputs()
@@ -213,10 +229,13 @@ void Player::rotate()
 	}
 }
 
-void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime)
+void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime, const bool& testingVec)
 {
+	if (dedge) return;
+	if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
+	else normalVector = DirectX::XMVectorSet(grav.x, grav.y, grav.z, 1.0f);
+
 	//Calculations
-	normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
 	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
 	normalVector = DirectX::XMVector3Normalize(normalVector);
@@ -698,7 +717,7 @@ DirectX::XMMATRIX Player::getRotationMX() const
 reactphysics3d::Vector3 Player::getRayCastPos() const
 {
 	SimpleMath::Vector3 returnValue = this->position;
-	returnValue += this->upVector * -2.f;
+	returnValue += this->normalVector * -2.f;
 	return reactphysics3d::Vector3(returnValue.x, returnValue.y, returnValue.z);
 }
 

@@ -320,6 +320,8 @@ GAMESTATE Game::Update()
 	for (int i = 0; i < players.size(); i++)
 	{
 		//players[i]->updateBuffer();
+		
+		std::cout << std::to_string(players[i]->getMatrix().m[4][1]) << std::endl;;
 		players[i]->updateMatrixOnline();
 	}
 

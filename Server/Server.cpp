@@ -338,6 +338,7 @@ int main()
 				prMatrix.matrix = data.users[i].playa.getMatrix();
 				prMatrix.packetId = PacketType::POSITIONROTATION;
 				prMatrix.playerId = i;
+				std::cout << std::to_string(data.users[i].playa.getMatrix().m[4][1]) << std::endl;
 				sendBinaryDataAllPlayers(prMatrix, data);
 			}
 

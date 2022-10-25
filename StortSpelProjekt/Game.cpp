@@ -2,17 +2,7 @@
 #include "Game.h"
 #include "DirectXMathHelper.h"
 
-/*enum ObjID
-{
-	PLANET,
-	PLAYER,
-	ROCKET,
-	BAT,
-	POTION,
-	GRENADE,
-	COMPONENT,
 
-};*/
 
 void Game::loadObjects()
 {
@@ -20,16 +10,16 @@ void Game::loadObjects()
 	using namespace DirectX::SimpleMath;
 
 	//Here we can add base object we want in the beginning of the game
-	planet = new GameObject("../Meshes/Sphere", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 0,nullptr, XMFLOAT3(20.0f, 20.0f, 20.0f));
-	player = new Player("../Meshes/pinto", Vector3(22, 12, -22), Vector3(0.0f, 0.0f, 0.0f), 1);
-	potion = new Potion("../Meshes/potion", Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), 2, &planetGravityField);
+	planet = new GameObject("../Meshes/Sphere", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET,nullptr, XMFLOAT3(20.0f, 20.0f, 20.0f));
+	player = new Player("../Meshes/pinto", Vector3(22, 12, -22), Vector3(0.0f, 0.0f, 0.0f), PLAYER);
+	potion = new Potion("../Meshes/potion", Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), POTION, &planetGravityField);
 	Vector3 shipPos(10, 14, 10);
 	Vector3 shipPos2(14, 10, 10);
-	spaceShipRed = new SpaceShip(shipPos, 3, 0, &planetGravityField, Vector3(2, 2, 2));
-	spaceShipBlue = new SpaceShip(shipPos2, 3, 1, &planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
-	testBat = new BaseballBat("../Meshes/bat", Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), 4, &planetGravityField);
+	spaceShipRed = new SpaceShip(shipPos, ROCKET, 0, &planetGravityField, Vector3(2, 2, 2));
+	spaceShipBlue = new SpaceShip(shipPos2, ROCKET, 1, &planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
+	testBat = new BaseballBat("../Meshes/bat", Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, &planetGravityField);
 	testCube = new GameObject("../Meshes/Player", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
-	otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), 6);
+	otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), PLAYER);
 	
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
@@ -264,7 +254,6 @@ GAMESTATE Game::Update()
 	{
 		//get object id
 		int id = gameObjects.at(i)->getId();
-		std::cout << "obj id: " << id << std::endl;
 
 		if (id != this->spaceShipRed->getId())
 		{

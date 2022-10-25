@@ -5,6 +5,17 @@
 
 class PhysicsComponent;
 
+enum ObjID
+{
+	PLANET,
+	PLAYER,
+	ROCKET,
+	BAT,
+	POTION,
+	GRENADE,
+	COMPONENT,
+};
+
 class GameObject
 {
 private:

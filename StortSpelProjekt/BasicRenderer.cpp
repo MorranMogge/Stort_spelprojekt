@@ -135,6 +135,7 @@ BasicRenderer::~BasicRenderer()
 	bill_vShader->Release();
 	bill_pShader->Release();
 	bill_gShader->Release();
+	PT_dsState->Release();
 }
 
 void BasicRenderer::lightPrePass()

@@ -138,10 +138,6 @@ void Game::updateBuffers()
 	{
 		gameObjects[i]->updateBuffer();
 	}
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->updateBuffer();
-	}
 
 	//Update Wireframe buffer
 	ZeroMemory(&subData, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -322,7 +318,7 @@ GAMESTATE Game::Update()
 	{
 		//players[i]->updateBuffer();
 		
-		std::cout << std::to_string(currentPlayer->getMatrix()._14) << std::endl;
+		//std::cout << std::to_string(currentPlayer->getMatrix()._14) << std::endl;
 		players[i]->updateMatrixOnline();
 	}
 

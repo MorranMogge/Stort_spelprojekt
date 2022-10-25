@@ -15,7 +15,7 @@
 #include "Component.h"
 #include "SpawnComponent.h"
 
-const short MAXNUMBEROFPLAYERS = 1;
+const short MAXNUMBEROFPLAYERS = 2;
 std::mutex mutex;
 
 struct userData
@@ -270,15 +270,15 @@ int main()
 
 			case PacketType::POSITIONROTATION:
 				prMatrixData = circBuffer->readData<PositionRotation>();
-				std::cout << "packet id: " << std::to_string(prMatrixData->playerId) << std::endl;
+				//std::cout << "packet id: " << std::to_string(prMatrixData->playerId) << std::endl;
 				for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 				{
-					std::cout << "playerid prMatrixData" << std::to_string(prMatrixData->playerId) << std::endl;
+					//std::cout << "playerid prMatrixData" << std::to_string(prMatrixData->) << std::endl;
 					if (i == prMatrixData->playerId)
 					{
 						
 						data.users[i].playa.setMatrix(prMatrixData->matrix);
-						std::cout << std::to_string(data.users[i].playa.getMatrix()._14) << std::endl;
+						std::cout <<"player Id: " << std::to_string(prMatrixData->playerId)<<"pos: " << std::to_string(data.users[i].playa.getMatrix()._14) << std::endl;
 						break;
 					}
 				}
@@ -340,6 +340,7 @@ int main()
 
 				PositionRotation prMatrix;
 				prMatrix.matrix = data.users[i].playa.getMatrix();
+				//std::cout << "id: " << std::to_string(data.users[i].playerId) << "prMatrix test: " << std::to_string(data.users[i].playa.getMatrix()._14);
 				prMatrix.packetId = PacketType::POSITIONROTATION;
 				prMatrix.playerId = i;
 				

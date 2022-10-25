@@ -63,11 +63,20 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		
 		case PacketType::POSITIONROTATION:
 			prMatrixData = circularBuffer->readData<PositionRotation>();
+
 			for (int i = 0; i < players.size(); i++)
 			{
-				if (playerId != i)
+				//std::cout << std::to_string(players[i]->getMatrix()._14) << std::endl;
+				
+				if (prMatrixData->playerId == i)
 				{
-					players[i]->setMatrix(prMatrixData->matrix);
+					if (playerId != i)
+					{
+						std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
+						players[i]->setMatrix(prMatrixData->matrix);
+					}
+					
+
 				}
 			}
 

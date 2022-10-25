@@ -15,7 +15,7 @@
 #include "Component.h"
 #include "SpawnComponent.h"
 
-const short MAXNUMBEROFPLAYERS = 2;
+const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
 
 struct userData
@@ -193,7 +193,7 @@ int main()
 
 	std::cout << "Nr of players for the game: " << std::to_string(MAXNUMBEROFPLAYERS) << std::endl;
 
-	std::vector<player> players;
+	//std::vector<player> players;
 	std::vector<Component> components;
 
 	//sf::UdpSocket socket;
@@ -258,6 +258,7 @@ int main()
 		while (circBuffer->getIfPacketsLeftToRead())
 		{
 			int packetId = circBuffer->peekPacketId();
+			
 			testPosition* tst = nullptr;
 			ComponentData* compData = nullptr;
 			PositionRotation* prMatrixData = nullptr;
@@ -269,12 +270,15 @@ int main()
 
 			case PacketType::POSITIONROTATION:
 				prMatrixData = circBuffer->readData<PositionRotation>();
-
-				for (int i = 0; i < players.size(); i++)
+				std::cout << "packet id: " << std::to_string(prMatrixData->playerId) << std::endl;
+				for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 				{
+					std::cout << "playerid prMatrixData" << std::to_string(prMatrixData->playerId) << std::endl;
 					if (i == prMatrixData->playerId)
 					{
+						
 						data.users[i].playa.setMatrix(prMatrixData->matrix);
+						std::cout << std::to_string(data.users[i].playa.getMatrix()._14) << std::endl;
 						break;
 					}
 				}
@@ -338,7 +342,7 @@ int main()
 				prMatrix.matrix = data.users[i].playa.getMatrix();
 				prMatrix.packetId = PacketType::POSITIONROTATION;
 				prMatrix.playerId = i;
-				std::cout << std::to_string(data.users[i].playa.getMatrix().m[4][1]) << std::endl;
+				
 				sendBinaryDataAllPlayers(prMatrix, data);
 			}
 
@@ -354,7 +358,7 @@ int main()
 				compData.x = components[i].getposition('y');
 				compData.x = components[i].getposition('z');
 				//if its in use by a player it will get the players position
-				for (int j = 0; j < players.size(); j++)
+				/*for (int j = 0; j < players.size(); j++)
 				{
 					if (compData.inUseBy >= 0 && compData.inUseBy <= MAXNUMBEROFPLAYERS)
 					{
@@ -364,7 +368,7 @@ int main()
 						break;
 					}
 					
-				}
+				}*/
 				
 				sendBinaryDataAllPlayers<ComponentData>(compData, data);
 			}

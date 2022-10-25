@@ -145,7 +145,7 @@ void GameObject::setMatrix(DirectX::XMFLOAT4X4 matrix)
 
 void GameObject::updateMatrixOnline()
 {
-	
+	this->mesh->updateONLINE();
 }
 
 Bound* GameObject::getBounds() const

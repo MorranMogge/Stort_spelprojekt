@@ -15,7 +15,7 @@
 #include "Component.h"
 #include "SpawnComponent.h"
 
-const short MAXNUMBEROFPLAYERS = 2;
+const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
 
 struct userData
@@ -320,19 +320,25 @@ int main()
 			//f�r varje spelare s� skicka deras position till alla klienter
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{
-				testPosition pos;
+				/*testPosition pos;
 				
 				pos.packetId = PacketType::POSITION;
 				
 				pos.x = data.users[i].playa.getposition('x');
 				pos.y = data.users[i].playa.getposition('y');
 				pos.z = data.users[i].playa.getposition('z');
-				pos.playerId = i;
+				pos.playerId = i;*/
 				
 				//std::cout << "data to send x: " << std::to_string(pos.x) << ", y: " << std::to_string(pos.y) << ", z: " << std::to_string(pos.z) << std::endl;
 				//std::cout << "packet id sent: " << std::to_string(pos.packetId) << std::endl;
 
-				sendDataAllPlayers(pos, data);
+				//sendDataAllPlayers(pos, data);
+
+				PositionRotation prMatrix;
+				prMatrix.matrix = data.users[i].playa.getMatrix();
+				prMatrix.packetId = PacketType::POSITIONROTATION;
+				prMatrix.playerId = i;
+				sendBinaryDataAllPlayers(prMatrix, data);
 			}
 
 			//send component data to all players

@@ -14,6 +14,16 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	dotValue = { 0.0f, 0.0f, 0.0f };
 	dotProduct = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	normalVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	//Particles
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
+
+	//Item Icon
+	float constant = 20.0f;
+	DirectX::XMFLOAT3 upDir = this->getUpDirection();
+	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
+	this->playerIcon = new BilboardObject("icon_potion.png", iconPos);
+	this->playerIcon->setOffset(constant);
 }
 
 Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
@@ -23,6 +33,28 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	dotValue = { 0.0f, 0.0f, 0.0f };
 	dotProduct = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	normalVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	//Particles
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
+
+	//Item Icon
+	float constant = 20.0f;
+	DirectX::XMFLOAT3 upDir = this->getUpDirection();
+	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
+	this->playerIcon = new BilboardObject("icon_potion.png", iconPos);
+	this->playerIcon->setOffset(constant);
+}
+
+Player::~Player()
+{
+	if (this->playerIcon != nullptr)
+	{
+		delete playerIcon;
+	}
+	if (this->particles != nullptr)
+	{
+		delete particles;
+	}
 }
 
 void Player::handleInputs()
@@ -382,6 +414,22 @@ void Player::update()
             holdingItem = nullptr;
         }
     }
+}
+
+void Player::drawIcon()
+{
+	if (this->playerIcon != nullptr)
+	{
+		this->playerIcon->bindAndDraw(0, 0);
+	}
+}
+
+void Player::drawParticles()
+{
+	if (this->particles != nullptr)
+	{
+		this->particles->BindAndDraw(0);
+	}
 }
 
 DirectX::XMVECTOR Player::getUpVec() const

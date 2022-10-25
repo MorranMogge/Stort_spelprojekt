@@ -277,16 +277,14 @@ GAMESTATE Game::Update()
 
 		}
 
-
-
-		//if (i > 0 && spaceShipRed->detectedComponent(gameObjects.at(i)) && gameObjects.at(i)->getId() != spaceShipRed->getId())
-		//{
-		//	if (gameObjects.at(i)->getId() == this->testBat->getId())
-		//	{
-		//		std::cout << "detected: " << gameObjects.at(i)->getId() << std::endl;
-		//		std::cout << "detected: Bat!" << std::endl;
-		//	}
-		//}
+		if (i > 0 && spaceShipRed->detectedComponent(gameObjects.at(i)) && gameObjects.at(i)->getId() != spaceShipRed->getId())
+		{
+			if (gameObjects.at(i)->getId() == this->testBat->getId())
+			{
+				std::cout << "detected: " << gameObjects.at(i)->getId() << std::endl;
+				std::cout << "detected: Bat!" << std::endl;
+			}
+		}
 	}
 	if (player->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
 	
@@ -322,6 +320,7 @@ void Game::Render()
 	basicRenderer.bilboardPrePass(this->camera);
 	this->potion->drawIcon();
 	this->testBat->drawIcon();
+	this->player->drawIcon();
 	this->spaceShipRed->drawQuad();
 	this->spaceShipBlue->drawQuad();
 
@@ -330,8 +329,10 @@ void Game::Render()
 	//drawParticles();	//not in use, intended for drawing particles in game.cpp
 	this->potion->drawParticles();
 	this->testBat->drawParticles();
+	this->player->drawParticles();
 	basicRenderer.geometryUnbind();
-	
+
+
 	//Render UI (needs to render last)
 	ui.Draw();
 }

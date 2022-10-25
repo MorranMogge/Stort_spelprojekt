@@ -2,6 +2,8 @@
 
 #include "GameObject.h"
 #include "Input.h"
+#include "BilboardObject.h"
+#include "ParticleEmitter.h"
 
 class Item;
 
@@ -27,16 +29,23 @@ private:
 	int repairCount = 0;
 	Item* holdingItem;
 	int health;
+protected:
+	BilboardObject* playerIcon;
+	ParticleEmitter* particles;
 
 public:
 	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
 	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
+	~Player();
 	void handleInputs(); 
 	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float& deltaTime);
 	bool getPickup(GameObject *pickup);
 	bool pickupItem(Item *itemToPickup);
 
 	void releasePickup();
+
+	void drawIcon();
+	void drawParticles();
 
 	DirectX::XMVECTOR getUpVec() const;
 	DirectX::XMVECTOR getForwardVec() const;

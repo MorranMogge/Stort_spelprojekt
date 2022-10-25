@@ -216,8 +216,11 @@ public:
 		this->matrix = matrix;
 		static MatrixS worldS;
 		DirectX::XMMATRIX xm = DirectX::XMLoadFloat4x4(&matrix);
-		DirectX::XMStoreFloat4x4(&worldS.matrix, DirectX::XMMatrixTranspose( xm ));
-		positionCB.Update(&this->matrix, sizeof(MatrixS));
+		DirectX::XMStoreFloat4x4(&worldS.matrix,  xm );
+		worldCB.Update(&worldS, sizeof(MatrixS));
+
+
+
 	}
 	void UpdateCB()
 	{

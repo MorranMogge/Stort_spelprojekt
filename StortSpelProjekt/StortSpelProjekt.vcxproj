@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Server\PacketsDataTypes.h" />
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="BasicRenderer.h" />
     <ClInclude Include="BlendState.h" />
@@ -159,6 +160,8 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="BufferTypes.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CircularBufferClient.h" />
+    <ClInclude Include="ClientHandler.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferNew.h" />
@@ -173,6 +176,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GPU.h" />
     <ClInclude Include="GravityField.h" />
+    <ClInclude Include="Grenade.h" />
     <ClInclude Include="GuiHandler.h" />
     <ClInclude Include="GUIObject.h" />
     <ClInclude Include="GUISprite.h" />
@@ -191,6 +195,9 @@
     </ClInclude>
     <ClInclude Include="MTL.h" />
     <ClInclude Include="OBJ.h" />
+    <ClInclude Include="PacketEnum.h" />
+    <ClInclude Include="PacketEventManager.h" />
+    <ClInclude Include="PacketsDataTypes.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="PhysicsComponent.h" />
@@ -201,6 +208,7 @@
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderTargetView.h" />
     <ClInclude Include="SamplerState.h" />
+    <ClInclude Include="SendingDataEvent.h" />
     <ClInclude Include="SettingsMenu.h" />
     <ClInclude Include="SettingsUI.h" />
     <ClInclude Include="ShaderLoader.h" />
@@ -244,6 +252,8 @@
     <ClInclude Include="WindowHelper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CircularBufferClient.cpp" />
+    <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="BaseballBat.cpp" />
     <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -258,6 +268,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GravityField.cpp" />
+    <ClCompile Include="Grenade.cpp" />
     <ClCompile Include="GuiHandler.cpp" />
     <ClCompile Include="GUISprite.cpp" />
     <ClCompile Include="GUIText.cpp" />
@@ -288,18 +299,20 @@
     <ClCompile Include="LightHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="ParticleEmitter.cpp" />
-    <ClCompile Include="PhysicsComponent.cpp" />
-    <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="MouseClass.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="PacketEventManager.cpp" />
+    <ClCompile Include="PhysicsComponent.cpp" />
+    <ClCompile Include="PhysicsWorld.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="MouseEvent.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerVectors.cpp" />
     <ClCompile Include="Potion.cpp" />
+    <ClCompile Include="SendingDataEvent.cpp" />
     <ClCompile Include="SettingsMenu.cpp" />
     <ClCompile Include="SettingsUI.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />

@@ -50,14 +50,14 @@ PhysicsComponent::~PhysicsComponent()
 	if (this->rigidBody != nullptr && this->shape != nullptr && this->collider != nullptr) this->deallocate();
 }
 
-void PhysicsComponent::initiateComponent(reactphysics3d::PhysicsCommon* com, reactphysics3d::PhysicsWorld* world, const reactphysics3d::CollisionShapeName& shape)
+void PhysicsComponent::initiateComponent(reactphysics3d::PhysicsCommon* com, reactphysics3d::PhysicsWorld* world, const reactphysics3d::CollisionShapeName& shape, const DirectX::XMFLOAT3& scale)
 {
 	this->comPtr = com;
 	this->worldPtr = world;
 
 	//Creates basic physics component
 	this->createRigidBody();
-	this->setShape(shape);
+	this->setShape(shape, scale);
 	this->addCollider();
 
 	//Gives some values	
@@ -72,16 +72,16 @@ void PhysicsComponent::setType(const reactphysics3d::BodyType& physicsType)
 	this->rigidBody->setType(physicsType);
 }
 
-void PhysicsComponent::setShape(const reactphysics3d::CollisionShapeName& shapeType)
+void PhysicsComponent::setShape(const reactphysics3d::CollisionShapeName& shapeType, const DirectX::XMFLOAT3& scale)
 {
 	reactphysics3d::Transform defaultTransform = reactphysics3d::Transform::identity();
 	switch (shapeType)
 	{
 	case reactphysics3d::CollisionShapeName::BOX:
-		this->shape = this->comPtr->createBoxShape(reactphysics3d::Vector3(4*0.35f, 4 * 0.35f, 4 * 0.35f));
+		this->shape = this->comPtr->createBoxShape(reactphysics3d::Vector3(3 * scale.x, 3 * scale.y, 3 * scale.z));
 		break;
 	case reactphysics3d::CollisionShapeName::SPHERE:
-		this->shape = this->comPtr->createSphereShape(4*0.5f);
+		this->shape = this->comPtr->createSphereShape(scale.x);
 		break;
 	/*case reactphysics3d::CollisionShapeName::CONVEX_MESH:
 		this->comPtr->destroyConvexMeshShape(c);
@@ -217,12 +217,14 @@ void PhysicsComponent::setIsSleeping(const bool& sleep)
 
 void PhysicsComponent::applyForceToCenter(const reactphysics3d::Vector3& force)
 {
+	//this->rigidBody->applyWorldForceAtCenterOfMass(force);
 	this->rigidBody->applyWorldForceAtCenterOfMass(force);
 }
 
 void PhysicsComponent::applyForceToPoint(const reactphysics3d::Vector3& force, const reactphysics3d::Vector3& point)
 {
 	this->rigidBody->applyWorldForceAtLocalPosition(force, point);
+	//this->rigidBody->applyLocalForceAtWorldPosition(force, point);
 }
 
 void PhysicsComponent::applyWorldTorque(const reactphysics3d::Vector3& force)
@@ -232,12 +234,32 @@ void PhysicsComponent::applyWorldTorque(const reactphysics3d::Vector3& force)
 
 void PhysicsComponent::applyLocalTorque(const reactphysics3d::Vector3& force)
 {
-	this->rigidBody->applyLocalTorque(force);
+	this->rigidBody->applyWorldTorque(force);
 }
 
 void PhysicsComponent::setPosition(const reactphysics3d::Vector3& position)
 {
 	this->rigidBody->setTransform(reactphysics3d::Transform(position, this->rigidBody->getTransform().getOrientation()));
+}
+
+void PhysicsComponent::setRotation(const reactphysics3d::Quaternion& rotation)
+{
+	this->rigidBody->setTransform(reactphysics3d::Transform(this->getPosition(), rotation));
+}
+
+void PhysicsComponent::setTransform(const reactphysics3d::Transform& transform)
+{
+	this->rigidBody->setTransform(transform);
+}
+
+void PhysicsComponent::resetForce() const
+{
+	this->rigidBody->resetForce();
+}
+
+void PhysicsComponent::resetTorque() const
+{
+	this->rigidBody->resetTorque();
 }
 
 reactphysics3d::BodyType PhysicsComponent::getType() const
@@ -274,6 +296,11 @@ DirectX::SimpleMath::Vector3 PhysicsComponent::getPosV3() const
 {
 	reactphysics3d::Vector3 temp = this->getPosition();
 	return {temp.x, temp.y, temp.z};
+}
+
+bool PhysicsComponent::raycast(const reactphysics3d::Ray& ray, reactphysics3d::RaycastInfo& rayInfo) const
+{
+	return this->collider->raycast(ray, rayInfo);
 }
 
 bool PhysicsComponent::testPointInside(const reactphysics3d::Vector3& point) const

@@ -14,7 +14,7 @@ void Game::loadObjects()
 	planet = new GameObject("../Meshes/Sphere", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(planetSize, planetSize, planetSize));
 	currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, grav);
 	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(40, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2);
-	spaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(20, 29, 20), orientToPlanet(DirectX::SimpleMath::Vector3(0, 40, 0)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
+	spaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(20, 29, 20), orientToPlanet(DirectX::SimpleMath::Vector3(20, 29, 20)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
 	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4);
 	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 	otherPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6, grav);
@@ -323,8 +323,10 @@ GAMESTATE Game::Update()
 
 	//Player functions
 	//Raycasting
-	DirectX::XMFLOAT3 hitPos(0.f, 0.f, 0.f);
-	DirectX::XMFLOAT3 hitNormal(grav.x, grav.y, grav.z);
+	static DirectX::XMFLOAT3 hitPos;
+	static DirectX::XMFLOAT3 hitNormal;
+	hitPos = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
+	hitNormal = DirectX::XMFLOAT3(grav.x, grav.y, grav.z);
 	bool testingVec = this->currentPlayer->raycast(gameObjects, hitPos, hitNormal);
 	if (testingVec || currentPlayer->getHitByBat()) velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 	

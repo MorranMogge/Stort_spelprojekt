@@ -716,8 +716,9 @@ DirectX::XMMATRIX Player::getRotationMX() const
 
 reactphysics3d::Vector3 Player::getRayCastPos() const
 {
-	SimpleMath::Vector3 returnValue = this->position;
-	returnValue += this->normalVector * -2.f;
+	static SimpleMath::Vector3 returnValue;
+	returnValue = this->position;
+	returnValue += this->normalVector * -1.5f;
 	return reactphysics3d::Vector3(returnValue.x, returnValue.y, returnValue.z);
 }
 

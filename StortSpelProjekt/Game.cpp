@@ -176,7 +176,7 @@ void Game::drawObjects(bool drawDebug)
 
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		this->gameObjects[i]->tmpDraw();
+		this->gameObjects[i]->drawWithTexture();
 	}
 	
 

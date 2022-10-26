@@ -302,7 +302,7 @@ void GameObject::update()
 	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
 }
 
-void GameObject::tmpDraw()
+void GameObject::drawWithTexture()
 {
 	this->mesh->draw(this->srv);
 }

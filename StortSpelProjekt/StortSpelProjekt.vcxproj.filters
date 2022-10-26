@@ -134,6 +134,7 @@
     <ClCompile Include="PacketEventManager.cpp" />
     <ClCompile Include="CircularBufferClient.cpp" />
     <ClCompile Include="SendingDataEvent.cpp" />
+    <ClCompile Include="Grenade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -389,6 +390,7 @@
     <ClInclude Include="CircularBufferClient.h" />
     <ClInclude Include="PacketsDataTypes.h" />
     <ClInclude Include="SendingDataEvent.h" />
+    <ClInclude Include="Grenade.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

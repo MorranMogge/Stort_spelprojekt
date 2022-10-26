@@ -137,7 +137,7 @@ void Game::randomizeObjectPos(GameObject* object)
 	randomPos.z = zPos;
 
 	randomPos.Normalize();
-	randomPos *= 30;
+	randomPos *= 100;
 
 	object->setPos(randomPos);
 }
@@ -358,6 +358,11 @@ GAMESTATE Game::Update()
 	currentPlayer->pickupItem(potion);
 	currentPlayer->pickupItem(testBat);
 	currentPlayer->pickupItem(component);
+
+	if (Input::KeyPress(KeyCode::K))
+	{
+		randomizeObjectPos(this->testBat);
+	}
 
 
 	//sending data to server

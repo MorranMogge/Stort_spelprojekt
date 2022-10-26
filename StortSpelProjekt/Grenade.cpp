@@ -13,12 +13,13 @@ void Grenade::explode()
 		if (gameObjects[i] == this) continue;
 		if (this->withinRadious(gameObjects[i], 25))
 		{
+			gameObjects[i]->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 			DirectX::XMFLOAT3 explosionRange = getSubtractionXMFLOAT3(this->position, gameObjects[i]->getPos());
-			float factor = 1.f/getLength(explosionRange);
 			
-			float newForce = this->physComp->getMass() * 10000;
 			explosionRange = gameObjects[i]->getPosV3() - this->position;
-			newNormalizeXMFLOAT3(explosionRange);
+			float factor = 1.f/getLength(explosionRange);
+			float newForce = this->physComp->getMass() * 5000 * factor;
+			//newNormalizeXMFLOAT3(explosionRange);
 			scalarMultiplicationXMFLOAT3(newForce, explosionRange);
 
 			//Add force to object

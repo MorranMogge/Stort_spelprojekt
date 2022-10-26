@@ -6,26 +6,37 @@
 
 void Grenade::explode()
 {
+	std::cout << "THE GRENADE EXPLODED\n";
 	int iterations = (int)gameObjects.size();
 	for (int i = 0; i < iterations; i++)
 	{
 		if (gameObjects[i] == this) continue;
 		if (this->withinRadious(gameObjects[i], 25))
 		{
+			gameObjects[i]->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 			DirectX::XMFLOAT3 explosionRange = getSubtractionXMFLOAT3(this->position, gameObjects[i]->getPos());
-			float factor = 1.f/getLength(explosionRange);
 			
-			float newForce = this->physComp->getMass() * 10000;
 			explosionRange = gameObjects[i]->getPosV3() - this->position;
-			newNormalizeXMFLOAT3(explosionRange);
-			scalarMultiplicationXMFLOAT3(newForce, explosionRange);
-
+			float factor = 1.f/getLength(explosionRange);
+			float newForce; 
+			//newNormalizeXMFLOAT3(explosionRange);
+			Player* hitPlayer = dynamic_cast<Player*>(gameObjects[i]);
+			if (hitPlayer != nullptr)
+			{
+				newForce = this->physComp->getMass() * 2500 * factor;
+				scalarMultiplicationXMFLOAT3(newForce, explosionRange);
+				hitPlayer->hitByBat(reactphysics3d::Vector3(explosionRange.x, explosionRange.y, explosionRange.z));
+			}
 			//Add force to object
-			Player* hitPlayer = dynamic_cast<Player*>(this->physComp->getParent());
-			if (hitPlayer != nullptr) hitPlayer->hitByBat(reactphysics3d::Vector3(explosionRange.x, explosionRange.y, explosionRange.z));
-			else physComp->applyForceToCenter(reactphysics3d::Vector3(explosionRange.x, explosionRange.y, explosionRange.z));
+			else
+			{
+				newForce = this->physComp->getMass() * 5000 * factor;
+				scalarMultiplicationXMFLOAT3(newForce, explosionRange);
+				gameObjects[i]->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(explosionRange.x, explosionRange.y, explosionRange.z));
+			}
 		}
 	}
+	this->destructionIsImminent = false;
 }
 
 Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
@@ -50,4 +61,5 @@ void Grenade::setGameObjects(const std::vector<GameObject*>& gameObjects)
 void Grenade::useItem()
 {
 	this->destructionIsImminent = true;
+	timer.resetStartTime();
 }

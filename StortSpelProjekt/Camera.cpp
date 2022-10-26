@@ -45,9 +45,10 @@ Camera::~Camera()
 {
 }
 
-void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMFLOAT4X4& playerRotation, float deltaTime)
+void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, float deltaTime)
 {
-	rotationMX = XMLoadFloat4x4(&playerRotation);
+	this->rotationMX = playerRotation;
+
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
 	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
@@ -65,6 +66,14 @@ DirectX::XMVECTOR Camera::getForwardVector() const
 DirectX::XMVECTOR Camera::getRightVector() const
 {
 	return this->rightVector;
+}
+
+void Camera::resetRotation()
+{
+	rotationMX = XMMatrixIdentity();
+	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
+	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
+	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
 }
 
 void Camera::VSbindPositionBuffer(const int& slot)

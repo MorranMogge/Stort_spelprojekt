@@ -23,6 +23,7 @@
 #include "Potion.h"
 #include "BaseballBat.h"
 #include "SpaceShip.h"
+#include "Grenade.h"
 
 //User
 #include "Input.h"

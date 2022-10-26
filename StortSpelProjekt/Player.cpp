@@ -7,6 +7,12 @@
 #include "Component.h"
 using namespace DirectX;
 
+void Player::resetRotationMatrix()
+{
+	this->rotationMX = DirectX::XMMatrixIdentity();
+	this->rotation = DirectX::XMMatrixIdentity();
+}
+
 void Player::handleItems()
 {
 	DirectX::SimpleMath::Vector3 newPos = this->position;
@@ -596,6 +602,7 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 	this->dedge = true;
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);
+	timer.resetStartTime();
 
 }
 
@@ -709,10 +716,9 @@ DirectX::XMVECTOR Player::getRightVec() const
 	return this->rightVector;
 }
 
-DirectX::XMFLOAT4X4 Player::getRotationMX()
+DirectX::XMMATRIX Player::getRotationMX()
 {
-	XMStoreFloat4x4(&rotationFloat, rotationMX);
-	return this->rotationFloat;
+	return this->rotationMX;
 }
 
 reactphysics3d::Vector3 Player::getRayCastPos() const
@@ -739,13 +745,14 @@ void Player::update()
 		reactQuaternion = this->physComp->getRotation();
 		dx11Quaternion = DirectX::SimpleMath::Quaternion(DirectX::SimpleMath::Vector4(reactQuaternion.x, reactQuaternion.y, reactQuaternion.z, reactQuaternion.w));
 		this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
-		if (timer.getTimePassed(7.f)) 
+		if (timer.getTimePassed(5.f)) 
 		{ 
 			dedge = false; 
 			this->physComp->resetForce();
 			this->physComp->resetTorque();
 			this->physComp->setType(reactphysics3d::BodyType::STATIC); 
-			this->position = SimpleMath::Vector3(22, 10, 20);
+			this->position = SimpleMath::Vector3(0, 60, 0);
+			this->resetRotationMatrix();
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
 		}

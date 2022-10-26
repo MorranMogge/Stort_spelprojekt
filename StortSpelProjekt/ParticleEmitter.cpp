@@ -26,7 +26,7 @@ bool CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>&  PT_vertexBuffer, Micros
 	uavDesc.Format = DXGI_FORMAT_R32_FLOAT;
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 	uavDesc.Buffer.FirstElement = 0;
-	uavDesc.Buffer.NumElements = (UINT)size(structVector) * 15;//fel???
+	uavDesc.Buffer.NumElements = (UINT)size(structVector) * (sizeof(particleStruct)/4);//fel???
 	uavDesc.Buffer.Flags = 0;
 	
 	if (FAILED(GPU::device->CreateUnorderedAccessView(PT_vertexBuffer.Get(), &uavDesc, particleUav.GetAddressOf())))

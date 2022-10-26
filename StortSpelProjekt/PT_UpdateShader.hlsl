@@ -1,5 +1,4 @@
 
-
 RWBuffer<float> rawBuffer : register(u0);
 
 cbuffer timeValue : register(b0)
@@ -11,10 +10,6 @@ cbuffer posValue : register(b1)
     float3 offsetFromOrigin;
     float enable;
     float3 orientation;
-    float lifetime;
-    float3 ptdirection;
-    float ison;
-    float3 baseofset;
 };
 
 cbuffer camUp : register(b2)
@@ -23,7 +18,7 @@ cbuffer camUp : register(b2)
     float padding;
 };
 
-#define Offset 14
+#define Offset 15
     
 #define PositionX rawBuffer[DTid.x * Offset]
 #define PositionY rawBuffer[DTid.x * Offset + 1]
@@ -45,7 +40,7 @@ cbuffer camUp : register(b2)
 #define BaseOffSetY rawBuffer[DTid.x * Offset + 11]
 #define BaseOffSetZ rawBuffer[DTid.x * Offset + 12]
 
-#define Speed 0.5f
+#define Speed 0.07f
 #define Range 100.0f
 
 // up vector from camera
@@ -89,14 +84,14 @@ void main(uint3 DTid : SV_DispatchThreadID)
     const float3 eulerZ = normalize(cross(currentDirection, camUpDirection)); // rotation Z
     const float3 eulerX = normalize(cross(currentDirection, eulerZ)); // rotation X
     
-#define EulerRotation float3x3(eulerX, orientation, eulerZ) // rotation matrix, 3x3 without translation
+#define EulerRotation float3x3(eulerX, currentDirection, eulerZ) // rotation matrix, 3x3 without translation
 #define RotatedStartPosition mul(EulerRotation, StartPosition) // oriented/rotated start position in local space
-#define RotatedLocalOffset (LocalOffset * orientation) // rotated local offset
+#define RotatedLocalOffset (LocalOffset * currentDirection) // rotated local offset
     
     
     const float3 baseOffSet = float3(BaseOffSetX, BaseOffSetY, BaseOffSetZ);
     // position in world space
-    const float3 position = RotatedStartPosition + RotatedLocalOffset + baseOffSet;
+    const float3 position = RotatedStartPosition + RotatedLocalOffset + offsetFromOrigin;
     
     //apply position to buffer
     PositionX = position.x;

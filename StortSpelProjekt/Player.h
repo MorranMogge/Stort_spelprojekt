@@ -57,6 +57,7 @@ private:
 	float totalPos = 0.0f;
 	float throttle = 0.0f;
 
+	void resetRotationMatrix();
 	void handleItems();
 public:
 	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& grav);
@@ -72,7 +73,7 @@ public:
 	DirectX::XMVECTOR getUpVec() const;
 	DirectX::XMVECTOR getForwardVec() const;
 	DirectX::XMVECTOR getRightVec() const;
-	DirectX::XMFLOAT4X4 getRotationMX();
+	DirectX::XMMATRIX getRotationMX();
 	reactphysics3d::Vector3 getRayCastPos()const;
 
 	void hitByBat(const reactphysics3d::Vector3& force);

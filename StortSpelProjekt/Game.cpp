@@ -365,15 +365,15 @@ GAMESTATE Game::Update()
 	//Physics related functions
 	physWolrd.update(dt);
 
-	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->update();
 	}
+	
+	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
 	//Here you can write client-server related functions?
 
 	//Updates gameObject physics components
-	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
 	for (int i = 1; i < gameObjects.size(); i++)
 	{
 		if (gameObjects[i]->getId() != this->spaceShip->getId())

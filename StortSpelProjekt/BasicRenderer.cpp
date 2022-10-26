@@ -241,6 +241,7 @@ void BasicRenderer::geometryPass(Camera& stageCamera)
 	stageCamera.GSbindViewBuffer(0);													//Set matrix [world],[view]
 	stageCamera.GSbindPositionBuffer(1);												//Set camera pos for 
 	stageCamera.CSbindUpBuffer(2);
+	stageCamera.GSbindUpBuffer(3);
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
 }
 

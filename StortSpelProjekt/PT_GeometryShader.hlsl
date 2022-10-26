@@ -15,6 +15,11 @@ cbuffer CamPosCB : register(b1)
     float4 mainCamPos;
 }
 
+cbuffer CamUp : register(b3)
+{
+    float4 camUp;
+}
+
 struct Particle
 {
     float3 pos : POSITION;
@@ -28,25 +33,23 @@ struct Particle
 void main(point Particle input[1], inout TriangleStream<Output> outputStream)
 {
 
+#define Size 1.5f
+    static const float4 localPosition[4] = { float4(-Size, Size, 0, 1), float4(Size, Size, 0, 1), float4(-Size, -Size, 0, 1), float4(Size, -Size, 0, 1) };
     static const float2 uv[4] = { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } };
-    static const float3 up = { 0.0f, 1.0f, 0.0f }; //up vector
-
-    const float3 normal = normalize(input[0].pos - mainCamPos.xyz); //plan normal
-    const float3 right = -normalize(cross(normal, up)); //right vector
-
-    const float3 worldPos[4] = {
-        { input[0].pos - right * Half + up * Half }, // top left
-        { input[0].pos + right * Half + up * Half }, // top right
-        { input[0].pos - right * Half - up * Half }, // bottom left
-        { input[0].pos + right * Half - up * Half }, // bottom right
-    };
-
-
+    
+    float3 zAxis = normalize(input[0].pos - mainCamPos.xyz);
+    float3 xAxis = normalize(cross(-zAxis, camUp.xyz));
+#define yAxis cross(zAxis, xAxis) // maybe not need normalize?
+    
+#define WorldMatrix float4x4(float4(xAxis, 0), float4(yAxis, 0), float4(zAxis, 0), float4(input[0].pos, 1))
+    const float4x4 worldViewProj = mul(WorldMatrix, mainCamViewProj);
+    
     [unroll]
     for (int i = 0; i < 4; i++)
     {
-        const Output output = {
-            mul(float4(worldPos[i], 1.0f), mainCamViewProj),
+        const Output output =
+        {
+            mul(localPosition[i], worldViewProj),
             uv[i],
             input[0].faloff,
             input[0].ison,

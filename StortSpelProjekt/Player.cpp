@@ -530,13 +530,14 @@ void Player::update()
 		reactQuaternion = this->physComp->getRotation();
 		dx11Quaternion = DirectX::SimpleMath::Quaternion(DirectX::SimpleMath::Vector4(reactQuaternion.x, reactQuaternion.y, reactQuaternion.z, reactQuaternion.w));
 		this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
-		if (timer.getTimePassed(7.f)) 
+		if (timer.getTimePassed(5.f)) 
 		{ 
 			dedge = false; 
 			this->physComp->resetForce();
 			this->physComp->resetTorque();
 			this->physComp->setType(reactphysics3d::BodyType::STATIC); 
-			this->position = SimpleMath::Vector3(22, 10, 20);
+			this->position = SimpleMath::Vector3(0, 60, 0);
+			this->setRot(DirectX::XMFLOAT3(0, 0, 0));
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
 		}

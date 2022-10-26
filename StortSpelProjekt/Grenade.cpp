@@ -18,14 +18,22 @@ void Grenade::explode()
 			
 			explosionRange = gameObjects[i]->getPosV3() - this->position;
 			float factor = 1.f/getLength(explosionRange);
-			float newForce = this->physComp->getMass() * 5000 * factor;
+			float newForce; 
 			//newNormalizeXMFLOAT3(explosionRange);
-			scalarMultiplicationXMFLOAT3(newForce, explosionRange);
-
-			//Add force to object
 			Player* hitPlayer = dynamic_cast<Player*>(gameObjects[i]);
-			if (hitPlayer != nullptr) hitPlayer->hitByBat(reactphysics3d::Vector3(explosionRange.x, explosionRange.y, explosionRange.z));
-			else gameObjects[i]->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(explosionRange.x, explosionRange.y, explosionRange.z));
+			if (hitPlayer != nullptr)
+			{
+				newForce = this->physComp->getMass() * 2500 * factor;
+				scalarMultiplicationXMFLOAT3(newForce, explosionRange);
+				hitPlayer->hitByBat(reactphysics3d::Vector3(explosionRange.x, explosionRange.y, explosionRange.z));
+			}
+			//Add force to object
+			else
+			{
+				newForce = this->physComp->getMass() * 5000 * factor;
+				scalarMultiplicationXMFLOAT3(newForce, explosionRange);
+				gameObjects[i]->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(explosionRange.x, explosionRange.y, explosionRange.z));
+			}
 		}
 	}
 	this->destructionIsImminent = false;

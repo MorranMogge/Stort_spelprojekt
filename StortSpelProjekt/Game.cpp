@@ -328,8 +328,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->manager.loadMeshData("../Meshes/Baseball.obj");
 	this->manager.loadMeshData("../Meshes/Sphere.obj");
 	this->manager.loadMeshData("../Meshes/rocket.obj");
-
-	//this->tempSRV = this->manager.getSrv();
+	
+	
 	MaterialLibrary::LoadDefault();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);

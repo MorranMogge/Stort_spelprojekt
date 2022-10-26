@@ -188,7 +188,9 @@ void sendIdToAllPlayers(serverData& data)
 int main()
 {
 	PhysicsWorld physWorld;
-	physWorld.addPhysComponent();
+	Component planetComp;
+	physWorld.addPhysComponent(planetComp, reactphysics3d::CollisionShapeName::SPHERE, DirectX::XMFLOAT3(40, 40, 40));
+	planetComp.getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 
 	std::string identifier;
 	std::string s = "empty";
@@ -229,7 +231,7 @@ int main()
 	start = std::chrono::system_clock::now();
 
 	float timerLength = 1.f / 30.0f;
-	float timerComponent = 20.0f;
+	float timerComponent = 5.0f;
 
 
 	setupTcp(data);
@@ -318,6 +320,7 @@ int main()
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponent)
 		{
 			SpawnComponent cData = SpawnOneComponent(components);
+			physWorld.addPhysComponent(components[components.size()-1]);
 			std::cout << "componentId: " << std::to_string(cData.ComponentId) << std::endl;
 			sendBinaryDataAllPlayers(cData, data);
 			startComponentTimer = std::chrono::system_clock::now();
@@ -325,7 +328,10 @@ int main()
 
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
 		{
-			physWorld.update(timerLength);
+			for (int i = 0; i < 10; i++)
+			{
+				physWorld.update(timerLength/10.f);
+			}
 			//f�r varje spelare s� skicka deras position till alla klienter
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{

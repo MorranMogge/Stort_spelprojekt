@@ -398,7 +398,6 @@ GAMESTATE Game::Update()
 	for (int i = 0; i < components.size(); i++)
 	{
   		components[i]->update(); 
-		std::cout << i  << " " << components[i]->getPosV3().x << " " << components[i]->getPosV3().y << " " << components[i]->getPosV3().z << "\n";
 	}
 
 	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);

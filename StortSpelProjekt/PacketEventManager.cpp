@@ -63,7 +63,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::SPAWNCOMPONENT:
 			spawnComp = circularBuffer->readData<SpawnComponent>();
 			std::cout << spawnComp->x << " " << spawnComp->y << " " << spawnComp->z << "\n";
-			newComponent = new Component("../Meshes/Baseball", DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), spawnComp->ComponentId);
+			newComponent = new Component("../Meshes/Baseball", DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), spawnComp->ComponentId, spawnComp->ComponentId);
 			physWorld.addPhysComponent(newComponent);
 			componentVector.push_back(newComponent);
  			std::cout << "Sucessfully recieved component from server: " << std::to_string(spawnComp->ComponentId) << std::endl;

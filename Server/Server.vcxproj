@@ -143,6 +143,7 @@
     <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="RandomizeSpawn.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="SpawnComponent.cpp" />
   </ItemGroup>

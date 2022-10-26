@@ -333,8 +333,8 @@ int main()
 		//skickar itemSpawn
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
 		{
-			ItemSpawn itemSpawnData;
-			DirectX::SimpleMath::Vector3 temp = randomizeObjectPos();
+			/*ItemSpawn itemSpawnData;
+			DirectX::XMFLOAT3 temp = randomizeObjectPos();
 
 			itemSpawnData.x = temp.x;
 			itemSpawnData.y = temp.y;
@@ -346,7 +346,7 @@ int main()
 			
 			items.push_back(Component());
 			itemSpawnTimer = std::chrono::system_clock::now();
-			sendBinaryDataAllPlayers(itemSpawnData, data);
+			sendBinaryDataAllPlayers(itemSpawnData, data);*/
 		}
 
 		//sends data based on the server tickrate

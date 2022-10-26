@@ -25,8 +25,8 @@ void Game::loadObjects()
 	testBat = new BaseballBat("../Meshes/bat", Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, &planetGravityField);
 	testCube = new GameObject("../Meshes/Player", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), PLAYER, & planetGravityField);
-	component = new Component("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2);
-	grenade = new Grenade("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2);
+	component = new Component("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT);
+	grenade = new Grenade("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE);
 	
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
@@ -34,13 +34,18 @@ void Game::loadObjects()
 	physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(component, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
-	physWolrd.addPhysComponent(spaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3*0.75f, 0.75f));
+	physWolrd.addPhysComponent(spaceShipRed, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3*0.75f, 0.75f));
+	physWolrd.addPhysComponent(spaceShipBlue, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3 * 0.75f, 0.75f));
 	physWolrd.addPhysComponent(grenade, reactphysics3d::CollisionShapeName::BOX);
 	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-	spaceShip->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-	spaceShip->updatePhysCompRotation();
+	spaceShipRed->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+	spaceShipRed->updatePhysCompRotation();
+	spaceShipBlue->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+	spaceShipBlue->updatePhysCompRotation();
 
-	spaceShip->getPhysComp()->setPosition(reactphysics3d::Vector3(spaceShip->getPosV3().x, spaceShip->getPosV3().y, spaceShip->getPosV3().z));
+
+	spaceShipRed->getPhysComp()->setPosition(reactphysics3d::Vector3(spaceShipRed->getPosV3().x, spaceShipRed->getPosV3().y, spaceShipRed->getPosV3().z));
+	spaceShipBlue->getPhysComp()->setPosition(reactphysics3d::Vector3(spaceShipBlue->getPosV3().x, spaceShipBlue->getPosV3().y, spaceShipBlue->getPosV3().z));
 	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	potion->setRot(DirectX::SimpleMath::Vector3(0.0f, 1.5f, 1.5f));
@@ -269,7 +274,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
 		{
-			Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, grav);
+			Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, &planetGravityField);
 			if (playerId != i)
 			{
 				players.push_back(tmpPlayer);
@@ -434,7 +439,7 @@ void Game::Render()
 	basicRenderer.bilboardPrePass(this->camera);
 	this->potion->drawIcon();
 	this->testBat->drawIcon();
-	this->player->drawIcon(3);
+	this->currentPlayer->drawIcon(3);
 	this->spaceShipRed->drawQuad();
 	this->spaceShipBlue->drawQuad();
 
@@ -443,7 +448,7 @@ void Game::Render()
 	//drawParticles();	//not in use, intended for drawing particles in game.cpp
 	this->potion->drawParticles();
 	this->testBat->drawParticles();
-	this->player->drawParticles();
+	this->currentPlayer->drawParticles();
 	basicRenderer.geometryUnbind();
 
 

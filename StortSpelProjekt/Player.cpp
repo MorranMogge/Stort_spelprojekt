@@ -5,6 +5,7 @@
 #include "Potion.h"
 #include "BaseballBat.h"
 #include "Component.h"
+#include "Mesh.h"
 using namespace DirectX;
 
 void Player::resetRotationMatrix()
@@ -61,14 +62,21 @@ Player::~Player()
 	{
 		delete particles;
 	}
+}
 
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
     :GameObject(useMesh, pos, rot, id, field), health(70), holdingItem(nullptr)
 {
-	this->rotationMX = XMMatrixIdentity();
-	dotValue = { 0.0f, 0.0f, 0.0f };
-	dotProduct = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	normalVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		this->rotationMX = XMMatrixIdentity();
+		resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	
+		normalVector = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 1.0f);
+		rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
+		forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
+		normalVector = DirectX::XMVector3Normalize(normalVector);
+		rightVector = DirectX::XMVector3Normalize(rightVector);
+		forwardVector = DirectX::XMVector3Normalize(forwardVector);
+		this->rotate();
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1);
@@ -86,9 +94,16 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	:GameObject(objectPath, pos, rot, id, field), health(70), holdingItem(nullptr)
 {
 	this->rotationMX = XMMatrixIdentity();
-	dotValue = { 0.0f, 0.0f, 0.0f };
-	dotProduct = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	normalVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	
+
+	normalVector = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 1.0f);
+	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
+	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
+	normalVector = DirectX::XMVector3Normalize(normalVector);
+	rightVector = DirectX::XMVector3Normalize(rightVector);
+	forwardVector = DirectX::XMVector3Normalize(forwardVector);
+	this->rotate();
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1);
@@ -742,9 +757,10 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLO
 
 	bool testingVec = false;
 	int gameObjSize = (int)gameObjects.size();
-	for (int i = 1; i < gameObjSize; i++)
+	for (int i = 0; i < gameObjSize; i++)
 	{
-		if (gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
+		int id = gameObjects.at(i)->getId();
+		if (id != ObjID::PLANET && gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
 		{
 			//Maybe somehow return the index of the triangle hit to calculate new Normal
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
@@ -797,7 +813,7 @@ bool Player::getHitByBat() const
 
             //Calculate the force vector
             DirectX::XMFLOAT3 temp;
-            DirectX::XMStoreFloat3(&temp, (this->forwardVector*5+this->upVector));
+            DirectX::XMStoreFloat3(&temp, (this->forwardVector*5+ this->getUpDirection()));
             newNormalizeXMFLOAT3(temp);
 
             //Apply the force
@@ -806,7 +822,7 @@ bool Player::getHitByBat() const
 			holdingItem->setPickedUp(false);
 
             //You no longer "own" the item
-            holdingItem = nullptr;
+            //holdingItem = nullptr;
         }
         //Use the Item
         else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
@@ -816,7 +832,7 @@ bool Player::getHitByBat() const
             itemPhysComp->setIsAllowedToSleep(true);
             itemPhysComp->setIsSleeping(true);
 			holdingItem->setPickedUp(false);
-            holdingItem = nullptr;
+            //holdingItem = nullptr;
         }
     }
 	//Update icon movement

@@ -14,6 +14,7 @@
 #include "PacketEnum.h"
 #include "Component.h"
 #include "SpawnComponent.h"
+#include "RandomizeSpawn.h"
 
 const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
@@ -195,6 +196,7 @@ int main()
 
 	//std::vector<player> players;
 	std::vector<Component> components;
+	std::vector<Component> items;
 
 	//sf::UdpSocket socket;
 	std::string connectionType, mode;
@@ -221,11 +223,12 @@ int main()
 		std::cout << "UDP Successfully bound socket\n";
 	}
 	
-	std::chrono::time_point<std::chrono::system_clock> start, startComponentTimer;
+	std::chrono::time_point<std::chrono::system_clock> start, startComponentTimer, itemSpawnTimer;
 	start = std::chrono::system_clock::now();
 
 	float timerLength = 1.f / 30.0f;
-	float timerComponent = 20.0f;
+	float timerComponentLength = 20.0f;
+	float itemSpawnTimerLength = 20.0f;
 
 
 	setupTcp(data);
@@ -250,6 +253,7 @@ int main()
 
 	start = std::chrono::system_clock::now();
 	startComponentTimer = std::chrono::system_clock::now();
+	itemSpawnTimer = std::chrono::system_clock::now();
 
 	std::cout << "Starting while loop! \n";
 	while (true)
@@ -311,7 +315,7 @@ int main()
 		}
 
 		//spawns a component when the timer is done
-		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponent)
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
 		{
 			SpawnComponent cData = SpawnOneComponent(components);
 			std::cout << "componentId: " << std::to_string(cData.ComponentId) << std::endl;
@@ -319,6 +323,26 @@ int main()
 			startComponentTimer = std::chrono::system_clock::now();
 		}
 
+		//skickar itemSpawn
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
+		{
+			ItemSpawn itemSpawnData;
+			DirectX::SimpleMath::Vector3 temp = randomizeObjectPos();
+
+			itemSpawnData.x = temp.x;
+			itemSpawnData.y = temp.y;
+			itemSpawnData.z = temp.z;
+
+			itemSpawnData.itemId = items.size();
+			itemSpawnData.packetId = PacketType::ITEMSPAWN;
+			itemSpawnData.inUseBy = -1;
+			
+			items.push_back(Component());
+			itemSpawnTimer = std::chrono::system_clock::now();
+			sendBinaryDataAllPlayers(itemSpawnData, data);
+		}
+
+		//sends data based on the server tickrate
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
 		{
 			//f�r varje spelare s� skicka deras position till alla klienter
@@ -372,6 +396,18 @@ int main()
 				}*/
 				
 				sendBinaryDataAllPlayers<ComponentData>(compData, data);
+			}
+
+			for (int i = 0; i < items.size(); i++)
+			{
+				itemPosition itemsPosData;
+				itemsPosData.packetId = PacketType::ITEMPOSITION;
+				itemsPosData.itemId = i;
+				itemsPosData.inUseBy = items[i].getInUseById();
+				itemsPosData.x = items[i].getposition('x');
+				itemsPosData.y = items[i].getposition('y');
+				itemsPosData.z = items[i].getposition('z');
+				sendBinaryDataAllPlayers<itemPosition>(itemsPosData, data);
 			}
 
 			start = std::chrono::system_clock::now();

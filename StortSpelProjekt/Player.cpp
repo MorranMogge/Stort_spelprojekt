@@ -566,6 +566,21 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 	}
 }
 
+int Player::getItemOnlineType() const
+{
+	if (this->holdingItem == nullptr)
+	{
+		return -1;
+	}
+	return holdingItem->getOnlineType();
+}
+
+int Player::getItemOnlineId() const
+{
+	
+	return holdingItem->getOnlineId();
+}
+
 bool Player::pickupItem(Item* itemToPickup)
 {
 	bool successfulPickup = false;

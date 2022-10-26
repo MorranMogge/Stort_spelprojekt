@@ -65,6 +65,8 @@ public:
 	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime,  const bool& testingVec);
 	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime);
 	bool getPickup(GameObject *pickup);
+	int getItemOnlineType()const;
+	int getItemOnlineId()const;
 	bool pickupItem(Item *itemToPickup);
 
 	void releasePickup();

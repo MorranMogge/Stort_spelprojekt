@@ -53,5 +53,8 @@
     <ClInclude Include="SpawnComponent.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="RandomizeSpawn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

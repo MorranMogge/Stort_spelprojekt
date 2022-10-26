@@ -18,9 +18,6 @@
 #include "SkyboxObj.h"
 #include "PlayerVectors.h"
 
-//Spawn
-#include "ItemSpawn.h"
-
 //GameObjects
 #include "Player.h"
 #include "Potion.h"

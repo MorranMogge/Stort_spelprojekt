@@ -182,7 +182,6 @@
     <ClInclude Include="GUIText.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Item.h" />
-    <ClInclude Include="ItemSpawn.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightHandler.h" />
     <ClInclude Include="MaterialLibrary.h" />
@@ -295,7 +294,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Item.cpp" />
-    <ClCompile Include="ItemSpawn.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightHandler.cpp" />
     <ClCompile Include="main.cpp" />

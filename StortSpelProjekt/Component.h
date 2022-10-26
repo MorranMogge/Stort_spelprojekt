@@ -5,9 +5,8 @@ class Component : public Item
 {
 private:
 	bool pickedUp;
-
 public:
-	Component(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
+	Component(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId);
 	~Component();
 
 	void interactWithComponent();

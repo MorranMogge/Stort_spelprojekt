@@ -21,6 +21,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		ComponentData* compData = nullptr;
 		SpawnComponent* spawnComp = nullptr;
 		PositionRotation* prMatrixData = nullptr;
+		ItemSpawn* itemSpawn = nullptr;
+		itemPosition* itemPosData = nullptr;
 
 		switch (packetId)
 		{
@@ -53,7 +55,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::COMPONENTPOSITION:
 
 			compData = circularBuffer->readData<ComponentData>();
-			std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
+			//std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
 			break;
 
 		case PacketType::SPAWNCOMPONENT:
@@ -80,6 +82,18 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				}
 			}
 
+			break;
+
+		case PacketType::ITEMSPAWN:
+
+			itemSpawn = circularBuffer->readData<ItemSpawn>();
+
+			std::cout << "item test: " << std::to_string(itemSpawn->itemId) << std::endl;
+			break;
+
+		case PacketType::ITEMPOSITION:
+			itemPosData = circularBuffer->readData<itemPosition>();
+			std::cout << "item pos data\n";
 			break;
 		}
 	}

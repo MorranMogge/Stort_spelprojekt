@@ -6,8 +6,8 @@
 
 using namespace DirectX;
 
-BaseballBat::BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-	:Item(objectPath, pos, rot, id), player(nullptr), force(0.f)
+BaseballBat::BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId)
+	:Item(objectPath, pos, rot, id, onlineId,2), player(nullptr), force(0.f)
 {
 	force = FORCECONSTANT;
 }

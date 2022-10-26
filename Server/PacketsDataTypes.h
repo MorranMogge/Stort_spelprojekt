@@ -30,6 +30,28 @@ struct ComponentData
 	float z;
 };
 
+//enum = 6
+struct itemPosition
+{
+	int packetId;
+	int itemId;
+	int inUseBy;
+	float x;
+	float y;
+	float z;
+};
+
+//enum = 7
+struct ItemSpawn
+{
+	int packetId;
+	int itemId;
+	int inUseBy;
+	float x;
+	float y;
+	float z;
+};
+
 //assign the player with an id that the server has created
 //enum = 10
 struct idProtocol

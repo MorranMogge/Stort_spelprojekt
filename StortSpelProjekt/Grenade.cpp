@@ -28,8 +28,8 @@ void Grenade::explode()
 	}
 }
 
-Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-	:Item(objectPath, pos, rot, id), destructionIsImminent(false), timeToExplode(5.f)
+Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId)
+	:Item(objectPath, pos, rot, id, onlineId, 2), destructionIsImminent(false), timeToExplode(5.f)
 {
 }
 

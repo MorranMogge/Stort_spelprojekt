@@ -20,6 +20,35 @@ void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Play
 	pr.matrix = currentPlayer->getMatrix();
 	client->sendStuff<PositionRotation>(pr);
 
+	
+
+	if (currentPlayer->getItemOnlineType() == 0)
+	{
+		
+		ComponentData c;
+		c.ComponentId = currentPlayer->getItemOnlineId();
+		c.inUseBy = client->getPlayerId();
+		c.packetId = PacketType::COMPONENTPOSITION;
+		c.x = currentPlayer->getPos().x;
+		c.y = currentPlayer->getPos().y;
+		c.z = currentPlayer->getPos().z;
+		client->sendStuff<ComponentData>(c);
+	}
+		//hitta current players item och bara skicka den dattan ****************************************
+		//currentPlayer->
+		//only sends component data if the player is holding the item
+		/*if (components[i]->returnStatus())
+		{
+			ComponentData c;
+			c.ComponentId = i;
+			c.inUseBy = i;
+			c.packetId = PacketType::COMPONENTPOSITION;
+			c.x = 69.0f;
+			c.y = 60.0f;
+			c.z = 69.0f;
+			client->sendStuff<ComponentData>(c);
+		}*/
+
 	//ComponentData c;
 	//c.ComponentId = 0;
 	//c.inUseBy = -1;

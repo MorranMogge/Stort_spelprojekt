@@ -16,7 +16,7 @@ private:
 	float force;
 
 public:
-	BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
+	BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId);
 	~BaseballBat();
 
 	void setPlayer(Player* player);

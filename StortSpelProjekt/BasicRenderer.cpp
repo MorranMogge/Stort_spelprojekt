@@ -230,7 +230,7 @@ void BasicRenderer::setUpScene(Camera& stageCamera)
 void BasicRenderer::geometryPass(Camera& stageCamera)
 {
 	//re-use same depth buffer as geometry pass.
-	//immediateContext->OMSetDepthStencilState(PT_dsState,0);							//Fix later?
+	immediateContext->OMSetDepthStencilState(PT_dsState,0);							//Fix later?
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 	immediateContext->CSSetShader(pt_UpdateShader, nullptr, 0);							//Set ComputeShader
 	immediateContext->VSSetShader(pt_vShader, nullptr, 0);								//SetVTXShader

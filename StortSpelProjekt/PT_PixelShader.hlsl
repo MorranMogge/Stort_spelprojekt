@@ -2,7 +2,7 @@ Texture2D tex : register(t0);
 SamplerState samplerState : register(s0);
 
 
-float4 main(float4 position : SV_Position, float2 uv : UV, float faloff : FALOFF) : SV_Target0
+float4 main(float4 position : SV_Position, float2 uv : UV, float faloff : FALOFF, float ison : ISON) : SV_Target0
 {
     float4 color = tex.Sample(samplerState, uv);
     color.a = faloff;

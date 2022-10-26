@@ -3,6 +3,7 @@ struct Output
     float4 position : SV_Position;
     float2 uv : UV;
     float faloff : FALOFF;
+    float ison : ISON;
 };
 
 cbuffer CamViewProjCB : register(b0)
@@ -18,9 +19,10 @@ struct Particle
 {
     float3 pos : POSITION;
     float faloff : FALOFF;
+    float ison : ISON;
 };
 
-#define Half 4.5f
+#define Half 1.5f
 
 [maxvertexcount(4)]
 void main(point Particle input[1], inout TriangleStream<Output> outputStream)
@@ -47,6 +49,7 @@ void main(point Particle input[1], inout TriangleStream<Output> outputStream)
             mul(float4(worldPos[i], 1.0f), mainCamViewProj),
             uv[i],
             input[0].faloff,
+            input[0].ison,
         };
         outputStream.Append(output);
     }

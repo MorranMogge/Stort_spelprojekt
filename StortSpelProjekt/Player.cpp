@@ -16,7 +16,7 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	normalVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	//Particles
-	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 2);
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1);
 
 	//Item Icon
 	float constant =5.0f;
@@ -36,7 +36,7 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	normalVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	//Particles
-	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 2);
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1);
 
 	//Item Icon
 	float constant = 5.0f;

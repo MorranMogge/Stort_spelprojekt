@@ -39,14 +39,16 @@ struct particleStruct
 	DirectX::XMFLOAT3 startpos;
 	float lifeTime;
 	DirectX::XMFLOAT3 currentDirection;
+	float isActive;
 	DirectX::XMFLOAT3 baseOffset;
-	particleStruct(const DirectX::XMFLOAT3 & position, const float deltaTime, const float lifeTime, const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& offset)
+	particleStruct(const DirectX::XMFLOAT3 & startPosition, const DirectX::XMFLOAT3& position, const float deltaTime, const float lifeTime, const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& offset)
 	{
-		this->startpos = position;
+		this->startpos = startPosition;
 		this->pos = position;
 		this->delta = deltaTime;
 		this->lifeTime = lifeTime;
 		this->currentDirection = direction;
 		this->baseOffset = offset;
+		this->isActive = 1.0f;
 	}
 };

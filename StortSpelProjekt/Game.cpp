@@ -11,7 +11,7 @@ void Game::loadObjects()
 
 	//Here we can add base object we want in the beginning of the game
 	planet = new GameObject("../Meshes/Sphere", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET,nullptr, XMFLOAT3(20.0f, 20.0f, 20.0f));
-	player = new Player("../Meshes/pinto", Vector3(22, 12, -22), Vector3(0.0f, 0.0f, 0.0f), PLAYER);
+	player = new Player("../Meshes/pinto", Vector3(22, 12, -22), Vector3(0.0f, 0.0f, 0.0f), PLAYER, &planetGravityField);
 	potion = new Potion("../Meshes/potion", Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), POTION, &planetGravityField);
 	Vector3 shipPos(10, 14, 10);
 	Vector3 shipPos2(14, 10, 10);
@@ -19,7 +19,7 @@ void Game::loadObjects()
 	spaceShipBlue = new SpaceShip(shipPos2, ROCKET, 1, &planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
 	testBat = new BaseballBat("../Meshes/bat", Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, &planetGravityField);
 	testCube = new GameObject("../Meshes/Player", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
-	otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), PLAYER);
+	otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), PLAYER, & planetGravityField);
 	
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
@@ -317,7 +317,7 @@ void Game::Render()
 	basicRenderer.bilboardPrePass(this->camera);
 	this->potion->drawIcon();
 	this->testBat->drawIcon();
-	this->player->drawIcon();
+	this->player->drawIcon(3);
 	this->spaceShipRed->drawQuad();
 	this->spaceShipBlue->drawQuad();
 

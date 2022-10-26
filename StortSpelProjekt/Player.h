@@ -29,13 +29,15 @@ private:
 	int repairCount = 0;
 	Item* holdingItem;
 	int health;
+	bool moveKeyPressed = false;
+
 protected:
 	BilboardObject* playerIcon;
 	ParticleEmitter* particles;
 
 public:
-	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
-	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
+	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field = nullptr);
+	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field = nullptr);
 	~Player();
 	void handleInputs(); 
 	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float& deltaTime);
@@ -44,7 +46,7 @@ public:
 
 	void releasePickup();
 
-	void drawIcon();
+	void drawIcon(int playerIndex);
 	void drawParticles();
 
 	DirectX::XMVECTOR getUpVec() const;

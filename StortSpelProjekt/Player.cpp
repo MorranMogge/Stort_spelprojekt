@@ -7,8 +7,8 @@
 #include "Component.h"
 using namespace DirectX;
 
-Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-    :GameObject(useMesh, pos, rot, id), health(70), holdingItem(nullptr)
+Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
+    :GameObject(useMesh, pos, rot, id, field), health(70), holdingItem(nullptr)
 {
 	this->rotationMX = XMMatrixIdentity();
 	dotValue = { 0.0f, 0.0f, 0.0f };
@@ -16,18 +16,19 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	normalVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	//Particles
-	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 2);
 
 	//Item Icon
-	float constant = 20.0f;
+	float constant =5.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-	this->playerIcon = new BilboardObject("icon_potion.png", iconPos);
+	std::vector<std::string> playernames{ "player1.png", "player2.png", "player3.png", "player4.png" };
+	this->playerIcon = new BilboardObject(playernames, iconPos);
 	this->playerIcon->setOffset(constant);
 }
 
-Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-	:GameObject(objectPath, pos, rot, id), health(70), holdingItem(nullptr)
+Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
+	:GameObject(objectPath, pos, rot, id, field), health(70), holdingItem(nullptr)
 {
 	this->rotationMX = XMMatrixIdentity();
 	dotValue = { 0.0f, 0.0f, 0.0f };
@@ -35,13 +36,14 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	normalVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	//Particles
-	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 2);
 
 	//Item Icon
-	float constant = 20.0f;
+	float constant = 5.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-	this->playerIcon = new BilboardObject("icon_potion.png", iconPos);
+	std::vector<std::string> playernames{ "player1.png", "player2.png", "player3.png", "player4.png" };
+	this->playerIcon = new BilboardObject(playernames, iconPos);
 	this->playerIcon->setOffset(constant);
 }
 
@@ -94,7 +96,6 @@ void Player::handleInputs()
 
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float& deltaTime)
 {
-
     //Variables
 	normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 	upVector = XMVector3TransformCoord(DEFAULT_UP, rotation);
@@ -139,8 +140,10 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		deltaTime *= 2.0f;
 	}
 
+
 	if (Input::KeyDown(KeyCode::W))
 	{
+		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * 25.0f;
 		dotProduct = DirectX::XMVector3Dot(cameraForward, rightVector);
 		XMStoreFloat3(&dotValue, dotProduct);
@@ -189,9 +192,9 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 			}
 		}
 	}
-
 	else if (Input::KeyDown(KeyCode::S))
 	{
+		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * 25.0f;
 		dotProduct = DirectX::XMVector3Dot(-cameraForward, rightVector);
 		XMStoreFloat3(&dotValue, dotProduct);
@@ -240,9 +243,9 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 			}
 		}
 	}
-
 	else if (Input::KeyDown(KeyCode::D))
 	{
+		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * 25.0f;
 		dotProduct = DirectX::XMVector3Dot(cameraRight, rightVector);
 		XMStoreFloat3(&dotValue, dotProduct);
@@ -265,9 +268,9 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 			}
 		}
 	}
-
 	else if (Input::KeyDown(KeyCode::A))
 	{
+		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * 25.0f;
 		dotProduct = DirectX::XMVector3Dot(-cameraRight, rightVector);
 		XMStoreFloat3(&dotValue, dotProduct);
@@ -290,6 +293,13 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 			}
 		}
 	}
+
+
+	if (!Input::KeyDown(KeyCode::W) && !Input::KeyDown(KeyCode::A) && !Input::KeyDown(KeyCode::S) && !Input::KeyDown(KeyCode::D))
+	{
+		this->moveKeyPressed = false;
+	}
+
 }
 
 bool Player::pickupItem(Item* itemToPickup)
@@ -414,19 +424,36 @@ void Player::update()
             holdingItem = nullptr;
         }
     }
+	//Update icon movement
+	if (this->playerIcon != nullptr)
+	{
+		float constant = playerIcon->getOffset();
+		DirectX::XMFLOAT3 upDir = this->getUpDirection();
+		DirectX::XMFLOAT3 itemPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
+		this->playerIcon->setPosition(this->position + itemPos);
+	}
+	//Update particle movement
+	if (this->particles != nullptr && moveKeyPressed)
+	{
+		//tStruct.resetStartTime();
+		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
+		this->particles->setPosition(this->position);
+		this->particles->setRotation(this->getUpDirection());
+		this->particles->updateBuffer();
+	}
 }
 
-void Player::drawIcon()
+void Player::drawIcon(int playerIndex)
 {
 	if (this->playerIcon != nullptr)
 	{
-		this->playerIcon->bindAndDraw(0, 0);
+		this->playerIcon->bindAndDraw(playerIndex, 0);
 	}
 }
 
 void Player::drawParticles()
 {
-	if (this->particles != nullptr)
+	if (this->particles != nullptr && moveKeyPressed)
 	{
 		this->particles->BindAndDraw(0);
 	}

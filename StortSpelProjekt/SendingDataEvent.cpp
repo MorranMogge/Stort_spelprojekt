@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "SendingDataEvent.h"
+#include "Component.h"
 #include "PacketEnum.h"
 
 //data to send
-void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Player*>& players)
+void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Player*>& players)//, std::vector<Component*>& components)
 {
 	//send data here 
 	testPosition t;

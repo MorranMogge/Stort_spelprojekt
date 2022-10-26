@@ -9,13 +9,13 @@ PacketEventManager::~PacketEventManager()
 {
 }
 
-void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int &NROFPLAYERS, std::vector<Player*>& players, const int& playerId)
+void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int &NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
+	std::vector<Component *>& componentVector, PhysicsWorld& physWorld)
 {
 	//handles the online events
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{
 		int packetId = circularBuffer->peekPacketId();
-
 		idProtocol* protocol = nullptr;
 		testPosition* tst = nullptr;
 		ComponentData* compData = nullptr;
@@ -23,6 +23,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		PositionRotation* prMatrixData = nullptr;
 		ItemSpawn* itemSpawn = nullptr;
 		itemPosition* itemPosData = nullptr;
+		Component* newComponent = nullptr;
 
 		switch (packetId)
 		{
@@ -55,12 +56,17 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::COMPONENTPOSITION:
 
 			compData = circularBuffer->readData<ComponentData>();
+			componentVector[compData->ComponentId]->setPos(DirectX::XMFLOAT3(compData->x, compData->y, compData->z));
 			//std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
 			break;
 
 		case PacketType::SPAWNCOMPONENT:
 			spawnComp = circularBuffer->readData<SpawnComponent>();
-			std::cout << "Received SpawnComponent id: " << std::to_string(spawnComp->ComponentId) << std::endl;
+			std::cout << spawnComp->x << " " << spawnComp->y << " " << spawnComp->z << "\n";
+			newComponent = new Component("../Meshes/Baseball", DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), spawnComp->ComponentId);
+			physWorld.addPhysComponent(newComponent);
+			componentVector.push_back(newComponent);
+ 			std::cout << "Sucessfully recieved component from server: " << std::to_string(spawnComp->ComponentId) << std::endl;
 			break;
 		
 		case PacketType::POSITIONROTATION:

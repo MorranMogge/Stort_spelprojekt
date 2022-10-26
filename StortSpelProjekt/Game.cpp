@@ -17,14 +17,10 @@ void Game::loadObjects()
 	spaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(20, 29, 20), orientToPlanet(DirectX::SimpleMath::Vector3(20, 29, 20)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
 	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4,0);
 	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(50, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-	otherPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(-42, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6, grav);
-	//component = new Component("../Meshes/Baseball", DirectX::SimpleMath::Vector3(30, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2);
 
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
-	physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
-	//physWolrd.addPhysComponent(component, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
 	physWolrd.addPhysComponent(spaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3*0.75f, 0.75f));
 	potion->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
@@ -40,7 +36,6 @@ void Game::loadObjects()
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	potion->setRot(DirectX::SimpleMath::Vector3(0.0f, 1.5f, 1.5f));
 	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
-	otherPlayer->getPhysComp()->setPosition(reactphysics3d::Vector3(otherPlayer->getPosV3().x, otherPlayer->getPosV3().y, otherPlayer->getPosV3().z));
 
 	gameObjects.emplace_back(currentPlayer);
 	gameObjects.emplace_back(spaceShip);
@@ -48,8 +43,6 @@ void Game::loadObjects()
 	gameObjects.emplace_back(potion);
 	gameObjects.emplace_back(testCube);
 	gameObjects.emplace_back(testBat);
-	gameObjects.emplace_back(otherPlayer);
-	//gameObjects.emplace_back(component);
 
 	//for (int i = 0; i < 10; i++)
 	//{
@@ -77,6 +70,10 @@ void Game::drawShadows()
 	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
 	{
 		ltHandler.drawShadows(i, gameObjects);
+	}
+	for (int i = 0; i < components.size(); i++)
+	{
+		components[i]->draw();
 	}
 
 	basicRenderer.depthPrePass();
@@ -172,6 +169,11 @@ void Game::updateBuffers()
 		gameObjects[i]->updateBuffer();
 	}
 
+	for (int i = 0; i < components.size(); i++)
+	{
+		components[i]->updateBuffer();
+	}
+
 	//Update Wireframe buffer
 	ZeroMemory(&subData, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	immediateContext->Map(wireBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &subData);
@@ -262,7 +264,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	this->packetEventManager = new PacketEventManager();
 	//m�ste raderas******************
-	client = new Client("192.168.43.251");
+	client = new Client("192.168.43.241");
 	circularBuffer = client->getCircularBuffer();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -357,7 +359,11 @@ GAMESTATE Game::Update()
 
 	currentPlayer->pickupItem(potion);
 	currentPlayer->pickupItem(testBat);
-	//currentPlayer->pickupItem(component);
+
+	for (int i = 0; i < components.size(); i++)
+	{
+		if (currentPlayer->pickupItem(components[i])) break;
+	}
 
 	if (Input::KeyPress(KeyCode::K))
 	{
@@ -375,8 +381,11 @@ GAMESTATE Game::Update()
 	}
 
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId());
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd);
 	
+	
+	//Physics related functions
+	//physWolrd.update(dt);
 	
 	for (int i = 0; i < players.size(); i++)
 	{
@@ -386,9 +395,10 @@ GAMESTATE Game::Update()
 		players[i]->updateMatrixOnline();
 	}
 
-	
-	//Physics related functions
-	physWolrd.update(dt);
+	for (int i = 0; i < components.size(); i++)
+	{
+  		components[i]->update(); 
+	}
 
 	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
 	for (int i = 0; i < gameObjects.size(); i++)

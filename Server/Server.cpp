@@ -1,3 +1,4 @@
+#include "PhysicsWorld.h"
 
 #include <iostream>
 #include <string>
@@ -187,6 +188,11 @@ void sendIdToAllPlayers(serverData& data)
 
 int main()
 {
+	PhysicsWorld physWorld;
+	Component planetComp;
+	physWorld.addPhysComponent(planetComp, reactphysics3d::CollisionShapeName::SPHERE, DirectX::XMFLOAT3(40, 40, 40));
+	planetComp.getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
+
 	std::string identifier;
 	std::string s = "empty";
 	// Group the variables to send into a packet
@@ -318,7 +324,8 @@ int main()
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
 		{
 			SpawnComponent cData = SpawnOneComponent(components);
-			std::cout << "Spawns componentId: " << std::to_string(cData.ComponentId) << std::endl;
+			physWorld.addPhysComponent(components[components.size()-1]);
+			//std::cout << "componentId: " << std::to_string(cData.ComponentId) << std::endl;
 			sendBinaryDataAllPlayers(cData, data);
 			startComponentTimer = std::chrono::system_clock::now();
 		}
@@ -345,6 +352,10 @@ int main()
 		//sends data based on the server tickrate
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
 		{
+			for (int i = 0; i < 10; i++)
+			{
+				physWorld.update(timerLength/10.f);
+			}
 			//f�r varje spelare s� skicka deras position till alla klienter
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{
@@ -380,8 +391,8 @@ int main()
 				compData.ComponentId = i;
 				compData.inUseBy = components[i].getInUseById();
 				compData.x = components[i].getposition('x');
-				compData.x = components[i].getposition('y');
-				compData.x = components[i].getposition('z');
+				compData.y = components[i].getposition('y');
+				compData.z = components[i].getposition('z');
 				//if its in use by a player it will get the players position
 				for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
 				{

@@ -5,19 +5,19 @@
 
 DirectX::SimpleMath::Vector3 randomizeObjectPos()
 {
-	DirectX::XMFLOAT3 position;
-	DirectX::SimpleMath::Vector3 randomPos = {};
+    DirectX::XMFLOAT3 position;
+    DirectX::SimpleMath::Vector3 randomPos = {};
 
-	int xPos = rand() % 201 - 100;
-	int yPos = rand() % 201 - 100;
-	int zPos = rand() % 201 - 100;
+    int xPos = rand() % 201 - 100;
+    int yPos = rand() % 201 - 100;
+    int zPos = rand() % 201 - 100;
 
-	position.x = xPos;
-	randomPos.y = yPos;
-	randomPos.z = zPos;
+    position.x = xPos;
+    randomPos.y = yPos;
+    randomPos.z = zPos;
 
-	randomPos.Normalize();
-	randomPos *= 100;
+    randomPos.Normalize();
+    randomPos *= 100;
 
-	return randomPos;
+    return randomPos;
 }

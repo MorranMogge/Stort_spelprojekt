@@ -59,9 +59,8 @@ private:
 	GameObject* testCube;
 	SpaceShip* spaceShip;
 	Potion* potion;			//not in use
-	Component* component;
 	BaseballBat* testBat;
-	Player* otherPlayer;
+	std::vector<Component*> components;
 
 	LightHandler ltHandler;
 	ImGuiHelper* imguiHelper;

@@ -1,3 +1,4 @@
+#include "PhysicsWorld.h"
 
 #include <iostream>
 #include <string>
@@ -186,6 +187,9 @@ void sendIdToAllPlayers(serverData& data)
 
 int main()
 {
+	PhysicsWorld physWorld;
+	physWorld.addPhysComponent();
+
 	std::string identifier;
 	std::string s = "empty";
 	// Group the variables to send into a packet
@@ -321,6 +325,7 @@ int main()
 
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
 		{
+			physWorld.update(timerLength);
 			//f�r varje spelare s� skicka deras position till alla klienter
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{
@@ -356,8 +361,8 @@ int main()
 				compData.ComponentId = i;
 				compData.inUseBy = components[i].getInUseById();
 				compData.x = components[i].getposition('x');
-				compData.x = components[i].getposition('y');
-				compData.x = components[i].getposition('z');
+				compData.y = components[i].getposition('y');
+				compData.z = components[i].getposition('z');
 				//if its in use by a player it will get the players position
 				/*for (int j = 0; j < players.size(); j++)
 				{

@@ -135,15 +135,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CircularBuffer.cpp" />
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="SpawnComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CircularBuffer.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="PacketEnum.h" />
     <ClInclude Include="Packethandler.h" />
     <ClInclude Include="PacketsDataTypes.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="SpawnComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

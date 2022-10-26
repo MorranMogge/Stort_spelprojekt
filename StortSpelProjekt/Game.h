@@ -9,7 +9,7 @@ struct wirefameInfo
 };
 
 const int NROFPLAYERS = 1;
-static bool IFONLINE = false;
+static bool IFONLINE = true;
 
 class Game : public State
 {
@@ -28,8 +28,8 @@ private:
 	std::unique_ptr<DirectX::GamePad> gamePad;
 
 	float dt;
-	std::chrono::time_point<std::chrono::system_clock> start;
-	
+	std::chrono::time_point<std::chrono::system_clock> currentTime;
+	std::chrono::time_point<std::chrono::system_clock> lastUpdate;
 
 	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
 	DirectX::XMFLOAT3 velocity;
@@ -52,7 +52,6 @@ private:
 	//variables to handle packets
 	CircularBufferClient* circularBuffer;
 
-
 	Camera camera;
 	SkyboxObj skybox;
 	Player* currentPlayer;
@@ -60,6 +59,7 @@ private:
 	GameObject* testCube;
 	SpaceShip* spaceShip;
 	Potion* potion;			//not in use
+	Component* component;
 	BaseballBat* testBat;
 	Player* otherPlayer;
 

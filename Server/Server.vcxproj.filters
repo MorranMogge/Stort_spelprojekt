@@ -24,6 +24,12 @@
     <ClCompile Include="CircularBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpawnComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="player.h">
@@ -39,6 +45,12 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="PacketsDataTypes.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnComponent.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

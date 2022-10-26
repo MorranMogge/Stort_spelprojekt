@@ -1,14 +1,14 @@
+#include "Component.h"
 
-#include "player.h"
-
-player::player()
+Component::Component()
 {
 	xPos = 20.0f;
 	yPos = 30.0f;
 	zPos = 40.0f;
+	inUseBy = -1;
 }
 
-float player::getposition(char whichPos) const
+float Component::getposition(char whichPos) const
 {
 	switch (whichPos)
 	{
@@ -27,24 +27,24 @@ float player::getposition(char whichPos) const
 	}
 }
 
-void player::setMatrix(DirectX::XMFLOAT4X4 matrix)
+int Component::getInUseById() const
 {
-	this->matrix = matrix;
+	return this->inUseBy;
 }
 
-DirectX::XMFLOAT4X4 player::getMatrix() const
+void Component::setInUseBy(const int inUseById)
 {
-	return this->matrix;
+	this->inUseBy = inUseById;
 }
 
-void player::setPosition(float pos[3])
+void Component::setPosition(float pos[3])
 {
 	this->xPos = pos[0];
 	this->yPos = pos[1];
 	this->zPos = pos[2];
 }
 
-void player::setPosition(float x, float y, float z)
+void Component::setPosition(float x, float y, float z)
 {
 	this->xPos = x;
 	this->yPos = y;

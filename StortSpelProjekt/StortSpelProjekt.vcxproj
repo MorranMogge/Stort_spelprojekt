@@ -152,7 +152,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Server\PacketsDataTypes.h" />
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="BasicRenderer.h" />
     <ClInclude Include="BlendState.h" />
@@ -176,6 +175,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GPU.h" />
     <ClInclude Include="GravityField.h" />
+    <ClInclude Include="Grenade.h" />
     <ClInclude Include="GuiHandler.h" />
     <ClInclude Include="GUIObject.h" />
     <ClInclude Include="GUISprite.h" />
@@ -268,6 +268,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GravityField.cpp" />
+    <ClCompile Include="Grenade.cpp" />
     <ClCompile Include="GuiHandler.cpp" />
     <ClCompile Include="GUISprite.cpp" />
     <ClCompile Include="GUIText.cpp" />

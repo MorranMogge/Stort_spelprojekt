@@ -12,6 +12,8 @@
 #include "Packethandler.h"
 #include "CircularBuffer.h"
 #include "PacketEnum.h"
+#include "Component.h"
+#include "SpawnComponent.h"
 
 const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
@@ -101,7 +103,7 @@ void sendDataAllPlayers(testPosition &posData, serverData& serverData)
 		}
 		else
 		{
-			std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
+			//std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
 		}
 	}
 };
@@ -119,7 +121,7 @@ void sendBinaryDataAllPlayers(const T& data, serverData& serverData)
 		}
 		else
 		{
-			std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
+			//std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
 		}
 	}
 }
@@ -191,7 +193,8 @@ int main()
 
 	std::cout << "Nr of players for the game: " << std::to_string(MAXNUMBEROFPLAYERS) << std::endl;
 
-	std::vector<player> players;
+	//std::vector<player> players;
+	std::vector<Component> components;
 
 	//sf::UdpSocket socket;
 	std::string connectionType, mode;
@@ -218,14 +221,15 @@ int main()
 		std::cout << "UDP Successfully bound socket\n";
 	}
 	
-	std::chrono::time_point<std::chrono::system_clock> start;
+	std::chrono::time_point<std::chrono::system_clock> start, startComponentTimer;
 	start = std::chrono::system_clock::now();
+
 	float timerLength = 1.f / 30.0f;
+	float timerComponent = 20.0f;
 
 
 	setupTcp(data);
 
-	
 	acceptPlayers(data);
 
 	sendIdToAllPlayers(data);
@@ -244,6 +248,8 @@ int main()
 	}
 	
 
+	start = std::chrono::system_clock::now();
+	startComponentTimer = std::chrono::system_clock::now();
 
 	std::cout << "Starting while loop! \n";
 	while (true)
@@ -252,10 +258,34 @@ int main()
 		while (circBuffer->getIfPacketsLeftToRead())
 		{
 			int packetId = circBuffer->peekPacketId();
+			
+			testPosition* tst = nullptr;
+			ComponentData* compData = nullptr;
+			PositionRotation* prMatrixData = nullptr;
 
-			if (packetId == PacketType::POSITION)
+			switch (packetId)
 			{
-				testPosition* tst = circBuffer->readData<testPosition>();
+			default:
+				break;
+
+			case PacketType::POSITIONROTATION:
+				prMatrixData = circBuffer->readData<PositionRotation>();
+				//std::cout << "packet id: " << std::to_string(prMatrixData->playerId) << std::endl;
+				for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+				{
+					//std::cout << "playerid prMatrixData" << std::to_string(prMatrixData->) << std::endl;
+					if (i == prMatrixData->playerId)
+					{
+						
+						data.users[i].playa.setMatrix(prMatrixData->matrix);
+						std::cout <<"player Id: " << std::to_string(prMatrixData->playerId)<<"pos: " << std::to_string(data.users[i].playa.getMatrix()._14) << std::endl;
+						break;
+					}
+				}
+				break;
+
+			case PacketType::POSITION:
+				tst = circBuffer->readData<testPosition>();
 				for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 				{
 					if (i == tst->playerId)
@@ -264,28 +294,86 @@ int main()
 						break;
 					}
 				}
+				break;
+
+			case PacketType::COMPONENTPOSITION:
+				compData = circBuffer->readData<ComponentData>();
+				std::cout << "Received componentData\n";
+				for (int i = 0; i < components.size(); i++)
+				{
+					components[i].setPosition(compData->x, compData->y, compData->z);
+					if (compData->inUseBy >= 0)components[i].setInUseBy(compData->inUseBy);
+				}
+					break;
 			}
+
+			
 		}
 
+		//spawns a component when the timer is done
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponent)
+		{
+			SpawnComponent cData = SpawnOneComponent(components);
+			std::cout << "componentId: " << std::to_string(cData.ComponentId) << std::endl;
+			sendBinaryDataAllPlayers(cData, data);
+			startComponentTimer = std::chrono::system_clock::now();
+		}
 
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
 		{
 			//f�r varje spelare s� skicka deras position till alla klienter
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{
-				testPosition pos;
+				/*testPosition pos;
 				
 				pos.packetId = PacketType::POSITION;
+				
 				pos.x = data.users[i].playa.getposition('x');
 				pos.y = data.users[i].playa.getposition('y');
 				pos.z = data.users[i].playa.getposition('z');
-				pos.playerId = i;
+				pos.playerId = i;*/
 				
-				std::cout << "data to send x: " << std::to_string(pos.x) << ", y: " << std::to_string(pos.y) << ", z: " << std::to_string(pos.z) << std::endl;
+				//std::cout << "data to send x: " << std::to_string(pos.x) << ", y: " << std::to_string(pos.y) << ", z: " << std::to_string(pos.z) << std::endl;
 				//std::cout << "packet id sent: " << std::to_string(pos.packetId) << std::endl;
 
-				sendDataAllPlayers(pos, data);
+				//sendDataAllPlayers(pos, data);
+
+				PositionRotation prMatrix;
+				prMatrix.matrix = data.users[i].playa.getMatrix();
+				//std::cout << "id: " << std::to_string(data.users[i].playerId) << "prMatrix test: " << std::to_string(data.users[i].playa.getMatrix()._14);
+				prMatrix.packetId = PacketType::POSITIONROTATION;
+				prMatrix.playerId = i;
+				
+				sendBinaryDataAllPlayers(prMatrix, data);
 			}
+
+			//send component data to all players
+			for (int i = 0; i < components.size(); i++)
+			{
+				ComponentData compData;
+				
+				compData.packetId = PacketType::COMPONENTPOSITION;
+				compData.ComponentId = i;
+				compData.inUseBy = components[i].getInUseById();
+				compData.x = components[i].getposition('x');
+				compData.x = components[i].getposition('y');
+				compData.x = components[i].getposition('z');
+				//if its in use by a player it will get the players position
+				/*for (int j = 0; j < players.size(); j++)
+				{
+					if (compData.inUseBy >= 0 && compData.inUseBy <= MAXNUMBEROFPLAYERS)
+					{
+						compData.x = players[j].getposition('x');
+						compData.x = players[j].getposition('y');
+						compData.x = players[j].getposition('z');
+						break;
+					}
+					
+				}*/
+				
+				sendBinaryDataAllPlayers<ComponentData>(compData, data);
+			}
+
 			start = std::chrono::system_clock::now();
 		}
 		
@@ -294,7 +382,7 @@ int main()
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+// Debug program: F5 or Debug > Start Debugging 
 
 // Tips for Getting Started: 
 //   1. Use the Solution Explorer window to add/manage files

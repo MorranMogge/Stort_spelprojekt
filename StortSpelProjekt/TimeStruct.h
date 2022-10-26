@@ -22,4 +22,9 @@ struct TimeStruct
 	{
 		startTime = std::chrono::system_clock::now();
 	}
+
+	bool getTimePassed(const float& timeInSeconds)
+	{
+		return timeInSeconds < ((std::chrono::duration<float>)(std::chrono::system_clock::now() - this->startTime)).count();
+	}
 };

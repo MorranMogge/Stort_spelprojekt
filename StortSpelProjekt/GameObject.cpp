@@ -2,6 +2,13 @@
 #include "PhysicsComponent.h"
 #include "GameObject.h"
 
+void GameObject::updatePhysCompRotation()
+{
+	DirectX::SimpleMath::Quaternion dx11Quaternion = DirectX::XMQuaternionRotationMatrix(this->rotation);
+	reactphysics3d::Quaternion reactQuaternion = reactphysics3d::Quaternion(dx11Quaternion.x, dx11Quaternion.y, dx11Quaternion.z, dx11Quaternion.w);
+	this->physComp->setRotation(reactQuaternion);
+}
+
 GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale)
 	:position(pos), mesh(useMesh), objectID(id), scale(scale), physComp(nullptr)
 {
@@ -109,6 +116,9 @@ void GameObject::setScale(const DirectX::XMFLOAT3& scale)
 {
 	this->mesh->scale = scale;
 	this->scale = scale;
+	
+	//if (this->physComp->getTypeName() == reactphysics3d::CollisionShapeName::BOX) 
+	this->physComp->setScale(scale);
 }
 
 DirectX::XMFLOAT3 GameObject::getPos() const
@@ -129,6 +139,24 @@ DirectX::XMMATRIX GameObject::getRot() const
 DirectX::XMFLOAT3 GameObject::getScale() const
 {
 	return this->scale;
+}
+
+DirectX::XMFLOAT4X4 GameObject::getMatrix() const
+{
+	DirectX::XMFLOAT4X4 temp;
+	DirectX::XMStoreFloat4x4(&temp, DirectX::XMMatrixTranspose({ (DirectX::XMMatrixScaling(scale.x, scale.y, scale.z)
+		* this->rotation * DirectX::XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
+	return temp;
+}
+
+void GameObject::setMatrix(DirectX::XMFLOAT4X4 matrix)
+{
+	this->mesh->setMatrix(matrix);
+}
+
+void GameObject::updateMatrixOnline()
+{
+	this->mesh->updateONLINE();
 }
 
 Bound* GameObject::getBounds() const

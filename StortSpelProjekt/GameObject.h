@@ -35,6 +35,11 @@ public:
 	DirectX::SimpleMath::Vector3 getPosV3()const;
 	DirectX::XMMATRIX getRot() const;
 	DirectX::XMFLOAT3 getScale() const;
+	DirectX::XMFLOAT4X4 getMatrix() const;
+
+	void setMatrix(DirectX::XMFLOAT4X4 matrix);
+	void updateMatrixOnline();
+
 	Bound* getBounds() const;
 	void setPhysComp(PhysicsComponent* comp);
 	PhysicsComponent* getPhysComp()const;
@@ -42,6 +47,7 @@ public:
 	int getId();
 	bool withinBox(GameObject *object ,float x, float y, float z) const;
 	bool withinRadious(GameObject* object, float radius) const;
+	void updatePhysCompRotation();
 	virtual void draw();
 	virtual void update(); //This updates the hitboxes
 };

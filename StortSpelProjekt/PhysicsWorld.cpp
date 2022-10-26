@@ -15,14 +15,6 @@ void PhysicsWorld::setUpBaseScenario()
 	playerBox->initiateComponent(&this->com, this->world);
 	playerBox->setType(reactphysics3d::BodyType::KINEMATIC);
 
-	//Planet
-	planetShape = com.createSphereShape(reactphysics3d::decimal(20));
-	reactphysics3d::Transform planetTransform = reactphysics3d::Transform(reactphysics3d::Vector3(0, 0, 0), reactphysics3d::Quaternion::identity());
-	planetRigidBody = world->createRigidBody(planetTransform);
-	planetCollider = planetRigidBody->addCollider(planetShape, reactphysics3d::Transform(reactphysics3d::Vector3(0, 0, 0), reactphysics3d::Quaternion::identity()));
-	planetRigidBody->setType(reactphysics3d::BodyType::STATIC);
-	planetRigidBody->enableGravity(false);
-
 	world->setIsDebugRenderingEnabled(true);
 	debugRenderer = &world->getDebugRenderer();
 	debugRenderer->setIsDebugItemDisplayed(reactphysics3d::DebugRenderer::DebugItem::COLLISION_SHAPE, true);
@@ -222,40 +214,26 @@ PhysicsWorld::~PhysicsWorld()
 	wireframeMode->Release();
 }
 
-void PhysicsWorld::update(float dt)
+void PhysicsWorld::update(const float& dt)
 {
+	this->addForceToObjects(dt);
 	world->update(dt);
 }
 
-void PhysicsWorld::addForceToObjects()
+void PhysicsWorld::addForceToObjects(const float& dt)
 {
+	float constant = 0.25f;
 	for (int i = 0; i < this->physObjects.size(); i++)
 	{
 		temp = this->physObjects[i]->getPosition();
 		grav = normalizeXMFLOAT3(DirectX::XMFLOAT3(-temp.x, -temp.y, -temp.z));
-		this->physObjects[i]->applyForceToCenter(this->physObjects[i]->getMass() * reactphysics3d::Vector3(9.82f * grav.x, 9.82f * grav.y, 9.82f * grav.z));
+		this->physObjects[i]->applyForceToCenter(this->physObjects[i]->getMass() * reactphysics3d::Vector3(9820.f * grav.x * dt * constant, 9820.f * grav.y * dt * constant, 9820.f * grav.z * dt * constant));
 	}
-}
-
-DirectX::SimpleMath::Vector3 PhysicsWorld::getPos() const
-{
-	//return { playerRigidBody->getTransform().getPosition().x, playerRigidBody->getTransform().getPosition().y , playerRigidBody->getTransform().getPosition().z };
-	return playerBox->getPosV3();
-}
-
-DirectX::SimpleMath::Vector3 PhysicsWorld::getRot() const
-{
-	return { playerBox->getRotation().x, playerBox->getRotation().y, playerBox->getRotation().z };
 }
 
 PhysicsComponent* PhysicsWorld::getPlayerBox() const
 {
 	return this->playerBox;
-}
-
-void PhysicsWorld::updatePlayerBox(const DirectX::SimpleMath::Vector3& pos)
-{
-	playerBox->setPosition(reactphysics3d::Vector3({ pos.x, pos.y, pos.z }));
 }
 
 void PhysicsWorld::addBoxToWorld(DirectX::XMFLOAT3 dimensions, float mass, DirectX::XMFLOAT3 position)
@@ -276,17 +254,12 @@ void PhysicsWorld::addBoxToWorld(DirectX::XMFLOAT3 dimensions, float mass, Direc
 	this->recreateVertexBuffer();
 }
 
-void PhysicsWorld::addSphereToWorld(float radius, DirectX::XMFLOAT3 position)
-{
-}
-
-void PhysicsWorld::addPhysComponent(GameObject* gameObj, reactphysics3d::CollisionShapeName shape)
+void PhysicsWorld::addPhysComponent(GameObject* gameObj, reactphysics3d::CollisionShapeName shape, const DirectX::XMFLOAT3& scale)
 {
 	PhysicsComponent* newComp = new PhysicsComponent();
-	newComp->initiateComponent(&this->com, this->world, shape);
+	newComp->initiateComponent(&this->com, this->world, shape, scale);
 	newComp->setPosition({ gameObj->getPos().x, gameObj->getPos().y, gameObj->getPos().z });
 	newComp->setLinearDampning(0.3f);
-	newComp->applyWorldTorque(reactphysics3d::Vector3(10000000, 0, 0));
 	gameObj->setPhysComp(newComp);
 	newComp->setParent(gameObj);
 	physObjects.emplace_back(newComp);

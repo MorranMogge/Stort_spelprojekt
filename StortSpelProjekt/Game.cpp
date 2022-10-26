@@ -247,7 +247,7 @@ DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3 &posit
 
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), respawnTime(0.f)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
 	MaterialLibrary::LoadDefault();
 
@@ -321,13 +321,6 @@ Game::~Game()
 
 GAMESTATE Game::Update()
 {
-	respawnTime += dt;
-
-	//if (respawnTime >= 30.f)
-	//{
-	//	randomizeObjectPos(potion);
-	//	respawnTime = 0.f;
-	//}
 
 	//Do we want this?
 	grav = planetGravityField.calcGravFactor(currentPlayer->getPosV3());
@@ -376,8 +369,15 @@ GAMESTATE Game::Update()
 	grav = normalizeXMFLOAT3(grav);
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
-	//camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
-	camera.moveCamera(potion->getPosV3(), potion->getRot(), dt);
+	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
+	
+	
+	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
+	/*if (Input::KeyDown(KeyCode::H))
+	{
+		camera.moveCamera(potion->getPosV3(), potion->getRot(), dt);
+	}*/
+	
 
 	//Updates gameObject buffers
 	this->updateBuffers();

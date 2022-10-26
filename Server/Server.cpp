@@ -282,7 +282,7 @@ int main()
 					{
 						
 						data.users[i].playa.setMatrix(prMatrixData->matrix);
-						std::cout <<"player Id: " << std::to_string(prMatrixData->playerId)<<"pos: " << std::to_string(data.users[i].playa.getMatrix()._14) << std::endl;
+						//std::cout <<"player Id: " << std::to_string(prMatrixData->playerId)<<"pos: " << std::to_string(data.users[i].playa.getMatrix()._14) << std::endl;
 						break;
 					}
 				}
@@ -302,7 +302,7 @@ int main()
 
 			case PacketType::COMPONENTPOSITION:
 				compData = circBuffer->readData<ComponentData>();
-				std::cout << "Received componentData\n";
+				//std::cout << "Received componentData\n";
 				for (int i = 0; i < components.size(); i++)
 				{
 					components[i].setPosition(compData->x, compData->y, compData->z);
@@ -318,7 +318,7 @@ int main()
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
 		{
 			SpawnComponent cData = SpawnOneComponent(components);
-			std::cout << "componentId: " << std::to_string(cData.ComponentId) << std::endl;
+			std::cout << "Spawns componentId: " << std::to_string(cData.ComponentId) << std::endl;
 			sendBinaryDataAllPlayers(cData, data);
 			startComponentTimer = std::chrono::system_clock::now();
 		}
@@ -383,17 +383,17 @@ int main()
 				compData.x = components[i].getposition('y');
 				compData.x = components[i].getposition('z');
 				//if its in use by a player it will get the players position
-				/*for (int j = 0; j < players.size(); j++)
+				for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
 				{
 					if (compData.inUseBy >= 0 && compData.inUseBy <= MAXNUMBEROFPLAYERS)
 					{
-						compData.x = players[j].getposition('x');
-						compData.x = players[j].getposition('y');
-						compData.x = players[j].getposition('z');
+						compData.x = data.users[i].playa.getposition('x');
+						compData.y = data.users[i].playa.getposition('y');
+						compData.z = data.users[i].playa.getposition('z');
 						break;
 					}
 					
-				}*/
+				}
 				
 				sendBinaryDataAllPlayers<ComponentData>(compData, data);
 			}

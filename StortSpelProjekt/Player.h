@@ -46,7 +46,6 @@ private:
 	const float speedConstant = 100.f;
 	int repairCount = 0;
 	Item* holdingItem;
-	int health;
 	float speed;
 	bool dedge = false;
 	TimeStruct timer;
@@ -76,9 +75,9 @@ public:
 	DirectX::XMMATRIX getRotationMX();
 	reactphysics3d::Vector3 getRayCastPos()const;
 
+	void setSpeed(float speed);
 	void hitByBat(const reactphysics3d::Vector3& force);
 	void addItem(Item* itemToHold);
-	void addHealth(const int& healthToIncrease);
 	void releaseItem();
 	bool checkForStaticCollision(const std::vector<GameObject*>& gameObjects);
 	bool raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);

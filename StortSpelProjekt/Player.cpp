@@ -41,7 +41,7 @@ void Player::handleItems()
 		holdingItem = nullptr;
 	}
 	//Use the Item
-	else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
+	else if (Input::KeyDown(KeyCode::T) /*&& Input::KeyDown(KeyCode::T)*/)
 	{
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 		holdingItem->useItem();
@@ -52,7 +52,7 @@ void Player::handleItems()
 }
 
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& grav)
-    :GameObject(useMesh, pos, rot, id), health(70), holdingItem(nullptr), speed(2.f)
+    :GameObject(useMesh, pos, rot, id), holdingItem(nullptr), speed(25.0f)
 {
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -67,7 +67,7 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 }
 
 Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& grav)
-	:GameObject(objectPath, pos, rot, id), health(70), holdingItem(nullptr), speed(2.f)
+	:GameObject(objectPath, pos, rot, id), holdingItem(nullptr), speed(25.0f)
 {
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -106,7 +106,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk North-East
 	if (Input::KeyDown(KeyCode::W) && Input::KeyDown(KeyCode::D))
 	{
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
 
 		if (resultVector.x > -0.4f)
@@ -127,7 +127,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk North-West
 	else if (Input::KeyDown(KeyCode::W) && Input::KeyDown(KeyCode::A))
 	{
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
 
 		if (resultVector.x < 0.4f)
@@ -148,7 +148,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk South-East
 	else if (Input::KeyDown(KeyCode::S) && Input::KeyDown(KeyCode::D))
 	{
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
 
 		if (resultVector.x < 0.4f)
@@ -169,7 +169,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk South-West
 	else if (Input::KeyDown(KeyCode::S) && Input::KeyDown(KeyCode::A))
 	{
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
 
 		if (resultVector.x > -0.4f)
@@ -271,7 +271,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Walking forward
 	else if (Input::KeyDown(KeyCode::W))
 	{
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
 
 		if (resultVector.x < -0.05f)
@@ -295,7 +295,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Walking backward
 	else if (Input::KeyDown(KeyCode::S))
 	{
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
 
 		if (resultVector.x < -0.05f)
@@ -319,7 +319,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Walking right
 	else if (Input::KeyDown(KeyCode::D))
 	{
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(cameraRight, rightVector);
 
 		if (resultVector.x < -0.05f)
@@ -343,7 +343,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Walking left
 	else if (Input::KeyDown(KeyCode::A))
 	{
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(-cameraRight, rightVector);
 
 		if (resultVector.x < -0.05f)
@@ -497,7 +497,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		else if (posY > 0.0f)
 		{
 			resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
-			position += forwardVector * posY * deltaTime * 25.0f;
+			position += forwardVector * posY * deltaTime * speed;
 
 			if (resultVector.x < -0.05f)
 			{
@@ -522,7 +522,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		else if (posY < 0.0f)
 		{
 			resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
-			position += forwardVector * posY * deltaTime * -25.0f;
+			position += forwardVector * posY * deltaTime * -speed;
 
 			if (resultVector.x < -0.05f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.1f);
 			else if (resultVector.x > 0.05f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.1f);
@@ -539,7 +539,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		//Walk right
 		else if (posX > 0.0f)
 		{
-			position += forwardVector * posX * deltaTime * 25.0f;
+			position += forwardVector * posX * deltaTime * speed;
 			resultVector = DirectX::XMVector3Dot(cameraRight, rightVector);
 
 			if (resultVector.x < -0.05f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.1f);
@@ -556,7 +556,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		//Walk left
 		else if (posX < 0.0f)
 		{
-			position += forwardVector * posX * deltaTime * -25.0f;
+			position += forwardVector * posX * deltaTime * -speed;
 			resultVector = DirectX::XMVector3Dot(-cameraRight, rightVector);
 
 			if (resultVector.x < -0.05f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.1f);
@@ -581,11 +581,6 @@ bool Player::pickupItem(Item* itemToPickup)
 		if (this->withinRadius(itemToPickup, 5))
 		{
 			addItem(itemToPickup);
-
-			Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
-			if (tmp)
-				tmp->setPlayerptr(this);
-
 			successfulPickup = true;
 			holdingItem->getPhysComp()->getRigidBody()->resetForce();
 			holdingItem->getPhysComp()->getRigidBody()->resetTorque();
@@ -611,16 +606,6 @@ void Player::addItem(Item* itemToHold)
 	if (!this->holdingItem)
 		this->holdingItem = itemToHold;
 	holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
-}
-
-void Player::addHealth(const int& healthToIncrease)
-{
-	this->health += healthToIncrease;
-	//Prototyp f�r en cap s� man inte kan f� mer liv �n en kapacitet
-	if (this->health > 100)
-	{
-		this->health = 100;
-	}
 }
 
 void Player::releaseItem()
@@ -727,6 +712,11 @@ reactphysics3d::Vector3 Player::getRayCastPos() const
 	returnValue = this->position;
 	returnValue += this->normalVector * -1.5f;
 	return reactphysics3d::Vector3(returnValue.x, returnValue.y, returnValue.z);
+}
+
+void Player::setSpeed(float speed)
+{
+	this->speed = speed;
 }
 
 void Player::update()

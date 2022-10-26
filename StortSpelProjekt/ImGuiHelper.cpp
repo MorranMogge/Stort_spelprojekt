@@ -30,19 +30,19 @@ void ImGuiHelper::drawInterface(std::string message)
 		{
 			
 		}
+
+		ImGui::Text("My port: %d", client->getport());
+
+
+
 		char buf[255]{};
 		std::string ip;
 		if (ImGui::InputText("ipAdress", buf, sizeof(buf)))
 		{
 			client->setIpAndPort(buf, 2001);
 		}
-		if (ImGui::Button("Connect to server"))
-		{
-			client->connectToServer();
-			client->setupThread();
-		}
 
-		ImGui::Text(client->receive().c_str());
+		//selector.add(tcpSocket);
 
 		ImGui::End();
 	}

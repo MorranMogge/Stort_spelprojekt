@@ -74,6 +74,17 @@ bool SpaceShip::detectedComponent(GameObject* objectToCheck)
 	return didDetect;
 }
 
+bool SpaceShip::detectedComponent(Component* componentToCheck)
+{
+	bool didDetect = false;
+
+	if (this->withinRadious(componentToCheck, 8.0f))
+	{
+		didDetect = true;
+	}
+	return didDetect;
+}
+
 void SpaceShip::update()
 {
 }

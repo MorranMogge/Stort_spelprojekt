@@ -23,7 +23,6 @@ void Camera::updateCamera()
 
 Camera::Camera()
 {
-	this->deltaTime = 0.0f;
 	this->position = { 0.0f, 0.0f, 0.0f };
 
 	cameraBuffer.Initialize(GPU::device, GPU::immediateContext);
@@ -54,15 +53,15 @@ Camera::~Camera()
 {
 }
 
-void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const float& deltaTime)
+void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, float deltaTime)
 {
-	this->deltaTime = deltaTime;
+	this->rotationMX = playerRotation;
 
-	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation * DirectX::XM_PI);
-	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation * DirectX::XM_PI);
-	upVector = XMVector3TransformCoord(DEFAULT_UP, playerRotation * DirectX::XM_PI);
+	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
+	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
+	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
 
-	cameraPos = playerPosition - forwardVector * 10.0f + upVector * 40.0f;
+	cameraPos = playerPosition + upVector * 60.0f - forwardVector;
 	lookAtPos = playerPosition;
 	updateCamera();
 }
@@ -75,6 +74,14 @@ DirectX::XMVECTOR Camera::getForwardVector() const
 DirectX::XMVECTOR Camera::getRightVector() const
 {
 	return this->rightVector;
+}
+
+void Camera::resetRotation()
+{
+	rotationMX = XMMatrixIdentity();
+	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
+	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
+	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
 }
 
 void Camera::VSbindPositionBuffer(const int& slot)

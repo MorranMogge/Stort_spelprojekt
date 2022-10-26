@@ -50,33 +50,26 @@ void BaseballBat::useItem()
 
 
 	bool collided = false;
-	for (int i = 0; i < objects.size(); i++)
+	for (int i = 1; i < objects.size(); i++)
 	{
 		if (this == objects[i]) continue;
 
-		int id = objects.at(i)->getId();
-		if (id != (int)ObjID::ROCKET && id != (int)ObjID::PLANET )
+		physComp = objects[i]->getPhysComp();
+		if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue;//int id = objects.at(i)->getId(); //if (id != (int)ObjID::ROCKET && id != (int)ObjID::PLANET )
 		{
-			physComp = objects[i]->getPhysComp();
+			Player* otherPlayer = dynamic_cast<Player*>(physComp->getParent()); //If we add a function "isPlayer()" in GameObject we do not have to type cast
 
-			collided = batComp->testBodiesOverlap(physComp);
+			physComp->setType(reactphysics3d::BodyType::DYNAMIC);
+			//Calculate the force vector
+			float newForce = batComp->getMass() * force;
+			batPos = objects[i]->getPosV3() - this->player->getPosV3();
+			batPos += this->player->getUpVec();
+			newNormalizeXMFLOAT3(batPos);
+			scalarMultiplicationXMFLOAT3(newForce, batPos);
 
-			if (collided)
-			{
-				Player* otherPlayer = dynamic_cast<Player*>(physComp->getParent()); //If we add a function "isPlayer()" in GameObject we do not have to type cast
-				if (otherPlayer != nullptr) std::cout << "You hit another Player!!!\n";
-
-				physComp->setType(reactphysics3d::BodyType::DYNAMIC);
-				//Calculate the force vector
-				force = batComp->getMass() * force;
-				batPos = objects[i]->getPosV3() - this->player->getPosV3();
-				batPos += this->player->getUpVec();
-				newNormalizeXMFLOAT3(batPos);
-				scalarMultiplicationXMFLOAT3(force, batPos);
-
-				//Add force to object
-				physComp->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
-			}
+			//Add force to object
+			if (otherPlayer != nullptr) otherPlayer->hitByBat(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+			else physComp->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
 		}
 	}
 

@@ -40,7 +40,7 @@ public:
 	void setPos(const DirectX::XMFLOAT3& pos);
 	void setRot(const DirectX::XMVECTOR& rot);
 	void setRot(const DirectX::XMFLOAT3& rot);
-	void setScale(DirectX::XMFLOAT3 scale);
+	void setScale(const DirectX::XMFLOAT3& scale);
 	void setMesh(const std::string& meshPath);
 	void setMesh(Mesh* inMesh);
 	DirectX::XMFLOAT3 getPos() const;
@@ -58,6 +58,7 @@ public:
 	int getId();
 	bool withinBox(GameObject *object ,float x, float y, float z) const;
 	bool withinRadious(GameObject* object, float radius) const;
+	void updatePhysCompRotation();
 	virtual void draw();
 	void updateRotation();
 	virtual void update(); //This updates the hitboxes

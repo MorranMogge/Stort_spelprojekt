@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "BilboardObject.h"
+#include "Component.h"
 
 class SpaceShip : public GameObject
 {
@@ -18,6 +19,7 @@ public:
 	~SpaceShip();
 	int getNrOfComponents();
 	bool detectedComponent(GameObject* objectToCheck);
+	bool detectedComponent(Component* componentToCheck);
 	virtual void update() override;
 	void drawQuad();
 	bool isFinished();

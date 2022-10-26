@@ -7,7 +7,6 @@
 class Camera
 {
 private:
-	float deltaTime;
 	DirectX::XMFLOAT3 position;
 	ConstantBufferNew<cameraStruct> cameraBuffer;
 	ConstantBufferNew<posStruct> positionBuffer;
@@ -32,11 +31,12 @@ public:
 	~Camera();
 
 	void updateCamera();
-	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const float& deltaTime);
+	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, float deltaTime);
 	DirectX::XMVECTOR getForwardVector() const;
 	DirectX::XMVECTOR getRightVector() const;
 	ID3D11Buffer* getViewBuffer();
 	ID3D11Buffer* getPositionBuffer();
+	void resetRotation();
 
 	void VSbindPositionBuffer(const int &slot);
 	void VSbindViewBuffer(const int& slot);

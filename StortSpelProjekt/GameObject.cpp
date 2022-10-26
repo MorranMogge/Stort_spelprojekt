@@ -2,6 +2,14 @@
 #include "PhysicsComponent.h"
 #include "GameObject.h"
 
+
+void GameObject::updatePhysCompRotation()
+{
+	DirectX::SimpleMath::Quaternion dx11Quaternion = DirectX::XMQuaternionRotationMatrix(this->rotation);
+	reactphysics3d::Quaternion reactQuaternion = reactphysics3d::Quaternion(dx11Quaternion.x, dx11Quaternion.y, dx11Quaternion.z, dx11Quaternion.w);
+	this->physComp->setRotation(reactQuaternion);
+}
+
 GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale)
 	:position(pos), mesh(useMesh), objectID(id), scale(scale), physComp(nullptr), activeField(field)
 {
@@ -104,10 +112,13 @@ void GameObject::setRot(const DirectX::XMVECTOR& rot)
 	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(rot);
 }
 
-void GameObject::setScale(DirectX::XMFLOAT3 scale)
+void GameObject::setScale(const DirectX::XMFLOAT3& scale)
 {
 	this->mesh->scale = scale;
 	this->scale = scale;
+	
+	//if (this->physComp->getTypeName() == reactphysics3d::CollisionShapeName::BOX) 
+	this->physComp->setScale(scale);
 }
 
 DirectX::XMFLOAT3 GameObject::getPos() const
@@ -223,7 +234,7 @@ void GameObject::updateBuffer()
 	this->mesh->UpdateCB();
 }
 
-void GameObject::setMesh(const  std::string& meshPath)
+void GameObject::setMesh(const std::string& meshPath)
 {
 	//delete current mesh ptr
 	if (this->mesh != nullptr)
@@ -309,7 +320,7 @@ bool GameObject::withinRadious(GameObject* object, float radius) const
 	float sum = std::sqrt(x + y + z);
 
 	//DirectX::SimpleMath::Vector3 vector(x, y, z);
-	if (abs(sum)/*vector.Length()*/ < radius)
+	if (abs(sum) < radius)
 	{
 		inRange = true;
 	}

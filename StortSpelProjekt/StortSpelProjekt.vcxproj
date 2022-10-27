@@ -155,6 +155,7 @@
     <ClInclude Include="..\Server\PacketsDataTypes.h" />
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="BasicRenderer.h" />
+    <ClInclude Include="BilboardObject.h" />
     <ClInclude Include="BlendState.h" />
     <ClInclude Include="Bound.h" />
     <ClInclude Include="Buffer.h" />
@@ -181,6 +182,7 @@
     <ClInclude Include="GUIObject.h" />
     <ClInclude Include="GUISprite.h" />
     <ClInclude Include="GUIText.h" />
+    <ClInclude Include="HudUI.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Light.h" />
@@ -250,12 +252,15 @@
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="ViewPort.h" />
     <ClInclude Include="WindowHelper.h" />
+    <ClInclude Include="WinMenu.h" />
+    <ClInclude Include="WinUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CircularBufferClient.cpp" />
     <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="BaseballBat.cpp" />
     <ClCompile Include="BasicRenderer.cpp" />
+    <ClCompile Include="BilboardObject.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -272,6 +277,7 @@
     <ClCompile Include="GuiHandler.cpp" />
     <ClCompile Include="GUISprite.cpp" />
     <ClCompile Include="GUIText.cpp" />
+    <ClCompile Include="HudUI.cpp" />
     <ClCompile Include="ImGuiHelper.cpp" />
     <ClCompile Include="ImGui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -324,6 +330,8 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="WindowHelper.cpp" />
+    <ClCompile Include="WinMenu.cpp" />
+    <ClCompile Include="WinUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -342,6 +350,30 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Bilboard_GS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Bilboard_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Bilboard_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="DebuggerPshader.hlsl">
@@ -393,6 +425,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Light.hlsli" />
+    <None Include="Math.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

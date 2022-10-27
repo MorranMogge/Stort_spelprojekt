@@ -12,6 +12,9 @@ class GuiHandler final
 	GUISprite credits;
 	GUISprite exit;
 
+	bool isLoading = false;
+	GUISprite Loading;
+
 	GAMESTATE gameState;
 
 	GUIText testText;

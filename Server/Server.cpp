@@ -260,14 +260,14 @@ int main()
 	CircularBuffer* circBuffer = new CircularBuffer();
 	std::thread* recvThread[MAXNUMBEROFPLAYERS];
 	threadInfo threadData[MAXNUMBEROFPLAYERS];
-	
+	int offset = 25;
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
 		PhysicsComponent* newComp = new PhysicsComponent();
 		physWorld.addPhysComponent(newComp);
 		data.users[i].playa.setPhysicsComponent(newComp);
 		newComp->setType(reactphysics3d::BodyType::KINEMATIC);
-		threadData[i].pos[0] = 22.0f;
+		threadData[i].pos[0] = 102.0f + (offset*i);
 		threadData[i].pos[1] = 12.0f;
 		threadData[i].pos[2] = -22.0f;
 		threadData[i].circBuffer = circBuffer;

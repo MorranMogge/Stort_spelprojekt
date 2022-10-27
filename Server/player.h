@@ -12,12 +12,15 @@ private:
 	float zPos;
 	DirectX::XMFLOAT4X4 matrix;
 	PhysicsComponent* physComp;
+	bool dead;
 
 public:
 	player();
 
 	//skicka in char 'x', 'y' eller 'z'
 	float getposition(char whichPos)const;
+
+	void playerGotHit(const reactphysics3d::Vector3& force);
 
 	void setPhysicsComponent(PhysicsComponent* physComp);
 	PhysicsComponent* getPhysComp()const;

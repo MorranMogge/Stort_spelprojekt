@@ -640,6 +640,7 @@ void Player::setOnlineID(const int& id)
 
 void Player::hitByBat(const reactphysics3d::Vector3& force)
 {
+	this->physComp->setType(reactphysics3d::BodyType::DYNAMIC);
 	this->dedge = true;
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);

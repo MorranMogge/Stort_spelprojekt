@@ -319,7 +319,7 @@ int main()
 				{
 					if (i == tst->playerId)
 					{
-						data.users[i].playa.setPosition(tst->x, tst->y, tst->z);
+						if (!data.users[i].playa.getDeathState()) data.users[i].playa.setPosition(tst->x, tst->y, tst->z);
 						break;
 					}
 				}
@@ -338,6 +338,7 @@ int main()
 			case PacketType::PLAYERHIT:
 				playerHit = circBuffer->readData<PlayerHit>();
 				sendBinaryDataOnePlayer<PlayerHit>(*playerHit, data.users[playerHit->playerId]);
+				data.users[playerHit->playerId].playa.playerGotHit(reactphysics3d::Vector3(playerHit->xForce, playerHit->yForce, playerHit->zForce));
 			}
 
 			

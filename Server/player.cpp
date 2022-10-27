@@ -27,6 +27,19 @@ float player::getposition(char whichPos) const
 	}
 }
 
+void player::playerGotHit(const reactphysics3d::Vector3& force)
+{
+	this->dead = false;
+	this->physComp->setType(reactphysics3d::BodyType::DYNAMIC);
+	this->physComp->applyForceToCenter(force);
+	this->physComp->applyWorldTorque(force);
+}
+
+bool player::getDeathState() const
+{
+	return this->dead;
+}
+
 void player::setPhysicsComponent(PhysicsComponent* physComp)
 {
 	this->physComp = physComp;

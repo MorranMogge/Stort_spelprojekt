@@ -210,7 +210,7 @@ ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XM
 		}
 
 		float lifeTime = minMaxTime.x + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (minMaxTime.y - minMaxTime.x)));
-		particleStruct tempStruct(DirectX::XMFLOAT3(/* + x*/0.0f , /*Pos.y + y*/0.0f, /*Pos.z + z*/0.0f ), DirectX::XMFLOAT3(Pos.x,Pos.y,Pos.z), (float)i, lifeTime, DirectX::XMFLOAT3(0,0,0), DirectX::XMFLOAT3(0, 0, 0));
+		particleStruct tempStruct(DirectX::XMFLOAT3(/* + x*/0.0f+x , /*Pos.y + y*/0.0f+y, /*Pos.z + z*/0.0f+z ), DirectX::XMFLOAT3(Pos.x,Pos.y,Pos.z), (float)i, lifeTime, DirectX::XMFLOAT3(0,0,0), DirectX::XMFLOAT3(0, 0, 0));
 		this->PT_Data.push_back(tempStruct);
 	}
 

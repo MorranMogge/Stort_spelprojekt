@@ -809,7 +809,7 @@ void Player::drawIcon(int playerIndex)
 
 void Player::drawParticles()
 {
-	if (this->particles != nullptr && moveKeyPressed)
+	if (this->particles != nullptr/* && moveKeyPressed*/)
 	{
 		this->particles->BindAndDraw(0);
 	}

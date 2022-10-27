@@ -27,14 +27,13 @@ struct Particle
     float ison : ISON;
 };
 
-#define Half 2.5f
 
 [maxvertexcount(4)]
 void main(point Particle input[1], inout TriangleStream<Output> outputStream)
 {
 
-#define Size 1.5f
-    static const float4 localPosition[4] = { float4(-Size, Size, 0, 1), float4(Size, Size, 0, 1), float4(-Size, -Size, 0, 1), float4(Size, -Size, 0, 1) };
+#define Size (3.0f * input[0].faloff)
+    const float4 localPosition[4] = { float4(-Size, Size, 0, 1), float4(Size, Size, 0, 1), float4(-Size, -Size, 0, 1), float4(Size, -Size, 0, 1) };
     static const float2 uv[4] = { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } };
     
     float3 zAxis = normalize(input[0].pos - mainCamPos.xyz);
@@ -49,6 +48,7 @@ void main(point Particle input[1], inout TriangleStream<Output> outputStream)
     {
         const Output output =
         {
+            
             mul(localPosition[i], worldViewProj),
             uv[i],
             input[0].faloff,

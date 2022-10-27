@@ -34,10 +34,12 @@ void player::playerGotHit(const reactphysics3d::Vector3& force)
 	this->physComp->setType(reactphysics3d::BodyType::DYNAMIC);
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);
+	timer.resetStartTime();
 }
 
-bool player::getDeathState() const
+bool player::getDeathState()
 {
+	if (timer.getTimePassed(5.0f)) this->dead = true;
 	return this->dead;
 }
 

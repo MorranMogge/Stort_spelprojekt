@@ -792,7 +792,7 @@ void Player::update()
 		reactQuaternion = this->physComp->getRotation();
 		dx11Quaternion = DirectX::SimpleMath::Quaternion(DirectX::SimpleMath::Vector4(reactQuaternion.x, reactQuaternion.y, reactQuaternion.z, reactQuaternion.w));
 		this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
-		if (timer.getTimePassed(7.f)) 
+		if (timer.getTimePassed(5.f)) 
 		{ 
 			dedge = false; 
 			this->physComp->resetForce();

@@ -2,6 +2,7 @@
 #include <string>
 #include <DirectXMath.h>
 #include "PhysicsComponent.h"
+#include "TimeStruct.h"
 
 //temp klass eftersom det inte finns en player
 class player
@@ -13,6 +14,7 @@ private:
 	DirectX::XMFLOAT4X4 matrix;
 	PhysicsComponent* physComp;
 	bool dead;
+	TimeStruct timer;
 
 public:
 	player();

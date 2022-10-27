@@ -36,9 +36,11 @@ cbuffer camUp : register(b2)
 #define CurrentDirectionY rawBuffer[DTid.x * Offset + 9]
 #define CurrentDirectionZ rawBuffer[DTid.x * Offset + 10]
 
-#define BaseOffSetX rawBuffer[DTid.x * Offset + 11]
-#define BaseOffSetY rawBuffer[DTid.x * Offset + 12]
-#define BaseOffSetZ rawBuffer[DTid.x * Offset + 13]
+#define IsActive rawBuffer[DTid.x * Offset + 11]
+
+#define BaseOffSetX rawBuffer[DTid.x * Offset + 12]
+#define BaseOffSetY rawBuffer[DTid.x * Offset + 13]
+#define BaseOffSetZ rawBuffer[DTid.x * Offset + 14]
 
 #define Speed 0.07f
 #define Range 100.0f
@@ -72,10 +74,20 @@ void main(uint3 DTid : SV_DispatchThreadID)
         BaseOffSetX = offsetFromOrigin.x;
         BaseOffSetY = offsetFromOrigin.y;
         BaseOffSetZ = offsetFromOrigin.z;
-
+        
+        IsActive = 0.0f;
     }
     else
     {
+        float3 baseOffSet2 = float3(BaseOffSetX, BaseOffSetY, BaseOffSetZ);
+        if (baseOffSet2.x == offsetFromOrigin.x, baseOffSet2.y == offsetFromOrigin.y, baseOffSet2.z == offsetFromOrigin.z)
+        {
+            IsActive = 0.0f;
+        }
+        else
+        {
+            IsActive = 1.0f;
+        }
         SimulateTime = SimulateTime + deltaTime;
     }
     
@@ -84,9 +96,9 @@ void main(uint3 DTid : SV_DispatchThreadID)
     const float3 eulerZ = normalize(cross(currentDirection, camUpDirection)); // rotation Z
     const float3 eulerX = normalize(cross(currentDirection, eulerZ)); // rotation X
     
-#define EulerRotation float3x3(eulerX, currentDirection, eulerZ) // rotation matrix, 3x3 without translation
-#define RotatedStartPosition mul(EulerRotation, StartPosition) // oriented/rotated start position in local space
-#define RotatedLocalOffset (LocalOffset * currentDirection) // rotated local offset
+    #define EulerRotation float3x3(eulerX, currentDirection, eulerZ) // rotation matrix, 3x3 without translation
+    #define RotatedStartPosition mul(EulerRotation, StartPosition) // oriented/rotated start position in local space
+    #define RotatedLocalOffset (LocalOffset * currentDirection) // rotated local offset
     
     
     float3 baseOffSet = float3(BaseOffSetX, BaseOffSetY, BaseOffSetZ);

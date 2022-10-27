@@ -591,6 +591,11 @@ bool Player::pickupItem(Item* itemToPickup)
 	return successfulPickup;
 }
 
+void Player::setOnlineID(const int& id)
+{
+	this->onlineID = id;
+}
+
 void Player::hitByBat(const reactphysics3d::Vector3& force)
 {
 	this->dedge = true;
@@ -721,6 +726,11 @@ reactphysics3d::Vector3 Player::getRayCastPos() const
 	returnValue = this->position;
 	returnValue += this->normalVector * -1.5f;
 	return reactphysics3d::Vector3(returnValue.x, returnValue.y, returnValue.z);
+}
+
+int Player::getOnlineID() const
+{
+	return this->onlineID;
 }
 
 void Player::update()

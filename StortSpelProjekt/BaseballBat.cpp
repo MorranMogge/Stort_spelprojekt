@@ -3,8 +3,23 @@
 #include "Player.h"
 #include "PhysicsComponent.h"
 #include "DirectXMathHelper.h"
+#include "Client.h"
+#include "PacketsDataTypes.h"
+#include "PacketEnum.h"
 
 using namespace DirectX;
+
+void BaseballBat::sendForceToServer(const DirectX::SimpleMath::Vector3& hitForce, const int& playerID)
+{
+	PlayerHit hitInfo;
+	hitInfo.packetId = PacketType::PLAYERHIT;
+	hitInfo.playerId = playerID;
+	hitInfo.xForce = batPos.x;
+	hitInfo.yForce = batPos.y;
+	hitInfo.zForce = batPos.z;
+
+	this->client->sendStuff<PlayerHit>(hitInfo);
+}
 
 BaseballBat::BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
 	:Item(objectPath, pos, rot, id), player(nullptr), force(0.f)
@@ -61,7 +76,7 @@ void BaseballBat::useItem()
 			scalarMultiplicationXMFLOAT3(newForce, batPos);
 
 			//Add force to object
-			if (otherPlayer != nullptr) otherPlayer->hitByBat(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+			if (otherPlayer != nullptr) this->sendForceToServer(batPos, otherPlayer->getOnlineID()); //otherPlayer->hitByBat(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
 			else physComp->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
 		}
 	}

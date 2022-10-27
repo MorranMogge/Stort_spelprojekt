@@ -91,3 +91,11 @@ void PhysicsWorld::addPhysComponent(Component& pos, reactphysics3d::CollisionSha
 	physObjects.emplace_back(newComp);
 }
 
+void PhysicsWorld::addPhysComponent(PhysicsComponent* newComp, const DirectX::XMFLOAT3& pos, reactphysics3d::CollisionShapeName shape, const DirectX::XMFLOAT3& scale)
+{
+	newComp->initiateComponent(&this->com, this->world, shape, scale);
+	newComp->setPosition({ pos.x, pos.y, pos.z });
+	newComp->setLinearDampning(0.3f);
+	physObjects.emplace_back(newComp);
+}
+

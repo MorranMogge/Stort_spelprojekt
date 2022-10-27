@@ -299,16 +299,18 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		//int playerid = client->initTEMPPLAYERS();
 
 		this->client->setClientId(playerId);
-
+		int tempID = -69;
 		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
 		{
 			Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, grav);
 			if (playerId != i)
 			{
+				tmpPlayer->setOnlineID(i);
 				players.push_back(tmpPlayer);
 			}
 			else
 			{
+				currentPlayer->setOnlineID(i);
 				players.push_back(currentPlayer);
 				delete tmpPlayer;
 			}

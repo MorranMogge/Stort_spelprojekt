@@ -19,6 +19,7 @@ private:
 	DirectX::XMMATRIX rotationMX;
 	DirectX::XMFLOAT4X4 rotationFloat;
 	bool controllerConnected = true;
+	int onlineID;
 	float jumpAllowed = 200.f;
 	float jumpHeight = 200.f;
 
@@ -66,6 +67,7 @@ public:
 	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime);
 	bool getPickup(GameObject *pickup);
 	bool pickupItem(Item *itemToPickup);
+	void setOnlineID(const int& id);
 
 	void releasePickup();
 
@@ -74,6 +76,7 @@ public:
 	DirectX::XMVECTOR getRightVec() const;
 	DirectX::XMFLOAT4X4 getRotationMX();
 	reactphysics3d::Vector3 getRayCastPos()const;
+	int getOnlineID()const;
 
 	void hitByBat(const reactphysics3d::Vector3& force);
 	void addItem(Item* itemToHold);

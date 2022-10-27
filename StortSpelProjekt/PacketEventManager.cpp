@@ -22,6 +22,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		SpawnComponent* spawnComp = nullptr;
 		PositionRotation* prMatrixData = nullptr;
 		Component* newComponent = nullptr;
+		PlayerHit* playerHit = nullptr;
 
 		switch (packetId)
 		{
@@ -87,6 +88,10 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			}
 
 			break;
+		
+		case PacketType::PLAYERHIT:
+			playerHit = circularBuffer->readData<PlayerHit>();
+			if (playerHit->playerId == playerId) players[playerId]->hitByBat(reactphysics3d::Vector3(playerHit->xForce, playerHit->yForce, playerHit->zForce));
 		}
 	}
 }

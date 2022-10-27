@@ -212,7 +212,7 @@ DirectX::XMFLOAT3 GameObject::getRotOrientedToGrav() const
 		Vector3 xAxis = yAxis.Cross(zAxis);
 		xAxis.Normalize();
 
-		finalRot = Quaternion::CreateFromRotationMatrix(Matrix(xAxis, yAxis, zAxis)).ToEuler();
+		finalRot = Quaternion::LookRotation({ 0, 0, -1 }, yAxis).ToEuler();
 	}
 	else
 	{
@@ -220,6 +220,56 @@ DirectX::XMFLOAT3 GameObject::getRotOrientedToGrav() const
 	}
 
 	return finalRot;
+
+	//using namespace DirectX; using namespace SimpleMath;
+
+	////Modified vectors
+	//XMVECTOR upVector = (this->activeField->calcGravFactor(this->position) * -1);
+	//XMVECTOR forwardVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	//XMVECTOR rightVector = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	//Vector3 resultVector;
+	//XMMATRIX rotation = XMMatrixIdentity();
+
+	////X-Rotation
+	//resultVector = DirectX::XMVector3Dot(upVector, forwardVector);
+	//if (resultVector.x < 0.0f)
+	//{
+	//	resultVector = DirectX::XMVector3Cross(rightVector, upVector);
+	//	resultVector = DirectX::XMVector3Normalize(resultVector);
+	//	resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, resultVector);
+	//	rotation *= DirectX::XMMatrixRotationAxis(rightVector, -resultVector.x);
+	//}
+	//else if (resultVector.x > 0.0f)
+	//{
+	//	resultVector = DirectX::XMVector3Cross(rightVector, upVector);
+	//	resultVector = DirectX::XMVector3Normalize(resultVector);
+	//	resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, resultVector);
+	//	rotation *= DirectX::XMMatrixRotationAxis(rightVector, resultVector.x);
+	//}
+
+	////Z-Rotation
+	//resultVector = DirectX::XMVector3Dot(upVector, rightVector);
+	//if (resultVector.z < 0.0f)
+	//{
+	//	resultVector = DirectX::XMVector3Cross(upVector, forwardVector);
+	//	resultVector = DirectX::XMVector3Normalize(resultVector);
+	//	resultVector = DirectX::XMVector3AngleBetweenNormals(rightVector, resultVector);
+	//	rotation *= DirectX::XMMatrixRotationAxis(forwardVector, resultVector.z);
+	//}
+	//else if (resultVector.z > 0.0f)
+	//{
+	//	resultVector = DirectX::XMVector3Cross(upVector, forwardVector);
+	//	resultVector = DirectX::XMVector3Normalize(resultVector);
+	//	resultVector = DirectX::XMVector3AngleBetweenNormals(rightVector, resultVector);
+	//	rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -resultVector.z);
+	//}
+
+	////Extracting rotation
+	//Quaternion quaterRot = Quaternion::CreateFromRotationMatrix(rotation);
+	//Vector3 finalRotation = quaterRot.ToEuler();
+
+	//return finalRotation;
+
 }
 
 

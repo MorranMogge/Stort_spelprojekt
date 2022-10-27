@@ -25,7 +25,7 @@ void Game::loadObjects()
 	testBat = new BaseballBat("../Meshes/bat", Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, &planetGravityField);
 	testCube = new GameObject("../Meshes/Player", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	//otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), PLAYER, & planetGravityField);
-	component = new Component("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT);
+	component = new Component("../Meshes/component", DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT);
 	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, &planetGravityField);
 	
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);

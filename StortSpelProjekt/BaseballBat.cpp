@@ -52,24 +52,31 @@ void BaseballBat::useItem()
 	bool collided = false;
 	for (int i = 1; i < objects.size(); i++)
 	{
+		int id = objects.at(i)->getId();
+
+
 		if (this == objects[i]) continue;
-
-		physComp = objects[i]->getPhysComp();
-		if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue;//int id = objects.at(i)->getId(); //if (id != (int)ObjID::ROCKET && id != (int)ObjID::PLANET )
+		if (id != PLAYER && id != PLANET)
 		{
-			Player* otherPlayer = dynamic_cast<Player*>(physComp->getParent()); //If we add a function "isPlayer()" in GameObject we do not have to type cast
 
-			physComp->setType(reactphysics3d::BodyType::DYNAMIC);
-			//Calculate the force vector
-			float newForce = batComp->getMass() * force;
-			batPos = objects[i]->getPosV3() - this->player->getPosV3();
-			batPos += this->player->getUpVec();
-			newNormalizeXMFLOAT3(batPos);
-			scalarMultiplicationXMFLOAT3(newForce, batPos);
+			physComp = objects[i]->getPhysComp();
+			if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue;//int id = objects.at(i)->getId(); //if (id != (int)ObjID::ROCKET && id != (int)ObjID::PLANET )
+			{
+				Player* otherPlayer = dynamic_cast<Player*>(physComp->getParent()); //If we add a function "isPlayer()" in GameObject we do not have to type cast
 
-			//Add force to object
-			if (otherPlayer != nullptr) otherPlayer->hitByBat(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
-			else physComp->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+				physComp->setType(reactphysics3d::BodyType::DYNAMIC);
+				//Calculate the force vector
+				float newForce = batComp->getMass() * force;
+				batPos = objects[i]->getPosV3() - this->player->getPosV3();
+				batPos += this->player->getUpVec();
+				newNormalizeXMFLOAT3(batPos);
+				scalarMultiplicationXMFLOAT3(newForce, batPos);
+
+				//Add force to object
+				if (otherPlayer != nullptr) otherPlayer->hitByBat(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+				else physComp->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+			}
+
 		}
 	}
 

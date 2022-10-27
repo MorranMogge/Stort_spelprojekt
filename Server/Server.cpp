@@ -187,13 +187,13 @@ void sendIdToAllPlayers(serverData& data)
 };
 
 template <typename T>
-void sendBinaryDataOnePlayer(const T& data, userData*& user)
+void sendBinaryDataOnePlayer(const T& data, userData& user)
 {
 	std::size_t recvSize;
 	if (user.tcpSocket.send(&data, sizeof(T), recvSize) != sf::Socket::Done)
 	{
 		//error
-		std::cout << "Couldnt send data to currentPlayer from array slot: " << std::to_string(user->playerId) << std::endl;
+		std::cout << "Couldnt send data to currentPlayer from array slot: " << std::to_string(user.playerId) << std::endl;
 	}
 	else
 	{
@@ -263,6 +263,10 @@ int main()
 	
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
+		PhysicsComponent* newComp = new PhysicsComponent();
+		physWorld.addPhysComponent(newComp);
+		data.users[i].playa.setPhysicsComponent(newComp);
+		newComp->setType(reactphysics3d::BodyType::KINEMATIC);
 		threadData[i].pos[0] = 22.0f;
 		threadData[i].pos[1] = 12.0f;
 		threadData[i].pos[2] = -22.0f;
@@ -286,6 +290,7 @@ int main()
 			testPosition* tst = nullptr;
 			ComponentData* compData = nullptr;
 			PositionRotation* prMatrixData = nullptr;
+			PlayerHit* playerHit = nullptr;
 
 			switch (packetId)
 			{
@@ -328,7 +333,11 @@ int main()
 					components[i].setPosition(compData->x, compData->y, compData->z);
 					components[i].setInUseBy(compData->inUseBy);
 				}
-					break;
+				break;
+
+			case PacketType::PLAYERHIT:
+				playerHit = circBuffer->readData<PlayerHit>();
+				sendBinaryDataOnePlayer<PlayerHit>(*playerHit, data.users[playerHit->playerId]);
 			}
 
 			

@@ -89,3 +89,13 @@ struct SpawnComponent
 	float y;
 	float z;
 };
+
+//enum = 21
+struct PlayerHit
+{
+	int packetId;
+	int playerId;
+	float xForce;
+	float yForce;
+	float zForce;
+};

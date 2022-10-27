@@ -305,10 +305,12 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, grav, client);
 			if (playerId != i)
 			{
+				tmpPlayer->setOnlineID(i);
 				players.push_back(tmpPlayer);
 			}
 			else
 			{
+				currentPlayer->setOnlineID(i);
 				players.push_back(currentPlayer);
 				delete tmpPlayer;
 			}

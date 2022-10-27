@@ -306,7 +306,7 @@ int main()
 					if (i == prMatrixData->playerId)
 					{
 						
-						data.users[i].playa.setMatrix(prMatrixData->matrix);
+						if (!data.users[i].playa.getDeathState())data.users[i].playa.setMatrix(prMatrixData->matrix);
 						//std::cout <<"player Id: " << std::to_string(prMatrixData->playerId)<<"pos: " << std::to_string(data.users[i].playa.getMatrix()._14) << std::endl;
 						break;
 					}
@@ -319,7 +319,11 @@ int main()
 				{
 					if (i == tst->playerId)
 					{
-						if (!data.users[i].playa.getDeathState()) data.users[i].playa.setPosition(tst->x, tst->y, tst->z);
+						if (!data.users[i].playa.getDeathState()) data.users[i].playa.setPosition(tst->x, tst->y, tst->z); else
+						{
+							reactphysics3d::Vector3 tempPos = data.users[i].playa.getPhysComp()->getPosition();
+							data.users[i].playa.setPosition(tempPos.x, tempPos.y, tempPos.z);
+						}
 						break;
 					}
 				}
@@ -390,10 +394,13 @@ int main()
 			for (int i = 0; i < 10; i++)
 			{
 				physWorld.update(timerLength/10.f);
+
 			}
+
 			//f�r varje spelare s� skicka deras position till alla klienter
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{
+
 				/*testPosition pos;
 				
 				pos.packetId = PacketType::POSITION;
@@ -407,8 +414,14 @@ int main()
 				//std::cout << "packet id sent: " << std::to_string(pos.packetId) << std::endl;
 
 				//sendDataAllPlayers(pos, data);
+				if (data.users[i].playa.getDeathState())
+				{
+					reactphysics3d::Vector3 tempPos = data.users[i].playa.getPhysComp()->getPosition();
+					data.users[i].playa.setPosition(tempPos.x, tempPos.y, tempPos.z);
+				}
 
 				PositionRotation prMatrix;
+				prMatrix.ifDead = data.users[i].playa.getDeathState();
 				prMatrix.matrix = data.users[i].playa.getMatrix();
 				//std::cout << "id: " << std::to_string(data.users[i].playerId) << "prMatrix test: " << std::to_string(data.users[i].playa.getMatrix()._14);
 				prMatrix.packetId = PacketType::POSITIONROTATION;

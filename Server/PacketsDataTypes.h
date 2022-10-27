@@ -7,6 +7,7 @@ struct PositionRotation
 	int packetId;
 	int playerId;
 	DirectX::XMFLOAT4X4 matrix;
+	bool ifDead;
 };
 
 //enum = 4
@@ -50,12 +51,6 @@ struct ItemSpawn
 	float x;
 	float y;
 	float z;
-};
-
-//enum 8
-struct ComponentDropped
-{
-
 };
 
 //assign the player with an id that the server has created

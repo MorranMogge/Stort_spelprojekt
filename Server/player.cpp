@@ -6,6 +6,7 @@ player::player()
 	xPos = 20.0f;
 	yPos = 30.0f;
 	zPos = 40.0f;
+	this->dead = false;
 }
 
 float player::getposition(char whichPos) const
@@ -29,7 +30,7 @@ float player::getposition(char whichPos) const
 
 void player::playerGotHit(const reactphysics3d::Vector3& force)
 {
-	this->dead = false;
+	this->dead = true;
 	this->physComp->setType(reactphysics3d::BodyType::DYNAMIC);
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);
@@ -59,7 +60,7 @@ void player::setMatrix(DirectX::XMFLOAT4X4 matrix)
 }
 
 DirectX::XMFLOAT4X4 player::getMatrix() const
-{
+{ 
 	return this->matrix;
 }
 
@@ -73,6 +74,9 @@ void player::setPosition(float pos[3])
 
 void player::setPosition(float x, float y, float z)
 {
+	this->matrix._14 = x;
+	this->matrix._24 = y;
+	this->matrix._34 = z;
 	this->xPos = x;
 	this->yPos = y;
 	this->zPos = z;

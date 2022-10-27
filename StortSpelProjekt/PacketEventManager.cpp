@@ -84,7 +84,11 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 						std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
 						players[i]->setMatrix(prMatrixData->matrix);
 					}
-					
+					else if (prMatrixData->ifDead)
+					{
+						std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
+						players[i]->setMatrix(prMatrixData->matrix);
+					}
 
 				}
 			}

@@ -21,7 +21,7 @@ public:
 	float getposition(char whichPos)const;
 
 	void playerGotHit(const reactphysics3d::Vector3& force);
-
+	bool getDeathState()const;
 	void setPhysicsComponent(PhysicsComponent* physComp);
 	PhysicsComponent* getPhysComp()const;
 	void setMatrix(DirectX::XMFLOAT4X4 matrix);

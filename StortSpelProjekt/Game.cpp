@@ -26,7 +26,7 @@ void Game::loadObjects()
 	testCube = new GameObject("../Meshes/Player", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	//otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), PLAYER, & planetGravityField);
 	component = new Component("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT);
-	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE);
+	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, &planetGravityField);
 	
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
@@ -211,6 +211,11 @@ void Game::handleKeybinds()
 	}
 }
 
+void Game::checkWinstate()
+{
+
+}
+
 
 DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3 &position)
 {
@@ -361,7 +366,7 @@ GAMESTATE Game::Update()
 		gameObjects[i]->update();
 		if (gameObjects[i]->getId() == PLAYER)
 		{
-			std::cout << "Player (" << i << ") Position X:" << gameObjects[i]->getPos().x << " Y:" << gameObjects[i]->getPos().y << " Z:" << gameObjects[i]->getPos().z << std::endl;
+			//std::cout << "Player (" << i << ") Position X:" << gameObjects[i]->getPos().x << " Y:" << gameObjects[i]->getPos().y << " Z:" << gameObjects[i]->getPos().z << std::endl;
 		}
 	}
 	
@@ -385,26 +390,30 @@ GAMESTATE Game::Update()
 	this->updateBuffers();
 	
 	//Check winstate
+	this->checkWinstate();
 	for (int i = 1; i < gameObjects.size(); i++)
 	{
 		//get object id
 		int id = gameObjects.at(i)->getId();
 
-		//If not spaceship & not planet
-		if (i > 0 && spaceShipRed->detectedComponent(gameObjects.at(i)) && gameObjects.at(i)->getId() != spaceShipRed->getId())
+		//If component
+		if (id == COMPONENT)
 		{
-			if (gameObjects.at(i)->getId() == this->testBat->getId())
+			//Check if RED spaceship detected
+			if(spaceShipRed->detectedComponent(gameObjects.at(i)))
 			{
-				std::cout << "detected: " << gameObjects.at(i)->getId() << std::endl;
-				std::cout << "detected: Bat!" << std::endl;
-				return WIN;
+				Component* comp = dynamic_cast<Component*>(gameObjects[i]);
+				std::cout << "RED Detected Component!\nID: " << comp->getId() << "\n";
+				//return WIN;
 			}
 
-			//Component* comp = dynamic_cast<Component*>(gameObjects[i]);
-			//if (comp && spaceShip->detectedComponent(comp))
-			//{
-			//	std::cout << "Detected Component!\nID: " << comp->getId() << "\n";
-			//}
+			//Check if BLU spaceship detected
+			if (spaceShipBlue->detectedComponent(gameObjects.at(i)))
+			{
+				Component* comp = dynamic_cast<Component*>(gameObjects[i]);
+				std::cout << "BLU Detected Component!\nID: " << comp->getId() << "\n";
+				//return WIN;
+			}
 		}
 	}
 	if (currentPlayer->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
@@ -444,6 +453,7 @@ void Game::Render()
 	basicRenderer.bilboardPrePass(this->camera);
 	this->potion->drawIcon();
 	this->testBat->drawIcon();
+	this->grenade->drawIcon();
 	this->currentPlayer->drawIcon(3);
 	this->spaceShipRed->drawQuad();
 	this->spaceShipBlue->drawQuad();
@@ -453,6 +463,7 @@ void Game::Render()
 	//drawParticles();	//not in use, intended for drawing particles in game.cpp
 	this->potion->drawParticles();
 	this->testBat->drawParticles();
+	this->grenade->drawParticles();
 	this->currentPlayer->drawParticles();
 	basicRenderer.geometryUnbind();
 

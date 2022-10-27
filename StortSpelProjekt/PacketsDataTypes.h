@@ -7,7 +7,7 @@ struct PositionRotation
 	int packetId;
 	int playerId;
 	DirectX::XMFLOAT4X4 matrix;
-	bool ifDead;
+	int ifDead;
 };
 
 //enum = 4

@@ -6,81 +6,6 @@
 
 void Game::loadObjects()
 {
-	//this->manager.getMeshData("../Meshes/player.obj", vBuff, iBuff, subMeshRanges, verticies);
-	//tmpMesh = new Mesh(this->vBuff, this->iBuff, this->subMeshRanges, this->verticies);
-	//player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
-	//
-	//
-
-	//this->manager.getMeshData("../Meshes/Sphere.obj", vBuff, iBuff, subMeshRanges, verticies);
-	//this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-	////this->tempSRV3 = this->manager.getSrv("planetTexture.png");
-
-	//
-	//
-	////planet = new GameObject("../Meshes/Sphere", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
-	//planet = new GameObject(tmpMesh, DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
-	//planet->setSrv(this->manager.getSrv("planetTexture.png"));
-	//
-	////Here we can add base object we want in the beginning of the game
-
-	//potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2);
-	//spaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
-	//
-	//
-	//this->manager.getMeshData("../Meshes/Baseball.obj", vBuff, iBuff, subMeshRanges, verticies);
-	////tmpMesh = new Mesh(this->vBuff, this->iBuff, this->subMeshRanges, this->verticies);
-	//
-	////Mesh* tmpMesh2 = new Mesh(this->vBuff, this->iBuff, this->subMeshRanges, this->verticies);
-
-	//testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4);
-	////testBat = new BaseballBat(tmpMesh2, DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4);
-	//
-	//testCube = new GameObject(vBuff, iBuff, subMeshRanges, verticies, DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-	//testCube->setSrv(this->manager.getSrv("planetTexture.png"));
-	//otherPlayer = new Player("../Meshes/Player", DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6);
-	////otherPlayer = new Player(tmpMesh2, DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6);
-	//otherPlayer->setSrv(this->manager.getSrv("planetTexture.png"));
-
-	//physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
-	//physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
-	//physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
-	//physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
-	//
-	//
-
-	//otherPlayer->setPos({ 5,5,5 });
-	//
-
-
-	//testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
-	//potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
-	//testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
-	//otherPlayer->getPhysComp()->setPosition(reactphysics3d::Vector3(otherPlayer->getPosV3().x, otherPlayer->getPosV3().y, otherPlayer->getPosV3().z));
-
-	//gameObjects.emplace_back(planet);
-	//gameObjects.emplace_back(player);
-	//gameObjects.emplace_back(potion);
-	//gameObjects.emplace_back(spaceShip);
-	//gameObjects.emplace_back(testCube);
-	//gameObjects.emplace_back(testBat);
-	//gameObjects.emplace_back(otherPlayer);
-	//
-
-	//for (int i = 0; i < 10; i++)
-	//{
-	//	GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6+ i, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-	//	physWolrd.addPhysComponent(newObj, reactphysics3d::CollisionShapeName::BOX);
-	//	newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+(float)i*10, 100));
-	//	gameObjects.emplace_back(newObj);
-	//}
-
-	//physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
-	//potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
-	//testBat->setPlayer(player);
-	//testBat->setTestObj(gameObjects);
-	//player->setPhysComp(physWolrd.getPlayerBox());
-
 	this->manager.getMeshData("../Meshes/Sphere.obj", vBuff, iBuff, subMeshRanges, verticies);
 	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	planet = new GameObject(tmpMesh, DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
@@ -95,7 +20,6 @@ void Game::loadObjects()
 	testBat = new BaseballBat(tmpMesh, DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4);
 	testBat->setSrv(manager.getSrv("planetTexture.png"));
 
-	
 	this->manager.getMeshData("../Meshes/rocket.obj",vBuff, iBuff, subMeshRanges, verticies);
 	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	spaceShip = new SpaceShip(tmpMesh, DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
@@ -328,6 +252,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->manager.loadMeshData("../Meshes/Baseball.obj");
 	this->manager.loadMeshData("../Meshes/Sphere.obj");
 	this->manager.loadMeshData("../Meshes/rocket.obj");
+	this->manager.loadMeshData("../Meshes/pinto.obj");
 	
 	
 	MaterialLibrary::LoadDefault();

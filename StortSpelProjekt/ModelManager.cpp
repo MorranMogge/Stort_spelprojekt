@@ -51,10 +51,10 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 {
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
-		if (this->meshes.size() > this->diffuseMaps.size())
+		/*if (this->meshes.size() > this->diffuseMaps.size())
 		{
 			this->diffuseMaps.push_back(this->bank.getSrv("Missing.png"));
-		}
+		}*/
 
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];		
 		

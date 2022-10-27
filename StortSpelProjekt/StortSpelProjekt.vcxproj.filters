@@ -132,7 +132,6 @@
     </ClCompile>
     <ClCompile Include="BaseballBat.cpp" />
     <ClCompile Include="Component.cpp" />
-    <ClCompile Include="mesh2.cpp" />
     <ClCompile Include="ModelDataContainer.cpp" />
     <ClCompile Include="ModelManager.cpp" />
   </ItemGroup>
@@ -386,7 +385,6 @@
     </ClInclude>
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="Component.h" />
-    <ClInclude Include="mesh2.h" />
     <ClInclude Include="ModelDataContainer.h" />
     <ClInclude Include="ModelManager.h" />
   </ItemGroup>

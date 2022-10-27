@@ -30,7 +30,6 @@ Camera::Camera()
 	positionBuffer.getData().pos = position;
 	positionBuffer.getData().padding = 0;
 
-	rotationMX = DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f);
 	viewMatrix = DirectX::XMMatrixLookAtLH(cameraPos, lookAtPos, upVector);
 	projMatrix = DirectX::XMMatrixPerspectiveFovLH(0.8f, 1264.f / 681.f, 0.1f, 800.0f);
 	cameraBuffer.getData().viewProjMX = viewMatrix * projMatrix;
@@ -47,13 +46,11 @@ Camera::~Camera()
 
 void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, float deltaTime)
 {
-	this->rotationMX = playerRotation;
+	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation);
+	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation);
+	upVector = XMVector3TransformCoord(DEFAULT_UP, playerRotation);
 
-	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
-	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
-	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
-
-	cameraPos = playerPosition + upVector * 60.0f - forwardVector;
+	cameraPos = playerPosition + upVector * 60.0f - forwardVector * 50.f;
 	lookAtPos = playerPosition;
 	updateCamera();
 }
@@ -66,14 +63,6 @@ DirectX::XMVECTOR Camera::getForwardVector() const
 DirectX::XMVECTOR Camera::getRightVector() const
 {
 	return this->rightVector;
-}
-
-void Camera::resetRotation()
-{
-	rotationMX = XMMatrixIdentity();
-	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
-	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
-	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
 }
 
 void Camera::VSbindPositionBuffer(const int& slot)

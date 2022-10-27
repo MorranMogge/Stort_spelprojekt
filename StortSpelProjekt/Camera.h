@@ -13,7 +13,6 @@ private:
 
 	DirectX::XMMATRIX viewMatrix;
 	DirectX::XMMATRIX projMatrix;
-	DirectX::XMMATRIX rotationMX;
 	DirectX::XMVECTOR cameraPos = DirectX::XMVectorSet(0.0f, 0.0f, -25.0f, 0.0f);
 	DirectX::XMVECTOR lookAtPos = DirectX::XMVectorSet(0.0f, 0.0f, -20.0f, 0.0f);
 
@@ -35,7 +34,6 @@ public:
 	DirectX::XMVECTOR getRightVector() const;
 	ID3D11Buffer* getViewBuffer();
 	ID3D11Buffer* getPositionBuffer();
-	void resetRotation();
 
 	void VSbindPositionBuffer(const int &slot);
 	void VSbindViewBuffer(const int& slot);

@@ -39,6 +39,7 @@ void Player::handleItems()
 		itemPhysComp->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
 
 		//You no longer "own" the item
+		holdingItem->setPickedUp(false);
 		holdingItem = nullptr;
 	}
 	//Use the Item
@@ -760,7 +761,7 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLO
 	for (int i = 0; i < gameObjSize; i++)
 	{
 		int id = gameObjects.at(i)->getId();
-		if (id != ObjID::PLANET && gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
+		if ( gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
 		{
 			//Maybe somehow return the index of the triangle hit to calculate new Normal
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);

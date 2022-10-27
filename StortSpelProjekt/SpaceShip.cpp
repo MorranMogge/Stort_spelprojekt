@@ -42,9 +42,12 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 	switch (team)
 	{
 	case 0:
-		red = this; break;
+		red = this; 
+		mesh->matKey[0] = "spaceshipTexture1.jpg"; break;
+
 	case 1:
-		blue = this; break;
+		blue = this;
+		mesh->matKey[0] = "spaceshipTexture2.jpg"; break;
 	}
 }
 

@@ -19,13 +19,14 @@ enum ObjID
 class GameObject
 {
 private:
-	Mesh* mesh;
+
 	int objectID;
 	reactphysics3d::Quaternion reactQuaternion;
 	DirectX::SimpleMath::Quaternion dx11Quaternion;
 	GravityField* activeField;
 
 protected:
+	Mesh* mesh;
 	PhysicsComponent* physComp;
 	DirectX::SimpleMath::Vector3 position;
 	DirectX::XMMATRIX rotation;

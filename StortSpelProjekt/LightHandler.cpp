@@ -391,6 +391,7 @@ void LightHandler::drawShadows(const int &lightIndex, const std::vector<GameObje
 
 	//pinto
 
+	//tmp visa Ove
 	gameObjects.at(1)->draw();
 
 

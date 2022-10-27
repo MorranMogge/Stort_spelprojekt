@@ -71,7 +71,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		aiString diffuseName;
 		material->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0), diffuseName);
 		
-		std::cout << diffuseName.C_Str() << "\n";
+		
 		aiString Path;
 		//if(material->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		if(material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)

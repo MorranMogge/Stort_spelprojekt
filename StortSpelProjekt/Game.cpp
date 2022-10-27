@@ -6,6 +6,13 @@
 
 void Game::loadObjects()
 {
+	//Mesh pekare som allokerar data för varje mesh
+	Mesh* tmpMesh;
+	//VertexBuffer
+	ID3D11Buffer* vBuff = {};
+	//IndexBuffer
+	ID3D11Buffer* iBuff = {};
+
 	this->manager.getMeshData("../Meshes/Sphere.obj", vBuff, iBuff, subMeshRanges, verticies);
 	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	planet = new GameObject(tmpMesh, DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
@@ -21,18 +28,25 @@ void Game::loadObjects()
 	testBat->setSrv(manager.getSrv("planetTexture.png"));
 
 	this->manager.getMeshData("../Meshes/rocket.obj",vBuff, iBuff, subMeshRanges, verticies);
-	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	spaceShip = new SpaceShip(tmpMesh, DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
 	spaceShip->setSrv(this->manager.getSrv("spaceshipTexture2.jpg"));
 
+
 	player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
 	
+	//Visa Ove
+	//this->manager.getMeshData("../Meshes/pinto.obj", vBuff, iBuff, subMeshRanges, verticies);
+	//this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	//player = new Player(tmpMesh, DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
+	//player->setSrv(this->manager.getSrv("texture2.png"));
+	
 	this->manager.getMeshData("../Meshes/player.obj",vBuff, iBuff, subMeshRanges, verticies);
-	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	testCube = new GameObject(tmpMesh, DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 	testCube->setSrv(manager.getSrv("playerTexture.png"));
 
-	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	otherPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6);
 	otherPlayer->setSrv(manager.getSrv("playerTexture.png"));
 
@@ -70,7 +84,6 @@ void Game::loadObjects()
 	testBat->setPlayer(player);
 	testBat->setTestObj(gameObjects);
 	player->setPhysComp(physWolrd.getPlayerBox());
-
 }
 
 void Game::drawShadows()
@@ -244,8 +257,6 @@ DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3 &posit
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
-	this->vBuff = {};
-	this->iBuff = {};
 	this->manager.setDevice(device);
 	this->manager.loadMeshData("../Meshes/player.obj");
 	this->manager.loadMeshData("../Meshes/Planet.obj");

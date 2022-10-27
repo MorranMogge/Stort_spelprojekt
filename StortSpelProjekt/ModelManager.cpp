@@ -71,7 +71,17 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		aiString diffuseName;
 		material->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0), diffuseName);
 		
-		
+
+
+		//få mat_key
+		aiColor3D color(0.f, 0.f, 0.f);
+		material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+
+		//få mat_key namn
+		aiString name;
+		material->Get(AI_MATKEY_NAME, name);
+
+
 		aiString Path;
 		//if(material->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		if(material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)

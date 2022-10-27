@@ -278,15 +278,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
 
-	currentTime = std::chrono::system_clock::now();
-	lastUpdate = currentTime;
-	gamePad = std::make_unique<DirectX::GamePad>();
-	playerVecRenderer.setPlayer(currentPlayer);
-	currentTime = std::chrono::system_clock::now();
-	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
-	serverStart = std::chrono::system_clock::now();
-	this->window = &window;
-
 	if (IFONLINE)
 	{
 		client->connectToServer();
@@ -319,6 +310,15 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	}
 	testBat->setGameObjects(players);
 	testBat->setClient(client);
+
+	currentTime = std::chrono::system_clock::now();
+	lastUpdate = currentTime;
+	gamePad = std::make_unique<DirectX::GamePad>();
+	playerVecRenderer.setPlayer(currentPlayer);
+	currentTime = std::chrono::system_clock::now();
+	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
+	serverStart = std::chrono::system_clock::now();
+	this->window = &window;
 }
 
 Game::~Game()

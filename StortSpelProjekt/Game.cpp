@@ -37,7 +37,7 @@ void Game::loadObjects()
 	
 	//Visa Ove
 	//this->manager.getMeshData("../Meshes/pinto.obj", vBuff, iBuff, subMeshRanges, verticies);
-	//this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	//tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	//player = new Player(tmpMesh, DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
 	//player->setSrv(this->manager.getSrv("texture2.png"));
 	

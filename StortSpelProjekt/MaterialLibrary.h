@@ -49,22 +49,8 @@ struct MaterialLibrary
 		AddTexture(mat.diffuseKey);
 		info.emplace("Default", mat);
 
-		struct MaterialS
-		{
-			DirectX::SimpleMath::Vector4 ambient{ 0.0f, 0.0f, 0.0f, 0.0f };
-			DirectX::SimpleMath::Vector4 diffuse{ 1.0f, 1.0f, 1.0f, 1.0f };
-			DirectX::SimpleMath::Vector3 specular{ 0.0f, 0.0f, 0.0f };
-			float specularPower = 16.0f;
-		};
 
-		MaterialS matS{
-			{mat.ambient},
-			{mat.diffuse},
-			{mat.specular},
-			{mat.specularPower} };
 
-		// material proterty constant buffer
-		materials.emplace("Default", ConstantBuffer(&matS, sizeof(MaterialS)));
 	}
 	static void LoadMaterial(const MTL::Material& mtlMat)
 	{

@@ -83,7 +83,7 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1);
 
 	//Item Icon
-	float constant =5.0f;
+	float constant =7.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
 	std::vector<std::string> playernames{ "player1.png", "player2.png", "player3.png", "player4.png" };
@@ -110,7 +110,7 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1);
 
 	//Item Icon
-	float constant = 5.0f;
+	float constant = 7.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
 	std::vector<std::string> playernames{ "player1.png", "player2.png", "player3.png", "player4.png" };
@@ -836,24 +836,6 @@ bool Player::getHitByBat() const
             //holdingItem = nullptr;
         }
     }
-	//Update icon movement
-	if (this->playerIcon != nullptr)
-	{
-		float constant = playerIcon->getOffset();
-		DirectX::XMFLOAT3 upDir = this->getUpDirection();
-		DirectX::XMFLOAT3 itemPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-		this->playerIcon->setPosition(this->position + itemPos);
-	}
-	//Update particle movement
-	if (this->particles != nullptr && moveKeyPressed)
-	{
-		//tStruct.resetStartTime();
-		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
-		this->particles->setPosition(this->position);
-		this->particles->setRotation(this->getUpDirection());
-		this->particles->updateBuffer();
-	}
-
 	return dedge;
 }
 
@@ -928,5 +910,21 @@ void Player::update()
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
 		}
+	}
+	//Update icon movement
+	if (this->playerIcon != nullptr)
+	{
+		float constant = playerIcon->getOffset();
+		DirectX::XMFLOAT3 upDir = this->getUpDirection();
+		DirectX::XMFLOAT3 itemPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
+		this->playerIcon->setPosition(this->position + itemPos);
+	}
+	//Update particle movement
+	if (this->particles != nullptr && moveKeyPressed)
+	{
+		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
+		this->particles->setPosition(this->position);
+		this->particles->setRotation(this->getUpDirection());
+		this->particles->updateBuffer();
 	}
 }

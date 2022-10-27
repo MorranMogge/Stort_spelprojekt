@@ -9,17 +9,18 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 	this->setRot(this->getRotOrientedToGrav());
 
 	//Icon initiation
-	int constant = 19;
+	int constant = 60;
 	std::vector<std::string> filenames{ "p0.png", "p1.png", "p2.png", "p3.png", "p4.png" };
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
 	this->rocketStatusQuad = new BilboardObject(filenames, test);
+	this->rocketStatusQuad->setOffset(constant);
 
-	//Team switch //should switch used texture!
+	//Team switch
 	switch (team)
 	{
 	case 0: 
-		red = this; break;
+		red = this; mesh->matKey[0] = "spaceshipTexture1.jpg"; break;
 	case 1: 
 		blue = this; break;
 	}
@@ -32,22 +33,21 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 	this->setRot(this->getRotOrientedToGrav());
 
 	//Icon initiation
-	int constant = 19;
+	int constant = 65;
 	std::vector<std::string> filenames{ "p0.png", "p1.png", "p2.png", "p3.png", "p4.png" };
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
 	this->rocketStatusQuad = new BilboardObject(filenames, test);
+	this->rocketStatusQuad->setOffset(constant);
 
 	//Team switch
 	switch (team)
 	{
 	case 0:
-		red = this; 
-		mesh->matKey[0] = "spaceshipTexture1.jpg"; break;
+		red = this; mesh->matKey[0] = "spaceshipTexture1.jpg"; break;
 
 	case 1:
-		blue = this;
-		mesh->matKey[0] = "spaceshipTexture2.jpg"; break;
+		blue = this; break;
 	}
 }
 

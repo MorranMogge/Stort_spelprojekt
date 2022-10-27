@@ -27,6 +27,7 @@ struct Particle
     float ison : ISON;
 };
 
+
 [maxvertexcount(4)]
 void main(point Particle input[1], inout TriangleStream<Output> outputStream)
 {

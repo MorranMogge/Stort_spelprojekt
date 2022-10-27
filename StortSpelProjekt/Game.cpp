@@ -18,20 +18,20 @@ void Game::loadObjects()
 	planet = new GameObject("../Meshes/Sphere", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET,nullptr, XMFLOAT3(planetSize, planetSize, planetSize));
 	currentPlayer = new Player("../Meshes/pinto", Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, &planetGravityField);
 	potion = new Potion("../Meshes/potion", Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), POTION, &planetGravityField);
-	Vector3 shipPos(30, 50, 10);
-	Vector3 shipPos2(14, 10, 10);
+	Vector3 shipPos(-7.81178, -37.8586, -8.50119);
+	Vector3 shipPos2(13.5817,35.9383, 9.91351);
 	spaceShipRed = new SpaceShip(shipPos, ROCKET, 0, &planetGravityField, Vector3(2, 2, 2));
 	spaceShipBlue = new SpaceShip(shipPos2, ROCKET, 1, &planetGravityField, Vector3(2, 2, 2));
 	testBat = new BaseballBat("../Meshes/bat", Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, &planetGravityField);
 	testCube = new GameObject("../Meshes/Player", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
-	otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), PLAYER, & planetGravityField);
+	//otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), PLAYER, & planetGravityField);
 	component = new Component("../Meshes/Baseball", DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT);
 	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE);
 	
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
-	physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
+	//physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(component, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
 	physWolrd.addPhysComponent(spaceShipRed, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3*0.75f, 0.75f));
@@ -50,7 +50,7 @@ void Game::loadObjects()
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	potion->setRot(DirectX::SimpleMath::Vector3(0.0f, 1.5f, 1.5f));
 	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
-	otherPlayer->getPhysComp()->setPosition(reactphysics3d::Vector3(otherPlayer->getPosV3().x, otherPlayer->getPosV3().y, otherPlayer->getPosV3().z));
+	//otherPlayer->getPhysComp()->setPosition(reactphysics3d::Vector3(otherPlayer->getPosV3().x, otherPlayer->getPosV3().y, otherPlayer->getPosV3().z));
 
 
 	gameObjects.emplace_back(planet);
@@ -60,7 +60,7 @@ void Game::loadObjects()
 	gameObjects.emplace_back(spaceShipBlue);
 	gameObjects.emplace_back(testCube);
 	gameObjects.emplace_back(testBat);
-	gameObjects.emplace_back(otherPlayer);
+	//gameObjects.emplace_back(otherPlayer);
 	gameObjects.emplace_back(component);
 	gameObjects.emplace_back(grenade);
 
@@ -359,6 +359,10 @@ GAMESTATE Game::Update()
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->update();
+		if (gameObjects[i]->getId() == PLAYER)
+		{
+			std::cout << "Player (" << i << ") Position X:" << gameObjects[i]->getPos().x << " Y:" << gameObjects[i]->getPos().y << " Z:" << gameObjects[i]->getPos().z << std::endl;
+		}
 	}
 	
 	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);

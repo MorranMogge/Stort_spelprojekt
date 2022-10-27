@@ -118,52 +118,12 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	this->playerIcon->setOffset(constant);
 }
 
-//=======
-//Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& grav)
-//    :GameObject(useMesh, pos, rot, id), health(70), holdingItem(nullptr), speed(2.f)
-//{
-//	this->rotationMX = XMMatrixIdentity();
-//	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-//
-//	normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
-//	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-//	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-//	normalVector = DirectX::XMVector3Normalize(normalVector);
-//	rightVector = DirectX::XMVector3Normalize(rightVector);
-//	forwardVector = DirectX::XMVector3Normalize(forwardVector);
-//	this->rotate();
-//}
-//
-//Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& grav)
-//	:GameObject(objectPath, pos, rot, id), health(70), holdingItem(nullptr), speed(2.f)
-//{
-//	this->rotationMX = XMMatrixIdentity();
-//	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-//
-//	normalVector = DirectX::XMVectorSet(grav.x, grav.y, grav.z, 1.0f);
-//	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-//	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-//	normalVector = DirectX::XMVector3Normalize(normalVector);
-//	rightVector = DirectX::XMVector3Normalize(rightVector);
-//	forwardVector = DirectX::XMVector3Normalize(forwardVector);
-//	this->rotate();
-//>>>>>>> main
-//}
-
 void Player::handleInputs()
 {
 }
 
 bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime)
 {
-
- //   //Variables
-	//normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
-	//upVector = XMVector3TransformCoord(DEFAULT_UP, rotation);
-	//forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-	//rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-	//upVector = DirectX::XMVector3Normalize(upVector);
-
 	//Calculations
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
 	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);

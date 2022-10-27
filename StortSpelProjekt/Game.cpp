@@ -18,8 +18,8 @@ void Game::loadObjects()
 	planet = new GameObject("../Meshes/Sphere", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET,nullptr, XMFLOAT3(planetSize, planetSize, planetSize));
 	currentPlayer = new Player("../Meshes/pinto", Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, &planetGravityField);
 	potion = new Potion("../Meshes/potion", Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), POTION, &planetGravityField);
-	Vector3 shipPos(-7.81178, -37.8586, -8.50119);
-	Vector3 shipPos2(13.5817,35.9383, 9.91351);
+	Vector3 shipPos(-7.81178f, -37.8586f, -8.50119f);
+	Vector3 shipPos2(13.5817f,35.9383f, 9.91351f);
 	spaceShipRed = new SpaceShip(shipPos, ROCKET, 0, &planetGravityField, Vector3(2, 2, 2));
 	spaceShipBlue = new SpaceShip(shipPos2, ROCKET, 1, &planetGravityField, Vector3(2, 2, 2));
 	testBat = new BaseballBat("../Meshes/bat", Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, &planetGravityField);
@@ -211,12 +211,6 @@ void Game::handleKeybinds()
 	}
 }
 
-void Game::checkWinstate()
-{
-
-}
-
-
 DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3 &position)
 {
 	using namespace DirectX::SimpleMath;
@@ -390,7 +384,6 @@ GAMESTATE Game::Update()
 	this->updateBuffers();
 	
 	//Check winstate
-	this->checkWinstate();
 	for (int i = 1; i < gameObjects.size(); i++)
 	{
 		//get object id

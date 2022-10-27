@@ -15,6 +15,8 @@
 
 //#include "../DirectXTK-main/Src/SDKMesh.h"
 
+
+//struct för en vertex
 struct vertex
 {
 	DirectX::XMFLOAT3 pos; // Position
@@ -36,35 +38,42 @@ class ModelManager
 {
 private:
 
+	//Struct som beskriver datan som behövs för en mesh, det är i denna datastruktur som samtliga vertexes och indicies kommer sparas i oavsett med eller utan submeshes
 	struct meshData
 	{
+		//Vertex data
 		std::vector<vertex> vertexTriangle;
+		//Indicies data
 		std::vector<DWORD> indexTriangle;
 	};
 
 	
 	struct meshData dataForMesh;
+	
+	//SubmeshRanges är antalet draws som skall göras per submesh
 	std::vector<int> submeshRanges;
+	//AmountOfVerticies är base vertex location - start index för första vertex som skall läsas för mesh / submesh
 	std::vector<int> amountOfvertices;
-	std::vector<ID3D11Buffer*> vecIndexBuff;
+	//Skapa srv för given bild i finalFilePath sökväg
 	bool makeSRV(ID3D11ShaderResourceView*& srv, std::string finalFilePath);
+	//Process Assimp data
 	void processNodes(aiNode* node, const aiScene* scene, const std::string& filePath);
+	//Process Assimp mesh data
 	void readNodes(aiMesh* mesh, const aiScene* scene);
 	std::vector<ID3D11ShaderResourceView*> diffuseMaps;
 
-
+	//Innehåller all data för mesh och texturer
 	ModelDataContainer bank;
 	ID3D11Device* device;
 public:
 	ModelManager();
 	ModelManager(ID3D11Device* device);
 	~ModelManager();
+	//Startpunkt för att ladda in data via Assimp
 	bool loadMeshData(const std::string& filePath);
 	ID3D11ShaderResourceView* getSrv(const std::string key);
-	//std::vector<Mesh2*> getMeshes() const;
 	std::vector<ID3D11ShaderResourceView*> getTextureMaps() const;
-	//fills the params with meshdata
+	//Fyller parametrarna med meshdata om nyckeln finns
 	bool getMeshData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces);
-	std::vector<ID3D11Buffer*> getBuff() const;
 	void setDevice(ID3D11Device* device);
 };

@@ -307,6 +307,11 @@ void GameObject::drawObjectWithTexture()
 	this->mesh->drawWithTexture(this->srv);
 }
 
+void GameObject::drawObject()
+{
+	this->mesh->draw();
+}
+
 void GameObject::setSrv(ID3D11ShaderResourceView* srv)
 {
 	this->srv = srv;

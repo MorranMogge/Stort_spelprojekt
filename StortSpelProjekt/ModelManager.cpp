@@ -187,11 +187,6 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 
 }
 
-std::vector<ID3D11Buffer*> ModelManager::getBuff() const
-{
-	return this->vecIndexBuff;
-}
-
 void ModelManager::setDevice(ID3D11Device* device)
 {
 	this->device = device;

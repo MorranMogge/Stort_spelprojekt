@@ -174,7 +174,7 @@ public:
 		this->vertexBuff = other->vertexBuff;
 		this->indexBuff = other->indexBuff;
 	}
-
+	//Draw mesh med textur
 	void drawWithTexture(ID3D11ShaderResourceView* srv)
 	{
 
@@ -195,6 +195,28 @@ public:
 			startVertex += this->amountOfVertices[i];
 		}
 	}
+	//Draw mesh utan textur
+	void draw()
+	{
+
+		worldCB.BindToVS(0u);
+
+		UINT stride = sizeof(vertex);
+		UINT offset = 0;
+
+		int startIndex = 0;
+		int startVertex = 0;
+		
+		GPU::immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuff, &stride, &offset);
+		GPU::immediateContext->IASetIndexBuffer(this->indexBuff, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+		for (int i = 0; i < submeshRanges.size(); i++)
+		{
+			GPU::immediateContext->DrawIndexed(submeshRanges[i], startIndex, startVertex);
+			startIndex += submeshRanges[i];
+			startVertex += this->amountOfVertices[i];
+		}
+	}
+
 
 	// without material
 	void Draw(bool tesselation = false)

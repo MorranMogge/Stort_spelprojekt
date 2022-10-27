@@ -36,9 +36,9 @@ cbuffer camUp : register(b2)
 #define CurrentDirectionY rawBuffer[DTid.x * Offset + 9]
 #define CurrentDirectionZ rawBuffer[DTid.x * Offset + 10]
 
-#define BaseOffSetX rawBuffer[DTid.x * Offset + 10]
-#define BaseOffSetY rawBuffer[DTid.x * Offset + 11]
-#define BaseOffSetZ rawBuffer[DTid.x * Offset + 12]
+#define BaseOffSetX rawBuffer[DTid.x * Offset + 11]
+#define BaseOffSetY rawBuffer[DTid.x * Offset + 12]
+#define BaseOffSetZ rawBuffer[DTid.x * Offset + 13]
 
 #define Speed 0.07f
 #define Range 100.0f
@@ -65,13 +65,13 @@ void main(uint3 DTid : SV_DispatchThreadID)
     {
         SimulateTime = 0.0f;
         
-        BaseOffSetX = offsetFromOrigin.x;
-        BaseOffSetY = offsetFromOrigin.y;
-        BaseOffSetZ = offsetFromOrigin.z;
-        
         CurrentDirectionX = orientation.x;
         CurrentDirectionY = orientation.y;
         CurrentDirectionZ = orientation.z;
+        
+        BaseOffSetX = offsetFromOrigin.x;
+        BaseOffSetY = offsetFromOrigin.y;
+        BaseOffSetZ = offsetFromOrigin.z;
 
     }
     else
@@ -89,9 +89,10 @@ void main(uint3 DTid : SV_DispatchThreadID)
 #define RotatedLocalOffset (LocalOffset * currentDirection) // rotated local offset
     
     
-    const float3 baseOffSet = float3(BaseOffSetX, BaseOffSetY, BaseOffSetZ);
+    float3 baseOffSet = float3(BaseOffSetX, BaseOffSetY, BaseOffSetZ);
+    
     // position in world space
-    const float3 position = RotatedStartPosition + RotatedLocalOffset + offsetFromOrigin;
+    const float3 position = RotatedStartPosition + RotatedLocalOffset + baseOffSet;
     
     //apply position to buffer
     PositionX = position.x;

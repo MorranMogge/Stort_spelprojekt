@@ -17,7 +17,7 @@ void BaseballBat::sendForceToServer(const DirectX::SimpleMath::Vector3& hitForce
 	hitInfo.xForce = batPos.x;
 	hitInfo.yForce = batPos.y;
 	hitInfo.zForce = batPos.z;
-
+	std::cout << "Hit player!!!!\n";
 	this->client->sendStuff<PlayerHit>(hitInfo);
 }
 
@@ -36,13 +36,27 @@ void BaseballBat::setPlayer(Player* player)
 	this->player = player;
 }
 
+void BaseballBat::setClient(Client* client)
+{
+	this->client = client;
+}
+
 void BaseballBat::setTestObj(const std::vector<GameObject*>& objects)
 {
 	this->objects = objects;
 }
 
+void BaseballBat::setGameObjects(const std::vector<Player*>& objects)
+{
+	for (int i = 0; i < objects.size(); i++)
+	{
+		this->objects.push_back(objects[i]);
+	}
+}
+
 void BaseballBat::useItem()
 {
+	std::cout << "Used bat!\n";
 	batPos = this->player->getPos();
 	batPos += this->player->getForwardVec() * 10;
 	savedPos = this->getPosV3(); //Used to reset the baseball bats position at the end of the function
@@ -54,9 +68,9 @@ void BaseballBat::useItem()
 	batComp->setScale(DirectX::XMFLOAT3(4.0f, 4.0f, 4.0f));
 
 	bool collided = false;
-	for (int i = 1; i < objects.size(); i++)
+	for (int i = 0; i < objects.size(); i++)
 	{
-		if (this == objects[i]) continue;
+		if (this == objects[i] || i == player->getOnlineID()) continue;
 
 		physComp = objects[i]->getPhysComp();
 		if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue;

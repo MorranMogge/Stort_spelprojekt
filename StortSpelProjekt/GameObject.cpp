@@ -152,6 +152,10 @@ DirectX::XMFLOAT4X4 GameObject::getMatrix() const
 void GameObject::setMatrix(DirectX::XMFLOAT4X4 matrix)
 {
 	this->mesh->setMatrix(matrix);
+	this->position.x = matrix._14;
+	this->position.y = matrix._24;
+	this->position.z = matrix._34;
+	this->physComp->setPosition(reactphysics3d::Vector3{ position.x,position.y, position.z });
 }
 
 void GameObject::updateMatrixOnline()

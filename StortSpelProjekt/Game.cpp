@@ -15,7 +15,7 @@ void Game::loadObjects()
 	currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, grav, client);
 	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(40, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2, 0);
 	spaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(20, 29, 20), orientToPlanet(DirectX::SimpleMath::Vector3(20, 29, 20)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
-	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(-10, 10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4,0);
+	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4,0);
 	testCube = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(50, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
@@ -306,6 +306,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			if (playerId != i)
 			{
 				tmpPlayer->setOnlineID(i);
+				physWolrd.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
 			}
 			else
@@ -316,6 +317,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			}
 		}
 	}
+	testBat->setGameObjects(players);
+	testBat->setClient(client);
 }
 
 Game::~Game()
@@ -395,12 +398,13 @@ GAMESTATE Game::Update()
 		
 		//std::cout << std::to_string(currentPlayer->getMatrix()._14) << std::endl;
 		players[i]->updateMatrixOnline();
+		players[i]->update();
 	}
 
-	//for (int i = 0; i < components.size(); i++)
-	//{
- // 		components[i]->update(); 
-	//}
+	for (int i = 0; i < components.size(); i++)
+	{
+  		components[i]->update(); 
+	}
 
 	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
 	for (int i = 0; i < gameObjects.size(); i++)

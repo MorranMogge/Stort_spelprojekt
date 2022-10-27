@@ -643,7 +643,7 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 	this->dedge = true;
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);
-
+	timer.resetStartTime();
 }
 
 void Player::addItem(Item* itemToHold)

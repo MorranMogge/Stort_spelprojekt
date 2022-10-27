@@ -39,13 +39,21 @@ void player::playerGotHit(const reactphysics3d::Vector3& force)
 
 bool player::getDeathState()
 {
-	if (timer.getTimePassed(5.0f)) this->dead = true;
+	if (dead && timer.getTimePassed(5.0f))
+	{
+		this->dead = false;
+		this->physComp->resetForce();
+		this->physComp->resetTorque();
+		this->physComp->setType(reactphysics3d::BodyType::STATIC);
+		this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
+	}
 	return this->dead;
 }
 
 void player::setPhysicsComponent(PhysicsComponent* physComp)
 {
 	this->physComp = physComp;
+	this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
 }
 
 PhysicsComponent* player::getPhysComp() const
@@ -83,4 +91,14 @@ void player::setPosition(float x, float y, float z)
 	this->yPos = y;
 	this->zPos = z;
 	this->physComp->setPosition(reactphysics3d::Vector3(x, y, z));
+}
+
+void player::updatePosViaPhysComp()
+{
+	reactphysics3d::Quaternion reactQuat = this->physComp->getRotation();
+	DirectX::SimpleMath::Quaternion quat(reactQuat.x, reactQuat.y, reactQuat.z, reactQuat.w);
+	DirectX::XMStoreFloat4x4(&matrix, DirectX::XMMatrixRotationRollPitchYawFromVector(quat.ToEuler()));
+	this->matrix._14 = xPos;
+	this->matrix._24 = yPos;
+	this->matrix._34 = zPos;
 }

@@ -418,6 +418,7 @@ int main()
 				{
 					reactphysics3d::Vector3 tempPos = data.users[i].playa.getPhysComp()->getPosition();
 					data.users[i].playa.setPosition(tempPos.x, tempPos.y, tempPos.z);
+					data.users[i].playa.updatePosViaPhysComp();
 				}
 
 				PositionRotation prMatrix;

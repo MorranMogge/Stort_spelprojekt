@@ -23,11 +23,12 @@ public:
 	float getposition(char whichPos)const;
 
 	void playerGotHit(const reactphysics3d::Vector3& force);
-	bool getDeathState()const;
+	bool getDeathState();
 	void setPhysicsComponent(PhysicsComponent* physComp);
 	PhysicsComponent* getPhysComp()const;
 	void setMatrix(DirectX::XMFLOAT4X4 matrix);
 	DirectX::XMFLOAT4X4 getMatrix()const;
 	void setPosition(float pos[3]);
 	void setPosition(float x, float y, float z);
+	void updatePosViaPhysComp();
 };

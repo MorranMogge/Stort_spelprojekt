@@ -159,6 +159,7 @@
     <ClInclude Include="player.h" />
     <ClInclude Include="RandomizeSpawn.h" />
     <ClInclude Include="SpawnComponent.h" />
+    <ClInclude Include="TimeStruct.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

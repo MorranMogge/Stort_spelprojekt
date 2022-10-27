@@ -77,5 +77,8 @@
     <ClInclude Include="RandomizeSpawn.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="TimeStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

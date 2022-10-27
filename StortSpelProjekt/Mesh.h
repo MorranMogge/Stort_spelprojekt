@@ -175,7 +175,7 @@ public:
 		this->indexBuff = other->indexBuff;
 	}
 
-	void draw(ID3D11ShaderResourceView* srv)
+	void drawWithTexture(ID3D11ShaderResourceView* srv)
 	{
 
 		worldCB.BindToVS(0u);

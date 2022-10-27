@@ -45,6 +45,6 @@ public:
 	bool withinRadious(GameObject* object, float radius) const;
 	virtual void draw();
 	virtual void update(); //This updates the hitboxes
-	void drawWithTexture();
+	void drawObjectWithTexture();
 	void setSrv(ID3D11ShaderResourceView* srv);
 };

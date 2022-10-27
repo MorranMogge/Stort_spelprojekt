@@ -5,6 +5,8 @@
 #include "Potion.h"
 #include "BaseballBat.h"
 #include "Component.h"
+#include "PacketEnum.h"
+
 using namespace DirectX;
 
 void Player::handleItems()
@@ -19,6 +21,17 @@ void Player::handleItems()
 	//Thorw the Item
 	if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
 	{
+		//allocates data to be sent
+		ComponentData c;
+		c.ComponentId = this->getItemOnlineId();
+		c.inUseBy = -1;
+		c.packetId = PacketType::COMPONENTPOSITION;
+		c.x = this->getPos().x;
+		c.y = this->getPos().y;
+		c.z = this->getPos().z;
+		//sending data to server
+		client->sendStuff<ComponentData>(c);
+
 		//Set dynamic so it can be affected by forces
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 
@@ -37,6 +50,18 @@ void Player::handleItems()
 	//Use the Item
 	else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
 	{
+		//allocates data to be sent
+		ComponentData c;
+		c.ComponentId = this->getItemOnlineId();
+		c.inUseBy = -1;
+		c.packetId = PacketType::COMPONENTPOSITION;
+		c.x = this->getPos().x;
+		c.y = this->getPos().y;
+		c.z = this->getPos().z;
+
+		//sending data to server
+		client->sendStuff<ComponentData>(c);
+
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 		holdingItem->useItem();
 		itemPhysComp->setIsAllowedToSleep(true);
@@ -45,9 +70,10 @@ void Player::handleItems()
 	}
 }
 
-Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& grav)
+Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& grav, Client* client)
     :GameObject(useMesh, pos, rot, id), health(70), holdingItem(nullptr), speed(2.f)
 {
+	this->client = client;
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -60,9 +86,10 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	this->rotate();
 }
 
-Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& grav)
+Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& grav, Client* client)
 	:GameObject(objectPath, pos, rot, id), health(70), holdingItem(nullptr), speed(2.f)
 {
+	this->client = client;
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 

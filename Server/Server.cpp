@@ -236,7 +236,6 @@ int main()
 	float timerComponentLength = 20.0f;
 	float itemSpawnTimerLength = 20.0f;
 
-
 	setupTcp(data);
 
 	acceptPlayers(data);
@@ -312,7 +311,7 @@ int main()
 				for (int i = 0; i < components.size(); i++)
 				{
 					components[i].setPosition(compData->x, compData->y, compData->z);
-					if (compData->inUseBy >= 0)components[i].setInUseBy(compData->inUseBy);
+					components[i].setInUseBy(compData->inUseBy);
 				}
 					break;
 			}
@@ -320,11 +319,22 @@ int main()
 			
 		}
 
+		for (int i = 0; i < components.size(); i++)
+		{
+			//std::cout << "component in useBy: " << std::to_string(components[i].getInUseById()) << std::endl;
+			if (components[i].getInUseById() == data.users[i].playerId)
+			{
+				components[i].setPosition(data.users[i].playa.getposition('x'), data.users[i].playa.getposition('y'), data.users[i].playa.getposition('z'));
+			}
+			std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
+		}
+
 		//spawns a component when the timer is done
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
 		{
 			SpawnComponent cData = SpawnOneComponent(components);
-			physWorld.addPhysComponent(components[components.size()-1]);
+			physWorld.addPhysComponent(components[components.size() - 1]);
+			components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
 			//std::cout << "componentId: " << std::to_string(cData.ComponentId) << std::endl;
 			sendBinaryDataAllPlayers(cData, data);
 			startComponentTimer = std::chrono::system_clock::now();
@@ -394,17 +404,7 @@ int main()
 				compData.y = components[i].getposition('y');
 				compData.z = components[i].getposition('z');
 				//if its in use by a player it will get the players position
-				for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
-				{
-					if (compData.inUseBy >= 0 && compData.inUseBy <= MAXNUMBEROFPLAYERS)
-					{
-						compData.x = data.users[i].playa.getposition('x');
-						compData.y = data.users[i].playa.getposition('y');
-						compData.z = data.users[i].playa.getposition('z');
-						break;
-					}
-					
-				}
+
 				
 				sendBinaryDataAllPlayers<ComponentData>(compData, data);
 			}

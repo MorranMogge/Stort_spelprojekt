@@ -52,7 +52,7 @@ void Component::setInUseBy(const int inUseById)
 
 void Component::setPosition(float pos[3])
 {
-	//this->physComp->setPosition(reactphysics3d::Vector3(pos[0], pos[1], pos[2]));
+	this->physComp->setPosition(reactphysics3d::Vector3(pos[0], pos[1], pos[2]));
 	this->xPos = pos[0];
 	this->yPos = pos[1];
 	this->zPos = pos[2];
@@ -60,7 +60,7 @@ void Component::setPosition(float pos[3])
 
 void Component::setPosition(float x, float y, float z)
 {
-	//this->physComp->setPosition(reactphysics3d::Vector3(x, y, z));
+	this->physComp->setPosition(reactphysics3d::Vector3(x, y, z));
 	this->xPos = x;
 	this->yPos = y;
 	this->zPos = z;

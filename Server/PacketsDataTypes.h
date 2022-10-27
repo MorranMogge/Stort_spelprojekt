@@ -52,6 +52,12 @@ struct ItemSpawn
 	float z;
 };
 
+//enum 8
+struct ComponentDropped
+{
+
+};
+
 //assign the player with an id that the server has created
 //enum = 10
 struct idProtocol

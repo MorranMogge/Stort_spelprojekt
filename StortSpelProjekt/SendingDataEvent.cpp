@@ -2,6 +2,7 @@
 #include "SendingDataEvent.h"
 #include "Component.h"
 #include "PacketEnum.h"
+#include "Player.h"
 
 //data to send
 void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Player*>& players)//, std::vector<Component*>& components)
@@ -22,10 +23,10 @@ void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Play
 	client->sendStuff<PositionRotation>(pr);
 
 	
-
+	//holds a component
 	if (currentPlayer->getItemOnlineType() == 0)
 	{
-		
+		std::cout << "sent compData\n";
 		ComponentData c;
 		c.ComponentId = currentPlayer->getItemOnlineId();
 		c.inUseBy = client->getPlayerId();
@@ -59,4 +60,18 @@ void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Play
 	//c.z = 69.0f;
 	//client->sendStuff<ComponentData>(c);
 
-};
+}
+void DroppedComponentSendingPacket(Client*& client)
+{
+	//if (currentPlayer->getItemOnlineType() == -1)//doesnt hold a component
+	//{
+	//ComponentData c;
+	//c.ComponentId = currentPlayer->getItemOnlineId();
+	//c.inUseBy = client->getPlayerId();
+	//c.packetId = PacketType::COMPONENTPOSITION;
+	//c.x = currentPlayer->getPos().x;
+	//c.y = currentPlayer->getPos().y;
+	//c.z = currentPlayer->getPos().z;
+	//client->sendStuff<ComponentData>(c);
+	//}
+}

@@ -2,9 +2,7 @@
 #include <SFML/Network.hpp>
 #include <iostream>
 #include <thread>
-#include "Player.h"
 
-#include "Player.h"
 #include "PacketsDataTypes.h"
 #include "CircularBufferClient.h"
 

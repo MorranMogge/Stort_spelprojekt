@@ -85,6 +85,16 @@ struct SpawnComponent
 	float z;
 };
 
+//enum = 14
+struct SpaceShipPosition
+{
+	int packetId;
+	int spaceShipTeam;
+	float x;
+	float y;
+	float z;
+};
+
 //enum = 21
 struct PlayerHit
 {

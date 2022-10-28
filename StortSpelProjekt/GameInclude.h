@@ -17,6 +17,7 @@
 #include "ParticleEmitter.h"
 #include "SkyboxObj.h"
 #include "PlayerVectors.h"
+#include "BilboardObject.h"
 
 //GameObjects
 #include "Player.h"
@@ -30,10 +31,15 @@
 #include "MouseClass.h"
 #include "Camera.h"
 
+//ui
+#include "HudUI.h"
+
 //Other
 #include "ShaderLoader.h"
 #include "ImGuiHelper.h"
 #include "StructuredBuffer.h"
 #include "BufferTypes.h"
-
 #include "PacketEventManager.h"
+
+
+

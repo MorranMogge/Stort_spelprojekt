@@ -5,6 +5,7 @@
 #include "Potion.h"
 #include "BaseballBat.h"
 #include "Component.h"
+#include "Mesh.h"
 using namespace DirectX;
 
 void Player::resetRotationMatrix()
@@ -38,6 +39,7 @@ void Player::handleItems()
 		itemPhysComp->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
 
 		//You no longer "own" the item
+		holdingItem->setPickedUp(false);
 		holdingItem = nullptr;
 	}
 	//Use the Item
@@ -51,18 +53,52 @@ void Player::handleItems()
 	}
 }
 
-Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-    :GameObject(useMesh, pos, rot, id), holdingItem(nullptr), speed(25.0f)
+Player::~Player()
 {
-	this->rotationMX = XMMatrixIdentity();
-	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	if (this->playerIcon != nullptr)
+	{
+		delete playerIcon;
+	}
+	if (this->particles != nullptr)
+	{
+		delete particles;
+	}
 }
 
-Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-	:GameObject(objectPath, pos, rot, id), holdingItem(nullptr), speed(25.0f)
+Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
+    :GameObject(useMesh, pos, rot, id, field), health(70), holdingItem(nullptr)
+{
+		this->rotationMX = XMMatrixIdentity();
+		resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	//Particles
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1);
+
+	//Item Icon
+	float constant =7.0f;
+	DirectX::XMFLOAT3 upDir = this->getUpDirection();
+	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
+	std::vector<std::string> playernames{ "player1.png", "player2.png", "player3.png", "player4.png" };
+	this->playerIcon = new BilboardObject(playernames, iconPos);
+	this->playerIcon->setOffset(constant);
+}
+
+Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
+	:GameObject(objectPath, pos, rot, id, field), health(70), holdingItem(nullptr)
 {
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	//Particles
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1);
+
+	//Item Icon
+	float constant = 7.0f;
+	DirectX::XMFLOAT3 upDir = this->getUpDirection();
+	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
+	std::vector<std::string> playernames{ "player1.png", "player2.png", "player3.png", "player4.png" };
+	this->playerIcon = new BilboardObject(playernames, iconPos);
+	this->playerIcon->setOffset(constant);
 }
 
 void Player::handleInputs()
@@ -249,12 +285,14 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		deltaTime *= 1.5f;
 	}
 
+
 	//PC movement
 	if (movingCross(cameraForward, deltaTime)) {}
 
 	//Walking forward
 	else if (Input::KeyDown(KeyCode::W))
 	{
+		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
 
@@ -279,6 +317,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Walking backward
 	else if (Input::KeyDown(KeyCode::S))
 	{
+		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
 
@@ -303,6 +342,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Walking right
 	else if (Input::KeyDown(KeyCode::D))
 	{
+		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(cameraRight, rightVector);
 
@@ -327,6 +367,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Walking left
 	else if (Input::KeyDown(KeyCode::A))
 	{
+		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(-cameraRight, rightVector);
 
@@ -554,18 +595,32 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 			this->rotate();
 		}
 	}
+
+
+	if (!Input::KeyDown(KeyCode::W) && !Input::KeyDown(KeyCode::A) && !Input::KeyDown(KeyCode::S) && !Input::KeyDown(KeyCode::D))
+	{
+		this->moveKeyPressed = false;
+	}
+
 }
 
 bool Player::pickupItem(Item* itemToPickup)
 {
 	bool successfulPickup = false;
-
 	if (Input::KeyDown(KeyCode::ENTER))
 	{
 		if (this->withinRadius(itemToPickup, 5))
 		{
 			addItem(itemToPickup);
-			successfulPickup = true;
+
+			Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
+			if (tmp)
+			{
+				tmp->setPlayerptr(this);
+				successfulPickup = true;
+				tmp->setPickedUp(true);
+			}
+
 			holdingItem->getPhysComp()->getRigidBody()->resetForce();
 			holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 			holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
@@ -587,14 +642,21 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 
 void Player::addItem(Item* itemToHold)
 {
-	if (!this->holdingItem)
+    if (!this->holdingItem)
+	{
 		this->holdingItem = itemToHold;
-	holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
+		this->holdingItem->setPickedUp(true);
+	}
+    holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 }
 
 void Player::releaseItem()
 {
-	this->holdingItem = nullptr;
+	if (this->holdingItem != nullptr)
+	{
+		this->holdingItem->setPickedUp(false);
+		this->holdingItem = nullptr;
+	}
 }
 
 bool Player::checkForStaticCollision(const std::vector<GameObject*>& gameObjects)
@@ -629,9 +691,10 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLO
 
 	bool testingVec = false;
 	int gameObjSize = (int)gameObjects.size();
-	for (int i = 1; i < gameObjSize; i++)
+	for (int i = 0; i < gameObjSize; i++)
 	{
-		if (gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
+		int id = gameObjects.at(i)->getId();
+		if ( gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
 		{
 			//Maybe somehow return the index of the triangle hit to calculate new Normal
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
@@ -667,7 +730,62 @@ bool Player::repairedShip() const
 
 bool Player::getHitByBat() const
 {
+    if (holdingItem != nullptr)
+    {
+        DirectX::SimpleMath::Vector3 newPos = this->position; 
+        newPos += 4*forwardVector;
+        
+        PhysicsComponent* itemPhysComp = holdingItem->getPhysComp();
+        holdingItem->setPos(newPos);
+        itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z}));
+        
+        //Thorw the Item
+        if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
+        {
+            //Set dynamic so it can be affected by forces
+	        itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+
+            //Calculate the force vector
+            DirectX::XMFLOAT3 temp;
+            DirectX::XMStoreFloat3(&temp, (this->forwardVector*5+ this->getUpDirection()));
+            newNormalizeXMFLOAT3(temp);
+
+            //Apply the force
+            itemPhysComp->applyLocalTorque(reactphysics3d::Vector3(temp.x * 500, temp.y * 500, temp.z * 500));
+            itemPhysComp->applyForceToCenter(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z * 1000));
+			holdingItem->setPickedUp(false);
+
+            //You no longer "own" the item
+            //holdingItem = nullptr;
+        }
+        //Use the Item
+        else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
+        {
+            itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+            holdingItem->useItem();
+            itemPhysComp->setIsAllowedToSleep(true);
+            itemPhysComp->setIsSleeping(true);
+			holdingItem->setPickedUp(false);
+            //holdingItem = nullptr;
+        }
+    }
 	return dedge;
+}
+
+void Player::drawIcon(int playerIndex)
+{
+	if (this->playerIcon != nullptr)
+	{
+		this->playerIcon->bindAndDraw(playerIndex, 0);
+	}
+}
+
+void Player::drawParticles()
+{
+	if (this->particles != nullptr/* && moveKeyPressed*/)
+	{
+		this->particles->BindAndDraw(0);
+	}
 }
 
 DirectX::XMVECTOR Player::getUpVec() const
@@ -730,5 +848,21 @@ void Player::update()
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
 		}
+	}
+	//Update icon movement
+	if (this->playerIcon != nullptr)
+	{
+		float constant = playerIcon->getOffset();
+		DirectX::XMFLOAT3 upDir = this->getUpDirection();
+		DirectX::XMFLOAT3 itemPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
+		this->playerIcon->setPosition(this->position + itemPos);
+	}
+	//Update particle movement
+	if (this->particles != nullptr && moveKeyPressed)
+	{
+		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
+		this->particles->setPosition(this->position);
+		this->particles->setRotation(this->getUpDirection());
+		this->particles->updateBuffer();
 	}
 }

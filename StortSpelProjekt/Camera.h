@@ -30,7 +30,8 @@ public:
 	~Camera();
 
 	void updateCamera();
-	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, float deltaTime);
+	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation);
+	void winScene(const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation);
 	DirectX::XMVECTOR getForwardVector() const;
 	DirectX::XMVECTOR getRightVector() const;
 	ID3D11Buffer* getViewBuffer();

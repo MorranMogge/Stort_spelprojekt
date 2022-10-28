@@ -52,14 +52,25 @@ Camera::~Camera()
 {
 }
 
-void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, float deltaTime)
+void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation)
 {
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation);
 	upVector = XMVector3TransformCoord(DEFAULT_UP, playerRotation);
 
-	cameraPos = playerPosition + upVector * 60.0f - forwardVector * 50.f;
+	cameraPos = playerPosition + upVector * 60.f - forwardVector * 50.f;
 	lookAtPos = playerPosition;
+	updateCamera();
+}
+
+void Camera::winScene(const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation)
+{
+	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, shipRotation);
+	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, shipRotation);
+	upVector = XMVector3TransformCoord(DEFAULT_UP, shipRotation);
+
+	cameraPos = shipPosition + upVector * 40.f - forwardVector * 50.f;
+	lookAtPos = shipPosition;
 	updateCamera();
 }
 

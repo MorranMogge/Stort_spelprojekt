@@ -51,6 +51,9 @@ private:
 	//variables to handle packets
 	CircularBufferClient* circularBuffer;
 
+	bool haveWon = false;
+	DirectX::SimpleMath::Matrix shipRotation;
+	DirectX::SimpleMath::Vector3 shipPosition;
 
 	Camera camera;
 	SkyboxObj skybox;

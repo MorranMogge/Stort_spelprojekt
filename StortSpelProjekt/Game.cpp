@@ -400,7 +400,13 @@ GAMESTATE Game::Update()
 		}
 	}
 	
-	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
+	//Setting the camera at position
+	if (!haveWon) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX());
+	else
+	{
+		camera.winScene(shipPosition, shipRotation);
+	}
+
 	//Here you can write client-server related functions?
 
 	//Updates gameObject physics components
@@ -433,6 +439,10 @@ GAMESTATE Game::Update()
 			{
 				Component* comp = dynamic_cast<Component*>(gameObjects[i]);
 				std::cout << "RED Detected Component!\nID: " << comp->getId() << "\n";
+
+				haveWon = true;
+				this->shipRotation = spaceShipRed->getRot();
+				this->shipPosition = spaceShipRed->getPosV3();
 				//return WIN;
 			}
 
@@ -441,6 +451,10 @@ GAMESTATE Game::Update()
 			{
 				Component* comp = dynamic_cast<Component*>(gameObjects[i]);
 				std::cout << "BLU Detected Component!\nID: " << comp->getId() << "\n";
+
+				haveWon = true;
+				this->shipRotation = spaceShipBlue->getRot();
+				this->shipPosition = spaceShipBlue->getPosV3();
 				//return WIN;
 			}
 		}

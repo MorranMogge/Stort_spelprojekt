@@ -65,8 +65,8 @@ Player::~Player()
 	}
 }
 
-Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
-    :GameObject(useMesh, pos, rot, id, field), health(70), holdingItem(nullptr)
+Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& team , GravityField* field)
+    :GameObject(useMesh, pos, rot, id, field), health(70), holdingItem(nullptr), team(team)
 {
 		this->rotationMX = XMMatrixIdentity();
 		resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -89,10 +89,19 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	std::vector<std::string> playernames{ "player1.png", "player2.png", "player3.png", "player4.png" };
 	this->playerIcon = new BilboardObject(playernames, iconPos);
 	this->playerIcon->setOffset(constant);
+
+	//Team switch
+	switch (team)
+	{
+	case 0:
+		this; mesh->matKey[0] = "spaceshipTexture1.jpg"; break;
+	case 1:
+		this; break;
+	}
 }
 
-Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
-	:GameObject(objectPath, pos, rot, id, field), health(70), holdingItem(nullptr)
+Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& team, GravityField* field)
+	:GameObject(objectPath, pos, rot, id, field), health(70), holdingItem(nullptr), team(team)
 {
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -116,6 +125,15 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	std::vector<std::string> playernames{ "player1.png", "player2.png", "player3.png", "player4.png" };
 	this->playerIcon = new BilboardObject(playernames, iconPos);
 	this->playerIcon->setOffset(constant);
+
+	//Team switch
+	switch (team)
+	{
+	case 0:
+		mesh->matKey[0] = "spaceshipTexture1.jpg"; break;
+	case 1:
+		break;
+	}
 }
 
 void Player::handleInputs()

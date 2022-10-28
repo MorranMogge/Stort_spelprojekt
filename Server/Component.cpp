@@ -30,6 +30,11 @@ float Component::getposition(char whichPos) const
 	}
 }
 
+DirectX::XMFLOAT3 Component::getPosXMFLOAT3() const
+{
+	return DirectX::XMFLOAT3(xPos, yPos, zPos);
+}
+
 int Component::getInUseById() const
 {
 	return this->inUseBy;

@@ -10,21 +10,25 @@ PacketEventManager::~PacketEventManager()
 }
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int &NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
-	std::vector<Component *>& componentVector, PhysicsWorld& physWorld)
+	std::vector<Component *>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject *>& gameObjects)
 {
 	//handles the online events
+	idProtocol* protocol = nullptr;
+	testPosition* tst = nullptr;
+	ComponentData* compData = nullptr;
+	SpawnComponent* spawnComp = nullptr;
+	PositionRotation* prMatrixData = nullptr;
+	ItemSpawn* itemSpawn = nullptr;
+	itemPosition* itemPosData = nullptr;
+	Component* newComponent = nullptr;
+	PlayerHit* playerHit = nullptr;
+	SpaceShipPosition* spaceShipPos = nullptr;
+	ComponentAdded* compAdded = nullptr;
+	SpaceShip* newSpaceShip = nullptr;
+	
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{
 		int packetId = circularBuffer->peekPacketId();
-		idProtocol* protocol = nullptr;
-		testPosition* tst = nullptr;
-		ComponentData* compData = nullptr;
-		SpawnComponent* spawnComp = nullptr;
-		PositionRotation* prMatrixData = nullptr;
-		ItemSpawn* itemSpawn = nullptr;
-		itemPosition* itemPosData = nullptr;
-		Component* newComponent = nullptr;
-		PlayerHit* playerHit = nullptr;
 
 		switch (packetId)
 		{
@@ -106,10 +110,32 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			itemPosData = circularBuffer->readData<itemPosition>();
 			std::cout << "item pos data\n";
 			break;
-		
 		case PacketType::PLAYERHIT:
 			playerHit = circularBuffer->readData<PlayerHit>();
 			if (playerHit->playerId == playerId) players[playerId]->hitByBat(reactphysics3d::Vector3(playerHit->xForce, playerHit->yForce, playerHit->zForce));
+			break;
+		case PacketType::SPACESHIPPOSITION:
+			spaceShipPos = circularBuffer->readData<SpaceShipPosition>();
+			//Create correct spaceship depending on team
+			//TO BE CHANGED WHEN MERGING SINCE SPACESHIP HAS NEW CONSTRUCTOR
+			newSpaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), DirectX::SimpleMath::Vector3(20, 29, 20), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
+			gameObjects.push_back(newSpaceShip);
+			physWorld.addPhysComponent(newSpaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3 * 0.75f, 0.75f));
+			std::cout << "You thought you could create a spaceship hUh?!?!?\nGit gud kid\n";
+			break;
+		case PacketType::COMPONENTADDED:
+			compAdded = circularBuffer->readData<ComponentAdded>();
+			SpaceShip* spaceShip = nullptr;
+			for (int i = 0; i < gameObjects.size(); i++)
+			{
+				std::cout << "Team: " << compAdded->spaceShipTeam << " gained progress!\n";
+				spaceShip = dynamic_cast<SpaceShip*>(gameObjects[i]);
+				if (spaceShip && spaceShip->getId() == compAdded->spaceShipTeam)
+				{
+					//Update hud or whatever
+					//spaceShip.increaseCounter();
+				}
+			}
 			break;
 		}
 	}

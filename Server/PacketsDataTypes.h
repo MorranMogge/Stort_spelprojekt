@@ -95,6 +95,13 @@ struct SpaceShipPosition
 	float z;
 };
 
+//enum = 15
+struct ComponentAdded
+{
+	int packetId;
+	int spaceShipTeam;
+};
+
 //enum = 21
 struct PlayerHit
 {

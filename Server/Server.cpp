@@ -16,8 +16,9 @@
 #include "Component.h"
 #include "SpawnComponent.h"
 #include "RandomizeSpawn.h"
+#include "DirectXMathHelper.h"
 
-const short MAXNUMBEROFPLAYERS = 2;
+const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
 
 struct userData
@@ -212,6 +213,10 @@ int main()
 	std::string s = "empty";
 	// Group the variables to send into a packet
 
+	std::vector<DirectX::XMFLOAT3> spaceShipPos;
+	spaceShipPos.emplace_back(DirectX::XMFLOAT3(20, 29, 20));
+	spaceShipPos.emplace_back(getScalarMultiplicationXMFLOAT3(-1.f, spaceShipPos[0]));
+
 
 	std::cout << "Nr of players for the game: " << std::to_string(MAXNUMBEROFPLAYERS) << std::endl;
 
@@ -256,6 +261,19 @@ int main()
 	acceptPlayers(data);
 
 	sendIdToAllPlayers(data);
+
+	//Sends information about the space ships to the clients
+	for (int i = 0; i < spaceShipPos.size(); i++)
+	{
+		SpaceShipPosition spaceShipData;
+		spaceShipData.packetId = PacketType::SPACESHIPPOSITION;
+		spaceShipData.spaceShipTeam = i;
+		spaceShipData.x = spaceShipPos[i].x;
+		spaceShipData.y = spaceShipPos[i].y;
+		spaceShipData.z = spaceShipPos[i].z;
+		sendBinaryDataAllPlayers<SpaceShipPosition>(spaceShipData, data);
+	}
+	
 
 	CircularBuffer* circBuffer = new CircularBuffer();
 	std::thread* recvThread[MAXNUMBEROFPLAYERS];
@@ -388,6 +406,22 @@ int main()
 			sendBinaryDataAllPlayers(itemSpawnData, data);*/
 		}
 
+		for (int i = 0; i < components.size(); i++)
+		{
+			for (int j = 0; j < spaceShipPos.size(); j++)
+			{
+				static DirectX::XMFLOAT3 vecToComp; 
+				vecToComp = spaceShipPos[j]; 
+				subtractionXMFLOAT3(vecToComp, components[i].getPosXMFLOAT3());
+				if (getLength(vecToComp) <= 10.f)
+				{
+					ComponentAdded compAdded;
+					compAdded.packetId = PacketType::COMPONENTADDED;
+					compAdded.spaceShipTeam = j;
+					sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
+				}
+			}
+		}
 		//sends data based on the server tickrate
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
 		{

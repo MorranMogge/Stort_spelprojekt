@@ -355,7 +355,7 @@ int main()
 			{
 				components[i].setPosition(data.users[i].playa.getposition('x'), data.users[i].playa.getposition('y'), data.users[i].playa.getposition('z'));
 			}
-			std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
+			//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
 		}
 
 		//spawns a component when the timer is done

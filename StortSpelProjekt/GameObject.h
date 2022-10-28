@@ -7,6 +7,7 @@ class PhysicsComponent;
 class GameObject
 {
 private:
+	Mesh* mesh;
 	int objectID;
 	reactphysics3d::Quaternion reactQuaternion;
 	DirectX::SimpleMath::Quaternion dx11Quaternion;
@@ -40,10 +41,10 @@ public:
 	PhysicsComponent* getPhysComp()const;
 	void updateBuffer();
 	int getId();
-	bool withinBox(GameObject *object ,float x, float y, float z) const;
+	bool withinBox(GameObject* object, float x, float y, float z) const;
 	bool withinRadious(GameObject* object, float radius) const;
 	virtual void draw();
 	virtual void update(); //This updates the hitboxes
-	void tmpDraw();
+	void tmpDraw(UINT stride = 32U);
 	void setSrv(ID3D11ShaderResourceView* srv);
 };

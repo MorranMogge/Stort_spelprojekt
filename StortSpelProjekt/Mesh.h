@@ -175,12 +175,12 @@ public:
 		this->indexBuff = other->indexBuff;
 	}
 
-	void draw(ID3D11ShaderResourceView* srv)
+	void draw(ID3D11ShaderResourceView* srv, UINT stride = sizeof(vertex))
 	{
 
 		worldCB.BindToVS(0u);
 
-		UINT stride = sizeof(vertex);
+		//UINT stride = stride;
 		UINT offset = 0;
 
 		int startIndex = 0;

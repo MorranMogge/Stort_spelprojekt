@@ -101,6 +101,12 @@ void Game::loadObjects()
 	spaceShip = new SpaceShip(tmpMesh, DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
 	spaceShip->setSrv(this->manager.getSrv("spaceshipTexture2.jpg"));
 
+	this->manager.getAnimData("../Meshes/flos.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
+	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	this->sexyMan = new AnimatedMesh(tmpMesh, DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 69);
+	this->sexyMan->addData(animData);
+	sexyMan->setSrv(this->manager.getSrv("spaceshipTexture2.jpg"));
+
 	player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
 	
 	this->manager.getMeshData("../Meshes/player.obj",vBuff, iBuff, subMeshRanges, verticies);
@@ -111,6 +117,8 @@ void Game::loadObjects()
 	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	otherPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6);
 	otherPlayer->setSrv(manager.getSrv("playerTexture.png"));
+
+
 
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
@@ -125,7 +133,7 @@ void Game::loadObjects()
 	gameObjects.emplace_back(planet);
 	gameObjects.emplace_back(player);
 	gameObjects.emplace_back(potion);
-	gameObjects.emplace_back(spaceShip);
+	//gameObjects.emplace_back(spaceShip);
 	gameObjects.emplace_back(testCube);
 	gameObjects.emplace_back(testBat);
 	gameObjects.emplace_back(otherPlayer);
@@ -141,12 +149,12 @@ void Game::loadObjects()
 		gameObjects.emplace_back(newObj);
 	}
 
+
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	testBat->setPlayer(player);
 	testBat->setTestObj(gameObjects);
 	player->setPhysComp(physWolrd.getPlayerBox());
-
 }
 
 void Game::drawShadows()
@@ -179,9 +187,6 @@ void Game::drawObjects(bool drawDebug)
 		this->gameObjects[i]->tmpDraw();
 	}
 	
-
-	
-
 	//Draw light debug meshes
 	if (drawDebug)
 	{
@@ -245,10 +250,6 @@ void Game::updateBuffers()
 	immediateContext->Unmap(wireBuffer, 0);
 }
 
-Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, MouseClass& mouse, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), player("../Meshes/Player", DirectX::SimpleMath::Vector3(22, 12, -22),
-		DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0), potion("../Meshes/player", DirectX::SimpleMath::Vector3(10,10,15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0),
-	test()
 void Game::handleKeybinds()
 {
 	if (GetAsyncKeyState('C')) physWolrd.addBoxToWorld();
@@ -326,12 +327,15 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 {
 	this->vBuff = {};
 	this->iBuff = {};
+	this->animData;
 	this->manager.setDevice(device);
 	this->manager.loadMeshData("../Meshes/player.obj");
 	this->manager.loadMeshData("../Meshes/Planet.obj");
 	this->manager.loadMeshData("../Meshes/Baseball.obj");
 	this->manager.loadMeshData("../Meshes/Sphere.obj");
 	this->manager.loadMeshData("../Meshes/rocket.obj");
+	//this->manager.loadMeshData("../Meshes/flos.fbx");
+	this->manager.loadMeshAndBoneData("../Meshes/flos.fbx");
 
 	//this->tempSRV = this->manager.getSrv();
 	MaterialLibrary::LoadDefault();
@@ -346,15 +350,16 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ltHandler.addLight(DirectX::XMFLOAT3(-57, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(10, 0, 0), DirectX::XMFLOAT3(0, 1, 0),1);
 	ltHandler.addLight(DirectX::XMFLOAT3(20, 30, 0), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 0);
 	ltHandler.addLight(DirectX::XMFLOAT3(10, -20, 30), DirectX::XMFLOAT3(0, 0, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
-
+	
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
 
 	gamePad = std::make_unique<DirectX::GamePad>();
 	playerVecRenderer.setPlayer(player);
 	start = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count();
-	ModelManager MM(device);
-	MM.loadMeshAndBoneData("../Meshes/two_bones_translation_rotation.fbx", this->test);
+
+	//ModelManager MM(device);
+	//MM.loadMeshAndBoneData("../Meshes/two_bones_translation_rotation.fbx", this->test);
 }
 
 Game::~Game()
@@ -392,7 +397,7 @@ GAMESTATE Game::Update()
 	physWolrd.addForceToObjects();
 	physWolrd.update(dt);
 	
-	this->test.uppdate(GPU::immediateContext, 0, dt);
+	//this->test.uppdate(GPU::immediateContext, 0, dt);
 
 	//Here you can write client-server related functions?
 
@@ -449,6 +454,10 @@ void Game::Render()
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
 
+	basicRenderer.changeToAnimation();
+	this->sexyMan->draw(dt,0);
+
+
 	//Render Skybox
 	basicRenderer.skyboxPrePass();
 	this->skybox.draw();
@@ -461,5 +470,8 @@ void Game::Render()
 	basicRenderer.geometryPass(this->camera);
 	drawParticles();
 	this->ptEmitters.at(0).unbind();
-}
 
+	//basicRenderer.changeToAnimation();
+	//this->sexyMan->draw(dt, 0);
+	//basicRenderer.setUpScene(this->camera);
+}

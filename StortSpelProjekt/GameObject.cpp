@@ -7,7 +7,7 @@ GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const Direct
 {
 
 
-	
+
 
 	// set position
 	mesh->position = pos;
@@ -27,11 +27,11 @@ GameObject::GameObject(ID3D11Buffer* vBuff, ID3D11Buffer* iBuff, std::vector<int
 	:position(pos), objectID(id), scale(scale), physComp(nullptr), srv(nullptr)
 {
 	// load obj file
-	
+
 	this->mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 
 
-	
+
 
 	// set position
 	this->mesh->position = pos;
@@ -62,7 +62,7 @@ GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos
 	{
 		MaterialLibrary::LoadMaterial(testObj.mtl.materials[i]);
 	}
-	
+
 	// set position
 	this->mesh->position = pos;
 
@@ -302,9 +302,9 @@ void GameObject::update()
 	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
 }
 
-void GameObject::tmpDraw()
+void GameObject::tmpDraw(UINT stride)
 {
-	this->mesh->draw(this->srv);
+	this->mesh->draw(this->srv, stride);
 }
 
 void GameObject::setSrv(ID3D11ShaderResourceView* srv)

@@ -15,19 +15,19 @@ bool BasicRenderer::setUpInputLayout(ID3D11Device* device, const std::string& vS
 	return !FAILED(hr);
 }
 
-bool BasicRenderer::setUpInputLayoutAnim(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout* iLayout)
+bool BasicRenderer::setUpInputLayoutAnim(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout*& iLayout)
 {
-	D3D11_INPUT_ELEMENT_DESC inputDesc[5] =
+	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"BoneIndex", 0, DXGI_FORMAT_R32G32B32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"Weights", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-
+		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BONEINDEX", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"WEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
-	HRESULT hr = device->CreateInputLayout(inputDesc, std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &iLayout);
+	HRESULT hr = device->CreateInputLayout(inputDesc, std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &this->animLayout);
+	return !FAILED(hr);
 }
 
 bool BasicRenderer::setUp_Sky_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode)
@@ -173,7 +173,8 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!CreateDepthStencilAndSrv(device, WIDTH, HEIGHT, dsTexture2, dsView2, depthSrv))	return false;
 	if (!LoadVertexShader(device, vShader, vShaderByteCode, "VertexShader"))				return false;
 	if (!LoadVertexShader(device, this->vShaderAnim, vShaderByteCodeForAnim, "vShaderSkinning"))	return false;
-	if (!setUpInputLayout(device, vShaderByteCode))											return false;
+	if (!setUpInputLayoutAnim(device, vShaderByteCodeForAnim, this->animLayout))			return false;
+	if (!setUpInputLayout(device, vShaderByteCode, this->inputLayout))						return false;
 	if (!LoadPixelShader(device, pShader, "PixelShader"))									return false;
 	if (!LoadPixelShader(device, ApShader, "AmbientPixelShader"))							return false;
 	if (!LoadVertexShader(device, pt_vShader, vShaderByteCode, "PT_VertexShader"))			return false;

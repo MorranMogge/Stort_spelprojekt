@@ -46,8 +46,8 @@ private:
 
 
 	bool setUpInputLayout(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout* iLayout);
-	bool setUpInputLayoutAnim(ID3D11Device* device, const std::string &vShaderByteCode, ID3D11InputLayout* iLayout);
-	bool setUpInputLayout(ID3D11Device* device, const std::string &vShaderByteCode);
+	bool setUpInputLayoutAnim(ID3D11Device* device, const std::string &vShaderByteCode, ID3D11InputLayout*& iLayout);
+	//bool setUpInputLayout(ID3D11Device* device, const std::string &vShaderByteCode);
 	bool setUp_PT_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode);
 	bool setUp_Sky_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode);
 	bool setUpSampler(ID3D11Device* device);

@@ -1,3 +1,4 @@
+#include"stdafx.h"
 #include "ModelManager.h"
 #include "GPU.h"
 #include <assimp/cimport.h>
@@ -62,20 +63,11 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 
 		if (mesh->HasBones())
 		{
-			for (int j = 0, length = mesh->mNumBones; j < length; j++)
-			{
-				{
-					std::cout << "Bone: " << mesh->mBones[j]->mName.C_Str() << "\n	"
-						<< mesh->mBones[j]->mOffsetMatrix.a1 << " " << mesh->mBones[j]->mOffsetMatrix.a2 << " " << mesh->mBones[j]->mOffsetMatrix.a3 << " " << mesh->mBones[j]->mOffsetMatrix.a4 << "\n	"
-						<< mesh->mBones[j]->mOffsetMatrix.b1 << " " << mesh->mBones[j]->mOffsetMatrix.b2 << " " << mesh->mBones[j]->mOffsetMatrix.b3 << " " << mesh->mBones[j]->mOffsetMatrix.b4 << "\n	"
-						<< mesh->mBones[j]->mOffsetMatrix.c1 << " " << mesh->mBones[j]->mOffsetMatrix.c2 << " " << mesh->mBones[j]->mOffsetMatrix.c3 << " " << mesh->mBones[j]->mOffsetMatrix.c4 << "\n	"
-						<< mesh->mBones[j]->mOffsetMatrix.d1 << " " << mesh->mBones[j]->mOffsetMatrix.d2 << " " << mesh->mBones[j]->mOffsetMatrix.d3 << " " << mesh->mBones[j]->mOffsetMatrix.d4 << "\n";
-				}
-			}
 
-			this->globalInverseTransform = scene->mRootNode->mTransformation;
-			this->globalInverseTransform = this->globalInverseTransform.Inverse();
-			printf("has bones \n");
+			this->aiMatrixToXMmatrix(scene->mRootNode->mTransformation, this->aniData.globalInverseTransform);
+			DirectX::XMMATRIX temp = DirectX::XMLoadFloat4x4(&this->aniData.globalInverseTransform);
+			temp = DirectX::XMMatrixInverse(nullptr, temp);
+			DirectX::XMStoreFloat4x4(&this->aniData.globalInverseTransform, temp);
 
 			this->loadBones(scene->mMeshes[i], i);
 		}
@@ -83,7 +75,6 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		
 		readNodes(mesh, scene);
 
-		aiMaterial* material = scene->mMaterials[scene->mMeshes[i]->mMaterialIndex];
 		//h�r srv inl�sning
 
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
@@ -526,7 +517,7 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 
 	ID3D11Buffer* vertexBuffer = {};
 
-	D3D11_BUFFER_DESC bufferDesc;
+	D3D11_BUFFER_DESC bufferDesc = {};
 	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	bufferDesc.ByteWidth = sizeof(vertex) * dataForMesh.vertexTriangle.size();
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -534,7 +525,7 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	bufferDesc.MiscFlags = 0;
 	bufferDesc.StructureByteStride = 0;
 
-	D3D11_SUBRESOURCE_DATA data;
+	D3D11_SUBRESOURCE_DATA data = {};
 	data.pSysMem = dataForMesh.vertexTriangle.data();
 	data.SysMemPitch = 0;
 	data.SysMemSlicePitch = 0;
@@ -551,7 +542,7 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	indexBufferDesc.MiscFlags = 0;
 	indexBufferDesc.StructureByteStride = 0;
 
-	D3D11_SUBRESOURCE_DATA indexBufferData;
+	D3D11_SUBRESOURCE_DATA indexBufferData = {};
 	indexBufferData.pSysMem = dataForMesh.indexTriangle.data();
 	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
 
@@ -567,6 +558,50 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	return true;
 }
 
+bool ModelManager::loadBoneData(const std::string& filePath)
+{
+	Assimp::Importer importer;
+	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
+
+	if (pScene == nullptr)
+	{
+		ErrorLog::Log("Cant read FBX-File!");
+		return false;
+	}
+
+	this->aiMatrixToXMmatrix(pScene->mRootNode->mTransformation, this->aniData.globalInverseTransform);
+	DirectX::XMMATRIX temp = DirectX::XMLoadFloat4x4(&this->aniData.globalInverseTransform);
+	temp = DirectX::XMMatrixInverse(nullptr, temp);
+	DirectX::XMStoreFloat4x4(&this->aniData.globalInverseTransform, temp);
+
+	aiMesh* mesh;
+	for (int i = 0, length = pScene->mNumMeshes; i < length; i++)
+	{
+		mesh = pScene->mMeshes[i];
+		if (mesh->HasBones())
+		{
+			for (int j = 0, length = mesh->mNumBones; j < length; j++)
+			{
+				{
+					std::cout << "Bone: " << mesh->mBones[j]->mName.C_Str() << "\n	"
+						<< mesh->mBones[j]->mOffsetMatrix.a1 << " " << mesh->mBones[j]->mOffsetMatrix.a2 << " " << mesh->mBones[j]->mOffsetMatrix.a3 << " " << mesh->mBones[j]->mOffsetMatrix.a4 << "\n	"
+						<< mesh->mBones[j]->mOffsetMatrix.b1 << " " << mesh->mBones[j]->mOffsetMatrix.b2 << " " << mesh->mBones[j]->mOffsetMatrix.b3 << " " << mesh->mBones[j]->mOffsetMatrix.b4 << "\n	"
+						<< mesh->mBones[j]->mOffsetMatrix.c1 << " " << mesh->mBones[j]->mOffsetMatrix.c2 << " " << mesh->mBones[j]->mOffsetMatrix.c3 << " " << mesh->mBones[j]->mOffsetMatrix.c4 << "\n	"
+						<< mesh->mBones[j]->mOffsetMatrix.d1 << " " << mesh->mBones[j]->mOffsetMatrix.d2 << " " << mesh->mBones[j]->mOffsetMatrix.d3 << " " << mesh->mBones[j]->mOffsetMatrix.d4 << "\n";
+				}
+			}
+
+
+			printf("has bones \n");
+
+			this->loadBones(pScene->mMeshes[i], i);
+		}
+	}
+
+	processNodes(pScene->mRootNode, pScene, filePath);
+	return true;
+}
+
 ID3D11ShaderResourceView* ModelManager::getSrv(const std::string key)
 {
 	return bank.getSrv(key);
@@ -577,26 +612,142 @@ std::vector<ID3D11ShaderResourceView*> ModelManager::getTextureMaps() const
 	return this->diffuseMaps;
 }
 
-bool ModelManager::loadMeshAndBoneData(const std::string& filePath, AnimatedMesh& gameObject)
+bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 {
-	this->loadMeshData(filePath);
-	this->aniData.boneVector;
-	for (int i = 0, end = this->aniData.boneVector.size(); i < end; i++)
+	Assimp::Importer importer;
+	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
+
+	if (pScene == nullptr)
 	{
-		std::cout << "Bone: " << this->aniData.boneVector[i].name << "\n	"
-			<< this->aniData.boneVector[i].offsetMatrix._11 << " " << this->aniData.boneVector[i].offsetMatrix._12 << " " << this->aniData.boneVector[i].offsetMatrix._13 << " " << this->aniData.boneVector[i].offsetMatrix._14 << "\n	"
-			<< this->aniData.boneVector[i].offsetMatrix._21 << " " << this->aniData.boneVector[i].offsetMatrix._22 << " " << this->aniData.boneVector[i].offsetMatrix._23 << " " << this->aniData.boneVector[i].offsetMatrix._24 << "\n	"
-			<< this->aniData.boneVector[i].offsetMatrix._31 << " " << this->aniData.boneVector[i].offsetMatrix._32 << " " << this->aniData.boneVector[i].offsetMatrix._33 << " " << this->aniData.boneVector[i].offsetMatrix._34 << "\n	"
-			<< this->aniData.boneVector[i].offsetMatrix._41 << " " << this->aniData.boneVector[i].offsetMatrix._42 << " " << this->aniData.boneVector[i].offsetMatrix._43 << " " << this->aniData.boneVector[i].offsetMatrix._44 << "\n";
+		ErrorLog::Log("Cant read FBX-File!");
+		return false;
 	}
 
-	this->aniData.boneDataVec;
-	gameObject.addData(this->aniData);
-	//gameObject.addData(this->boneDataVec, this->boneVec, this->boneIndexTraslator, this->scene, this->AnimationVec, this->assimpImp);
+	if (bank.hasItem(filePath) == true)
+	{
+		return false;
+	}
+	processNodes(pScene->mRootNode, pScene, filePath);
+	parseNode(pScene);
+	parseAnimation(pScene);
 
+	this->aniData.boneVector;
+	this->aniData.boneDataVec;
+	
+	std::vector<AnimatedVertex> vertexAVec;
+	vertexAVec.reserve(this->dataForMesh.vertexTriangle.size());
+	AnimatedVertex tempVertex;
+	for (int i = 0, end = this->dataForMesh.vertexTriangle.size(); i < end; i++)
+	{
+		tempVertex.pos = this->dataForMesh.vertexTriangle[i].pos;
+		tempVertex.uv = this->dataForMesh.vertexTriangle[i].uv;
+		tempVertex.nor = this->dataForMesh.vertexTriangle[i].nor;
+
+		tempVertex.boneId = DirectX::XMINT4
+		(this->aniData.boneDataVec[i].BoneIDs[0], this->aniData.boneDataVec[i].BoneIDs[1], this->aniData.boneDataVec[i].BoneIDs[2], this->aniData.boneDataVec[i].BoneIDs[3]);
+		tempVertex.weights = DirectX::XMFLOAT4
+		(this->aniData.boneDataVec[i].Weights[0], this->aniData.boneDataVec[i].Weights[1], this->aniData.boneDataVec[i].Weights[2], this->aniData.boneDataVec[i].Weights[3]);
+
+		vertexAVec.push_back(tempVertex);
+	}
+
+	ID3D11Buffer* vertexBuffer = {};
+
+	D3D11_BUFFER_DESC bufferDesc = {};
+	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	bufferDesc.ByteWidth = sizeof(AnimatedVertex) * vertexAVec.size();
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDesc.CPUAccessFlags = 0;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA data = {};
+	data.pSysMem = vertexAVec.data();
+	data.SysMemPitch = 0;
+	data.SysMemSlicePitch = 0;
+
+	HRESULT HR = device->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
+	if (FAILED(HR))
+	{
+		int bp = 2;
+	}
+
+	//skapa indexBuffer
+	ID3D11Buffer* indexBuffer = {};
+
+	D3D11_BUFFER_DESC indexBufferDesc = {};
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * dataForMesh.indexTriangle.size();
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA indexBufferData = {};
+	indexBufferData.pSysMem = dataForMesh.indexTriangle.data();
+	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
+
+	/*ID3D11Buffer* vertexBuffer = {};
+
+	D3D11_BUFFER_DESC bufferDesc = {};
+	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	bufferDesc.ByteWidth = sizeof(vertex) * dataForMesh.vertexTriangle.size();
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDesc.CPUAccessFlags = 0;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA data = {};
+	data.pSysMem = dataForMesh.vertexTriangle.data();
+	data.SysMemPitch = 0;
+	data.SysMemSlicePitch = 0;
+	device->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
+
+	skapa indexBuffer
+	ID3D11Buffer* indexBuffer = {};
+
+	D3D11_BUFFER_DESC indexBufferDesc = {};
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * dataForMesh.indexTriangle.size();
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA indexBufferData = {};
+	indexBufferData.pSysMem = dataForMesh.indexTriangle.data();
+	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);*/
+
+	//bank.addMeshBuffers(filePath, vertexBuffer, indexBuffer, submeshRanges, amountOfvertices);
+
+	//indexBuffer = {};
+	//vertexBuffer = {};
+	//this->submeshRanges.clear();
+	//this->amountOfvertices.clear();
+	//this->dataForMesh.indexTriangle.clear();
+	//this->dataForMesh.vertexTriangle.clear();
+
+	bank.addAnimationData(filePath, vertexBuffer, indexBuffer, submeshRanges, amountOfvertices, this->aniData);
+
+	indexBuffer = {};
+	vertexBuffer = {};
+	this->submeshRanges.clear();
+	this->amountOfvertices.clear();
+	this->dataForMesh.indexTriangle.clear();
+	this->dataForMesh.vertexTriangle.clear();
+
+	int bp = 2;
 	return true;
 }
+
 bool ModelManager::getMeshData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces)
 {
 	return bank.getIndexMeshBuffers(filePath, indexBuffer, vertexBuffer, submeshRanges, amountOfVertces);
+}
+
+bool ModelManager::getAnimData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces, AnimationData& AnimData)
+{
+	this->bank.getAnimData(filePath, indexBuffer, vertexBuffer, submeshRanges, amountOfVertces, aniData);
+	AnimData = aniData;
+	return	true;
 }

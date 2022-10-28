@@ -21,6 +21,7 @@ public:
 	void addData(T& obj, ID3D11Device* device);
 	void remapBuffer(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T>& buffData);
 	void applyData();
+	T& getIndexData(int index);
 
 	void BindToVS(UINT toRegister);
 	void BindToPS(UINT toRegister);
@@ -37,7 +38,7 @@ template<class T>
 inline bool StructuredBuffer<T>::reInitialize(ID3D11Device* device)
 {
 D3D11_BUFFER_DESC cBuffDesc = { 0 };
-	cBuffDesc.ByteWidth = sizeof(T) * (UINT)this->bufferData.size();			//size of buffer //*nr of elements
+	cBuffDesc.ByteWidth = sizeof(T) * this->bufferData.size();			//size of buffer //*nr of elements
 	cBuffDesc.Usage = D3D11_USAGE_DYNAMIC;										//sets interaction with gpu and cpu
 	cBuffDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;							//Specifies the type of buffer
 	cBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;							//Specifies cpu acess
@@ -61,7 +62,7 @@ D3D11_BUFFER_DESC cBuffDesc = { 0 };
 	shaderResourceViewDesc.Format = DXGI_FORMAT_UNKNOWN;
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 	shaderResourceViewDesc.Buffer.FirstElement = 0;
-	shaderResourceViewDesc.Buffer.NumElements = (UINT)this->bufferData.size();
+	shaderResourceViewDesc.Buffer.NumElements = this->bufferData.size();
 
 	//create shader resource view 
 	HRESULT hr2 = device->CreateShaderResourceView(this->buffer.Get(), &shaderResourceViewDesc, this->srv.GetAddressOf());
@@ -85,7 +86,7 @@ bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 	}
 
 	D3D11_BUFFER_DESC cBuffDesc = { 0 };
-	cBuffDesc.ByteWidth = sizeof(T) * (UINT)this->bufferData.size();			//size of buffer //*nr of elements
+	cBuffDesc.ByteWidth = sizeof(T) * this->bufferData.size();			//size of buffer //*nr of elements
 	cBuffDesc.Usage = D3D11_USAGE_DYNAMIC;										//sets interaction with gpu and cpu
 	cBuffDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;							//Specifies the type of buffer
 	cBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;							//Specifies cpu acess
@@ -109,7 +110,7 @@ bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 	shaderResourceViewDesc.Format = DXGI_FORMAT_UNKNOWN;
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 	shaderResourceViewDesc.Buffer.FirstElement = 0;
-	shaderResourceViewDesc.Buffer.NumElements = (UINT)this->bufferData.size();
+	shaderResourceViewDesc.Buffer.NumElements = this->bufferData.size();
 
 	//create shader resource view
 	HRESULT hr2 = device->CreateShaderResourceView(this->buffer.Get(), &shaderResourceViewDesc, this->srv.GetAddressOf());
@@ -154,7 +155,7 @@ inline void StructuredBuffer<T>::remapBuffer(ID3D11Device* device, ID3D11DeviceC
 	{
 		bufferData.push_back(buffData[i]);
 	}
-	this->Initialize(device, deviceContext, buffData);
+	this->reInitialize(device);
 }
 
 template<class T>
@@ -174,6 +175,12 @@ void StructuredBuffer<T>::applyData() //from member variable bufferData
 
 	//UnMap
 	deviceContext->Unmap(this->buffer.Get(), 0);
+}
+
+template<class T>
+inline T& StructuredBuffer<T>::getIndexData(int index)
+{
+	return this->bufferData[index];
 }
 
 template<class T>

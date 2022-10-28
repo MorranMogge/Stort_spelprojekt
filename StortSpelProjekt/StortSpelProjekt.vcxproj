@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AnimatedMesh.h" />
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="BasicRenderer.h" />
     <ClInclude Include="BlendState.h" />
@@ -249,6 +250,7 @@
     <ClInclude Include="WindowHelper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimatedMesh.cpp" />
     <ClCompile Include="BaseballBat.cpp" />
     <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -392,6 +394,10 @@
     <FxCompile Include="VertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="vShaderSkinning.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -18,6 +18,27 @@
 #include <assimp/cimport.h>
 //#include "../DirectXTK-main/Src/SDKMesh.h"
 
+struct AnimatedVertex
+{
+	DirectX::XMFLOAT3 pos; // Position
+	DirectX::XMFLOAT2 uv; // UV coordination
+	DirectX::XMFLOAT3 nor; // Normal
+
+	DirectX::XMINT4 boneId;
+	DirectX::XMFLOAT4 weights;
+
+	AnimatedVertex() {
+		pos = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };
+		uv = DirectX::XMFLOAT2{ 0.0f,0.0f };
+		nor = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };
+
+		boneId = DirectX::XMINT4{ 0, 0, 0, 0 };
+		weights = DirectX::XMFLOAT4{ 0.0f,0.0f,0.0f,0.0f };
+	};
+	AnimatedVertex(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT2& uv, DirectX::XMFLOAT3& nor, DirectX::XMINT4& boneId,
+		DirectX::XMFLOAT4& weight) : pos(pos), uv(uv), nor(nor), boneId(boneId), weights(weight) {};
+};
+
 
 class ModelManager
 {
@@ -29,7 +50,6 @@ private:
 		std::vector<DWORD> indexTriangle;
 	};
 
-	
 	struct meshData dataForMesh;
 	std::vector<int> submeshRanges;
 	std::vector<int> amountOfvertices;
@@ -46,7 +66,6 @@ private:
 
 	//bones 
 	
-	aiMatrix4x4 globalInverseTransform;
 	AnimationData aniData;
 
 	void aiMatrixToXMmatrix(const aiMatrix4x4& in, DirectX::XMFLOAT4X4& out);
@@ -65,13 +84,15 @@ public:
 	ModelManager(ID3D11Device* device);
 	~ModelManager();
 	bool loadMeshData(const std::string& filePath);
+	bool loadBoneData(const std::string& filePath);
 	ID3D11ShaderResourceView* getSrv(const std::string key);
 	//std::vector<Mesh2*> getMeshes() const;
 	std::vector<ID3D11ShaderResourceView*> getTextureMaps() const;
 
-	bool loadMeshAndBoneData(const std::string& filePath, AnimatedMesh& gameObject);
+	bool loadMeshAndBoneData(const std::string& filePath);
 	//fills the params with meshdata
 	bool getMeshData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces);
+	bool getAnimData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces, AnimationData& AnimData);
 	std::vector<ID3D11Buffer*> getBuff() const;
 	void setDevice(ID3D11Device* device);
 };

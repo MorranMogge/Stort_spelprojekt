@@ -16,8 +16,8 @@ struct VShaderIn
     float3 normal : NORMAL;
     float2 uv : UV;
     
-    int4 boneIndex : BoneIndex;
-    float4 weights : Weights;
+    uint4 boneIndex : BONEINDEX;
+    float4 weights : WEIGHT;
 };
 
 struct VSout
@@ -43,6 +43,7 @@ VSout main(VShaderIn input)
 
     //Calculate position of vertex in world
     output.worldPosition = mul(float4(sumPos, 1.0f), worldM);
+    //output.worldPosition = mul(float4(input.position, 1.0f), worldM);
     output.position = mul(output.worldPosition, camViewProjM);
 
     //Calculate the normal vector against the world matrix only.

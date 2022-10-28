@@ -39,6 +39,7 @@ private:
 	std::vector<int> subMeshRanges;
 	std::vector<int> verticies;
 	ID3D11ShaderResourceView* tempSRV;
+	AnimationData animData;
 
 
 	ID3D11DeviceContext* immediateContext;
@@ -70,6 +71,7 @@ private:
 	Player* tmp;
 	Potion* tmp2;
 	GameObject* planet;
+	AnimatedMesh* sexyMan;
 	GameObject* testCube;
 	SpaceShip* spaceShip;
 	Potion* potion;			//not in use

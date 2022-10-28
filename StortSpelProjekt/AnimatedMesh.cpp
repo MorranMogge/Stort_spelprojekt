@@ -1,5 +1,7 @@
+#include "stdafx.h"
 #include "AnimatedMesh.h"
-using namespace DirectX;
+#include "ModelManager.h"
+//using namespace DirectX;
 
 void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, const nodes& node, DirectX::XMFLOAT4X4& parentTrasform)
 {
@@ -15,7 +17,7 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 
 	//MySimp.animationData.mChannels = scene->mAnimations[0]->mChannels;
 
-	if (this->findNodeAnim(node.nodeName, an, amnNode))
+	if (this->findNodeAnim(node.nodeName, an, amnNode) && false)
 	{
 		DirectX::XMFLOAT3 Scaling;
 		this->InterpolateScaling(Scaling, animationTime, amnNode);
@@ -31,28 +33,38 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 
 		currentNodeTrans = TranslationM * RotationM * ScalingM;
 	}
+
 	DirectX::XMMATRIX PrevNode = DirectX::XMLoadFloat4x4(&parentTrasform);
-
 	DirectX::XMMATRIX globalTrasform = PrevNode * currentNodeTrans;
-	DirectX::XMFLOAT4X4 meshToBoneTransform;
-	DirectX::XMStoreFloat4x4(&meshToBoneTransform, globalTrasform);
-
+	DirectX::XMFLOAT4X4 finalTransfrom;
 
 	if (MySimp.boneNameToIndex.find(node.nodeName) != MySimp.boneNameToIndex.end())
 	{
 		int id = MySimp.boneNameToIndex[node.nodeName];
-		DirectX::XMFLOAT4X4 identityFloat;
-		DirectX::XMStoreFloat4x4(&identityFloat, DirectX::XMMatrixIdentity());
-		while (id > finalTransforms.size())
-		{
-			finalTransforms.push_back(identityFloat);
-		}
-		finalTransforms[id] = meshToBoneTransform;
+
+		DirectX::XMMATRIX globalInvers = DirectX::XMLoadFloat4x4(&MySimp.globalInverseTransform);
+		DirectX::XMMATRIX boneOffset = DirectX::XMLoadFloat4x4(&MySimp.boneVector[id].offsetMatrix);
+		DirectX::XMMATRIX finalMesh = globalTrasform * globalInvers * boneOffset;
+		DirectX::XMStoreFloat4x4(&finalTransfrom, finalMesh);
+		strucBuff.getIndexData(id) = finalTransfrom;
+
+
+		//DirectX::XMFLOAT4X4 identityFloat;
+		//DirectX::XMStoreFloat4x4(&identityFloat, DirectX::XMMatrixIdentity());
+		//while (id >= finalTransforms.size())
+		//{
+		//	finalTransforms.push_back(identityFloat);
+		//}
+		//finalTransforms[id] = finalTransfrom;
+	}
+	else
+	{
+		DirectX::XMStoreFloat4x4(&finalTransfrom, globalTrasform);
 	}
 
 	for (int i = 0, end = node.children.size(); i < end; i++)
 	{
-		uppdateMatrices(animationIndex, animationTime, *node.children[i], meshToBoneTransform);
+		uppdateMatrices(animationIndex, animationTime, *node.children[i], finalTransfrom);
 	}
 }
 
@@ -197,18 +209,20 @@ void AnimatedMesh::getTimeInTicks(float dt)
 AnimatedMesh::AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
 	:GameObject(useMesh, pos, rot, id)
 {
+	//strucBuff.Initialize(GPU::device, GPU::immediateContext, finalTransforms);
 	///();
-	this->mesh.
 }
 
 AnimatedMesh::AnimatedMesh(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
 	:GameObject(objectPath, pos, rot, id)
 {
+	//strucBuff.Initialize(GPU::device, GPU::immediateContext, finalTransforms);
 
 }
 
 AnimatedMesh::AnimatedMesh()
 {
+	//strucBuff.Initialize(GPU::device, GPU::immediateContext, finalTransforms);
 }
 
 AnimatedMesh::~AnimatedMesh()
@@ -219,6 +233,16 @@ AnimatedMesh::~AnimatedMesh()
 void AnimatedMesh::addData(const AnimationData& data)
 {
 	this->MySimp = data;
+	std::vector<DirectX::XMFLOAT4X4> tempfloatvec;
+	tempfloatvec.reserve(data.boneVector.size());
+
+	DirectX::XMFLOAT4X4 identityFloat;
+	DirectX::XMStoreFloat4x4(&identityFloat, DirectX::XMMatrixIdentity());
+	for (size_t i = 0; i < data.boneVector.size(); i++)
+	{
+		tempfloatvec.push_back(identityFloat);
+	}
+	strucBuff.Initialize(GPU::device, GPU::immediateContext, tempfloatvec);
 
 	//std::vector<DirectX::XMFLOAT4X4> structVector(boneVector.size());
 	//this->boneStrucBuf.Initialize(GPU::device, GPU::immediateContext, structVector);
@@ -244,11 +268,14 @@ void AnimatedMesh::uppdate(ID3D11DeviceContext* immediateContext, int animationI
 
 void AnimatedMesh::draw(const float& dt, const int& animIndex)
 {
+	strucBuff.BindToVS(0);
 	DirectX::XMFLOAT4X4 identityFloat;
 	DirectX::XMStoreFloat4x4(&identityFloat, DirectX::XMMatrixIdentity());
 	this->uppdateMatrices(0, dt, *MySimp.rootNode, identityFloat);
-
-	strucBuff.Initialize(GPU::device, GPU::immediateContext, finalTransforms);
+	
+	
 	strucBuff.applyData();
 
+
+	this->tmpDraw(sizeof(AnimatedVertex));
 }

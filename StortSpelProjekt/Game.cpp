@@ -230,6 +230,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 {
 	MaterialLibrary::LoadDefault();
 	MaterialLibrary::LoadMaterial("spaceshipTexture1.jpg");
+	MaterialLibrary::LoadMaterial("pintoRed.png");
+	MaterialLibrary::LoadMaterial("pintoBlue.png");
 
 	this->packetEventManager = new PacketEventManager();
 	//m�ste raderas******************

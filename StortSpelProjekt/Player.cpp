@@ -130,7 +130,7 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	switch (team)
 	{
 	case 0:
-		mesh->matKey[0] = "spaceshipTexture1.jpg"; break;
+		mesh->matKey[0] = "pintoRed.png"; break;
 	case 1:
 		break;
 	}

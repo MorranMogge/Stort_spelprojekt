@@ -8,8 +8,8 @@ class SpaceShip : public GameObject
 private:
 	std::vector<GameObject*> components;
 	BilboardObject* rocketStatusQuad;
-	int compToComplete = 4;
-
+	int compToComplete;
+	int currentComponents;
 public:
 
 	inline static SpaceShip* red = nullptr;
@@ -20,6 +20,7 @@ public:
 	int getNrOfComponents();
 	bool detectedComponent(GameObject* objectToCheck);
 	bool detectedComponent(Component* componentToCheck);
+	void addComponent();
 	virtual void update() override;
 	void drawQuad();
 	bool isFinished();

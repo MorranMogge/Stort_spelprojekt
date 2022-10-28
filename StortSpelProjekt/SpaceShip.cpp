@@ -44,10 +44,14 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 	switch (team)
 	{
 	case 0:
-		red = this; mesh->matKey[0] = "spaceshipTexture1.jpg"; break;
+		red = this;
+		mesh->matKey[0] = "spaceshipTexture1.jpg"; 
+		break;
 
 	case 1:
-		blue = this; break;
+		blue = this; 
+		break;
+
 	}
 }
 
@@ -63,7 +67,7 @@ SpaceShip::~SpaceShip()
 
 int SpaceShip::getNrOfComponents()
 {
-	 return (int)components.size(); 
+	 return currentComponents;
 }
 
 bool SpaceShip::detectedComponent(GameObject* objectToCheck)

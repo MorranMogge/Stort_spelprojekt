@@ -8,6 +8,7 @@ class SpaceShip : public GameObject
 private:
 	std::vector<GameObject*> components;
 	BilboardObject* rocketStatusQuad;
+	ParticleEmitter* particles;
 	int compToComplete;
 	int currentComponents;
 public:
@@ -19,7 +20,9 @@ public:
 	bool detectedComponent(GameObject* objectToCheck);
 	bool detectedComponent(Component* componentToCheck);
 	void addComponent();
+	void takeOff();
 	virtual void update() override;
 	void drawQuad();
+	void drawParticles();
 	bool isFinished();
 };

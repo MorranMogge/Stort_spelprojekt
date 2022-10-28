@@ -66,7 +66,7 @@ Player::~Player()
 }
 
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
-    :GameObject(useMesh, pos, rot, id, field), health(70), holdingItem(nullptr)
+    :GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), speed(25.f)
 {
 		this->rotationMX = XMMatrixIdentity();
 		resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -84,7 +84,7 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 }
 
 Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
-	:GameObject(objectPath, pos, rot, id, field), health(70), holdingItem(nullptr)
+	:GameObject(objectPath, pos, rot, id, field), holdingItem(nullptr), speed(25.f)
 {
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -616,7 +616,6 @@ bool Player::pickupItem(Item* itemToPickup)
 			Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
 			if (tmp)
 			{
-				tmp->setPlayerptr(this);
 				successfulPickup = true;
 				tmp->setPickedUp(true);
 			}

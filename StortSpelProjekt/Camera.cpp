@@ -37,7 +37,6 @@ Camera::Camera()
 	this->upVectorBuffer.getData().pos = DirectX::SimpleMath::Vector3(upVector);
 	this->upVectorBuffer.getData().padding = 0;
 		
-	rotationMX = DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f);
 	viewMatrix = DirectX::XMMatrixLookAtLH(cameraPos, lookAtPos, upVector);
 	projMatrix = DirectX::XMMatrixPerspectiveFovLH(0.8f, 1264.f / 681.f, 0.1f, 800.0f);
 	cameraBuffer.getData().viewProjMX = viewMatrix * projMatrix;

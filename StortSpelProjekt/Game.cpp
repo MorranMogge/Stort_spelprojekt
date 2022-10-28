@@ -257,7 +257,7 @@ DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3 &posit
 	Quaternion quaterRot = Quaternion::CreateFromRotationMatrix(rotation);
 	Vector3 finalRotation = quaterRot.ToEuler();
 
-	return Quaternion::CreateFromRotationMatrix(Matrix(xAxis, yAxis, zAxis)).ToEuler();
+	return finalRotation;
 }
 
 

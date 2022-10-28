@@ -16,6 +16,9 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 	this->rocketStatusQuad = new BilboardObject(filenames, test);
 	this->rocketStatusQuad->setOffset(constant);
 
+	//Particles
+	this->particles = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
+
 	//Team switch
 	switch (team)
 	{
@@ -40,6 +43,9 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 	this->rocketStatusQuad = new BilboardObject(filenames, test);
 	this->rocketStatusQuad->setOffset(constant);
 
+	//Particles
+	this->particles = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
+
 	//Team switch
 	switch (team)
 	{
@@ -58,6 +64,7 @@ SpaceShip::~SpaceShip()
 	{
 		delete this->components.at(i);
 	}
+	delete this->particles;
 	delete this->rocketStatusQuad;
 }
 
@@ -88,6 +95,32 @@ bool SpaceShip::detectedComponent(Component* componentToCheck)
 	return didDetect;
 }
 
+void SpaceShip::addComponent()
+{
+	this->currentComponents++;
+}
+
+void SpaceShip::takeOff()
+{
+	//Icon initiation
+	static float constant = this->position.Length();
+	DirectX::XMFLOAT3 upDir = this->getUpDirection();
+	constant += 0.1;
+	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
+
+	this->position = test;
+	this->updateBuffer();
+
+	//Update particle movement
+	if (this->particles != nullptr)
+	{
+		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
+		this->particles->setPosition(this->position);
+		this->particles->setRotation(this->getUpDirection());
+		this->particles->updateBuffer();
+	}
+}
+
 void SpaceShip::update()
 {
 }
@@ -97,10 +130,18 @@ void SpaceShip::drawQuad()
 	rocketStatusQuad->bindAndDraw((int)this->components.size(), 0);//Changes texture depending on components
 }
 
+void SpaceShip::drawParticles()
+{
+	if (this->particles != nullptr)
+	{
+		this->particles->BindAndDraw(0);
+	}
+}
+
 bool SpaceShip::isFinished()
 {
 	bool complete = false;
-	if (components.size() >= compToComplete)
+	if (this->currentComponents >= this->compToComplete)
 	{
 		complete = true;
 	}

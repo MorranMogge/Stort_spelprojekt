@@ -397,6 +397,7 @@ GAMESTATE Game::Update()
 			{
 				Component* comp = dynamic_cast<Component*>(gameObjects[i]);
 				std::cout << "RED Detected Component!\nID: " << comp->getId() << "\n";
+				spaceShipRed->takeOff();
 				//return WIN;
 			}
 
@@ -457,6 +458,8 @@ void Game::Render()
 	this->potion->drawParticles();
 	this->testBat->drawParticles();
 	this->grenade->drawParticles();
+	this->spaceShipRed->drawParticles();
+	this->spaceShipBlue->drawParticles();
 	this->currentPlayer->drawParticles();
 	basicRenderer.geometryUnbind();
 

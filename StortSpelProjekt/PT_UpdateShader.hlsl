@@ -75,19 +75,19 @@ void main(uint3 DTid : SV_DispatchThreadID)
         BaseOffSetY = offsetFromOrigin.y;
         BaseOffSetZ = offsetFromOrigin.z;
         
-        IsActive = 0.0f;
+        //IsActive = 0.0f;
     }
     else
     {
         float3 baseOffSet2 = float3(BaseOffSetX, BaseOffSetY, BaseOffSetZ);
-        if (baseOffSet2.x == offsetFromOrigin.x, baseOffSet2.y == offsetFromOrigin.y, baseOffSet2.z == offsetFromOrigin.z)
-        {
-            IsActive = 0.0f;
-        }
-        else
-        {
-            IsActive = 1.0f;
-        }
+        //if (baseOffSet2.x == offsetFromOrigin.x, baseOffSet2.y == offsetFromOrigin.y, baseOffSet2.z == offsetFromOrigin.z)
+        //{
+        //    IsActive = 0.0f;
+        //}
+        //else
+        //{
+        //    IsActive = 1.0f;
+        //}
         SimulateTime = SimulateTime + deltaTime;
     }
     

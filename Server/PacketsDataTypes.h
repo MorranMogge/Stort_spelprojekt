@@ -59,6 +59,7 @@ struct idProtocol
 {
 	int packetId;
 	int assignedPlayerId;
+	//int team;
 };
 
 //the winner gets this package

@@ -8,7 +8,7 @@ struct wirefameInfo
 	float padding;
 };
 
-const int NROFPLAYERS = 2;
+const int NROFPLAYERS = 1;
 static bool IFONLINE = true;
 
 class Game : public State
@@ -37,7 +37,7 @@ private:
 
 	std::chrono::time_point<std::chrono::system_clock> serverStart;
 	
-	float serverTimerLength =  1.f / 30.0f;
+	float serverTimerLength =  1.f / 60.0f;
 	Client* client;
 
 	BasicRenderer basicRenderer;

@@ -64,7 +64,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::SPAWNCOMPONENT:
 			spawnComp = circularBuffer->readData<SpawnComponent>();
 			std::cout << spawnComp->x << " " << spawnComp->y << " " << spawnComp->z << "\n";
-			newComponent = new Component("../Meshes/Baseball", DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), spawnComp->ComponentId, spawnComp->ComponentId);
+			newComponent = new Component("../Meshes/Player", DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), spawnComp->ComponentId, spawnComp->ComponentId);
 			physWorld.addPhysComponent(newComponent);
 			componentVector.push_back(newComponent);
  			std::cout << "Sucessfully recieved component from server: " << std::to_string(spawnComp->ComponentId) << std::endl;
@@ -81,15 +81,15 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				{
 					if (playerId != i)
 					{
-						std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
+						//std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
 						players[i]->setMatrix(prMatrixData->matrix);
 					}
 					else if (prMatrixData->ifDead)
 					{
-						std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
+						//std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
 						players[i]->setMatrix(prMatrixData->matrix);
 					}
-					players[i]->getPhysComp()->setRotation(DirectX::XMQuaternionRotationMatrix(DirectX::XMLoadFloat4x4(&prMatrixData->matrix)));
+					//players[i]->getPhysComp()->setRotation(DirectX::XMQuaternionRotationMatrix(DirectX::XMLoadFloat4x4(&prMatrixData->matrix)));
 				}
 			}
 

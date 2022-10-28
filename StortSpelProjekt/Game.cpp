@@ -174,6 +174,7 @@ void Game::updateBuffers()
 		components[i]->updateBuffer();
 	}
 
+
 	//Update Wireframe buffer
 	ZeroMemory(&subData, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	immediateContext->Map(wireBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &subData);
@@ -264,7 +265,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	this->packetEventManager = new PacketEventManager();
 	//m�ste raderas******************
-	client = new Client("192.168.43.241");
+	client = new Client("192.168.43.251");
 	circularBuffer = client->getCircularBuffer();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -293,7 +294,18 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		int offset = 10;
 		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
 		{
-			Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, grav, client);
+			Player* tmpPlayer = nullptr;
+			if (i <= (NROFPLAYERS/2))//team 1
+			{
+				std::cout << "team 1\n";
+				Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, grav, client);
+			}
+			else//team 2
+			{
+				std::cout << "team 1\n";
+				Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, grav, client);
+			}
+			
 			if (playerId != i)
 			{
 				tmpPlayer->setOnlineID(i);
@@ -406,6 +418,7 @@ GAMESTATE Game::Update()
   		components[i]->update(); 
 	}
 
+
 	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
@@ -448,6 +461,14 @@ void Game::Render()
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->draw();
+	}
+	for (int i = 0; i < components.size(); i++)
+	{
+		components[i]->draw();
+	}
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		onlineItems[i]->draw();
 	}
 	//Render shadow maps
 	basicRenderer.lightPrePass();

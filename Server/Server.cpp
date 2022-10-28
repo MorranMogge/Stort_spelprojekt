@@ -17,7 +17,7 @@
 #include "SpawnComponent.h"
 #include "RandomizeSpawn.h"
 
-const short MAXNUMBEROFPLAYERS = 2;
+const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
 
 struct userData
@@ -163,7 +163,7 @@ void recvData(void* param, userData* user)//thread to recv data
 
 void sendIdToAllPlayers(serverData& data)
 {
-	int packetid = 10;
+	int packetid = PacketType::PACKETID;
 
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
@@ -251,7 +251,7 @@ int main()
 	std::chrono::time_point<std::chrono::system_clock> start, startComponentTimer, itemSpawnTimer;
 	start = std::chrono::system_clock::now();
 
-	float timerLength = 1.f / 30.0f;
+	float servertimerLength = 1.f / 60.0f;//amount of times the server sends data per second
 	float timerComponentLength = 20.0f;
 	float itemSpawnTimerLength = 20.0f;
 
@@ -379,7 +379,7 @@ int main()
 		//skickar itemSpawn
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
 		{
-			ItemSpawn itemSpawnData;
+			/*ItemSpawn itemSpawnData;
 			DirectX::XMFLOAT3 temp = randomizeObjectPos();
 
 			itemSpawnData.x = temp.x;
@@ -392,15 +392,15 @@ int main()
 			
 			items.push_back(Component());
 			itemSpawnTimer = std::chrono::system_clock::now();
-			sendBinaryDataAllPlayers(itemSpawnData, data);
+			sendBinaryDataAllPlayers(itemSpawnData, data);*/
 		}
 
 		//sends data based on the server tickrate
-		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > servertimerLength)
 		{
 			for (int i = 0; i < 10; i++)
 			{
-				physWorld.update(timerLength/10.f);
+				physWorld.update(servertimerLength/10.f);
 
 			}
 

@@ -1,7 +1,7 @@
 
 #include "GUISprite.h"
 #include "GUIText.h"
-#include "SpaceShip.h"
+class SpaceShip;
 
 class HudUI final
 {
@@ -20,8 +20,10 @@ class HudUI final
 
 	void SpritePass();
 
-
 public:
+
+	inline static SpaceShip* red = nullptr;
+	inline static SpaceShip* blue = nullptr;
 
 	HudUI();
 	~HudUI();

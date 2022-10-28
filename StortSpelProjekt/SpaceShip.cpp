@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "SpaceShip.h"
+#include "HudUI.h";
 
 
 SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
@@ -20,9 +21,11 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 	switch (team)
 	{
 	case 0: 
-		red = this; mesh->matKey[0] = "spaceshipTexture1.jpg"; break;
+		HudUI::red = this;
+		mesh->matKey[0] = "spaceshipTexture1.jpg"; break;
 	case 1: 
-		blue = this; break;
+		HudUI::blue = this;
+		break;
 	}
 }
 
@@ -44,12 +47,12 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 	switch (team)
 	{
 	case 0:
-		red = this;
+		HudUI::red = this;
 		mesh->matKey[0] = "spaceshipTexture1.jpg"; 
 		break;
 
 	case 1:
-		blue = this; 
+		HudUI::blue = this;
 		break;
 
 	}

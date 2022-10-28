@@ -35,9 +35,19 @@ int Component::getInUseById() const
 	return this->inUseBy;
 }
 
+long Component::getOnlineId() const
+{
+	return onlineId;
+}
+
 PhysicsComponent* Component::getPhysicsComponent() const
 {
 	return this->physComp;
+}
+
+void Component::setOnlineId(long id)
+{
+	this->onlineId = id;
 }
 
 void Component::setPhysCompServer(PhysicsComponent* physComp)

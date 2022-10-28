@@ -219,6 +219,10 @@ int main()
 	std::vector<Component> components;
 	std::vector<Component> items;
 
+	//used to assign id
+	long itemId = 0;
+	long componentId = 0;
+
 	//sf::UdpSocket socket;
 	std::string connectionType, mode;
 
@@ -334,8 +338,11 @@ int main()
 				//std::cout << "Received componentData\n";
 				for (int i = 0; i < components.size(); i++)
 				{
-					components[i].setPosition(compData->x, compData->y, compData->z);
-					components[i].setInUseBy(compData->inUseBy);
+					if (compData->ComponentId = components[i].getOnlineId())
+					{
+						components[i].setPosition(compData->x, compData->y, compData->z);
+						components[i].setInUseBy(compData->inUseBy);
+					}
 				}
 				break;
 
@@ -361,7 +368,7 @@ int main()
 		//spawns a component when the timer is done
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
 		{
-			SpawnComponent cData = SpawnOneComponent(components);
+			SpawnComponent cData = SpawnOneComponent(components, componentId);
 			physWorld.addPhysComponent(components[components.size() - 1]);
 			components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
 			//std::cout << "componentId: " << std::to_string(cData.ComponentId) << std::endl;
@@ -372,20 +379,20 @@ int main()
 		//skickar itemSpawn
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
 		{
-			/*ItemSpawn itemSpawnData;
+			ItemSpawn itemSpawnData;
 			DirectX::XMFLOAT3 temp = randomizeObjectPos();
 
 			itemSpawnData.x = temp.x;
 			itemSpawnData.y = temp.y;
 			itemSpawnData.z = temp.z;
 
-			itemSpawnData.itemId = items.size();
+			itemSpawnData.itemId = itemId++;
 			itemSpawnData.packetId = PacketType::ITEMSPAWN;
 			itemSpawnData.inUseBy = -1;
 			
 			items.push_back(Component());
 			itemSpawnTimer = std::chrono::system_clock::now();
-			sendBinaryDataAllPlayers(itemSpawnData, data);*/
+			sendBinaryDataAllPlayers(itemSpawnData, data);
 		}
 
 		//sends data based on the server tickrate

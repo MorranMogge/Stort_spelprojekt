@@ -3,4 +3,4 @@
 #include "PacketsDataTypes.h"
 #include <vector>
 
-SpawnComponent SpawnOneComponent(std::vector<Component>& components);
+SpawnComponent SpawnOneComponent(std::vector<Component>& components, long& componentId);

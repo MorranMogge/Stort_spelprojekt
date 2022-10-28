@@ -10,6 +10,7 @@ private:
 	float yPos;
 	float zPos;
 	PhysicsComponent* physComp;
+	long onlineId;
 
 	int inUseBy;
 public:
@@ -18,9 +19,11 @@ public:
 	//skicka in char 'x', 'y' eller 'z'
 	float getposition(char whichPos)const;
 	int getInUseById()const;
+	long getOnlineId()const;
 	
 	PhysicsComponent* getPhysicsComponent()const;
 
+	void setOnlineId(long id);
 	void setPhysCompServer(PhysicsComponent* physComp);
 	void setInUseBy(const int inUseById);
 	void setPosition(float pos[3]);

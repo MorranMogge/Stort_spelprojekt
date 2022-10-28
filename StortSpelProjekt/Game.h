@@ -61,6 +61,7 @@ private:
 	Potion* potion;			//not in use
 	BaseballBat* testBat;
 	std::vector<Component*> components;
+	std::vector<Item*> onlineItems;
 
 	LightHandler ltHandler;
 	ImGuiHelper* imguiHelper;

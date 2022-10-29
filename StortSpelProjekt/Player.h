@@ -75,7 +75,7 @@ public:
 
 	void releasePickup();
 
-	void drawIcon(int playerIndex);
+	void drawIcon();
 	void drawParticles();
 
 	DirectX::XMVECTOR getUpVec() const;

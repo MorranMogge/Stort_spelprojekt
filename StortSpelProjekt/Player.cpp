@@ -49,6 +49,7 @@ void Player::handleItems()
 		holdingItem->useItem();
 		itemPhysComp->setIsAllowedToSleep(true);
 		itemPhysComp->setIsSleeping(true);
+		holdingItem->setPickedUp(false);
 		holdingItem = nullptr;
 	}
 }
@@ -134,10 +135,6 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	case 1:
 		break;
 	}
-}
-
-void Player::handleInputs()
-{
 }
 
 bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime)
@@ -811,17 +808,16 @@ bool Player::getHitByBat() const
             itemPhysComp->setIsAllowedToSleep(true);
             itemPhysComp->setIsSleeping(true);
 			holdingItem->setPickedUp(false);
-            //holdingItem = nullptr;
         }
     }
 	return dedge;
 }
 
-void Player::drawIcon(int playerIndex)
+void Player::drawIcon()
 {
 	if (this->playerIcon != nullptr)
 	{
-		this->playerIcon->bindAndDraw(playerIndex, 0);
+		this->playerIcon->bindAndDraw(this->team, 0);
 	}
 }
 
@@ -863,7 +859,6 @@ reactphysics3d::Vector3 Player::getRayCastPos() const
 
 void Player::update()
 {
-	this->handleInputs();
 	if (holdingItem != nullptr)
 	{
 		this->handleItems();

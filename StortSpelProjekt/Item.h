@@ -14,7 +14,7 @@ private:
 protected:
 	BilboardObject* itemIcon;
 	ParticleEmitter* particles;
-
+	bool withinPlayerReach;
 public:
 	Item(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field = nullptr);
 	Item(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field = nullptr);
@@ -23,6 +23,7 @@ public:
 	void drawIcon();
 	void setPickedUp(bool pickedUp);
 	void drawParticles();
+	void checkDistance(GameObject* playerTocheck);
 	//virtual void useItem();
 	void throwItem();
 	virtual void update() override;

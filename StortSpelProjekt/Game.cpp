@@ -23,7 +23,7 @@ void Game::loadObjects()
 	testBat = new BaseballBat("../Meshes/bat", Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, &planetGravityField);
 	testCube = new GameObject("../Meshes/Player", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), MOVABLE, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	//otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), PLAYER, & planetGravityField);
-	component = new Component("../Meshes/component", DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT);
+	component = new Component("../Meshes/component", DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT, &planetGravityField);
 	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, &planetGravityField);
 	
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
@@ -50,7 +50,13 @@ void Game::loadObjects()
 	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
 	//otherPlayer->getPhysComp()->setPosition(reactphysics3d::Vector3(otherPlayer->getPosV3().x, otherPlayer->getPosV3().y, otherPlayer->getPosV3().z));
 
+	//Add to item array
+	items.emplace_back(potion);
+	items.emplace_back(testBat);
+	items.emplace_back(component);
+	items.emplace_back(grenade);
 
+	//Add to obj array
 	gameObjects.emplace_back(planet);
 	gameObjects.emplace_back(currentPlayer);
 	gameObjects.emplace_back(potion);
@@ -315,7 +321,6 @@ GAMESTATE Game::Update()
 	grav = planetGravityField.calcGravFactor(currentPlayer->getPosV3());
 	additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
 
-	//Player functions
 	//Raycasting
 	static DirectX::XMFLOAT3 hitPos;
 	static DirectX::XMFLOAT3 hitNormal;
@@ -324,18 +329,17 @@ GAMESTATE Game::Update()
 	bool testingVec = this->currentPlayer->raycast(gameObjects, hitPos, hitNormal);
 	if (testingVec || currentPlayer->getHitByBat()) velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 	
+	//Player functions
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), hitNormal, dt, testingVec);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
 	currentPlayer->movePos(velocity);
 	currentPlayer->checkForStaticCollision(gameObjects);
-
 	currentPlayer->pickupItem(potion);
 	currentPlayer->pickupItem(testBat);
 	currentPlayer->pickupItem(component);
 	currentPlayer->pickupItem(grenade);
-
 	grenade->updateExplosionCheck();
-
+	
 	//sending data to server
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
 	{
@@ -343,10 +347,9 @@ GAMESTATE Game::Update()
 		SendingDataEvent(client, currentPlayer, players);
 		serverStart = std::chrono::system_clock::now();
 	}
-
 	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId());
 	
-	
+	//Applying player movement
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->updateBuffer();
@@ -355,34 +358,35 @@ GAMESTATE Game::Update()
 	//Physics related functions
 	physWolrd.update(dt);
 
+	//Updates gameObject physics components
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->update();
+	}
+	
+
+	//Prints for game objects
+	for (int i = 0; i < gameObjects.size(); i++)
+	{
+		//get object id
+		int id = gameObjects.at(i)->getId();
+
 		if (gameObjects[i]->getId() == PLAYER)
 		{
 			//std::cout << "Player (" << i << ") Position X:" << gameObjects[i]->getPos().x << " Y:" << gameObjects[i]->getPos().y << " Z:" << gameObjects[i]->getPos().z << std::endl;
 		}
 	}
-	
-	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
-	//Here you can write client-server related functions?
 
-	//Updates gameObject physics components
-	for (int i = 1; i < gameObjects.size(); i++)
-	{
-		//get object id
-		int id = gameObjects.at(i)->getId();
 
-		if (id != this->spaceShipRed->getId())
-		{
-			gameObjects[i]->update();
-		}
-		
-	}
-
-	//Updates gameObject buffers
+	//Applies updated movement & rotation to models
 	this->updateBuffers();
 	
+
+
+	//Move camera
+	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
+
+
 	//Check winstate
 	for (int i = 1; i < gameObjects.size(); i++)
 	{
@@ -412,6 +416,15 @@ GAMESTATE Game::Update()
 	}
 	if (currentPlayer->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
 	
+
+
+
+	//Check if item icon should change to pickup icon 
+	for (int i = 0; i < items.size(); i++)
+	{
+		this->items[i]->checkDistance((GameObject*)(currentPlayer));
+	}
+
 	//Debug keybinds
 	this->handleKeybinds();
 
@@ -445,19 +458,21 @@ void Game::Render()
 
 	//render billboard objects
 	basicRenderer.bilboardPrePass(this->camera);
-	this->potion->drawIcon();
-	this->testBat->drawIcon();
-	this->grenade->drawIcon();
-	this->currentPlayer->drawIcon(3);
+	for (int i = 0; i < items.size(); i++)
+	{
+		this->items[i]->drawIcon();
+	}
+	this->currentPlayer->drawIcon();
 	this->spaceShipRed->drawQuad();
 	this->spaceShipBlue->drawQuad();
 
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);
 	//drawParticles();	//not in use, intended for drawing particles in game.cpp
-	this->potion->drawParticles();
-	this->testBat->drawParticles();
-	this->grenade->drawParticles();
+	for (int i = 0; i < items.size(); i++)
+	{
+		this->items[i]->drawParticles();
+	}
 	this->spaceShipRed->drawParticles();
 	this->spaceShipBlue->drawParticles();
 	this->currentPlayer->drawParticles();

@@ -68,6 +68,46 @@ void Grenade::setGameObjects(const std::vector<GameObject*>& gameObjects)
 	this->gameObjects = gameObjects;
 }
 
+void Grenade::drawIcon()
+{
+	if (destructionIsImminent)
+	{
+		this->itemIcon->bindAndDraw(1, 0);
+	}
+	else
+	{
+		if (this->itemIcon != nullptr && !pickedUp)
+		{
+			if (withinPlayerReach)
+			{
+				this->itemIcon->bindAndDraw(1, 0);
+			}
+			else
+			{
+				this->itemIcon->bindAndDraw(0, 0);
+			}
+		}
+	}
+}
+
+void Grenade::drawParticles()
+{
+	if (destructionIsImminent)
+	{
+		this->particles->BindAndDraw(0);
+	}
+	else
+	{
+		if (this->particles != nullptr && pickedUp)
+		{
+			if (tStruct.getDt() < 1)
+			{
+				this->particles->BindAndDraw(0);
+			}
+		}
+	}
+}
+
 void Grenade::useItem()
 {
 	this->destructionIsImminent = true;

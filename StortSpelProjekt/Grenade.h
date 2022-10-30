@@ -16,7 +16,8 @@ public:
 	~Grenade();
 	void updateExplosionCheck();
 	void setGameObjects(const std::vector<GameObject *> &gameObjects);
-
+	virtual void drawIcon() override;
+	virtual void drawParticles() override;
 	// Inherited via Item
 	virtual void useItem() override;
 };

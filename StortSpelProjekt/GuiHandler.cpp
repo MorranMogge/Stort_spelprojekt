@@ -9,13 +9,19 @@ using namespace DirectX::SimpleMath;
 
 void GuiHandler::SpritePass()
 {
+
+	if (isLoading)
+	{
+		Loading.Draw();
+		return;
+	}
+
 	start.Draw();
 	settings.Draw();
 	credits.Draw();
 	exit.Draw();
+	control.Draw();
 
-	if (isLoading)
-		Loading.Draw();
 }
 
 void GuiHandler::HandleInputs()
@@ -124,6 +130,10 @@ GuiHandler::GuiHandler()
 
 	Loading = GUISprite(GPU::windowWidth/ 2.0f, GPU::windowHeight / 2.0f);
 	Loading.Load(GPU::device, L"../Sprites/Loading.bmp");
+
+	control = GUISprite(310, 225);
+	control.Load(GPU::device, L"../Sprites/control.png");
+	control.SetScale(0.75, 0.75);
 
 	gameState = NOCHANGE;
 }

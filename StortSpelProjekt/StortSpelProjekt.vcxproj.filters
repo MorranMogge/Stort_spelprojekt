@@ -65,9 +65,6 @@
     <ClCompile Include="D3D11Helper.cpp">
       <Filter>Handler/Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="GuiHandler.cpp">
-      <Filter>Handler/Helpers</Filter>
-    </ClCompile>
     <ClCompile Include="GUISprite.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
@@ -153,6 +150,9 @@
     <ClCompile Include="Component.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="GuiHandler.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -226,9 +226,6 @@
       <Filter>Handler/Helpers</Filter>
     </ClInclude>
     <ClInclude Include="D3D11Helper.h">
-      <Filter>Handler/Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="GuiHandler.h">
       <Filter>Handler/Helpers</Filter>
     </ClInclude>
     <ClInclude Include="GUIObject.h">
@@ -429,6 +426,9 @@
     </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiHandler.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

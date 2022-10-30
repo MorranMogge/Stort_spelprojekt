@@ -18,7 +18,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> PT_vertexBuffer;				//Vertex buffer
 	Microsoft::WRL::ComPtr<ID3D11Buffer> emitterPosBuffer;				//Position buffer
 	Microsoft::WRL::ComPtr<ID3D11Buffer> timeBuffer;					//Time buffer, contains delta time
-	Microsoft::WRL::ComPtr <ID3D11BlendState> blendState;				//Blendstate for PT_Pixel shader
 
 	TimeStruct tStruct;
 	std::vector<particleStruct> PT_Data;								//Particle Data (pos, delta time, lifetime)//Add speed?

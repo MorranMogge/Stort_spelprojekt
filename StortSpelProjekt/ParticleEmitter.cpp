@@ -76,27 +76,6 @@ bool CreateTimeBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& timeBuffer, float &d
 	return !FAILED(hr);
 }
 
-bool CreateBlendState(Microsoft::WRL::ComPtr <ID3D11BlendState> &blendState)
-{
-	D3D11_BLEND_DESC desc{};
-	D3D11_RENDER_TARGET_BLEND_DESC& brt = desc.RenderTarget[0];
-
-	brt.BlendEnable = true;
-	brt.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
-	brt.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
-
-	brt.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
-	brt.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
-
-	brt.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
-	brt.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
-
-	brt.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL; //write all channels
-	HRESULT hr = GPU::device->CreateBlendState(&desc, blendState.GetAddressOf());
-
-	return !FAILED(hr);
-}
-
 bool CreateShaderResource(const std::vector<std::string>& filenames, std::vector<Microsoft::WRL::ComPtr<ID3D11Texture2D>>& Textures, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& renderedTextureView)
 {
 	//variables
@@ -239,11 +218,6 @@ ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XM
 	{
 		std::cerr << "error creating PT_time_Buffer!" << std::endl;
 	}
-
-	if (!CreateBlendState(this->blendState))
-	{
-		std::cerr << "error creating Blendstate!" << std::endl;
-	}
 }
 
 //----------------------------------------------- Functions ------------------------------------------------//
@@ -273,11 +247,11 @@ void ParticleEmitter::BindAndDraw(int textureIndex)
 	tempBuff.push_back(this->emitterPosBuffer.Get());
 
 	
-	//Bind blendstate
-	GPU::immediateContext->OMSetBlendState(this->blendState.Get(), nullptr, 0xffffffffu);
-	GPU::immediateContext->PSSetShaderResources(0, 1, this->PT_TXView.at(textureIndex).GetAddressOf());
-	//Draw
+
 	GPU::immediateContext->IASetVertexBuffers(0, 1, this->PT_vertexBuffer.GetAddressOf(), &stride, &offset);	//Set VtxBuffer
+	GPU::immediateContext->PSSetShaderResources(0, 1, this->PT_TXView.at(textureIndex).GetAddressOf());			//Bind Resources
+
+	//Draw
 	GPU::immediateContext->Draw(nrOfPt, 0);																		//Draw once per primitive
 
 	//Unbind UAV

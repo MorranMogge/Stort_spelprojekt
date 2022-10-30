@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SpaceShip.h"
 
+using namespace DirectX;
 
 SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
 	:GameObject(useMesh, pos, DirectX::XMFLOAT3(0,0,0), id, field, scale), compToComplete(nrofComp)
@@ -105,4 +106,10 @@ bool SpaceShip::isFinished()
 		complete = true;
 	}
 	return complete;
+}
+
+void SpaceShip::move(const DirectX::XMFLOAT3& grav, const float& deltaTime)
+{
+	upVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);
+	this->position += upVector * 18.f * deltaTime;
 }

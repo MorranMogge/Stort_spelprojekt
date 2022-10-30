@@ -51,7 +51,8 @@ private:
 	//variables to handle packets
 	CircularBufferClient* circularBuffer;
 
-	bool haveWon = false;
+	bool blueWon = false;
+	bool redWon = false;
 	DirectX::SimpleMath::Matrix shipRotation;
 	DirectX::SimpleMath::Vector3 shipPosition;
 

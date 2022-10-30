@@ -9,6 +9,7 @@ private:
 	std::vector<GameObject*> components;
 	BilboardObject* rocketStatusQuad;
 	int compToComplete = 4;
+	DirectX::XMVECTOR upVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 public:
 
@@ -23,4 +24,5 @@ public:
 	virtual void update() override;
 	void drawQuad();
 	bool isFinished();
+	void move(const DirectX::XMFLOAT3& grav, const float& deltaTime);
 };

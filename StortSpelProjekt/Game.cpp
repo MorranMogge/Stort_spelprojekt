@@ -401,10 +401,21 @@ GAMESTATE Game::Update()
 	}
 	
 	//Setting the camera at position
-	if (!haveWon) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX());
+	if (!blueWon && !redWon) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX());
 	else
 	{
 		camera.winScene(shipPosition, shipRotation);
+
+		if (blueWon)
+		{
+			grav = planetGravityField.calcGravFactor(this->spaceShipBlue->getPosV3());
+			this->spaceShipBlue->move(grav, dt);
+		}
+		else
+		{
+			grav = planetGravityField.calcGravFactor(this->spaceShipRed->getPosV3());
+			this->spaceShipRed->move(grav, dt);
+		}
 	}
 
 	//Here you can write client-server related functions?
@@ -440,7 +451,7 @@ GAMESTATE Game::Update()
 				Component* comp = dynamic_cast<Component*>(gameObjects[i]);
 				std::cout << "RED Detected Component!\nID: " << comp->getId() << "\n";
 
-				haveWon = true;
+				redWon = true;
 				this->shipRotation = spaceShipRed->getRot();
 				this->shipPosition = spaceShipRed->getPosV3();
 				//return WIN;
@@ -452,7 +463,7 @@ GAMESTATE Game::Update()
 				Component* comp = dynamic_cast<Component*>(gameObjects[i]);
 				std::cout << "BLU Detected Component!\nID: " << comp->getId() << "\n";
 
-				haveWon = true;
+				blueWon = true;
 				this->shipRotation = spaceShipBlue->getRot();
 				this->shipPosition = spaceShipBlue->getPosV3();
 				//return WIN;

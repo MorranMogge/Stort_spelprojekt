@@ -166,7 +166,7 @@ void StructuredBuffer<T>::applyData() //from member variable bufferData
 	ZeroMemory(&map, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	HRESULT hr = deviceContext->Map(this->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &map);
-	memcpy(map.pData, bufferData.data(), sizeof(T));
+	memcpy(map.pData, bufferData.data(), sizeof(T)*bufferData.size());
 	if (FAILED(hr))
 	{
 		//ErrorLogger::Log(hr, "Failed to map constant buffer.");

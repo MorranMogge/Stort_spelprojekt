@@ -45,6 +45,7 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 		DirectX::XMMATRIX globalInvers = DirectX::XMLoadFloat4x4(&MySimp.globalInverseTransform);
 		DirectX::XMMATRIX boneOffset = DirectX::XMLoadFloat4x4(&MySimp.boneVector[id].offsetMatrix);
 		DirectX::XMMATRIX finalMesh = globalTrasform * globalInvers * boneOffset;
+		finalMesh = DirectX::XMMatrixTranspose(finalMesh);
 		DirectX::XMStoreFloat4x4(&finalTransfrom, finalMesh);
 		strucBuff.getIndexData(id) = finalTransfrom;
 
@@ -248,34 +249,13 @@ void AnimatedMesh::addData(const AnimationData& data)
 	//this->boneStrucBuf.Initialize(GPU::device, GPU::immediateContext, structVector);
 }
 
-void AnimatedMesh::uppdate(ID3D11DeviceContext* immediateContext, int animationIndex, const float dt)
-{
-	//DirectX::XMMATRIX start = DirectX::XMMatrixIdentity();
-	//this->getTimeInTicks(dt);
-
-	//this->boneVector;
-	//int bp = 2;
-
-	//----------------------------------------
-
-	//for (int i = 0, end = this->boneVector.size(); i < end; i++)
-	//{
-	//	DirectX::XMStoreFloat4x4(&this->boneStrucBuf.getData(i), boneVector[i].offsetMatrix);
-	//}
-	//this->boneStrucBuf.applyData();
-	//this->boneStrucBuf.BindToVS(0);
-}
-
 void AnimatedMesh::draw(const float& dt, const int& animIndex)
 {
-	strucBuff.BindToVS(0);
 	DirectX::XMFLOAT4X4 identityFloat;
 	DirectX::XMStoreFloat4x4(&identityFloat, DirectX::XMMatrixIdentity());
-	this->uppdateMatrices(0, dt, *MySimp.rootNode, identityFloat);
-	
-	
+	this->getTimeInTicks(dt);
 	strucBuff.applyData();
-
+	strucBuff.BindToVS(0);
 
 	this->tmpDraw(sizeof(AnimatedVertex));
 }

@@ -140,7 +140,5 @@ public:
 
 	void addData(const AnimationData& data);
 
-	void uppdate(ID3D11DeviceContext* immediateContext, int animationIndex, const float dt);
-
 	void draw(const float& dt, const int& animIndex);
 };

@@ -362,7 +362,7 @@ int main()
 			{
 				components[i].setPosition(data.users[i].playa.getposition('x'), data.users[i].playa.getposition('y'), data.users[i].playa.getposition('z'));
 			}
-			std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
+			//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
 		}
 
 		//spawns a component when the timer is done
@@ -379,7 +379,7 @@ int main()
 		//skickar itemSpawn
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
 		{
-			/*ItemSpawn itemSpawnData;
+			ItemSpawn itemSpawnData;
 			DirectX::XMFLOAT3 temp = randomizeObjectPos();
 
 			itemSpawnData.x = temp.x;
@@ -391,8 +391,11 @@ int main()
 			itemSpawnData.inUseBy = -1;
 			
 			items.push_back(Component());
+			physWorld.addPhysComponent(items[items.size() - 1]);
+			items[items.size() - 1].setPosition(temp.x, temp.y, temp.z);
+
+			sendBinaryDataAllPlayers(itemSpawnData, data);
 			itemSpawnTimer = std::chrono::system_clock::now();
-			sendBinaryDataAllPlayers(itemSpawnData, data);*/
 		}
 
 		//sends data based on the server tickrate
@@ -407,19 +410,6 @@ int main()
 			//f�r varje spelare s� skicka deras position till alla klienter
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{
-
-				/*testPosition pos;
-				
-				pos.packetId = PacketType::POSITION;
-				
-				pos.x = data.users[i].playa.getposition('x');
-				pos.y = data.users[i].playa.getposition('y');
-				pos.z = data.users[i].playa.getposition('z');
-				pos.playerId = i;*/
-				
-				//std::cout << "data to send x: " << std::to_string(pos.x) << ", y: " << std::to_string(pos.y) << ", z: " << std::to_string(pos.z) << std::endl;
-				//std::cout << "packet id sent: " << std::to_string(pos.packetId) << std::endl;
-
 				//sendDataAllPlayers(pos, data);
 				if (data.users[i].playa.getDeathState())
 				{

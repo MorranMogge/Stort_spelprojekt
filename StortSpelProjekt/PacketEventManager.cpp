@@ -99,18 +99,26 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 			itemSpawn = circularBuffer->readData<ItemSpawn>();
 
-			std::cout << "item test: " << std::to_string(itemSpawn->itemId) << std::endl;
+			std::cout << "item spawned: " << std::to_string(itemSpawn->itemId) << std::endl;
 			break;
 
 		case PacketType::ITEMPOSITION:
 			itemPosData = circularBuffer->readData<itemPosition>();
-			std::cout << "item pos data\n";
+			//std::cout << "item pos data x: " << std::to_string(itemPosData->x) << std::endl;
 			break;
 		
 		case PacketType::PLAYERHIT:
 			playerHit = circularBuffer->readData<PlayerHit>();
 			if (playerHit->playerId == playerId) players[playerId]->hitByBat(reactphysics3d::Vector3(playerHit->xForce, playerHit->yForce, playerHit->zForce));
 			break;
+
+		case PacketType::WINNER:
+
+				break;
+		case PacketType::LOSER:
+
+			break;
+
 		}
 	}
 }

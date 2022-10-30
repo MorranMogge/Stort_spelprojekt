@@ -294,6 +294,7 @@ void BasicRenderer::skyboxPrePass()
 
 void BasicRenderer::bilboardPrePass(Camera& stageCamera)
 {
+	immediateContext->OMSetDepthStencilState(PT_dsState, 0);
 	immediateContext->OMSetBlendState(blendState, nullptr, 0xffffffffu);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	immediateContext->IASetInputLayout(inputLayout_Skybox);

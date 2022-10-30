@@ -18,7 +18,7 @@ BaseballBat::BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3&
 	float constant = 2.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-    std::vector<std::string> tempStr{ "icon_sword.png", "team_b_0.png" };
+    std::vector<std::string> tempStr{ "icon_sword.png", "icon_sword2.png" };
 	this->itemIcon = new BilboardObject(tempStr, iconPos);
 	this->itemIcon->setOffset(constant);
 }

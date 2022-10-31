@@ -45,6 +45,27 @@ bool BasicRenderer::setUp_PT_InputLayout(ID3D11Device* device, const std::string
 	return !FAILED(hr);
 }
 
+bool BasicRenderer::setUpBlendState()
+{
+	D3D11_BLEND_DESC desc{};
+	D3D11_RENDER_TARGET_BLEND_DESC& brt = desc.RenderTarget[0];
+
+	brt.BlendEnable = true;
+	brt.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
+	brt.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+
+	brt.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+	brt.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+
+	brt.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
+	brt.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+
+	brt.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL; //write all channels
+	HRESULT hr = GPU::device->CreateBlendState(&desc, &this->blendState);
+
+	return !FAILED(hr);
+}
+
 bool BasicRenderer::setUpSampler(ID3D11Device* device)
 {
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -137,6 +158,7 @@ BasicRenderer::~BasicRenderer()
 	bill_pShader->Release();
 	bill_gShader->Release();
 	PT_dsState->Release();
+	blendState->Release();
 }
 
 void BasicRenderer::lightPrePass()
@@ -181,7 +203,7 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadPixelShader(device, bill_pShader, "Bilboard_PS"))								return false;
 	if (!LoadGeometryShader(device, bill_gShader, "Bilboard_GS"))							return false;
 	if (!CreatePT_DSState(PT_dsState))														return false;
-	
+	if (!setUpBlendState())																	return false;
 
 	SetViewport(viewport, WIDTH, HEIGHT);
 	SetViewport(shadowViewport, WidthAndHeight, WidthAndHeight);
@@ -230,6 +252,7 @@ void BasicRenderer::setUpScene(Camera& stageCamera)
 void BasicRenderer::geometryPass(Camera& stageCamera)
 {
 	//re-use same depth buffer as geometry pass.
+	immediateContext->OMSetBlendState(blendState, nullptr, 0xffffffffu);
 	immediateContext->OMSetDepthStencilState(PT_dsState,0);							//Fix later?
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 	immediateContext->CSSetShader(pt_UpdateShader, nullptr, 0);							//Set ComputeShader
@@ -271,6 +294,8 @@ void BasicRenderer::skyboxPrePass()
 
 void BasicRenderer::bilboardPrePass(Camera& stageCamera)
 {
+	immediateContext->OMSetDepthStencilState(PT_dsState, 0);
+	immediateContext->OMSetBlendState(blendState, nullptr, 0xffffffffu);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	immediateContext->IASetInputLayout(inputLayout_Skybox);
 	immediateContext->VSSetShader(bill_vShader, nullptr, 0);

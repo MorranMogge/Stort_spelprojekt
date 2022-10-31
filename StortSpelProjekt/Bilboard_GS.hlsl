@@ -22,7 +22,7 @@ cbuffer CamUp : register(b3)
 [maxvertexcount(4)]
 void main(point float3 input[1] : Position, inout TriangleStream<Output> outputStream)
 {
-#define Size 1.5f
+#define Size 2.0f
     static const float4 localPosition[4] = { float4(-Size, Size, 0, 1), float4(Size, Size, 0, 1), float4(-Size, -Size, 0, 1), float4(Size, -Size, 0, 1) };
     static const float2 uv[4] = { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } };
     

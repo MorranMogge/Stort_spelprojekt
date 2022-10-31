@@ -6,13 +6,14 @@ Potion::Potion(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	:Item(useMesh, pos, rot, id, field), playerPtr(nullptr), restoringAmount(10)
 {
 	//Particles
-	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 3);
 
 	//Item Icon
 	float constant = 2.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-	this->itemIcon = new BilboardObject("icon_potion.png", iconPos);
+	std::vector<std::string> tempStr{ "icon_potion.png", "icon_potion2.png" };
+	this->itemIcon = new BilboardObject(tempStr, iconPos);
 	this->itemIcon->setOffset(constant);
 }
 
@@ -26,7 +27,8 @@ Potion::Potion(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	float constant = 2.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-	this->itemIcon = new BilboardObject("icon_potion.png", iconPos);
+	std::vector<std::string> tempStr{ "icon_potion.png", "icon_potion2.png"};
+	this->itemIcon = new BilboardObject(tempStr, iconPos);
 	this->itemIcon->setOffset(constant);
 }
 

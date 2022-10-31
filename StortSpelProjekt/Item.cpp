@@ -2,16 +2,16 @@
 #include "Item.h"
 
 
-Item::Item(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field)
-	:GameObject(useMesh, pos, rot, id, field), pickedUp(false), itemIcon(nullptr), particles(nullptr)
+Item::Item(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
+	:GameObject(useMesh, pos, rot, id, field), pickedUp(false), itemIcon(nullptr), particles(nullptr), withinPlayerReach(false)
 {
 	//Initilize timer
 	tStruct.startTime;
 }
 
 
-Item::Item(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field)
-	:GameObject(objectPath, pos, rot, id, field), pickedUp(false), itemIcon(nullptr), particles(nullptr)
+Item::Item(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
+	:GameObject(objectPath, pos, rot, id, field), pickedUp(false), itemIcon(nullptr), particles(nullptr), withinPlayerReach(false)
 {
 	//Initilize timer
 	tStruct.startTime;
@@ -29,11 +29,20 @@ Item::~Item()
 	}
 }
 
+
+
 void Item::drawIcon()
 {
 	if (this->itemIcon != nullptr && !pickedUp)
 	{
-		this->itemIcon->bindAndDraw(0, 0);
+		if (withinPlayerReach)
+		{
+			this->itemIcon->bindAndDraw(1, 0);
+		}
+		else
+		{
+			this->itemIcon->bindAndDraw(0, 0);
+		}
 	}
 }
 
@@ -50,6 +59,18 @@ void Item::drawParticles()
 		{
 			this->particles->BindAndDraw(0);
 		}
+	}
+}
+
+void Item::checkDistance(GameObject* playerToCheck)
+{
+	if (this->withinRadious(playerToCheck, 5.5f))
+	{
+		this->withinPlayerReach = true;
+	}
+	else
+	{
+		this->withinPlayerReach = false;
 	}
 }
 

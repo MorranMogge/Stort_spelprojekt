@@ -49,6 +49,7 @@ void Player::handleItems()
 		holdingItem->useItem();
 		itemPhysComp->setIsAllowedToSleep(true);
 		itemPhysComp->setIsSleeping(true);
+		holdingItem->setPickedUp(false);
 		holdingItem = nullptr;
 	}
 }
@@ -65,34 +66,44 @@ Player::~Player()
 	}
 }
 
-Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
-    :GameObject(useMesh, pos, rot, id, field), health(70), holdingItem(nullptr)
+Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& team , GravityField* field)
+    :GameObject(useMesh, pos, rot, id, field), health(70), holdingItem(nullptr), team(team)
 {
-		this->rotationMX = XMMatrixIdentity();
-		resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	
-		normalVector = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 1.0f);
-		rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-		forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-		normalVector = DirectX::XMVector3Normalize(normalVector);
-		rightVector = DirectX::XMVector3Normalize(rightVector);
-		forwardVector = DirectX::XMVector3Normalize(forwardVector);
-		this->rotate();
+	this->rotationMX = XMMatrixIdentity();
+	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+
+	normalVector = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 1.0f);
+	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
+	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
+	normalVector = DirectX::XMVector3Normalize(normalVector);
+	rightVector = DirectX::XMVector3Normalize(rightVector);
+	forwardVector = DirectX::XMVector3Normalize(forwardVector);
+	this->rotate();
 
 	//Particles
-	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1);
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);
 
 	//Item Icon
-	float constant =7.0f;
+	float constant = 7.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-	std::vector<std::string> playernames{ "player1.png", "player2.png", "player3.png", "player4.png" };
+	std::vector<std::string> playernames{ "Team1_r.png", "Team2_b.png", "player3.png", "player4.png" };
 	this->playerIcon = new BilboardObject(playernames, iconPos);
 	this->playerIcon->setOffset(constant);
+
+	//Team switch
+	switch (team)
+	{
+	case 0:
+		mesh->matKey[0] = "pintoRed.png"; break;
+	case 1:
+		break;
+	}
 }
 
-Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
-	:GameObject(objectPath, pos, rot, id, field), health(70), holdingItem(nullptr)
+Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& team, GravityField* field)
+	:GameObject(objectPath, pos, rot, id, field), health(70), holdingItem(nullptr), team(team)
 {
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -107,19 +118,24 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	this->rotate();
 
 	//Particles
-	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1);
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);
 
 	//Item Icon
 	float constant = 7.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-	std::vector<std::string> playernames{ "player1.png", "player2.png", "player3.png", "player4.png" };
+	std::vector<std::string> playernames{ "Team1_r.png", "Team2_b.png", "player3.png", "player4.png" };
 	this->playerIcon = new BilboardObject(playernames, iconPos);
 	this->playerIcon->setOffset(constant);
-}
 
-void Player::handleInputs()
-{
+	//Team switch
+	switch (team)
+	{
+	case 0:
+		mesh->matKey[0] = "pintoRed.png"; break;
+	case 1:
+		break;
+	}
 }
 
 bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime)
@@ -793,17 +809,16 @@ bool Player::getHitByBat() const
             itemPhysComp->setIsAllowedToSleep(true);
             itemPhysComp->setIsSleeping(true);
 			holdingItem->setPickedUp(false);
-            //holdingItem = nullptr;
         }
     }
 	return dedge;
 }
 
-void Player::drawIcon(int playerIndex)
+void Player::drawIcon()
 {
 	if (this->playerIcon != nullptr)
 	{
-		this->playerIcon->bindAndDraw(playerIndex, 0);
+		this->playerIcon->bindAndDraw(this->team, 0);
 	}
 }
 
@@ -813,6 +828,11 @@ void Player::drawParticles()
 	{
 		this->particles->BindAndDraw(0);
 	}
+}
+
+int Player::getTeam() const
+{
+	return this->team;
 }
 
 DirectX::XMVECTOR Player::getUpVec() const
@@ -845,7 +865,6 @@ reactphysics3d::Vector3 Player::getRayCastPos() const
 
 void Player::update()
 {
-	this->handleInputs();
 	if (holdingItem != nullptr)
 	{
 		this->handleItems();

@@ -44,6 +44,8 @@ private:
 	D3D11_VIEWPORT shadowViewport;
 	ID3D11SamplerState* shadowSampler;
 	ID3D11RasterizerState* shadowRastirizer;
+	ID3D11BlendState* blendState;				//Blendstate for PT_Pixel shader
+
 
 
 	bool setUpInputLayout(ID3D11Device* device, const std::string &vShaderByteCode);
@@ -52,7 +54,7 @@ private:
 	bool setUpSampler(ID3D11Device* device);
 	bool setUpShadowSampler(ID3D11Device* device);
 	bool setUpShadowRastirizer(ID3D11Device* device);
-
+	bool setUpBlendState();
 public:
 	BasicRenderer();
 	~BasicRenderer();

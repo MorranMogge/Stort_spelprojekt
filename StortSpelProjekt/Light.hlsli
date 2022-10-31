@@ -22,16 +22,9 @@ float FresnelEffect(float3 Normal, float3 ViewDir, float Power)
     return pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
 }
 
-float FallOff(float range, float distance)
+float3 DoDiffuse(float3 lightColor, float3 lightDir, float3 normal)
 {
-    //return 1.0f / (1.0f + 1.0f * distance + 1.0f * distance * distance);
-    return saturate(1 - distance / range); // normalize distance in range, linear falloff
-}
-
-float3 DoDiffuse(Light light, float3 lightDir, float3 normal)
-{
-    float NdotL = max(0, dot(lightDir, normal));
-    return NdotL * light.color.xyz;
+    return max(0, dot(lightDir, normal)) * lightColor;
 }
 float3 DoSpecular(Light light, float3 ViewDir, float3 lightDir, float3 normal, float specularPower)
 {
@@ -45,90 +38,49 @@ float3 DoSpecular(Light light, float3 ViewDir, float3 lightDir, float3 normal, f
 
     return light.color.xyz * pow(NdotH, 0 /*specularPower*/);
 }
-float DoAttenuation(Light light, float d)
+float DoAttenuation(Light light, float distance)
 {
-    //return 1.0f / (light.ConstantAttenuation + light.LinearAttenuation * d + light.QuadraticAttenuation * d * d);
-    return saturate(1 - d / light.range);
-}
-
-float FallOff2(float3 lightVec)
-{
-    //return 1.0f / (1.0f + 1.0f * distance + 1.0f * distance * distance);
-    return 1 / (1 + dot(lightVec, lightVec));
-}
-
-LightResult DoPointLight(Light light, float3 ViewDir, float4 worldPosition, float3 normal, float specularPower, float3 L)
-{
-    //float3 L = (light.position - worldPosition).xyz;
-    float distance = length(L);
-    L = L / distance;
-
-    float attenuation = DoAttenuation(light, distance);
-
-    LightResult result = {
-        DoDiffuse(light, L, normal) * attenuation,
-        DoSpecular(light, ViewDir, L, normal, specularPower) * attenuation
-    };
-
-    return result;
-}
-LightResult DoDirectionalLight(Light light, float3 ViewDir, float3 normal, float specularPower, float3 lightDir)
-{
-    LightResult result;
-
-    //float3 lightDir = -light.direction.xyz;
-
-    result.Diffuse = DoDiffuse(light, lightDir, normal);
-    result.Specular = DoSpecular(light, ViewDir, lightDir, normal, specularPower);
-
-    return result;
+    //static const float attConst = 1.0f;
+    //static const float attLin = 0.045f;
+    //static const float attQuad = 0.0075f;
+    //return 1.0f / (attConst + attLin * distance + attQuad * (distance * distance));
+    return saturate(1 - distance / light.range);
 }
 
 LightResult ComputeDirectionalLight(Light L, float3 lightDir, float3 normal, float3 toEye, float3 diffuse, float3 specular, float spacularPower)
 {
-    LightResult result = { { 0, 0, 0 }, { 0, 0, 0 } };
-    float diffuseFactor = dot(lightDir, normal);
+    LightResult result = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
+    const float diffuseFactor = dot(lightDir, normal);
+    
     [flatten]
     if (diffuseFactor > 0.0f)
     {
-        float3 v = reflect(-lightDir, normal);
-        float specFactor = pow(max(dot(v, toEye), 0.0f), spacularPower);
+        const float3 v = reflect(-lightDir, normal);
+        const float specFactor = pow(max(dot(v, toEye), 0.0f), spacularPower);
 
         result.Diffuse = diffuseFactor * diffuse * L.color.xyz;
-        result.Specular = specFactor * specular /* * L.specular*/;
+        result.Specular = specFactor * specular;
     }
     return result;
 }
-LightResult ComputePointLight(Light L, float3 lightDir, float3 normal, float3 toEye, float3 specular, float spacularPower)
+LightResult ComputePointLight(Light L, float3 lightDir, float3 normal, float3 viewDir, float3 specular, float spacularPower)
 {
-    LightResult result = { { 0, 0, 0 }, { 0, 0, 0 } };
-
-    float d = length(lightDir);
-
-    if (d > L.range)
-        return result;
-
-    lightDir /= d;
-
-    float diffuseFactor = dot(lightDir, normal);
+    LightResult result = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
+    const float disToL = length(lightDir);
+    lightDir /= disToL;
+    const float diffuseFactor = dot(lightDir, normal);
 
     [flatten]
     if (diffuseFactor > 0.0f)
     {
-        float3 v = reflect(-lightDir, normal);
-        float specFactor = pow(max(dot(v, toEye), 0.0f), spacularPower);
+        const float3 v = reflect(-lightDir, normal);
+        const float specFactor = pow(max(dot(v, viewDir), 0.0f), spacularPower);
 
-        result.Diffuse = diffuseFactor * L.color.xyz;
-        result.Specular = specFactor * specular;
+        const float attenuation = DoAttenuation(L, disToL);
+        result.Diffuse = diffuseFactor * L.color.xyz * attenuation;
+        result.Specular = specFactor * specular * attenuation;
     }
-
-    float att = DoAttenuation(L, d); //1.0f / dot(L.att, float3(1.0f, d, d * d));
-
-    result.Diffuse *= att;
-    result.Specular *= att;
-    
     return result;
-
 }
 
 float DoSpotCone(Light light, float3 lightDir)
@@ -138,20 +90,17 @@ float DoSpotCone(Light light, float3 lightDir)
     float cosAngle = dot(light.direction.xyz, -lightDir);
     return smoothstep(minCos, maxCos, cosAngle);
 }
-LightResult DoSpotLight(Light light, float3 ViewDir, float4 worldPosition, float3 normal, float specularPower, float3 L)
+LightResult DoSpotLight(Light light, float3 ViewDir, float4 worldPosition, float3 normal, float specularPower, float3 lightDir)
 {
-    LightResult result;
+    const float distance = length(lightDir);
+    lightDir /= distance;
 
-    //float3 L = (light.position - worldPosition).xyz;
-    float distance = length(L);
-    L = L / distance;
-
-    float attenuation = DoAttenuation(light, distance);
-    float spotIntensity = DoSpotCone(light, L);
-
-    result.Diffuse = DoDiffuse(light, L, normal) * attenuation * spotIntensity;
-    result.Specular = DoSpecular(light, ViewDir, L, normal, specularPower) * attenuation * spotIntensity;
-
+    const float attenuation = DoAttenuation(light, distance);
+    const float spotIntensity = DoSpotCone(light, lightDir);
+    
+    LightResult result = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
+    result.Diffuse = DoDiffuse(light.color.xyz, lightDir, normal) * attenuation * spotIntensity;
+    result.Specular = DoSpecular(light, ViewDir, lightDir, normal, specularPower) * attenuation * spotIntensity;
     return result;
 }
 
@@ -281,7 +230,7 @@ static const float2 poissonDisk64[64] =
 };
 
 
-float HardShadow(float4 lightWorldPosition, Texture2DArray shadowMap, SamplerComparisonState shadowMapSampler, int index, float3 normal, float3 lightDirection, int numSamples)
+float DoShadow(float4 lightWorldPosition, Texture2DArray shadowMap, SamplerComparisonState shadowMapSampler, int index, float3 normal, float3 lightDirection, int numSamples)
 {
     lightWorldPosition.xyz /= lightWorldPosition.w;
     const float2 smTex = float2(0.5f * lightWorldPosition.x + 0.5f, -0.5f * lightWorldPosition.y + 0.5f);
@@ -305,66 +254,4 @@ float HardShadow(float4 lightWorldPosition, Texture2DArray shadowMap, SamplerCom
     }
 
     return percentLit / 32.0f;
-}
-
-float FindBlocker(float2 uv, float4 Lpos, float searchWidth, float numSamples, Texture2DArray shadowMap, SamplerState shadowMapSampler, int index)
-{
-    float stepSize = 2.0 * searchWidth / numSamples;
-	// Starting point uv coords for search
-    uv -= searchWidth;
-    float blockerSum = 0.0;
-    float blockerCount = 0.0;
-    float receiver = Lpos.z;
-    // iterate through search region and add up depth values
-    for (int i = 0; i < numSamples; i++)
-    {
-        for (int j = 0; j < numSamples; j++)
-        {
-            float shadMapDepth = shadowMap.SampleLevel(shadowMapSampler, float3(uv + float2(i * stepSize, j * stepSize), index), Lpos.z).r;
-            
-            if (shadMapDepth < receiver)
-            {
-                blockerSum += shadMapDepth;
-                blockerCount++;
-            }
-        }
-    }
-    
-    return blockerSum / blockerCount;
-}
-
-float EstimatePenumbra(float2 uv, float4 Lpos, float blocker, float lightSize)
-{
-    // receiver depth
-    float receiver = Lpos.z;
-    // estimate penumbra using parallel planes approximation
-    float penumbra = (receiver - blocker) * lightSize / blocker;
-    return penumbra;
-}
-
-float SoftShadow(float4 lightWorldPosition, float numSamples, Texture2DArray shadowMap, SamplerComparisonState shadowMapSampler, SamplerState samplertest,int index)
-{
-    lightWorldPosition.xyz /= lightWorldPosition.w;
-    float2 smTex = float2(0.5f * lightWorldPosition.x + 0.5f, -0.5f * lightWorldPosition.y + 0.5f);
-    
-    float blocker = FindBlocker(smTex, lightWorldPosition, 1.0, numSamples, shadowMap, samplertest, index);
-    
-    float penumbra = EstimatePenumbra(smTex, lightWorldPosition, blocker, 0.01);
-    
-    if (penumbra > 0.01)
-        penumbra = 0.01;
-    
-    float stepSize = 2.0 * penumbra / numSamples;
-    smTex -= penumbra;
-    float sum = 0.0;
-
-    for (float i = 0.0; i < numSamples; i += 1.0)
-    {
-        for (float j = 0.0; j < numSamples; j += 1.0)
-        {
-            sum += shadowMap.SampleCmpLevelZero(shadowMapSampler, float3(smTex + float2(i * stepSize, j * stepSize), index), lightWorldPosition.z - 0.00001).r;
-        }
-    }
-
-    return sum / (numSamples * numSamples);
 }

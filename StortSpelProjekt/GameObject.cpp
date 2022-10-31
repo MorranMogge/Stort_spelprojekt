@@ -13,6 +13,9 @@ void GameObject::updatePhysCompRotation()
 GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale)
 	:position(pos), mesh(useMesh), objectID(id), scale(scale), physComp(nullptr), activeField(field)
 {
+
+
+
 	// set position
 	mesh->position = pos;
 
@@ -205,14 +208,7 @@ DirectX::XMFLOAT3 GameObject::getRotOrientedToGrav() const
 	if (this->activeField != nullptr)
 	{
 		Vector3 yAxis( this->activeField->calcGravFactor(this->position) * -1);
-
-		Vector3 zAxis = yAxis.Cross({ 0, 0, 1 });
-		zAxis.Normalize();
-
-		Vector3 xAxis = yAxis.Cross(zAxis);
-		xAxis.Normalize();
-
-		finalRot = Quaternion::CreateFromRotationMatrix(Matrix(xAxis, yAxis, zAxis)).ToEuler();
+		finalRot = Quaternion::LookRotation({ 0, 0, -1 }, yAxis).ToEuler();
 	}
 	else
 	{
@@ -220,6 +216,7 @@ DirectX::XMFLOAT3 GameObject::getRotOrientedToGrav() const
 	}
 
 	return finalRot;
+
 }
 
 

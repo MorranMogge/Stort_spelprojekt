@@ -123,7 +123,7 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	float constant = 7.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-	std::vector<std::string> playernames{ "player1.png", "player2.png", "player3.png", "player4.png" };
+	std::vector<std::string> playernames{ "Team1_r.png", "Team2_b.png", "player3.png", "player4.png" };
 	this->playerIcon = new BilboardObject(playernames, iconPos);
 	this->playerIcon->setOffset(constant);
 

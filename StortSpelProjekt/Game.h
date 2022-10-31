@@ -19,7 +19,7 @@ private:
 	ImGuiHelper imGui;
 	bool wireframe = false;
 	bool objectDraw = true;
-	bool drawDebug = true;
+	bool drawDebug = false;
 	wirefameInfo reactWireframeInfo;
 	ID3D11Buffer* wireBuffer;
 	D3D11_MAPPED_SUBRESOURCE subData;

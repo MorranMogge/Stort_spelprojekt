@@ -14,10 +14,10 @@ void Game::loadObjects()
 	//Here we can add base object we want in the beginning of the game
 	planet = new GameObject("../Meshes/Sphere", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, nullptr, DirectX::XMFLOAT3(planetSize, planetSize, planetSize));
 	currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, &planetGravityField);
-	potion = new Potion("../Meshes/Baseball", DirectX::SimpleMath::Vector3(40, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2, 0, &planetGravityField);
+	potion = new Potion("../Meshes/potion", DirectX::SimpleMath::Vector3(0, -40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2, 0, &planetGravityField);
 	//spaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(20, 29, 20), orientToPlanet(DirectX::SimpleMath::Vector3(20, 29, 20)), 3, DirectX::SimpleMath::Vector3(2, 2, 2), planetGravityField);
-	testBat = new BaseballBat("../Meshes/Baseball", DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4, 0, &planetGravityField);
-	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6, GRENADE, &planetGravityField);
+	testBat = new BaseballBat("../Meshes/bat", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4, 0, &planetGravityField);
+	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(40, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6, GRENADE, &planetGravityField);
 
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
@@ -56,7 +56,7 @@ void Game::loadObjects()
 	//spaceShipRed->getPhysComp()->setPosition(reactphysics3d::Vector3(spaceShipRed->getPosV3().x, spaceShipRed->getPosV3().y, spaceShipRed->getPosV3().z));
 	//spaceShipBlue->getPhysComp()->setPosition(reactphysics3d::Vector3(spaceShipBlue->getPosV3().x, spaceShipBlue->getPosV3().y, spaceShipBlue->getPosV3().z));
 	
-	randomizeObjectPos(potion);
+	//randomizeObjectPos(potion);
 	
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	potion->setRot(DirectX::SimpleMath::Vector3(0.0f, 1.5f, 1.5f));
@@ -123,6 +123,7 @@ void Game::drawObjects(bool drawDebug)
 	{
 		players[i]->draw();
 	}
+	
 	//Draw light debug meshes
 	if (drawDebug)
 	{
@@ -200,6 +201,11 @@ void Game::updateBuffers()
 	for (int i = 0; i < components.size(); i++)
 	{
 		components[i]->updateBuffer();
+	}
+
+	for (int i = 0; i < spaceShips.size(); i++)
+	{
+		spaceShips[i]->updateBuffer();
 	}
 
 	//Update Wireframe buffer
@@ -430,7 +436,7 @@ GAMESTATE Game::Update()
 	}
 
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, &planetGravityField);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, &planetGravityField, spaceShips);
 	
 	
 	//Physics related functions
@@ -440,98 +446,41 @@ GAMESTATE Game::Update()
 	{
 		//players[i]->updateBuffer();
 		
-		//std::cout << std::to_string(currentPlayer->getMatrix()._14) << std::endl;
 		players[i]->updateMatrixOnline();
 		players[i]->update();
 	}
 
-	for (int i = 0; i < components.size(); i++)
-	{
-  		components[i]->update(); 
-	}
 
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->update();
-		if (gameObjects[i]->getId() == PLAYER)
-		{
-			//std::cout << "Player (" << i << ") Position X:" << gameObjects[i]->getPos().x << " Y:" << gameObjects[i]->getPos().y << " Z:" << gameObjects[i]->getPos().z << std::endl;
-		}
 	}
 	
 	//Setting the camera at position
-	if (!blueWon && !redWon) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX());
-	/*else
+	bool noWinners = true;
+	for (int i = 0; i < spaceShips.size(); i++)
 	{
-		camera.winScene(shipPosition, shipRotation);
-
-		if (blueWon)
+		if (spaceShips[i]->getCompletion())
 		{
-			grav = planetGravityField.calcGravFactor(this->spaceShipBlue->getPosV3());
-			this->spaceShipBlue->move(grav, dt);
+			camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot());
+			grav = planetGravityField.calcGravFactor(this->spaceShips[i]->getPosV3());
+			this->spaceShips[i]->move(grav, dt);
+			noWinners = false;
 		}
-		else
-		{
-			grav = planetGravityField.calcGravFactor(this->spaceShipRed->getPosV3());
-			this->spaceShipRed->move(grav, dt);
-		}
-	}*/
+	}
+	if (noWinners) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX());
+	
 
 	//Here you can write client-server related functions?
 
 	//Updates gameObject physics components
-	for (int i = 0; i < gameObjects.size(); i++)
-	{
-		gameObjects[i]->update();
-		//get object id
-		/*int id = gameObjects.at(i)->getId();
 
-		if (id != this->spaceShipRed->getId())
-		{
-			gameObjects[i]->update();
-		}*/
-		
-	}
+	
 
 	//Updates gameObject buffers
 	this->updateBuffers();
 	
-	//Check winstate
-	for (int i = 1; i < gameObjects.size(); i++)
-	{
-		//get object id
-		int id = gameObjects.at(i)->getId();
 
-		//If component
-		if (id == COMPONENT)
-		{
-			////Check if RED spaceship detected
-			//if(spaceShipRed->detectedComponent(gameObjects.at(i)))
-			//{
-			//	Component* comp = dynamic_cast<Component*>(gameObjects[i]);
-			//	std::cout << "RED Detected Component!\nID: " << comp->getId() << "\n";
-
-			//	redWon = true;
-			//	this->shipRotation = spaceShipRed->getRot();
-			//	this->shipPosition = spaceShipRed->getPosV3();
-			//	//return WIN;
-			//}
-
-			////Check if BLU spaceship detected
-			//if (spaceShipBlue->detectedComponent(gameObjects.at(i)))
-			//{
-			//	Component* comp = dynamic_cast<Component*>(gameObjects[i]);
-			//	std::cout << "BLU Detected Component!\nID: " << comp->getId() << "\n";
-
-			//	blueWon = true;
-			//	this->shipRotation = spaceShipBlue->getRot();
-			//	this->shipPosition = spaceShipBlue->getPosV3();
-			//	//return WIN;
-			//}
-		}
-	}
-	if (currentPlayer->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
-	
 	//Debug keybinds
 	this->handleKeybinds();
 
@@ -547,14 +496,7 @@ void Game::Render()
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->draw();
-	}
-	for (int i = 0; i < components.size(); i++)
-	{
-		components[i]->draw();
-	}
+
 	//Render Skybox
 	basicRenderer.skyboxPrePass();
 	this->skybox.draw();

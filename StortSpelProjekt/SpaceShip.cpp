@@ -67,6 +67,11 @@ int SpaceShip::getNrOfComponents()
 	 return (int)components.size(); 
 }
 
+void SpaceShip::addComponent()
+{
+	this->componentsAdded++;
+}
+
 bool SpaceShip::detectedComponent(GameObject* objectToCheck)
 {
 	bool didDetect = false;
@@ -96,6 +101,11 @@ void SpaceShip::update()
 void SpaceShip::drawQuad()
 {
 	rocketStatusQuad->bindAndDraw((int)this->components.size(), 0);//Changes texture depending on components
+}
+
+bool SpaceShip::getCompletion() const
+{
+	return this->componentsAdded >= this->compToComplete;
 }
 
 bool SpaceShip::isFinished()

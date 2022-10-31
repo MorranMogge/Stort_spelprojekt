@@ -10,7 +10,7 @@ PacketEventManager::~PacketEventManager()
 }
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int &NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
-	std::vector<Component *>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject *>& gameObjects, GravityField* field)
+	std::vector<Component *>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject *>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -72,6 +72,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			newComponent = new Component("../Meshes/Baseball", DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), spawnComp->ComponentId, spawnComp->ComponentId);
 			physWorld.addPhysComponent(newComponent);
 			componentVector.push_back(newComponent);
+			gameObjects.push_back(newComponent);
  			std::cout << "Sucessfully recieved component from server: " << std::to_string(spawnComp->ComponentId) << std::endl;
 			break;
 		
@@ -120,6 +121,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			//Create correct spaceship depending on team
 			//TO BE CHANGED WHEN MERGING SINCE SPACESHIP HAS NEW CONSTRUCTOR
 			newSpaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, DirectX::SimpleMath::Vector3(2, 2, 2), 4);
+			spaceShips.push_back(newSpaceShip);
 			gameObjects.push_back(newSpaceShip);
 			physWorld.addPhysComponent(newSpaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3 * 0.75f, 0.75f));
 			newSpaceShip->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
@@ -127,15 +129,13 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			break;
 		case PacketType::COMPONENTADDED:
 			compAdded = circularBuffer->readData<ComponentAdded>();
-			SpaceShip* spaceShip = nullptr;
 			std::cout << "Team: " << compAdded->spaceShipTeam << " gained progress!\n";
-			for (int i = 0; i < gameObjects.size(); i++)
+			for (int i = 0; i < spaceShips.size(); i++)
 			{
-				spaceShip = dynamic_cast<SpaceShip*>(gameObjects[i]);
-				if (spaceShip && spaceShip->getId() == compAdded->spaceShipTeam)
+				if (i == compAdded->spaceShipTeam)
 				{
 					//Update hud or whatever
-					//spaceShip.increaseCounter();
+					spaceShips[i]->addComponent();
 				}
 			}
 			break;

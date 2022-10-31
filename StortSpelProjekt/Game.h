@@ -51,11 +51,6 @@ private:
 	//variables to handle packets
 	CircularBufferClient* circularBuffer;
 
-	bool blueWon = false;
-	bool redWon = false;
-	DirectX::SimpleMath::Matrix shipRotation;
-	DirectX::SimpleMath::Vector3 shipPosition;
-
 	Camera camera;
 	SkyboxObj skybox;
 	Player* currentPlayer;
@@ -66,6 +61,7 @@ private:
 	BaseballBat* testBat;
 	Grenade* grenade;
 	std::vector<Component*> components;
+	std::vector<SpaceShip*> spaceShips;
 
 	LightHandler ltHandler;
 	ImGuiHelper* imguiHelper;

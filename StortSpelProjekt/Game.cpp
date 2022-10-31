@@ -5,6 +5,8 @@
 
 void Game::loadObjects()
 {
+	//Meshes vector contents
+	//Sphere, pinto, potion, bat, Player, component, grenade
 
 	using namespace DirectX;
 	using namespace DirectX::SimpleMath;
@@ -31,6 +33,7 @@ void Game::loadObjects()
 	potion->setRot(DirectX::SimpleMath::Vector3(0.0f, 1.5f, 1.5f));
 	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
 
+	//Add to obj array
 	gameObjects.emplace_back(planet);
 	gameObjects.emplace_back(currentPlayer);
 	gameObjects.emplace_back(potion);
@@ -257,12 +260,14 @@ DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3& posit
 	return finalRotation;
 }
 
-
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
 	MaterialLibrary::LoadDefault();
 	MaterialLibrary::LoadMaterial("spaceshipTexture1.jpg");
+	MaterialLibrary::LoadMaterial("pintoRed.png");
+	MaterialLibrary::LoadMaterial("pintoBlue.png");
+	MaterialLibrary::LoadMaterial("Red.png");
 
 	this->packetEventManager = new PacketEventManager();
 	//m�ste raderas******************
@@ -274,9 +279,11 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->setUpWireframe();
 
 	//camera.updateCamera(immediateContext);
-	ltHandler.addLight(DirectX::XMFLOAT3(-90, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 1);
-	ltHandler.addLight(DirectX::XMFLOAT3(50, 30, 0), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 0);
-	ltHandler.addLight(DirectX::XMFLOAT3(10, -50, 30), DirectX::XMFLOAT3(0, 0, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
+	ltHandler.addLight(DirectX::XMFLOAT3(-90, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 1, 0),1);
+	ltHandler.addLight(DirectX::XMFLOAT3(16 + 7, 42 + 17, 12 + 7), DirectX::XMFLOAT3(0, 0.3f, 1.0f), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
+	ltHandler.addLight(DirectX::XMFLOAT3(-10 - 5, -45 - 17, -10 - 7), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
+	
+	//ltHandler.addLight(DirectX::XMFLOAT3(10, -50, 30), DirectX::XMFLOAT3(0, 0, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 
 	//Particle test
 	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2, 5)));
@@ -358,7 +365,6 @@ GAMESTATE Game::Update()
 	grav = planetGravityField.calcGravFactor(currentPlayer->getPosV3());
 	additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
 
-	//Player functions
 	//Raycasting
 	static DirectX::XMFLOAT3 hitPos;
 	static DirectX::XMFLOAT3 hitNormal;
@@ -367,6 +373,7 @@ GAMESTATE Game::Update()
 	bool testingVec = this->currentPlayer->raycast(gameObjects, hitPos, hitNormal);
 	if (testingVec || currentPlayer->getHitByBat()) velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 	
+	//Player functions
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), hitNormal, dt, testingVec);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
 	currentPlayer->movePos(velocity);
@@ -420,6 +427,7 @@ GAMESTATE Game::Update()
 		onlineItems[i]->update();
 	}
 
+	//Updates gameObject physics components
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->update();
@@ -449,9 +457,15 @@ GAMESTATE Game::Update()
 	//Updates gameObject buffers
 	this->updateBuffers();
 	
+		//Check if item icon should change to pickup icon 
+	for (int i = 0; i < items.size(); i++)
+	{
+		this->items[i]->checkDistance((GameObject*)(currentPlayer));
+	}
 
 	//Debug keybinds
 	this->handleKeybinds();
+
 
 	return NOCHANGE;
 }
@@ -482,10 +496,15 @@ void Game::Render()
 
 	//render billboard objects
 	basicRenderer.bilboardPrePass(this->camera);
-	this->potion->drawIcon();
-	this->testBat->drawIcon();
-	this->grenade->drawIcon();
-	this->currentPlayer->drawIcon(0);
+	for (int i = 0; i < items.size(); i++)
+	{
+		this->items[i]->drawIcon();
+	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->drawIcon();
+	}
+
 
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
@@ -497,15 +516,14 @@ void Game::Render()
 	//this->ptEmitters.at(0).unbind();
 
 	//drawParticles();	//not in use, intended for drawing particles in game.cpp
-	this->potion->drawParticles();
-	this->testBat->drawParticles();
-	this->grenade->drawParticles();
-	//for (int i = 0; i < players.size(); i++)
-	//{
-	//	players[i]->drawParticles();
-	//	players[i]->drawIcon(players[i]->getOnlineID());
-	//}
-	this->currentPlayer->drawParticles();
+	for (int i = 0; i < items.size(); i++)
+	{
+		this->items[i]->drawParticles();
+	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->drawParticles();
+	}
 	basicRenderer.geometryUnbind();
 
 

@@ -14,6 +14,7 @@ enum ObjID
 	POTION,
 	GRENADE,
 	COMPONENT,
+	MOVABLE
 };
 
 class GameObject

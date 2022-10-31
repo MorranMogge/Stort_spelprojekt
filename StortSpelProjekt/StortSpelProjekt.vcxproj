@@ -186,6 +186,8 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightHandler.h" />
+    <ClInclude Include="LoseMenu.h" />
+    <ClInclude Include="LoseUI.h" />
     <ClInclude Include="MaterialLibrary.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MouseClass.h">
@@ -302,6 +304,8 @@
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightHandler.cpp" />
+    <ClCompile Include="LoseMenu.cpp" />
+    <ClCompile Include="LoseUI.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MouseClass.cpp">

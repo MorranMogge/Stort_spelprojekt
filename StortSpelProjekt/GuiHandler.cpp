@@ -9,13 +9,23 @@ using namespace DirectX::SimpleMath;
 
 void GuiHandler::SpritePass()
 {
+
+	if (isLoading)
+	{
+		Loading.Draw();
+		return;
+	}
+
 	start.Draw();
 	settings.Draw();
 	credits.Draw();
 	exit.Draw();
+	control.Draw();
+	objective.Draw();
+	useText.Draw();
+	throwText.Draw();
+	pickText.Draw();
 
-	if (isLoading)
-		Loading.Draw();
 }
 
 void GuiHandler::HandleInputs()
@@ -110,6 +120,9 @@ GuiHandler::GuiHandler()
 {
 	GUI::Init();
 
+#define upp 60
+#define left 80
+
 	start = GUISprite(1000, 200);
 	start.Load(GPU::device, L"../Sprites/start.png");
 
@@ -124,6 +137,26 @@ GuiHandler::GuiHandler()
 
 	Loading = GUISprite(GPU::windowWidth/ 2.0f, GPU::windowHeight / 2.0f);
 	Loading.Load(GPU::device, L"../Sprites/Loading.bmp");
+
+	control = GUISprite(310 - left, 225 - upp);
+	control.Load(GPU::device, L"../Sprites/control.png");
+	control.SetScale(0.75, 0.75);
+	
+	useText = GUISprite(320 - left, 420 - upp);
+	useText.Load(GPU::device, L"../Sprites/UseText.png");
+	useText.SetScale(0.40, 0.40);
+
+	throwText = GUISprite(340 - left, 500 - upp);
+	throwText.Load(GPU::device, L"../Sprites/ThrowText.png");
+	throwText.SetScale(0.40, 0.40);
+
+	pickText = GUISprite(322 - left, 580 - upp);
+	pickText.Load(GPU::device, L"../Sprites/PickText.png");
+	pickText.SetScale(0.40, 0.40);
+
+	objective = GUISprite(310 - left, 675 - upp);
+	objective.Load(GPU::device, L"../Sprites/Objective.png");
+	objective.SetScale(0.75, 0.75);
 
 	gameState = NOCHANGE;
 }

@@ -19,7 +19,7 @@ private:
 	ImGuiHelper imGui;
 	bool wireframe = false;
 	bool objectDraw = true;
-	bool drawDebug = true;
+	bool drawDebug = false;
 	wirefameInfo reactWireframeInfo;
 	ID3D11Buffer* wireBuffer;
 	D3D11_MAPPED_SUBRESOURCE subData;
@@ -36,6 +36,8 @@ private:
 
 	std::chrono::time_point<std::chrono::system_clock> serverStart;
 	
+	std::vector< Mesh*> meshes;
+
 	float serverTimerLength =  1.f / 30.0f;
 	Client* client;
 

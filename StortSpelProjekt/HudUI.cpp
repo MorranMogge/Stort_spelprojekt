@@ -1,13 +1,14 @@
 #include "stdafx.h"
 #include "HudUI.h"
 #include "Input.h"
+#include "SpaceShip.h"
 
 
 void HudUI::SpritePass()
 {
-	if (SpaceShip::red)
+	if (red)
 	{
-		switch (SpaceShip::red->getNrOfComponents())
+		switch (red->getNrOfComponents())
 		{
 		case 0:
 			redTeam0.Draw(); break;
@@ -22,9 +23,9 @@ void HudUI::SpritePass()
 		}
 	}
 
-	if (SpaceShip::blue)
+	if (blue)
 	{
-		switch (SpaceShip::blue->getNrOfComponents())
+		switch (blue->getNrOfComponents())
 		{
 		case 0:
 			blueTeam0.Draw(); break;

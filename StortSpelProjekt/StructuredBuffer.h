@@ -8,7 +8,7 @@ class StructuredBuffer
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> buffer;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
-	ID3D11DeviceContext* deviceContext;
+	inline static ID3D11DeviceContext* deviceContext;
 	std::vector<T> bufferData;
 
 	bool reInitialize(ID3D11Device* device);
@@ -37,7 +37,7 @@ template<class T>
 inline bool StructuredBuffer<T>::reInitialize(ID3D11Device* device)
 {
 D3D11_BUFFER_DESC cBuffDesc = { 0 };
-	cBuffDesc.ByteWidth = sizeof(T) * (UINT)this->bufferData.size();			//size of buffer //*nr of elements
+	cBuffDesc.ByteWidth = (UINT)(sizeof(T) * this->bufferData.size());			//size of buffer //*nr of elements
 	cBuffDesc.Usage = D3D11_USAGE_DYNAMIC;										//sets interaction with gpu and cpu
 	cBuffDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;							//Specifies the type of buffer
 	cBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;							//Specifies cpu acess
@@ -74,6 +74,7 @@ StructuredBuffer<T>::StructuredBuffer()
 {
 }
 
+//called when created for the first time otherwise if data is to be added use either remapBuffer or addata
 template<class T>
 bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, std::vector<T>& buffData)
 {
@@ -85,7 +86,7 @@ bool StructuredBuffer<T>::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 	}
 
 	D3D11_BUFFER_DESC cBuffDesc = { 0 };
-	cBuffDesc.ByteWidth = sizeof(T) * (UINT)this->bufferData.size();			//size of buffer //*nr of elements
+	cBuffDesc.ByteWidth = (UINT)(sizeof(T) * this->bufferData.size());			//size of buffer //*nr of elements
 	cBuffDesc.Usage = D3D11_USAGE_DYNAMIC;										//sets interaction with gpu and cpu
 	cBuffDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;							//Specifies the type of buffer
 	cBuffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;							//Specifies cpu acess
@@ -154,7 +155,7 @@ inline void StructuredBuffer<T>::remapBuffer(ID3D11Device* device, ID3D11DeviceC
 	{
 		bufferData.push_back(buffData[i]);
 	}
-	this->Initialize(device, deviceContext, buffData);
+	this->reInitialize(device);
 }
 
 template<class T>
@@ -165,7 +166,7 @@ void StructuredBuffer<T>::applyData() //from member variable bufferData
 	ZeroMemory(&map, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	HRESULT hr = deviceContext->Map(this->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &map);
-	memcpy(map.pData, bufferData.data(), sizeof(T));
+	memcpy(map.pData, bufferData.data(), sizeof(T) * bufferData.size());
 	if (FAILED(hr))
 	{
 		//ErrorLogger::Log(hr, "Failed to map constant buffer.");

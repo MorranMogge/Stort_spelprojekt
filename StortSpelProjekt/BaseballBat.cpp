@@ -60,7 +60,8 @@ void BaseballBat::setGameObjects(const std::vector<Player*>& objects)
 {
 	for (int i = 0; i < objects.size(); i++)
 	{
-		if (objects[i] != this->player) this->objects.push_back(objects[i]);
+		//if (objects[i] != this->player) this->objects.push_back(objects[i]);
+		this->objects.push_back(objects[i]);
 	}
 }
 

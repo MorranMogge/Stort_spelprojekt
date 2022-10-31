@@ -36,6 +36,10 @@ void Game::loadObjects()
 	gameObjects.emplace_back(potion);
 	gameObjects.emplace_back(testBat);
 	gameObjects.emplace_back(grenade);
+	
+	items.emplace_back(potion);
+	items.emplace_back(testBat);
+	items.emplace_back(grenade);
 
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	testBat->setPlayer(currentPlayer);
@@ -75,7 +79,7 @@ void Game::drawObjects(bool drawDebug)
 	//Draw Game objects
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		gameObjects.at(i)->draw();
+		gameObjects[i]->draw();
 	}
 	for (int i = 0; i < players.size(); i++)
 	{
@@ -154,16 +158,6 @@ void Game::updateBuffers()
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->updateBuffer();
-	}
-
-	for (int i = 0; i < components.size(); i++)
-	{
-		components[i]->updateBuffer();
-	}
-
-	for (int i = 0; i < spaceShips.size(); i++)
-	{
-		spaceShips[i]->updateBuffer();
 	}
 
 	//Update Wireframe buffer
@@ -367,12 +361,14 @@ GAMESTATE Game::Update()
 	currentPlayer->movePos(velocity);
 	currentPlayer->checkForStaticCollision(gameObjects);
 
-	currentPlayer->pickupItem(potion);
-	currentPlayer->pickupItem(testBat);
-
 	for (int i = 0; i < components.size(); i++)
 	{
 		if (currentPlayer->pickupItem(components[i])) break;
+	}
+
+	for (int i = 0; i < items.size(); i++)
+	{
+		if (currentPlayer->pickupItem(items[i])) break;
 	}
 
 	if (Input::KeyPress(KeyCode::K))
@@ -469,10 +465,12 @@ void Game::Render()
 	this->potion->drawIcon();
 	this->testBat->drawIcon();
 	this->grenade->drawIcon();
-	this->currentPlayer->drawIcon(3);
-	//this->spaceShipRed->drawQuad();
-	//this->spaceShipBlue->drawQuad();
+	this->currentPlayer->drawIcon(0);
 
+	for (int i = 0; i < spaceShips.size(); i++)
+	{
+		spaceShips[i]->drawQuad();
+	}
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);
 	//drawParticles();
@@ -482,6 +480,11 @@ void Game::Render()
 	this->potion->drawParticles();
 	this->testBat->drawParticles();
 	this->grenade->drawParticles();
+	//for (int i = 0; i < players.size(); i++)
+	//{
+	//	players[i]->drawParticles();
+	//	players[i]->drawIcon(players[i]->getOnlineID());
+	//}
 	this->currentPlayer->drawParticles();
 	basicRenderer.geometryUnbind();
 

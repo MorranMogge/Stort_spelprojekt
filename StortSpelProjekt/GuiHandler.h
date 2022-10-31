@@ -15,6 +15,7 @@ class GuiHandler final
 	GUISprite control;
 	GUISprite useText;
 	GUISprite throwText;
+	GUISprite pickText;
 
 	GUISprite objective;
 

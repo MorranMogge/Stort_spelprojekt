@@ -24,6 +24,7 @@ void GuiHandler::SpritePass()
 	objective.Draw();
 	useText.Draw();
 	throwText.Draw();
+	pickText.Draw();
 
 }
 
@@ -119,34 +120,41 @@ GuiHandler::GuiHandler()
 {
 	GUI::Init();
 
-	start = GUISprite(1000, 200);
+#define upp 60
+#define left 80
+
+	start = GUISprite(1000 - left, 200 - upp);
 	start.Load(GPU::device, L"../Sprites/start.png");
 
-	settings = GUISprite(1000, 300);
+	settings = GUISprite(1000 - left, 300 - upp);
 	settings.Load(GPU::device, L"../Sprites/settings.png");
 
-	credits = GUISprite(1000, 400);
+	credits = GUISprite(1000 - left, 400 - upp);
 	credits.Load(GPU::device, L"../Sprites/credit.png");
 
-	exit = GUISprite(1000, 500);
+	exit = GUISprite(1000 - left, 500 - upp);
 	exit.Load(GPU::device, L"../Sprites/exit.png");
 
 	Loading = GUISprite(GPU::windowWidth/ 2.0f, GPU::windowHeight / 2.0f);
 	Loading.Load(GPU::device, L"../Sprites/Loading.bmp");
 
-	control = GUISprite(310, 225);
+	control = GUISprite(310 - left, 225 - upp);
 	control.Load(GPU::device, L"../Sprites/control.png");
 	control.SetScale(0.75, 0.75);
 	
-	useText = GUISprite(320, 420);
+	useText = GUISprite(320 - left, 420 - upp);
 	useText.Load(GPU::device, L"../Sprites/UseText.png");
 	useText.SetScale(0.40, 0.40);
 
-	throwText = GUISprite(340, 500);
+	throwText = GUISprite(340 - left, 500 - upp);
 	throwText.Load(GPU::device, L"../Sprites/ThrowText.png");
 	throwText.SetScale(0.40, 0.40);
 
-	objective = GUISprite(310, 600);
+	pickText = GUISprite(322 - left, 580 - upp);
+	pickText.Load(GPU::device, L"../Sprites/PickText.png");
+	pickText.SetScale(0.40, 0.40);
+
+	objective = GUISprite(310 - left, 675 - upp);
 	objective.Load(GPU::device, L"../Sprites/Objective.png");
 	objective.SetScale(0.75, 0.75);
 

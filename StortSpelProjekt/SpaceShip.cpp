@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "SpaceShip.h"
-#include "HudUI.h";
+#include "HudUI.h"
 
 
 SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
@@ -112,7 +112,7 @@ void SpaceShip::takeOff()
 	//Icon initiation
 	static float constant = this->position.Length();
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
-	constant += 0.1;
+	constant += 0.1f;
 	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
 
 	this->position = test;

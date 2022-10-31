@@ -110,6 +110,9 @@ void Grenade::drawParticles()
 
 void Grenade::useItem()
 {
-	this->destructionIsImminent = true;
-	timer.resetStartTime();
+	if (!this->destructionIsImminent)
+	{
+		this->destructionIsImminent = true;
+		timer.resetStartTime();
+	}
 }

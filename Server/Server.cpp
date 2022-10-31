@@ -18,7 +18,7 @@
 #include "RandomizeSpawn.h"
 #include "DirectXMathHelper.h"
 
-const short MAXNUMBEROFPLAYERS = 1;
+const short MAXNUMBEROFPLAYERS = 2;
 std::mutex mutex;
 
 struct userData
@@ -254,7 +254,7 @@ int main()
 
 	float timerLength = 1.f / 30.0f;
 	float timerComponentLength = 20.0f;
-	float itemSpawnTimerLength = 20.0f;
+	float itemSpawnTimerLength = 5.0f;
 
 	setupTcp(data);
 
@@ -411,13 +411,15 @@ int main()
 
 			for (int j = 0; j < spaceShipPos.size(); j++)
 			{
-				if (!components[i].getActiveState()) continue;
+				//if (!components[i].getActiveState()) continue;
 				DirectX::XMFLOAT3 vecToComp = spaceShipPos[j];
 				DirectX::XMFLOAT3 objPos = components[i].getPhysicsComponent()->getPosV3();
 				subtractionXMFLOAT3(vecToComp, objPos);
 				if (getLength(vecToComp) <= 10.f)
 				{
-					components[i].setInactive();
+					//components[i].setInactive();
+					DirectX::XMFLOAT3 newCompPos = randomizeObjectPos();
+					components[i].setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
 					ComponentAdded compAdded;
 					compAdded.packetId = PacketType::COMPONENTADDED;
 					compAdded.spaceShipTeam = j;

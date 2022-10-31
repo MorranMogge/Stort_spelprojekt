@@ -445,10 +445,6 @@ GAMESTATE Game::Update()
 
 void Game::Render()
 {
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->draw();
-	}
 	//Render shadow maps
 	basicRenderer.lightPrePass();
 	drawShadows();
@@ -456,7 +452,14 @@ void Game::Render()
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
-
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->draw();
+	}
+	for (int i = 0; i < components.size(); i++)
+	{
+		components[i]->draw();
+	}
 	//Render Skybox
 	basicRenderer.skyboxPrePass();
 	this->skybox.draw();

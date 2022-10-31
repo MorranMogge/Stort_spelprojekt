@@ -83,7 +83,17 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 
 
 		aiString Path;
-		//if(material->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		
+		
+		if (material->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		{
+			std::cout << Path.C_Str() << "\n";
+		}
+
+		//if (material->GetTexture(aiTextureType_, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+
+
+
 		if(material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
 			if (this->bank.hasItem(Path.data))
@@ -92,6 +102,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 				continue;
 			};
 
+			std::cout << Path.C_Str() << "\n";
 			ID3D11ShaderResourceView* tempSRV = {};
 			std::string FullPath = "../Textures/";
 			FullPath.append(Path.data);

@@ -6,6 +6,11 @@ Component::Component(const std::string& objectPath, const DirectX::XMFLOAT3& pos
 {
 }
 
+Component::Component(Mesh* mesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
+	:Item(mesh, pos, rot, id), pickedUp(false)
+{
+}
+
 Component::~Component()
 {
 }

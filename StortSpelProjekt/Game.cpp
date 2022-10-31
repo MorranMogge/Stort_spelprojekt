@@ -14,9 +14,12 @@ void Game::loadObjects()
 	//IndexBuffer
 	ID3D11Buffer* iBuff = {};
 
-	this->manager.getMeshData("../Meshes/Sphere.obj", vBuff, iBuff, subMeshRanges, verticies);
+
+	//Gör på detta sätt
+
+	/*this->manager.getMeshData("../Meshes/Sphere.obj", vBuff, iBuff, subMeshRanges, verticies);
 	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-	planet = new GameObject(tmpMesh, DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
+	planet = new GameObject(tmpMesh, DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, nullptr, DirectX::XMFLOAT3(20.0f, 20.0f, 20.0f));
 	planet->setSrv(manager.getSrv("planetTexture.png"));
 
 	this->manager.getMeshData("../Meshes/Baseball.obj",vBuff, iBuff, subMeshRanges, verticies);
@@ -29,12 +32,18 @@ void Game::loadObjects()
 	testBat->setSrv(manager.getSrv("planetTexture.png"));
 
 	this->manager.getMeshData("../Meshes/rocket.obj",vBuff, iBuff, subMeshRanges, verticies);
-	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-	spaceShip = new SpaceShip(tmpMesh, DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
-	spaceShip->setSrv(this->manager.getSrv("spaceshipTexture2.jpg"));
+	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);*/
 
 
-	player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
+
+
+
+
+	//spaceShip = new SpaceShip(tmpMesh, DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
+	//spaceShip->setSrv(this->manager.getSrv("spaceshipTexture2.jpg"));
+
+
+	//player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
 	
 	//Visa Ove
 	//this->manager.getMeshData("../Meshes/pinto.obj", vBuff, iBuff, subMeshRanges, verticies);
@@ -42,14 +51,21 @@ void Game::loadObjects()
 	//player = new Player(tmpMesh, DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
 	//player->setSrv(this->manager.getSrv("texture2.png"));
 	
-	this->manager.getMeshData("../Meshes/player.obj",vBuff, iBuff, subMeshRanges, verticies);
+
+
+
+
+
+	//gör på detta sätt
+
+	/*this->manager.getMeshData("../Meshes/player.obj",vBuff, iBuff, subMeshRanges, verticies);
 	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-	testCube = new GameObject(tmpMesh, DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+	testCube = new GameObject(tmpMesh, DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5,nullptr, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 	testCube->setSrv(manager.getSrv("playerTexture.png"));
 
 	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	otherPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6);
-	otherPlayer->setSrv(manager.getSrv("playerTexture.png"));
+	otherPlayer->setSrv(manager.getSrv("playerTexture.png"));*/
 
 	using namespace DirectX;
 	using namespace DirectX::SimpleMath;
@@ -58,18 +74,50 @@ void Game::loadObjects()
 	grav = planetGravityField.calcGravFactor(DirectX::SimpleMath::Vector3(0, 40, 0));
 
 	//Here we can add base object we want in the beginning of the game
-	planet = new GameObject("../Meshes/Sphere", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET,nullptr, XMFLOAT3(planetSize, planetSize, planetSize));
+	
+	this->manager.getMeshData("../Meshes/Sphere.obj", vBuff, iBuff, subMeshRanges, verticies);
+	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	planet = new GameObject(tmpMesh, Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET,nullptr, XMFLOAT3(planetSize, planetSize, planetSize));
+	planet->setSrv(manager.getSrv("planetTexture.png"));
+
+
 	currentPlayer = new Player("../Meshes/pinto", Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, &planetGravityField);
-	potion = new Potion("../Meshes/potion", Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), POTION, &planetGravityField);
+	
+	this->manager.getMeshData("../Meshes/Sphere.obj", vBuff, iBuff, subMeshRanges, verticies);
+	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+
+	potion = new Potion(tmpMesh, Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), POTION, &planetGravityField);
 	Vector3 shipPos(-7.81178f, -37.8586f, -8.50119f);
 	Vector3 shipPos2(13.5817f,35.9383f, 9.91351f);
-	spaceShipRed = new SpaceShip(shipPos, ROCKET, 0, &planetGravityField, Vector3(2, 2, 2));
+	
+	
+	//Spaceship edge case får fråga Viktor / Liye
+	//this->manager.getMeshData("../Meshes/rocket.obj", vBuff, iBuff, subMeshRanges, verticies);
+	//tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	spaceShipRed = new SpaceShip(/*tmpMesh,*/ shipPos, ROCKET, 0, &planetGravityField, Vector3(2, 2, 2));
 	spaceShipBlue = new SpaceShip(shipPos2, ROCKET, 1, &planetGravityField, Vector3(2, 2, 2));
-	testBat = new BaseballBat("../Meshes/bat", Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, &planetGravityField);
-	testCube = new GameObject("../Meshes/Player", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
+	
+	
+	this->manager.getMeshData("../Meshes/bat.obj", vBuff, iBuff, subMeshRanges, verticies);
+	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	testBat = new BaseballBat(tmpMesh, Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, &planetGravityField);
+	
+	
+	this->manager.getMeshData("../Meshes/goblin2.fbx", vBuff, iBuff, subMeshRanges, verticies);
+	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	testCube = new GameObject(tmpMesh, Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
+	testCube->setSrv(this->manager.getSrv("playerTexture.png"));
+
+
 	//otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), PLAYER, & planetGravityField);
-	component = new Component("../Meshes/component", DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT);
-	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, &planetGravityField);
+	
+	this->manager.getMeshData("../Meshes/component.obj", vBuff, iBuff, subMeshRanges, verticies);
+	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	component = new Component(tmpMesh, DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT);
+
+	this->manager.getMeshData("../Meshes/grenade.obj", vBuff, iBuff, subMeshRanges, verticies);
+	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	grenade = new Grenade(tmpMesh, DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, &planetGravityField);
 	
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
@@ -151,10 +199,10 @@ void Game::drawObjects(bool drawDebug)
 	ltHandler.bindLightBuffers();
 
 	//Draw Game objects
-	/*for (int i = 0; i < gameObjects.size(); i++)
+	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects.at(i)->draw();
-	}*/
+	}
 
 	gameObjects.at(1)->draw();
 
@@ -284,14 +332,19 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
 	this->manager.setDevice(device);
-	this->manager.loadMeshData("../Meshes/player.obj");
+	this->manager.loadMeshData("../Meshes/Player.obj");
 	this->manager.loadMeshData("../Meshes/Planet.obj");
 	this->manager.loadMeshData("../Meshes/Baseball.obj");
 	this->manager.loadMeshData("../Meshes/Sphere.obj");
 	this->manager.loadMeshData("../Meshes/rocket.obj");
 	this->manager.loadMeshData("../Meshes/pinto.obj");
+	this->manager.loadMeshData("../Meshes/bat.obj");
+	this->manager.loadMeshData("../Meshes/component.obj");
+	this->manager.loadMeshData("../Meshes/grenade.obj");
+	this->manager.loadMeshData("../Meshes/goblin2.fbx");
 	
-	
+
+		
 	MaterialLibrary::LoadDefault();
 	MaterialLibrary::LoadMaterial("spaceshipTexture1.jpg");
 

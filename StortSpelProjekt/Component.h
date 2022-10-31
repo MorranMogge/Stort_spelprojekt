@@ -8,6 +8,7 @@ private:
 
 public:
 	Component(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
+	Component(Mesh* mesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
 	~Component();
 
 	void interactWithComponent();

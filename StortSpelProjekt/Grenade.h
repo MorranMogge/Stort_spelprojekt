@@ -13,6 +13,7 @@ private:
 	void explode();
 public:
 	Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field = nullptr);
+	Grenade(Mesh* mesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field = nullptr);
 	~Grenade();
 	void updateExplosionCheck();
 	void setGameObjects(const std::vector<GameObject *> &gameObjects);

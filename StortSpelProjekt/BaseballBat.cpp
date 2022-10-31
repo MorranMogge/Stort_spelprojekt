@@ -22,7 +22,7 @@ BaseballBat::BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3&
 	this->itemIcon->setOffset(constant);
 }
 
-BaseballBat::BaseballBat(Mesh* mesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
+BaseballBat::BaseballBat(Mesh* mesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
 	:Item(mesh, pos, rot, id), player(nullptr), force(0.f)
 {
 	force = FORCECONSTANT;

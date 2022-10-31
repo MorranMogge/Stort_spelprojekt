@@ -17,6 +17,7 @@ private:
 
 public:
 	BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field = nullptr);
+	BaseballBat(Mesh* mesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field = nullptr);
 	~BaseballBat();
 
 	void setPlayer(Player* player);

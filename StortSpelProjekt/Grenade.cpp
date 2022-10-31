@@ -124,7 +124,6 @@ void Grenade::drawParticles()
 		if (frame != 0)
 		{
 			frame--;
-			std::cout << currentTime << std::endl;
 			this->mesh->matKey[0] = "Red.png";
 		}
 		else

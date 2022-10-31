@@ -153,6 +153,12 @@
     <ClCompile Include="GuiHandler.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="LoseUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="LoseMenu.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -429,6 +435,12 @@
     </ClInclude>
     <ClInclude Include="GuiHandler.h">
       <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="LoseUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="LoseMenu.h">
+      <Filter>Game-States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

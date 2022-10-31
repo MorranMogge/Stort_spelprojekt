@@ -39,13 +39,10 @@ cbuffer numLightBuffer : register(b2)
 
 float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : UV, float4 worldPosition : WorldPosition, float3 localPosition : LocalPosition) : SV_TARGET
 {
-    
-    
-    float3 ambient = ambientTex.Sample(samplerState, uv).xyz * mat.ambient.xyz;
-    float3 diffuseColor = diffuseTex.Sample(samplerState, uv).xyz;
-    float3 specular = specularTex.Sample(samplerState, uv).xyz * mat.specular;
-    float3 viewDir = normalize(cameraPosition.xyz - worldPosition.xyz);
-
+    const float3 ambient = ambientTex.Sample(samplerState, uv).xyz * mat.ambient.xyz;
+    const float3 diffuseColor = diffuseTex.Sample(samplerState, uv).xyz;
+    const float3 specular = specularTex.Sample(samplerState, uv).xyz * mat.specular;
+    const float3 viewDir = normalize(cameraPosition.xyz - worldPosition.xyz);
     
     LightResult litResult = { { 0, 0, 0 }, { 0, 0, 0 } };
     for (int i = 0; i < nrOfLights; ++i)
@@ -63,13 +60,11 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
         {
             case DIRECTIONAL_LIGHT:
                 lightDir = normalize(-lights[i].direction.xyz);
-                //result = DoDirectionalLight(lights[i], viewDir, normal, mat.specularPower, lightDir);
                 result = ComputeDirectionalLight(lights[i], lightDir, normal, viewDir, diffuseColor, specular, mat.specularPower);
                 break;
             
             case POINT_LIGHT:
                 lightDir = lights[i].position.xyz - worldPosition.xyz;
-                //result = DoPointLight(lights[i], viewDir, worldPosition, normal, mat.specularPower, lightDir);
                 result = ComputePointLight(lights[i], lightDir, normal, viewDir, specular, mat.specularPower);
                 break;
             
@@ -79,7 +74,7 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
                 break;
         }
         
-        float shadowFactor = HardShadow(lightWorldPosition, shadowMaps, shadowSampler, i, normal, lightDir,9);
+        float shadowFactor = DoShadow(lightWorldPosition, shadowMaps, shadowSampler, i, normal, lightDir, 9);
         //float shadowFactor = SoftShadow(lightWorldPosition, 6.0, shadowMaps, shadowSampler,samplerState, i);
         
         litResult.Diffuse += result.Diffuse * shadowFactor;

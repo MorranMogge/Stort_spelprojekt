@@ -52,6 +52,50 @@ struct MaterialLibrary
 
 
 	}
+
+	static void LoadMaterial(const std::string path)
+	{
+		//if empty
+		if (path.empty())
+			return;
+
+		//check if material exist
+		if (materials.find(path) == materials.end())
+		{
+			//not found
+			MaterialInfo mat;
+			mat.ambientKey = "default_Ambient.png";
+			mat.specularKey = "default_Specular.png";
+			mat.diffuseKey = path;
+			AddTexture(mat.ambientKey);
+			AddTexture(mat.specularKey);
+			AddTexture(mat.diffuseKey);
+
+			mat.ambient = DirectX::SimpleMath::Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+			mat.diffuse = DirectX::SimpleMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+			mat.specular = { 0.0f, 0.0f, 0.0f };
+			mat.specularPower = 16.0f;
+			info.emplace(path, mat);
+
+			struct MaterialS
+			{
+				DirectX::SimpleMath::Vector4 ambient{ 0.0f, 0.0f, 0.0f, 0.0f };
+				DirectX::SimpleMath::Vector4 diffuse{ 1.0f, 1.0f, 1.0f, 1.0f };
+				DirectX::SimpleMath::Vector3 specular{ 0.0f, 0.0f, 0.0f };
+				float specularPower = 16.0f;
+			};
+			MaterialS matS{
+				{mat.ambient},
+				{mat.diffuse},
+				{mat.specular},
+				{mat.specularPower} };
+
+			// material proterty constant buffer
+			materials.emplace(path, ConstantBuffer(&matS, sizeof(MaterialS)));
+		}
+
+	}
+
 	static void LoadMaterial(const MTL::Material& mtlMat)
 	{
 		//if empty

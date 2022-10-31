@@ -13,6 +13,8 @@ bool CreateDepthStencilAndSrv(ID3D11Device* device, const UINT& width, const UIN
 
 bool CreateDSState(ID3D11DepthStencilState*& dss);
 
+bool CreatePT_DSState(ID3D11DepthStencilState*& dss);
+
 void SetViewport(D3D11_VIEWPORT& viewport, const UINT &width, const UINT& height);
 
 bool SetupD3D11(const UINT& width, const UINT& height, HWND window, ID3D11Device*& device, ID3D11DeviceContext*& immediateContext, IDXGISwapChain*& swapChain,

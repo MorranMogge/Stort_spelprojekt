@@ -152,13 +152,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Server\PacketsDataTypes.h" />
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="BasicRenderer.h" />
+    <ClInclude Include="BilboardObject.h" />
     <ClInclude Include="BlendState.h" />
     <ClInclude Include="Bound.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="BufferTypes.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CircularBufferClient.h" />
+    <ClInclude Include="ClientHandler.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferNew.h" />
@@ -173,10 +177,12 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GPU.h" />
     <ClInclude Include="GravityField.h" />
+    <ClInclude Include="Grenade.h" />
     <ClInclude Include="GuiHandler.h" />
     <ClInclude Include="GUIObject.h" />
     <ClInclude Include="GUISprite.h" />
     <ClInclude Include="GUIText.h" />
+    <ClInclude Include="HudUI.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Light.h" />
@@ -193,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="MTL.h" />
     <ClInclude Include="OBJ.h" />
+    <ClInclude Include="PacketEnum.h" />
+    <ClInclude Include="PacketEventManager.h" />
+    <ClInclude Include="PacketsDataTypes.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="PhysicsComponent.h" />
@@ -203,6 +212,7 @@
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderTargetView.h" />
     <ClInclude Include="SamplerState.h" />
+    <ClInclude Include="SendingDataEvent.h" />
     <ClInclude Include="SettingsMenu.h" />
     <ClInclude Include="SettingsUI.h" />
     <ClInclude Include="ShaderLoader.h" />
@@ -244,10 +254,15 @@
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="ViewPort.h" />
     <ClInclude Include="WindowHelper.h" />
+    <ClInclude Include="WinMenu.h" />
+    <ClInclude Include="WinUI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CircularBufferClient.cpp" />
+    <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="BaseballBat.cpp" />
     <ClCompile Include="BasicRenderer.cpp" />
+    <ClCompile Include="BilboardObject.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -260,9 +275,11 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GravityField.cpp" />
+    <ClCompile Include="Grenade.cpp" />
     <ClCompile Include="GuiHandler.cpp" />
     <ClCompile Include="GUISprite.cpp" />
     <ClCompile Include="GUIText.cpp" />
+    <ClCompile Include="HudUI.cpp" />
     <ClCompile Include="ImGuiHelper.cpp" />
     <ClCompile Include="ImGui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -298,18 +315,20 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ParticleEmitter.cpp" />
-    <ClCompile Include="PhysicsComponent.cpp" />
-    <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="MouseClass.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="PacketEventManager.cpp" />
+    <ClCompile Include="PhysicsComponent.cpp" />
+    <ClCompile Include="PhysicsWorld.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="MouseEvent.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerVectors.cpp" />
     <ClCompile Include="Potion.cpp" />
+    <ClCompile Include="SendingDataEvent.cpp" />
     <ClCompile Include="SettingsMenu.cpp" />
     <ClCompile Include="SettingsUI.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
@@ -321,6 +340,8 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="WindowHelper.cpp" />
+    <ClCompile Include="WinMenu.cpp" />
+    <ClCompile Include="WinUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -339,6 +360,30 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Bilboard_GS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Bilboard_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Bilboard_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="DebuggerPshader.hlsl">
@@ -390,6 +435,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Light.hlsli" />
+    <None Include="Math.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -98,6 +98,10 @@ void GUISprite::SetScale(const DirectX::SimpleMath::Vector2& scale)
 {
     m_Scale = scale;
 }
+void GUISprite::SetScale(const float x, const float y)
+{
+    m_Scale = { x, y };
+}
 
 void GUISprite::SetTint(const DirectX::SimpleMath::Color& color)
 {

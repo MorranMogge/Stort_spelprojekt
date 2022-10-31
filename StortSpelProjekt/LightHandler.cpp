@@ -13,8 +13,6 @@ bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBu
 		DirectX::XMFLOAT3 position = lights.at(i).getPosition();
 		DirectX::XMFLOAT3 color = lights.at(i).getColor();
 		DirectX::XMFLOAT3 direction = lights.at(i).getDirection();
-		
-	
 
 		//Change to XMFLOAT4
 		DirectX::XMFLOAT4X4 matrix;
@@ -36,13 +34,15 @@ bool CreateLtBuffer(ID3D11Device* device, StructuredBuffer<LightStruct>& lightBu
 	lightBuffer.Initialize(GPU::device, GPU::immediateContext, structVector);
 	lightBuffer.applyData();
 
+
+
 	return true; //!FAILED(hr);
 }
 
 
 bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, Microsoft::WRL::ComPtr<ID3D11Texture2D>& dsTexture, std::vector<Microsoft::WRL::ComPtr<ID3D11DepthStencilView>>& dsViews, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& shaderView, int nrOfLights)
 {
-	int WidthAndHeight = 2048;
+	int WidthAndHeight = 512;
 
 	D3D11_TEXTURE2D_DESC textureDesc = {};											//skapa svartvit textur som representerar djup i en scen
 	textureDesc.Width = WidthAndHeight;
@@ -215,6 +215,9 @@ void LightHandler::addLight(const DirectX::XMFLOAT3 &position, const DirectX::XM
 		this->viewBuffers.push_back(tempBuffer);
 
 		//Create Debug Mesh
+
+
+
 		this->boundingSphere.push_back(new GameObject("../Meshes/Cone", position, direction, lightID));
 		this->boundingSphere.back()->updateBuffer();
 

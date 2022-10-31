@@ -13,6 +13,9 @@ void GuiHandler::SpritePass()
 	settings.Draw();
 	credits.Draw();
 	exit.Draw();
+
+	if (isLoading)
+		Loading.Draw();
 }
 
 void GuiHandler::HandleInputs()
@@ -27,6 +30,7 @@ void GuiHandler::HandleInputs()
 		if (Input::KeyPress(KeyCode::MOUSE_L))
 		{
 			gameState = GAME;
+			isLoading = true;
 		}
 	}
 	else
@@ -117,6 +121,9 @@ GuiHandler::GuiHandler()
 
 	exit = GUISprite(1000, 500);
 	exit.Load(GPU::device, L"../Sprites/exit.png");
+
+	Loading = GUISprite(GPU::windowWidth/ 2.0f, GPU::windowHeight / 2.0f);
+	Loading.Load(GPU::device, L"../Sprites/Loading.bmp");
 
 	gameState = NOCHANGE;
 }

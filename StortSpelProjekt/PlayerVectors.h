@@ -2,6 +2,8 @@
 #include <d3d11.h>
 #include "Player.h"
 
+#define NROFVERTICES 8
+
 class PlayerVectors
 {
 private:
@@ -9,7 +11,7 @@ private:
 	ID3D11Buffer* vBuffer;
 	ID3D11VertexShader* vShader;
 	ID3D11PixelShader* pShader;
-	Vertex vectors[6];
+	Vertex vectors[NROFVERTICES];
 
 	UINT stride;
 	UINT offset;	

@@ -22,6 +22,7 @@
 
 #include "SettingsMenu.h"
 #include "CreditsMenu.h"
+#include "WinMenu.h"
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace, _In_ LPWSTR lpCmdLine, _In_ int nCmdShhow)
@@ -75,14 +76,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	GAMESTATE stateInfo = NOCHANGE;
 
 	MSG msg = {};
-
-	float clearColour[4]{ 0,0,0,0 };
-
-	ImGuiHelper imGuiHelper(client);
-	imGuiHelper.setupImGui(clearColour);
+	
 
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
+
+		stateInfo = currentState->Update();
 
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
@@ -94,7 +93,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 		
 
 
-		stateInfo = currentState->Update();
 
 		if (GetAsyncKeyState(VK_ESCAPE))
 			stateInfo = EXIT;
@@ -114,6 +112,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			case CREDITS:
 				delete currentState;
 				currentState = new CreditsMenu();
+				break;
+			case WIN:
+				delete currentState;
+				currentState = new WinMenu();
 				break;
 			case MENU:
 				delete currentState;

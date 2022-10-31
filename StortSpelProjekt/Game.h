@@ -36,6 +36,8 @@ private:
 
 	std::chrono::time_point<std::chrono::system_clock> serverStart;
 	
+	std::vector< Mesh*> meshes;
+
 	float serverTimerLength =  1.f / 30.0f;
 	Client* client;
 

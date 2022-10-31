@@ -44,6 +44,21 @@ public:
 	{
 		Load(obj);
 	}
+	Mesh(std::string path)
+	{
+		// load obj file
+		OBJ testObj(path);
+
+		// load all materials for Obj
+		int nrOfMat = (int)testObj.mtl.materials.size();
+		for (int i = 0; i < nrOfMat; i++)
+		{
+			MaterialLibrary::LoadMaterial(testObj.mtl.materials[i]);
+		}
+		Load(testObj);
+	}
+
+
 
 	void Load(OBJ& obj)
 	{

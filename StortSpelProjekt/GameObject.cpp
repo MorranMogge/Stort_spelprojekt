@@ -13,6 +13,9 @@ void GameObject::updatePhysCompRotation()
 GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale)
 	:position(pos), mesh(useMesh), objectID(id), scale(scale), physComp(nullptr), activeField(field)
 {
+
+
+
 	// set position
 	mesh->position = pos;
 

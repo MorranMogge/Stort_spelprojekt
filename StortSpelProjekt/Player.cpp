@@ -69,25 +69,26 @@ Player::~Player()
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& team , GravityField* field)
     :GameObject(useMesh, pos, rot, id, field), health(70), holdingItem(nullptr), team(team)
 {
-		this->rotationMX = XMMatrixIdentity();
-		resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	
-		normalVector = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 1.0f);
-		rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-		forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-		normalVector = DirectX::XMVector3Normalize(normalVector);
-		rightVector = DirectX::XMVector3Normalize(rightVector);
-		forwardVector = DirectX::XMVector3Normalize(forwardVector);
-		this->rotate();
+	this->rotationMX = XMMatrixIdentity();
+	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+
+	normalVector = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 1.0f);
+	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
+	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
+	normalVector = DirectX::XMVector3Normalize(normalVector);
+	rightVector = DirectX::XMVector3Normalize(rightVector);
+	forwardVector = DirectX::XMVector3Normalize(forwardVector);
+	this->rotate();
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);
 
 	//Item Icon
-	float constant =7.0f;
+	float constant = 7.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-	std::vector<std::string> playernames{ "player1.png", "player2.png", "player3.png", "player4.png" };
+	std::vector<std::string> playernames{ "Team1_r.png", "Team2_b.png", "player3.png", "player4.png" };
 	this->playerIcon = new BilboardObject(playernames, iconPos);
 	this->playerIcon->setOffset(constant);
 
@@ -95,9 +96,9 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	switch (team)
 	{
 	case 0:
-		this; mesh->matKey[0] = "spaceshipTexture1.jpg"; break;
+		mesh->matKey[0] = "pintoRed.png"; break;
 	case 1:
-		this; break;
+		break;
 	}
 }
 

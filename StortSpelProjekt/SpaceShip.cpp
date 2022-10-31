@@ -110,7 +110,8 @@ void SpaceShip::addComponent()
 void SpaceShip::takeOff()
 {
 	//Icon initiation
-	static float constant = this->position.Length();
+	DirectX::XMFLOAT3  pos = this->position;
+	static float constant = this->position.Length() *1.2;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	constant += 0.1f;
 	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);

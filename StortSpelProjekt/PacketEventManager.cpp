@@ -13,7 +13,7 @@ PacketEventManager::~PacketEventManager()
 }
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int &NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
-	std::vector<Component *>& componentVector, PhysicsWorld& physWorld, std::vector<Item*>&onlineItems)
+	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<Item*>&onlineItems)
 {
 	//handles the online events
 	while (circularBuffer->getIfPacketsLeftToRead())

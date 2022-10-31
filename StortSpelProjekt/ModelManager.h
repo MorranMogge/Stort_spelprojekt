@@ -10,6 +10,7 @@
 #include "ModelDataContainer.h"
 #include <d3d11.h>
 #include <SimpleMath.h>
+#include <DirectXMath.h>
 
 //#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -78,6 +79,7 @@ private:
 	void recParseNodes(nodes* node, const aiNode* ainode);
 	void parseNode(const aiScene* scene);
 	void parseAnimation(const aiScene* scene);
+	void calculateBoneInverse(const nodes& node, DirectX::XMFLOAT4X4& parentTrasform);
 
 public:
 	ModelManager();

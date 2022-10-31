@@ -112,6 +112,8 @@ private:
 
 	StructuredBuffer<DirectX::XMFLOAT4X4> strucBuff;
 
+	float totalTime;
+
 	void uppdateMatrices(int animationIndex, float animationTime, const nodes& node, DirectX::XMFLOAT4X4& parentTrasform);
 
 	void findlowRotationNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm);

@@ -470,6 +470,31 @@ void ModelManager::parseAnimation(const aiScene* scene)
 	}
 }
 
+void ModelManager::calculateBoneInverse(const nodes& node, DirectX::XMFLOAT4X4& parentTrasform)
+{
+	DirectX::XMMATRIX currentNodeTrans = DirectX::XMLoadFloat4x4(&node.trasformation);
+	DirectX::XMMATRIX PrevNode = DirectX::XMLoadFloat4x4(&parentTrasform);
+	const DirectX::XMMATRIX globalTrasform = DirectX::XMMatrixMultiply(PrevNode, currentNodeTrans);
+	DirectX::XMMATRIX globalTrasform1 = DirectX::XMMatrixMultiply(currentNodeTrans, PrevNode);
+	DirectX::XMFLOAT4X4 finalTransfrom;
+
+	if (this->aniData.boneNameToIndex.find(node.nodeName) != aniData.boneNameToIndex.end())
+	{
+		int id = aniData.boneNameToIndex[node.nodeName];
+		DirectX::XMVECTOR garbo;
+		DirectX::XMMATRIX inverse = DirectX::XMMatrixInverse(&garbo, globalTrasform);
+		DirectX::XMStoreFloat4x4(&aniData.boneVector[id].offsetMatrix, inverse);
+		int bp = 2;
+	}
+
+	DirectX::XMStoreFloat4x4(&finalTransfrom, globalTrasform);
+
+	for (int i = 0, length = node.children.size(); i < length; i++)
+	{
+		this->calculateBoneInverse(*node.children[i], finalTransfrom);
+	}
+}
+
 //void ModelManager::readAnimations(aiScene* scene)
 //{
 //	if (scene->HasAnimations())
@@ -631,8 +656,9 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 	parseNode(pScene);
 	parseAnimation(pScene);
 
-	this->aniData.boneVector;
-	this->aniData.boneDataVec;
+	DirectX::XMFLOAT4X4 temp;
+	DirectX::XMStoreFloat4x4(&temp, DirectX::XMMatrixIdentity());
+	this->calculateBoneInverse(*aniData.rootNode, temp);
 	
 	std::vector<AnimatedVertex> vertexAVec;
 	vertexAVec.reserve(this->dataForMesh.vertexTriangle.size());
@@ -686,46 +712,6 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 	D3D11_SUBRESOURCE_DATA indexBufferData = {};
 	indexBufferData.pSysMem = dataForMesh.indexTriangle.data();
 	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
-
-	/*ID3D11Buffer* vertexBuffer = {};
-
-	D3D11_BUFFER_DESC bufferDesc = {};
-	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	bufferDesc.ByteWidth = sizeof(vertex) * dataForMesh.vertexTriangle.size();
-	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bufferDesc.CPUAccessFlags = 0;
-	bufferDesc.MiscFlags = 0;
-	bufferDesc.StructureByteStride = 0;
-
-	D3D11_SUBRESOURCE_DATA data = {};
-	data.pSysMem = dataForMesh.vertexTriangle.data();
-	data.SysMemPitch = 0;
-	data.SysMemSlicePitch = 0;
-	device->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
-
-	skapa indexBuffer
-	ID3D11Buffer* indexBuffer = {};
-
-	D3D11_BUFFER_DESC indexBufferDesc = {};
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * dataForMesh.indexTriangle.size();
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
-	indexBufferDesc.StructureByteStride = 0;
-
-	D3D11_SUBRESOURCE_DATA indexBufferData = {};
-	indexBufferData.pSysMem = dataForMesh.indexTriangle.data();
-	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);*/
-
-	//bank.addMeshBuffers(filePath, vertexBuffer, indexBuffer, submeshRanges, amountOfvertices);
-
-	//indexBuffer = {};
-	//vertexBuffer = {};
-	//this->submeshRanges.clear();
-	//this->amountOfvertices.clear();
-	//this->dataForMesh.indexTriangle.clear();
-	//this->dataForMesh.vertexTriangle.clear();
 
 	bank.addAnimationData(filePath, vertexBuffer, indexBuffer, submeshRanges, amountOfvertices, this->aniData);
 

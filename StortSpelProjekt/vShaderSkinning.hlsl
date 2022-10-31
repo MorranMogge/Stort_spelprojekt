@@ -34,10 +34,10 @@ VSout main(VShaderIn input)
     
     const float4 startPosition = float4(input.position, 1.0f);
     float3 sumPos = float3(0, 0, 0);
-    sumPos += mul(startPosition, Tx[input.boneIndex.x] * input.weights[0]);
-    sumPos += mul(startPosition, Tx[input.boneIndex.y] * input.weights[1]);
-    sumPos += mul(startPosition, Tx[input.boneIndex.z] * input.weights[2]);
-    sumPos += mul(startPosition, Tx[input.boneIndex.w] * input.weights[3]);
+    sumPos += mul(startPosition, Tx[input.boneIndex[0]] * input.weights[0]);
+    sumPos += mul(startPosition, Tx[input.boneIndex[1]] * input.weights[1]);
+    sumPos += mul(startPosition, Tx[input.boneIndex[2]] * input.weights[2]);
+    sumPos += mul(startPosition, Tx[input.boneIndex[3]] * input.weights[3]);
 
     output.uv = input.uv;
 

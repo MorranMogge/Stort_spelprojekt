@@ -314,7 +314,7 @@ int main()
 		{
 			physWorld.update(tempDt/10.f);
 		}*/
-		physWorld.update(physicsTimer.getDt());
+		//physWorld.update(physicsTimer.getDt());
 
 		physicsTimer.resetStartTime();
 
@@ -511,12 +511,10 @@ int main()
 		//sends data based on the server tickrate
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > servertimerLength)
 		{
-			/*for (int i = 0; i < 30; i++)
+			for (int i = 0; i < 0; i++)
 			{
 				physWorld.update(servertimerLength / 10.f);
-				physWorld.update(timerLength/30.f);
-
-			}*/
+			}
 			//physWorld.update(timerLength);
 
 			//f�r varje spelare s� skicka deras position till alla klienter

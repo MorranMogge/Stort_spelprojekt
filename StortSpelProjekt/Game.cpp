@@ -297,12 +297,12 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			if (i <= (NROFPLAYERS/2))//team 1
 			{
 				std::cout << "team 1\n";
-				Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, grav, client);
+				Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, &planetGravityField);
 			}
 			else//team 2
 			{
 				std::cout << "team 1\n";
-				Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, grav, client);
+				Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, &planetGravityField);
 			}
 			
 			if (playerId != i)
@@ -401,7 +401,7 @@ GAMESTATE Game::Update()
 	}
 
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, &planetGravityField, spaceShips);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, &planetGravityField, spaceShips, onlineItems);
 	
 	
 	//Physics related functions
@@ -428,7 +428,7 @@ GAMESTATE Game::Update()
 	}
 
 
-	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
+	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX());
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->update();

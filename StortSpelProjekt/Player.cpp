@@ -867,6 +867,8 @@ reactphysics3d::Vector3 Player::getRayCastPos() const
 int Player::getOnlineID() const
 {
 	return this->onlineID;
+}
+
 void Player::setSpeed(float speed)
 {
 	this->speed = speed;

@@ -40,7 +40,7 @@ void Grenade::explode()
 }
 
 Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
-	:Item(objectPath, pos, rot, id, 2, field), destructionIsImminent(false), timeToExplode(5.f)
+	:Item(objectPath, pos, rot, id, onlineId, 3, field), destructionIsImminent(false), timeToExplode(5.f)
 {
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);

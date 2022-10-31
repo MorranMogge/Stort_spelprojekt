@@ -21,8 +21,8 @@ void BaseballBat::sendForceToServer(const DirectX::SimpleMath::Vector3& hitForce
 	this->client->sendStuff<PlayerHit>(hitInfo);
 }
 
-BaseballBat::BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId)
-	:Item(objectPath, pos, rot, id, onlineId,2), player(nullptr), force(0.f)
+BaseballBat::BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
+	:Item(objectPath, pos, rot, id, onlineId, 2, field), player(nullptr), force(0.f)
 {
 	force = FORCECONSTANT;
 

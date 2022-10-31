@@ -10,7 +10,7 @@ PacketEventManager::~PacketEventManager()
 }
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int &NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
-	std::vector<Component *>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject *>& gameObjects)
+	std::vector<Component *>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject *>& gameObjects, GravityField* field)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -119,10 +119,11 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			spaceShipPos = circularBuffer->readData<SpaceShipPosition>();
 			//Create correct spaceship depending on team
 			//TO BE CHANGED WHEN MERGING SINCE SPACESHIP HAS NEW CONSTRUCTOR
-			newSpaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), DirectX::SimpleMath::Vector3(20, 29, 20), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
+			newSpaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, DirectX::SimpleMath::Vector3(2, 2, 2), 4);
 			gameObjects.push_back(newSpaceShip);
 			physWorld.addPhysComponent(newSpaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3 * 0.75f, 0.75f));
 			newSpaceShip->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+			newSpaceShip->orientToUpDirection();
 			break;
 		case PacketType::COMPONENTADDED:
 			compAdded = circularBuffer->readData<ComponentAdded>();

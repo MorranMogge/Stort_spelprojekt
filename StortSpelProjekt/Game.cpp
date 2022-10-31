@@ -174,6 +174,11 @@ void Game::updateBuffers()
 		components[i]->updateBuffer();
 	}
 
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		onlineItems[i]->updateBuffer();
+	}
+
 
 	//Update Wireframe buffer
 	ZeroMemory(&subData, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -416,11 +421,12 @@ GAMESTATE Game::Update()
 	for (int i = 0; i < components.size(); i++)
 	{
   		components[i]->update(); 
+		std::cout << ", compId : " << std::to_string(components[i]->getOnlineId()) << " x: " << std::to_string(components[i]->getPos().x)
+			<< " y: " << std::to_string(components[i]->getPos().y) << std::endl;
 	}
 
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
-		std::cout << "online item pos: " << std::to_string(onlineItems[i]->getPos().x) << " y: " << std::to_string(onlineItems[i]->getPos().y) << std::endl;
 		onlineItems[i]->update();
 	}
 

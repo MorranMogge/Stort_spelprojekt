@@ -24,18 +24,20 @@ void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Play
 
 	
 	//holds a component
-	if (currentPlayer->getItemOnlineType() == 0)
+	//std::cout << "itemOnline Type(): " << std::to_string(currentPlayer->getItemOnlineType()) << std::endl;
+	if (currentPlayer->getItemOnlineType() == 0)// component
 	{
+		std::cout << "sending comppos\n";
 		ComponentData c;
 		c.ComponentId = currentPlayer->getItemOnlineId();
-		c.inUseBy = client->getPlayerId();
+		c.inUseBy = currentPlayer->getOnlineID();
 		c.packetId = PacketType::COMPONENTPOSITION;
 		c.x = currentPlayer->getPos().x;
 		c.y = currentPlayer->getPos().y;
 		c.z = currentPlayer->getPos().z;
 		client->sendStuff<ComponentData>(c);
 	}
-	else if (currentPlayer->getItemOnlineType() == 2)
+	else if (currentPlayer->getItemOnlineType() == 2)//baseball
 	{
 		itemPosition iPos;
 		iPos.packetId = PacketType::ITEMPOSITION;

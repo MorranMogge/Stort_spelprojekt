@@ -53,6 +53,20 @@ struct ItemSpawn
 	float z;
 };
 
+//enum = 8
+struct DroppedComponent
+{
+	int packetId;
+	int DroppedOnlineComponentId;
+};
+
+//enum = 9
+struct DroppedItem
+{
+	int packetId;
+	int DroppedOnlineitemId;
+};
+
 //assign the player with an id that the server has created
 //enum = 10
 struct idProtocol

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "PacketEventManager.h"
 #include "BaseballBat.h"
+#include "GameObject.h"
 
 
 PacketEventManager::PacketEventManager()
@@ -60,14 +61,25 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::COMPONENTPOSITION:
 
 			compData = circularBuffer->readData<ComponentData>();
-			componentVector[compData->ComponentId]->setPos(DirectX::XMFLOAT3(compData->x, compData->y, compData->z));
+			//componentVector[compData->ComponentId]->setPos(DirectX::XMFLOAT3(compData->x, compData->y, compData->z));
+			for (int i = 0; i < componentVector.size(); i++)
+			{
+				//std::cout << "vector item id: " << std::to_string(onlineItems[i]->getOnlineId()) << ", recv Data itemid: " << std::to_string(itemPosData->itemId) << std::endl;
+				if (componentVector[i]->getOnlineId() == compData->ComponentId)
+				{
+					componentVector[i]->setPos(DirectX::XMFLOAT3(compData->x, compData->y, compData->z));
+					break;
+				}
+
+			}
 			//std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
 			break;
 
 		case PacketType::SPAWNCOMPONENT:
 			spawnComp = circularBuffer->readData<SpawnComponent>();
 			std::cout << spawnComp->x << " " << spawnComp->y << " " << spawnComp->z << "\n";
-			newComponent = new Component("../Meshes/Player", DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), spawnComp->ComponentId, spawnComp->ComponentId);
+			newComponent = new Component("../Meshes/Player", DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z),
+				DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 69, spawnComp->ComponentId);
 			physWorld.addPhysComponent(newComponent);
 			componentVector.push_back(newComponent);
  			std::cout << "Sucessfully recieved component from server: " << std::to_string(spawnComp->ComponentId) << std::endl;
@@ -101,7 +113,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::ITEMSPAWN:
 
 			itemSpawn = circularBuffer->readData<ItemSpawn>();
-			newBaseballItem = new BaseballBat("../Meshes/Player", DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
+			newBaseballItem = new BaseballBat("../Meshes/rocket", DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
 			DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), itemSpawn->itemId, itemSpawn->itemId);
 			physWorld.addPhysComponent(newBaseballItem);
 			onlineItems.push_back(newBaseballItem);
@@ -114,6 +126,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			//std::cout << "item pos, item id: " << std::to_string(itemPosData->itemId) << std::endl;
 			for (int i = 0; i < onlineItems.size(); i++)
 			{
+				//std::cout << "vector item id: " << std::to_string(onlineItems[i]->getOnlineId()) << ", recv Data itemid: " << std::to_string(itemPosData->itemId) << std::endl;
 				if (onlineItems[i]->getOnlineId() == itemPosData->itemId)
 				{
 					onlineItems[i]->setPos(DirectX::XMFLOAT3(itemPosData->x, itemPosData->y, itemPosData->z));

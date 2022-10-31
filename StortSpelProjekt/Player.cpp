@@ -22,15 +22,11 @@ void Player::handleItems()
 	if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
 	{
 		//allocates data to be sent
-		ComponentData c;
-		c.ComponentId = this->getItemOnlineId();
-		c.inUseBy = -1;
-		c.packetId = PacketType::COMPONENTPOSITION;
-		c.x = this->getPos().x;
-		c.y = this->getPos().y;
-		c.z = this->getPos().z;
-		//sending data to server
-		client->sendStuff<ComponentData>(c);
+		DroppedComponent c;
+		c.DroppedOnlineComponentId = this->getItemOnlineId();
+		c.packetId = PacketType::COMPONENTDROPPED;
+		//sends data
+		client->sendStuff<DroppedComponent>(c);
 
 		//Set dynamic so it can be affected by forces
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -51,16 +47,13 @@ void Player::handleItems()
 	else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
 	{
 		//allocates data to be sent
-		ComponentData c;
-		c.ComponentId = this->getItemOnlineId();
-		c.inUseBy = -1;
-		c.packetId = PacketType::COMPONENTPOSITION;
-		c.x = this->getPos().x;
-		c.y = this->getPos().y;
-		c.z = this->getPos().z;
+		DroppedComponent c;
+		c.DroppedOnlineComponentId = this->getItemOnlineId();
+		std::cout << "dropped component: " << std::to_string(this->getItemOnlineId()) << std::endl;
+		c.packetId = PacketType::COMPONENTDROPPED;
 
-		//sending data to server
-		client->sendStuff<ComponentData>(c);
+		//sends data
+		client->sendStuff<DroppedComponent>(c);
 
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 		holdingItem->useItem();

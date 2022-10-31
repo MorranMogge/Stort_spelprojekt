@@ -3,7 +3,7 @@
 
 #include "RandomizeSpawn.h"
 
-SpawnComponent SpawnOneComponent(std::vector<Component>& components, long& componentId)
+SpawnComponent SpawnOneComponent(std::vector<Component>& components, int& componentId)
 {
 	SpawnComponent dataValue;
 	Component temp;
@@ -13,7 +13,9 @@ SpawnComponent SpawnOneComponent(std::vector<Component>& components, long& compo
 	components.push_back(temp);
 	
 	dataValue.packetId = 13;
+	std::cout << "comp id FÖRE: " << std::to_string(componentId) << std::endl;
 	dataValue.ComponentId = componentId++;
+	std::cout << "comp id EFTER: " << std::to_string(componentId) << std::endl;
 	dataValue.x = randomPos.x;
 	dataValue.y = randomPos.y;
 	dataValue.z = randomPos.z;

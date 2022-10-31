@@ -97,7 +97,6 @@ void Game::loadObjects()
 void Game::drawShadows()
 {
 	potion->draw();
-	currentPlayer->draw();
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->draw();
@@ -301,6 +300,11 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			}
 		}
 	}
+	else
+	{
+		//Add to player array
+		players.emplace_back(currentPlayer);
+	}
 
 }
 
@@ -389,7 +393,6 @@ GAMESTATE Game::Update()
 
 	//Applies updated movement & rotation to models
 	this->updateBuffers();
-	
 
 
 	//Move camera
@@ -419,6 +422,7 @@ GAMESTATE Game::Update()
 			{
 				Component* comp = dynamic_cast<Component*>(gameObjects[i]);
 				std::cout << "BLU Detected Component!\nID: " << comp->getId() << "\n";
+				spaceShipBlue->takeOff();
 				//return WIN;
 			}
 		}
@@ -454,12 +458,6 @@ GAMESTATE Game::Update()
 
 void Game::Render()
 {
-
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->draw();
-	}
-
 	//Render shadow maps
 	basicRenderer.lightPrePass();
 	drawShadows();
@@ -483,7 +481,10 @@ void Game::Render()
 	{
 		this->items[i]->drawIcon();
 	}
-	this->currentPlayer->drawIcon();
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->drawIcon();
+	}
 	this->spaceShipRed->drawQuad();
 	this->spaceShipBlue->drawQuad();
 
@@ -494,9 +495,12 @@ void Game::Render()
 	{
 		this->items[i]->drawParticles();
 	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->drawParticles();
+	}
 	this->spaceShipRed->drawParticles();
 	this->spaceShipBlue->drawParticles();
-	this->currentPlayer->drawParticles();
 	basicRenderer.geometryUnbind();
 
 

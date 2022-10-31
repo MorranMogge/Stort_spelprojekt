@@ -62,6 +62,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 			compData = circularBuffer->readData<ComponentData>();
 			componentVector[compData->ComponentId]->setPos(DirectX::XMFLOAT3(compData->x, compData->y, compData->z));
+			componentVector[compData->ComponentId]->getPhysComp()->setRotation(compData->quat);
 			//std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
 			break;
 

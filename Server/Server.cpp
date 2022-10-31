@@ -499,6 +499,7 @@ int main()
 				compData.x = components[i].getposition('x');
 				compData.y = components[i].getposition('y');
 				compData.z = components[i].getposition('z');
+				compData.quat = components[i].getPhysicsComponent()->getRotation();
 				//if its in use by a player it will get the players position
 
 				

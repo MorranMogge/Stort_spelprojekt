@@ -29,6 +29,7 @@ struct ComponentData
 	float x;
 	float y;
 	float z;
+	reactphysics3d::Quaternion quat;
 };
 
 //enum = 6

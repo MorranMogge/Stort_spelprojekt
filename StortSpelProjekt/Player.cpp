@@ -830,6 +830,11 @@ void Player::drawParticles()
 	}
 }
 
+int Player::getTeam() const
+{
+	return this->team;
+}
+
 DirectX::XMVECTOR Player::getUpVec() const
 {
 	return this->normalVector;

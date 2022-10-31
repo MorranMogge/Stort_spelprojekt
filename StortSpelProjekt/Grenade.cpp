@@ -95,6 +95,28 @@ void Grenade::drawParticles()
 	if (destructionIsImminent)
 	{
 		this->particles->BindAndDraw(0);
+
+
+
+		currentTime += this->timer2.getDt();
+		static int frame = 0;
+		if (currentTime >= 1)
+		{
+			currentTime -= 1;
+			frame = 15;
+		}
+
+		if (frame != 0)
+		{
+			frame--;
+			std::cout << currentTime << std::endl;
+			this->mesh->matKey[0] = "Red.png";
+		}
+		else
+		{
+			this->mesh->matKey[0] = "Default";
+		}
+		timer2.resetStartTime();
 	}
 	else
 	{
@@ -112,7 +134,9 @@ void Grenade::useItem()
 {
 	if (!this->destructionIsImminent)
 	{
+		
 		this->destructionIsImminent = true;
 		timer.resetStartTime();
+		timer2.resetStartTime();
 	}
 }

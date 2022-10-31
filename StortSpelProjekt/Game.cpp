@@ -301,10 +301,15 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 		this->client->setClientId(playerId);
 		int offset = 10;
+		int dude = NROFPLAYERS / 2;
+
+		int newNrOfPlayer = NROFPLAYERS;
+		int tempTeam = 0;
 		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
 		{
+			tempTeam = i < (newNrOfPlayer / 2);
 			Player* tmpPlayer = nullptr;
-			if (i <= (NROFPLAYERS / 2))//team 1
+			if (dude > i)//team 1
 			{
 				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, 0, &planetGravityField);
 			}
@@ -321,7 +326,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			else
 			{
 				currentPlayer->setOnlineID(i);
-				currentPlayer->setTeam(i / 2);
+				currentPlayer->setTeam((int)(dude > i));
 				players.push_back(currentPlayer);
 				delete tmpPlayer;
 			}

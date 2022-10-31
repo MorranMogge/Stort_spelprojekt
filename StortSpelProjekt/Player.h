@@ -78,6 +78,7 @@ public:
 	void drawIcon();
 	void drawParticles();
 
+	int getTeam() const;
 	DirectX::XMVECTOR getUpVec() const;
 	DirectX::XMVECTOR getForwardVec() const;
 	DirectX::XMVECTOR getRightVec() const;

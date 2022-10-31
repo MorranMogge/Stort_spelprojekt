@@ -21,6 +21,7 @@ void GuiHandler::SpritePass()
 	credits.Draw();
 	exit.Draw();
 	control.Draw();
+	objective.Draw();
 
 }
 
@@ -134,6 +135,10 @@ GuiHandler::GuiHandler()
 	control = GUISprite(310, 225);
 	control.Load(GPU::device, L"../Sprites/control.png");
 	control.SetScale(0.75, 0.75);
+
+	objective = GUISprite(310, 560);
+	objective.Load(GPU::device, L"../Sprites/Objective.png");
+	objective.SetScale(0.75, 0.75);
 
 	gameState = NOCHANGE;
 }

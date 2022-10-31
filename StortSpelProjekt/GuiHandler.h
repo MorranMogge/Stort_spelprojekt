@@ -12,6 +12,7 @@ class GuiHandler final
 	GUISprite credits;
 	GUISprite exit;
 	GUISprite control;
+	GUISprite objective;
 
 	bool isLoading = false;
 	GUISprite Loading;

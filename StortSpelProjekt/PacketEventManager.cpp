@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "PacketEventManager.h"
+#include "BaseballBat.h"
 
 PacketEventManager::PacketEventManager()
 {
@@ -10,7 +11,8 @@ PacketEventManager::~PacketEventManager()
 }
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int &NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
-	std::vector<Component *>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject *>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips)
+	std::vector<Component *>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject *>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips
+	, std::vector<Item*>& onlineItems)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -26,6 +28,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	ComponentAdded* compAdded = nullptr;
 	SpaceShip* newSpaceShip = nullptr;
 	Item* item = nullptr;
+	BaseballBat* baseballbat = nullptr;
 
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{
@@ -105,13 +108,27 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::ITEMSPAWN:
 
 			itemSpawn = circularBuffer->readData<ItemSpawn>();
+			baseballbat = new BaseballBat("../Meshes/rocket", DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
+				DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), itemSpawn->itemId, itemSpawn->itemId, field);
+			physWorld.addPhysComponent(baseballbat);
+			onlineItems.push_back(baseballbat);
 
-			std::cout << "item test: " << std::to_string(itemSpawn->itemId) << std::endl;
+			std::cout << "item spawned: " << std::to_string(itemSpawn->itemId) << std::endl;
 			break;
 
 		case PacketType::ITEMPOSITION:
 			itemPosData = circularBuffer->readData<itemPosition>();
-			std::cout << "item pos data\n";
+			//std::cout << "item pos, item id: " << std::to_string(itemPosData->itemId) << std::endl;
+			for (int i = 0; i < onlineItems.size(); i++)
+			{
+				//std::cout << "vector item id: " << std::to_string(onlineItems[i]->getOnlineId()) << ", recv Data itemid: " << std::to_string(itemPosData->itemId) << std::endl;
+				if (onlineItems[i]->getOnlineId() == itemPosData->itemId)
+				{
+					onlineItems[i]->setPos(DirectX::XMFLOAT3(itemPosData->x, itemPosData->y, itemPosData->z));
+					break;
+				}
+
+			}
 			break;
 		case PacketType::PLAYERHIT:
 			playerHit = circularBuffer->readData<PlayerHit>();

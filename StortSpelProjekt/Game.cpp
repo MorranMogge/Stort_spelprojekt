@@ -157,6 +157,11 @@ void Game::updateBuffers()
 	{
 		gameObjects[i]->updateBuffer();
 	}
+	
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		onlineItems[i]->updateBuffer();
+	}
 
 	//Update Wireframe buffer
 	ZeroMemory(&subData, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -192,7 +197,7 @@ void Game::handleKeybinds()
 	}
 	if (Input::KeyPress(KeyCode::O))
 	{
-		drawDebug = false;
+drawDebug = false;
 	}
 	if (Input::KeyPress(KeyCode::K))
 	{
@@ -200,10 +205,10 @@ void Game::handleKeybinds()
 	}
 }
 
-DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3 &position)
+DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3& position)
 {
 	using namespace DirectX; using namespace SimpleMath;
-	
+
 	//Modified vectors
 	XMVECTOR upVector = (planetGravityField.calcGravFactor(position) * -1);
 	XMVECTOR forwardVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -227,7 +232,7 @@ DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3 &posit
 		resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, resultVector);
 		rotation *= DirectX::XMMatrixRotationAxis(rightVector, resultVector.x);
 	}
-	
+
 	//Z-Rotation
 	resultVector = DirectX::XMVector3Dot(upVector, rightVector);
 	if (resultVector.z < 0.0f)
@@ -244,7 +249,7 @@ DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3 &posit
 		resultVector = DirectX::XMVector3AngleBetweenNormals(rightVector, resultVector);
 		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -resultVector.z);
 	}
-	
+
 	//Extracting rotation
 	Quaternion quaterRot = Quaternion::CreateFromRotationMatrix(rotation);
 	Vector3 finalRotation = quaterRot.ToEuler();
@@ -261,7 +266,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	this->packetEventManager = new PacketEventManager();
 	//m�ste raderas******************
-	client = new Client("192.168.43.241");
+	client = new Client("192.168.43.251");
 	circularBuffer = client->getCircularBuffer();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -269,12 +274,12 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->setUpWireframe();
 
 	//camera.updateCamera(immediateContext);
-	ltHandler.addLight(DirectX::XMFLOAT3(-90, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 1, 0),1);
+	ltHandler.addLight(DirectX::XMFLOAT3(-90, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 1);
 	ltHandler.addLight(DirectX::XMFLOAT3(50, 30, 0), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 0);
 	ltHandler.addLight(DirectX::XMFLOAT3(10, -50, 30), DirectX::XMFLOAT3(0, 0, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 
 	//Particle test
-	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
+	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2, 5)));
 
 	if (IFONLINE)
 	{
@@ -291,7 +296,15 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		int offset = 10;
 		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
 		{
-			Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, &planetGravityField);
+			Player* tmpPlayer = nullptr;
+			if (i <= (NROFPLAYERS / 2))//team 1
+			{
+				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, &planetGravityField);
+			}
+			else//team 2
+			{
+				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, &planetGravityField);
+			}
 			if (playerId != i)
 			{
 				tmpPlayer->setOnlineID(i);
@@ -388,7 +401,7 @@ GAMESTATE Game::Update()
 	}
 
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, &planetGravityField, spaceShips);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, &planetGravityField, spaceShips, onlineItems);
 	
 	
 	//Physics related functions
@@ -402,6 +415,10 @@ GAMESTATE Game::Update()
 		players[i]->update();
 	}
 
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		onlineItems[i]->update();
+	}
 
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
@@ -453,6 +470,11 @@ void Game::Render()
 	basicRenderer.skyboxPrePass();
 	this->skybox.draw();
 	basicRenderer.depthUnbind();
+
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		onlineItems[i]->draw();
+	}
 
 	//Render imgui & wireframe
 	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);

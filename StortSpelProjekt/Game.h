@@ -8,7 +8,7 @@ struct wirefameInfo
 	float padding;
 };
 
-const int NROFPLAYERS = 2;
+const int NROFPLAYERS = 1;
 static bool IFONLINE = true;
 
 class Game : public State
@@ -47,6 +47,7 @@ private:
 
 	PacketEventManager* packetEventManager;
 	std::vector<Player*> players;
+	std::vector<Item*> onlineItems;
 
 	//variables to handle packets
 	CircularBufferClient* circularBuffer;

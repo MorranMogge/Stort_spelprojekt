@@ -19,7 +19,7 @@
 #include "DirectXMathHelper.h"
 #include "TimeStruct.h"
 
-const short MAXNUMBEROFPLAYERS = 2;
+const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
 
 struct userData
@@ -205,6 +205,7 @@ void sendBinaryDataOnePlayer(const T& data, userData& user)
 
 int main()
 {
+	int itemid = 0;
 	int counting = 0;
 	bool once = false;
 	TimeStruct physicsTimer;
@@ -322,6 +323,7 @@ int main()
 			ComponentData* compData = nullptr;
 			PositionRotation* prMatrixData = nullptr;
 			PlayerHit* playerHit = nullptr;
+			itemPosition* itemPos = nullptr;
 
 			switch (packetId)
 			{
@@ -399,6 +401,39 @@ int main()
 				playerHit = circBuffer->readData<PlayerHit>();
 				sendBinaryDataOnePlayer<PlayerHit>(*playerHit, data.users[playerHit->playerId]);
 				data.users[playerHit->playerId].playa.playerGotHit(reactphysics3d::Vector3(playerHit->xForce, playerHit->yForce, playerHit->zForce));
+				break;
+
+			case PacketType::ITEMPOSITION:
+				itemPos = circBuffer->readData<itemPosition>();
+
+				for (int i = 0; i < items.size(); i++)
+				{
+					//First check which component
+					if (i == itemPos->itemId && items[i].getInUseById() != itemPos->inUseBy)
+					{
+						for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
+						{
+							if (itemPos->inUseBy == data.users[j].playerId && items[i].getInUseById() == -1)
+							{
+								items[i].setInUseBy(itemPos->inUseBy);
+								//components[i].setPosition(compData->x, compData->y, compData->z);
+								//components[i].setInUseBy(compData->inUseBy);
+							}
+							else if (itemPos->inUseBy == -1)
+							{
+								items[i].setInUseBy(-1);
+								items[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
+								items[i].setPosition(compData->x, compData->y, compData->z);
+								items[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
+							}
+
+						}
+					}
+
+				}
+
+				break;
+
 			}
 
 			
@@ -429,20 +464,22 @@ int main()
 		//skickar itemSpawn
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
 		{
-			/*ItemSpawn itemSpawnData;
-			DirectX::XMFLOAT3 temp = randomizeObjectPos();
+			//ItemSpawn itemSpawnData;
+			//DirectX::XMFLOAT3 temp = randomizeObjectPos();
+			//itemSpawnData.x = temp.x;
+			//itemSpawnData.y = temp.y;
+			//itemSpawnData.z = temp.z;
+			//itemSpawnData.itemId = itemid++;
+			//std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
+			//itemSpawnData.packetId = PacketType::ITEMSPAWN;
+			//itemSpawnData.inUseBy = -1;
 
-			itemSpawnData.x = temp.x;
-			itemSpawnData.y = temp.y;
-			itemSpawnData.z = temp.z;
-
-			itemSpawnData.itemId = items.size();
-			itemSpawnData.packetId = PacketType::ITEMSPAWN;
-			itemSpawnData.inUseBy = -1;
-			
-			items.push_back(Component());
-			itemSpawnTimer = std::chrono::system_clock::now();
-			sendBinaryDataAllPlayers(itemSpawnData, data);*/
+			//items.push_back(Component());
+			//physWorld.addPhysComponent(items[items.size() - 1]);
+			//items[items.size() - 1].setPosition(temp.x, temp.y, temp.z);;
+			//items[items.size() - 1].setInUseBy(-1);
+			//sendBinaryDataAllPlayers(itemSpawnData, data);
+			//itemSpawnTimer = std::chrono::system_clock::now();
 		}
 
 		

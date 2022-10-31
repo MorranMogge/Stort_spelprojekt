@@ -66,6 +66,7 @@ int Item::getOnlineId() const
 {
 	return onlineId;
 }
+
 void Item::update()
 {
 	//Update movement

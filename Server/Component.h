@@ -11,6 +11,8 @@ private:
 	float zPos;
 	PhysicsComponent* physComp;
 
+
+	int onlineId;
 	int inUseBy;
 	bool active;
 public:

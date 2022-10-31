@@ -31,6 +31,7 @@ void Player::handleItems()
 		//allocates data to be sent
 		ComponentData c;
 		c.ComponentId = this->getItemOnlineId();
+		std::cout << c.ComponentId << "\n";
 		c.inUseBy = -1;
 		c.packetId = PacketType::COMPONENTPOSITION;
 		c.x = this->getPos().x;
@@ -702,6 +703,15 @@ void Player::releaseItem()
 {
 	if (this->holdingItem != nullptr)
 	{
+		ComponentData newData;
+		newData.packetId = PacketType::COMPONENTPOSITION;
+		newData.ComponentId = this->getItemOnlineId();
+		newData.inUseBy = -1;
+		newData.x = this->holdingItem->getPosV3().x;
+		newData.y = this->holdingItem->getPosV3().y;
+		newData.z = this->holdingItem->getPosV3().z;
+		client->sendStuff<ComponentData>(newData);
+
 		this->holdingItem->setPickedUp(false);
 		this->holdingItem = nullptr;
 	}
@@ -863,6 +873,11 @@ reactphysics3d::Vector3 Player::getRayCastPos() const
 	returnValue = this->position;
 	returnValue += this->normalVector * -1.5f;
 	return reactphysics3d::Vector3(returnValue.x, returnValue.y, returnValue.z);
+}
+
+Item* Player::getItem()const
+{
+	return this->holdingItem;
 }
 
 int Player::getOnlineID() const

@@ -51,7 +51,7 @@ void PhysicsWorld::update(const float& dt)
 
 void PhysicsWorld::addForceToObjects(const float& dt)
 {
-	float constant = 100.f;
+	float constant = 10.f;
 	for (int i = 0; i < this->physObjects.size(); i++)
 	{
 		temp = this->physObjects[i]->getPosition();

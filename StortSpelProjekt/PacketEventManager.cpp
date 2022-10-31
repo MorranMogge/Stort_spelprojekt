@@ -25,7 +25,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	SpaceShipPosition* spaceShipPos = nullptr;
 	ComponentAdded* compAdded = nullptr;
 	SpaceShip* newSpaceShip = nullptr;
-	
+	Item* item = nullptr;
+
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{
 		int packetId = circularBuffer->peekPacketId();
@@ -119,7 +120,6 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::SPACESHIPPOSITION:
 			spaceShipPos = circularBuffer->readData<SpaceShipPosition>();
 			//Create correct spaceship depending on team
-			//TO BE CHANGED WHEN MERGING SINCE SPACESHIP HAS NEW CONSTRUCTOR
 			newSpaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, DirectX::SimpleMath::Vector3(2, 2, 2), 4);
 			spaceShips.push_back(newSpaceShip);
 			gameObjects.push_back(newSpaceShip);
@@ -137,6 +137,29 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				{
 					//Update hud or whatever
 					spaceShips[i]->addComponent();
+				}
+			}
+			for (int i = 0; i < players.size(); i++)
+			{
+				item = players[i]->getItem();
+				if (item)
+				{
+					DirectX::SimpleMath::Vector3 randomPos = {};
+
+					int xPos = rand() % 201 - 100;
+					int yPos = rand() % 201 - 100;
+					int zPos = rand() % 201 - 100;
+
+					randomPos.x = xPos;
+					randomPos.y = yPos;
+					randomPos.z = zPos;
+
+					randomPos.Normalize();
+					randomPos *= 100;
+
+					item->setPos(randomPos);
+					players[i]->releaseItem();
+
 				}
 			}
 			break;

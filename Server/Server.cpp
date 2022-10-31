@@ -206,6 +206,7 @@ void sendBinaryDataOnePlayer(const T& data, userData& user)
 int main()
 {
 	int counting = 0;
+	bool once = false;
 	TimeStruct physicsTimer;
 	PhysicsWorld physWorld;
 	Component planetComp;
@@ -310,7 +311,6 @@ int main()
 		{
 			physWorld.update(tempDt/10.f);
 		}*/
-		physWorld.update(physicsTimer.getDt());
 
 		physicsTimer.resetStartTime();
 
@@ -363,10 +363,35 @@ int main()
 			case PacketType::COMPONENTPOSITION:
 				compData = circBuffer->readData<ComponentData>();
 				//std::cout << "Received componentData\n";
-				for (int i = 0; i < components.size(); i++)
+				/*for (int i = 0; i < components.size(); i++)
 				{
 					components[i].setPosition(compData->x, compData->y, compData->z);
 					components[i].setInUseBy(compData->inUseBy);
+				}*/
+				for (int i = 0; i < components.size(); i++)
+				{
+					//First check which component
+					if (i == compData->ComponentId && components[i].getInUseById() != compData->inUseBy)
+					{
+						for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
+						{
+							if (compData->inUseBy == data.users[j].playerId && components[i].getInUseById() == -1)
+							{
+								components[i].setInUseBy(compData->inUseBy);
+								//components[i].setPosition(compData->x, compData->y, compData->z);
+								//components[i].setInUseBy(compData->inUseBy);
+							}
+							else if (compData->inUseBy == -1)
+							{
+								components[i].setInUseBy(-1);
+								components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
+								components[i].setPosition(compData->x, compData->y, compData->z);
+								components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
+							}
+							
+						}
+					}
+
 				}
 				break;
 
@@ -390,7 +415,7 @@ int main()
 		}
 
 		//spawns a component when the timer is done
-		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)// && !once)
 		{
 			SpawnComponent cData = SpawnOneComponent(components);
 			physWorld.addPhysComponent(components[components.size() - 1]);
@@ -398,6 +423,7 @@ int main()
 			//std::cout << "componentId: " << std::to_string(cData.ComponentId) << std::endl;
 			sendBinaryDataAllPlayers(cData, data);
 			startComponentTimer = std::chrono::system_clock::now();
+			once = true;
 		}
 
 		//skickar itemSpawn
@@ -419,39 +445,44 @@ int main()
 			sendBinaryDataAllPlayers(itemSpawnData, data);*/
 		}
 
-		for (int i = 0; i < components.size(); i++)
-		{
-			for (int j = 0; j < spaceShipPos.size(); j++)
-			{
-				//if (!components[i].getActiveState()) continue;
-				static DirectX::XMFLOAT3 vecToComp;
-				static DirectX::XMFLOAT3 objPos;
-				vecToComp = spaceShipPos[j];
-				objPos = components[i].getPhysicsComponent()->getPosV3();
-				subtractionXMFLOAT3(vecToComp, objPos);
-				if (getLength(vecToComp) <= 10.f)
-				{
-					//components[i].setInactive();
-					DirectX::XMFLOAT3 newCompPos = randomizeObjectPos();
-					components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
-					components[i].setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
-					components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
-					ComponentAdded compAdded;
-					compAdded.packetId = PacketType::COMPONENTADDED;
-					compAdded.spaceShipTeam = j;
-					sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
-				}
-			}
-		}
-		counting++;
+		
 		//sends data based on the server tickrate
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
 		{
-			/*for (int i = 0; i < 30; i++)
+			for (int i = 0; i < 10; i++)
 			{
-				physWorld.update(timerLength/30.f);
+				physWorld.update(timerLength/10.f);
 
-			}*/
+			}
+
+			counting++;
+
+			for (int i = 0; i < components.size(); i++)
+			{
+				for (int j = 0; j < spaceShipPos.size(); j++)
+				{
+					//if (!components[i].getActiveState()) continue;
+					static DirectX::XMFLOAT3 vecToComp;
+					static DirectX::XMFLOAT3 objPos;
+					vecToComp = spaceShipPos[j];
+					objPos = components[i].getPhysicsComponent()->getPosV3();
+					subtractionXMFLOAT3(vecToComp, objPos);
+					if (getLength(vecToComp) <= 10.f)
+					{
+						//components[i].setInactive();
+						DirectX::XMFLOAT3 newCompPos = randomizeObjectPos();
+						components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
+						components[i].setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
+						components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
+						ComponentAdded compAdded;
+						compAdded.packetId = PacketType::COMPONENTADDED;
+						compAdded.spaceShipTeam = j;
+						sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
+					}
+				}
+			}
+			
+			
 			//physWorld.update(timerLength);
 
 			//f�r varje spelare s� skicka deras position till alla klienter
@@ -519,6 +550,8 @@ int main()
 			}
 
 			start = std::chrono::system_clock::now();
+
+			
 		}
 		
 	}

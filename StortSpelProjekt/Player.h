@@ -90,6 +90,7 @@ public:
 	DirectX::XMVECTOR getRightVec() const;
 	DirectX::XMMATRIX getRotationMX();
 	reactphysics3d::Vector3 getRayCastPos()const;
+	Item* getItem()const;
 	int getOnlineID()const;
 
 	void setSpeed(float speed);

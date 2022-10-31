@@ -15,6 +15,8 @@ Light::Light(const DirectX::XMFLOAT3 &lightColor, const DirectX::XMFLOAT3 &light
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.5f, 0.5f, 0.0f, 1.0f);
 	
+	
+
 	DirectX::XMMATRIX viewM = DirectX::XMMatrixLookAtLH(pos, focusPos, upPos);
 	
 	DirectX::SimpleMath::Vector3 lightDir = DirectX::SimpleMath::Vector3(position) - direction;

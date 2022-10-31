@@ -10,10 +10,10 @@ private:
 	DirectX::XMFLOAT3 position;
 	ConstantBufferNew<cameraStruct> cameraBuffer;
 	ConstantBufferNew<posStruct> positionBuffer;
+	ConstantBufferNew<posStruct> upVectorBuffer;
 
 	DirectX::XMMATRIX viewMatrix;
 	DirectX::XMMATRIX projMatrix;
-	DirectX::XMMATRIX rotationMX;
 	DirectX::XMVECTOR cameraPos = DirectX::XMVectorSet(0.0f, 0.0f, -25.0f, 0.0f);
 	DirectX::XMVECTOR lookAtPos = DirectX::XMVectorSet(0.0f, 0.0f, -20.0f, 0.0f);
 
@@ -30,7 +30,8 @@ public:
 	~Camera();
 
 	void updateCamera();
-	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMFLOAT4X4& playerRotation, float deltaTime);
+	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation);
+	void winScene(const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation);
 	DirectX::XMVECTOR getForwardVector() const;
 	DirectX::XMVECTOR getRightVector() const;
 	ID3D11Buffer* getViewBuffer();
@@ -42,4 +43,6 @@ public:
 	void PSbindViewBuffer(const int& slot);
 	void GSbindPositionBuffer(const int& slot);
 	void GSbindViewBuffer(const int& slot);
+	void GSbindUpBuffer(const int& slot);
+	void CSbindUpBuffer(const int& slot);
 };

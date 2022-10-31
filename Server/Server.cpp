@@ -16,6 +16,8 @@
 #include "Component.h"
 #include "SpawnComponent.h"
 #include "RandomizeSpawn.h"
+#include "DirectXMathHelper.h"
+#include "TimeStruct.h"
 
 const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
@@ -203,6 +205,8 @@ void sendBinaryDataOnePlayer(const T& data, userData& user)
 
 int main()
 {
+	int counting = 0;
+	TimeStruct physicsTimer;
 	PhysicsWorld physWorld;
 	Component planetComp;
 	physWorld.addPhysComponent(planetComp, reactphysics3d::CollisionShapeName::SPHERE, DirectX::XMFLOAT3(40, 40, 40));
@@ -211,6 +215,10 @@ int main()
 	std::string identifier;
 	std::string s = "empty";
 	// Group the variables to send into a packet
+
+	std::vector<DirectX::XMFLOAT3> spaceShipPos;
+	spaceShipPos.emplace_back(DirectX::XMFLOAT3(20, 29, 20));
+	spaceShipPos.emplace_back(getScalarMultiplicationXMFLOAT3(-1.f, spaceShipPos[0]));
 
 
 	std::cout << "Nr of players for the game: " << std::to_string(MAXNUMBEROFPLAYERS) << std::endl;
@@ -261,6 +269,19 @@ int main()
 
 	sendIdToAllPlayers(data);
 
+	//Sends information about the space ships to the clients
+	for (int i = 0; i < spaceShipPos.size(); i++)
+	{
+		SpaceShipPosition spaceShipData;
+		spaceShipData.packetId = PacketType::SPACESHIPPOSITION;
+		spaceShipData.spaceShipTeam = i;
+		spaceShipData.x = spaceShipPos[i].x;
+		spaceShipData.y = spaceShipPos[i].y;
+		spaceShipData.z = spaceShipPos[i].z;
+		sendBinaryDataAllPlayers<SpaceShipPosition>(spaceShipData, data);
+	}
+	
+
 	CircularBuffer* circBuffer = new CircularBuffer();
 	std::thread* recvThread[MAXNUMBEROFPLAYERS];
 	threadInfo threadData[MAXNUMBEROFPLAYERS];
@@ -284,8 +305,18 @@ int main()
 	itemSpawnTimer = std::chrono::system_clock::now();
 
 	std::cout << "Starting while loop! \n";
+	physicsTimer.resetStartTime();
 	while (true)
 	{
+		/*static float tempDt;
+		tempDt = physicsTimer.getDt();
+		for (int i = 0; i < 10; i++)
+		{
+			physWorld.update(tempDt/10.f);
+		}*/
+		physWorld.update(physicsTimer.getDt());
+
+		physicsTimer.resetStartTime();
 
 		while (circBuffer->getIfPacketsLeftToRead())
 		{
@@ -452,16 +483,41 @@ int main()
 			itemSpawnTimer = std::chrono::system_clock::now();*/
 		}
 
-
-
+		for (int i = 0; i < components.size(); i++)
+		{
+			for (int j = 0; j < spaceShipPos.size(); j++)
+			{
+				//if (!components[i].getActiveState()) continue;
+				static DirectX::XMFLOAT3 vecToComp;
+				static DirectX::XMFLOAT3 objPos;
+				vecToComp = spaceShipPos[j];
+				objPos = components[i].getPhysicsComponent()->getPosV3();
+				subtractionXMFLOAT3(vecToComp, objPos);
+				if (getLength(vecToComp) <= 10.f)
+				{
+					//components[i].setInactive();
+					DirectX::XMFLOAT3 newCompPos = randomizeObjectPos();
+					components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
+					components[i].setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
+					components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
+					ComponentAdded compAdded;
+					compAdded.packetId = PacketType::COMPONENTADDED;
+					compAdded.spaceShipTeam = j;
+					sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
+				}
+			}
+		}
+		counting++;
 		//sends data based on the server tickrate
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > servertimerLength)
 		{
-			for (int i = 0; i < 10; i++)
+			/*for (int i = 0; i < 30; i++)
 			{
 				physWorld.update(servertimerLength / 10.f);
+				physWorld.update(timerLength/30.f);
 
-			}
+			}*/
+			//physWorld.update(timerLength);
 
 			//f�r varje spelare s� skicka deras position till alla klienter
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
@@ -495,6 +551,7 @@ int main()
 				compData.x = components[i].getposition('x');
 				compData.y = components[i].getposition('y');
 				compData.z = components[i].getposition('z');
+				compData.quat = components[i].getPhysicsComponent()->getRotation();
 				//if its in use by a player it will get the players position
 				//std::cout << "components " << std::to_string(components[i].getOnlineId()) << ", in useby: " << std::to_string(components[i].getInUseById()) << std::endl;
 				

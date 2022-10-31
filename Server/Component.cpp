@@ -6,6 +6,7 @@ Component::Component()
 	yPos = 30.0f;
 	zPos = 40.0f;
 	inUseBy = -1;
+	active = true;
 }
 
 float Component::getposition(char whichPos) const
@@ -30,6 +31,11 @@ float Component::getposition(char whichPos) const
 	}
 }
 
+DirectX::XMFLOAT3 Component::getPosXMFLOAT3() const
+{
+	return DirectX::XMFLOAT3(xPos, yPos, zPos);
+}
+
 int Component::getInUseById() const
 {
 	return this->inUseBy;
@@ -48,6 +54,16 @@ PhysicsComponent* Component::getPhysicsComponent() const
 void Component::setOnlineId(long id)
 {
 	this->onlineId = id;
+}
+
+bool Component::getActiveState() const
+{
+	return this->active;
+}
+
+void Component::setInactive()
+{
+	this->active = false;
 }
 
 void Component::setPhysCompServer(PhysicsComponent* physComp)

@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+#include <reactphysics3d/reactphysics3d.h>
 
 //enum = 3
 struct PositionRotation
@@ -29,6 +30,7 @@ struct ComponentData
 	float x;
 	float y;
 	float z;
+	reactphysics3d::Quaternion quat;
 };
 
 //enum = 6
@@ -98,6 +100,23 @@ struct SpawnComponent
 	float x;
 	float y;
 	float z;
+};
+
+//enum = 14
+struct SpaceShipPosition
+{
+	int packetId;
+	int spaceShipTeam;
+	float x;
+	float y;
+	float z;
+};
+
+//enum = 15
+struct ComponentAdded
+{
+	int packetId;
+	int spaceShipTeam;
 };
 
 //enum = 21

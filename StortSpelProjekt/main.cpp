@@ -17,6 +17,7 @@
 
 #include "SettingsMenu.h"
 #include "CreditsMenu.h"
+#include "WinMenu.h"
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace, _In_ LPWSTR lpCmdLine, _In_ int nCmdShhow)
@@ -100,6 +101,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			case CREDITS:
 				delete currentState;
 				currentState = new CreditsMenu();
+				break;
+			case WIN:
+				delete currentState;
+				currentState = new WinMenu();
 				break;
 			case MENU:
 				delete currentState;

@@ -17,8 +17,7 @@ private:
 	ID3D11DeviceContext* immediateContext;
 
 	ImGuiHelper imGui;
-
-	bool wireframe = true;
+	bool wireframe = false;
 	bool objectDraw = true;
 	bool drawDebug = true;
 	wirefameInfo reactWireframeInfo;
@@ -60,8 +59,10 @@ private:
 	SpaceShip* spaceShip;
 	Potion* potion;			//not in use
 	BaseballBat* testBat;
+	Grenade* grenade;
 	std::vector<Component*> components;
 	std::vector<Item*> onlineItems;
+	std::vector<SpaceShip*> spaceShips;
 
 	LightHandler ltHandler;
 	ImGuiHelper* imguiHelper;
@@ -69,8 +70,11 @@ private:
 
 	//Objects
 	std::vector<GameObject*> gameObjects;
+	std::vector<Item*> items;
 	std::vector<ParticleEmitter> ptEmitters;
 	
+	//HUD
+	HudUI ui;
 	
 
 	void loadObjects();

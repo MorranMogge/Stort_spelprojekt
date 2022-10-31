@@ -19,7 +19,7 @@ private:
 
 	void sendForceToServer(const DirectX::SimpleMath::Vector3& hitForce, const int& playerID);
 public:
-	BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId);
+	BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field = nullptr);
 	~BaseballBat();
 
 	void setPlayer(Player* player);

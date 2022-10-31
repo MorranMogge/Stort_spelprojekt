@@ -18,7 +18,7 @@ PhysicsWorld::PhysicsWorld(std::string worldName)
 {
 	// Create the world settings 
 	reactphysics3d::PhysicsWorld::WorldSettings settings;
-	settings.defaultVelocitySolverNbIterations = 20;
+	settings.defaultVelocitySolverNbIterations = 10;
 	settings.isSleepingEnabled = false;
 	settings.worldName = worldName;
 	settings.isSleepingEnabled = true;
@@ -51,7 +51,7 @@ void PhysicsWorld::update(const float& dt)
 
 void PhysicsWorld::addForceToObjects(const float& dt)
 {
-	float constant = 0.25f;
+	float constant = 100.f;
 	for (int i = 0; i < this->physObjects.size(); i++)
 	{
 		temp = this->physObjects[i]->getPosition();

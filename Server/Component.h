@@ -13,17 +13,21 @@ private:
 	long onlineId;
 
 	int inUseBy;
+	bool active;
 public:
 	Component();
 
 	//skicka in char 'x', 'y' eller 'z'
 	float getposition(char whichPos)const;
+	DirectX::XMFLOAT3 getPosXMFLOAT3()const;
 	int getInUseById()const;
 	long getOnlineId()const;
 	
 	PhysicsComponent* getPhysicsComponent()const;
+	bool getActiveState()const;
 
 	void setOnlineId(long id);
+	void setInactive();
 	void setPhysCompServer(PhysicsComponent* physComp);
 	void setInUseBy(const int inUseById);
 	void setPosition(float pos[3]);

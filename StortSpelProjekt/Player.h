@@ -2,14 +2,14 @@
 
 #include "GameObject.h"
 #include "Input.h"
+#include "BilboardObject.h"
+#include "ParticleEmitter.h"
 #include "Potion.h"
 #include "TimeStruct.h"
 #include "Client.h"
 
 #include <GamePad.h>
 #include <iostream>
-
-
 #define FORCE 2500
 
 class Item;
@@ -52,7 +52,9 @@ private:
 	const float speedConstant = 100.f;
 	int repairCount = 0;
 	Item* holdingItem;
-	int health;
+	bool moveKeyPressed = false;
+	BilboardObject* playerIcon;
+	ParticleEmitter* particles;
 	float speed;
 	bool dedge = false;
 	TimeStruct timer;
@@ -63,10 +65,12 @@ private:
 	float totalPos = 0.0f;
 	float throttle = 0.0f;
 
+	void resetRotationMatrix();
 	void handleItems();
 public:
-	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& grav, Client* client);
-	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& grav, Client* client);
+	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, GravityField* field = nullptr);
+	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, GravityField* field = nullptr);
+	~Player();
 	void handleInputs(); 
 	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime,  const bool& testingVec);
 	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime);
@@ -78,16 +82,19 @@ public:
 
 	void releasePickup();
 
+	void drawIcon(int playerIndex);
+	void drawParticles();
+
 	DirectX::XMVECTOR getUpVec() const;
 	DirectX::XMVECTOR getForwardVec() const;
 	DirectX::XMVECTOR getRightVec() const;
-	DirectX::XMFLOAT4X4 getRotationMX();
+	DirectX::XMMATRIX getRotationMX();
 	reactphysics3d::Vector3 getRayCastPos()const;
 	int getOnlineID()const;
 
+	void setSpeed(float speed);
 	void hitByBat(const reactphysics3d::Vector3& force);
 	void addItem(Item* itemToHold);
-	void addHealth(const int& healthToIncrease);
 	void releaseItem();
 	bool checkForStaticCollision(const std::vector<GameObject*>& gameObjects);
 	bool raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);

@@ -8,7 +8,8 @@ enum GAMESTATE
 	CREDITS,
 	GAME,
 	NOCHANGE,
-	EXIT
+	EXIT,
+	WIN
 };
 
 class State

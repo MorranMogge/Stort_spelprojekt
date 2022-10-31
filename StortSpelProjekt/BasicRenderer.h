@@ -20,6 +20,7 @@ private:
 	ID3D11Texture2D* dsTexture;
 	ID3D11SamplerState* sampler;
 	ID3D11DepthStencilState* dsState;
+	ID3D11DepthStencilState* PT_dsState;
 	
 	ID3D11InputLayout* inputLayout;
 	ID3D11VertexShader* vShader;
@@ -34,6 +35,10 @@ private:
 	ID3D11PixelShader* pt_pShader;
 	ID3D11ComputeShader* pt_UpdateShader;
 	ID3D11GeometryShader* pt_gShader;
+
+	ID3D11VertexShader* bill_vShader;
+	ID3D11PixelShader* bill_pShader;
+	ID3D11GeometryShader* bill_gShader;
 
 	D3D11_VIEWPORT viewport;
 	D3D11_VIEWPORT shadowViewport;
@@ -60,5 +65,7 @@ public:
 	void depthPrePass();
 	void depthUnbind();
 	void skyboxPrePass();
+	void bilboardPrePass(Camera& stageCamera);
 	void bindAmbientShader();
+	void geometryUnbind();
 };

@@ -1,21 +1,18 @@
 #pragma once
 #include "Item.h"
-
-class Player;
+#include "TimeStruct.h"
 
 class Potion : public Item 
 {
 private:
-	Player* playerPtr;
-	int restoringAmount;
+	TimeStruct timer;
+	bool timeToRun = false;
+
 public:
-	Potion(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId);
-	Potion(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId);
-	
-	virtual void useItem() override;
-	int getRestore() const;
-	void setPlayerptr(Player* ptr);
+	Potion(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field = nullptr);
+	Potion(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field = nullptr);
 	virtual ~Potion();
 
-
+	virtual void useItem() override;
+	bool isTimeToRun();
 };

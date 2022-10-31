@@ -11,15 +11,15 @@ void SettingsUI::HandleInputs()
 	if (backText.IntersectMouse())
 	{
 		backText.SetTint(DirectX::Colors::Green.v);
-
-		if (Input::KeyPress(KeyCode::MOUSE_L))
-		{
-			gameState = MENU;
-		}
 	}
 	else
 	{
 		backText.SetTint(DirectX::Colors::White.v);
+	}
+
+	if (Input::KeyPress(KeyCode::MOUSE_L) && backText.GetTint() == DirectX::Colors::Green.v)
+	{
+		gameState = MENU;
 	}
 
 #pragma endregion

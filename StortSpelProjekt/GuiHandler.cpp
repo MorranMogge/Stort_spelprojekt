@@ -123,16 +123,16 @@ GuiHandler::GuiHandler()
 #define upp 60
 #define left 80
 
-	start = GUISprite(1000 - left, 200 - upp);
+	start = GUISprite(1000, 200);
 	start.Load(GPU::device, L"../Sprites/start.png");
 
-	settings = GUISprite(1000 - left, 300 - upp);
+	settings = GUISprite(1000, 300);
 	settings.Load(GPU::device, L"../Sprites/settings.png");
 
-	credits = GUISprite(1000 - left, 400 - upp);
+	credits = GUISprite(1000, 400);
 	credits.Load(GPU::device, L"../Sprites/credit.png");
 
-	exit = GUISprite(1000 - left, 500 - upp);
+	exit = GUISprite(1000, 500);
 	exit.Load(GPU::device, L"../Sprites/exit.png");
 
 	Loading = GUISprite(GPU::windowWidth/ 2.0f, GPU::windowHeight / 2.0f);

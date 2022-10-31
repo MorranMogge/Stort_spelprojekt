@@ -18,8 +18,8 @@ protected:
 	bool pickedUp;
 
 public:
-	Item(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field = nullptr);
-	Item(std::string objectPath, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field = nullptr);
+	Item(Mesh* useMesh,const DirectX::XMFLOAT3 & pos, const DirectX::XMFLOAT3 & rot,const int & id, GravityField* field = nullptr);
+	Item(const std::string & objectPath,const DirectX::XMFLOAT3 & pos,const DirectX::XMFLOAT3 & rot, const int & id, GravityField* field = nullptr);
 	virtual ~Item();
 	virtual void useItem() = 0;
 	virtual void drawIcon();

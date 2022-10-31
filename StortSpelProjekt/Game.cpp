@@ -22,41 +22,10 @@ void Game::loadObjects()
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
 	
-	/*
-	planet = new GameObject("../Meshes/Sphere", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET,nullptr, XMFLOAT3(planetSize, planetSize, planetSize));
-	currentPlayer = new Player("../Meshes/pinto", Vector3(0, 48, 0), orientToPlanet(DirectX::SimpleMath::Vector3(0, 48, 0)), PLAYER, &planetGravityField);
-	potion = new Potion("../Meshes/potion", Vector3(40, 40, 0),Vector3(0.0f, 0.0f, 0.0f), POTION, &planetGravityField);
-	Vector3 shipPos(-7.81178f, -37.8586f, -8.50119f);
-	Vector3 shipPos2(13.5817f,35.9383f, 9.91351f);
-	spaceShipRed = new SpaceShip(shipPos, ROCKET, 0, &planetGravityField, Vector3(2, 2, 2));
-	spaceShipBlue = new SpaceShip(shipPos2, ROCKET, 1, &planetGravityField, Vector3(2, 2, 2));
-	testBat = new BaseballBat("../Meshes/bat", Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, &planetGravityField);
-	testCube = new GameObject("../Meshes/Player", Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
-	//otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), PLAYER, & planetGravityField);
-	component = new Component("../Meshes/component", DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT);
-	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, &planetGravityField);
 	
-	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
-	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
-	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
-	*/
-	//physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
-	//physWolrd.addPhysComponent(component, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
-	//physWolrd.addPhysComponent(spaceShipRed, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3*0.75f, 0.75f));
-	//physWolrd.addPhysComponent(spaceShipBlue, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3 * 0.75f, 0.75f));
 	physWolrd.addPhysComponent(grenade, reactphysics3d::CollisionShapeName::BOX);
 	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-	//spaceShipRed->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-	//spaceShipRed->updatePhysCompRotation();
-	//spaceShipBlue->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-	//spaceShipBlue->updatePhysCompRotation();
-
-
-	//spaceShipRed->getPhysComp()->setPosition(reactphysics3d::Vector3(spaceShipRed->getPosV3().x, spaceShipRed->getPosV3().y, spaceShipRed->getPosV3().z));
-	//spaceShipBlue->getPhysComp()->setPosition(reactphysics3d::Vector3(spaceShipBlue->getPosV3().x, spaceShipBlue->getPosV3().y, spaceShipBlue->getPosV3().z));
-	
-	//randomizeObjectPos(potion);
 	
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	potion->setRot(DirectX::SimpleMath::Vector3(0.0f, 1.5f, 1.5f));
@@ -65,19 +34,8 @@ void Game::loadObjects()
 	gameObjects.emplace_back(planet);
 	gameObjects.emplace_back(currentPlayer);
 	gameObjects.emplace_back(potion);
-	//gameObjects.emplace_back(spaceShipRed);
-	//gameObjects.emplace_back(spaceShipBlue);
 	gameObjects.emplace_back(testBat);
-	//gameObjects.emplace_back(component);
 	gameObjects.emplace_back(grenade);
-
-	//for (int i = 0; i < 10; i++)
-	//{
-	//	GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6+ i, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-	//	physWolrd.addPhysComponent(newObj, reactphysics3d::CollisionShapeName::BOX);
-	//	newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+(float)i*10, 100));
-	//	gameObjects.emplace_back(newObj);
-	//}
 
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	testBat->setPlayer(currentPlayer);
@@ -440,7 +398,7 @@ GAMESTATE Game::Update()
 	
 	
 	//Physics related functions
-	//physWolrd.update(dt);
+	if (!IFONLINE) physWolrd.update(dt);
 	
 	for (int i = 0; i < players.size(); i++)
 	{

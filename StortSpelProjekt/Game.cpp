@@ -363,7 +363,7 @@ GAMESTATE Game::Update()
 	{
 		players[i]->updateBuffer();
 	}
-	
+
 	//Physics related functions
 	physWolrd.update(dt);
 
@@ -434,8 +434,20 @@ GAMESTATE Game::Update()
 		this->items[i]->checkDistance((GameObject*)(currentPlayer));
 	}
 
+
 	//Debug keybinds
 	this->handleKeybinds();
+
+
+	// check if any team has won or lose
+	if (spaceShipRed->getNrOfComponents() >= 1 && currentPlayer->getTeam() == 0)
+	{
+		return WIN;
+	}
+	else if (spaceShipBlue->getNrOfComponents() >= 1 && currentPlayer->getTeam() == 1)
+	{
+		return LOSE;
+	}
 
 	return NOCHANGE;
 }

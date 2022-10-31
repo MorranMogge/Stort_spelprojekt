@@ -357,12 +357,14 @@ int main()
 
 		for (int i = 0; i < components.size(); i++)
 		{
-			//std::cout << "component in useBy: " << std::to_string(components[i].getInUseById()) << std::endl;
-			if (components[i].getInUseById() == data.users[i].playerId)
+			for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
 			{
-				components[i].setPosition(data.users[i].playa.getposition('x'), data.users[i].playa.getposition('y'), data.users[i].playa.getposition('z'));
+				if (components[i].getInUseById() == data.users[j].playerId)
+				{
+					components[i].setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
+				}
 			}
-			//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
+			
 		}
 
 		//spawns a component when the timer is done
@@ -398,14 +400,16 @@ int main()
 			itemSpawnTimer = std::chrono::system_clock::now();
 		}
 
+		for (int i = 0; i < 10; i++)
+		{
+			physWorld.update(servertimerLength / 10.f);
+
+		}
+
 		//sends data based on the server tickrate
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > servertimerLength)
 		{
-			for (int i = 0; i < 10; i++)
-			{
-				physWorld.update(servertimerLength/10.f);
 
-			}
 
 			//f�r varje spelare s� skicka deras position till alla klienter
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
@@ -449,7 +453,7 @@ int main()
 			{
 				itemPosition itemsPosData;
 				itemsPosData.packetId = PacketType::ITEMPOSITION;
-				itemsPosData.itemId = i;
+				itemsPosData.itemId = items[i].getOnlineId();
 				itemsPosData.inUseBy = items[i].getInUseById();
 				itemsPosData.x = items[i].getposition('x');
 				itemsPosData.y = items[i].getposition('y');

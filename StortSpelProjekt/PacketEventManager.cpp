@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "PacketEventManager.h"
+#include "BaseballBat.h"
+
 
 PacketEventManager::PacketEventManager()
 {
@@ -10,7 +12,7 @@ PacketEventManager::~PacketEventManager()
 }
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int &NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
-	std::vector<Component *>& componentVector, PhysicsWorld& physWorld)
+	std::vector<Component *>& componentVector, PhysicsWorld& physWorld, std::vector<Item*>&onlineItems)
 {
 	//handles the online events
 	while (circularBuffer->getIfPacketsLeftToRead())
@@ -25,6 +27,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		itemPosition* itemPosData = nullptr;
 		Component* newComponent = nullptr;
 		PlayerHit* playerHit = nullptr;
+		BaseballBat* newBaseballItem = nullptr;
 
 		switch (packetId)
 		{
@@ -98,13 +101,26 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::ITEMSPAWN:
 
 			itemSpawn = circularBuffer->readData<ItemSpawn>();
+			newBaseballItem = new BaseballBat("../Meshes/Player", DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
+			DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), itemSpawn->itemId, itemSpawn->itemId);
+			physWorld.addPhysComponent(newBaseballItem);
+			onlineItems.push_back(newBaseballItem);
 
 			std::cout << "item spawned: " << std::to_string(itemSpawn->itemId) << std::endl;
 			break;
 
 		case PacketType::ITEMPOSITION:
 			itemPosData = circularBuffer->readData<itemPosition>();
-			//std::cout << "item pos data x: " << std::to_string(itemPosData->x) << std::endl;
+			//std::cout << "item pos, item id: " << std::to_string(itemPosData->itemId) << std::endl;
+			for (int i = 0; i < onlineItems.size(); i++)
+			{
+				if (onlineItems[i]->getOnlineId() == itemPosData->itemId)
+				{
+					onlineItems[i]->setPos(DirectX::XMFLOAT3(itemPosData->x, itemPosData->y, itemPosData->z));
+					break;
+				}
+				
+			}
 			break;
 		
 		case PacketType::PLAYERHIT:

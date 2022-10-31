@@ -14,6 +14,7 @@ public:
 	PacketEventManager();
 	~PacketEventManager();
 
-	void PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId, std::vector<Component*>& compnentVector, PhysicsWorld& physWorld);
+	void PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
+		std::vector<Component*>& compnentVector, PhysicsWorld& physWorld, std::vector<Item*>& onlineItems);
 	int handleId(CircularBufferClient*& circularBuffer);
 };

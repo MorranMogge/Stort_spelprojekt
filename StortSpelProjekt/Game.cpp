@@ -265,7 +265,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	this->packetEventManager = new PacketEventManager();
 	//m�ste raderas******************
-	client = new Client("92.33.144.206");
+	client = new Client("192.168.43.251");
 	circularBuffer = client->getCircularBuffer();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -398,7 +398,7 @@ GAMESTATE Game::Update()
 	}
 
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, onlineItems);
 	
 	
 	//Physics related functions
@@ -416,6 +416,12 @@ GAMESTATE Game::Update()
 	for (int i = 0; i < components.size(); i++)
 	{
   		components[i]->update(); 
+	}
+
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		std::cout << "online item pos: " << std::to_string(onlineItems[i]->getPos().x) << " y: " << std::to_string(onlineItems[i]->getPos().y) << std::endl;
+		onlineItems[i]->update();
 	}
 
 
@@ -458,6 +464,14 @@ GAMESTATE Game::Update()
 
 void Game::Render()
 {
+	//Render shadow maps
+	basicRenderer.lightPrePass();
+	drawShadows();
+	
+	//Render Scene
+	basicRenderer.setUpScene(this->camera);
+	if (objectDraw) drawObjects(drawDebug);
+
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->draw();
@@ -470,13 +484,7 @@ void Game::Render()
 	{
 		onlineItems[i]->draw();
 	}
-	//Render shadow maps
-	basicRenderer.lightPrePass();
-	drawShadows();
-	
-	//Render Scene
-	basicRenderer.setUpScene(this->camera);
-	if (objectDraw) drawObjects(drawDebug);
+
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();

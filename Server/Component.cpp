@@ -6,6 +6,7 @@ Component::Component()
 	yPos = 30.0f;
 	zPos = 40.0f;
 	inUseBy = -1;
+	active = true;
 }
 
 float Component::getposition(char whichPos) const
@@ -43,6 +44,16 @@ int Component::getInUseById() const
 PhysicsComponent* Component::getPhysicsComponent() const
 {
 	return this->physComp;
+}
+
+bool Component::getActiveState() const
+{
+	return this->active;
+}
+
+void Component::setInactive()
+{
+	this->active = false;
 }
 
 void Component::setPhysCompServer(PhysicsComponent* physComp)

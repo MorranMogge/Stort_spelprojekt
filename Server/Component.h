@@ -12,6 +12,7 @@ private:
 	PhysicsComponent* physComp;
 
 	int inUseBy;
+	bool active;
 public:
 	Component();
 
@@ -21,7 +22,9 @@ public:
 	int getInUseById()const;
 	
 	PhysicsComponent* getPhysicsComponent()const;
+	bool getActiveState()const;
 
+	void setInactive();
 	void setPhysCompServer(PhysicsComponent* physComp);
 	void setInUseBy(const int inUseById);
 	void setPosition(float pos[3]);

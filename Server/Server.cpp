@@ -373,7 +373,7 @@ int main()
 			{
 				components[i].setPosition(data.users[i].playa.getposition('x'), data.users[i].playa.getposition('y'), data.users[i].playa.getposition('z'));
 			}
-			std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
+			//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
 		}
 
 		//spawns a component when the timer is done
@@ -408,13 +408,16 @@ int main()
 
 		for (int i = 0; i < components.size(); i++)
 		{
+
 			for (int j = 0; j < spaceShipPos.size(); j++)
 			{
-				static DirectX::XMFLOAT3 vecToComp; 
-				vecToComp = spaceShipPos[j]; 
-				subtractionXMFLOAT3(vecToComp, components[i].getPosXMFLOAT3());
+				if (!components[i].getActiveState()) continue;
+				DirectX::XMFLOAT3 vecToComp = spaceShipPos[j];
+				DirectX::XMFLOAT3 objPos = components[i].getPhysicsComponent()->getPosV3();
+				subtractionXMFLOAT3(vecToComp, objPos);
 				if (getLength(vecToComp) <= 10.f)
 				{
+					components[i].setInactive();
 					ComponentAdded compAdded;
 					compAdded.packetId = PacketType::COMPONENTADDED;
 					compAdded.spaceShipTeam = j;

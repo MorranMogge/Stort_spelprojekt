@@ -121,14 +121,14 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			newSpaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), DirectX::SimpleMath::Vector3(20, 29, 20), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
 			gameObjects.push_back(newSpaceShip);
 			physWorld.addPhysComponent(newSpaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3 * 0.75f, 0.75f));
-			std::cout << "You thought you could create a spaceship hUh?!?!?\nGit gud kid\n";
+			newSpaceShip->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 			break;
 		case PacketType::COMPONENTADDED:
 			compAdded = circularBuffer->readData<ComponentAdded>();
 			SpaceShip* spaceShip = nullptr;
+			std::cout << "Team: " << compAdded->spaceShipTeam << " gained progress!\n";
 			for (int i = 0; i < gameObjects.size(); i++)
 			{
-				std::cout << "Team: " << compAdded->spaceShipTeam << " gained progress!\n";
 				spaceShip = dynamic_cast<SpaceShip*>(gameObjects[i]);
 				if (spaceShip && spaceShip->getId() == compAdded->spaceShipTeam)
 				{

@@ -22,6 +22,8 @@ void GuiHandler::SpritePass()
 	exit.Draw();
 	control.Draw();
 	objective.Draw();
+	useText.Draw();
+	throwText.Draw();
 
 }
 
@@ -135,8 +137,16 @@ GuiHandler::GuiHandler()
 	control = GUISprite(310, 225);
 	control.Load(GPU::device, L"../Sprites/control.png");
 	control.SetScale(0.75, 0.75);
+	
+	useText = GUISprite(320, 420);
+	useText.Load(GPU::device, L"../Sprites/UseText.png");
+	useText.SetScale(0.40, 0.40);
 
-	objective = GUISprite(310, 560);
+	throwText = GUISprite(340, 500);
+	throwText.Load(GPU::device, L"../Sprites/ThrowText.png");
+	throwText.SetScale(0.40, 0.40);
+
+	objective = GUISprite(310, 600);
 	objective.Load(GPU::device, L"../Sprites/Objective.png");
 	objective.SetScale(0.75, 0.75);
 

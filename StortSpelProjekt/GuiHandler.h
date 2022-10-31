@@ -11,7 +11,11 @@ class GuiHandler final
 	GUISprite settings;
 	GUISprite credits;
 	GUISprite exit;
+
 	GUISprite control;
+	GUISprite useText;
+	GUISprite throwText;
+
 	GUISprite objective;
 
 	bool isLoading = false;

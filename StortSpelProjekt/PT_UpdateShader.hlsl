@@ -10,6 +10,7 @@ cbuffer posValue : register(b1)
     float3 offsetFromOrigin;
     float enable;
     float3 orientation;
+    float drawOnlyWhenMoving; //Determines if particles are drawn when object not moving
 };
 
 cbuffer camUp : register(b2)
@@ -80,14 +81,17 @@ void main(uint3 DTid : SV_DispatchThreadID)
     else
     {
         float3 baseOffSet2 = float3(BaseOffSetX, BaseOffSetY, BaseOffSetZ);
-        //if (baseOffSet2.x == offsetFromOrigin.x, baseOffSet2.y == offsetFromOrigin.y, baseOffSet2.z == offsetFromOrigin.z)
-        //{
-        //    IsActive = 0.0f;
-        //}
-        //else
-        //{
-        //    IsActive = 1.0f;
-        //}
+        if (drawOnlyWhenMoving)
+        {
+            if (baseOffSet2.x == offsetFromOrigin.x, baseOffSet2.y == offsetFromOrigin.y, baseOffSet2.z == offsetFromOrigin.z)
+            {
+                IsActive = 0.0f;
+            }
+            else
+            {
+                IsActive = 1.0f;
+            }
+        }
         SimulateTime = SimulateTime + deltaTime;
     }
     

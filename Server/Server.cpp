@@ -406,31 +406,31 @@ int main()
 			case PacketType::ITEMPOSITION:
 				itemPos = circBuffer->readData<itemPosition>();
 
-				for (int i = 0; i < items.size(); i++)
-				{
-					//First check which component
-					if (i == itemPos->itemId && items[i].getInUseById() != itemPos->inUseBy)
-					{
-						for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
-						{
-							if (itemPos->inUseBy == data.users[j].playerId && items[i].getInUseById() == -1)
-							{
-								items[i].setInUseBy(itemPos->inUseBy);
-								//components[i].setPosition(compData->x, compData->y, compData->z);
-								//components[i].setInUseBy(compData->inUseBy);
-							}
-							else if (itemPos->inUseBy == -1)
-							{
-								items[i].setInUseBy(-1);
-								items[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
-								items[i].setPosition(compData->x, compData->y, compData->z);
-								items[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
-							}
+				//for (int i = 0; i < items.size(); i++)
+				//{
+				//	//First check which component
+				//	if (i == itemPos->itemId && items[i].getInUseById() != itemPos->inUseBy)
+				//	{
+				//		for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
+				//		{
+				//			if (itemPos->inUseBy == data.users[j].playerId && items[i].getInUseById() == -1)
+				//			{
+				//				items[i].setInUseBy(itemPos->inUseBy);
+				//				//components[i].setPosition(compData->x, compData->y, compData->z);
+				//				//components[i].setInUseBy(compData->inUseBy);
+				//			}
+				//			else if (itemPos->inUseBy == -1)
+				//			{
+				//				items[i].setInUseBy(-1);
+				//				items[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
+				//				items[i].setPosition(compData->x, compData->y, compData->z);
+				//				items[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
+				//			}
 
-						}
-					}
+				//		}
+				//	}
 
-				}
+				//}
 
 				break;
 

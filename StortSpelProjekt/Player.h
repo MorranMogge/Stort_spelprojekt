@@ -81,7 +81,6 @@ public:
 	void setOnlineID(const int& id);
 
 	void releasePickup();
-
 	void drawIcon();
 	void drawParticles();
 
@@ -104,4 +103,5 @@ public:
 	bool repairedShip() const;
 	bool getHitByBat()const;
 	void update();
+	void setTeam(const int& team);
 };

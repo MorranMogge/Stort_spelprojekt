@@ -92,8 +92,8 @@ Player::~Player()
 	}
 }
 
-Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& team,  Client* client , GravityField* field)
-    :GameObject(useMesh, pos, rot, id, field), health(70), holdingItem(nullptr), team(team)
+Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
+    :GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team)
 {
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -128,8 +128,8 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	}
 }
 
-Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& team, GravityField* field)
-	:GameObject(objectPath, pos, rot, id, field), health(70), holdingItem(nullptr), team(team)
+Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
+	:GameObject(objectPath, pos, rot, id, field), holdingItem(nullptr), team(team)
 {
 	this->client = client;
 	this->rotationMX = XMMatrixIdentity();
@@ -959,4 +959,9 @@ void Player::update()
 		this->particles->setRotation(this->getUpDirection());
 		this->particles->updateBuffer();
 	}
+}
+
+void Player::setTeam(const int& team)
+{
+	this->team = team;
 }

@@ -8,8 +8,6 @@
 class Item : public GameObject
 {
 private:
-	bool pickedUp;
-	TimeStruct tStruct;
 	int onlineType;
 	int onlineId;
 

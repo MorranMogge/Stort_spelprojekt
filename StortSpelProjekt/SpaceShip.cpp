@@ -81,10 +81,10 @@ int SpaceShip::getNrOfComponents()
 	 return currentComponents;
 }
 
-void SpaceShip::addComponent()
-{
-	this->componentsAdded++;
-}
+//void SpaceShip::addComponent()
+//{
+//	this->componentsAdded++;
+//}
 
 bool SpaceShip::detectedComponent(GameObject* objectToCheck)
 {
@@ -146,7 +146,7 @@ void SpaceShip::drawQuad()
 
 bool SpaceShip::getCompletion() const
 {
-	return this->componentsAdded >= this->compToComplete;
+	return this->currentComponents >= this->compToComplete;
 }
 
 void SpaceShip::drawParticles()

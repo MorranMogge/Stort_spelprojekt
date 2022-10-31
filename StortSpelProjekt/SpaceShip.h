@@ -8,6 +8,7 @@ class SpaceShip : public GameObject
 private:
 	std::vector<GameObject*> components;
 	BilboardObject* rocketStatusQuad;
+	DirectX::XMVECTOR upVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	ParticleEmitter* particles;
 	int compToComplete;
 	int currentComponents;
@@ -20,7 +21,6 @@ public:
 	void addComponent();
 	bool detectedComponent(GameObject* objectToCheck);
 	bool detectedComponent(Component* componentToCheck);
-	void addComponent();
 	void takeOff();
 	virtual void update() override;
 	void drawQuad();

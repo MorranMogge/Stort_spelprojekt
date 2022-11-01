@@ -306,7 +306,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 		this->client->setClientId(playerId);
 		int offset = 10;
-		int dude = NROFPLAYERS / 2;
+		int dude = (NROFPLAYERS) / 2;
 
 		int newNrOfPlayer = NROFPLAYERS;
 		int tempTeam = 0;
@@ -324,14 +324,14 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			//}
 			if (playerId != i)
 			{
-				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude > i), &planetGravityField);
+				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude <= i + 1), &planetGravityField);
 				tmpPlayer->setOnlineID(i);
 				physWolrd.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
 			}
 			else
 			{
-				currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, (int)(dude > i), &planetGravityField);
+				currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, (int)(dude <= i+1), &planetGravityField);
 				currentPlayer->setOnlineID(i);
 				currentPlayer->setTeam((int)(dude > i));
 				players.push_back(currentPlayer);

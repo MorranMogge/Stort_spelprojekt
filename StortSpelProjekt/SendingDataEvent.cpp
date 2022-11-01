@@ -26,7 +26,6 @@ void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Play
 	//holds a component
 	if (currentPlayer->getItemOnlineType() == 0)
 	{
-		std::cout << "sent compData\n";
 		ComponentData c;
 		c.ComponentId = currentPlayer->getItemOnlineId();
 		c.inUseBy = client->getPlayerId();

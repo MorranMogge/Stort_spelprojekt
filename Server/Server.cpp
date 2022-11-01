@@ -19,7 +19,7 @@
 #include "DirectXMathHelper.h"
 #include "TimeStruct.h"
 
-const short MAXNUMBEROFPLAYERS = 1;
+const short MAXNUMBEROFPLAYERS = 2;
 std::mutex mutex;
 
 struct userData
@@ -391,6 +391,7 @@ int main()
 							if (compData->inUseBy == data.users[j].playerId && components[i].getInUseById() == -1)
 							{
 								components[i].setInUseBy(compData->inUseBy);
+								components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 								//components[i].setPosition(compData->x, compData->y, compData->z);
 								//components[i].setInUseBy(compData->inUseBy);
 							}
@@ -452,11 +453,15 @@ int main()
 
 		for (int i = 0; i < components.size(); i++)
 		{
-			//std::cout << "component in useBy: " << std::to_string(components[i].getInUseById()) << std::endl;
-			if (components[i].getInUseById() == data.users[0].playerId)
+			for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
 			{
-				components[i].setPosition(data.users[0].playa.getposition('x'), data.users[0].playa.getposition('y'), data.users[0].playa.getposition('z'));
+				if (components[i].getInUseById() == data.users[j].playerId)
+				{
+					components[i].setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
+				}
 			}
+			//std::cout << "component in useBy: " << std::to_string(components[i].getInUseById()) << std::endl;
+			
 			//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
 		}
 

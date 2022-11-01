@@ -31,7 +31,7 @@ void Player::handleItems()
 		//allocates data to be sent
 		ComponentData c;
 		c.ComponentId = this->getItemOnlineId();
-		std::cout << c.ComponentId << "\n";
+		std::cout << "Item: " << c.ComponentId << "\n";
 		c.inUseBy = -1;
 		c.packetId = PacketType::COMPONENTPOSITION;
 		c.x = this->getPos().x;

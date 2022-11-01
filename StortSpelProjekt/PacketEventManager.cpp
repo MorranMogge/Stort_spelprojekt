@@ -113,7 +113,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), itemSpawn->itemId, itemSpawn->itemId, field);
 			physWorld.addPhysComponent(baseballbat);
 			onlineItems.push_back(baseballbat);
-
+			gameObjects.push_back(baseballbat);
 			std::cout << "item spawned: " << std::to_string(itemSpawn->itemId) << std::endl;
 			break;
 

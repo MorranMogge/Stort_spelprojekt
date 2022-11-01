@@ -35,7 +35,7 @@ void Game::loadObjects()
 
 	//Add to obj array
 	gameObjects.emplace_back(planet);
-	gameObjects.emplace_back(currentPlayer);
+	//gameObjects.emplace_back(currentPlayer);
 	gameObjects.emplace_back(potion);
 	gameObjects.emplace_back(testBat);
 	gameObjects.emplace_back(grenade);
@@ -85,11 +85,6 @@ void Game::drawObjects(bool drawDebug)
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->draw();
-	}
-
-	for (int i = 0; i < onlineItems.size(); i++)
-	{
-		onlineItems[i]->draw();
 	}
 
 
@@ -430,16 +425,11 @@ GAMESTATE Game::Update()
 	
 	for (int i = 0; i < players.size(); i++)
 	{
-		//players[i]->updateBuffer();
 		
 		players[i]->updateMatrixOnline();
 		players[i]->update();
 	}
-
-	for (int i = 0; i < onlineItems.size(); i++)
-	{
-		onlineItems[i]->update();
-	}
+	currentPlayer->updateBuffer();
 
 	//Updates gameObject physics components
 	for (int i = 0; i < gameObjects.size(); i++)

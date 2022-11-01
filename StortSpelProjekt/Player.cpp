@@ -152,7 +152,7 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	case 0:
 		mesh->matKey[0] = "pintoRed.png"; break;
 	case 1:
-		break;
+		mesh->matKey[0] = "pintoBlue.png"; break;
 	}
 }
 

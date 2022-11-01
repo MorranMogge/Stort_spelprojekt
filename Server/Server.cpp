@@ -19,7 +19,7 @@
 #include "DirectXMathHelper.h"
 #include "TimeStruct.h"
 
-const short MAXNUMBEROFPLAYERS = 4;
+const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
 
 struct userData
@@ -206,7 +206,6 @@ void sendBinaryDataOnePlayer(const T& data, userData& user)
 int main()
 {
 	int itemid = 0;
-	int counting = 0;
 	bool once = false;
 	TimeStruct physicsTimer;
 	PhysicsWorld physWorld;
@@ -267,6 +266,9 @@ int main()
 
 	sendIdToAllPlayers(data);
 
+	//Wait 3 seconds since we can lose some data if we directly send information about space ships
+	while (!physicsTimer.getTimePassed(3.0f)) continue;
+
 	//Sends information about the space ships to the clients
 	for (int i = 0; i < spaceShipPos.size(); i++)
 	{
@@ -277,8 +279,14 @@ int main()
 		spaceShipData.y = spaceShipPos[i].y;
 		spaceShipData.z = spaceShipPos[i].z;
 		sendBinaryDataAllPlayers<SpaceShipPosition>(spaceShipData, data);
+		std::cout << "Yes\n";
 	}
-	
+
+	SpawnComponent cData = SpawnOneComponent(components);
+	physWorld.addPhysComponent(components[components.size() - 1]);
+	components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
+	sendBinaryDataAllPlayers(cData, data);
+	startComponentTimer = std::chrono::system_clock::now();
 
 	CircularBuffer* circBuffer = new CircularBuffer();
 	std::thread* recvThread[MAXNUMBEROFPLAYERS];
@@ -301,6 +309,9 @@ int main()
 	start = std::chrono::system_clock::now();
 	startComponentTimer = std::chrono::system_clock::now();
 	itemSpawnTimer = std::chrono::system_clock::now();
+
+	physicsTimer.resetStartTime();
+	
 
 	std::cout << "Starting while loop! \n";
 	physicsTimer.resetStartTime();
@@ -449,17 +460,7 @@ int main()
 			//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
 		}
 
-		//spawns a component when the timer is done
-		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)// && !once)
-		{
-			SpawnComponent cData = SpawnOneComponent(components);
-			physWorld.addPhysComponent(components[components.size() - 1]);
-			components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
-			//std::cout << "componentId: " << std::to_string(cData.ComponentId) << std::endl;
-			sendBinaryDataAllPlayers(cData, data);
-			startComponentTimer = std::chrono::system_clock::now();
-			once = true;
-		}
+		
 
 		//skickar itemSpawn
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
@@ -492,8 +493,7 @@ int main()
 
 			}
 
-			counting++;
-
+			//Check if any components are near after the physics update
 			for (int i = 0; i < components.size(); i++)
 			{
 				for (int j = 0; j < spaceShipPos.size(); j++)
@@ -593,6 +593,17 @@ int main()
 		
 	}
     return 0;
+
+	//Hidden code
+	/*if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength && !once)
+	{
+		SpawnComponent cData = SpawnOneComponent(components);
+		physWorld.addPhysComponent(components[components.size() - 1]);
+		components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
+		sendBinaryDataAllPlayers(cData, data);
+		startComponentTimer = std::chrono::system_clock::now();
+		once = true;
+	}*/
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

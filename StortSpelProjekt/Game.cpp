@@ -14,7 +14,7 @@ void Game::loadObjects()
 	float planetSize = 40.f;
 
 	//Here we can add base object we want in the beginning of the game
-	currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, &planetGravityField);
+	//currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, &planetGravityField);
 	
 	planet = new GameObject("../Meshes/Sphere", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, nullptr, DirectX::XMFLOAT3(planetSize, planetSize, planetSize));
 	potion = new Potion("../Meshes/potion", DirectX::SimpleMath::Vector3(0, -40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2, 0, &planetGravityField);
@@ -86,7 +86,13 @@ void Game::drawObjects(bool drawDebug)
 	{
 		players[i]->draw();
 	}
-	
+
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		onlineItems[i]->draw();
+	}
+
+
 	//Draw light debug meshes
 	if (drawDebug)
 	{
@@ -275,7 +281,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	circularBuffer = client->getCircularBuffer();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
-	this->loadObjects();
 	this->setUpWireframe();
 
 	//camera.updateCamera(immediateContext);
@@ -309,22 +314,24 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		{
 			tempTeam = i < (newNrOfPlayer / 2);
 			Player* tmpPlayer = nullptr;
-			if (dude > i)//team 1
-			{
-				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, 0, &planetGravityField);
-			}
-			else//team 2
-			{
-				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, 1, &planetGravityField);
-			}
+			//if (dude > i)//team 1
+			//{
+			//	tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, 0, &planetGravityField);
+			//}
+			//else//team 2
+			//{
+			//	tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, 1, &planetGravityField);
+			//}
 			if (playerId != i)
 			{
+				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude > i), &planetGravityField);
 				tmpPlayer->setOnlineID(i);
 				physWolrd.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
 			}
 			else
 			{
+				currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, (int)(dude > i), &planetGravityField);
 				currentPlayer->setOnlineID(i);
 				currentPlayer->setTeam((int)(dude > i));
 				players.push_back(currentPlayer);
@@ -332,6 +339,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			}
 		}
 	}
+	this->loadObjects();
 	testBat->setGameObjects(players);
 	testBat->setClient(client);
 
@@ -494,10 +502,6 @@ void Game::Render()
 	this->skybox.draw();
 	basicRenderer.depthUnbind();
 
-	for (int i = 0; i < onlineItems.size(); i++)
-	{
-		onlineItems[i]->draw();
-	}
 
 	//Render imgui & wireframe
 	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
@@ -517,12 +521,11 @@ void Game::Render()
 	{
 		players[i]->drawIcon();
 	}
-
-
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
 		spaceShips[i]->drawQuad();
 	}
+
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);
 	//drawParticles();
@@ -540,6 +543,10 @@ void Game::Render()
 	for (int i = 0; i < components.size(); i++)
 	{
 		this->components[i]->drawParticles();
+	}
+	for (int i = 0; i < spaceShips.size(); i++)
+	{
+		spaceShips[i]->drawParticles();
 	}
 	basicRenderer.geometryUnbind();
 

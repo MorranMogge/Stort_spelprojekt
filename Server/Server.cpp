@@ -219,8 +219,8 @@ int main()
 	// Group the variables to send into a packet
 
 	std::vector<DirectX::XMFLOAT3> spaceShipPos;
-	spaceShipPos.emplace_back(DirectX::XMFLOAT3(20, 29, 20));
-	spaceShipPos.emplace_back(getScalarMultiplicationXMFLOAT3(-1.f, spaceShipPos[0]));
+	spaceShipPos.emplace_back(DirectX::XMFLOAT3(-7.81178f, -37.8586f, -8.50119f));
+	spaceShipPos.emplace_back(DirectX::XMFLOAT3(13.5817f, 35.9383f, 9.91351f));
 
 
 	std::cout << "Nr of players for the game: " << std::to_string(MAXNUMBEROFPLAYERS) << std::endl;

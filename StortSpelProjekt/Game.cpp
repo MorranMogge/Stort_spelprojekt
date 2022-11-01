@@ -202,10 +202,10 @@ void Game::handleKeybinds()
 	{
 drawDebug = false;
 	}
-	if (Input::KeyPress(KeyCode::K))
+	/*if (Input::KeyPress(KeyCode::K))
 	{
 		randomizeObjectPos(potion);
-	}
+	}*/
 }
 
 DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3& position)
@@ -271,7 +271,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	this->packetEventManager = new PacketEventManager();
 	//m�ste raderas******************
-	client = new Client("192.168.43.251");
+	client = new Client("192.168.43.244");
 	circularBuffer = client->getCircularBuffer();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -395,10 +395,10 @@ GAMESTATE Game::Update()
 		if (currentPlayer->pickupItem(items[i])) break;
 	}
 
-	if (Input::KeyPress(KeyCode::K))
+	/*if (Input::KeyPress(KeyCode::K))
 	{
 		randomizeObjectPos(this->testBat);
-	}
+	}*/
 
 	grenade->updateExplosionCheck();
 	if (potion->isTimeToRun()) currentPlayer->setSpeed(50.f);
@@ -441,17 +441,17 @@ GAMESTATE Game::Update()
 	
 	//Setting the camera at position
 	bool noWinners = true;
+	if (noWinners) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX());
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
 		if (spaceShips[i]->getCompletion())
 		{
-			camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot());
+			if (currentPlayer->getTeam() ==  i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot());
 			grav = planetGravityField.calcGravFactor(this->spaceShips[i]->getPosV3());
 			this->spaceShips[i]->move(grav, dt);
-			noWinners = false;
+			noWinners = true;
 		}
 	}
-	if (noWinners) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX());
 	
 
 	//Here you can write client-server related functions?
@@ -468,7 +468,10 @@ GAMESTATE Game::Update()
 	{
 		this->items[i]->checkDistance((GameObject*)(currentPlayer));
 	}
-
+	for (int i = 0; i < components.size(); i++)
+	{
+		this->components[i]->checkDistance((GameObject*)(currentPlayer));
+	}
 	//Debug keybinds
 	this->handleKeybinds();
 
@@ -506,6 +509,10 @@ void Game::Render()
 	{
 		this->items[i]->drawIcon();
 	}
+	for (int i = 0; i < components.size(); i++)
+	{
+		this->components[i]->drawIcon();
+	}
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->drawIcon();
@@ -529,6 +536,10 @@ void Game::Render()
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->drawParticles();
+	}
+	for (int i = 0; i < components.size(); i++)
+	{
+		this->components[i]->drawParticles();
 	}
 	basicRenderer.geometryUnbind();
 

@@ -57,7 +57,7 @@ void Player::handleItems()
 		holdingItem = nullptr;
 	}
 	//Use the Item
-	else if (Input::KeyDown(KeyCode::T) /*&& Input::KeyDown(KeyCode::T)*/)
+	else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
 	{
 		//allocates data to be sent
 		ComponentData c;
@@ -673,7 +673,7 @@ int Player::getItemOnlineId() const
 bool Player::pickupItem(Item* itemToPickup)
 {
 	bool successfulPickup = false;
-	if (Input::KeyDown(KeyCode::ENTER))
+	if (Input::KeyDown(KeyCode::E))
 	{
 		if (this->withinRadius(itemToPickup, 5))
 		{
@@ -964,4 +964,13 @@ void Player::update()
 void Player::setTeam(const int& team)
 {
 	this->team = team;
+
+	//Team switch
+	switch (team)
+	{
+	case 0:
+		mesh->matKey[0] = "pintoRed.png"; break;
+	case 1:
+		mesh->matKey[0] = "pintoBlue.png"; break;
+	}
 }

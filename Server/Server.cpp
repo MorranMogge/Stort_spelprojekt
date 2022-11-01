@@ -267,6 +267,7 @@ int main()
 	sendIdToAllPlayers(data);
 
 	//Wait 3 seconds since we can lose some data if we directly send information about space ships
+	physicsTimer.resetStartTime();
 	while (!physicsTimer.getTimePassed(3.0f)) continue;
 
 	//Sends information about the space ships to the clients
@@ -281,6 +282,9 @@ int main()
 		sendBinaryDataAllPlayers<SpaceShipPosition>(spaceShipData, data);
 		std::cout << "Yes\n";
 	}
+
+	physicsTimer.resetStartTime();
+	while (!physicsTimer.getTimePassed(3.0f)) continue;
 
 	SpawnComponent cData = SpawnOneComponent(components);
 	physWorld.addPhysComponent(components[components.size() - 1]);

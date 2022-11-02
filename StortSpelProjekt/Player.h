@@ -20,8 +20,9 @@ private:
 	DirectX::XMMATRIX rotationMX;
 	DirectX::XMFLOAT4X4 rotationFloat;
 	bool controllerConnected = true;
-	float jumpAllowed = 200.f;
-	float jumpHeight = 200.f;
+	bool onGround = false;
+	float jumpAllowed = 300.f;
+	float jumpHeight = 300.f;
 
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
@@ -43,6 +44,12 @@ private:
 	bool movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 	bool moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 
+	//Controller variables
+	float posX = 0.0f;
+	float posY = 0.0f;
+	float totalPos = 0.0f;
+	float throttle = 0.0f;
+
 	//Other variables
 	const float speedConstant = 100.f;
 	int repairCount = 0;
@@ -53,12 +60,6 @@ private:
 	float speed;
 	bool dedge = false;
 	TimeStruct timer;
-
-	//Controller variables
-	float posX = 0.0f;
-	float posY = 0.0f;
-	float totalPos = 0.0f;
-	float throttle = 0.0f;
 
 	void resetRotationMatrix();
 	void handleItems();

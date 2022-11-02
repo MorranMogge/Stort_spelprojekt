@@ -544,6 +544,9 @@
     <FxCompile Include="Bilboard_VS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Fresnel_PS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico">

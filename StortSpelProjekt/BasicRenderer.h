@@ -45,7 +45,8 @@ private:
 	ID3D11SamplerState* shadowSampler;
 	ID3D11RasterizerState* shadowRastirizer;
 	ID3D11BlendState* blendState;				//Blendstate for PT_Pixel shader
-
+	ID3D11BlendState* fresnelBlendState;
+	ID3D11PixelShader* Fresnel_PS;
 
 
 	bool setUpInputLayout(ID3D11Device* device, const std::string &vShaderByteCode);
@@ -55,6 +56,8 @@ private:
 	bool setUpShadowSampler(ID3D11Device* device);
 	bool setUpShadowRastirizer(ID3D11Device* device);
 	bool setUpBlendState();
+	bool setUpFresnelBlendState();
+
 public:
 	BasicRenderer();
 	~BasicRenderer();
@@ -70,4 +73,5 @@ public:
 	void bilboardPrePass(Camera& stageCamera);
 	void bindAmbientShader();
 	void geometryUnbind();
+	void fresnelPrePass(Camera& stageCamera);
 };

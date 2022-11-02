@@ -85,10 +85,10 @@ GameObject::GameObject()
 
 GameObject::~GameObject()
 {
-	if (this->mesh != nullptr)
-	{
-		delete this->mesh;
-	}
+	//if (this->mesh != nullptr)
+	//{
+	//	delete this->mesh;
+	//}
 }
 
 void GameObject::movePos(const DirectX::XMFLOAT3& offset)
@@ -101,6 +101,7 @@ void GameObject::movePos(const DirectX::XMFLOAT3& offset)
 void GameObject::setPos(const DirectX::XMFLOAT3& pos)
 {
 	this->position = pos;
+	this->physComp->setPosition({ pos.x, pos.y, pos.z });
 }
 
 void GameObject::setRot(const DirectX::XMFLOAT3& rot)

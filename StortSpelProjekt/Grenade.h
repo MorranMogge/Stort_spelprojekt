@@ -1,6 +1,7 @@
 #pragma once
 #include "Item.h"
 #include "TimeStruct.h"
+#include "ConstantBufferNew.h"
 
 class Grenade : public Item
 {
@@ -11,6 +12,8 @@ private:
 	bool destructionIsImminent;
 	float timeToExplode;
 	float currentTime;
+	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
+	//ConstantBufferNew<posStruct> upVectorBuffer;
 
 	void explode();
 public:

@@ -52,6 +52,11 @@ Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMF
 	std::vector<std::string> tempStr{ "icon_boom.png", "icon_boom2.png" };
 	this->itemIcon = new BilboardObject(tempStr, iconPos);
 	this->itemIcon->setOffset(constant);
+
+	//Set up color buffer
+	this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
+	this->colorBuffer.getData() = DirectX::XMFLOAT4(1 ,0.25 ,0 , 0);
+	this->colorBuffer.applyData();
 }
 
 Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
@@ -67,6 +72,11 @@ Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, co
 	std::vector<std::string> tempStr{ "icon_boom.png", "icon_boom2.png" };
 	this->itemIcon = new BilboardObject(tempStr, iconPos);
 	this->itemIcon->setOffset(constant);
+
+	//Set up color buffer
+	this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
+	this->colorBuffer.getData() = DirectX::XMFLOAT4(1, 0.25, 0, 0);
+	this->colorBuffer.applyData();
 }
 
 Grenade::~Grenade()

@@ -19,6 +19,7 @@ void Game::loadObjects()
 	//Here we can add base object we want in the beginning of the game
 	meshes.push_back(new Mesh("../Meshes/Sphere"));
 	planet = new GameObject(meshes.back(), Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(planetSize, planetSize, planetSize));
+	testplanet = new GameObject(meshes.back(), Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(49, 49, 49));
 	meshes.push_back(new Mesh("../Meshes/pinto"));
 	currentPlayer = new Player(meshes.back(), Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, 0, &planetGravityField);
 	meshes.push_back(new Mesh("../Meshes/potion"));
@@ -35,6 +36,8 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/grenade"));
 	grenade = new Grenade(meshes.back(), DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, &planetGravityField);
 	
+
+
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
@@ -92,6 +95,8 @@ void Game::loadObjects()
 	grenade->setGameObjects(gameObjects);
 	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
+
+
 }
 
 void Game::drawShadows()
@@ -116,6 +121,10 @@ void Game::drawObjects(bool drawDebug)
 	//Bind light
 	ltHandler.bindLightBuffers();
 
+
+
+
+
 	//Draw Game objects
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
@@ -125,12 +134,18 @@ void Game::drawObjects(bool drawDebug)
 	{
 		players[i]->draw();
 	}
+
+	basicRenderer.fresnelPrePass(this->camera);
+	testplanet->updateBuffer();
+	testplanet->draw();
+
 	//Draw light debug meshes
 	if (drawDebug)
 	{
 		basicRenderer.bindAmbientShader();
 		ltHandler.drawDebugMesh();
 	}
+
 
 	//Unbind light
 	ltHandler.unbindSrv();
@@ -322,6 +337,14 @@ Game::~Game()
 			delete this->gameObjects.at(i);
 		}
 	}
+
+	for (int i = 0; i < meshes.size(); i++)
+	{
+		delete meshes[i];
+	}
+
+	
+
 	wireBuffer->Release();
 }
 
@@ -415,7 +438,10 @@ GAMESTATE Game::Update()
 			{
 				Component* comp = dynamic_cast<Component*>(gameObjects[i]);
 				std::cout << "RED Detected Component!\nID: " << comp->getId() << "\n";
-				spaceShipRed->takeOff();
+				currentPlayer->releaseItem();
+				gameObjects[i]->setPos(DirectX::SimpleMath::Vector3(22.6783, -21.7597, 31.504));
+				spaceShipRed->addComponent();
+				spaceShipRed->setAnimate(true);
 				//return WIN;
 			}
 
@@ -424,11 +450,22 @@ GAMESTATE Game::Update()
 			{
 				Component* comp = dynamic_cast<Component*>(gameObjects[i]);
 				std::cout << "BLU Detected Component!\nID: " << comp->getId() << "\n";
-				spaceShipBlue->takeOff();
+				currentPlayer->releaseItem();
+				gameObjects[i]->setPos(DirectX::SimpleMath::Vector3(22.6783, -21.7597, 31.504));
+				spaceShipBlue->setAnimate(true);
+				spaceShipBlue->addComponent();
 				//return WIN;
 			}
 		}
 	}
+
+	//Play pickup animation
+	spaceShipBlue->animateOnPickup();
+	spaceShipRed->animateOnPickup();
+
+
+
+
 	if (currentPlayer->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
 	
 
@@ -456,6 +493,7 @@ void Game::Render()
 	
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
+
 	if (objectDraw) drawObjects(drawDebug);
 
 	//Render Skybox

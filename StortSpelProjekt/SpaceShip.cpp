@@ -88,6 +88,10 @@ bool SpaceShip::detectedComponent(GameObject* objectToCheck)
 	{
 		didDetect = true;
 	}
+	else
+	{
+		this->setScale(DirectX::XMFLOAT3(2, 2, 2));
+	}
 	return didDetect;
 }
 
@@ -98,6 +102,10 @@ bool SpaceShip::detectedComponent(Component* componentToCheck)
 	if (this->withinRadious(componentToCheck, 8.0f))
 	{
 		didDetect = true;
+	}
+	else
+	{
+		this->setScale(DirectX::XMFLOAT3(2, 2, 2));
 	}
 	return didDetect;
 }
@@ -135,7 +143,7 @@ void SpaceShip::update()
 
 void SpaceShip::drawQuad()
 {
-	rocketStatusQuad->bindAndDraw((int)this->components.size(), 0);//Changes texture depending on components
+	rocketStatusQuad->bindAndDraw(this->currentComponents, 0);//Changes texture depending on components
 }
 
 void SpaceShip::drawParticles()
@@ -154,4 +162,41 @@ bool SpaceShip::isFinished()
 		complete = true;
 	}
 	return complete;
+}
+
+
+void SpaceShip::setAnimate(const bool& onOff)
+{
+	this->animate = onOff;
+	this->counter = 0;
+	this->timer.resetStartTime();
+}
+
+void SpaceShip::animateOnPickup()
+{
+	if (animate)
+	{
+		float animationDuration = 0.3f;
+
+		this->counter += this->timer.getDt();
+		auto scale = this->getScale();
+		float constant = 0.5;
+
+		if (this->counter > (animationDuration/2))
+		{
+			this->setScale({ scale.x + (animationDuration / 2) - this->counter,scale.y+ (animationDuration / 2) - this->counter,scale.z + (animationDuration / 2) - this->counter });
+		}
+		else
+		{
+			this->setScale({ scale.x + this->counter + constant,scale.y + this->counter + constant ,scale.z + this->counter + constant });
+		}
+
+		this->timer.resetStartTime();
+
+		if (this->counter > animationDuration)
+		{
+			this->counter = 0;
+			this->animate = false;
+		}
+	}
 }

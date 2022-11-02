@@ -469,7 +469,15 @@ int main()
 			//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
 		}
 
-		
+		//if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)// && !once)
+		//{
+		//	SpawnComponent cData = SpawnOneComponent(components);
+		//	physWorld.addPhysComponent(components[components.size() - 1]);
+		//	components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
+		//	sendBinaryDataAllPlayers(cData, data);
+		//	startComponentTimer = std::chrono::system_clock::now();
+		//	once = true;
+		//}
 
 		//skickar itemSpawn
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)

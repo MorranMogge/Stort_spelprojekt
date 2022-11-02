@@ -365,6 +365,9 @@ Game::~Game()
 
 GAMESTATE Game::Update()
 {
+	//read the packets received from the server
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, &planetGravityField, spaceShips, onlineItems);
+	
 	//Get newest delta time
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();
@@ -416,9 +419,6 @@ GAMESTATE Game::Update()
 		serverStart = std::chrono::system_clock::now();
 	}
 
-	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, &planetGravityField, spaceShips, onlineItems);
-	
 	
 	//Physics related functions
 	if (!IFONLINE) physWolrd.update(dt);

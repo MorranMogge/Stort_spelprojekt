@@ -611,12 +611,9 @@ bool Player::pickupItem(Item* itemToPickup)
 		{
 			addItem(itemToPickup);
 
-			Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
-			if (tmp)
-			{
-				successfulPickup = true;
-				tmp->setPickedUp(true);
-			}
+			Component* tmp = dynamic_cast<Component*>(itemToPickup);
+			if (tmp) this->holdingComp = true;
+			else this->holdingComp = false;
 
 			holdingItem->getPhysComp()->getRigidBody()->resetForce();
 			holdingItem->getPhysComp()->getRigidBody()->resetTorque();
@@ -868,6 +865,9 @@ void Player::update()
 
 void Player::checkMovement()
 {
-	if (this->holdingItem != nullptr) this->setSpeed(18.f);
-	else this->setSpeed(25.f);
+	if (holdingComp)
+	{
+		if (this->holdingItem != nullptr) this->setSpeed(2.f);
+		else this->setSpeed(25.f);
+	}
 }

@@ -54,6 +54,7 @@ private:
 	const float speedConstant = 100.f;
 	int repairCount = 0;
 	Item* holdingItem;
+	bool holdingComp = false;
 	bool moveKeyPressed = false;
 	BilboardObject* playerIcon;
 	ParticleEmitter* particles;

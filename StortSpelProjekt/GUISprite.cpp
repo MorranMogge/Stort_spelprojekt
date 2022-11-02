@@ -9,10 +9,13 @@ GUISprite::GUISprite()
 
 GUISprite::GUISprite(const float x, const float y, const float layer)
 {
-    m_Position = DirectX::SimpleMath::Vector2(x, y);
+    #define BaseWidth (GPU::windowWidth / 1264.0f) 
+    #define BaseHeight (GPU::windowHeight / 681.0f)
+
+    m_Position = DirectX::SimpleMath::Vector2(BaseWidth * x, BaseHeight * y);
     m_Layer = layer;
     //m_pOrigin =;
-    m_Scale = { 1, 1 };            //same scale as object
+    m_Scale = { BaseWidth * 1, BaseWidth * 1 };            //same scale as object
     m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
     m_Alpha = 1.0f;
     m_Rotation = 0.0f;
@@ -20,10 +23,15 @@ GUISprite::GUISprite(const float x, const float y, const float layer)
 
 GUISprite::GUISprite(const DirectX::SimpleMath::Vector2& position, float layer)
 {
+    #define BaseWidth (GPU::windowWidth / 1264.0f) 
+    #define BaseHeight (GPU::windowHeight / 681.0f)
+
     m_Position = position;
+    m_Position.x *= BaseWidth;
+    m_Position.y *= BaseHeight;
     m_Layer = layer;
     //m_pOrigin =;
-    m_Scale = { 1, 1 };            //same scale as object
+    m_Scale = { BaseWidth * 1, BaseWidth * 1 };            //same scale as object
     m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
     m_Alpha = 1.0f;
     m_Rotation = 0.0f;
@@ -86,7 +94,11 @@ const float GUISprite::GetHeight() const
 
 void GUISprite::SetPosition(const DirectX::SimpleMath::Vector2& position)
 {
+    #define BaseWidth (GPU::windowWidth / 1264.0f) 
+    #define BaseHeight (GPU::windowHeight / 681.0f)
     m_Position = position;
+    m_Position.x *= BaseWidth;
+    m_Position.y *= BaseHeight;
 }
 
 void GUISprite::SetOrigin(const DirectX::SimpleMath::Vector2& origin)
@@ -96,11 +108,17 @@ void GUISprite::SetOrigin(const DirectX::SimpleMath::Vector2& origin)
 
 void GUISprite::SetScale(const DirectX::SimpleMath::Vector2& scale)
 {
+    #define BaseWidth (GPU::windowWidth / 1264.0f) 
+    #define BaseHeight (GPU::windowHeight / 681.0f)
     m_Scale = scale;
+    m_Scale.x *= BaseWidth;
+    m_Scale.y *= BaseHeight;
 }
 void GUISprite::SetScale(const float x, const float y)
 {
-    m_Scale = { x, y };
+    #define BaseWidth (GPU::windowWidth / 1264.0f) 
+    #define BaseHeight (GPU::windowHeight / 681.0f)
+    m_Scale = { BaseWidth * x, BaseWidth * y };
 }
 
 void GUISprite::SetTint(const DirectX::SimpleMath::Color& color)

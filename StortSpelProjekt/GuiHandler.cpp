@@ -135,7 +135,7 @@ GuiHandler::GuiHandler()
 	exit = GUISprite(1000, 500);
 	exit.Load(GPU::device, L"../Sprites/exit.png");
 
-	Loading = GUISprite(GPU::windowWidth/ 2.0f, GPU::windowHeight / 2.0f);
+	Loading = GUISprite(1264.0f / 2.0f, 681.0f / 2.0f);
 	Loading.Load(GPU::device, L"../Sprites/Loading.bmp");
 
 	control = GUISprite(310 - left, 225 - upp);

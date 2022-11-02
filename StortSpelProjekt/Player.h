@@ -42,13 +42,13 @@ private:
 
 	void rotate();
 	bool movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime);
-	bool moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 
 	//Controller variables
 	float posX = 0.0f;
 	float posY = 0.0f;
 	float totalPos = 0.0f;
 	float throttle = 0.0f;
+	bool moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 
 	//Other variables
 	const float speedConstant = 100.f;

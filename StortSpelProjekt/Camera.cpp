@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "Camera.h"
+#include "Input.h"
 #include <string>
 using namespace DirectX;
 
 void Camera::updateCamera()
 {
 	viewMatrix = DirectX::XMMatrixLookAtLH(cameraPos, lookAtPos, upVector);
+	projMatrix = DirectX::XMMatrixPerspectiveFovLH(fieldOfView, 1264.f / 681.f, 0.1f, 800.0f);
 	cameraBuffer.getData().viewProjMX = viewMatrix * projMatrix;
 	cameraBuffer.getData().viewProjMX = XMMatrixTranspose(cameraBuffer.getData().viewProjMX);
 
@@ -38,7 +40,6 @@ Camera::Camera()
 	this->upVectorBuffer.getData().padding = 0;
 		
 	viewMatrix = DirectX::XMMatrixLookAtLH(cameraPos, lookAtPos, upVector);
-	//projMatrix = DirectX::XMMatrixPerspectiveFovLH(0.8f, 1264.f / 681.f, 0.1f, 800.0f);
 	projMatrix = DirectX::XMMatrixPerspectiveFovLH(0.8f, 1264.f / 681.f, 0.1f, 800.0f);
 	cameraBuffer.getData().viewProjMX = viewMatrix * projMatrix;
 	cameraBuffer.getData().viewProjMX = XMMatrixTranspose(cameraBuffer.getData().viewProjMX);
@@ -58,6 +59,15 @@ void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation);
 	upVector = XMVector3TransformCoord(DEFAULT_UP, playerRotation);
+
+	if (Input::KeyDown(KeyCode::ARROW_Up))
+	{
+		if (fieldOfView > MINFOV) fieldOfView -= 0.005;
+	}
+	else if (Input::KeyDown(KeyCode::ARROW_Down))
+	{
+		if (fieldOfView < MAXFOV) fieldOfView += 0.005;
+	}
 
 	cameraPos = playerPosition + upVector * 60.f - forwardVector * 50.f;
 	lookAtPos = playerPosition;

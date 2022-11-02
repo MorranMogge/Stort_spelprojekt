@@ -630,7 +630,6 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);
 	timer.resetStartTime();
-
 }
 
 void Player::addItem(Item* itemToHold)
@@ -867,7 +866,7 @@ void Player::checkMovement()
 {
 	if (holdingComp)
 	{
-		if (this->holdingItem != nullptr) this->setSpeed(2.f);
+		if (this->holdingItem != nullptr) this->setSpeed(18.f);
 		else this->setSpeed(25.f);
 	}
 }

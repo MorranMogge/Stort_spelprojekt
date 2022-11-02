@@ -63,12 +63,6 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 
 		if (mesh->HasBones())
 		{
-
-			this->aiMatrixToXMmatrix(scene->mRootNode->mTransformation, this->aniData.globalInverseTransform);
-			DirectX::XMMATRIX temp = DirectX::XMLoadFloat4x4(&this->aniData.globalInverseTransform);
-			temp = DirectX::XMMatrixInverse(nullptr, temp);
-			DirectX::XMStoreFloat4x4(&this->aniData.globalInverseTransform, temp);
-
 			this->loadBones(scene->mMeshes[i], i);
 		}
 
@@ -299,10 +293,6 @@ void ModelManager::loadBones(const aiMesh* mesh, const int mesh_index)
 {
 	for (int i = 0; i < mesh->mNumBones; i++)
 	{
-		if (i == 2)
-		{
-			int bp = 2;
-		}
 		std::string boneName = (mesh->mBones[i]->mName.data);
 		int bone_ID = this->findAndAddBoneID(boneName);
 		if (bone_ID == this->aniData.boneVector.size())
@@ -311,8 +301,8 @@ void ModelManager::loadBones(const aiMesh* mesh, const int mesh_index)
 			DirectX::XMFLOAT4X4 offset;
 			this->aiMatrixToXMmatrix(mesh->mBones[i]->mOffsetMatrix, offset);
 			boneInfo bi(offset);
+			bi.name = boneName;
 			this->aniData.boneVector.push_back(bi);
-			this->aniData.boneVector[this->aniData.boneVector.size() - 1].name = boneName;
 		}
 
 		for (int j = 0; j < mesh->mBones[i]->mNumWeights; j++)
@@ -336,7 +326,6 @@ void ModelManager::numberBone(aiNode* node, int parentNode, const DirectX::XMFLO
 	if (realNode)
 	{
 		this->aniData.boneVector[boneID].parentID = parentNode;
-
 	}
 	
 	DirectX::XMFLOAT4X4 floatMatrix;
@@ -475,19 +464,19 @@ void ModelManager::calculateBoneInverse(const nodes& node, DirectX::XMFLOAT4X4& 
 	DirectX::XMMATRIX currentNodeTrans = DirectX::XMLoadFloat4x4(&node.trasformation);
 	DirectX::XMMATRIX PrevNode = DirectX::XMLoadFloat4x4(&parentTrasform);
 	const DirectX::XMMATRIX globalTrasform = DirectX::XMMatrixMultiply(PrevNode, currentNodeTrans);
-	DirectX::XMMATRIX globalTrasform1 = DirectX::XMMatrixMultiply(currentNodeTrans, PrevNode);
+	const DirectX::XMMATRIX globalTrasform1 = DirectX::XMMatrixMultiply(currentNodeTrans, PrevNode);
 	DirectX::XMFLOAT4X4 finalTransfrom;
 
 	if (this->aniData.boneNameToIndex.find(node.nodeName) != aniData.boneNameToIndex.end())
 	{
 		int id = aniData.boneNameToIndex[node.nodeName];
 		DirectX::XMVECTOR garbo;
-		DirectX::XMMATRIX inverse = DirectX::XMMatrixInverse(&garbo, globalTrasform);
+		DirectX::XMMATRIX inverse = DirectX::XMMatrixInverse(&garbo, globalTrasform1);
 		DirectX::XMStoreFloat4x4(&aniData.boneVector[id].offsetMatrix, inverse);
 		int bp = 2;
 	}
 
-	DirectX::XMStoreFloat4x4(&finalTransfrom, globalTrasform);
+	DirectX::XMStoreFloat4x4(&finalTransfrom, globalTrasform1);
 
 	for (int i = 0, length = node.children.size(); i < length; i++)
 	{

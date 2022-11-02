@@ -19,7 +19,7 @@
 #include "DirectXMathHelper.h"
 #include "TimeStruct.h"
 
-const short MAXNUMBEROFPLAYERS = 4;
+const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
 
 struct userData
@@ -258,7 +258,7 @@ int main()
 	start = std::chrono::system_clock::now();
 
 	float timerLength = 1.f / 30.0f;
-	float timerComponentLength = 5.0f;
+	float timerComponentLength = 3.0f;
 	float itemSpawnTimerLength = 20.0f;
 
 	setupTcp(data);
@@ -452,7 +452,7 @@ int main()
 		//spawns a component when the timer is done
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)// && !once)
 		{
-			SpawnComponent cData = SpawnOneComponent(components);
+			SpawnComponent cData = SpawnOneComponent(components, spaceShipPos);
 			physWorld.addPhysComponent(components[components.size() - 1]);
 			components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
 			//std::cout << "componentId: " << std::to_string(cData.ComponentId) << std::endl;

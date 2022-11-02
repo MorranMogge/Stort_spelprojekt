@@ -18,6 +18,13 @@ class HudUI final
 	GUISprite blueTeam3;
 	GUISprite blueTeam4;
 
+	GUISprite control;
+	GUISprite useText;
+	GUISprite throwText;
+	GUISprite pickText;
+	GUISprite objective;
+	GUISprite blackBackground;
+
 	void SpritePass();
 
 public:

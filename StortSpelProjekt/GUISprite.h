@@ -3,6 +3,8 @@
 
 class GUISprite final :public GUIObject
 {
+
+	inline static float BaseWidth, BaseHeight;
 public:
 
 	GUISprite();

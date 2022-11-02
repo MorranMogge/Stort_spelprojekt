@@ -5,13 +5,15 @@
 
 GUISprite::GUISprite()
 {
+    BaseWidth = GPU::windowWidth / 1264.0f;
+    BaseHeight = GPU::windowHeight / 681.0f;
 }
 
 GUISprite::GUISprite(const float x, const float y, const float layer)
 {
-    #define BaseWidth (GPU::windowWidth / 1264.0f) 
-    #define BaseHeight (GPU::windowHeight / 681.0f)
-
+    BaseWidth = GPU::windowWidth / 1264.0f;
+    BaseHeight = GPU::windowHeight / 681.0f;
+    
     m_Position = DirectX::SimpleMath::Vector2(BaseWidth * x, BaseHeight * y);
     m_Layer = layer;
     //m_pOrigin =;
@@ -23,8 +25,8 @@ GUISprite::GUISprite(const float x, const float y, const float layer)
 
 GUISprite::GUISprite(const DirectX::SimpleMath::Vector2& position, float layer)
 {
-    #define BaseWidth (GPU::windowWidth / 1264.0f) 
-    #define BaseHeight (GPU::windowHeight / 681.0f)
+    BaseWidth = GPU::windowWidth / 1264.0f;
+    BaseHeight = GPU::windowHeight / 681.0f;
 
     m_Position = position;
     m_Position.x *= BaseWidth;
@@ -94,8 +96,6 @@ const float GUISprite::GetHeight() const
 
 void GUISprite::SetPosition(const DirectX::SimpleMath::Vector2& position)
 {
-    #define BaseWidth (GPU::windowWidth / 1264.0f) 
-    #define BaseHeight (GPU::windowHeight / 681.0f)
     m_Position = position;
     m_Position.x *= BaseWidth;
     m_Position.y *= BaseHeight;
@@ -108,16 +108,12 @@ void GUISprite::SetOrigin(const DirectX::SimpleMath::Vector2& origin)
 
 void GUISprite::SetScale(const DirectX::SimpleMath::Vector2& scale)
 {
-    #define BaseWidth (GPU::windowWidth / 1264.0f) 
-    #define BaseHeight (GPU::windowHeight / 681.0f)
     m_Scale = scale;
     m_Scale.x *= BaseWidth;
     m_Scale.y *= BaseHeight;
 }
 void GUISprite::SetScale(const float x, const float y)
 {
-    #define BaseWidth (GPU::windowWidth / 1264.0f) 
-    #define BaseHeight (GPU::windowHeight / 681.0f)
     m_Scale = { BaseWidth * x, BaseWidth * y };
 }
 
@@ -156,8 +152,8 @@ bool GUISprite::IntersectMouse() const
 
 #pragma endregion
 
-#define InsideX mousePos.x > m_Position.x - (m_Width / 2.0f) && mousePos.x < m_Position.x + (m_Width / 2.0f)
-#define InsideY mousePos.y > m_Position.y - (m_Height / 2.0f) && mousePos.y < m_Position.y + (m_Height / 2.0f)
+#define InsideX mousePos.x > m_Position.x - (m_Width * m_Scale.x / 2.0f) && mousePos.x < m_Position.x + (m_Width * m_Scale.x / 2.0f)
+#define InsideY mousePos.y > m_Position.y - (m_Height * m_Scale.y / 2.0f) && mousePos.y < m_Position.y + (m_Height * m_Scale.y / 2.0f)
 #define Intersect InsideX && InsideY
 
     return Intersect;

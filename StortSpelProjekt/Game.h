@@ -58,7 +58,7 @@ private:
 	SkyboxObj skybox;
 	Player* currentPlayer;
 	GameObject* planet;
-	GameObject* testplanet;
+	//GameObject* testplanet;
 	GameObject* testCube;
 	SpaceShip* spaceShipRed;
 	SpaceShip* spaceShipBlue;

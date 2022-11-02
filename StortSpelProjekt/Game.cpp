@@ -8,7 +8,7 @@
 void Game::loadObjects()
 {
 	//Meshes vector contents
-	//Sphere, pinto, potion, bat, Player, component, grenade
+	//Sphere, pinto, potion, rocket, bat, Player, component, grenade
 
 	using namespace DirectX;
 	using namespace DirectX::SimpleMath;
@@ -19,13 +19,15 @@ void Game::loadObjects()
 	//Here we can add base object we want in the beginning of the game
 	meshes.push_back(new Mesh("../Meshes/Sphere"));
 	planet = new GameObject(meshes.back(), Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(planetSize, planetSize, planetSize));
-	testplanet = new GameObject(meshes.back(), Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(49, 49, 49));
+	//testplanet = new GameObject(meshes.back(), Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(49, 49, 49));
 	meshes.push_back(new Mesh("../Meshes/pinto"));
 	currentPlayer = new Player(meshes.back(), Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, 0, &planetGravityField);
 	meshes.push_back(new Mesh("../Meshes/potion"));
 	potion = new Potion(meshes.back(), Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), POTION, &planetGravityField);
-	spaceShipRed = new SpaceShip(Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, &planetGravityField, Vector3(2, 2, 2));
-	spaceShipBlue = new SpaceShip(Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, &planetGravityField, Vector3(2, 2, 2));
+	meshes.push_back(new Mesh("../Meshes/rocket"));
+	spaceShipRed = new SpaceShip(meshes.back(), Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, &planetGravityField, Vector3(2, 2, 2));
+	meshes.push_back(new Mesh("../Meshes/rocket"));
+	spaceShipBlue = new SpaceShip(meshes.back(), Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, &planetGravityField, Vector3(2, 2, 2));
 	meshes.push_back(new Mesh("../Meshes/bat"));
 	testBat = new BaseballBat(meshes.back(), Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, &planetGravityField);
 	meshes.push_back(new Mesh("../Meshes/Player"));
@@ -83,7 +85,7 @@ void Game::loadObjects()
 
 	for (int i = 0; i < 10; i++)
 	{
-		GameObject* newObj = new GameObject("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), MOVABLE, nullptr, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+		GameObject* newObj = new GameObject(meshes[5], DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), MOVABLE, nullptr, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 		physWolrd.addPhysComponent(newObj, reactphysics3d::CollisionShapeName::BOX);
 		newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+(float)i*10, 100));
 		gameObjects.emplace_back(newObj);
@@ -135,9 +137,9 @@ void Game::drawObjects(bool drawDebug)
 		players[i]->draw();
 	}
 
-	basicRenderer.fresnelPrePass(this->camera);
-	testplanet->updateBuffer();
-	testplanet->draw();
+	//basicRenderer.fresnelPrePass(this->camera);
+	//testplanet->updateBuffer();
+	//testplanet->draw();
 
 	//Draw light debug meshes
 	if (drawDebug)
@@ -305,7 +307,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
 		{
-			Player* tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), PLAYER, 0, &planetGravityField);
+			Player* tmpPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), PLAYER, 0, &planetGravityField);
 			if (playerId != i)
 			{
 				players.push_back(tmpPlayer);

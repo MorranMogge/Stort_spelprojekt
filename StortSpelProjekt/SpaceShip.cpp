@@ -23,12 +23,15 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 	//Team switch
 	switch (team)
 	{
-	case 0: 
+	case 0:
 		HudUI::red = this;
-		mesh->matKey[0] = "spaceshipTexture1.jpg"; break;
-	case 1: 
+		mesh->matKey[0] = "spaceshipTexture1.jpg";
+		break;
+
+	case 1:
 		HudUI::blue = this;
 		break;
+
 	}
 }
 

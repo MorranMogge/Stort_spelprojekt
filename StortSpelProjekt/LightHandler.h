@@ -29,6 +29,7 @@ private:
 	int LightCap = 10;															//Max nr of lights that can be created
 
 	//Debug Mesh
+	Mesh* debugMesh;
 	std::vector<GameObject*> boundingSphere;									//Mesh for visualization
 	
 public:

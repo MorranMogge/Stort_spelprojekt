@@ -89,6 +89,9 @@ GameObject::~GameObject()
 	//{
 	//	delete this->mesh;
 	//}
+	//this->mesh = nullptr;
+	//this->activeField = nullptr;
+	//this->physComp = nullptr;
 }
 
 void GameObject::movePos(const DirectX::XMFLOAT3& offset)

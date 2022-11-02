@@ -63,7 +63,7 @@ Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, co
 	:Item(objectPath, pos, rot, id, field), destructionIsImminent(false), timeToExplode(5.f)
 {
 	//Particles
-	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
+	this->particles = new ParticleEmitter(pos, rot, 36, DirectX::XMFLOAT2(2, 5), 4);
 
 	//Item Icon
 	float constant = 4.0f;
@@ -131,19 +131,26 @@ void Grenade::drawParticles()
 			frame = 15;
 		}
 
+		this->setScale(DirectX::XMFLOAT3(1.0f + (currentTime/2), 1.0f+ (currentTime / 2), 1.0f+ (currentTime / 2)));
+
+
 		if (frame != 0)
 		{
 			frame--;
 			this->mesh->matKey[0] = "Red.png";
+			/*this->setScale(DirectX::XMFLOAT3(1.5f, 1.5f, 1.5f));*/
 		}
 		else
 		{
-			this->mesh->matKey[0] = "Default";
+			this->mesh->matKey[0] = "Default";			
+
 		}
 		timer2.resetStartTime();
 	}
 	else
 	{
+		this->setScale(DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+
 		if (this->particles != nullptr && pickedUp)
 		{
 			if (tStruct.getDt() < 1)

@@ -9,7 +9,6 @@ using namespace DirectX::SimpleMath;
 
 void GuiHandler::SpritePass()
 {
-
 	if (isLoading)
 	{
 		Loading.Draw();
@@ -30,79 +29,32 @@ void GuiHandler::SpritePass()
 
 void GuiHandler::HandleInputs()
 {
+	start.IntersectMouse() ? start.SetTint(DirectX::Colors::Green.v) : start.SetTint(DirectX::Colors::White.v);
+	settings.IntersectMouse() ? settings.SetTint(DirectX::Colors::Green.v) : settings.SetTint(DirectX::Colors::White.v);
+	credits.IntersectMouse() ? credits.SetTint(DirectX::Colors::Green.v) : credits.SetTint(DirectX::Colors::White.v);
+	exit.IntersectMouse() ? exit.SetTint(DirectX::Colors::Green.v) : exit.SetTint(DirectX::Colors::White.v);
 
-#pragma region start
-
-	if (start.IntersectMouse())
+	if (Input::KeyPress(KeyCode::MOUSE_L))
 	{
-		start.SetTint(DirectX::Colors::Green.v);
-
-		if (Input::KeyPress(KeyCode::MOUSE_L))
+		if (start.GetTint() == DirectX::Colors::Green.v)
 		{
 			gameState = GAME;
 			isLoading = true;
 		}
-	}
-	else
-	{
-		start.SetTint(DirectX::Colors::White.v);
-	}
-
-#pragma endregion
-
-#pragma region settings
-
-	if (settings.IntersectMouse())
-	{
-		settings.SetTint(DirectX::Colors::Green.v);
-
-		if (Input::KeyPress(KeyCode::MOUSE_L))
+		else if (settings.GetTint() == DirectX::Colors::Green.v)
 		{
 			gameState = SETTINGS;
 		}
-	}
-	else
-	{
-		settings.SetTint(DirectX::Colors::White.v);
-	}
-
-#pragma endregion
-
-#pragma region credits
-
-	if (credits.IntersectMouse())
-	{
-		credits.SetTint(DirectX::Colors::Green.v);
-
-		if (Input::KeyPress(KeyCode::MOUSE_L))
+		else if (credits.GetTint() == DirectX::Colors::Green.v)
 		{
 			gameState = CREDITS;
 		}
-	}
-	else
-	{
-		credits.SetTint(DirectX::Colors::White.v);
-	}
-
-#pragma endregion
-
-#pragma region exit
-
-	if (exit.IntersectMouse())
-	{
-		exit.SetTint(DirectX::Colors::Green.v);
-
-		if (Input::KeyPress(KeyCode::MOUSE_L))
+		else if (credits.GetTint() == DirectX::Colors::Green.v)
 		{
 			gameState = EXIT;
 		}
-	}
-	else
-	{
-		exit.SetTint(DirectX::Colors::White.v);
-	}
 
-#pragma endregion
+	}
 
 }
 

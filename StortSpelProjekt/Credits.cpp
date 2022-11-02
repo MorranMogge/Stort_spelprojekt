@@ -6,23 +6,15 @@
 void Credits::HandleInputs()
 {
 
-#pragma region backText
+	backText.IntersectMouse() ? backText.SetTint(DirectX::Colors::Green.v) : backText.SetTint(DirectX::Colors::White.v);
 
-	if (backText.IntersectMouse())
+	if (Input::KeyPress(KeyCode::MOUSE_L))
 	{
-		backText.SetTint(DirectX::Colors::Green.v);
-
-		if (Input::KeyPress(KeyCode::MOUSE_L))
+		if (backText.GetTint() == DirectX::Colors::Green.v)
 		{
 			gameState = MENU;
 		}
 	}
-	else
-	{
-		backText.SetTint(DirectX::Colors::White.v);
-	}
-
-#pragma endregion
 
 }
 

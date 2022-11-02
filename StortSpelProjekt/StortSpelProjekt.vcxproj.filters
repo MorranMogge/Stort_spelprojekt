@@ -77,9 +77,6 @@
     <ClCompile Include="WindowHelper.cpp">
       <Filter>Handler/Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="Credits.cpp">
-      <Filter>Game-States</Filter>
-    </ClCompile>
     <ClCompile Include="SettingsUI.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
@@ -158,6 +155,9 @@
     </ClCompile>
     <ClCompile Include="LoseMenu.cpp">
       <Filter>Game-States</Filter>
+    </ClCompile>
+    <ClCompile Include="Credits.cpp">
+      <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -251,9 +251,6 @@
     </ClInclude>
     <ClInclude Include="WindowHelper.h">
       <Filter>Handler/Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Credits.h">
-      <Filter>Game-States</Filter>
     </ClInclude>
     <ClInclude Include="SettingsUI.h">
       <Filter>GUI</Filter>
@@ -441,6 +438,9 @@
     </ClInclude>
     <ClInclude Include="LoseMenu.h">
       <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="Credits.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

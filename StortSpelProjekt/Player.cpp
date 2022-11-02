@@ -23,7 +23,7 @@ void Player::handleItems()
 	holdingItem->setPos(newPos);
 	itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z }));
 
-	//Thorw the Item
+	//Throw the Item
 	if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
 	{
 		//Set dynamic so it can be affected by forces
@@ -43,7 +43,7 @@ void Player::handleItems()
 		holdingItem = nullptr;
 	}
 	//Use the Item
-	else if (Input::KeyDown(KeyCode::T) /*&& Input::KeyDown(KeyCode::T)*/)
+	else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
 	{
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 		holdingItem->useItem();
@@ -286,7 +286,6 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		jumpHeight += 2000.f * deltaTime;
 	}
 	
-
 	//PC movement
 	if (movingCross(cameraForward, deltaTime)) {}
 
@@ -622,7 +621,6 @@ bool Player::pickupItem(Item* itemToPickup)
 			holdingItem->getPhysComp()->getRigidBody()->resetForce();
 			holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 			holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-
 		}
 	}
 
@@ -740,7 +738,7 @@ bool Player::getHitByBat() const
         holdingItem->setPos(newPos);
         itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z}));
         
-        //Thorw the Item
+        //Throw the Item
         if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
         {
             //Set dynamic so it can be affected by forces
@@ -866,4 +864,10 @@ void Player::update()
 		this->particles->setRotation(this->getUpDirection());
 		this->particles->updateBuffer();
 	}
+}
+
+void Player::checkMovement()
+{
+	if (this->holdingItem != nullptr) this->setSpeed(18.f);
+	else this->setSpeed(25.f);
 }

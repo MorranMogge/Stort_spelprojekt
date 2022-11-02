@@ -94,4 +94,5 @@ public:
 	bool repairedShip() const;
 	bool getHitByBat()const;
 	void update();
+	void checkMovement();
 };

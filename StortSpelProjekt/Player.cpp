@@ -258,7 +258,7 @@ void Player::rotate()
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime, const bool& testingVec)
 {
 	if (dedge) return;
-	if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
+	else if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 	else normalVector = DirectX::XMVectorSet(grav.x, grav.y, grav.z, 1.0f);
 
 	//Calculations

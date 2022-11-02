@@ -87,7 +87,26 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		
 		if (material->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
+			if (this->bank.hasItem(Path.data))
+			{
+				this->diffuseMaps.emplace_back(this->bank.getSrv(Path.data));
+				continue;
+			};
+
 			std::cout << Path.C_Str() << "\n";
+			ID3D11ShaderResourceView* tempSRV = {};
+			std::string FullPath = "../Textures/";
+			FullPath.append(Path.data);
+			//make srv
+			if (!this->makeSRV(tempSRV, FullPath))
+			{
+				continue;
+			}
+			//give to bank
+			this->bank.addSrv(Path.data, tempSRV);
+			this->diffuseMaps.emplace_back(tempSRV);
+
+
 		}
 
 		//if (material->GetTexture(aiTextureType_, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
@@ -140,6 +159,11 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 		vertex.nor.x = mesh->mNormals[i].x;
 		vertex.nor.y = mesh->mNormals[i].y;
 		vertex.nor.z = mesh->mNormals[i].z;
+
+		vertex.tangent.x = mesh->mBitangents[i].x;
+		vertex.tangent.y = mesh->mBitangents[i].y;
+		vertex.tangent.z = mesh->mBitangents[i].z;
+
 
 		//vertex.tangent.x = mesh->mTangents[i].x;
 		//vertex.tangent.y = mesh->mTangents[i].y;

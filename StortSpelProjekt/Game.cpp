@@ -106,7 +106,7 @@ void Game::loadObjects()
 	this->manager.getMeshData("../Meshes/goblin2.fbx", vBuff, iBuff, subMeshRanges, verticies);
 	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	testCube = new GameObject(tmpMesh, Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
-	testCube->setSrv(this->manager.getSrv("playerTexture.png"));
+	testCube->setSrv(this->manager.getSrv("Goblin_Normal.png"));
 
 
 	//otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), PLAYER, & planetGravityField);
@@ -332,15 +332,15 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
 	this->manager.setDevice(device);
-	this->manager.loadMeshData("../Meshes/Player.obj");
-	this->manager.loadMeshData("../Meshes/Planet.obj");
-	this->manager.loadMeshData("../Meshes/Baseball.obj");
-	this->manager.loadMeshData("../Meshes/Sphere.obj");
-	this->manager.loadMeshData("../Meshes/rocket.obj");
-	this->manager.loadMeshData("../Meshes/pinto.obj");
-	this->manager.loadMeshData("../Meshes/bat.obj");
-	this->manager.loadMeshData("../Meshes/component.obj");
-	this->manager.loadMeshData("../Meshes/grenade.obj");
+	//this->manager.loadMeshData("../Meshes/Player.obj");
+	//this->manager.loadMeshData("../Meshes/Planet.obj");
+	//this->manager.loadMeshData("../Meshes/Baseball.obj");
+	//this->manager.loadMeshData("../Meshes/Sphere.obj");
+	//this->manager.loadMeshData("../Meshes/rocket.obj");
+	//this->manager.loadMeshData("../Meshes/pinto.obj");
+	//this->manager.loadMeshData("../Meshes/bat.obj");
+	//this->manager.loadMeshData("../Meshes/component.obj");
+	//this->manager.loadMeshData("../Meshes/grenade.obj");
 	this->manager.loadMeshData("../Meshes/goblin2.fbx");
 	
 

@@ -55,6 +55,20 @@ struct ItemSpawn
 	float z;
 };
 
+//enum = 8
+struct ComponentDropped
+{
+	int packetId;
+	int componentId;
+};
+
+//enum = 9
+struct ItemDropped
+{
+	int packetId;
+	int componentId;
+};
+
 //assign the player with an id that the server has created
 //enum = 10
 struct idProtocol
@@ -104,6 +118,20 @@ struct ComponentAdded
 	int spaceShipTeam;
 };
 
+//enum = 16
+struct ComponentPickedUp
+{
+	int packetId;
+	int componentId;
+};
+
+//enum = 17
+struct ItemPickedUp
+{
+	int packetId;
+	int itemId;
+};
+
 //enum = 21
 struct PlayerHit
 {
@@ -112,4 +140,12 @@ struct PlayerHit
 	float xForce;
 	float yForce;
 	float zForce;
+};
+
+//enum = 22
+struct PlayerId
+{
+	int packetId;
+	int playerId;
+	int teamId;
 };

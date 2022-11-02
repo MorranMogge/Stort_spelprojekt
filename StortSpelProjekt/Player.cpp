@@ -748,7 +748,7 @@ bool Player::checkForStaticCollision(const std::vector<GameObject*>& gameObjects
 	int gameObjSize = (int)gameObjects.size();
 	for (int i = 0; i < gameObjSize; i++)
 	{
-		if (gameObjects[i]->getPhysComp()->getType() != reactphysics3d::BodyType::STATIC) continue;
+		if (gameObjects[i]->getPhysComp()->getType() != reactphysics3d::BodyType::STATIC || gameObjects[i] == this->holdingItem) continue;
 		if (gameObjects[i]->getPhysComp()->testPointInside(point)) 
 		{
 			this->position -= 1.f * forwardVector;

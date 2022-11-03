@@ -39,8 +39,8 @@ void Grenade::explode()
 	this->destructionIsImminent = false;
 }
 
-Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
-	:Item(useMesh, pos, rot, id, field), destructionIsImminent(false), timeToExplode(5.f)
+Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
+	:Item(useMesh, pos, rot, id, onlineId, 3, field), destructionIsImminent(false), timeToExplode(5.f)
 {
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
@@ -54,8 +54,8 @@ Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMF
 	this->itemIcon->setOffset(constant);
 }
 
-Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
-	:Item(objectPath, pos, rot, id, field), destructionIsImminent(false), timeToExplode(5.f)
+Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
+	:Item(objectPath, pos, rot, id, onlineId, 3, field), destructionIsImminent(false), timeToExplode(5.f)
 {
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);

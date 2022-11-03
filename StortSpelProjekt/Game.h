@@ -9,7 +9,7 @@ struct wirefameInfo
 };
 
 const int NROFPLAYERS = 1;
-static bool IFONLINE = false;
+static bool IFONLINE = true;
 
 class Game : public State
 {
@@ -49,23 +49,22 @@ private:
 
 	PacketEventManager* packetEventManager;
 	std::vector<Player*> players;
+	std::vector<Item*> onlineItems;
 
 	//variables to handle packets
 	CircularBufferClient* circularBuffer;
-
 
 	Camera camera;
 	SkyboxObj skybox;
 	Player* currentPlayer;
 	GameObject* planet;
 	GameObject* testCube;
-	SpaceShip* spaceShipRed;
-	SpaceShip* spaceShipBlue;
-	Potion* potion;
-	Component* component;
+	SpaceShip* spaceShip;
+	Potion* potion;			//not in use
 	BaseballBat* testBat;
-	Player* otherPlayer;
 	Grenade* grenade;
+	std::vector<Component*> components;
+	std::vector<SpaceShip*> spaceShips;
 
 	LightHandler ltHandler;
 	ImGuiHelper* imguiHelper;
@@ -87,6 +86,7 @@ private:
 	bool setUpWireframe();
 	void updateBuffers();
 	void handleKeybinds();
+	void randomizeObjectPos(GameObject* item);
 	DirectX::SimpleMath::Vector3 orientToPlanet(const DirectX::XMFLOAT3 &position);
 	HWND* window;
 

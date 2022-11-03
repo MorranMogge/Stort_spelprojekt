@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Component.h"
 
-Component::Component(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
-	:Item(useMesh, pos, rot, id, field), pickedUp(false)
+Component::Component(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
+	:Item(useMesh, pos, rot, id, onlineId, 0, field), pickedUp(false)
 {
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
@@ -16,8 +16,8 @@ Component::Component(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX:
 	this->itemIcon->setOffset(constant);
 }
 
-Component::Component(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
-	:Item(objectPath, pos, rot, id, field), pickedUp(false)
+Component::Component(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
+	:Item(objectPath, pos, rot, id, onlineId, 0, field), pickedUp(false)
 {
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
@@ -33,6 +33,7 @@ Component::Component(const std::string& objectPath, const DirectX::XMFLOAT3& pos
 
 Component::~Component()
 {
+
 }
 
 void Component::interactWithComponent()

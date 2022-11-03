@@ -1,6 +1,6 @@
 #pragma once
-#include "stdafx.h"
-#include "Vertex.h"
+#include <reactphysics3d/reactphysics3d.h>
+#include <SimpleMath.h>
 
 class GameObject;
 
@@ -48,7 +48,7 @@ public:
 	//Set the shape to Sphere
 	void setSphereShape(const float& radius = 0.5f);
 	//Set the shape to Convex Mesh
-	void setConvexMeshShape(const std::vector<Vertex>& vertices); //Implement this later
+	//void setConvexMeshShape(const std::vector<Vertex>& vertices); //Implement this later
 
 	void setLinearDampning(const float& factor = 0.0f);
 	void setAngularDampning(const float& factor = 0.0f);
@@ -64,7 +64,6 @@ public:
 	void applyLocalTorque(const reactphysics3d::Vector3& force);
 	void setPosition(const reactphysics3d::Vector3& position);
 	void setRotation(const reactphysics3d::Quaternion& rotation);
-	void setRotation(const DirectX::SimpleMath::Quaternion& rotation);
 	void setTransform(const reactphysics3d::Transform& transform);
 	void resetForce()const;
 	void resetTorque()const;

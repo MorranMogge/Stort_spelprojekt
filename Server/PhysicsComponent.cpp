@@ -1,6 +1,4 @@
-#include "stdafx.h"
 #include "PhysicsComponent.h"
-#include "GameObject.h"
 
 void PhysicsComponent::createRigidBody(const reactphysics3d::Transform& transform)
 {
@@ -173,27 +171,27 @@ void PhysicsComponent::setSphereShape(const float& radius)
 	this->collider = this->rigidBody->addCollider(this->shape, reactphysics3d::Transform::identity());
 }
 
-void PhysicsComponent::setConvexMeshShape(const std::vector<Vertex>& vertices)
-{
-	//This function is yet to be implemented
-	std::cout << "FUNCTION NOT FOUND, PLEASE USE OTHER FUNCTION\n";
-	return;
-
-	this->rigidBody->removeCollider(this->collider);
-	reactphysics3d::CollisionShapeName shapeType = this->shape->getName();
-	switch (shapeType)
-	{
-	case reactphysics3d::CollisionShapeName::BOX:
-		this->comPtr->destroyBoxShape(dynamic_cast<reactphysics3d::BoxShape*>(this->shape));
-		break;
-	case reactphysics3d::CollisionShapeName::SPHERE:
-		this->comPtr->destroySphereShape(dynamic_cast<reactphysics3d::SphereShape*>(this->shape));
-		break;
-	default:
-		break;
-	}
-	this->collider = this->rigidBody->addCollider(this->shape, reactphysics3d::Transform::identity());
-}
+//void PhysicsComponent::setConvexMeshShape(const std::vector<Vertex>& vertices)
+//{
+//	//This function is yet to be implemented
+//	std::cout << "FUNCTION NOT FOUND, PLEASE USE OTHER FUNCTION\n";
+//	return;
+//
+//	this->rigidBody->removeCollider(this->collider);
+//	reactphysics3d::CollisionShapeName shapeType = this->shape->getName();
+//	switch (shapeType)
+//	{
+//	case reactphysics3d::CollisionShapeName::BOX:
+//		this->comPtr->destroyBoxShape(dynamic_cast<reactphysics3d::BoxShape*>(this->shape));
+//		break;
+//	case reactphysics3d::CollisionShapeName::SPHERE:
+//		this->comPtr->destroySphereShape(dynamic_cast<reactphysics3d::SphereShape*>(this->shape));
+//		break;
+//	default:
+//		break;
+//	}
+//	this->collider = this->rigidBody->addCollider(this->shape, reactphysics3d::Transform::identity());
+//}
 
 void PhysicsComponent::setLinearDampning(const float& factor)
 {
@@ -245,11 +243,6 @@ void PhysicsComponent::setPosition(const reactphysics3d::Vector3& position)
 void PhysicsComponent::setRotation(const reactphysics3d::Quaternion& rotation)
 {
 	this->rigidBody->setTransform(reactphysics3d::Transform(this->getPosition(), rotation));
-}
-
-void PhysicsComponent::setRotation(const DirectX::SimpleMath::Quaternion& rotation)
-{
-	this->rigidBody->setTransform(reactphysics3d::Transform(this->getPosition(), reactphysics3d::Quaternion(rotation.x, rotation.y, rotation.z, rotation.w)));
 }
 
 void PhysicsComponent::setTransform(const reactphysics3d::Transform& transform)

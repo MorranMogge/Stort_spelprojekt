@@ -2,9 +2,7 @@
 #include <SFML/Network.hpp>
 #include <iostream>
 #include <thread>
-#include "Player.h"
 
-#include "Player.h"
 #include "PacketsDataTypes.h"
 #include "CircularBufferClient.h"
 
@@ -57,8 +55,6 @@ public:
 	void sendToServerTcp();
 	void sendToServerTcp(std::string buf);
 	void receiveFromServerTcp();
-
-	void tempwrite();
 
 	//returns if a player position has been received
 	bool getIfConnected();

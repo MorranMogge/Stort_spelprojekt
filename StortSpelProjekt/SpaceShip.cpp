@@ -2,6 +2,7 @@
 #include "SpaceShip.h"
 #include "HudUI.h"
 
+using namespace DirectX;
 
 SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
 	:GameObject(useMesh, pos, DirectX::XMFLOAT3(0,0,0), id, field, scale), compToComplete(nrofComp), currentComponents(0)
@@ -80,6 +81,11 @@ int SpaceShip::getNrOfComponents()
 	 return currentComponents;
 }
 
+//void SpaceShip::addComponent()
+//{
+//	this->componentsAdded++;
+//}
+
 bool SpaceShip::detectedComponent(GameObject* objectToCheck)
 {
 	bool didDetect = false;
@@ -138,6 +144,11 @@ void SpaceShip::drawQuad()
 	rocketStatusQuad->bindAndDraw((int)this->components.size(), 0);//Changes texture depending on components
 }
 
+bool SpaceShip::getCompletion() const
+{
+	return this->currentComponents >= this->compToComplete;
+}
+
 void SpaceShip::drawParticles()
 {
 	if (this->particles != nullptr)
@@ -154,4 +165,10 @@ bool SpaceShip::isFinished()
 		complete = true;
 	}
 	return complete;
+}
+
+void SpaceShip::move(const DirectX::XMFLOAT3& grav, const float& deltaTime)
+{
+	upVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);
+	this->position += upVector * 18.f * deltaTime;
 }

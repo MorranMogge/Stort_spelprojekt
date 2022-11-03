@@ -405,10 +405,13 @@ GAMESTATE Game::Update()
 	{
 		randomizeObjectPos(this->testBat);
 	}*/
-
+	currentPlayer->checkMovement();
 	grenade->updateExplosionCheck();
-	if (potion->isTimeToRun()) currentPlayer->setSpeed(50.f);
-	else currentPlayer->setSpeed(25.f);
+	if (potion->isTimeToRun())
+	{
+		if (potion->timerGoing()) currentPlayer->setSpeed(50.f);
+		else currentPlayer->setSpeed(25.f);
+	}
 
 	//sending data to server
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())

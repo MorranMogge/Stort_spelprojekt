@@ -25,7 +25,7 @@ void Player::handleItems()
 	holdingItem->setPos(newPos);
 	itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z }));
 
-	//Thorw the Item
+	//Throw the Item
 	if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
 	{
 		//allocates data to be sent
@@ -309,7 +309,7 @@ void Player::rotate()
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime, const bool& testingVec)
 {
 	if (dedge) return;
-	if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
+	else if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 	else normalVector = DirectX::XMVectorSet(grav.x, grav.y, grav.z, 1.0f);
 
 	//Calculations
@@ -319,24 +319,24 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	rightVector = DirectX::XMVector3Normalize(rightVector);
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
-	//Jumping
-	if (jumpHeight >= jumpAllowed && Input::KeyPress(KeyCode::SPACE))
-	{
-		jumpHeight = 0.f;
-	}
-	else if (jumpHeight < jumpAllowed)
-	{
-		position += normalVector * jumpHeight * deltaTime;
-		jumpHeight += 3000.f * deltaTime;
-	}
-
 	//Running
 	if (Input::KeyDown(KeyCode::SHIFT))
 	{
 		deltaTime *= 1.5f;
 	}
 
-
+	//Jumping
+	if (onGround && Input::KeyPress(KeyCode::SPACE))
+	{
+		jumpHeight = 0.f;
+		onGround = false;
+	}
+	else if (jumpHeight < jumpAllowed)
+	{
+		position += normalVector * jumpHeight * deltaTime;
+		jumpHeight += 2000.f * deltaTime;
+	}
+	
 	//PC movement
 	if (movingCross(cameraForward, deltaTime)) {}
 
@@ -647,12 +647,10 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		}
 	}
 
-
 	if (!Input::KeyDown(KeyCode::W) && !Input::KeyDown(KeyCode::A) && !Input::KeyDown(KeyCode::S) && !Input::KeyDown(KeyCode::D))
 	{
 		this->moveKeyPressed = false;
 	}
-
 }
 
 int Player::getItemOnlineType() const
@@ -679,17 +677,13 @@ bool Player::pickupItem(Item* itemToPickup)
 		{
 			addItem(itemToPickup);
 
-			Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
-			if (tmp)
-			{
-				successfulPickup = true;
-				tmp->setPickedUp(true);
-			}
+			Component* tmp = dynamic_cast<Component*>(itemToPickup);
+			if (tmp) this->holdingComp = true;
+			else this->holdingComp = false;
 
 			holdingItem->getPhysComp()->getRigidBody()->resetForce();
 			holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 			holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-
 		}
 	}
 
@@ -708,7 +702,6 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);
 	timer.resetStartTime();
-
 }
 
 void Player::addItem(Item* itemToHold)
@@ -771,6 +764,8 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLO
 	reactphysics3d::RaycastInfo rayInfo;
 
 	bool testingVec = false;
+	onGround = false;
+
 	int gameObjSize = (int)gameObjects.size();
 	for (int i = 0; i < gameObjSize; i++)
 	{
@@ -780,6 +775,7 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLO
 			//Maybe somehow return the index of the triangle hit to calculate new Normal
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
 			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
+			onGround = true;
 			return true;
 		}
 	}
@@ -820,7 +816,7 @@ bool Player::getHitByBat() const
         holdingItem->setPos(newPos);
         itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z}));
         
-        //Thorw the Item
+        //Throw the Item
         if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
         {
             //Set dynamic so it can be affected by forces
@@ -972,5 +968,14 @@ void Player::setTeam(const int& team)
 		mesh->matKey[0] = "pintoRed.png"; break;
 	case 1:
 		mesh->matKey[0] = "pintoBlue.png"; break;
+	}
+}
+
+void Player::checkMovement()
+{
+	if (holdingComp)
+	{
+		if (this->holdingItem != nullptr) this->setSpeed(18.f);
+		else this->setSpeed(25.f);
 	}
 }

@@ -25,6 +25,8 @@ class HudUI final
 	GUISprite objective;
 	GUISprite blackBackground;
 
+	GUISprite controls;
+
 	void SpritePass();
 
 public:

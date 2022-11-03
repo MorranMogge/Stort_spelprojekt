@@ -257,7 +257,7 @@ int main()
 	start = std::chrono::system_clock::now();
 
 	float timerLength = 1.f / 30.0f;
-	float timerComponentLength = 5.0f;
+	float timerComponentLength = 3.0f;
 	float itemSpawnTimerLength = 20.0f;
 
 	setupTcp(data);

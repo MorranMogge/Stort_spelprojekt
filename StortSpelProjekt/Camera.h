@@ -4,7 +4,7 @@
 #include "ConstantBufferNew.h"
 #include "GPU.h"
 
-#define MAXFOV 0.8f
+#define MAXFOV 1.5f
 #define  MINFOV 0.5f
 
 class Camera

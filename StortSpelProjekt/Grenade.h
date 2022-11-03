@@ -13,9 +13,8 @@ private:
 	float timeToExplode;
 	float currentTime;
 	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
-	//ConstantBufferNew<posStruct> upVectorBuffer;
+	Mesh* explosionMesh;
 
-	void explode();
 public:
 	Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field = nullptr);
 	Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field = nullptr);
@@ -24,6 +23,10 @@ public:
 	void setGameObjects(const std::vector<GameObject *> &gameObjects);
 	virtual void drawIcon() override;
 	virtual void drawParticles() override;
-	// Inherited via Item
+	void drawFresnel();
 	virtual void useItem() override;
+
+private:
+	void explode();
+
 };

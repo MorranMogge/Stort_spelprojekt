@@ -123,10 +123,6 @@ void Game::drawObjects(bool drawDebug)
 	//Bind light
 	ltHandler.bindLightBuffers();
 
-
-
-
-
 	//Draw Game objects
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
@@ -136,10 +132,6 @@ void Game::drawObjects(bool drawDebug)
 	{
 		players[i]->draw();
 	}
-
-	basicRenderer.fresnelPrePass(this->camera);
-	atmosphere->updateBuffer();
-	atmosphere->draw();
 
 	//Draw light debug meshes
 	if (drawDebug)
@@ -155,17 +147,16 @@ void Game::drawObjects(bool drawDebug)
 
 void Game::drawParticles()
 {
-	for (int i = 0; i < this->ptEmitters.size(); i++)
+	for (int i = 0; i < items.size(); i++)
 	{
-		if (!this->ptEmitters.at(i).isActive() && this->ptEmitters.at(i).isPassComplete())
-		{
-			//turn off
-		}
-		else
-		{
-			this->ptEmitters.at(i).BindAndDraw(0);
-		}
+		this->items[i]->drawParticles();
 	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->drawParticles();
+	}
+	this->spaceShipRed->drawParticles();
+	this->spaceShipBlue->drawParticles();
 }
 
 bool Game::setUpWireframe()
@@ -448,17 +439,12 @@ GAMESTATE Game::Update()
 			}
 		}
 	}
+	if (currentPlayer->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
+
 
 	//Play pickup animation
 	spaceShipBlue->animateOnPickup();
 	spaceShipRed->animateOnPickup();
-
-
-
-
-	if (currentPlayer->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
-	
-
 
 
 	//Check if item icon should change to pickup icon 
@@ -483,8 +469,13 @@ void Game::Render()
 	
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
-
 	if (objectDraw) drawObjects(drawDebug);
+
+	//Render fresnel objects
+	basicRenderer.fresnelPrePass(this->camera);
+	//atmosphere->updateBuffer();
+	//atmosphere->draw();
+	grenade->drawFresnel();
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();
@@ -510,17 +501,7 @@ void Game::Render()
 
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);
-	//drawParticles();	//not in use, intended for drawing particles in game.cpp
-	for (int i = 0; i < items.size(); i++)
-	{
-		this->items[i]->drawParticles();
-	}
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->drawParticles();
-	}
-	this->spaceShipRed->drawParticles();
-	this->spaceShipBlue->drawParticles();
+	drawParticles();
 	basicRenderer.geometryUnbind();
 
 

@@ -74,7 +74,7 @@ public:
 	bool pickupItem(Item *itemToPickup);
 
 	void releasePickup();
-
+	virtual void draw() override;
 	void drawIcon();
 	void drawParticles();
 

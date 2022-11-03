@@ -814,6 +814,24 @@ bool Player::getHitByBat() const
 	return dedge;
 }
 
+void Player::draw()
+{
+	//Team switch
+	switch (team)
+	{
+	case 0:
+		mesh->matKey[0] = "pintoRed.png"; break;
+		break;
+
+	case 1:
+		mesh->matKey[0] = "pintoBlue.png"; break;
+		break;
+
+	}
+	this->mesh->UpdateCB(position, rotation, scale);
+	this->mesh->DrawWithMat();
+}
+
 void Player::drawIcon()
 {
 	if (this->playerIcon != nullptr)

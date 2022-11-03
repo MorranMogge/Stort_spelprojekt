@@ -30,6 +30,7 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 
 	case 1:
 		HudUI::blue = this;
+		mesh->matKey[0] = "spaceshipTexture2.jpg";
 		break;
 
 	}
@@ -63,6 +64,7 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 
 	case 1:
 		HudUI::blue = this;
+		mesh->matKey[0] = "spaceshipTexture2.jpg";
 		break;
 
 	}

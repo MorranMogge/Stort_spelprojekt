@@ -7,14 +7,15 @@
 class SpaceShip : public GameObject
 {
 private:
-	std::vector<GameObject*> components;
+	//std::vector<GameObject*> components;
 	BilboardObject* rocketStatusQuad;
 	ParticleEmitter* particles;
 	int compToComplete;
 	int currentComponents;
 	TimeStruct timer;
 	float counter;
-	bool animate = false;
+	bool animate;
+	int team;
 
 public:
 
@@ -32,4 +33,5 @@ public:
 	void drawQuad();
 	void drawParticles();
 	bool isFinished();
+	virtual void draw() override;
 };

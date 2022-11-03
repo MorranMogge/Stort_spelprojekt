@@ -96,15 +96,15 @@ GuiHandler::GuiHandler()
 	
 	useText = GUISprite(320 - left, 420 - upp);
 	useText.Load(GPU::device, L"../Sprites/UseText.png");
-	useText.SetScale(0.40, 0.40);
+	useText.SetScale(0.40f, 0.40f);
 
 	throwText = GUISprite(340 - left, 500 - upp);
 	throwText.Load(GPU::device, L"../Sprites/ThrowText.png");
-	throwText.SetScale(0.40, 0.40);
+	throwText.SetScale(0.40f, 0.40f);
 
 	pickText = GUISprite(322 - left, 580 - upp);
 	pickText.Load(GPU::device, L"../Sprites/PickText.png");
-	pickText.SetScale(0.40, 0.40);
+	pickText.SetScale(0.40f, 0.40f);
 
 	objective = GUISprite(310 - left, 675 - upp);
 	objective.Load(GPU::device, L"../Sprites/Objective.png");

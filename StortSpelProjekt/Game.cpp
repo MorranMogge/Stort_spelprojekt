@@ -8,7 +8,7 @@
 void Game::loadObjects()
 {
 	//Meshes vector contents
-	//Sphere, pinto, potion, rocket, bat, Player, component, grenade
+	//Sphere, pinto, potion, rocket, rocket, bat, Player, component, grenade
 
 	using namespace DirectX;
 	using namespace DirectX::SimpleMath;
@@ -19,14 +19,14 @@ void Game::loadObjects()
 	//Here we can add base object we want in the beginning of the game
 	meshes.push_back(new Mesh("../Meshes/Sphere"));
 	planet = new GameObject(meshes.back(), Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(planetSize, planetSize, planetSize));
-	//testplanet = new GameObject(meshes.back(), Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(49, 49, 49));
+	atmosphere = new GameObject(meshes.back(), Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(43, 43, 43));
 	meshes.push_back(new Mesh("../Meshes/pinto"));
 	currentPlayer = new Player(meshes.back(), Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, 0, &planetGravityField);
 	meshes.push_back(new Mesh("../Meshes/potion"));
 	potion = new Potion(meshes.back(), Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), POTION, &planetGravityField);
 	meshes.push_back(new Mesh("../Meshes/rocket"));
 	spaceShipRed = new SpaceShip(meshes.back(), Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, &planetGravityField, Vector3(2, 2, 2));
-	meshes.push_back(new Mesh("../Meshes/rocket"));
+	//meshes.push_back(new Mesh("../Meshes/rocket"));
 	spaceShipBlue = new SpaceShip(meshes.back(), Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, &planetGravityField, Vector3(2, 2, 2));
 	meshes.push_back(new Mesh("../Meshes/bat"));
 	testBat = new BaseballBat(meshes.back(), Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, &planetGravityField);
@@ -137,9 +137,9 @@ void Game::drawObjects(bool drawDebug)
 		players[i]->draw();
 	}
 
-	//basicRenderer.fresnelPrePass(this->camera);
-	//testplanet->updateBuffer();
-	//testplanet->draw();
+	basicRenderer.fresnelPrePass(this->camera);
+	atmosphere->updateBuffer();
+	atmosphere->draw();
 
 	//Draw light debug meshes
 	if (drawDebug)
@@ -191,17 +191,6 @@ bool Game::setUpWireframe()
 
 void Game::updateBuffers()
 {
-	//Update GameObjects
-
-	for (int i = 0; i < gameObjects.size(); i++)
-	{
-		gameObjects[i]->updateBuffer();
-	}
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->updateBuffer();
-	}
-
 	//Update Wireframe buffer
 	ZeroMemory(&subData, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	immediateContext->Map(wireBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &subData);
@@ -260,6 +249,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 {
 	MaterialLibrary::LoadDefault();
 	MaterialLibrary::LoadMaterial("spaceshipTexture1.jpg");
+	MaterialLibrary::LoadMaterial("spaceshipTexture2.jpg");
 	MaterialLibrary::LoadMaterial("pintoRed.png");
 	MaterialLibrary::LoadMaterial("pintoBlue.png");
 	MaterialLibrary::LoadMaterial("Red.png");
@@ -344,9 +334,7 @@ Game::~Game()
 	{
 		delete meshes[i];
 	}
-
-	
-
+	delete atmosphere;
 	wireBuffer->Release();
 }
 
@@ -441,7 +429,7 @@ GAMESTATE Game::Update()
 				Component* comp = dynamic_cast<Component*>(gameObjects[i]);
 				std::cout << "RED Detected Component!\nID: " << comp->getId() << "\n";
 				currentPlayer->releaseItem();
-				gameObjects[i]->setPos(DirectX::SimpleMath::Vector3(22.6783, -21.7597, 31.504));
+				gameObjects[i]->setPos(DirectX::SimpleMath::Vector3(22.6783f, -21.7597f, 31.504f));
 				spaceShipRed->addComponent();
 				spaceShipRed->setAnimate(true);
 				//return WIN;
@@ -453,7 +441,7 @@ GAMESTATE Game::Update()
 				Component* comp = dynamic_cast<Component*>(gameObjects[i]);
 				std::cout << "BLU Detected Component!\nID: " << comp->getId() << "\n";
 				currentPlayer->releaseItem();
-				gameObjects[i]->setPos(DirectX::SimpleMath::Vector3(22.6783, -21.7597, 31.504));
+				gameObjects[i]->setPos(DirectX::SimpleMath::Vector3(22.6783f, -21.7597f, 31.504f));
 				spaceShipBlue->setAnimate(true);
 				spaceShipBlue->addComponent();
 				//return WIN;

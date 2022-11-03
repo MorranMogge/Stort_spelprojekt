@@ -110,23 +110,23 @@ HudUI::HudUI()
 	#define scaleFactor 0.5f
 	control = GUISprite(310 + left, 225 + upp);
 	control.Load(GPU::device, L"../Sprites/control.png");
-	control.SetScale(0.75 * scaleFactor, 0.75 * scaleFactor);
+	control.SetScale(0.75f * scaleFactor, 0.75f * scaleFactor);
 
 	useText = GUISprite(317 + left, 320 + upp);
 	useText.Load(GPU::device, L"../Sprites/UseText.png");
-	useText.SetScale(0.40 * scaleFactor, 0.40 * scaleFactor);
+	useText.SetScale(0.40f * scaleFactor, 0.40f * scaleFactor);
 
 	throwText = GUISprite(327 + left, 360 + upp);
 	throwText.Load(GPU::device, L"../Sprites/ThrowText.png");
-	throwText.SetScale(0.40 * scaleFactor, 0.40 * scaleFactor);
+	throwText.SetScale(0.40f * scaleFactor, 0.40f * scaleFactor);
 
 	pickText = GUISprite(318 + left, 400 + upp);
 	pickText.Load(GPU::device, L"../Sprites/PickText.png");
-	pickText.SetScale(0.40 * scaleFactor, 0.40 * scaleFactor);
+	pickText.SetScale(0.40f * scaleFactor, 0.40f * scaleFactor);
 
 	objective = GUISprite(310 + left, 450 + upp);
 	objective.Load(GPU::device, L"../Sprites/Objective.png");
-	objective.SetScale(0.75 * scaleFactor, 0.75 * scaleFactor);
+	objective.SetScale(0.75f * scaleFactor, 0.75f * scaleFactor);
 
 	blackBackground = GUISprite(310 + left, 300 + upp);
 	blackBackground.Load(GPU::device, L"../Sprites/BackHudTransparent.png");

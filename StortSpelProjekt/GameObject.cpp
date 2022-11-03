@@ -11,10 +11,10 @@ void GameObject::updatePhysCompRotation()
 }
 
 GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale)
-	:position(pos), mesh(useMesh), objectID(id), scale(scale), physComp(nullptr), activeField(field)
+	:position(pos), objectID(id), scale(scale), physComp(nullptr), activeField(field)
 {
 
-
+	this->mesh = useMesh;
 
 	// set position
 	mesh->position = pos;
@@ -26,6 +26,7 @@ GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const Direct
 	// set scale
 	mesh->scale = scale;
 	this->scale = scale;
+
 }
 
 GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale)
@@ -54,7 +55,6 @@ GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos
 	this->mesh->scale = scale;
 	this->scale = scale;
 
-	this->mesh->UpdateCB();
 }
 
 GameObject::GameObject()
@@ -232,7 +232,7 @@ void GameObject::updateBuffer()
 	this->mesh->scale = this->scale;
 
 	//Update constantbuffer
-	this->mesh->UpdateCB();
+	//this->mesh->UpdateCB();
 }
 
 void GameObject::setMesh(const std::string& meshPath)
@@ -331,6 +331,7 @@ bool GameObject::withinRadious(GameObject* object, float radius) const
 
 void GameObject::draw()
 {
+	this->mesh->UpdateCB(position, rotation, scale);
 	this->mesh->DrawWithMat();
 }
 

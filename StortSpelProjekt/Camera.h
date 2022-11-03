@@ -4,9 +4,14 @@
 #include "ConstantBufferNew.h"
 #include "GPU.h"
 
+#define MAXFOV 0.8f
+#define  MINFOV 0.5f
+
 class Camera
 {
 private:
+	float fieldOfView = 0.8f;
+
 	DirectX::XMFLOAT3 position;
 	ConstantBufferNew<cameraStruct> cameraBuffer;
 	ConstantBufferNew<posStruct> positionBuffer;

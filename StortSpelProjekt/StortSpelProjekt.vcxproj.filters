@@ -404,7 +404,6 @@
     </ClInclude>
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="Component.h" />
-    <ClInclude Include="..\Server\PacketsDataTypes.h" />
     <ClInclude Include="ClientHandler.h" />
     <ClInclude Include="MouseClass.h" />
     <ClInclude Include="PacketEventManager.h" />

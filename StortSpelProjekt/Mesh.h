@@ -39,7 +39,7 @@ public:
 
 	Bound bound;
 
-	Mesh() {}
+	Mesh() { DirectX::XMStoreFloat4x4(&matrix, DirectX::XMMatrixIdentity()); }
 	Mesh(OBJ& obj)
 	{
 		Load(obj);

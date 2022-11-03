@@ -10,8 +10,8 @@ struct ThreadInfo
 {
 	sf::TcpSocket socket;
 	std::string receivedstring;
-	int playerId;
-	CircularBufferClient* circularBuffer;
+	int playerId = -1;
+	CircularBufferClient* circularBuffer = nullptr;
 	bool endThread = false;
 };
 

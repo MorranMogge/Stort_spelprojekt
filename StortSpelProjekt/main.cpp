@@ -36,8 +36,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui::GetIO().IniFilename = nullptr;
 
+	bool fullscreen = false;
 	UINT WIDTH = 1280;
 	UINT HEIGHT = 720;
+	//UINT WIDTH = 1920;
+	//UINT HEIGHT = 1080;
 	HWND window;
 
 	Client* client = new Client();
@@ -61,7 +64,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX11_Init(device, immediateContext);
 
-	//State* currentState = new Game(immediateContext, device, swapChain, mouse, window);
 	State* currentState = new Menu();
 	GAMESTATE stateInfo = NOCHANGE;
 
@@ -70,6 +72,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
+		if (Input::KeyPress(KeyCode::F1))
+		{
+			fullscreen = !fullscreen;
+			swapChain->SetFullscreenState(fullscreen, nullptr);
+			GPU::windowHeight = 1080;
+			GPU::windowWidth = 1920;
+		}
 
 		stateInfo = currentState->Update();
 
@@ -79,10 +88,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			DispatchMessage(&msg);
 		}
 		Sound::Update();
-
-		
-
-
 
 		if (GetAsyncKeyState(VK_ESCAPE))
 			stateInfo = EXIT;
@@ -122,14 +127,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 		
 		currentState->Render();
 
-		//immediateContext->ClearRenderTargetView(rtv, clearColour);
-		/*immediateContext->OMSetRenderTargets(1, &rtv, dsView);
-		immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		immediateContext->RSSetViewports(1, &viewport);
-
-		currentState->DrawUI();
-		*/
-		//imGuiHelper.drawInterface("test");
 		swapChain->Present(0, 0);
 	}
 

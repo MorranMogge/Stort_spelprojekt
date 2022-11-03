@@ -27,7 +27,7 @@ DirectX::XMFLOAT3 normalizeXMFLOAT3(DirectX::XMFLOAT3 argOne)
     float x = argOne.x;
     float y = argOne.y;
     float z = argOne.z;
-    float length = sqrt(x * x + y * y + z * z);
+    float length = (float)sqrt(x * x + y * y + z * z);
     if (length == 0) return argOne;
     float factor = 1 / length;
     argOne.x *= factor;
@@ -41,7 +41,7 @@ void newNormalizeXMFLOAT3(DirectX::XMFLOAT3& argOne)
     float x = argOne.x;
     float y = argOne.y;
     float z = argOne.z;
-    float length = sqrt(x * x + y * y + z * z);
+    float length = (float)sqrt(x * x + y * y + z * z);
     float factor = 1.f / length;
     argOne.x *= factor;
     argOne.y *= factor;
@@ -66,5 +66,5 @@ DirectX::XMFLOAT3 getScalarMultiplicationXMFLOAT3(const float& scalar, DirectX::
 
 float getLength(DirectX::XMFLOAT3 argOne)
 {
-    return sqrt(argOne.x * argOne.x + argOne.y * argOne.y + argOne.z * argOne.z);
+    return (float)sqrt(argOne.x * argOne.x + argOne.y * argOne.y + argOne.z * argOne.z);
 }

@@ -156,7 +156,7 @@ void AnimatedMesh::InterpolatePos(DirectX::XMFLOAT3& res, float animationTime, c
 	//res = start + factor * (end-start);
 	DirectX::XMVECTOR vectorRez = DirectX::XMVectorLerp(start, end, factor);
 	//vectorRez = DirectX::XMVector4Normalize(vectorRez);
-	DirectX::XMStoreFloat3(&res, vectorRez);
+	DirectX::XMStoreFloat3(&res, start);
 }
 
 bool AnimatedMesh::findNodeAnim(const std::string& nodeName,  const animationNode pAnimation, channels& res)
@@ -196,7 +196,7 @@ AnimatedMesh::AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOA
 	:GameObject(useMesh, pos, rot, id)
 {
 	this->totalTime = 0;
-	this->setScale(DirectX::XMFLOAT3(20, 20, 20));
+	this->setScale(DirectX::XMFLOAT3(0.20, 0.20, 0.20));
 	this->updateBuffer();
 	//strucBuff.Initialize(GPU::device, GPU::immediateContext, finalTransforms);
 	///();

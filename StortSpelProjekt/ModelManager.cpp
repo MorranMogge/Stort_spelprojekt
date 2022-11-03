@@ -629,7 +629,7 @@ std::vector<ID3D11ShaderResourceView*> ModelManager::getTextureMaps() const
 bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 {
 	Assimp::Importer importer;
-	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
+	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate );
 
 	if (pScene == nullptr)
 	{
@@ -642,6 +642,10 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 		return false;
 	}
 	processNodes(pScene->mRootNode, pScene, filePath);
+	for (int i = 0, end = this->aniData.boneDataVec.size(); i < end; i++)
+	{
+		this->normalizeWeights(this->aniData.boneDataVec[i].Weights);
+	}
 	parseNode(pScene);
 	parseAnimation(pScene);
 

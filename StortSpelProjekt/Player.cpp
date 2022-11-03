@@ -984,5 +984,5 @@ void Player::checkMovement()
 
 void Player::checkDirection(DirectX::XMVECTOR compPosition)
 {
-	arrowVector = XMVectorSubtract(compPosition, forwardVector);
+	arrowVector = XMVectorSubtract(compPosition, this->getPosV3());
 }

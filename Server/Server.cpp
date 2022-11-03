@@ -28,37 +28,6 @@
 const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
 
-void ramUsage()
-{
-	//src: https://learn.microsoft.com/en-us/windows/win32/api/psapi/ns-psapi-process_memory_counters
-
-	DWORD currentProcessID = GetCurrentProcessId();
-
-	HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, currentProcessID);
-
-	if (NULL == hProcess)
-		return;
-
-	// https://learn.microsoft.com/en-us/windows/win32/psapi/process-memory-usage-information
-
-	PROCESS_MEMORY_COUNTERS pmc{};
-	if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc)))
-	{
-		//PagefileUsage is the:
-		//The Commit Charge value in bytes for this process.
-		//Commit Charge is the total amount of memory that the memory manager has committed for a running process.
-
-		float memoryUsage = float(pmc.PagefileUsage / 1024.0 / 1024.0); //MiB
-
-		char msg[100];
-		std::cout << std::to_string(memoryUsage) << std::endl;
-		//sprintf_s(msg, "%.2f MiB committed", memoryUsage);
-		//MessageBoxA(0, msg, "RAM", 0);
-	}
-
-	CloseHandle(hProcess);
-}
-
 struct userData
 {
 	sf::IpAddress ipAdress;
@@ -629,7 +598,6 @@ int main()
 			
 		}
 		
-		ramUsage();
 
 	}
     return 0;

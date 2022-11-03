@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ImGuiHelper.h"
+#include "Profiler.h"
 
 ImGuiHelper::ImGuiHelper(Client*& client)
 	:client(client)
@@ -74,9 +75,21 @@ void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, DirectX::XMFLOAT3&
 		{
 			std::string tmpStr = "FPS: " + std::to_string(fps);
 			ImGui::Text(tmpStr.c_str());
+
+			ImVec4 col(0.0f, 0.8f, 0.0f, 1.0f);
+			ImGui::TextColored(col, ("Vram: " + std::to_string(getVramUsage())).c_str());
+			ImGui::TextColored(col, ("Ram: " + std::to_string(getRamUsage())).c_str());
+
+
 			ImGui::Checkbox("Draw collision boxes", &wireframe);
 			ImGui::Checkbox("Draw objects", &drawObjects);
 			ImGui::ColorEdit3("Wireframe colour", wClr);
+
+			if (ImGui::Button("vram Usage"))
+			{
+				std::cout << std::to_string(getVramUsage());
+			}
+			
 		}
 		wireframeClr.x = wClr[0];
 		wireframeClr.y = wClr[1];

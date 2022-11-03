@@ -159,6 +159,7 @@
     <ClCompile Include="LoseMenu.cpp">
       <Filter>Game-States</Filter>
     </ClCompile>
+    <ClCompile Include="Profiler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -404,7 +405,6 @@
     </ClInclude>
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="Component.h" />
-    <ClInclude Include="..\Server\PacketsDataTypes.h" />
     <ClInclude Include="ClientHandler.h" />
     <ClInclude Include="MouseClass.h" />
     <ClInclude Include="PacketEventManager.h" />
@@ -444,6 +444,7 @@
     <ClInclude Include="LoseMenu.h">
       <Filter>Game-States</Filter>
     </ClInclude>
+    <ClInclude Include="Profiler.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

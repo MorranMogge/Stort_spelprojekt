@@ -272,7 +272,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	this->packetEventManager = new PacketEventManager();
 	//m�ste raderas******************
-	client = new Client("192.168.43.216");
+	client = new Client();//("192.168.43.216");
 	circularBuffer = client->getCircularBuffer();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -359,6 +359,10 @@ Game::~Game()
 		{
 			delete this->gameObjects.at(i);
 		}
+	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		delete players[i];
 	}
 	wireBuffer->Release();
 }

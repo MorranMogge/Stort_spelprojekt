@@ -410,6 +410,12 @@ GAMESTATE Game::Update()
 		randomizeObjectPos(this->testBat);
 	}*/
 	currentPlayer->checkMovement();
+
+	if (components.size() > 0)
+	{
+		currentPlayer->checkDirection(components[0]->getPosV3());
+	}
+
 	grenade->updateExplosionCheck();
 	if (potion->isTimeToRun())
 	{

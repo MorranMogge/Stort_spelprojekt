@@ -55,7 +55,6 @@ private:
 
 	//Other variables
 	Client* client;
-
 	const float speedConstant = 100.f;
 	int repairCount = 0;
 	Item* holdingItem;
@@ -66,6 +65,8 @@ private:
 	float speed = 25.f;
 	bool dedge = false;
 	TimeStruct timer;
+
+	DirectX::XMVECTOR arrowVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	void resetRotationMatrix();
 	void handleItems();
@@ -107,4 +108,6 @@ public:
 	void update();
 	void setTeam(const int& team);
 	void checkMovement();
+
+	void checkDirection(DirectX::XMVECTOR compPosition);
 };

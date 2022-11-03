@@ -878,7 +878,7 @@ DirectX::XMVECTOR Player::getUpVec() const
 
 DirectX::XMVECTOR Player::getForwardVec() const
 {
-	return this->forwardVector;
+	return this->arrowVector;
 }
 
 DirectX::XMVECTOR Player::getRightVec() const
@@ -980,4 +980,9 @@ void Player::checkMovement()
 		if (this->holdingItem != nullptr) this->setSpeed(25.f*0.65f);
 		else this->setSpeed(25.f);
 	}
+}
+
+void Player::checkDirection(DirectX::XMVECTOR compPosition)
+{
+	arrowVector = XMVectorSubtract(compPosition, forwardVector);
 }

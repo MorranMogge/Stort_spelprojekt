@@ -52,6 +52,8 @@ void HudUI::SpritePass()
 		pickText.Draw();
 	}
 
+	controls.Draw();
+
 }
 
 HudUI::HudUI()
@@ -132,7 +134,9 @@ HudUI::HudUI()
 	blackBackground.Load(GPU::device, L"../Sprites/BackHudTransparent.png");
 	blackBackground.SetScale(1.0f, 1.0f);
 
-
+	controls = GUISprite(1150,650);
+	controls.Load(GPU::device, L"../Sprites/DisplayControls.png");
+	controls.SetScale(1.0f, 1.0f);
 }
 
 HudUI::~HudUI()

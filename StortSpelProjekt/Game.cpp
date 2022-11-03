@@ -122,9 +122,9 @@ void Game::randomizeObjectPos(GameObject* object)
 	int yPos = rand() % 201 - 100;
 	int zPos = rand() % 201 - 100;
 
-	randomPos.x = xPos;
-	randomPos.y = yPos;
-	randomPos.z = zPos;
+	randomPos.x = (float)xPos;
+	randomPos.y = (float)yPos;
+	randomPos.z = (float)zPos;
 
 	randomPos.Normalize();
 	randomPos *= 100;
@@ -319,7 +319,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			//}
 			if (playerId != i)
 			{
-				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude < i + 1), &planetGravityField);
+				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude < i + 1), &planetGravityField);
 				tmpPlayer->setOnlineID(i);
 				physWolrd.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);

@@ -286,7 +286,7 @@ int main()
 	physicsTimer.resetStartTime();
 	while (!physicsTimer.getTimePassed(3.0f)) continue;
 
-	SpawnComponent cData = SpawnOneComponent(components);
+	SpawnComponent cData = SpawnOneComponent(components, spaceShipPos);
 	physWorld.addPhysComponent(components[components.size() - 1]);
 	components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
 	sendBinaryDataAllPlayers(cData, data);

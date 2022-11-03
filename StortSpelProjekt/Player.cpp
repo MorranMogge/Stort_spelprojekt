@@ -93,11 +93,12 @@ Player::~Player()
 }
 
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
-    :GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team)
+    :GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0)
 {
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	this->client = client;
+	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
 
 	normalVector = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 1.0f);
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
@@ -129,11 +130,12 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 }
 
 Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
-	:GameObject(objectPath, pos, rot, id, field), holdingItem(nullptr), team(team)
+	:GameObject(objectPath, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0), speed(25.f)
 {
 	this->client = client;
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);

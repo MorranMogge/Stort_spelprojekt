@@ -169,9 +169,9 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					int yPos = rand() % 201 - 100;
 					int zPos = rand() % 201 - 100;
 
-					randomPos.x = xPos;
-					randomPos.y = yPos;
-					randomPos.z = zPos;
+					randomPos.x = (float)xPos;
+					randomPos.y = (float)yPos;
+					randomPos.z = (float)zPos;
 
 					randomPos.Normalize();
 					randomPos *= 100;

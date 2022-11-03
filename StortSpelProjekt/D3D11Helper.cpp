@@ -41,10 +41,10 @@ bool CreateInterfaces(const UINT& width, const UINT& height, HWND window, ID3D11
 	GPU::immediateContext = immediateContext;
 	GPU::swapChain = swapChain;
 
-	//GPU::windowWidth = 1264;
-	//GPU::windowHeight = 681;
-	GPU::windowWidth = 1920;
-	GPU::windowHeight = 1080;
+	GPU::windowWidth = 1264;
+	GPU::windowHeight = 681;
+	//GPU::windowWidth = 1920;
+	//GPU::windowHeight = 1080;
 
 	return !FAILED(hr);
 }

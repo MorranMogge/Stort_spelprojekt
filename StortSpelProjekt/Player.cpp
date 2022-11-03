@@ -975,7 +975,7 @@ void Player::checkMovement()
 {
 	if (holdingComp)
 	{
-		if (this->holdingItem != nullptr) this->setSpeed(18.f);
+		if (this->holdingItem != nullptr) this->setSpeed(25.f*0.65f);
 		else this->setSpeed(25.f);
 	}
 }

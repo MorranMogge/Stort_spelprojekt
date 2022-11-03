@@ -63,7 +63,7 @@ private:
 	bool moveKeyPressed = false;
 	BilboardObject* playerIcon;
 	ParticleEmitter* particles;
-	float speed;
+	float speed = 25.f;
 	bool dedge = false;
 	TimeStruct timer;
 

@@ -43,6 +43,16 @@ DirectX::XMVECTOR Arrow::getPosition() const
 	return this->position;
 }
 
+DirectX::XMVECTOR Arrow::getArrowVector() const
+{
+	return this->arrowVector;
+}
+
+void Arrow::pointDirection(const DirectX::XMVECTOR& compPosition)
+{
+	arrowVector = XMVectorSubtract(compPosition, this->position);
+}
+
 void Arrow::changeDirection(const DirectX::XMVECTOR& cameraPosition, const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraUp, const DirectX::XMMATRIX& cameraRotation)
 {
 	this->position = cameraPosition - cameraUp * 40.f + cameraForward * 20.f;

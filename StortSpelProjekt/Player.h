@@ -66,8 +66,6 @@ private:
 	bool dedge = false;
 	TimeStruct timer;
 
-	DirectX::XMVECTOR arrowVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-
 	void resetRotationMatrix();
 	void handleItems();
 public:
@@ -108,6 +106,4 @@ public:
 	void update();
 	void setTeam(const int& team);
 	void checkMovement();
-
-	void checkDirection(const DirectX::XMVECTOR& compPosition, const DirectX::XMVECTOR& cameraPosition);
 };

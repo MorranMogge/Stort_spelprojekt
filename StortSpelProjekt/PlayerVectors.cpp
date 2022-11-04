@@ -39,11 +39,13 @@ bool PlayerVectors::setUpVertexBuffer()
 void PlayerVectors::updateVertexBuffer()
 {
 	
-		vectors[0].position = vectors[1].position = vectors[2].position = 
+		vectors[2].position = 
 		vectors[3].position = vectors[4].position = vectors[5].position =
 		vectors[6].position = vectors[7].position = this->player->getPos();
 		
-		vectors[1].position += this->player->getForwardVec() * 50;
+		vectors[0].position = vectors[1].position = this->arrow->getPosition();
+
+		vectors[1].position += this->arrow->getArrowVector() * 50;
 		vectors[3].position += this->player->getUpVec() * 50;
 		vectors[5].position += this->player->getRightVec() * 50;
 		vectors[7].position = {this->player->getRayCastPos().x, this->player->getRayCastPos().y, this->player->getRayCastPos().z};
@@ -68,22 +70,24 @@ PlayerVectors::~PlayerVectors()
 	pShader->Release();
 }
 
-void PlayerVectors::setPlayer(Player* player)
+void PlayerVectors::setPlayer(Player* player, Arrow* arrow)
 {
 	this->player = player;
+	this->arrow = arrow;
 
-	vectors[0].position = vectors[1].position = vectors[2].position =
+	vectors[2].position =
 		vectors[3].position = vectors[4].position = vectors[5].position = 
 		vectors[6].position = vectors[7].position = this->player->getPos();
+	vectors[0].position = vectors[1].position = this->arrow->getPosition();
 
-	vectors[1].position += this->player->getForwardVec() * 100;
+	vectors[1].position += this->arrow->getArrowVector() * 100;
 	vectors[3].position += this->player->getUpVec() * 100;
 	vectors[5].position += this->player->getRightVec() * 100;
 	vectors[6].position += this->player->getUpVec() * -100.f;
 	vectors[7].position = SimpleMath::Vector3(0, 0, 0);
 
-	vectors[0].normal = DirectX::SimpleMath::Vector3(1, 0, 0);
-	vectors[1].normal = DirectX::SimpleMath::Vector3(1, 0, 0);
+	vectors[0].normal = DirectX::SimpleMath::Vector3(1, 0, 1);
+	vectors[1].normal = DirectX::SimpleMath::Vector3(1, 0, 1);
 	vectors[2].normal = DirectX::SimpleMath::Vector3(0, 1, 0);
 	vectors[3].normal = DirectX::SimpleMath::Vector3(0, 1, 0);
 	vectors[4].normal = DirectX::SimpleMath::Vector3(0, 0, 1);

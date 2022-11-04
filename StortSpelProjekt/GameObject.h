@@ -23,7 +23,8 @@ private:
 	int objectID;
 	reactphysics3d::Quaternion reactQuaternion;
 	DirectX::SimpleMath::Quaternion dx11Quaternion;
-	ID3D11ShaderResourceView* srv;
+	ID3D11ShaderResourceView* diffuseMap;
+	ID3D11ShaderResourceView* normalMap;
 	GravityField* activeField;
 
 protected:
@@ -69,5 +70,7 @@ public:
 	void drawObject();
 	//Draw f�r gameObject med textur
 	void drawObjectWithTexture();
-	void setSrv(ID3D11ShaderResourceView* srv);
+	void drawObjectWithNormalMap();
+	void setDiffuseMap(ID3D11ShaderResourceView* srv);
+	void setNormalMap(ID3D11ShaderResourceView* srv);
 };

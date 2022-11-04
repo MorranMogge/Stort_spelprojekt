@@ -78,7 +78,7 @@ void Game::loadObjects()
 	this->manager.getMeshData("../Meshes/Sphere.obj", vBuff, iBuff, subMeshRanges, verticies);
 	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	planet = new GameObject(tmpMesh, Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET,nullptr, XMFLOAT3(planetSize, planetSize, planetSize));
-	planet->setSrv(manager.getSrv("planetTexture.png"));
+	planet->setDiffuseMap(manager.getSrv("planetTexture.png"));
 
 
 	currentPlayer = new Player("../Meshes/pinto", Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, &planetGravityField);
@@ -106,7 +106,10 @@ void Game::loadObjects()
 	this->manager.getMeshData("../Meshes/goblin2.fbx", vBuff, iBuff, subMeshRanges, verticies);
 	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	testCube = new GameObject(tmpMesh, Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
-	testCube->setSrv(this->manager.getSrv("Goblin_Normal.png"));
+	
+	//normal map test
+	testCube->setDiffuseMap(this->manager.getSrv("Goblin_BaseColor.png"));
+	testCube->setNormalMap(this->manager.getSrv("Goblin_Normal.png"));
 
 
 	//otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), PLAYER, & planetGravityField);
@@ -179,6 +182,11 @@ void Game::drawShadows()
 {
 	potion->draw();
 	currentPlayer->draw();
+	
+	//why it no work?
+	//testCube->drawObject();
+	
+	
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->draw();
@@ -549,6 +557,10 @@ void Game::Render()
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
+
+	basicRenderer.setUpSceneNormalMap(this->camera);
+	ltHandler.bindLightBuffers();
+	testCube->drawObjectWithNormalMap();
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();

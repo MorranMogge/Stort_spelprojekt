@@ -27,6 +27,13 @@ private:
 	ID3D11PixelShader* pShader;
 	ID3D11PixelShader* ApShader;
 	ID3D11VertexShader* vs_Skybox;
+
+	//normal map
+	ID3D11VertexShader* vs_normalMap;
+	ID3D11PixelShader* ps_normalMap;
+	ID3D11InputLayout* inputLayout_NormalMap;
+
+
 	ID3D11PixelShader* ps_Skybox;
 	ID3D11InputLayout* inputLayout_Skybox;
 
@@ -49,6 +56,7 @@ private:
 	bool setUpInputLayout(ID3D11Device* device, const std::string &vShaderByteCode);
 	bool setUp_PT_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode);
 	bool setUp_Sky_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode);
+	bool setUp_NormalMap_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode);
 	bool setUpSampler(ID3D11Device* device);
 	bool setUpShadowSampler(ID3D11Device* device);
 	bool setUpShadowRastirizer(ID3D11Device* device);
@@ -61,6 +69,7 @@ public:
 	bool initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT);
 	void setUpScene();
 	void setUpScene(Camera& stageCamera);
+	void setUpSceneNormalMap(Camera& stageCamera);
 	void geometryPass(Camera & stageCamera);
 	void depthPrePass();
 	void depthUnbind();

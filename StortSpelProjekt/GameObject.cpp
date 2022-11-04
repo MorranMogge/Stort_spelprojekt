@@ -367,7 +367,12 @@ void GameObject::update()
 
 void GameObject::drawObjectWithTexture()
 {
-	this->mesh->drawWithTexture(this->srv);
+	this->mesh->drawWithTexture(this->diffuseMap);
+}
+
+void GameObject::drawObjectWithNormalMap()
+{
+	this->mesh->drawWithNormalMap(this->diffuseMap, this->normalMap);
 }
 
 void GameObject::drawObject()
@@ -375,7 +380,12 @@ void GameObject::drawObject()
 	this->mesh->draw();
 }
 
-void GameObject::setSrv(ID3D11ShaderResourceView* srv)
+void GameObject::setDiffuseMap(ID3D11ShaderResourceView* srv)
 {
-	this->srv = srv;
+	this->diffuseMap = srv;
+}
+
+void GameObject::setNormalMap(ID3D11ShaderResourceView* srv)
+{
+	this->normalMap = srv;
 }

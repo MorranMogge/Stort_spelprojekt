@@ -20,8 +20,8 @@
 struct vertex
 {
 	DirectX::XMFLOAT3 pos; // Position
-	DirectX::XMFLOAT2 uv; // UV coordination
 	DirectX::XMFLOAT3 nor; // Normal
+	DirectX::XMFLOAT2 uv; // UV coordination
 	DirectX::XMFLOAT3 tangent;
 
 	vertex() {

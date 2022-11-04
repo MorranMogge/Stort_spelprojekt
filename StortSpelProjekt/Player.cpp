@@ -789,6 +789,7 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 			//Maybe somehow return the index of the triangle hit to calculate new Normal
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
 			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
+			onGround = true;
 			return true;
 		}
 	}

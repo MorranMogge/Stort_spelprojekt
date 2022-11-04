@@ -15,38 +15,37 @@ class Game : public State
 {
 private:
 	ID3D11DeviceContext* immediateContext;
+	HWND* window;
 
 	ImGuiHelper imGui;
 	bool wireframe = false;
 	bool objectDraw = true;
 	bool drawDebug = false;
-	wirefameInfo reactWireframeInfo;
-	ID3D11Buffer* wireBuffer;
-	D3D11_MAPPED_SUBRESOURCE subData;
 
 	std::unique_ptr<DirectX::GamePad> gamePad;
 
+	//Used for delta time
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> currentTime;
 	std::chrono::time_point<std::chrono::system_clock> lastUpdate;
+	
+	//Server related variables
+	std::chrono::time_point<std::chrono::system_clock> serverStart;
+	float serverTimerLength =  1.f / 30.0f;
+	Client* client;
 
 	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT3 grav;
 
-	std::chrono::time_point<std::chrono::system_clock> serverStart;
 	
-	std::vector< Mesh*> meshes;
 
-	float serverTimerLength =  1.f / 30.0f;
-	Client* client;
 
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
 
 	PhysicsWorld physWolrd;
 	std::vector<Planet*> planetVector;
-	Mesh* planetMeshes;
 
 	PacketEventManager* packetEventManager;
 	std::vector<Player*> players;
@@ -58,38 +57,36 @@ private:
 	Camera camera;
 	SkyboxObj skybox;
 	Player* currentPlayer;
-	GameObject* planet;
-	GameObject* testCube;
 	SpaceShip* spaceShip;
-	Potion* potion;			//not in use
-	BaseballBat* testBat;
-	Grenade* grenade;
-	std::vector<Component*> components;
-	std::vector<SpaceShip*> spaceShips;
+	Mesh* planetMeshes;
 
+	//Items
+	Potion* potion;
+	BaseballBat* baseballBat;
+	Grenade* grenade;
+
+	//Objects
+	std::vector<Component*> components;
+	std::vector<GameObject*> gameObjects;
+	std::vector<SpaceShip*> spaceShips;
+	std::vector<Item*> items;
+	std::vector< Mesh*> meshes;
+	
 	LightHandler ltHandler;
 	ImGuiHelper* imguiHelper;
 	PlayerVectors playerVecRenderer;
-
-	//Objects
-	std::vector<GameObject*> gameObjects;
-	std::vector<Item*> items;
 	std::vector<ParticleEmitter> ptEmitters;
-	
+
 	//HUD
 	HudUI ui;
 	
-
 	void loadObjects();
 	void drawShadows();
 	void drawObjects(bool drawDebug);
 	void drawParticles();
-	bool setUpWireframe();
 	void updateBuffers();
 	void handleKeybinds();
 	void randomizeObjectPos(GameObject* item);
-	DirectX::SimpleMath::Vector3 orientToPlanet(const DirectX::XMFLOAT3 &position);
-	HWND* window;
 
 public:
 	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window);

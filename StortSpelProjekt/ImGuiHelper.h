@@ -25,5 +25,5 @@ public:
 
 	void drawInterface(std::string message);
 	void setupImGui(float bgColour[]);
-	void react3D(bool& wireframe, bool& drawObjects, DirectX::XMFLOAT3& wireframeClr, const float &dt);
+	void react3D(bool& wireframe, bool& drawObjects, const float &dt);
 };

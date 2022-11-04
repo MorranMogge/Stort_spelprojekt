@@ -3,6 +3,104 @@
 #include "DirectXMathHelper.h"
 #include "SendingDataEvent.h"
 
+Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
+{
+	MaterialLibrary::LoadDefault();
+	MaterialLibrary::LoadMaterial("spaceshipTexture1.jpg");
+	MaterialLibrary::LoadMaterial("pintoRed.png");
+	MaterialLibrary::LoadMaterial("pintoBlue.png");
+	MaterialLibrary::LoadMaterial("Red.png");
+
+	this->packetEventManager = new PacketEventManager();
+	//m�ste raderas******************
+	client = new Client();//("192.168.43.216");
+	circularBuffer = client->getCircularBuffer();
+
+	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
+
+	ltHandler.addLight(DirectX::XMFLOAT3(-90, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 1, 0),1);
+	ltHandler.addLight(DirectX::XMFLOAT3(16 + 7, 42 + 17, 12 + 7), DirectX::XMFLOAT3(0, 0.3f, 1.0f), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
+	ltHandler.addLight(DirectX::XMFLOAT3(-10 - 5, -45 - 17, -10 - 7), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
+	
+	//ltHandler.addLight(DirectX::XMFLOAT3(10, -50, 30), DirectX::XMFLOAT3(0, 0, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
+
+	//Particle test
+	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2, 5)));
+
+	if (IFONLINE)
+	{
+		client->connectToServer();
+		int playerId = -1;
+		while (playerId <= -1 || playerId >= 9)
+		{
+			playerId = packetEventManager->handleId(client->getCircularBuffer());
+			//std::cout << "Game.cpp, playerId: " << std::to_string(playerId) << std::endl;
+		}
+		//int playerid = client->initTEMPPLAYERS();
+
+		this->client->setClientId(playerId);
+		int offset = 10;
+		int dude = (NROFPLAYERS) / 2;
+
+		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
+		{
+			Player* tmpPlayer = nullptr;
+			
+			if (playerId != i)
+			{
+				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude < i + 1), &planetGravityField);
+				tmpPlayer->setOnlineID(i);
+				physWolrd.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
+				players.push_back(tmpPlayer);
+			}
+			else
+			{
+				currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, (int)(dude < i + 1), &planetGravityField);
+				currentPlayer->setOnlineID(i);
+				players.push_back(currentPlayer);
+				delete tmpPlayer;
+			}
+			std::cout << "Dude: " << (int)(dude < i + 1) << "\n";
+		}
+	}
+	this->loadObjects();
+	baseballBat->setGameObjects(players);
+	baseballBat->setClient(client);
+
+	currentTime = std::chrono::system_clock::now();
+	lastUpdate = currentTime;
+	gamePad = std::make_unique<DirectX::GamePad>();
+	playerVecRenderer.setPlayer(currentPlayer);
+	currentTime = std::chrono::system_clock::now();
+	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
+	serverStart = std::chrono::system_clock::now();
+	this->window = &window;
+}
+
+Game::~Game()
+{
+	delete client;
+	delete packetEventManager;
+
+	for (int i = 0; i < this->gameObjects.size(); i++)
+	{
+		if (this->gameObjects.at(i) != nullptr)
+		{
+			delete this->gameObjects.at(i);
+		}
+	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		delete players[i];
+	}
+	for (int i = 0; i < planetVector.size(); i++)
+	{
+		delete planetVector[i];
+	}
+	delete planetMeshes;
+}
+
 void Game::loadObjects()
 {
 	//Meshes vector contents
@@ -14,44 +112,35 @@ void Game::loadObjects()
 	float planetSize = 40.f;
 
 	//Here we can add base object we want in the beginning of the game
-	//currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, &planetGravityField);
-	
 	potion = new Potion("../Meshes/potion", DirectX::SimpleMath::Vector3(0, -40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2, 0, &planetGravityField);
-	testBat = new BaseballBat("../Meshes/bat", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4, 0, &planetGravityField);
+	baseballBat = new BaseballBat("../Meshes/bat", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4, 0, &planetGravityField);
 	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(40, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6, GRENADE, &planetGravityField);
+	
 	planetMeshes = new Mesh("../Meshes/Sphere");
 	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize)));
 	planetVector.back()->setPlanetShape(&physWolrd);
-	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(50.f, 50.f, 50.f)));
+	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
 	planetVector.back()->setPlanetShape(&physWolrd);
 
-	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
-	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
-	
-	
-	//physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
-	physWolrd.addPhysComponent(grenade, reactphysics3d::CollisionShapeName::BOX);
-	//planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-	
-	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
-	potion->setRot(DirectX::SimpleMath::Vector3(0.0f, 1.5f, 1.5f));
-	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
-
-	//Add to obj array
-	//gameObjects.emplace_back(planet);
-	//gameObjects.emplace_back(currentPlayer);
-	gameObjects.emplace_back(potion);
-	gameObjects.emplace_back(testBat);
-	gameObjects.emplace_back(grenade);
-	
 	items.emplace_back(potion);
-	items.emplace_back(testBat);
+	items.emplace_back(baseballBat);
 	items.emplace_back(grenade);
 
-	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
-	testBat->setPlayer(currentPlayer);
-	testBat->setTestObj(gameObjects);
+	for (int i = 0; i < items.size(); i++)
+	{
+		gameObjects.emplace_back(items[i]);
+	}
+	for (int i = 0; i < gameObjects.size(); i++)
+	{
+		physWolrd.addPhysComponent(gameObjects[i], reactphysics3d::CollisionShapeName::BOX);
+		gameObjects[i]->getPhysComp()->setPosition(reactphysics3d::Vector3(gameObjects[i]->getPosV3().x, gameObjects[i]->getPosV3().y, gameObjects[i]->getPosV3().z));
+	}
+
+	baseballBat->setPlayer(currentPlayer);
+	baseballBat->setTestObj(gameObjects);
 	grenade->setGameObjects(gameObjects);
+	
+	if (!currentPlayer) { currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, &planetGravityField); players.emplace_back(currentPlayer); }
 	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
 }
@@ -139,31 +228,9 @@ void Game::randomizeObjectPos(GameObject* object)
 	object->setPos(randomPos);
 }
 
-bool Game::setUpWireframe()
-{
-	reactWireframeInfo.wireframeClr = DirectX::XMFLOAT3(1.f, 0.f, 0.f);
-
-	D3D11_BUFFER_DESC bufferDesc = {};
-	bufferDesc.ByteWidth = sizeof(wirefameInfo);
-	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bufferDesc.MiscFlags = 0;
-	bufferDesc.StructureByteStride = 0;
-
-	D3D11_SUBRESOURCE_DATA data = {};
-	data.pSysMem = &reactWireframeInfo;
-	data.SysMemPitch = 0;
-	data.SysMemSlicePitch = 0;
-
-	HRESULT hr = GPU::device->CreateBuffer(&bufferDesc, &data, &wireBuffer);
-	return !FAILED(hr);
-}
-
 void Game::updateBuffers()
 {
 	//Update GameObjects
-
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->updateBuffer();
@@ -174,11 +241,6 @@ void Game::updateBuffers()
 		onlineItems[i]->updateBuffer();
 	}
 
-	//Update Wireframe buffer
-	ZeroMemory(&subData, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	immediateContext->Map(wireBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &subData);
-	memcpy(subData.pData, &reactWireframeInfo, sizeof(wirefameInfo));
-	immediateContext->Unmap(wireBuffer, 0);
 }
 
 void Game::handleKeybinds()
@@ -208,175 +270,9 @@ void Game::handleKeybinds()
 	}
 	if (Input::KeyPress(KeyCode::O))
 	{
-drawDebug = false;
+		drawDebug = false;
 	}
-	/*if (Input::KeyPress(KeyCode::K))
-	{
-		randomizeObjectPos(potion);
-	}*/
-}
-
-DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3& position)
-{
-	using namespace DirectX; using namespace SimpleMath;
-
-	//Modified vectors
-	XMVECTOR upVector = (planetGravityField.calcGravFactor(position) * -1);
-	XMVECTOR forwardVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	XMVECTOR rightVector = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-	Vector3 resultVector;
-	XMMATRIX rotation = XMMatrixIdentity();
-
-	//X-Rotation
-	resultVector = DirectX::XMVector3Dot(upVector, forwardVector);
-	if (resultVector.x < 0.0f)
-	{
-		resultVector = DirectX::XMVector3Cross(rightVector, upVector);
-		resultVector = DirectX::XMVector3Normalize(resultVector);
-		resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, resultVector);
-		rotation *= DirectX::XMMatrixRotationAxis(rightVector, -resultVector.x);
-	}
-	else if (resultVector.x > 0.0f)
-	{
-		resultVector = DirectX::XMVector3Cross(rightVector, upVector);
-		resultVector = DirectX::XMVector3Normalize(resultVector);
-		resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, resultVector);
-		rotation *= DirectX::XMMatrixRotationAxis(rightVector, resultVector.x);
-	}
-
-	//Z-Rotation
-	resultVector = DirectX::XMVector3Dot(upVector, rightVector);
-	if (resultVector.z < 0.0f)
-	{
-		resultVector = DirectX::XMVector3Cross(upVector, forwardVector);
-		resultVector = DirectX::XMVector3Normalize(resultVector);
-		resultVector = DirectX::XMVector3AngleBetweenNormals(rightVector, resultVector);
-		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, resultVector.z);
-	}
-	else if (resultVector.z > 0.0f)
-	{
-		resultVector = DirectX::XMVector3Cross(upVector, forwardVector);
-		resultVector = DirectX::XMVector3Normalize(resultVector);
-		resultVector = DirectX::XMVector3AngleBetweenNormals(rightVector, resultVector);
-		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -resultVector.z);
-	}
-
-	//Extracting rotation
-	Quaternion quaterRot = Quaternion::CreateFromRotationMatrix(rotation);
-	Vector3 finalRotation = quaterRot.ToEuler();
-
-	return finalRotation;
-}
-
-Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
-{
-	MaterialLibrary::LoadDefault();
-	MaterialLibrary::LoadMaterial("spaceshipTexture1.jpg");
-	MaterialLibrary::LoadMaterial("pintoRed.png");
-	MaterialLibrary::LoadMaterial("pintoBlue.png");
-	MaterialLibrary::LoadMaterial("Red.png");
-
-	this->packetEventManager = new PacketEventManager();
-	//m�ste raderas******************
-	client = new Client();//("192.168.43.216");
-	circularBuffer = client->getCircularBuffer();
-
-	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
-	this->setUpWireframe();
-
-	//camera.updateCamera(immediateContext);
-	ltHandler.addLight(DirectX::XMFLOAT3(-90, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 1, 0),1);
-	ltHandler.addLight(DirectX::XMFLOAT3(16 + 7, 42 + 17, 12 + 7), DirectX::XMFLOAT3(0, 0.3f, 1.0f), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
-	ltHandler.addLight(DirectX::XMFLOAT3(-10 - 5, -45 - 17, -10 - 7), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 	
-	//ltHandler.addLight(DirectX::XMFLOAT3(10, -50, 30), DirectX::XMFLOAT3(0, 0, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
-
-	//Particle test
-	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2, 5)));
-
-	if (IFONLINE)
-	{
-		client->connectToServer();
-		int playerId = -1;
-		while (playerId <= -1 || playerId >= 9)
-		{
-			playerId = packetEventManager->handleId(client->getCircularBuffer());
-			//std::cout << "Game.cpp, playerId: " << std::to_string(playerId) << std::endl;
-		}
-		//int playerid = client->initTEMPPLAYERS();
-
-		this->client->setClientId(playerId);
-		int offset = 10;
-		int dude = (NROFPLAYERS) / 2;
-
-		int newNrOfPlayer = NROFPLAYERS;
-		int tempTeam = 0;
-		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
-		{
-			tempTeam = i < (newNrOfPlayer / 2);
-			Player* tmpPlayer = nullptr;
-			//if (dude > i)//team 1
-			//{
-			//	tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, 0, &planetGravityField);
-			//}
-			//else//team 2
-			//{
-			//	tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, 1, &planetGravityField);
-			//}
-			if (playerId != i)
-			{
-				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude < i + 1), &planetGravityField);
-				tmpPlayer->setOnlineID(i);
-				physWolrd.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
-				players.push_back(tmpPlayer);
-			}
-			else
-			{
-				currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, (int)(dude < i+1), &planetGravityField);
-				currentPlayer->setOnlineID(i);
-				players.push_back(currentPlayer);
-				delete tmpPlayer;
-			}
-			std::cout << "Dude: " << (int)(dude < i + 1) << "\n";
-		}
-	}
-	this->loadObjects();
-	testBat->setGameObjects(players);
-	testBat->setClient(client);
-
-	currentTime = std::chrono::system_clock::now();
-	lastUpdate = currentTime;
-	gamePad = std::make_unique<DirectX::GamePad>();
-	playerVecRenderer.setPlayer(currentPlayer);
-	currentTime = std::chrono::system_clock::now();
-	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
-	serverStart = std::chrono::system_clock::now();
-	this->window = &window;
-}
-
-Game::~Game()
-{
-	delete client;
-	delete packetEventManager;
-
-	for (int i = 0; i < this->gameObjects.size(); i++)
-	{
-		if (this->gameObjects.at(i) != nullptr)
-		{
-			delete this->gameObjects.at(i);
-		}
-	}
-	for (int i = 0; i < players.size(); i++)
-	{
-		delete players[i];
-	}
-	wireBuffer->Release();
-	for (int i = 0; i < planetVector.size(); i++)
-	{
-		delete planetVector[i];
-	}
-	delete planetMeshes;
 }
 
 GAMESTATE Game::Update()
@@ -390,7 +286,6 @@ GAMESTATE Game::Update()
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 
 	//Calculate gravity factor
-	//grav = planetGravityField.calcGravFactor(currentPlayer->getPosV3());
 	grav = planetVector[0]->getClosestFieldFactor(planetVector[1], currentPlayer->getPosV3());
 	additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
 
@@ -407,6 +302,7 @@ GAMESTATE Game::Update()
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
 	currentPlayer->movePos(velocity);
 	currentPlayer->checkForStaticCollision(gameObjects);
+	currentPlayer->checkMovement();
 
 	for (int i = 0; i < components.size(); i++)
 	{
@@ -418,11 +314,6 @@ GAMESTATE Game::Update()
 		if (currentPlayer->pickupItem(items[i])) break;
 	}
 
-	/*if (Input::KeyPress(KeyCode::K))
-	{
-		randomizeObjectPos(this->testBat);
-	}*/
-	currentPlayer->checkMovement();
 	grenade->updateExplosionCheck();
 	if (potion->isTimeToRun())
 	{
@@ -433,8 +324,6 @@ GAMESTATE Game::Update()
 	//sending data to server
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
 	{
-		//client->sendToServerTEMPTCP(currentPlayer);
-		
 		SendingDataEvent(client, currentPlayer, players);
 		serverStart = std::chrono::system_clock::now();
 	}
@@ -472,16 +361,9 @@ GAMESTATE Game::Update()
 	}
 	
 
-	//Here you can write client-server related functions?
-
-	//Updates gameObject physics components
-
-	
-
-	//Updates gameObject buffers
 	this->updateBuffers();
 	
-		//Check if item icon should change to pickup icon 
+	//Check if item icon should change to pickup icon 
 	for (int i = 0; i < items.size(); i++)
 	{
 		this->items[i]->checkDistance((GameObject*)(currentPlayer));
@@ -492,7 +374,6 @@ GAMESTATE Game::Update()
 	}
 	//Debug keybinds
 	this->handleKeybinds();
-
 
 	return NOCHANGE;
 }
@@ -514,8 +395,8 @@ void Game::Render()
 
 
 	//Render imgui & wireframe
-	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
-	if (wireframe) { immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); playerVecRenderer.drawLines(); }
+	imGui.react3D(wireframe, objectDraw, dt);
+	if (wireframe) { physWolrd.renderReact3D(); playerVecRenderer.drawLines(); }
 
 	//render billboard objects
 	basicRenderer.bilboardPrePass(this->camera);

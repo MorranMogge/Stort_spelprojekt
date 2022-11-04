@@ -1,9 +1,3 @@
-cbuffer Wcolour : register(b0)
-{
-    float3 colour;
-    float padding;
-}
-
 struct VSout
 {
     float4 position : SV_POSITION;
@@ -15,5 +9,5 @@ struct VSout
 
 float4 main(VSout input) : SV_TARGET
 {
-	return float4(colour, 1.0f);
+	return float4(1.0f, 0.f, 0.f, 1.0f);
 }

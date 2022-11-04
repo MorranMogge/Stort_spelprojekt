@@ -12,6 +12,6 @@ public:
 	GravityField(const float& gravityConstant = 0.82, const DirectX::XMFLOAT3& planetCenterPoint = DirectX::XMFLOAT3(0.0f,0.0f,0.0f), const float& radius = 1.0f);
 	~GravityField();
 	DirectX::XMFLOAT3 calcGravFactor(DirectX::XMFLOAT3 objectPosition);
-	DirectX::XMFLOAT3 calcGravFactor(DirectX::SimpleMath::Vector3 objectPosition);
+	DirectX::XMFLOAT3 calcGravFactor(const DirectX::SimpleMath::Vector3& objectPosition);
 };
 

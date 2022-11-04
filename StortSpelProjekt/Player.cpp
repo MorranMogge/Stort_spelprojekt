@@ -758,7 +758,7 @@ bool Player::checkForStaticCollision(const std::vector<GameObject*>& gameObjects
 	return false;
 }
 
-bool Player::raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
+bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet *>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
 {
 	if (!dedge)
 	{
@@ -776,6 +776,17 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLO
 	{
 		int id = gameObjects.at(i)->getId();
 		if ( gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
+		{
+			//Maybe somehow return the index of the triangle hit to calculate new Normal
+			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
+			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
+			return true;
+		}
+	}
+	gameObjSize = (int)planets.size();
+	for (int i = 0; i < gameObjSize; i++)
+	{
+		if (planets[i]->getPlanetCollider()->raycast(ray, rayInfo))
 		{
 			//Maybe somehow return the index of the triangle hit to calculate new Normal
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);

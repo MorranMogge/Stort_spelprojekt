@@ -16,6 +16,7 @@ Planet::~Planet()
 
 void Planet::setPlanetShape(PhysicsWorld* physWorld, const PlanetShape& shape)
 {
+	float sizeCorrector = 1.f;
 	reactphysics3d::CollisionShapeName shapeName = reactphysics3d::CollisionShapeName::SPHERE;
 	this->planetShape = shape;
 	switch (shape)
@@ -25,13 +26,14 @@ void Planet::setPlanetShape(PhysicsWorld* physWorld, const PlanetShape& shape)
 		break;
 
 	case BOX:
+		sizeCorrector = 3.f;
 		shapeName = reactphysics3d::CollisionShapeName::BOX;
 		break;
 
 	default:
 		break;
 	}
-	this->planetCollisionBox = physWorld->returnAddedPhysComponent(shapeName, this->position, this->scale);
+	this->planetCollisionBox = physWorld->returnAddedPhysComponent(shapeName, this->position, this->scale/sizeCorrector);
 	this->planetCollisionBox->setType(reactphysics3d::BodyType::STATIC);
 }
 
@@ -53,6 +55,11 @@ float Planet::getFieldFactor() const
 	}
 }
 
+DirectX::SimpleMath::Vector3 Planet::getPlanetPosition() const
+{
+	return this->position;
+}
+
 GravityField* Planet::getClosestField(const Planet& otherPlanet, const DirectX::SimpleMath::Vector3& position) const
 {
 	GravityField* closestField = nullptr;
@@ -63,6 +70,18 @@ GravityField* Planet::getClosestField(const Planet& otherPlanet, const DirectX::
 	if (getLength(fieldOne) > getLength(fieldTwo)) closestField = this->gravField;
 	else closestField = otherPlanet.getGravityField();
 	return closestField;
+}
+
+DirectX::SimpleMath::Vector3 Planet::getClosestFieldFactor(const Planet* otherPlanet, const DirectX::SimpleMath::Vector3& position) const
+{
+	GravityField* closestField = nullptr;
+	DirectX::SimpleMath::Vector3 fieldOne = position - this->position;
+	DirectX::SimpleMath::Vector3 fieldTwo = position - otherPlanet->getPlanetPosition();
+	scalarMultiplicationXMFLOAT3(1.f/this->getFieldFactor(), fieldOne);
+	scalarMultiplicationXMFLOAT3(1.f/otherPlanet->getFieldFactor(), fieldTwo);
+	if (getLength(fieldOne) < getLength(fieldTwo)) closestField = this->gravField;
+	else closestField = otherPlanet->getGravityField();
+	return closestField->calcGravFactor(position);
 }
 
 DirectX::SimpleMath::Vector3 Planet::getBothGravFactor(const Planet& otherPlanet, const DirectX::SimpleMath::Vector3& position) const
@@ -79,7 +98,7 @@ DirectX::SimpleMath::Vector3 Planet::getAllGravFactor(const std::vector<Planet *
 	{
 		additionXMFLOAT3(planetGrav, planets[i]->gravField->calcGravFactor(position));
 	}
-	return this->gravField->calcGravFactor(planetGrav);
+	return planetGrav;
 }
 
 bool Planet::insideGravityField(const DirectX::SimpleMath::Vector3& position) const
@@ -87,6 +106,11 @@ bool Planet::insideGravityField(const DirectX::SimpleMath::Vector3& position) co
 	DirectX::SimpleMath::Vector3 gravRange = position;
 	subtractionXMFLOAT3(gravRange, this->position);
 	return getLength(gravRange) <= (float)(PLANETGRAVSIZE * this->gravityFactor * this->scale.x);
+}
+
+PhysicsComponent* Planet::getPlanetCollider() const
+{
+	return this->planetCollisionBox;
 }
 
 GravityField* Planet::getGravityField() const

@@ -7,6 +7,7 @@
 #include "Potion.h"
 #include "TimeStruct.h"
 #include "Client.h"
+#include "Planet.h"
 
 #include <GamePad.h>
 #include <iostream>
@@ -98,7 +99,7 @@ public:
 	void addItem(Item* itemToHold);
 	void releaseItem();
 	bool checkForStaticCollision(const std::vector<GameObject*>& gameObjects);
-	bool raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
+	bool raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	bool repairedShip() const;
 	bool getHitByBat()const;

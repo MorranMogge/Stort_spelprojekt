@@ -16,30 +16,29 @@ void Game::loadObjects()
 	//Here we can add base object we want in the beginning of the game
 	currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, &planetGravityField);
 	
-	planet = new GameObject("../Meshes/Sphere", DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, nullptr, DirectX::XMFLOAT3(planetSize, planetSize, planetSize));
 	potion = new Potion("../Meshes/potion", DirectX::SimpleMath::Vector3(0, -40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2, 0, &planetGravityField);
 	testBat = new BaseballBat("../Meshes/bat", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4, 0, &planetGravityField);
 	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(40, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6, GRENADE, &planetGravityField);
 	planetMeshes = new Mesh("../Meshes/Sphere");
 	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize)));
 	planetVector.back()->setPlanetShape(&physWolrd);
-	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(planetSize, planetSize, planetSize)));
+	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(50.f, 50.f, 50.f)));
 	planetVector.back()->setPlanetShape(&physWolrd);
 
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
 	
 	
-	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
+	//physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
 	physWolrd.addPhysComponent(grenade, reactphysics3d::CollisionShapeName::BOX);
-	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+	//planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 	
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	potion->setRot(DirectX::SimpleMath::Vector3(0.0f, 1.5f, 1.5f));
 	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
 
 	//Add to obj array
-	gameObjects.emplace_back(planet);
+	//gameObjects.emplace_back(planet);
 	gameObjects.emplace_back(currentPlayer);
 	gameObjects.emplace_back(potion);
 	gameObjects.emplace_back(testBat);
@@ -83,7 +82,7 @@ void Game::drawObjects(bool drawDebug)
 	ltHandler.bindLightBuffers();
 
 	//Draw Game objects
-	for (int i = 1; i < gameObjects.size(); i++)
+	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->draw();
 	}
@@ -383,7 +382,7 @@ GAMESTATE Game::Update()
 
 	//Calculate gravity factor
 	//grav = planetGravityField.calcGravFactor(currentPlayer->getPosV3());
-	grav = planetVector[0]->getAllGravFactor(planetVector, currentPlayer->getPosV3());
+	grav = planetVector[0]->getClosestFieldFactor(planetVector[1], currentPlayer->getPosV3());
 	additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
 
 	//Raycasting
@@ -391,7 +390,7 @@ GAMESTATE Game::Update()
 	static DirectX::XMFLOAT3 hitNormal;
 	hitPos = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 	hitNormal = DirectX::XMFLOAT3(grav.x, grav.y, grav.z);
-	bool testingVec = this->currentPlayer->raycast(gameObjects, hitPos, hitNormal);
+	bool testingVec = this->currentPlayer->raycast(gameObjects, planetVector, hitPos, hitNormal);
 	if (testingVec || currentPlayer->getHitByBat()) velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 	
 	//Player functions

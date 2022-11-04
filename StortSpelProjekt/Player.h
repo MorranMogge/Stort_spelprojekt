@@ -65,6 +65,7 @@ private:
 	float speed = 25.f;
 	bool dedge = false;
 	TimeStruct timer;
+	DirectX::XMVECTOR arrowVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	void resetRotationMatrix();
 	void handleItems();
@@ -75,6 +76,7 @@ public:
 	void handleInputs(); 
 	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime,  const bool& testingVec);
 	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime);
+	void pointDirection(const DirectX::XMVECTOR& compPosition);
 	bool getPickup(GameObject *pickup);
 	int getItemOnlineType()const;
 	int getItemOnlineId()const;

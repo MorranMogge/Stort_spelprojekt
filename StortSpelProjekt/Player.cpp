@@ -655,6 +655,11 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 	}
 }
 
+void Player::pointDirection(const DirectX::XMVECTOR& compPosition)
+{
+	arrowVector = XMVectorSubtract(compPosition, this->position);
+}
+
 int Player::getItemOnlineType() const
 {
 	if (this->holdingItem == nullptr)
@@ -878,7 +883,7 @@ DirectX::XMVECTOR Player::getUpVec() const
 
 DirectX::XMVECTOR Player::getForwardVec() const
 {
-	return this->forwardVector;
+	return this->arrowVector;
 }
 
 DirectX::XMVECTOR Player::getRightVec() const

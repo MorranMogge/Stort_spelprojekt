@@ -267,7 +267,7 @@ void PhysicsWorld::addPhysComponent(GameObject* gameObj, reactphysics3d::Collisi
 	this->recreateVertexBuffer();
 }
 
-void PhysicsWorld::returnAddedPhysComponent(reactphysics3d::CollisionShapeName shape, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& scale)
+PhysicsComponent* PhysicsWorld::returnAddedPhysComponent(reactphysics3d::CollisionShapeName shape, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& scale)
 {
 	PhysicsComponent* newComp = new PhysicsComponent();
 	newComp->initiateComponent(&this->com, this->world, shape, scale);
@@ -276,5 +276,6 @@ void PhysicsWorld::returnAddedPhysComponent(reactphysics3d::CollisionShapeName s
 	physObjects.emplace_back(newComp);
 
 	this->recreateVertexBuffer();
+	return newComp;
 }
 

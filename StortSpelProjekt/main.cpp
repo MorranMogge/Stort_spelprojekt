@@ -70,7 +70,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
-
 		stateInfo = currentState->Update();
 
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))

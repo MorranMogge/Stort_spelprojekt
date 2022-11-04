@@ -205,6 +205,7 @@
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="PhysicsWorld.h" />
+    <ClInclude Include="Planet.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerVectors.h" />
     <ClInclude Include="Potion.h" />
@@ -318,6 +319,7 @@
     <ClCompile Include="MouseEvent.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Planet.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerVectors.cpp" />
     <ClCompile Include="Potion.cpp" />

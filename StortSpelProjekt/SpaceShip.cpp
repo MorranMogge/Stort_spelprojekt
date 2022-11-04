@@ -228,9 +228,9 @@ void SpaceShip::animateOnPickup()
 		auto scale = this->getScale();
 		float constant = 0.5;
 
-		if (this->counter > (animationDuration/2))
+		if (this->counter > (animationDuration / 2))
 		{
-			this->setScale({ scale.x + (animationDuration / 2) - this->counter,scale.y+ (animationDuration / 2) - this->counter,scale.z + (animationDuration / 2) - this->counter });
+			this->setScale({ scale.x + (animationDuration / 2) - this->counter,scale.y + (animationDuration / 2) - this->counter,scale.z + (animationDuration / 2) - this->counter });
 		}
 		else
 		{
@@ -245,7 +245,7 @@ void SpaceShip::animateOnPickup()
 			this->animate = false;
 		}
 	}
-
+}
 void SpaceShip::move(const DirectX::XMFLOAT3& grav, const float& deltaTime)
 {
 	upVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);

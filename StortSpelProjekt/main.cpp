@@ -40,8 +40,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	HWND window;
 
-	Client* client = new Client();
-
 	if (!SetupWindow(hInstance, WIDTH, HEIGHT, nCmdShhow, window))
 	{
 		ErrorLog::Log("Could not set up window!");
@@ -71,8 +69,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	{
 		if (Input::KeyPress(KeyCode::F1))
 		{
-			fullscreen = !fullscreen;
-			swapChain->SetFullscreenState(fullscreen, nullptr);
+			//fullscreen = !fullscreen;
+			//swapChain->SetFullscreenState(fullscreen, nullptr);
 			GPU::windowHeight = 1080;
 			GPU::windowWidth = 1920;
 		}
@@ -130,7 +128,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	#pragma region Deallocation
 	delete currentState;
 	
-	delete client;
 
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();

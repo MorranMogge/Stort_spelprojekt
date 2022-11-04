@@ -9,7 +9,7 @@ struct wirefameInfo
 };
 
 const int NROFPLAYERS = 1;
-static bool IFONLINE = true;
+static bool IFONLINE = false;
 
 class Game : public State
 {
@@ -60,10 +60,12 @@ private:
 	GameObject* planet;
 	GameObject* atmosphere;
 	GameObject* testCube;
-	SpaceShip* spaceShip;
+	SpaceShip* spaceShipRed;
+	SpaceShip* spaceShipBlue;
 	Potion* potion;			//not in use
 	BaseballBat* testBat;
 	Grenade* grenade;
+	Component* component;
 	std::vector<Component*> components;
 	std::vector<SpaceShip*> spaceShips;
 
@@ -85,6 +87,8 @@ private:
 
 	void loadObjects();
 	void drawShadows();
+	void drawFresnel();
+	void drawIcons();
 	void drawObjects(bool drawDebug);
 	void drawParticles();
 	bool setUpWireframe();

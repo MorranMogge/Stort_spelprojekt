@@ -21,6 +21,24 @@ void BaseballBat::sendForceToServer(const DirectX::SimpleMath::Vector3& hitForce
 	this->client->sendStuff<PlayerHit>(hitInfo);
 }
 
+BaseballBat::BaseballBat(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
+	:Item(useMesh, pos, rot, id, onlineId, 2, field), player(nullptr), force(0.f)
+{
+	force = FORCECONSTANT;
+
+	//Particles
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
+
+	//Item Icon
+	float constant = 2.0f;
+	DirectX::XMFLOAT3 upDir = this->getUpDirection();
+	DirectX::XMFLOAT3 iconPos(upDir.x* constant, upDir.y* constant, upDir.z* constant);
+	std::vector<std::string> tempStr{ "icon_sword.png", "icon_sword2.png" };
+	this->itemIcon = new BilboardObject(tempStr, iconPos);
+	this->itemIcon->setOffset(constant);
+}
+
+
 BaseballBat::BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
 	:Item(objectPath, pos, rot, id, onlineId, 2, field), player(nullptr), force(0.f)
 {

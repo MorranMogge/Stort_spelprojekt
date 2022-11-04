@@ -226,7 +226,6 @@ public:
 	{
 		submeshVerCounts.emplace_back(count);
 	}
-	void UpdateCB(const DirectX::SimpleMath::Vector3& position, const DirectX::XMMATRIX &rotation, const DirectX::SimpleMath::Vector3& scale)
 	void setMatrix(DirectX::XMFLOAT4X4 matrix)
 	{
 		this->matrix = matrix;
@@ -242,7 +241,7 @@ public:
 
 		worldCB.Update(&worldS, sizeof(MatrixS));
 	}
-	void UpdateCB()
+	void UpdateCB(const DirectX::SimpleMath::Vector3& position, const DirectX::XMMATRIX& rotation, const DirectX::SimpleMath::Vector3& scale)
 	{
 		using namespace DirectX;
 

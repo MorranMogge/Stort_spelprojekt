@@ -273,6 +273,12 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	serverStart = std::chrono::system_clock::now();
 	this->window = &window;
 
+
+	//Set up color buffer
+	this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
+	this->colorBuffer.getData() = DirectX::XMFLOAT4(0, 0.55, 0.75, 3.8);
+	this->colorBuffer.applyData();
+
 	if (IFONLINE)
 	{
 		client->connectToServer();
@@ -405,7 +411,7 @@ GAMESTATE Game::Update()
 	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), dt);
 
 
-	//Check winstate
+	//Check component pickup
 	for (int i = 1; i < gameObjects.size(); i++)
 	{
 		//get object id
@@ -435,11 +441,34 @@ GAMESTATE Game::Update()
 				gameObjects[i]->setPos(DirectX::SimpleMath::Vector3(22.6783f, -21.7597f, 31.504f));
 				spaceShipBlue->setAnimate(true);
 				spaceShipBlue->addComponent();
-				//return WIN;
 			}
 		}
 	}
-	if (currentPlayer->repairedShip()) { std::cout << "You have repaired the ship and returned to earth\n"; return EXIT; }
+	//Check winstate
+	if (spaceShipBlue->isFinished())
+	{
+		if (currentPlayer->getTeam() == 1)
+		{
+			return WIN;
+			std::cout << "You have repaired the ship and returned to earth\n";
+		}
+		else
+		{
+			return LOSE;
+		}
+	}	
+	if (spaceShipRed->isFinished())
+	{
+		if (currentPlayer->getTeam() == 0)
+		{
+			return WIN;
+			std::cout << "You have repaired the ship and returned to earth\n";
+		}
+		else
+		{
+			return LOSE;
+		}
+	}
 
 
 	//Play pickup animation
@@ -473,8 +502,8 @@ void Game::Render()
 
 	//Render fresnel objects
 	basicRenderer.fresnelPrePass(this->camera);
-	//atmosphere->updateBuffer();
-	//atmosphere->draw();
+	GPU::immediateContext->PSSetConstantBuffers(2, 1, this->colorBuffer.getReferenceOf());
+	atmosphere->draw();
 	grenade->drawFresnel();
 
 	//Render Skybox

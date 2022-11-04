@@ -80,6 +80,9 @@ private:
 	//HUD
 	HudUI ui;
 	
+	//Temp buffer for atmosphere
+	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
+
 
 	void loadObjects();
 	void drawShadows();

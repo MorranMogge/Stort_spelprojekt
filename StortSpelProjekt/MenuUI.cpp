@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "GuiHandler.h"
+#include "MenuUI.h"
 #include "GPU.h"
 #include"Input.h"
 #include "SettingsUI.h"
@@ -7,7 +7,7 @@
 
 using namespace DirectX::SimpleMath;
 
-void GuiHandler::SpritePass()
+void MenuUI::SpritePass()
 {
 	if (isLoading)
 	{
@@ -27,7 +27,7 @@ void GuiHandler::SpritePass()
 
 }
 
-void GuiHandler::HandleInputs()
+void MenuUI::HandleInputs()
 {
 	start.IntersectMouse() ? start.SetTint(DirectX::Colors::Green.v) : start.SetTint(DirectX::Colors::White.v);
 	settings.IntersectMouse() ? settings.SetTint(DirectX::Colors::Green.v) : settings.SetTint(DirectX::Colors::White.v);
@@ -49,7 +49,7 @@ void GuiHandler::HandleInputs()
 		{
 			gameState = CREDITS;
 		}
-		else if (credits.GetTint() == DirectX::Colors::Green.v)
+		else if (exit.GetTint() == DirectX::Colors::Green.v)
 		{
 			gameState = EXIT;
 		}
@@ -58,17 +58,17 @@ void GuiHandler::HandleInputs()
 
 }
 
-void GuiHandler::TextPass()
+void MenuUI::TextPass()
 {
 
 }
 
-GAMESTATE GuiHandler::GetGameState()
+GAMESTATE MenuUI::GetGameState()
 {
 	return gameState;
 }
 
-GuiHandler::GuiHandler()
+MenuUI::MenuUI()
 {
 	GUI::Init();
 
@@ -113,7 +113,7 @@ GuiHandler::GuiHandler()
 	gameState = NOCHANGE;
 }
 
-void GuiHandler::Draw()
+void MenuUI::Draw()
 {
 	HandleInputs();
 	GUI::Begin();

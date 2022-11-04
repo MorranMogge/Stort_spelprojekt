@@ -147,7 +147,7 @@
     <ClCompile Include="Component.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="GuiHandler.cpp">
+    <ClCompile Include="MenuUI.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="LoseUI.cpp">
@@ -430,7 +430,7 @@
     <ClInclude Include="Component.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="GuiHandler.h">
+    <ClInclude Include="MenuUI.h">
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="LoseUI.h">

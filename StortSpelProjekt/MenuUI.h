@@ -3,7 +3,7 @@
 #include "GUIText.h"
 #include "State.h"
 
-class GuiHandler final
+class MenuUI final
 {
 	GUISprite spriteWeaponBox;
 
@@ -35,7 +35,7 @@ public:
 
 	GAMESTATE GetGameState();
 
-	GuiHandler();
+	MenuUI();
 	void Draw();
 
 };

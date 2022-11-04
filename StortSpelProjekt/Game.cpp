@@ -14,7 +14,7 @@ void Game::loadObjects()
 	float planetSize = 40.f;
 
 	//Here we can add base object we want in the beginning of the game
-	currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, &planetGravityField);
+	//currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, &planetGravityField);
 	
 	potion = new Potion("../Meshes/potion", DirectX::SimpleMath::Vector3(0, -40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2, 0, &planetGravityField);
 	testBat = new BaseballBat("../Meshes/bat", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4, 0, &planetGravityField);
@@ -39,7 +39,7 @@ void Game::loadObjects()
 
 	//Add to obj array
 	//gameObjects.emplace_back(planet);
-	gameObjects.emplace_back(currentPlayer);
+	//gameObjects.emplace_back(currentPlayer);
 	gameObjects.emplace_back(potion);
 	gameObjects.emplace_back(testBat);
 	gameObjects.emplace_back(grenade);
@@ -129,9 +129,9 @@ void Game::randomizeObjectPos(GameObject* object)
 	int yPos = rand() % 201 - 100;
 	int zPos = rand() % 201 - 100;
 
-	randomPos.x = xPos;
-	randomPos.y = yPos;
-	randomPos.z = zPos;
+	randomPos.x = (float)xPos;
+	randomPos.y = (float)yPos;
+	randomPos.z = (float)zPos;
 
 	randomPos.Normalize();
 	randomPos *= 100;
@@ -279,11 +279,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	this->packetEventManager = new PacketEventManager();
 	//m�ste raderas******************
-	client = new Client("192.168.43.216");
+	client = new Client();//("192.168.43.216");
 	circularBuffer = client->getCircularBuffer();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
-	this->loadObjects();
 	this->setUpWireframe();
 
 	//camera.updateCamera(immediateContext);
@@ -309,7 +308,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 		this->client->setClientId(playerId);
 		int offset = 10;
-		int dude = NROFPLAYERS / 2;
+		int dude = (NROFPLAYERS) / 2;
 
 		int newNrOfPlayer = NROFPLAYERS;
 		int tempTeam = 0;
@@ -317,29 +316,32 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		{
 			tempTeam = i < (newNrOfPlayer / 2);
 			Player* tmpPlayer = nullptr;
-			if (dude > i)//team 1
-			{
-				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, 0, &planetGravityField);
-			}
-			else//team 2
-			{
-				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, 1, &planetGravityField);
-			}
+			//if (dude > i)//team 1
+			//{
+			//	tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, 0, &planetGravityField);
+			//}
+			//else//team 2
+			//{
+			//	tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35 + (offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, 1, &planetGravityField);
+			//}
 			if (playerId != i)
 			{
+				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude < i + 1), &planetGravityField);
 				tmpPlayer->setOnlineID(i);
 				physWolrd.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
 			}
 			else
 			{
+				currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, (int)(dude < i+1), &planetGravityField);
 				currentPlayer->setOnlineID(i);
-				currentPlayer->setTeam((int)(dude > i));
 				players.push_back(currentPlayer);
 				delete tmpPlayer;
 			}
+			std::cout << "Dude: " << (int)(dude < i + 1) << "\n";
 		}
 	}
+	this->loadObjects();
 	testBat->setGameObjects(players);
 	testBat->setClient(client);
 
@@ -365,6 +367,10 @@ Game::~Game()
 			delete this->gameObjects.at(i);
 		}
 	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		delete players[i];
+	}
 	wireBuffer->Release();
 	for (int i = 0; i < planetVector.size(); i++)
 	{
@@ -375,6 +381,9 @@ Game::~Game()
 
 GAMESTATE Game::Update()
 {
+	//read the packets received from the server
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, &planetGravityField, spaceShips, onlineItems);
+	
 	//Get newest delta time
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();
@@ -413,10 +422,13 @@ GAMESTATE Game::Update()
 	{
 		randomizeObjectPos(this->testBat);
 	}*/
-
+	currentPlayer->checkMovement();
 	grenade->updateExplosionCheck();
-	if (potion->isTimeToRun()) currentPlayer->setSpeed(50.f);
-	else currentPlayer->setSpeed(25.f);
+	if (potion->isTimeToRun())
+	{
+		if (potion->timerGoing()) currentPlayer->setSpeed(50.f);
+		else currentPlayer->setSpeed(25.f);
+	}
 
 	//sending data to server
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
@@ -427,25 +439,17 @@ GAMESTATE Game::Update()
 		serverStart = std::chrono::system_clock::now();
 	}
 
-	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, &planetGravityField, spaceShips, onlineItems);
-	
 	
 	//Physics related functions
 	if (!IFONLINE) physWolrd.update(dt);
 	
 	for (int i = 0; i < players.size(); i++)
 	{
-		//players[i]->updateBuffer();
 		
 		players[i]->updateMatrixOnline();
 		players[i]->update();
 	}
-
-	for (int i = 0; i < onlineItems.size(); i++)
-	{
-		onlineItems[i]->update();
-	}
+	currentPlayer->updateBuffer();
 
 	//Updates gameObject physics components
 	for (int i = 0; i < gameObjects.size(); i++)
@@ -508,10 +512,6 @@ void Game::Render()
 	this->skybox.draw();
 	basicRenderer.depthUnbind();
 
-	for (int i = 0; i < onlineItems.size(); i++)
-	{
-		onlineItems[i]->draw();
-	}
 
 	//Render imgui & wireframe
 	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
@@ -531,12 +531,11 @@ void Game::Render()
 	{
 		players[i]->drawIcon();
 	}
-
-
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
 		spaceShips[i]->drawQuad();
 	}
+
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);
 	//drawParticles();
@@ -554,6 +553,10 @@ void Game::Render()
 	for (int i = 0; i < components.size(); i++)
 	{
 		this->components[i]->drawParticles();
+	}
+	for (int i = 0; i < spaceShips.size(); i++)
+	{
+		spaceShips[i]->drawParticles();
 	}
 	basicRenderer.geometryUnbind();
 

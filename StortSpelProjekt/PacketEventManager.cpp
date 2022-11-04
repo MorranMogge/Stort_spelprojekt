@@ -72,8 +72,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 		case PacketType::SPAWNCOMPONENT:
 			spawnComp = circularBuffer->readData<SpawnComponent>();
-			std::cout << spawnComp->x << " " << spawnComp->y << " " << spawnComp->z << "\n";
-			newComponent = new Component("../Meshes/Baseball", DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+			std::cout << "Comp ID: " << spawnComp->ComponentId << "\n";
+			newComponent = new Component("../Meshes/component", DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 				spawnComp->ComponentId, spawnComp->ComponentId, field);
 			physWorld.addPhysComponent(newComponent);
 			componentVector.push_back(newComponent);
@@ -113,7 +113,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), itemSpawn->itemId, itemSpawn->itemId, field);
 			physWorld.addPhysComponent(baseballbat);
 			onlineItems.push_back(baseballbat);
-
+			gameObjects.push_back(baseballbat);
 			std::cout << "item spawned: " << std::to_string(itemSpawn->itemId) << std::endl;
 			break;
 
@@ -138,6 +138,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::SPACESHIPPOSITION:
 			spaceShipPos = circularBuffer->readData<SpaceShipPosition>();
 			//Create correct spaceship depending on team
+			std::cout << "Spawned spaceship\n";
 			newSpaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, DirectX::SimpleMath::Vector3(2, 2, 2), 4);
 			spaceShips.push_back(newSpaceShip);
 			gameObjects.push_back(newSpaceShip);
@@ -168,9 +169,9 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					int yPos = rand() % 201 - 100;
 					int zPos = rand() % 201 - 100;
 
-					randomPos.x = xPos;
-					randomPos.y = yPos;
-					randomPos.z = zPos;
+					randomPos.x = (float)xPos;
+					randomPos.y = (float)yPos;
+					randomPos.z = (float)zPos;
 
 					randomPos.Normalize();
 					randomPos *= 100;

@@ -20,9 +20,9 @@ SpawnComponent SpawnOneComponent(std::vector<Component>& components, std::vector
 		DirectX::XMFLOAT3 tmp(0.f, 0.0f, 0.0f);
 
 
-		tmp.x = rand() % 201 - 100;
-		tmp.y = rand() % 201 - 100;
-		tmp.z = rand() % 201 - 100;
+		tmp.x = (float)(rand() % 201 - 100);
+		tmp.y = (float)(rand() % 201 - 100);
+		tmp.z = (float)(rand() % 201 - 100);
 
 		randomPos = normalizeXMFLOAT3(tmp);
 
@@ -47,6 +47,7 @@ SpawnComponent SpawnOneComponent(std::vector<Component>& components, std::vector
 
 	dataValue.packetId = 13;
 	dataValue.ComponentId = components.size() - 1;
+	std::cout << "Comp ID: " << dataValue.ComponentId << "\n";
 	dataValue.x = randomPos.x;
 	dataValue.y = randomPos.y;
 	dataValue.z = randomPos.z;

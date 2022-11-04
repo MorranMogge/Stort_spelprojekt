@@ -24,8 +24,9 @@ private:
 	DirectX::XMFLOAT4X4 rotationFloat;
 	bool controllerConnected = true;
 	int onlineID;
-	float jumpAllowed = 200.f;
-	float jumpHeight = 200.f;
+	bool onGround = false;
+	float jumpAllowed = 300.f;
+	float jumpHeight = 300.f;
 	int team;
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
@@ -45,26 +46,27 @@ private:
 
 	void rotate();
 	bool movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime);
-	bool moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime);
-
-	Client* client;
-
-	//Other variables
-	const float speedConstant = 100.f;
-	int repairCount = 0;
-	Item* holdingItem;
-	bool moveKeyPressed = false;
-	BilboardObject* playerIcon;
-	ParticleEmitter* particles;
-	float speed;
-	bool dedge = false;
-	TimeStruct timer;
 
 	//Controller variables
 	float posX = 0.0f;
 	float posY = 0.0f;
 	float totalPos = 0.0f;
 	float throttle = 0.0f;
+	bool moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime);
+
+	//Other variables
+	Client* client;
+
+	const float speedConstant = 100.f;
+	int repairCount = 0;
+	Item* holdingItem;
+	bool holdingComp = false;
+	bool moveKeyPressed = false;
+	BilboardObject* playerIcon;
+	ParticleEmitter* particles;
+	float speed = 25.f;
+	bool dedge = false;
+	TimeStruct timer;
 
 	void resetRotationMatrix();
 	void handleItems();
@@ -105,4 +107,5 @@ public:
 	bool getHitByBat()const;
 	void update();
 	void setTeam(const int& team);
+	void checkMovement();
 };

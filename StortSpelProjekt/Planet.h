@@ -38,12 +38,13 @@ public:
 	float getFieldFactor()const;
 	DirectX::SimpleMath::Vector3 getPlanetPosition()const;
 
+	void movePlanet(float offset);
 	//Returns the gravity field of the planet
 	GravityField* getGravityField()const;
 	//Returns the closest gravity field out of two planets
-	GravityField* getClosestField(const Planet& otherPlanet, const DirectX::SimpleMath::Vector3& position)const;
+	GravityField* getClosestField(std::vector<Planet*>& planets, const DirectX::SimpleMath::Vector3& position)const;
 	//Returns the closest gravity field factor out of two planets
-	DirectX::SimpleMath::Vector3 getClosestFieldFactor(const Planet* otherPlanet, const DirectX::SimpleMath::Vector3& position)const;
+	DirectX::SimpleMath::Vector3 getClosestFieldFactor(std::vector<Planet*>& planets, const DirectX::SimpleMath::Vector3& position)const;
 	//Uses two planets and calculates the resulting gravity 
 	DirectX::SimpleMath::Vector3 getBothGravFactor(const Planet& otherPlanet, const DirectX::SimpleMath::Vector3& position)const;
 	//Uses all the planets and calculates resulting gravity

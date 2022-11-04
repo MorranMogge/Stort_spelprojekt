@@ -119,7 +119,12 @@ void Game::loadObjects()
 	planetMeshes = new Mesh("../Meshes/Sphere");
 	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize)));
 	planetVector.back()->setPlanetShape(&physWolrd);
-	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
+	//for (int i = 1; i < 100; i++)
+	//{
+	//	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(rand()%100*i, rand() % 100 * i, rand() % 100)));
+	//	planetVector.back()->setPlanetShape(&physWolrd);
+	//}
+	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
 	planetVector.back()->setPlanetShape(&physWolrd);
 
 	items.emplace_back(potion);
@@ -147,19 +152,11 @@ void Game::loadObjects()
 
 void Game::drawShadows()
 {
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->draw();
-	}
 	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
 	{
 		ltHandler.drawShadows(i, gameObjects);
 	}
-	for (int i = 0; i < components.size(); i++)
-	{
-		components[i]->draw();
-	}
-
+	
 	basicRenderer.depthPrePass();
 	ltHandler.drawShadows(0, gameObjects, &camera);
 	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
@@ -286,7 +283,7 @@ GAMESTATE Game::Update()
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 
 	//Calculate gravity factor
-	grav = planetVector[0]->getClosestFieldFactor(planetVector[1], currentPlayer->getPosV3());
+	grav = planetVector[0]->getClosestFieldFactor(planetVector, currentPlayer->getPosV3());
 	additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
 
 	//Raycasting

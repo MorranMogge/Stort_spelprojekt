@@ -60,27 +60,42 @@ DirectX::SimpleMath::Vector3 Planet::getPlanetPosition() const
 	return this->position;
 }
 
-GravityField* Planet::getClosestField(const Planet& otherPlanet, const DirectX::SimpleMath::Vector3& position) const
+void Planet::movePlanet(float offset)
 {
-	GravityField* closestField = nullptr;
-	DirectX::SimpleMath::Vector3 fieldOne;
-	DirectX::SimpleMath::Vector3 fieldTwo;
+	this->position.x += offset;
+	this->position.y += offset;
+	this->position.z += offset;
+	this->planetCollisionBox->setPosition(reactphysics3d::Vector3(position.x, position.y, position.z));
+	this->gravField->setCenterpoint(this->position);
+}
+
+GravityField* Planet::getClosestField(std::vector<Planet*>& planets, const DirectX::SimpleMath::Vector3& position) const
+{
+	GravityField* closestField = this->gravField;
+	DirectX::SimpleMath::Vector3 fieldOne = position - this->position;
 	scalarMultiplicationXMFLOAT3(this->getFieldFactor(), fieldOne);
-	scalarMultiplicationXMFLOAT3(otherPlanet.getFieldFactor(), fieldTwo);
-	if (getLength(fieldOne) > getLength(fieldTwo)) closestField = this->gravField;
-	else closestField = otherPlanet.getGravityField();
+	for (int i = 1; i < planets.size(); i++)
+	{
+		DirectX::SimpleMath::Vector3 fieldTwo = position - planets[i]->getPlanetPosition();
+		scalarMultiplicationXMFLOAT3(this->getFieldFactor(), fieldTwo);
+		if (getLength(fieldOne) > getLength(fieldTwo)) { closestField = planets[i]->getGravityField(); fieldOne = fieldTwo; }
+	}
+	
 	return closestField;
 }
 
-DirectX::SimpleMath::Vector3 Planet::getClosestFieldFactor(const Planet* otherPlanet, const DirectX::SimpleMath::Vector3& position) const
+DirectX::SimpleMath::Vector3 Planet::getClosestFieldFactor(std::vector<Planet*>& planets, const DirectX::SimpleMath::Vector3& position) const
 {
-	GravityField* closestField = nullptr;
+	GravityField* closestField = this->gravField;
 	DirectX::SimpleMath::Vector3 fieldOne = position - this->position;
-	DirectX::SimpleMath::Vector3 fieldTwo = position - otherPlanet->getPlanetPosition();
-	scalarMultiplicationXMFLOAT3(1.f/this->getFieldFactor(), fieldOne);
-	scalarMultiplicationXMFLOAT3(1.f/otherPlanet->getFieldFactor(), fieldTwo);
-	if (getLength(fieldOne) < getLength(fieldTwo)) closestField = this->gravField;
-	else closestField = otherPlanet->getGravityField();
+	scalarMultiplicationXMFLOAT3(this->getFieldFactor(), fieldOne);
+	for (int i = 1; i < planets.size(); i++)
+	{
+		DirectX::SimpleMath::Vector3 fieldTwo = position - planets[i]->getPlanetPosition();
+		scalarMultiplicationXMFLOAT3(this->getFieldFactor(), fieldTwo);
+		if (getLength(fieldOne) > getLength(fieldTwo)) { closestField = planets[i]->getGravityField(); fieldOne = fieldTwo; }
+	}
+
 	return closestField->calcGravFactor(position);
 }
 

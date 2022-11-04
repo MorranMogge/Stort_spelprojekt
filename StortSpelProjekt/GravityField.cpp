@@ -11,6 +11,11 @@ GravityField::~GravityField()
 {
 }
 
+void GravityField::setCenterpoint(const DirectX::XMFLOAT3& newPos)
+{
+    this->planetCenterPoint = newPos;
+}
+
 DirectX::XMFLOAT3 GravityField::calcGravFactor(DirectX::XMFLOAT3 objectPosition)
 {
     float x = (objectPosition.x - planetCenterPoint.x);

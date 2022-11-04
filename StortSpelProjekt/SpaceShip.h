@@ -10,6 +10,7 @@ private:
 	//std::vector<GameObject*> components;
 	BilboardObject* rocketStatusQuad;
 	ParticleEmitter* particles;
+	ParticleEmitter* particles2;
 	int compToComplete;
 	int currentComponents;
 	TimeStruct timer;

@@ -159,7 +159,7 @@ ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XM
 	:Position(Pos), Rotation(Rot), nrOfParticles(nrOfPT), active(true), renderPassComplete(true), minMaxLifetime(minMaxTime), drawOnlyWhenMoving(onlyDrawMoving)
 {
 	//particle types
-	std::vector<std::string> textureNames{ "smoke.png", "player2.png" , "player3.png" , "player4.png" };
+	std::vector<std::string> textureNames{ "smoke.png", "icon_star.png" , "player3.png" , "player4.png" };
 
 	//Initilize timer
 	tStruct.startTime;

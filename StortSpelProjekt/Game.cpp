@@ -276,7 +276,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	//Set up color buffer
 	this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
-	this->colorBuffer.getData() = DirectX::XMFLOAT4(0, 0.55, 0.75, 3.8);
+	this->colorBuffer.getData() = DirectX::XMFLOAT4(0.0f, 0.55f, 0.75f, 3.8f);
 	this->colorBuffer.applyData();
 
 	if (IFONLINE)

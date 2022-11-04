@@ -19,6 +19,8 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
+	this->particles2 = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
+
 
 	//Team switch
 	switch (team)
@@ -52,7 +54,7 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
-
+	this->particles2 = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 
 	//Team switch
 	switch (team)
@@ -78,6 +80,7 @@ SpaceShip::~SpaceShip()
 	//	delete this->components.at(i);
 	//}
 	delete this->particles;
+	delete this->particles2;
 	delete this->rocketStatusQuad;
 }
 
@@ -157,6 +160,11 @@ void SpaceShip::drawParticles()
 	if (this->particles != nullptr)
 	{
 		this->particles->BindAndDraw(0);
+	}
+
+	if (animate)
+	{
+		particles2->BindAndDraw(1);
 	}
 }
 

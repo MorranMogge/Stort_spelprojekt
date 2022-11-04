@@ -65,8 +65,14 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::COMPONENTPOSITION:
 
 			compData = circularBuffer->readData<ComponentData>();
-			componentVector[compData->ComponentId]->setPos(DirectX::XMFLOAT3(compData->x, compData->y, compData->z));
-			componentVector[compData->ComponentId]->getPhysComp()->setRotation(compData->quat);
+			for (int i = 0; i < componentVector.size(); i++)
+			{
+				if (componentVector[i]->getOnlineId() == compData->ComponentId)
+				{
+					componentVector[i]->setPos(DirectX::XMFLOAT3(compData->x, compData->y, compData->z));
+					componentVector[i]->getPhysComp()->setRotation(compData->quat);
+				}
+			}
 			//std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
 			break;
 

@@ -457,12 +457,15 @@ int main()
 			
 		}
 
+		//checks all components player position
 		for (int i = 0; i < components.size(); i++)
 		{
-			//std::cout << "component in useBy: " << std::to_string(components[i].getInUseById()) << std::endl;
-			if (components[i].getInUseById() == data.users[0].playerId)
+			for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
 			{
-				components[i].setPosition(data.users[0].playa.getposition('x'), data.users[0].playa.getposition('y'), data.users[0].playa.getposition('z'));
+				if (components[i].getInUseById() == data.users[j].playerId)
+				{
+					components[i].setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
+				}
 			}
 			//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
 		}

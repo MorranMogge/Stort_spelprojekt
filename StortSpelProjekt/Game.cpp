@@ -20,6 +20,11 @@ void Game::loadObjects()
 	potion = new Potion("../Meshes/potion", DirectX::SimpleMath::Vector3(0, -40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2, 0, &planetGravityField);
 	testBat = new BaseballBat("../Meshes/bat", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4, 0, &planetGravityField);
 	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(40, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6, GRENADE, &planetGravityField);
+	planetMeshes = new Mesh("../Meshes/Sphere");
+	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize)));
+	planetVector.back()->setPlanetShape(&physWolrd);
+	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(planetSize, planetSize, planetSize)));
+	planetVector.back()->setPlanetShape(&physWolrd);
 
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
@@ -78,7 +83,7 @@ void Game::drawObjects(bool drawDebug)
 	ltHandler.bindLightBuffers();
 
 	//Draw Game objects
-	for (int i = 0; i < gameObjects.size(); i++)
+	for (int i = 1; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->draw();
 	}
@@ -86,7 +91,11 @@ void Game::drawObjects(bool drawDebug)
 	{
 		players[i]->draw();
 	}
-	
+	for (int i = 0; i < planetVector.size(); i++)
+	{
+		planetVector[i]->drawPlanet();
+	}
+
 	//Draw light debug meshes
 	if (drawDebug)
 	{
@@ -358,6 +367,11 @@ Game::~Game()
 		}
 	}
 	wireBuffer->Release();
+	for (int i = 0; i < planetVector.size(); i++)
+	{
+		delete planetVector[i];
+	}
+	delete planetMeshes;
 }
 
 GAMESTATE Game::Update()
@@ -368,7 +382,8 @@ GAMESTATE Game::Update()
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 
 	//Calculate gravity factor
-	grav = planetGravityField.calcGravFactor(currentPlayer->getPosV3());
+	//grav = planetGravityField.calcGravFactor(currentPlayer->getPosV3());
+	grav = planetVector[0]->getAllGravFactor(planetVector, currentPlayer->getPosV3());
 	additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
 
 	//Raycasting

@@ -2,7 +2,7 @@
 #include "Planet.h"
 #include "DirectXMathHelper.h"
 
-Planet::Planet(Mesh* useMesh, const float& gravityFactor, const DirectX::XMFLOAT3& pos, const DirectX::SimpleMath::Vector3& scale)
+Planet::Planet(Mesh* useMesh, const DirectX::SimpleMath::Vector3& scale, const DirectX::XMFLOAT3& pos, const float& gravityFactor)
 	:mesh(useMesh), position(pos), rotation(DirectX::XMFLOAT3(0.f,0.f,0.f)), scale(scale), rotSpeed(0), gravityFactor(gravityFactor), planetCollisionBox(nullptr)
 {
 	this->planetShape = NONDISCLOSEDSHAPE;
@@ -32,6 +32,7 @@ void Planet::setPlanetShape(PhysicsWorld* physWorld, const PlanetShape& shape)
 		break;
 	}
 	this->planetCollisionBox = physWorld->returnAddedPhysComponent(shapeName, this->position, this->scale);
+	this->planetCollisionBox->setType(reactphysics3d::BodyType::STATIC);
 }
 
 float Planet::getFieldFactor() const

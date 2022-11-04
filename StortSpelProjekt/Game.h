@@ -9,7 +9,7 @@ struct wirefameInfo
 };
 
 const int NROFPLAYERS = 1;
-static bool IFONLINE = true;
+static bool IFONLINE = false;
 
 class Game : public State
 {
@@ -45,7 +45,8 @@ private:
 	GravityField planetGravityField;
 
 	PhysicsWorld physWolrd;
-
+	std::vector<Planet*> planetVector;
+	Mesh* planetMeshes;
 
 	PacketEventManager* packetEventManager;
 	std::vector<Player*> players;

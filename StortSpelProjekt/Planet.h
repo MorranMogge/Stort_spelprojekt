@@ -29,7 +29,7 @@ private:
 	PhysicsComponent* planetCollisionBox;
 
 public:
-	Planet(Mesh* useMesh, const float& gravityFactor = 1.0f, const DirectX::XMFLOAT3& pos = DirectX::XMFLOAT3(0.f, 0.f, 0.f), const DirectX::SimpleMath::Vector3& scale = DirectX::XMFLOAT3(1.f, 1.f, 1.f));
+	Planet(Mesh* useMesh, const DirectX::SimpleMath::Vector3& scale = DirectX::XMFLOAT3(1.f, 1.f, 1.f), const DirectX::XMFLOAT3& pos = DirectX::XMFLOAT3(0.f, 0.f, 0.f), const float& gravityFactor = 1.0f);
 	~Planet();
 
 	//Sets the shape of the planet, can be used to create box shaped planets

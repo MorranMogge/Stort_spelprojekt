@@ -2,8 +2,8 @@
 #include "Potion.h"
 #include "Player.h"
 
-Potion::Potion(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
-	:Item(useMesh, pos, rot, id, field), playerPtr(nullptr), restoringAmount(10)
+Potion::Potion(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
+	:Item(useMesh, pos, rot, id, onlineId, 1, field)
 {
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 3);
@@ -17,8 +17,8 @@ Potion::Potion(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	this->itemIcon->setOffset(constant);
 }
 
-Potion::Potion(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field)
-	:Item(objectPath, pos, rot, id, field), playerPtr(nullptr), restoringAmount(10)
+Potion::Potion(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
+	:Item(objectPath, pos, rot, id, onlineId, 1, field)
 {
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5),3);
@@ -38,18 +38,18 @@ Potion::~Potion()
 
 void Potion::useItem()
 {
-	this->playerPtr->addHealth(this->restoringAmount);
 	this->setPos({ -100, -100, -100 });
-	
+	timeToRun = true;
+	timer.resetStartTime();
 }
 
-int Potion::getRestore() const
+bool Potion::isTimeToRun() const
 {
-	return this->restoringAmount;
+	return this->timeToRun;
 }
 
-void Potion::setPlayerptr(Player* ptr)
+bool Potion::timerGoing()
 {
-	if (!playerPtr)
-		this->playerPtr = ptr;
+	if (this->timer.getTimePassed(5.f)) timeToRun = false;
+	return timeToRun;
 }

@@ -3,8 +3,6 @@
 #include "DirectXMathHelper.h"
 #include "SendingDataEvent.h"
 
-
-
 void Game::loadObjects()
 {
 	//Meshes vector contents
@@ -14,7 +12,6 @@ void Game::loadObjects()
 	using namespace DirectX::SimpleMath;
 
 	float planetSize = 40.f;
-	grav = planetGravityField.calcGravFactor(DirectX::SimpleMath::Vector3(0, 40, 0));
 
 	//Here we can add base object we want in the beginning of the game
 	meshes.push_back(new Mesh("../Meshes/Sphere"));
@@ -43,53 +40,23 @@ void Game::loadObjects()
 	physWolrd.addPhysComponent(testCube, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
-	//physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
-	physWolrd.addPhysComponent(component, reactphysics3d::CollisionShapeName::BOX);
+	
+	
 	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
-	physWolrd.addPhysComponent(spaceShipRed, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3*0.75f, 0.75f));
-	physWolrd.addPhysComponent(spaceShipBlue, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3 * 0.75f, 0.75f));
 	physWolrd.addPhysComponent(grenade, reactphysics3d::CollisionShapeName::BOX);
 	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-	spaceShipRed->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-	spaceShipRed->updatePhysCompRotation();
-	spaceShipBlue->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-	spaceShipBlue->updatePhysCompRotation();
-
-
-	spaceShipRed->getPhysComp()->setPosition(reactphysics3d::Vector3(spaceShipRed->getPosV3().x, spaceShipRed->getPosV3().y, spaceShipRed->getPosV3().z));
-	spaceShipBlue->getPhysComp()->setPosition(reactphysics3d::Vector3(spaceShipBlue->getPosV3().x, spaceShipBlue->getPosV3().y, spaceShipBlue->getPosV3().z));
-	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
+	
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	potion->setRot(DirectX::SimpleMath::Vector3(0.0f, 1.5f, 1.5f));
 	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
-	//otherPlayer->getPhysComp()->setPosition(reactphysics3d::Vector3(otherPlayer->getPosV3().x, otherPlayer->getPosV3().y, otherPlayer->getPosV3().z));
-
-	//Add to item array
-	items.emplace_back(potion);
-	items.emplace_back(testBat);
-	items.emplace_back(component);
-	items.emplace_back(grenade);
 
 	//Add to obj array
 	gameObjects.emplace_back(planet);
-	gameObjects.emplace_back(currentPlayer);
+	//gameObjects.emplace_back(currentPlayer);
 	gameObjects.emplace_back(potion);
-	gameObjects.emplace_back(spaceShipRed);
-	gameObjects.emplace_back(spaceShipBlue);
-	gameObjects.emplace_back(testCube);
 	gameObjects.emplace_back(testBat);
-	//gameObjects.emplace_back(otherPlayer);
-	gameObjects.emplace_back(component);
 	gameObjects.emplace_back(grenade);
 
-
-	for (int i = 0; i < 10; i++)
-	{
-		GameObject* newObj = new GameObject(meshes[5], DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), MOVABLE, nullptr, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-		physWolrd.addPhysComponent(newObj, reactphysics3d::CollisionShapeName::BOX);
-		newObj->getPhysComp()->setPosition(reactphysics3d::Vector3(-100, 120+(float)i*10, 100));
-		gameObjects.emplace_back(newObj);
-	}
 
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	testBat->setPlayer(currentPlayer);
@@ -97,13 +64,10 @@ void Game::loadObjects()
 	grenade->setGameObjects(gameObjects);
 	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
-
-
 }
 
 void Game::drawShadows()
 {
-	potion->draw();
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->draw();
@@ -111,6 +75,10 @@ void Game::drawShadows()
 	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
 	{
 		ltHandler.drawShadows(i, gameObjects);
+	}
+	for (int i = 0; i < components.size(); i++)
+	{
+		components[i]->draw();
 	}
 
 	basicRenderer.depthPrePass();
@@ -126,12 +94,13 @@ void Game::drawObjects(bool drawDebug)
 	//Draw Game objects
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		gameObjects.at(i)->draw();
+		gameObjects[i]->draw();
 	}
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->draw();
 	}
+
 
 	//Draw light debug meshes
 	if (drawDebug)
@@ -155,8 +124,32 @@ void Game::drawParticles()
 	{
 		players[i]->drawParticles();
 	}
-	this->spaceShipRed->drawParticles();
-	this->spaceShipBlue->drawParticles();
+	for (int i = 0; i < components.size(); i++)
+	{
+		this->components[i]->drawParticles();
+	}
+	for (int i = 0; i < spaceShips.size(); i++)
+	{
+		spaceShips[i]->drawParticles();
+	}
+}
+
+void Game::randomizeObjectPos(GameObject* object)
+{
+	DirectX::SimpleMath::Vector3 randomPos = {};
+
+	int xPos = rand() % 201 - 100;
+	int yPos = rand() % 201 - 100;
+	int zPos = rand() % 201 - 100;
+
+	randomPos.x = (float)xPos;
+	randomPos.y = (float)yPos;
+	randomPos.z = (float)zPos;
+
+	randomPos.Normalize();
+	randomPos *= 100;
+
+	object->setPos(randomPos);
 }
 
 bool Game::setUpWireframe()
@@ -218,21 +211,62 @@ void Game::handleKeybinds()
 	{
 		drawDebug = false;
 	}
+	/*if (Input::KeyPress(KeyCode::K))
+	{
+		randomizeObjectPos(potion);
+	}*/
 }
 
-DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3 &position)
+DirectX::SimpleMath::Vector3 Game::orientToPlanet(const DirectX::XMFLOAT3& position)
 {
-	using namespace DirectX::SimpleMath;
-	
-	Vector3 yAxis(planetGravityField.calcGravFactor(position) * -1);
+	using namespace DirectX; using namespace SimpleMath;
 
-	Vector3 zAxis = yAxis.Cross({ 0, 0, 1 });
-	zAxis.Normalize();
+	//Modified vectors
+	XMVECTOR upVector = (planetGravityField.calcGravFactor(position) * -1);
+	XMVECTOR forwardVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	XMVECTOR rightVector = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	Vector3 resultVector;
+	XMMATRIX rotation = XMMatrixIdentity();
 
-	Vector3 xAxis = yAxis.Cross(zAxis);
-	xAxis.Normalize();
+	//X-Rotation
+	resultVector = DirectX::XMVector3Dot(upVector, forwardVector);
+	if (resultVector.x < 0.0f)
+	{
+		resultVector = DirectX::XMVector3Cross(rightVector, upVector);
+		resultVector = DirectX::XMVector3Normalize(resultVector);
+		resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, resultVector);
+		rotation *= DirectX::XMMatrixRotationAxis(rightVector, -resultVector.x);
+	}
+	else if (resultVector.x > 0.0f)
+	{
+		resultVector = DirectX::XMVector3Cross(rightVector, upVector);
+		resultVector = DirectX::XMVector3Normalize(resultVector);
+		resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, resultVector);
+		rotation *= DirectX::XMMatrixRotationAxis(rightVector, resultVector.x);
+	}
 
-	return Quaternion::CreateFromRotationMatrix(Matrix(xAxis, yAxis, zAxis)).ToEuler();
+	//Z-Rotation
+	resultVector = DirectX::XMVector3Dot(upVector, rightVector);
+	if (resultVector.z < 0.0f)
+	{
+		resultVector = DirectX::XMVector3Cross(upVector, forwardVector);
+		resultVector = DirectX::XMVector3Normalize(resultVector);
+		resultVector = DirectX::XMVector3AngleBetweenNormals(rightVector, resultVector);
+		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, resultVector.z);
+	}
+	else if (resultVector.z > 0.0f)
+	{
+		resultVector = DirectX::XMVector3Cross(upVector, forwardVector);
+		resultVector = DirectX::XMVector3Normalize(resultVector);
+		resultVector = DirectX::XMVector3AngleBetweenNormals(rightVector, resultVector);
+		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -resultVector.z);
+	}
+
+	//Extracting rotation
+	Quaternion quaterRot = Quaternion::CreateFromRotationMatrix(rotation);
+	Vector3 finalRotation = quaterRot.ToEuler();
+
+	return finalRotation;
 }
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
@@ -247,11 +281,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	this->packetEventManager = new PacketEventManager();
 	//m�ste raderas******************
-	client = new Client("192.168.43.251");
+	client = new Client();//("192.168.43.216");
 	circularBuffer = client->getCircularBuffer();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
-	this->loadObjects();
 	this->setUpWireframe();
 
 	//camera.updateCamera(immediateContext);
@@ -262,16 +295,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	//ltHandler.addLight(DirectX::XMFLOAT3(10, -50, 30), DirectX::XMFLOAT3(0, 0, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 
 	//Particle test
-	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2,5)));
-
-	currentTime = std::chrono::system_clock::now();
-	lastUpdate = currentTime;
-	gamePad = std::make_unique<DirectX::GamePad>();
-	playerVecRenderer.setPlayer(currentPlayer);
-	currentTime = std::chrono::system_clock::now();
-	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
-	serverStart = std::chrono::system_clock::now();
-	this->window = &window;
+	ptEmitters.push_back(ParticleEmitter(DirectX::XMFLOAT3(0, 0, 20), DirectX::XMFLOAT3(0.5, 0.5, 0), 36, DirectX::XMFLOAT2(2, 5)));
 
 
 	//Set up color buffer
@@ -291,27 +315,45 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		//int playerid = client->initTEMPPLAYERS();
 
 		this->client->setClientId(playerId);
+		int offset = 10;
+		int dude = (NROFPLAYERS) / 2;
 
+		int newNrOfPlayer = NROFPLAYERS;
+		int tempTeam = 0;
 		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
 		{
-			Player* tmpPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), PLAYER, 0, &planetGravityField);
+
+			tempTeam = i < (newNrOfPlayer / 2);
+			Player* tmpPlayer = nullptr;
 			if (playerId != i)
 			{
+				tmpPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude < i + 1), &planetGravityField);
+				tmpPlayer->setOnlineID(i);
+				physWolrd.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
 			}
 			else
 			{
+				currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, (int)(dude < i+1), &planetGravityField);
+				currentPlayer->setOnlineID(i);
 				players.push_back(currentPlayer);
 				delete tmpPlayer;
 			}
+			std::cout << "Dude: " << (int)(dude < i + 1) << "\n";
 		}
 	}
-	else
-	{
-		//Add to player array
-		players.emplace_back(currentPlayer);
-	}
+	this->loadObjects();
+	testBat->setGameObjects(players);
+	testBat->setClient(client);
 
+	currentTime = std::chrono::system_clock::now();
+	lastUpdate = currentTime;
+	gamePad = std::make_unique<DirectX::GamePad>();
+	playerVecRenderer.setPlayer(currentPlayer);
+	currentTime = std::chrono::system_clock::now();
+	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
+	serverStart = std::chrono::system_clock::now();
+	this->window = &window;
 }
 
 Game::~Game()
@@ -327,16 +369,27 @@ Game::~Game()
 		}
 	}
 
+	for (int i = 0; i < players.size(); i++)
+	{
+		delete players[i];
+	}
+
 	for (int i = 0; i < meshes.size(); i++)
 	{
 		delete meshes[i];
 	}
 	delete atmosphere;
+
+
+
 	wireBuffer->Release();
 }
 
 GAMESTATE Game::Update()
 {
+	//read the packets received from the server
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, &planetGravityField, spaceShips, onlineItems);
+	
 	//Get newest delta time
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();
@@ -359,29 +412,49 @@ GAMESTATE Game::Update()
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
 	currentPlayer->movePos(velocity);
 	currentPlayer->checkForStaticCollision(gameObjects);
-	currentPlayer->pickupItem(potion);
-	currentPlayer->pickupItem(testBat);
-	currentPlayer->pickupItem(component);
-	currentPlayer->pickupItem(grenade);
+
+	for (int i = 0; i < components.size(); i++)
+	{
+		if (currentPlayer->pickupItem(components[i])) break;
+	}
+
+	for (int i = 0; i < items.size(); i++)
+	{
+		if (currentPlayer->pickupItem(items[i])) break;
+	}
+
+	/*if (Input::KeyPress(KeyCode::K))
+	{
+		randomizeObjectPos(this->testBat);
+	}*/
+	currentPlayer->checkMovement();
 	grenade->updateExplosionCheck();
-	
+	if (potion->isTimeToRun())
+	{
+		if (potion->timerGoing()) currentPlayer->setSpeed(50.f);
+		else currentPlayer->setSpeed(25.f);
+	}
+
 	//sending data to server
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
 	{
 		//client->sendToServerTEMPTCP(currentPlayer);
+		
 		SendingDataEvent(client, currentPlayer, players);
 		serverStart = std::chrono::system_clock::now();
 	}
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId());
+
 	
-	//Applying player movement
+	//Physics related functions
+	if (!IFONLINE) physWolrd.update(dt);
+	
 	for (int i = 0; i < players.size(); i++)
 	{
-		players[i]->updateBuffer();
+		
+		players[i]->updateMatrixOnline();
+		players[i]->update();
 	}
-
-	//Physics related functions
-	physWolrd.update(dt);
+	currentPlayer->updateBuffer();
 
 	//Updates gameObject physics components
 	for (int i = 0; i < gameObjects.size(); i++)
@@ -389,19 +462,19 @@ GAMESTATE Game::Update()
 		gameObjects[i]->update();
 	}
 	
-
-	//Prints for game objects
-	for (int i = 0; i < gameObjects.size(); i++)
+	//Setting the camera at position
+	bool noWinners = true;
+	if (noWinners) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX());
+	for (int i = 0; i < spaceShips.size(); i++)
 	{
-		//get object id
-		int id = gameObjects.at(i)->getId();
-
-		if (gameObjects[i]->getId() == PLAYER)
+		if (spaceShips[i]->getCompletion())
 		{
-			//std::cout << "Player (" << i << ") Position X:" << gameObjects[i]->getPos().x << " Y:" << gameObjects[i]->getPos().y << " Z:" << gameObjects[i]->getPos().z << std::endl;
+			if (currentPlayer->getTeam() ==  i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot());
+			grav = planetGravityField.calcGravFactor(this->spaceShips[i]->getPosV3());
+			this->spaceShips[i]->move(grav, dt);
+			noWinners = true;
 		}
 	}
-
 
 	//Applies updated movement & rotation to models
 	this->updateBuffers();
@@ -476,13 +549,18 @@ GAMESTATE Game::Update()
 	spaceShipRed->animateOnPickup();
 
 
-	//Check if item icon should change to pickup icon 
+	//Updates gameObject physics components
+	this->updateBuffers();
+	
+		//Check if item icon should change to pickup icon 
 	for (int i = 0; i < items.size(); i++)
 	{
 		this->items[i]->checkDistance((GameObject*)(currentPlayer));
 	}
-
-
+	for (int i = 0; i < components.size(); i++)
+	{
+		this->components[i]->checkDistance((GameObject*)(currentPlayer));
+	}
 	//Debug keybinds
 	this->handleKeybinds();
 
@@ -511,6 +589,7 @@ void Game::Render()
 	this->skybox.draw();
 	basicRenderer.depthUnbind();
 
+
 	//Render imgui & wireframe
 	imGui.react3D(wireframe, objectDraw, reactWireframeInfo.wireframeClr, dt);
 	if (wireframe) { immediateContext->PSSetConstantBuffers(0, 1, &wireBuffer), physWolrd.renderReact3D(); playerVecRenderer.drawLines(); }
@@ -521,12 +600,18 @@ void Game::Render()
 	{
 		this->items[i]->drawIcon();
 	}
+	for (int i = 0; i < components.size(); i++)
+	{
+		this->components[i]->drawIcon();
+	}
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->drawIcon();
 	}
-	this->spaceShipRed->drawQuad();
-	this->spaceShipBlue->drawQuad();
+	for (int i = 0; i < spaceShips.size(); i++)
+	{
+		spaceShips[i]->drawQuad();
+	}
 
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);

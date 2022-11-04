@@ -247,6 +247,11 @@ void PhysicsComponent::setRotation(const reactphysics3d::Quaternion& rotation)
 	this->rigidBody->setTransform(reactphysics3d::Transform(this->getPosition(), rotation));
 }
 
+void PhysicsComponent::setRotation(const DirectX::SimpleMath::Quaternion& rotation)
+{
+	this->rigidBody->setTransform(reactphysics3d::Transform(this->getPosition(), reactphysics3d::Quaternion(rotation.x, rotation.y, rotation.z, rotation.w)));
+}
+
 void PhysicsComponent::setTransform(const reactphysics3d::Transform& transform)
 {
 	this->rigidBody->setTransform(transform);

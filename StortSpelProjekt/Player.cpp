@@ -5,6 +5,8 @@
 #include "Potion.h"
 #include "BaseballBat.h"
 #include "Component.h"
+#include "PacketEnum.h"
+
 #include "Mesh.h"
 using namespace DirectX;
 
@@ -23,9 +25,21 @@ void Player::handleItems()
 	holdingItem->setPos(newPos);
 	itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z }));
 
-	//Thorw the Item
+	//Throw the Item
 	if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
 	{
+		//allocates data to be sent
+		ComponentData c;
+		c.ComponentId = this->getItemOnlineId();
+		std::cout << "Item: " << c.ComponentId << "\n";
+		c.inUseBy = -1;
+		c.packetId = PacketType::COMPONENTPOSITION;
+		c.x = this->getPos().x;
+		c.y = this->getPos().y;
+		c.z = this->getPos().z;
+		//sending data to server
+		client->sendStuff<ComponentData>(c);
+
 		//Set dynamic so it can be affected by forces
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 
@@ -45,6 +59,18 @@ void Player::handleItems()
 	//Use the Item
 	else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
 	{
+		//allocates data to be sent
+		ComponentData c;
+		c.ComponentId = this->getItemOnlineId();
+		c.inUseBy = -1;
+		c.packetId = PacketType::COMPONENTPOSITION;
+		c.x = this->getPos().x;
+		c.y = this->getPos().y;
+		c.z = this->getPos().z;
+
+		//sending data to server
+		client->sendStuff<ComponentData>(c);
+
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 		holdingItem->useItem();
 		itemPhysComp->setIsAllowedToSleep(true);
@@ -66,12 +92,13 @@ Player::~Player()
 	}
 }
 
-Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& team , GravityField* field)
-    :GameObject(useMesh, pos, rot, id, field), health(70), holdingItem(nullptr), team(team)
+Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
+    :GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0)
 {
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-
+	this->client = client;
+	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
 
 	normalVector = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 1.0f);
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
@@ -102,20 +129,13 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	}
 }
 
-Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& team, GravityField* field)
-	:GameObject(objectPath, pos, rot, id, field), health(70), holdingItem(nullptr), team(team)
+Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
+	:GameObject(objectPath, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0), speed(25.f)
 {
+	this->client = client;
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	
-
-	normalVector = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 1.0f);
-	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-	normalVector = DirectX::XMVector3Normalize(normalVector);
-	rightVector = DirectX::XMVector3Normalize(rightVector);
-	forwardVector = DirectX::XMVector3Normalize(forwardVector);
-	this->rotate();
+	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);
@@ -134,7 +154,7 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	case 0:
 		mesh->matKey[0] = "pintoRed.png"; break;
 	case 1:
-		break;
+		mesh->matKey[0] = "pintoBlue.png"; break;
 	}
 }
 
@@ -159,7 +179,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk North-East
 	if (Input::KeyDown(KeyCode::W) && Input::KeyDown(KeyCode::D))
 	{
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
 
 		if (resultVector.x > -0.4f)
@@ -180,7 +200,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk North-West
 	else if (Input::KeyDown(KeyCode::W) && Input::KeyDown(KeyCode::A))
 	{
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
 
 		if (resultVector.x < 0.4f)
@@ -201,7 +221,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk South-East
 	else if (Input::KeyDown(KeyCode::S) && Input::KeyDown(KeyCode::D))
 	{
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
 
 		if (resultVector.x < 0.4f)
@@ -222,7 +242,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk South-West
 	else if (Input::KeyDown(KeyCode::S) && Input::KeyDown(KeyCode::A))
 	{
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
 
 		if (resultVector.x > -0.4f)
@@ -291,7 +311,7 @@ void Player::rotate()
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime, const bool& testingVec)
 {
 	if (dedge) return;
-	if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
+	else if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 	else normalVector = DirectX::XMVectorSet(grav.x, grav.y, grav.z, 1.0f);
 
 	//Calculations
@@ -301,24 +321,24 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	rightVector = DirectX::XMVector3Normalize(rightVector);
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
-	//Jumping
-	if (jumpHeight >= jumpAllowed && Input::KeyPress(KeyCode::SPACE))
-	{
-		jumpHeight = 0.f;
-	}
-	else if (jumpHeight < jumpAllowed)
-	{
-		position += normalVector * jumpHeight * deltaTime;
-		jumpHeight += 3000.f * deltaTime;
-	}
-
 	//Running
 	if (Input::KeyDown(KeyCode::SHIFT))
 	{
 		deltaTime *= 1.5f;
 	}
 
-
+	//Jumping
+	if (onGround && Input::KeyPress(KeyCode::SPACE))
+	{
+		jumpHeight = 0.f;
+		onGround = false;
+	}
+	else if (jumpHeight < jumpAllowed)
+	{
+		position += normalVector * jumpHeight * deltaTime;
+		jumpHeight += 2000.f * deltaTime;
+	}
+	
 	//PC movement
 	if (movingCross(cameraForward, deltaTime)) {}
 
@@ -326,7 +346,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	else if (Input::KeyDown(KeyCode::W))
 	{
 		this->moveKeyPressed = true;
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
 
 		if (resultVector.x < -0.05f)
@@ -351,7 +371,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	else if (Input::KeyDown(KeyCode::S))
 	{
 		this->moveKeyPressed = true;
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
 
 		if (resultVector.x < -0.05f)
@@ -376,7 +396,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	else if (Input::KeyDown(KeyCode::D))
 	{
 		this->moveKeyPressed = true;
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(cameraRight, rightVector);
 
 		if (resultVector.x < -0.05f)
@@ -401,7 +421,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	else if (Input::KeyDown(KeyCode::A))
 	{
 		this->moveKeyPressed = true;
-		position += forwardVector * deltaTime * 25.0f;
+		position += forwardVector * deltaTime * speed;
 		resultVector = DirectX::XMVector3Dot(-cameraRight, rightVector);
 
 		if (resultVector.x < -0.05f)
@@ -555,7 +575,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		else if (posY > 0.0f)
 		{
 			resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
-			position += forwardVector * posY * deltaTime * 25.0f;
+			position += forwardVector * posY * deltaTime * speed;
 
 			if (resultVector.x < -0.05f)
 			{
@@ -580,7 +600,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		else if (posY < 0.0f)
 		{
 			resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
-			position += forwardVector * posY * deltaTime * -25.0f;
+			position += forwardVector * posY * deltaTime * -speed;
 
 			if (resultVector.x < -0.05f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.1f);
 			else if (resultVector.x > 0.05f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.1f);
@@ -597,7 +617,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		//Walk right
 		else if (posX > 0.0f)
 		{
-			position += forwardVector * posX * deltaTime * 25.0f;
+			position += forwardVector * posX * deltaTime * speed;
 			resultVector = DirectX::XMVector3Dot(cameraRight, rightVector);
 
 			if (resultVector.x < -0.05f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.1f);
@@ -614,7 +634,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		//Walk left
 		else if (posX < 0.0f)
 		{
-			position += forwardVector * posX * deltaTime * -25.0f;
+			position += forwardVector * posX * deltaTime * -speed;
 			resultVector = DirectX::XMVector3Dot(-cameraRight, rightVector);
 
 			if (resultVector.x < -0.05f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.1f);
@@ -629,48 +649,61 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		}
 	}
 
-
 	if (!Input::KeyDown(KeyCode::W) && !Input::KeyDown(KeyCode::A) && !Input::KeyDown(KeyCode::S) && !Input::KeyDown(KeyCode::D))
 	{
 		this->moveKeyPressed = false;
 	}
+}
 
+int Player::getItemOnlineType() const
+{
+	if (this->holdingItem == nullptr)
+	{
+		return -1;
+	}
+	return holdingItem->getOnlineType();
+}
+
+int Player::getItemOnlineId() const
+{
+	
+	return holdingItem->getOnlineId();
 }
 
 bool Player::pickupItem(Item* itemToPickup)
 {
 	bool successfulPickup = false;
-	if (Input::KeyDown(KeyCode::ENTER))
+	if (Input::KeyDown(KeyCode::E))
 	{
 		if (this->withinRadius(itemToPickup, 5))
 		{
 			addItem(itemToPickup);
 
-			Potion* tmp = dynamic_cast<Potion*>(itemToPickup);
-			if (tmp)
-			{
-				tmp->setPlayerptr(this);
-				successfulPickup = true;
-				tmp->setPickedUp(true);
-			}
+			Component* tmp = dynamic_cast<Component*>(itemToPickup);
+			if (tmp) this->holdingComp = true;
+			else this->holdingComp = false;
 
 			holdingItem->getPhysComp()->getRigidBody()->resetForce();
 			holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 			holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-
 		}
 	}
 
 	return successfulPickup;
 }
 
+void Player::setOnlineID(const int& id)
+{
+	this->onlineID = id;
+}
+
 void Player::hitByBat(const reactphysics3d::Vector3& force)
 {
+	this->physComp->setType(reactphysics3d::BodyType::DYNAMIC);
 	this->dedge = true;
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);
 	timer.resetStartTime();
-
 }
 
 void Player::addItem(Item* itemToHold)
@@ -683,20 +716,19 @@ void Player::addItem(Item* itemToHold)
     holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 }
 
-void Player::addHealth(const int& healthToIncrease)
-{
-	this->health += healthToIncrease;
-	//Prototyp f�r en cap s� man inte kan f� mer liv �n en kapacitet
-	if (this->health > 100)
-	{
-		this->health = 100;
-	}
-}
-
 void Player::releaseItem()
 {
 	if (this->holdingItem != nullptr)
 	{
+		ComponentData newData;
+		newData.packetId = PacketType::COMPONENTPOSITION;
+		newData.ComponentId = this->getItemOnlineId();
+		newData.inUseBy = -1;
+		newData.x = this->holdingItem->getPosV3().x;
+		newData.y = this->holdingItem->getPosV3().y;
+		newData.z = this->holdingItem->getPosV3().z;
+		client->sendStuff<ComponentData>(newData);
+
 		this->holdingItem->setPickedUp(false);
 		this->holdingItem = nullptr;
 	}
@@ -709,11 +741,12 @@ bool Player::checkForStaticCollision(const std::vector<GameObject*>& gameObjects
 	reactphysics3d::Vector3 point(vecPoint.x, vecPoint.y, vecPoint.z);
 
 	int gameObjSize = (int)gameObjects.size();
-	for (int i = 1; i < gameObjSize; i++)
+	for (int i = 0; i < gameObjSize; i++)
 	{
+		if (gameObjects[i]->getPhysComp()->getType() != reactphysics3d::BodyType::STATIC || gameObjects[i] == this->holdingItem) continue;
 		if (gameObjects[i]->getPhysComp()->testPointInside(point)) 
 		{
-			if (gameObjects[i]->getPhysComp()->getType() == reactphysics3d::BodyType::STATIC) this->position -= 1.f * forwardVector;
+			this->position -= 1.f * forwardVector;
 			return true;
 		}
 	}
@@ -733,6 +766,8 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLO
 	reactphysics3d::RaycastInfo rayInfo;
 
 	bool testingVec = false;
+	onGround = false;
+
 	int gameObjSize = (int)gameObjects.size();
 	for (int i = 0; i < gameObjSize; i++)
 	{
@@ -742,6 +777,7 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, DirectX::XMFLO
 			//Maybe somehow return the index of the triangle hit to calculate new Normal
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
 			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
+			onGround = true;
 			return true;
 		}
 	}
@@ -782,7 +818,7 @@ bool Player::getHitByBat() const
         holdingItem->setPos(newPos);
         itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z}));
         
-        //Thorw the Item
+        //Throw the Item
         if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
         {
             //Set dynamic so it can be affected by forces
@@ -881,6 +917,21 @@ reactphysics3d::Vector3 Player::getRayCastPos() const
 	return reactphysics3d::Vector3(returnValue.x, returnValue.y, returnValue.z);
 }
 
+Item* Player::getItem()const
+{
+	return this->holdingItem;
+}
+
+int Player::getOnlineID() const
+{
+	return this->onlineID;
+}
+
+void Player::setSpeed(float speed)
+{
+	this->speed = speed;
+}
+
 void Player::update()
 {
 	if (holdingItem != nullptr)
@@ -923,5 +974,28 @@ void Player::update()
 		this->particles->setPosition(this->position);
 		this->particles->setRotation(this->getUpDirection());
 		this->particles->updateBuffer();
+	}
+}
+
+void Player::setTeam(const int& team)
+{
+	this->team = team;
+
+	//Team switch
+	switch (team)
+	{
+	case 0:
+		mesh->matKey[0] = "pintoRed.png"; break;
+	case 1:
+		mesh->matKey[0] = "pintoBlue.png"; break;
+	}
+}
+
+void Player::checkMovement()
+{
+	if (holdingComp)
+	{
+		if (this->holdingItem != nullptr) this->setSpeed(25.f*0.65f);
+		else this->setSpeed(25.f);
 	}
 }

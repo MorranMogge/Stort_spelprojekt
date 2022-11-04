@@ -399,7 +399,8 @@
     <ClInclude Include="SpaceShip.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="..\Server\PacketsDataTypes.h" />
+    <ClInclude Include="BaseballBat.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="ClientHandler.h" />
     <ClInclude Include="MouseClass.h" />
     <ClInclude Include="PacketEventManager.h" />

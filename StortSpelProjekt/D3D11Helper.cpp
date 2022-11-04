@@ -26,10 +26,10 @@ bool CreateInterfaces(const UINT& width, const UINT& height, HWND window, ID3D11
 	swapChainDesc.Flags = 0;
 
 	UINT flags = 0;
-	if (_DEBUG)
+	/*if (_DEBUG)
 	{
 		flags = D3D11_CREATE_DEVICE_DEBUG;
-	}
+	}*/
 
 	D3D_FEATURE_LEVEL featureLevels[] = {
 		D3D_FEATURE_LEVEL::D3D_FEATURE_LEVEL_11_1,
@@ -40,6 +40,7 @@ bool CreateInterfaces(const UINT& width, const UINT& height, HWND window, ID3D11
 	GPU::device = device;
 	GPU::immediateContext = immediateContext;
 	GPU::swapChain = swapChain;
+
 
 	//GPU::windowWidth = 1264;
 	//GPU::windowHeight = 681;

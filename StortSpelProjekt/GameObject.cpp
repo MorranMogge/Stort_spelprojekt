@@ -104,7 +104,8 @@ void GameObject::movePos(const DirectX::XMFLOAT3& offset)
 void GameObject::setPos(const DirectX::XMFLOAT3& pos)
 {
 	this->position = pos;
-	this->physComp->setPosition({ pos.x, pos.y, pos.z });
+	this->physComp->setPosition(reactphysics3d::Vector3{ pos.x,pos.y, pos.z });
+
 }
 
 void GameObject::setRot(const DirectX::XMFLOAT3& rot)
@@ -151,6 +152,28 @@ DirectX::XMFLOAT3 GameObject::getRotXM() const
 DirectX::XMFLOAT3 GameObject::getScale() const
 {
 	return this->scale;
+}
+
+DirectX::XMFLOAT4X4 GameObject::getMatrix() const
+{
+	DirectX::XMFLOAT4X4 temp;
+	DirectX::XMStoreFloat4x4(&temp, DirectX::XMMatrixTranspose({ (DirectX::XMMatrixScaling(scale.x, scale.y, scale.z)
+		* this->rotation * DirectX::XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
+	return temp;
+}
+
+void GameObject::setMatrix(DirectX::XMFLOAT4X4 matrix)
+{
+	this->mesh->setMatrix(matrix);
+	this->position.x = matrix._14;
+	this->position.y = matrix._24;
+	this->position.z = matrix._34;
+	this->physComp->setPosition(reactphysics3d::Vector3{ position.x,position.y, position.z });
+}
+
+void GameObject::updateMatrixOnline()
+{
+	this->mesh->updateONLINE();
 }
 
 Bound* GameObject::getBounds() const

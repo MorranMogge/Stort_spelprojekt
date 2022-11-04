@@ -22,7 +22,7 @@ class Mesh
 private:
 
 	std::vector<unsigned int> submeshVerCounts;
-
+	DirectX::XMFLOAT4X4 matrix;
 public:
 
 	VertexBuffer vertexBuffer;
@@ -39,7 +39,7 @@ public:
 
 	Bound bound;
 
-	Mesh() {}
+	Mesh() { DirectX::XMStoreFloat4x4(&matrix, DirectX::XMMatrixIdentity()); }
 	Mesh(OBJ& obj)
 	{
 		Load(obj);
@@ -227,6 +227,22 @@ public:
 		submeshVerCounts.emplace_back(count);
 	}
 	void UpdateCB(const DirectX::SimpleMath::Vector3& position, const DirectX::XMMATRIX &rotation, const DirectX::SimpleMath::Vector3& scale)
+	void setMatrix(DirectX::XMFLOAT4X4 matrix)
+	{
+		this->matrix = matrix;
+
+
+
+	}
+	void updateONLINE()
+	{
+		static MatrixS worldS;
+		DirectX::XMMATRIX xm = DirectX::XMLoadFloat4x4(&matrix);
+		DirectX::XMStoreFloat4x4(&worldS.matrix, xm);
+
+		worldCB.Update(&worldS, sizeof(MatrixS));
+	}
+	void UpdateCB()
 	{
 		using namespace DirectX;
 

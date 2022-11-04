@@ -12,7 +12,6 @@
 #include "WindowHelper.h"
 #include "D3D11Helper.h"
 
-#include "GuiHandler.h"
 #include "ImGuiHelper.h"
 
 #include "SettingsMenu.h"

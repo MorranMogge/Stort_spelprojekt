@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SettingsUI.h"
 #include "Input.h"
-#include "GuiHandler.h"
+
 
 void SettingsUI::HandleInputs()
 {

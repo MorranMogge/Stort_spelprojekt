@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Credits.h"
 #include "Input.h"
-#include "GuiHandler.h"
 
 void Credits::HandleInputs()
 {

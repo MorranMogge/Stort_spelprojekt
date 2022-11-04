@@ -982,7 +982,7 @@ void Player::checkMovement()
 	}
 }
 
-void Player::checkDirection(DirectX::XMVECTOR compPosition)
+void Player::checkDirection(const DirectX::XMVECTOR& compPosition, const DirectX::XMVECTOR& cameraPosition)
 {
 	arrowVector = XMVectorSubtract(compPosition, this->getPosV3());
 }

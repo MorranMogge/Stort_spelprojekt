@@ -20,11 +20,10 @@ void Game::loadObjects()
 	potion = new Potion("../Meshes/potion", DirectX::SimpleMath::Vector3(0, -40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2, 0, &planetGravityField);
 	testBat = new BaseballBat("../Meshes/bat", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4, 0, &planetGravityField);
 	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(40, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6, GRENADE, &planetGravityField);
+	arrow = new Arrow("../Meshes/Player", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0, 0.0f, 0.0f));
 
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
-	
-	
 	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
 	physWolrd.addPhysComponent(grenade, reactphysics3d::CollisionShapeName::BOX);
 	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
@@ -82,6 +81,7 @@ void Game::drawObjects(bool drawDebug)
 	{
 		gameObjects[i]->draw();
 	}
+
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->draw();
@@ -161,6 +161,7 @@ void Game::updateBuffers()
 	{
 		gameObjects[i]->updateBuffer();
 	}
+	arrow->update();
 	
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
@@ -364,6 +365,7 @@ Game::~Game()
 	{
 		delete players[i];
 	}
+	delete arrow;
 	wireBuffer->Release();
 }
 
@@ -413,8 +415,10 @@ GAMESTATE Game::Update()
 
 	if (components.size() > 0)
 	{
-		currentPlayer->checkDirection(components[0]->getPosV3());
+		
 	}
+
+	currentPlayer->checkDirection(arrow->getPosition(), camera.getPosition()); //REMOVE!!
 
 	grenade->updateExplosionCheck();
 	if (potion->isTimeToRun())
@@ -463,6 +467,8 @@ GAMESTATE Game::Update()
 			noWinners = true;
 		}
 	}
+
+	this->arrow->changeDirection(camera.getPosition(), DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getUpVector()), camera.getRotMX());
 	
 
 	//Here you can write client-server related functions?
@@ -499,6 +505,7 @@ void Game::Render()
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
+	arrow->draw();
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();

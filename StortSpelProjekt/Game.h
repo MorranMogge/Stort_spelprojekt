@@ -1,6 +1,6 @@
 #pragma once
 #include "GameInclude.h"
-
+#include "Arrow.h"
 
 struct wirefameInfo
 {
@@ -55,6 +55,7 @@ private:
 	CircularBufferClient* circularBuffer;
 
 	Camera camera;
+	Arrow* arrow;
 	SkyboxObj skybox;
 	Player* currentPlayer;
 	GameObject* planet;

@@ -19,6 +19,7 @@ private:
 
 	DirectX::XMMATRIX viewMatrix;
 	DirectX::XMMATRIX projMatrix;
+	DirectX::XMMATRIX rotationMX;
 	DirectX::XMVECTOR cameraPos = DirectX::XMVectorSet(0.0f, 0.0f, -25.0f, 0.0f);
 	DirectX::XMVECTOR lookAtPos = DirectX::XMVectorSet(0.0f, 0.0f, -20.0f, 0.0f);
 
@@ -39,6 +40,9 @@ public:
 	void winScene(const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation);
 	DirectX::XMVECTOR getForwardVector() const;
 	DirectX::XMVECTOR getRightVector() const;
+	DirectX::XMVECTOR getUpVector() const;
+	DirectX::XMVECTOR getPosition() const;
+	DirectX::XMMATRIX getRotMX() const;
 	ID3D11Buffer* getViewBuffer();
 	ID3D11Buffer* getPositionBuffer();
 

@@ -109,5 +109,5 @@ public:
 	void setTeam(const int& team);
 	void checkMovement();
 
-	void checkDirection(DirectX::XMVECTOR compPosition);
+	void checkDirection(const DirectX::XMVECTOR& compPosition, const DirectX::XMVECTOR& cameraPosition);
 };

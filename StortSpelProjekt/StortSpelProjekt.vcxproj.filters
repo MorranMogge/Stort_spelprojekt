@@ -159,6 +159,7 @@
     <ClCompile Include="LoseMenu.cpp">
       <Filter>Game-States</Filter>
     </ClCompile>
+    <ClCompile Include="Arrow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -443,6 +444,7 @@
     <ClInclude Include="LoseMenu.h">
       <Filter>Game-States</Filter>
     </ClInclude>
+    <ClInclude Include="Arrow.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

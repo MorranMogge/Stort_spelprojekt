@@ -56,6 +56,7 @@ Camera::~Camera()
 
 void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation)
 {
+	rotationMX = playerRotation;
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation);
 	upVector = XMVector3TransformCoord(DEFAULT_UP, playerRotation);
@@ -76,6 +77,7 @@ void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::
 
 void Camera::winScene(const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation)
 {
+	rotationMX = shipRotation;
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, shipRotation);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, shipRotation);
 	upVector = XMVector3TransformCoord(DEFAULT_UP, shipRotation);
@@ -93,6 +95,21 @@ DirectX::XMVECTOR Camera::getForwardVector() const
 DirectX::XMVECTOR Camera::getRightVector() const
 {
 	return this->rightVector;
+}
+
+DirectX::XMVECTOR Camera::getUpVector() const
+{
+	return this->upVector;
+}
+
+DirectX::XMVECTOR Camera::getPosition() const
+{
+	return this->cameraPos;
+}
+
+DirectX::XMMATRIX Camera::getRotMX() const
+{
+	return this->rotationMX;
 }
 
 void Camera::VSbindPositionBuffer(const int& slot)

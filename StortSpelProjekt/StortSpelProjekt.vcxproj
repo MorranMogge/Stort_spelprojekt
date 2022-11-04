@@ -159,6 +159,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Arrow.h" />
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="BasicRenderer.h" />
     <ClInclude Include="BilboardObject.h" />
@@ -264,6 +265,7 @@
     <ClInclude Include="WinUI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="CircularBufferClient.cpp" />
     <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="BaseballBat.cpp" />

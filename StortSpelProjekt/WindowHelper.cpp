@@ -59,8 +59,8 @@ bool SetupWindow(HINSTANCE instance, UINT& width, UINT& height, int nCmdShow, HW
 		0, //style, 0, not need style
 		CLASS_NAME, //class name
 		L"Projekt", //window name
-		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,//window style,F1 for more details, type of DWORD
-		//WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, //window style,F1 for more details, type of DWORD
+		//WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,//window style,F1 for more details, type of DWORD
+		WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, //window style,F1 for more details, type of DWORD
 		(GetSystemMetrics(SM_CXSCREEN) - width) / 2, (GetSystemMetrics(SM_CYSCREEN) - height) / 2, //window start position on screen
 		wr.right - wr.left, wr.bottom - wr.top, //window size
 		nullptr,  //parent, null means no parent

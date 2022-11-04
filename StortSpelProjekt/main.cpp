@@ -35,8 +35,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui::GetIO().IniFilename = nullptr;
 
-	UINT WIDTH = 1280;
-	UINT HEIGHT = 720;
+	UINT WIDTH = 1920;
+	UINT HEIGHT = 1080;
 	HWND window;
 
 	Client* client = new Client();

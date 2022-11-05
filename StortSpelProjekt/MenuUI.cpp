@@ -29,6 +29,7 @@ void MenuUI::SpritePass()
 
 void MenuUI::HandleInputs()
 {
+	Input::Update();
 	start.IntersectMouse() ? start.SetTint(DirectX::Colors::Green.v) : start.SetTint(DirectX::Colors::White.v);
 	settings.IntersectMouse() ? settings.SetTint(DirectX::Colors::Green.v) : settings.SetTint(DirectX::Colors::White.v);
 	credits.IntersectMouse() ? credits.SetTint(DirectX::Colors::Green.v) : credits.SetTint(DirectX::Colors::White.v);

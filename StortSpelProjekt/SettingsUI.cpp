@@ -5,6 +5,7 @@
 
 void SettingsUI::HandleInputs()
 {
+	Input::Update();
 	backText.IntersectMouse() ? backText.SetTint(DirectX::Colors::Green.v) : backText.SetTint(DirectX::Colors::White.v);
 
 	if (Input::KeyPress(KeyCode::MOUSE_L))

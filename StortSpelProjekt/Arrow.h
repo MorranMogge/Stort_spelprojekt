@@ -16,14 +16,20 @@ private:
 	DirectX::SimpleMath::Vector3 normalVector = DEFAULT_UP;
 	DirectX::SimpleMath::Vector3 rightVector = DEFAULT_RIGHT;
 	DirectX::SimpleMath::Vector3 forwardVector = DEFAULT_FORWARD;
+	DirectX::XMVECTOR arrowVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 public:
-	Arrow(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot);
+	Arrow(const std::string& objectPath, const DirectX::XMFLOAT3& pos);
 	~Arrow();
 
+	DirectX::XMVECTOR getUpVectorArrow() const;
+	DirectX::XMVECTOR getForwardVectorArrow() const;
+	DirectX::XMVECTOR getRightVectorArrow() const;
+	DirectX::XMVECTOR getArrowVectorArrow() const;
+
 	DirectX::XMVECTOR getPosition() const;
-	void changeDirection(const DirectX::XMVECTOR& cameraPosition, const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraUp, const DirectX::XMMATRIX& cameraRotation);
-	void showDirection(const DirectX::XMVECTOR& arrowVector, const DirectX::XMFLOAT3& gravity);
+	void moveWithCamera(const DirectX::XMVECTOR& cameraPosition, const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraUp, const DirectX::XMMATRIX& cameraRotation);
+	void showDirection(const DirectX::XMVECTOR& goalPosition, const DirectX::XMVECTOR& playerPosition, const DirectX::XMFLOAT3& gravity);
 	void draw();
 	void update();
 };

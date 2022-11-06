@@ -99,14 +99,7 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	this->client = client;
 	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
-
-	normalVector = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 1.0f);
-	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-	normalVector = DirectX::XMVector3Normalize(normalVector);
-	rightVector = DirectX::XMVector3Normalize(rightVector);
-	forwardVector = DirectX::XMVector3Normalize(forwardVector);
-	this->rotate();
+	this->setRot(this->getRotOrientedToGrav());
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);
@@ -134,6 +127,7 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 {
 	this->client = client;
 	this->rotationMX = XMMatrixIdentity();
+	this->setRot(this->getRotOrientedToGrav());
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
 
@@ -655,11 +649,6 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 	}
 }
 
-void Player::pointDirection(const DirectX::XMVECTOR& compPosition)
-{
-	arrowVector = XMVectorSubtract(compPosition, this->position);
-}
-
 int Player::getItemOnlineType() const
 {
 	if (this->holdingItem == nullptr)
@@ -876,19 +865,19 @@ int Player::getTeam() const
 	return this->team;
 }
 
-DirectX::XMVECTOR Player::getUpVec() const
+DirectX::XMVECTOR Player::getUpVector() const
 {
-	return this->normalVector;
+	return this->tempVector;
 }
 
-DirectX::XMVECTOR Player::getForwardVec() const
+DirectX::XMVECTOR Player::getForwardVector() const
 {
-	return this->arrowVector;
+	return this->forwardVector;
 }
 
-DirectX::XMVECTOR Player::getRightVec() const
+DirectX::XMVECTOR Player::getRightVector() const
 {
-	return this->rightVector;
+	return this->tempVector;
 }
 
 DirectX::XMMATRIX Player::getRotationMX()
@@ -978,11 +967,19 @@ void Player::setTeam(const int& team)
 	}
 }
 
-void Player::checkMovement()
+bool Player::isHoldingComp()
 {
 	if (holdingComp)
 	{
-		if (this->holdingItem != nullptr) this->setSpeed(25.f*0.65f);
-		else this->setSpeed(25.f);
+		if (this->holdingItem != nullptr)
+		{
+			this->setSpeed(25.f * 0.65f);
+			return true;
+		}
+		else
+		{
+			this->setSpeed(25.f);
+			return false;
+		}
 	}
 }

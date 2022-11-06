@@ -65,10 +65,14 @@ private:
 	float speed = 25.f;
 	bool dedge = false;
 	TimeStruct timer;
-	DirectX::XMVECTOR arrowVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	void resetRotationMatrix();
 	void handleItems();
+
+
+	DirectX::XMVECTOR tempVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+
 public:
 	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int &team, GravityField* field = nullptr);
 	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field = nullptr);
@@ -76,7 +80,6 @@ public:
 	void handleInputs(); 
 	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime,  const bool& testingVec);
 	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime);
-	void pointDirection(const DirectX::XMVECTOR& compPosition);
 	bool getPickup(GameObject *pickup);
 	int getItemOnlineType()const;
 	int getItemOnlineId()const;
@@ -88,9 +91,9 @@ public:
 	void drawParticles();
 
 	int getTeam() const;
-	DirectX::XMVECTOR getUpVec() const;
-	DirectX::XMVECTOR getForwardVec() const;
-	DirectX::XMVECTOR getRightVec() const;
+	DirectX::XMVECTOR getUpVector() const;
+	DirectX::XMVECTOR getForwardVector() const;
+	DirectX::XMVECTOR getRightVector() const;
 	DirectX::XMMATRIX getRotationMX();
 	reactphysics3d::Vector3 getRayCastPos()const;
 	Item* getItem()const;
@@ -107,5 +110,5 @@ public:
 	bool getHitByBat()const;
 	void update();
 	void setTeam(const int& team);
-	void checkMovement();
+	bool isHoldingComp();
 };

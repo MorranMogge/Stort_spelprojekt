@@ -20,7 +20,7 @@ void Game::loadObjects()
 	potion = new Potion("../Meshes/potion", DirectX::SimpleMath::Vector3(0, -40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2, 0, &planetGravityField);
 	testBat = new BaseballBat("../Meshes/bat", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4, 0, &planetGravityField);
 	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(40, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6, GRENADE, &planetGravityField);
-	arrow = new Arrow("../Meshes/arrow", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f));
+	arrow = new Arrow("../Meshes/arrow", DirectX::SimpleMath::Vector3(0, 40, 0));
 
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
@@ -342,7 +342,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	currentTime = std::chrono::system_clock::now();
 	lastUpdate = currentTime;
 	gamePad = std::make_unique<DirectX::GamePad>();
-	playerVecRenderer.setPlayer(currentPlayer);
+	playerVecRenderer.setPlayer(this->currentPlayer, this->arrow);
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 	serverStart = std::chrono::system_clock::now();
@@ -411,13 +411,20 @@ GAMESTATE Game::Update()
 	{
 		randomizeObjectPos(this->testBat);
 	}*/
-	currentPlayer->checkMovement();
 
+	this->arrow->moveWithCamera(camera.getPosition(), DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getUpVector()), camera.getRotMX());
 	if (components.size() > 0)
 	{
-		currentPlayer->pointDirection(components[0]->getPosV3()); //REMOVE!!
-		this->arrow->changeDirection(camera.getPosition(), DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getUpVector()), camera.getRotMX());
-		this->arrow->showDirection(DirectX::XMVector3Normalize(currentPlayer->getForwardVec()), planetGravityField.calcGravFactor(arrow->getPosition()));
+		//Arrow pointing to spaceship
+		if (currentPlayer->isHoldingComp())
+		{
+			for (int i = 0; i < spaceShips.size(); i++)
+			{
+				if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField.calcGravFactor(arrow->getPosition()));
+			}
+		}
+		//Arrow pointing to component
+		else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), planetGravityField.calcGravFactor(arrow->getPosition()));
 	}
 
 	grenade->updateExplosionCheck();
@@ -460,7 +467,7 @@ GAMESTATE Game::Update()
 	{
 		if (spaceShips[i]->getCompletion())
 		{
-			if (currentPlayer->getTeam() ==  i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot());
+			if (currentPlayer->getTeam() == i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot());
 			grav = planetGravityField.calcGravFactor(this->spaceShips[i]->getPosV3());
 			this->spaceShips[i]->move(grav, dt);
 			noWinners = true;

@@ -430,6 +430,10 @@ void ModelManager::parseAnimation(const aiScene* scene)
 		this->aniData.animation[i].mChannels.reserve(scene->mAnimations[i]->mNumChannels);
 		for (int j = 0, length = scene->mAnimations[i]->mNumChannels; j < length; j++)
 		{
+			//if (this->aniData.boneNameToIndex.find(scene->mAnimations[i]->mChannels[j]->mNodeName.C_Str()) == aniData.boneNameToIndex.end())
+			//{
+			//	continue;
+			//}
 			this->aniData.animation[i].mChannels.emplace_back();
 			this->aniData.animation[i].mChannels[j].mNodeName = scene->mAnimations[i]->mChannels[j]->mNodeName.C_Str();
 
@@ -472,7 +476,9 @@ void ModelManager::calculateBoneInverse(const nodes& node, DirectX::XMFLOAT4X4& 
 		int id = aniData.boneNameToIndex[node.nodeName];
 		DirectX::XMVECTOR garbo;
 		DirectX::XMMATRIX inverse = DirectX::XMMatrixInverse(&garbo, globalTrasform1);
-		DirectX::XMStoreFloat4x4(&aniData.boneVector[id].offsetMatrix, inverse);
+		DirectX::XMFLOAT4X4 floatInverse;
+		DirectX::XMStoreFloat4x4(&floatInverse, inverse);
+		aniData.boneVector[id].offsetMatrix = floatInverse;
 		int bp = 2;
 	}
 

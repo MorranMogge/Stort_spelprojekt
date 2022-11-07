@@ -330,14 +330,15 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Jumping
 	if (onGround && Input::KeyPress(KeyCode::SPACE))
 	{
-		jumpHeight = 0.f;
+		//jumpHeight = 0.f;
 		onGround = false;
+		this->velocity = this->normalVector*0.40f;
 	}
-	else if (jumpHeight < jumpAllowed)
+	/*else if (jumpHeight < jumpAllowed)
 	{
 		position += normalVector * jumpHeight * deltaTime;
 		jumpHeight += 2000.f * deltaTime;
-	}
+	}*/
 	
 	//PC movement
 	if (movingCross(cameraForward, deltaTime)) {}
@@ -814,11 +815,6 @@ bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) con
 	return inRange;
 }
 
-bool Player::repairedShip() const
-{
-	return repairCount >= 4;
-}
-
 bool Player::getHitByBat() const
 {
     if (holdingItem != nullptr)
@@ -928,6 +924,7 @@ void Player::setSpeed(float speed)
 
 void Player::update()
 {
+	this->movePos(this->velocity);
 	if (holdingItem != nullptr)
 	{
 		this->handleItems();
@@ -992,4 +989,14 @@ void Player::checkMovement()
 		if (this->holdingItem != nullptr) this->setSpeed(25.f*0.65f);
 		else this->setSpeed(25.f);
 	}
+}
+
+void Player::updateVelocity(const DirectX::SimpleMath::Vector3& gravityVector)
+{
+	this->velocity += gravityVector;
+}
+
+void Player::resetVelocity()
+{
+	this->velocity = DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f);
 }

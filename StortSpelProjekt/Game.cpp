@@ -295,7 +295,8 @@ GAMESTATE Game::Update()
 
 	//Calculate gravity factor
 	grav = planetVector[0]->getClosestFieldFactor(planetVector, currentPlayer->getPosV3());
-	additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
+	currentPlayer->updateVelocity(getScalarMultiplicationXMFLOAT3(dt, grav));
+	//additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
 
 	//Raycasting
 	static DirectX::XMFLOAT3 hitPos;
@@ -303,12 +304,12 @@ GAMESTATE Game::Update()
 	hitPos = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 	hitNormal = DirectX::XMFLOAT3(grav.x, grav.y, grav.z);
 	bool testingVec = this->currentPlayer->raycast(gameObjects, planetVector, hitPos, hitNormal);
-	if (testingVec || currentPlayer->getHitByBat()) velocity = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
+	if (testingVec || currentPlayer->getHitByBat()) currentPlayer->resetVelocity();
 	
 	//Player functions
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), hitNormal, dt, testingVec);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
-	currentPlayer->movePos(velocity);
+	//currentPlayer->movePos(velocity);
 	currentPlayer->checkForStaticCollision(gameObjects);
 	currentPlayer->checkMovement();
 

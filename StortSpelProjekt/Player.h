@@ -95,7 +95,7 @@ public:
 	reactphysics3d::Vector3 getRayCastPos()const;
 	Item* getItem()const;
 	int getOnlineID()const;
-
+	bool isHoldingItem() const;
 	void setSpeed(float speed);
 	void hitByBat(const reactphysics3d::Vector3& force);
 	void addItem(Item* itemToHold);

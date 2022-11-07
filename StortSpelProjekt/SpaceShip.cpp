@@ -85,15 +85,15 @@ SpaceShip::~SpaceShip()
 	delete this->rocketStatusQuad;
 }
 
-int SpaceShip::getNrOfComponents()
+int SpaceShip::getTeam() const
+{
+	return this->team;
+}
+
+int SpaceShip::getNrOfComponents() const
 {
 	 return currentComponents;
 }
-
-//void SpaceShip::addComponent()
-//{
-//	this->componentsAdded++;
-//}
 
 bool SpaceShip::detectedComponent(GameObject* objectToCheck)
 {

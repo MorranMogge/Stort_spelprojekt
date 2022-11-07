@@ -6,7 +6,7 @@
 #include "BaseballBat.h"
 #include "Component.h"
 #include "PacketEnum.h"
-
+#include "HudUI.h"
 #include "Mesh.h"
 using namespace DirectX;
 
@@ -38,7 +38,10 @@ void Player::handleItems()
 		c.y = this->getPos().y;
 		c.z = this->getPos().z;
 		//sending data to server
-		client->sendStuff<ComponentData>(c);
+		if (this->client != nullptr)
+		{
+			client->sendStuff<ComponentData>(c);
+		}
 
 		//Set dynamic so it can be affected by forces
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -69,7 +72,10 @@ void Player::handleItems()
 		c.z = this->getPos().z;
 
 		//sending data to server
-		client->sendStuff<ComponentData>(c);
+		if (this->client != nullptr)
+		{
+			client->sendStuff<ComponentData>(c);
+		}	
 
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 		holdingItem->useItem();
@@ -100,6 +106,9 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	this->client = client;
 	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
 
+
+	HudUI::player = this;
+
 	normalVector = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 1.0f);
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
 	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
@@ -107,7 +116,7 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	rightVector = DirectX::XMVector3Normalize(rightVector);
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 	this->rotate();
-
+	
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);
 
@@ -136,6 +145,8 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
+
+	HudUI::player = this;
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);
@@ -727,9 +738,14 @@ void Player::releaseItem()
 		newData.x = this->holdingItem->getPosV3().x;
 		newData.y = this->holdingItem->getPosV3().y;
 		newData.z = this->holdingItem->getPosV3().z;
-		client->sendStuff<ComponentData>(newData);
+		//sending data to server
+		if (this->client != nullptr)
+		{
+			client->sendStuff<ComponentData>(newData);
+		}
 
 		this->holdingItem->setPickedUp(false);
+		this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 		this->holdingItem = nullptr;
 	}
 }
@@ -925,6 +941,20 @@ Item* Player::getItem()const
 int Player::getOnlineID() const
 {
 	return this->onlineID;
+}
+
+bool Player::isHoldingItem() const
+{
+	bool isHolding = false;
+	if (this->holdingItem == nullptr)
+	{
+		isHolding = false;
+	}
+	else
+	{
+		isHolding = true;
+	}
+	return isHolding;
 }
 
 void Player::setSpeed(float speed)

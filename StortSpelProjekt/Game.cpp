@@ -36,9 +36,13 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/component"));
 	meshes.push_back(new Mesh("../Meshes/grenade"));
 
+	planet = new GameObject(meshes[0], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(40.0f, 40.0f, 40.0f));
+	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
+	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+	gameObjects.emplace_back(planet);
+	if (IFONLINE) return;
 
 	//Here we can add base object we want in the beginning of the game
-	planet = new GameObject(meshes[0], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(40.0f, 40.0f, 40.0f));
 	atmosphere = new GameObject(meshes[0], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(43, 43, 43));
 	currentPlayer = new Player(meshes[1], Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, client, 0, &planetGravityField);
 	potion = new Potion(meshes[2], Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), POTION, 0, &planetGravityField);
@@ -52,14 +56,12 @@ void Game::loadObjects()
 
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
-	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
 	physWolrd.addPhysComponent(grenade, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(component, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(spaceShipRed, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(spaceShipBlue, reactphysics3d::CollisionShapeName::BOX);
 
 
-	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 	spaceShipRed->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 	spaceShipBlue->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 	
@@ -70,7 +72,6 @@ void Game::loadObjects()
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
 
 	//Add to obj array
-	gameObjects.emplace_back(planet);
 	gameObjects.emplace_back(potion);
 	gameObjects.emplace_back(testBat);
 	gameObjects.emplace_back(grenade);

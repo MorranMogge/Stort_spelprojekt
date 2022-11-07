@@ -155,6 +155,7 @@ LightHandler::LightHandler()
 	{
 		std::cerr << "error creating Dstencil/Srv!" << std::endl;
 	}
+	debugMesh = new Mesh("../Meshes/Sphere");
 }
 
 LightHandler::~LightHandler()
@@ -166,6 +167,7 @@ LightHandler::~LightHandler()
 			delete boundingSphere.at(i);
 		}
 	}
+	delete debugMesh;
 }
 
 // ------------------------------------------------------------------------------- FUNCTIONS -------------------------------------------------------------------------------
@@ -218,7 +220,7 @@ void LightHandler::addLight(const DirectX::XMFLOAT3 &position, const DirectX::XM
 
 
 
-		this->boundingSphere.push_back(new GameObject("../Meshes/Cone", position, direction, lightID));
+		this->boundingSphere.push_back(new GameObject(debugMesh, position, direction, lightID));
 		this->boundingSphere.back()->updateBuffer();
 
 	}

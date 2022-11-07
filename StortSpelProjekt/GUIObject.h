@@ -8,13 +8,15 @@
 
 class GUI final
 {
+
+	inline static bool init = false;
+public:
+
 	inline static Microsoft::WRL::ComPtr<ID3D11RenderTargetView> spriteView;
 	inline static Microsoft::WRL::ComPtr<ID3D11RasterizerState> rss;
 	inline static Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;
 	inline static Microsoft::WRL::ComPtr<ID3D11DepthStencilState> dss;
 	inline static Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler;
-	inline static bool init = false;
-public:
 
 	inline static std::unique_ptr<DirectX::SpriteBatch> spriteBatch;
 

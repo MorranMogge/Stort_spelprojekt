@@ -9,7 +9,7 @@ struct wirefameInfo
 };
 
 const int NROFPLAYERS = 1;
-static bool IFONLINE = true;
+static bool IFONLINE = false;
 
 class Game : public State
 {
@@ -25,7 +25,7 @@ private:
 	D3D11_MAPPED_SUBRESOURCE subData;
 
 	std::unique_ptr<DirectX::GamePad> gamePad;
-
+	float endTimer;
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> currentTime;
 	std::chrono::time_point<std::chrono::system_clock> lastUpdate;
@@ -43,7 +43,6 @@ private:
 
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
-
 	PhysicsWorld physWolrd;
 
 
@@ -57,12 +56,7 @@ private:
 	Camera camera;
 	SkyboxObj skybox;
 	Player* currentPlayer;
-	GameObject* planet;
-	GameObject* testCube;
-	SpaceShip* spaceShip;
-	Potion* potion;			//not in use
-	BaseballBat* testBat;
-	Grenade* grenade;
+	GameObject* atmosphere;
 	std::vector<Component*> components;
 	std::vector<SpaceShip*> spaceShips;
 
@@ -78,16 +72,20 @@ private:
 	//HUD
 	HudUI ui;
 	
+	//Temp buffer for atmosphere
+	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
+
 
 	void loadObjects();
 	void drawShadows();
+	void drawFresnel();
+	void drawIcons();
 	void drawObjects(bool drawDebug);
 	void drawParticles();
 	bool setUpWireframe();
 	void updateBuffers();
 	void handleKeybinds();
 	void randomizeObjectPos(GameObject* item);
-	DirectX::SimpleMath::Vector3 orientToPlanet(const DirectX::XMFLOAT3 &position);
 	HWND* window;
 
 public:

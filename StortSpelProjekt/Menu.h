@@ -1,13 +1,13 @@
 #pragma once
 #include "State.h"
-#include "GuiHandler.h"
+#include "MenuUI.h"
 #include "BasicRenderer.h"
 
 class Menu : public State
 {
 private:
 
-	GuiHandler ui;
+	MenuUI ui;
 	BasicRenderer basicRenderer;
 
 public:

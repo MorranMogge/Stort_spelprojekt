@@ -1,6 +1,7 @@
 #pragma once
 #include "Item.h"
 #include "TimeStruct.h"
+#include "ConstantBufferNew.h"
 
 class Grenade : public Item
 {
@@ -11,8 +12,9 @@ private:
 	bool destructionIsImminent;
 	float timeToExplode;
 	float currentTime;
+	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
+	Mesh* explosionMesh;
 
-	void explode();
 public:
 	Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field = nullptr);
 	Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field = nullptr);
@@ -21,6 +23,10 @@ public:
 	void setGameObjects(const std::vector<GameObject *> &gameObjects);
 	virtual void drawIcon() override;
 	virtual void drawParticles() override;
-	// Inherited via Item
+	void drawFresnel();
 	virtual void useItem() override;
+
+private:
+	void explode();
+
 };

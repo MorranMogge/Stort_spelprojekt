@@ -38,7 +38,10 @@ void Player::handleItems()
 		c.y = this->getPos().y;
 		c.z = this->getPos().z;
 		//sending data to server
-		client->sendStuff<ComponentData>(c);
+		if (this->client != nullptr)
+		{
+			client->sendStuff<ComponentData>(c);
+		}
 
 		//Set dynamic so it can be affected by forces
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -69,7 +72,10 @@ void Player::handleItems()
 		c.z = this->getPos().z;
 
 		//sending data to server
-		client->sendStuff<ComponentData>(c);
+		if (this->client != nullptr)
+		{
+			client->sendStuff<ComponentData>(c);
+		}	
 
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 		holdingItem->useItem();
@@ -727,9 +733,14 @@ void Player::releaseItem()
 		newData.x = this->holdingItem->getPosV3().x;
 		newData.y = this->holdingItem->getPosV3().y;
 		newData.z = this->holdingItem->getPosV3().z;
-		client->sendStuff<ComponentData>(newData);
+		//sending data to server
+		if (this->client != nullptr)
+		{
+			client->sendStuff<ComponentData>(newData);
+		}
 
 		this->holdingItem->setPickedUp(false);
+		this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 		this->holdingItem = nullptr;
 	}
 }

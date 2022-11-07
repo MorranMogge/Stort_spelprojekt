@@ -18,7 +18,10 @@ void BaseballBat::sendForceToServer(const DirectX::SimpleMath::Vector3& hitForce
 	hitInfo.yForce = batPos.y;
 	hitInfo.zForce = batPos.z;
 	std::cout << "Hit player!!!!\n";
-	this->client->sendStuff<PlayerHit>(hitInfo);
+	if (client != nullptr)
+	{
+		this->client->sendStuff<PlayerHit>(hitInfo);
+	}
 }
 
 BaseballBat::BaseballBat(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)

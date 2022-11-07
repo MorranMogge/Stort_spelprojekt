@@ -89,3 +89,25 @@ void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, DirectX::XMFLOAT3&
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
+void ImGuiHelper::spriteBegin()
+{
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+}
+
+void ImGuiHelper::spriteFloat(std::string name,float& x, float min, float max)
+{
+	ImGui::Begin("sprite pos: ");
+
+	ImGui::SliderFloat(std::string(name + " X: ").c_str(), &x, min, max);
+
+	ImGui::End();
+}
+
+void ImGuiHelper::spriteEnd()
+{
+	ImGui::EndFrame();
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}

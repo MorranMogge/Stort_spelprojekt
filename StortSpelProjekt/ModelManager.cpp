@@ -214,32 +214,32 @@ ModelManager::ModelManager()
 void ModelManager::aiMatrixToXMmatrix(const aiMatrix4x4& in, DirectX::XMFLOAT4X4& out)
 {
 	out = 
-		DirectX::XMFLOAT4X4(
-			float(in.a1),
-			float(in.a2),
-			float(in.a3),
-			float(in.a4),
-
-			float(in.b1),
-			float(in.b2),
-			float(in.b3),
-			float(in.b4),
-
-			float(in.c1),
-			float(in.c2),
-			float(in.c3),
-			float(in.c4),
-
-			float(in.d1),
-			float(in.d2),
-			float(in.d3),
-			float(in.d4)
-		);
 		//DirectX::XMFLOAT4X4(
-		//float(in.a1), float(in.b1), float(in.c1), float(in.d1),
-		//float(in.a2), float(in.b2), float(in.c2), float(in.d2),
-		//float(in.a3), float(in.b3), float(in.c3), float(in.d3),
-		//float(in.a4), float(in.b4), float(in.c4), float(in.d4));
+		//	float(in.a1),
+		//	float(in.a2),
+		//	float(in.a3),
+		//	float(in.a4),
+
+		//	float(in.b1),
+		//	float(in.b2),
+		//	float(in.b3),
+		//	float(in.b4),
+
+		//	float(in.c1),
+		//	float(in.c2),
+		//	float(in.c3),
+		//	float(in.c4),
+
+		//	float(in.d1),
+		//	float(in.d2),
+		//	float(in.d3),
+		//	float(in.d4)
+		//);
+		DirectX::XMFLOAT4X4(
+		float(in.a1), float(in.b1), float(in.c1), float(in.d1),
+		float(in.a2), float(in.b2), float(in.c2), float(in.d2),
+		float(in.a3), float(in.b3), float(in.c3), float(in.d3),
+		float(in.a4), float(in.b4), float(in.c4), float(in.d4));
 }
 
 void ModelManager::normalizeWeights(float weights[])
@@ -635,7 +635,7 @@ std::vector<ID3D11ShaderResourceView*> ModelManager::getTextureMaps() const
 bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 {
 	Assimp::Importer importer;
-	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);
+	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate );
 
 	if (pScene == nullptr)
 	{

@@ -11,7 +11,7 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 	DirectX::XMMATRIX currentNodeTrans = DirectX::XMLoadFloat4x4(&node.trasformation);
 	channels amnNode;
 
-	if (this->findNodeAnim(node.nodeName, an, amnNode) && true)
+	if (this->findNodeAnim(node.nodeName, an, amnNode) && false)
 	{
 		DirectX::XMFLOAT3 Scaling;
 		this->InterpolateScaling(Scaling, animationTime, amnNode);
@@ -31,12 +31,12 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 		currentNodeTrans = DirectX::XMMatrixMultiply(currentNodeTrans, TranslationM);
 	}
 
-	//if (node.nodeName == "joint2")
-	//{
-	//	//currentNodeTrans = DirectX::XMMatrixScaling(5, 5, 5);
-	//	//currentNodeTrans = DirectX::XMMatrixMultiply(currentNodeTrans, DirectX::XMMatrixTranslation(0, 0, 0));
-	//	currentNodeTrans = DirectX::XMMatrixTranslation(0, 5, 0);
-	//}
+	if (node.nodeName == "joint2")
+	{
+		//currentNodeTrans = DirectX::XMMatrixScaling(5, 5, 5);
+		//currentNodeTrans = DirectX::XMMatrixMultiply(currentNodeTrans, DirectX::XMMatrixTranslation(0, 0, 0));
+		currentNodeTrans = DirectX::XMMatrixTranslation(0, 5, 0);
+	}
 
 	DirectX::XMMATRIX PrevNode = DirectX::XMLoadFloat4x4(&parentTrasform);
 	const DirectX::XMMATRIX globalTrasform = DirectX::XMMatrixMultiply(currentNodeTrans, PrevNode);
@@ -204,7 +204,7 @@ AnimatedMesh::AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOA
 	:GameObject(useMesh, pos, rot, id)
 {
 	this->totalTime = 0;
-	this->setScale(DirectX::XMFLOAT3(0.08, 0.08, 0.08));
+	this->setScale(DirectX::XMFLOAT3(2, 2, 2));
 	this->updateBuffer();
 	//strucBuff.Initialize(GPU::device, GPU::immediateContext, finalTransforms);
 	///();

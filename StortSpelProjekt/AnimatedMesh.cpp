@@ -5,13 +5,12 @@
 
 void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, const nodes& node, DirectX::XMFLOAT4X4& parentTrasform)
 {
-	//animationTime = 2;
 	animationNode an = this->MySimp.animation[animationIndex];
 
 	DirectX::XMMATRIX currentNodeTrans = DirectX::XMLoadFloat4x4(&node.trasformation);
 	channels amnNode;
 
-	if (this->findNodeAnim(node.nodeName, an, amnNode) && false)
+	if (this->findNodeAnim(node.nodeName, an, amnNode))
 	{
 		DirectX::XMFLOAT3 Scaling;
 		this->InterpolateScaling(Scaling, animationTime, amnNode);
@@ -31,13 +30,6 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 		currentNodeTrans = DirectX::XMMatrixMultiply(currentNodeTrans, TranslationM);
 	}
 
-	if (node.nodeName == "joint2")
-	{
-		//currentNodeTrans = DirectX::XMMatrixScaling(5, 5, 5);
-		//currentNodeTrans = DirectX::XMMatrixMultiply(currentNodeTrans, DirectX::XMMatrixTranslation(0, 0, 0));
-		currentNodeTrans = DirectX::XMMatrixTranslation(0, 5, 0);
-	}
-
 	DirectX::XMMATRIX PrevNode = DirectX::XMLoadFloat4x4(&parentTrasform);
 	const DirectX::XMMATRIX globalTrasform = DirectX::XMMatrixMultiply(currentNodeTrans, PrevNode);
 
@@ -47,8 +39,8 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 	{
 		int id = MySimp.boneNameToIndex[node.nodeName];
 
-		DirectX::XMMATRIX boneInverse = DirectX::XMLoadFloat4x4(&MySimp.boneVector[id].offsetMatrix);
-		DirectX::XMMATRIX finalMesh = DirectX::XMMatrixMultiply(globalTrasform, boneInverse);
+		DirectX::XMMATRIX boneOffset = DirectX::XMLoadFloat4x4(&MySimp.boneVector[id].offsetMatrix);
+		DirectX::XMMATRIX finalMesh = DirectX::XMMatrixMultiply(boneOffset, globalTrasform);
 		finalMesh = DirectX::XMMatrixTranspose(finalMesh);
 		DirectX::XMStoreFloat4x4(&finalTransfrom, finalMesh);
 		strucBuff.getIndexData(id) = finalTransfrom;
@@ -92,7 +84,7 @@ void AnimatedMesh::InterpolateRotation(DirectX::XMFLOAT4& res, float animationTi
 	const DirectX::XMVECTOR& start = DirectX::XMLoadFloat4(&animationNode.rotKeyFrame[lowRotaKey].Value);
 	const DirectX::XMVECTOR& end = DirectX::XMLoadFloat4(&animationNode.rotKeyFrame[nextRotation].Value);
 	DirectX::XMVECTOR vectorRez = DirectX::XMVectorLerp(start, end, factor);
-	vectorRez = DirectX::XMVector4Normalize(start);
+	vectorRez = DirectX::XMVector4Normalize(vectorRez);
 	DirectX::XMStoreFloat4(&res, vectorRez);
 }
 
@@ -128,7 +120,7 @@ void AnimatedMesh::InterpolateScaling(DirectX::XMFLOAT3& res, float animationTim
 	const DirectX::XMVECTOR& end = DirectX::XMLoadFloat3(&animationNode.scalKeyFrames[nextRotation].Value);
 	//res = start + factor * (end-start);
 	DirectX::XMVECTOR vectorRez = DirectX::XMVectorLerp(start, end, factor);
-	DirectX::XMStoreFloat3(&res, start);
+	DirectX::XMStoreFloat3(&res, vectorRez);
 }
 
 void AnimatedMesh::findlowPosNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm)
@@ -167,7 +159,7 @@ void AnimatedMesh::InterpolatePos(DirectX::XMFLOAT3& res, float animationTime, c
 	DirectX::XMStoreFloat3(&res, start);
 }
 
-bool AnimatedMesh::findNodeAnim(const std::string& nodeName, const animationNode pAnimation, channels& res)
+bool AnimatedMesh::findNodeAnim(const std::string& nodeName,  const animationNode pAnimation, channels& res)
 {
 	for (int i = 0, end = pAnimation.mChannels.size(); i < end; i++)
 	{
@@ -204,7 +196,7 @@ AnimatedMesh::AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOA
 	:GameObject(useMesh, pos, rot, id)
 {
 	this->totalTime = 0;
-	this->setScale(DirectX::XMFLOAT3(2, 2, 2));
+	this->setScale(DirectX::XMFLOAT3(0.20, 0.20, 0.20));
 	this->updateBuffer();
 	//strucBuff.Initialize(GPU::device, GPU::immediateContext, finalTransforms);
 	///();

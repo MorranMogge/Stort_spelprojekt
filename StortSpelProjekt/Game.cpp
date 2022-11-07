@@ -101,9 +101,9 @@ void Game::loadObjects()
 	spaceShip = new SpaceShip(tmpMesh, DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
 	spaceShip->setSrv(this->manager.getSrv("spaceshipTexture2.jpg"));
 
-	this->manager.getAnimData("../Meshes/f.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
+	this->manager.getAnimData("../Meshes/flos.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
 	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-	this->sexyMan = new AnimatedMesh(tmpMesh, DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 0, 0), 69);
+	this->sexyMan = new AnimatedMesh(tmpMesh, DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 69);
 	this->sexyMan->addData(animData);
 	sexyMan->setSrv(this->manager.getSrv("spaceshipTexture2.jpg"));
 
@@ -335,7 +335,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->manager.loadMeshData("../Meshes/Sphere.obj");
 	this->manager.loadMeshData("../Meshes/rocket.obj");
 	//this->manager.loadMeshData("../Meshes/flos.fbx");
-	this->manager.loadMeshAndBoneData("../Meshes/f.fbx");
+	this->manager.loadMeshAndBoneData("../Meshes/flos.fbx");
 
 	//this->tempSRV = this->manager.getSrv();
 	MaterialLibrary::LoadDefault();
@@ -452,7 +452,7 @@ void Game::Render()
 
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
-//	if (objectDraw) drawObjects(drawDebug);
+	if (objectDraw) drawObjects(drawDebug);
 
 	basicRenderer.changeToAnimation();
 	this->sexyMan->draw(dt,0);

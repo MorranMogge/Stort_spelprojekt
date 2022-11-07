@@ -58,8 +58,8 @@ struct float3KeyFrame
 	void addAiVector3D(const aiVector3D& other)
 	{
 		Value.x = other.x;
-		Value.y = other.z;
-		Value.z = other.y;
+		Value.y = other.y;
+		Value.z = other.z;
 	}
 };
 
@@ -70,8 +70,8 @@ struct float4KeyFrame
 	void addAiQuaternion(const aiQuaternion& other)
 	{
 		Value.x = other.x;
-		Value.y = other.z;
-		Value.z = other.y;
+		Value.y = other.y;
+		Value.z = other.z;
 		Value.w = other.w;
 	}
 };

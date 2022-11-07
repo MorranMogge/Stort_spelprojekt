@@ -24,8 +24,8 @@ private:
 	bool controllerConnected = true;
 	int onlineID;
 	bool onGround = false;
-	float jumpAllowed = 300.f;
-	float jumpHeight = 300.f;
+	float jumpAllowed = 500.f;
+	float jumpHeight = 500.f;
 	int team;
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
@@ -68,10 +68,6 @@ private:
 
 	void resetRotationMatrix();
 	void handleItems();
-
-
-	DirectX::XMVECTOR tempVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-
 
 public:
 	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int &team, GravityField* field = nullptr);

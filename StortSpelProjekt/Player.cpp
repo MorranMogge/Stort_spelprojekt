@@ -867,7 +867,7 @@ int Player::getTeam() const
 
 DirectX::XMVECTOR Player::getUpVector() const
 {
-	return this->tempVector;
+	return this->normalVector;
 }
 
 DirectX::XMVECTOR Player::getForwardVector() const
@@ -877,7 +877,7 @@ DirectX::XMVECTOR Player::getForwardVector() const
 
 DirectX::XMVECTOR Player::getRightVector() const
 {
-	return this->tempVector;
+	return this->rightVector;
 }
 
 DirectX::XMMATRIX Player::getRotationMX()

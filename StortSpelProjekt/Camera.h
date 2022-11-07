@@ -13,6 +13,7 @@ private:
 	float fieldOfView = 0.8f;
 
 	DirectX::XMFLOAT3 position;
+	DirectX::SimpleMath::Vector3 resultVector;
 	ConstantBufferNew<cameraStruct> cameraBuffer;
 	ConstantBufferNew<posStruct> positionBuffer;
 	ConstantBufferNew<posStruct> upVectorBuffer;
@@ -42,7 +43,6 @@ public:
 	DirectX::XMVECTOR getRightVector() const;
 	DirectX::XMVECTOR getUpVector() const;
 	DirectX::XMVECTOR getPosition() const;
-	DirectX::XMMATRIX getRotMX() const;
 	ID3D11Buffer* getViewBuffer();
 	ID3D11Buffer* getPositionBuffer();
 

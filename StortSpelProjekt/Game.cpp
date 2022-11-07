@@ -412,7 +412,7 @@ GAMESTATE Game::Update()
 		randomizeObjectPos(this->testBat);
 	}*/
 
-	this->arrow->moveWithCamera(camera.getPosition(), DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getUpVector()), camera.getRotMX());
+	this->arrow->moveWithCamera(camera.getPosition(), DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getUpVector()), currentPlayer->getRotationMX());
 	if (components.size() > 0)
 	{
 		//Arrow pointing to spaceship

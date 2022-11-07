@@ -160,6 +160,7 @@
       <Filter>Game-States</Filter>
     </ClCompile>
     <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="Asteroid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -445,6 +446,7 @@
       <Filter>Game-States</Filter>
     </ClInclude>
     <ClInclude Include="Planet.h" />
+    <ClInclude Include="Asteroid.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

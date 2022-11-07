@@ -124,8 +124,9 @@ void Game::loadObjects()
 	//	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(rand()%100*i, rand() % 100 * i, rand() % 100)));
 	//	planetVector.back()->setPlanetShape(&physWolrd);
 	//}
-	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
+	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
 	planetVector.back()->setPlanetShape(&physWolrd);
+	asteroids.emplace_back(new Asteroid(planetMeshes, physWolrd, DirectX::XMFLOAT3(100, 100, 100), DirectX::XMFLOAT3(-1, -1, -1), 0.01f));
 
 	items.emplace_back(potion);
 	items.emplace_back(baseballBat);
@@ -179,6 +180,10 @@ void Game::drawObjects(bool drawDebug)
 	for (int i = 0; i < planetVector.size(); i++)
 	{
 		planetVector[i]->drawPlanet();
+	}
+	for (int i = 0; i < asteroids.size(); i++)
+	{
+		asteroids[i]->draw();
 	}
 
 	//Draw light debug meshes
@@ -281,6 +286,11 @@ GAMESTATE Game::Update()
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
+
+	for (int i = 0; i < asteroids.size(); i++)
+	{
+		asteroids[i]->update(planetVector, gameObjects);
+	}
 
 	//Calculate gravity factor
 	grav = planetVector[0]->getClosestFieldFactor(planetVector, currentPlayer->getPosV3());

@@ -38,14 +38,12 @@ private:
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT3 grav;
 
-	
-
-
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
 
 	PhysicsWorld physWolrd;
 	std::vector<Planet*> planetVector;
+	std::vector<Asteroid*> asteroids;
 
 	PacketEventManager* packetEventManager;
 	std::vector<Player*> players;

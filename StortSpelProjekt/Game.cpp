@@ -295,6 +295,7 @@ GAMESTATE Game::Update()
 	//Calculate gravity factor
 	grav = planetVector[0]->getClosestFieldFactor(planetVector, currentPlayer->getPosV3());
 	additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
+	/*velocity = getScalarMultiplicationXMFLOAT3(dt * 60, grav);*/
 
 	//Raycasting
 	static DirectX::XMFLOAT3 hitPos;
@@ -306,7 +307,7 @@ GAMESTATE Game::Update()
 	
 	//Player functions
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), hitNormal, dt, testingVec);
-	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
+	//currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
 	currentPlayer->movePos(velocity);
 	currentPlayer->checkForStaticCollision(gameObjects);
 	currentPlayer->checkMovement();
@@ -341,7 +342,6 @@ GAMESTATE Game::Update()
 	
 	for (int i = 0; i < players.size(); i++)
 	{
-		
 		players[i]->updateMatrixOnline();
 		players[i]->update();
 	}

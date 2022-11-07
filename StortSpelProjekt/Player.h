@@ -23,10 +23,13 @@ private:
 	DirectX::XMMATRIX rotationMX;
 	DirectX::XMFLOAT4X4 rotationFloat;
 	bool controllerConnected = true;
+
+	bool temp = false;
+
 	int onlineID;
 	bool onGround = false;
-	float jumpAllowed = 300.f;
-	float jumpHeight = 300.f;
+	float jumpAllowed = 500.f;
+	float jumpHeight = 500.f;
 	int team;
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
@@ -44,7 +47,6 @@ private:
 	DirectX::XMVECTOR southEastVector = SOUTH_EAST;
 	DirectX::XMVECTOR southWestVector = SOUTH_WEST;
 
-	void rotate();
 	bool movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 
 	//Controller variables
@@ -77,6 +79,8 @@ public:
 	void handleInputs(); 
 	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime,  const bool& testingVec);
 	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime);
+	void rotate();
+
 	bool getPickup(GameObject *pickup);
 	int getItemOnlineType()const;
 	int getItemOnlineId()const;

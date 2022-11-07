@@ -87,11 +87,12 @@ GravityField* Planet::getClosestField(std::vector<Planet*>& planets, const Direc
 DirectX::SimpleMath::Vector3 Planet::getClosestFieldFactor(std::vector<Planet*>& planets, const DirectX::SimpleMath::Vector3& position) const
 {
 	GravityField* closestField = this->gravField;
-	DirectX::SimpleMath::Vector3 fieldOne = position - this->position;
+	DirectX::SimpleMath::Vector3 fieldOne = position - planets[0]->getPlanetPosition();
+	DirectX::SimpleMath::Vector3 fieldTwo;
 	scalarMultiplicationXMFLOAT3(this->getFieldFactor(), fieldOne);
 	for (int i = 1; i < planets.size(); i++)
 	{
-		DirectX::SimpleMath::Vector3 fieldTwo = position - planets[i]->getPlanetPosition();
+		fieldTwo = position - planets[i]->getPlanetPosition();
 		scalarMultiplicationXMFLOAT3(this->getFieldFactor(), fieldTwo);
 		if (getLength(fieldOne) > getLength(fieldTwo)) { closestField = planets[i]->getGravityField(); fieldOne = fieldTwo; }
 	}

@@ -148,38 +148,63 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 	std::vector<DWORD> indexTriangle;
 
 	vertex vertex;
-	
-
-	for (UINT i = 0; i < mesh->mNumVertices; i++)
+	if (mesh->HasTangentsAndBitangents())
 	{
-		vertex.pos.x = mesh->mVertices[i].x;
-		vertex.pos.y = mesh->mVertices[i].y;
-		vertex.pos.z = mesh->mVertices[i].z;
-
-		vertex.nor.x = mesh->mNormals[i].x;
-		vertex.nor.y = mesh->mNormals[i].y;
-		vertex.nor.z = mesh->mNormals[i].z;
-
-		vertex.tangent.x = mesh->mBitangents[i].x;
-		vertex.tangent.y = mesh->mBitangents[i].y;
-		vertex.tangent.z = mesh->mBitangents[i].z;
-
-
-		//vertex.tangent.x = mesh->mTangents[i].x;
-		//vertex.tangent.y = mesh->mTangents[i].y;
-		//vertex.tangent.z = mesh->mTangents[i].z;
-		
-
-
-		if (mesh->mTextureCoords[0])
+		for (UINT i = 0; i < mesh->mNumVertices; i++)
 		{
-			vertex.uv.x = (float)mesh->mTextureCoords[0][i].x;
-			vertex.uv.y = (float)mesh->mTextureCoords[0][i].y;
-		}
+			vertex.pos.x = mesh->mVertices[i].x;
+			vertex.pos.y = mesh->mVertices[i].y;
+			vertex.pos.z = mesh->mVertices[i].z;
 
-		vertexTriangle.emplace_back(vertex);
-		dataForMesh.vertexTriangle.emplace_back(vertex);
+			vertex.nor.x = mesh->mNormals[i].x;
+			vertex.nor.y = mesh->mNormals[i].y;
+			vertex.nor.z = mesh->mNormals[i].z;
+
+			vertex.tangent.x = mesh->mBitangents[i].x;
+			vertex.tangent.y = mesh->mBitangents[i].y;
+			vertex.tangent.z = mesh->mBitangents[i].z;
+
+
+			//vertex.tangent.x = mesh->mTangents[i].x;
+			//vertex.tangent.y = mesh->mTangents[i].y;
+			//vertex.tangent.z = mesh->mTangents[i].z;
+
+
+
+			if (mesh->mTextureCoords[0])
+			{
+				vertex.uv.x = (float)mesh->mTextureCoords[0][i].x;
+				vertex.uv.y = (float)mesh->mTextureCoords[0][i].y;
+			}
+
+			vertexTriangle.emplace_back(vertex);
+			dataForMesh.vertexTriangle.emplace_back(vertex);
+		}
 	}
+	else
+	{
+		for (UINT i = 0; i < mesh->mNumVertices; i++)
+		{
+			vertex.pos.x = mesh->mVertices[i].x;
+			vertex.pos.y = mesh->mVertices[i].y;
+			vertex.pos.z = mesh->mVertices[i].z;
+
+			vertex.nor.x = mesh->mNormals[i].x;
+			vertex.nor.y = mesh->mNormals[i].y;
+			vertex.nor.z = mesh->mNormals[i].z;
+
+			if (mesh->mTextureCoords[0])
+			{
+				vertex.uv.x = (float)mesh->mTextureCoords[0][i].x;
+				vertex.uv.y = (float)mesh->mTextureCoords[0][i].y;
+			}
+
+			vertexTriangle.emplace_back(vertex);
+			dataForMesh.vertexTriangle.emplace_back(vertex);
+		}
+	}
+
+	
 	
 	/*for (int i = 0; i < dataForMesh.vertexTriangle.size(); i += 3)
 	{

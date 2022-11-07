@@ -184,7 +184,7 @@ void Game::drawShadows()
 	currentPlayer->draw();
 	
 	//why it no work?
-	//testCube->drawObject();
+	testCube->drawObject();
 	
 	
 	for (int i = 0; i < players.size(); i++)
@@ -340,15 +340,15 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
 	this->manager.setDevice(device);
-	//this->manager.loadMeshData("../Meshes/Player.obj");
-	//this->manager.loadMeshData("../Meshes/Planet.obj");
-	//this->manager.loadMeshData("../Meshes/Baseball.obj");
-	//this->manager.loadMeshData("../Meshes/Sphere.obj");
-	//this->manager.loadMeshData("../Meshes/rocket.obj");
-	//this->manager.loadMeshData("../Meshes/pinto.obj");
-	//this->manager.loadMeshData("../Meshes/bat.obj");
-	//this->manager.loadMeshData("../Meshes/component.obj");
-	//this->manager.loadMeshData("../Meshes/grenade.obj");
+	this->manager.loadMeshData("../Meshes/Player.obj");
+	this->manager.loadMeshData("../Meshes/Planet.obj");
+	this->manager.loadMeshData("../Meshes/Baseball.obj");
+	this->manager.loadMeshData("../Meshes/Sphere.obj");
+	this->manager.loadMeshData("../Meshes/rocket.obj");
+	this->manager.loadMeshData("../Meshes/pinto.obj");
+	this->manager.loadMeshData("../Meshes/bat.obj");
+	this->manager.loadMeshData("../Meshes/component.obj");
+	this->manager.loadMeshData("../Meshes/grenade.obj");
 	this->manager.loadMeshData("../Meshes/goblin2.fbx");
 	
 

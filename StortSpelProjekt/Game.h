@@ -43,7 +43,7 @@ private:
 
 	PhysicsWorld physWolrd;
 	std::vector<Planet*> planetVector;
-	std::vector<Asteroid*> asteroids;
+	AsteroidHandler* asteroids;
 
 	PacketEventManager* packetEventManager;
 	std::vector<Player*> players;

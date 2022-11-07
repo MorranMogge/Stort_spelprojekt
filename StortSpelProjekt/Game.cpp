@@ -92,12 +92,13 @@ Game::~Game()
 	}
 	for (int i = 0; i < players.size(); i++)
 	{
-		delete players[i];
+		//delete players[i];
 	}
 	for (int i = 0; i < planetVector.size(); i++)
 	{
 		delete planetVector[i];
 	}
+	delete asteroids;
 	delete planetMeshes;
 }
 
@@ -124,9 +125,10 @@ void Game::loadObjects()
 	//	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(rand()%100*i, rand() % 100 * i, rand() % 100)));
 	//	planetVector.back()->setPlanetShape(&physWolrd);
 	//}
-	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
+	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(-55.f, -55.f, -55.f)));
 	planetVector.back()->setPlanetShape(&physWolrd);
-	asteroids.emplace_back(new Asteroid(planetMeshes, physWolrd, DirectX::XMFLOAT3(100, 100, 100), DirectX::XMFLOAT3(-1, -1, -1), 0.01f));
+	asteroids = new AsteroidHandler(planetMeshes, physWolrd);
+	//asteroids.emplace_back(new Asteroid(planetMeshes, physWolrd, DirectX::XMFLOAT3(100, 100, 100), DirectX::XMFLOAT3(-1, -1, -1), 0.05f));
 
 	items.emplace_back(potion);
 	items.emplace_back(baseballBat);
@@ -149,6 +151,10 @@ void Game::loadObjects()
 	if (!currentPlayer) { currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, &planetGravityField); players.emplace_back(currentPlayer); }
 	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
+	for (int i = 0; i < players.size(); i++)
+	{
+		gameObjects.emplace_back(players[i]);
+	}
 }
 
 void Game::drawShadows()
@@ -181,10 +187,7 @@ void Game::drawObjects(bool drawDebug)
 	{
 		planetVector[i]->drawPlanet();
 	}
-	for (int i = 0; i < asteroids.size(); i++)
-	{
-		asteroids[i]->draw();
-	}
+	asteroids->drawAsteroids();
 
 	//Draw light debug meshes
 	if (drawDebug)
@@ -287,10 +290,8 @@ GAMESTATE Game::Update()
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 
-	for (int i = 0; i < asteroids.size(); i++)
-	{
-		asteroids[i]->update(planetVector, gameObjects);
-	}
+	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
+	asteroids->updateAsteroids(dt, planetVector, gameObjects);
 
 	//Calculate gravity factor
 	grav = planetVector[0]->getClosestFieldFactor(planetVector, currentPlayer->getPosV3());

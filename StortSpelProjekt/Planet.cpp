@@ -128,6 +128,26 @@ PhysicsComponent* Planet::getPlanetCollider() const
 	return this->planetCollisionBox;
 }
 
+float Planet::getSize(int index) const
+{
+	switch (index)
+	{
+	case 0:
+		return this->scale.x;
+		break;
+	case 1:
+		return this->scale.y;
+		break;
+	case 2:
+		return this->scale.z;
+		break;
+	default:
+		return this->scale.x;
+		break;
+	}
+	
+}
+
 GravityField* Planet::getGravityField() const
 {
 	return this->gravField;

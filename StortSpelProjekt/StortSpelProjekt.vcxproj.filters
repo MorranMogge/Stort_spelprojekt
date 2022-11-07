@@ -349,9 +349,6 @@
     <ClInclude Include="OBJ.h">
       <Filter>Structs</Filter>
     </ClInclude>
-    <ClInclude Include="PackageTypes.h">
-      <Filter>Structs</Filter>
-    </ClInclude>
     <ClInclude Include="PerspectiveCamera.h">
       <Filter>Structs</Filter>
     </ClInclude>

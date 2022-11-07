@@ -42,7 +42,7 @@ GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos
 	{
 		MaterialLibrary::LoadMaterial(testObj.mtl.materials[i]);
 	}
-	
+
 	// set position
 	this->mesh->position = pos;
 
@@ -120,7 +120,7 @@ void GameObject::setScale(const DirectX::XMFLOAT3& scale)
 {
 	this->mesh->scale = scale;
 	this->scale = scale;
-	
+
 	//if (this->physComp->getTypeName() == reactphysics3d::CollisionShapeName::BOX) 
 	this->physComp->setScale(scale);
 }
@@ -154,7 +154,7 @@ DirectX::XMFLOAT4X4 GameObject::getMatrix() const
 {
 	DirectX::XMFLOAT4X4 temp;
 	DirectX::XMStoreFloat4x4(&temp, DirectX::XMMatrixTranspose({ (DirectX::XMMatrixScaling(scale.x, scale.y, scale.z)
-		* this->rotation * DirectX::XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
+		* this->rotation * DirectX::XMMatrixTranslation(this->position.x, this->position.y, this->position.z)) }));
 	return temp;
 }
 
@@ -187,6 +187,25 @@ PhysicsComponent* GameObject::getPhysComp() const
 	return this->physComp;
 }
 
+void GameObject::orientToUpDirection()
+{
+	using namespace DirectX::SimpleMath;
+	if (this->activeField != nullptr)
+	{
+		Vector3 yAxis(this->activeField->calcGravFactor(this->position) * -1);
+		Vector3 zAxis = yAxis.Cross({ 0, 0, 1 });
+		zAxis.Normalize();
+
+		Vector3 xAxis = yAxis.Cross(zAxis);
+		xAxis.Normalize();
+		this->rotation = Matrix(xAxis, yAxis, zAxis);
+	}
+	else
+	{
+		std::cout << "Gravity field was nullptr, rotation was not changed" << std::endl;
+	}
+}
+
 DirectX::XMFLOAT3 GameObject::getUpDirection() const
 {
 	DirectX::XMFLOAT3 upDir(0, 0, 0);
@@ -207,11 +226,11 @@ DirectX::XMFLOAT3 GameObject::getRotOrientedToGrav() const
 {
 	using namespace DirectX::SimpleMath;
 
-	DirectX::XMFLOAT3 finalRot(0,0,0);
+	DirectX::XMFLOAT3 finalRot(0, 0, 0);
 
 	if (this->activeField != nullptr)
 	{
-		Vector3 yAxis( this->activeField->calcGravFactor(this->position) * -1);
+		Vector3 yAxis(this->activeField->calcGravFactor(this->position) * -1);
 		finalRot = Quaternion::LookRotation({ 0, 0, -1 }, yAxis).ToEuler();
 	}
 	else
@@ -222,6 +241,46 @@ DirectX::XMFLOAT3 GameObject::getRotOrientedToGrav() const
 	return finalRot;
 
 }
+
+
+void GameObject::updateBuffer()
+{
+	//Set mesh pos & rot to current member variable pos/rot
+	this->mesh->position = this->position;
+	this->mesh->rotation = this->rotation;
+	this->mesh->scale = this->scale;
+
+	//Update constantbuffer
+	this->mesh->UpdateCB();
+}
+
+void GameObject::setMesh(const std::string& meshPath)
+{
+	//delete current mesh ptr
+	if (this->mesh != nullptr)
+	{
+		delete this->mesh;
+	}
+
+	// load obj file
+	OBJ testObj(meshPath);
+	this->mesh = new Mesh(testObj);
+
+
+	// load all materials for Obj
+	UINT nrOfMat = UINT(testObj.mtl.materials.size());
+	for (UINT i = 0; i < nrOfMat; i++)
+	{
+		MaterialLibrary::LoadMaterial(testObj.mtl.materials[i]);
+	}
+
+	// set position
+	this->mesh->position = this->position;
+
+	// set rotation
+	this->mesh->rotation = this->rotation;
+}
+
 
 void GameObject::setMesh(Mesh* inMesh)
 {

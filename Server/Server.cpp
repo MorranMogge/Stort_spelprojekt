@@ -289,12 +289,6 @@ int main()
 		std::cout << "Yes\n";
 	}
 
-	SpawnComponent cData = SpawnOneComponent(components);
-	physWorld.addPhysComponent(components[components.size() - 1]);
-	components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
-	sendBinaryDataAllPlayers(cData, data);
-	startComponentTimer = std::chrono::system_clock::now();
-
 	CircularBuffer* circBuffer = new CircularBuffer();
 	std::thread* recvThread[MAXNUMBEROFPLAYERS];
 	threadInfo threadData[MAXNUMBEROFPLAYERS];
@@ -382,37 +376,7 @@ int main()
 
 			case PacketType::COMPONENTPOSITION:
 				compData = circBuffer->readData<ComponentData>();
-				//std::cout << "Received componentData\n";
-				/*for (int i = 0; i < components.size(); i++)
-				{
-					components[i].setPosition(compData->x, compData->y, compData->z);
-					components[i].setInUseBy(compData->inUseBy);
-				}*/
-				for (int i = 0; i < components.size(); i++)
-				{
-					//First check which component
-					if (i == compData->ComponentId && components[i].getInUseById() != compData->inUseBy)
-					{
-						for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
-						{
-							if (compData->inUseBy == data.users[j].playerId && components[i].getInUseById() == -1)
-							{
-								components[i].setInUseBy(compData->inUseBy);
-								//components[i].setPosition(compData->x, compData->y, compData->z);
-								//components[i].setInUseBy(compData->inUseBy);
-							}
-							else if (compData->inUseBy == -1)
-							{
-								components[i].setInUseBy(-1);
-								components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
-								components[i].setPosition(compData->x, compData->y, compData->z);
-								components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
-							}
-							
-						}
-					}
-
-				}
+				
 				break;
 
 			case PacketType::PLAYERHIT:
@@ -470,6 +434,13 @@ int main()
 			//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
 		}
 
+
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
+		{
+			std::cout << "timer test\n";
+			
+			startComponentTimer = std::chrono::system_clock::now();
+		}
 		
 
 		//skickar itemSpawn
@@ -492,7 +463,7 @@ int main()
 			//sendBinaryDataAllPlayers(itemSpawnData, data);
 			//itemSpawnTimer = std::chrono::system_clock::now();
 		}
-
+		
 		
 		//sends data based on the server tickrate
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)

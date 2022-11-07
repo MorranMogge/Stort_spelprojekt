@@ -5,6 +5,18 @@
 
 class PhysicsComponent;
 
+enum ObjID
+{
+	PLANET,
+	PLAYER,
+	ROCKET,
+	BAT,
+	POTION,
+	GRENADE,
+	COMPONENT,
+	MOVABLE
+};
+
 class GameObject
 {
 private:
@@ -22,8 +34,8 @@ protected:
 	DirectX::XMFLOAT3 scale;
 
 public:
-	GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id,GravityField* field = nullptr, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
-	GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id,GravityField* field = nullptr , const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
+	GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field = nullptr, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
+	GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field = nullptr, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
 	GameObject();
 	virtual ~GameObject();
 	void movePos(const DirectX::XMFLOAT3& offset);
@@ -51,7 +63,7 @@ public:
 	DirectX::XMFLOAT3 getUpDirection() const;
 	void updateBuffer();
 	int getId();
-	bool withinBox(GameObject *object ,float x, float y, float z) const;
+	bool withinBox(GameObject* object, float x, float y, float z) const;
 	bool withinRadious(GameObject* object, float radius) const;
 	void updatePhysCompRotation();
 	virtual void draw();

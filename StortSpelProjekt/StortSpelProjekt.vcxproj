@@ -237,7 +237,6 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="MemoryLeackChecker.h" />
     <ClInclude Include="Menu.h" />
-    <ClInclude Include="PackageTypes.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="State.h" />

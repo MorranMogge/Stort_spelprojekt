@@ -1,6 +1,7 @@
 
 #include "GUISprite.h"
 #include "GUIText.h"
+#include "Player.h"
 class SpaceShip;
 
 class HudUI final
@@ -26,6 +27,8 @@ class HudUI final
 	GUISprite blackBackground;
 
 	GUISprite controls;
+	GUISprite useControls;
+	GUISprite useControls1;
 
 	void SpritePass();
 
@@ -33,6 +36,7 @@ public:
 
 	inline static SpaceShip* red = nullptr;
 	inline static SpaceShip* blue = nullptr;
+	inline static Player* player = nullptr;
 
 	HudUI();
 	~HudUI();

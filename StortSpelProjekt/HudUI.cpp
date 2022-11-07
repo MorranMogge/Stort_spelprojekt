@@ -42,6 +42,16 @@ void HudUI::SpritePass()
 		}
 	}
 
+	if (player)
+	{
+		switch (player->isHoldingItem())
+		{
+		case 1:
+			useControls.Draw();
+			useControls1.Draw(); break;
+		}
+	}
+
 	if (Input::KeyDown(KeyCode::TAB))
 	{
 		blackBackground.Draw();
@@ -64,6 +74,7 @@ HudUI::HudUI()
 
 	#define PositionRed Vector2(50, 620)
 	#define PositionBlue Vector2(125, 620)
+
 
 	redTeam0 = GUISprite(PositionRed);
 	redTeam0.Load(GPU::device, L"../Sprites/team_r_0.png");
@@ -137,6 +148,15 @@ HudUI::HudUI()
 	controls = GUISprite(1150,650);
 	controls.Load(GPU::device, L"../Sprites/DisplayControls.png");
 	controls.SetScale(1.0f, 1.0f);
+
+
+	useControls = GUISprite(300 + left, 600 + upp);
+	useControls.Load(GPU::device, L"../Sprites/ThrowText.png");
+	useControls.SetScale(0.40f * scaleFactor, 0.40f * scaleFactor);
+
+	useControls1 = GUISprite(290 + left, 570 + upp);
+	useControls1.Load(GPU::device, L"../Sprites/UseText.png");
+	useControls1.SetScale(0.40f * scaleFactor, 0.40f * scaleFactor);
 }
 
 HudUI::~HudUI()

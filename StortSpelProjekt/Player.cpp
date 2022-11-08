@@ -10,6 +10,41 @@
 #include "Mesh.h"
 using namespace DirectX;
 
+void Player::throwItem()
+{
+	//allocates data to be sent
+	ComponentData c;
+	c.ComponentId = this->getItemOnlineId();
+	std::cout << "Item: " << c.ComponentId << "\n";
+	c.inUseBy = -1;
+	c.packetId = PacketType::COMPONENTPOSITION;
+	c.x = this->getPos().x;
+	c.y = this->getPos().y;
+	c.z = this->getPos().z;
+	//sending data to server
+	client->sendStuff<ComponentData>(c);
+
+	//Calculate the force vector
+	DirectX::XMFLOAT3 temp;
+	DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5.f + this->normalVector * 0.5f));
+	newNormalizeXMFLOAT3(temp);
+	if (this->moveKeyPressed) 
+	{ 
+		if (this->currentSpeed == this->speed) scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.095f, temp);
+		else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
+	}
+
+
+	//Set dynamic so it can be affected by forces
+	this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
+	//Apply the force
+	this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
+
+	//You no longer "own" the item
+	holdingItem->setPickedUp(false);
+	holdingItem = nullptr;
+}
+
 void Player::resetRotationMatrix()
 {
 	this->rotationMX = DirectX::XMMatrixIdentity();
@@ -28,33 +63,7 @@ void Player::handleItems()
 	//Throw the Item
 	if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
 	{
-		//allocates data to be sent
-		ComponentData c;
-		c.ComponentId = this->getItemOnlineId();
-		std::cout << "Item: " << c.ComponentId << "\n";
-		c.inUseBy = -1;
-		c.packetId = PacketType::COMPONENTPOSITION;
-		c.x = this->getPos().x;
-		c.y = this->getPos().y;
-		c.z = this->getPos().z;
-		//sending data to server
-		client->sendStuff<ComponentData>(c);
-
-		//Set dynamic so it can be affected by forces
-		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
-
-		//Calculate the force vector
-		DirectX::XMFLOAT3 temp;
-		DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5.f + this->normalVector * 2.f));
-		newNormalizeXMFLOAT3(temp);
-
-		//Apply the force
-		//itemPhysComp->applyLocalTorque(reactphysics3d::Vector3(temp.x * FORCE/2, temp.y * FORCE/2, temp.z * FORCE/2));
-		itemPhysComp->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
-
-		//You no longer "own" the item
-		holdingItem->setPickedUp(false);
-		holdingItem = nullptr;
+		this->throwItem();
 	}
 	//Use the Item
 	else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
@@ -93,7 +102,7 @@ Player::~Player()
 }
 
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
-    :GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0)
+    :GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0), currentSpeed(0)
 {
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -130,7 +139,7 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 }
 
 Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
-	:GameObject(objectPath, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0), speed(25.f)
+	:GameObject(objectPath, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0), speed(25.f), currentSpeed(0)
 {
 	this->client = client;
 	this->rotationMX = XMMatrixIdentity();
@@ -179,7 +188,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk North-East
 	if (Input::KeyDown(KeyCode::W) && Input::KeyDown(KeyCode::D))
 	{
-		position += forwardVector * deltaTime * speed;
+		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
 
 		if (resultVector.x > -0.4f)
@@ -200,7 +209,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk North-West
 	else if (Input::KeyDown(KeyCode::W) && Input::KeyDown(KeyCode::A))
 	{
-		position += forwardVector * deltaTime * speed;
+		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
 
 		if (resultVector.x < 0.4f)
@@ -221,7 +230,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk South-East
 	else if (Input::KeyDown(KeyCode::S) && Input::KeyDown(KeyCode::D))
 	{
-		position += forwardVector * deltaTime * speed;
+		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
 
 		if (resultVector.x < 0.4f)
@@ -242,7 +251,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk South-West
 	else if (Input::KeyDown(KeyCode::S) && Input::KeyDown(KeyCode::A))
 	{
-		position += forwardVector * deltaTime * speed;
+		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
 
 		if (resultVector.x > -0.4f)
@@ -330,22 +339,25 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
 	//Running
+	this->currentSpeed = this->speed;
 	if (Input::KeyDown(KeyCode::SHIFT))
 	{
-		deltaTime *= 1.5f;
+		this->currentSpeed *= 1.5f;
 	}
 
 	//Jumping
 	if (onGround && Input::KeyPress(KeyCode::SPACE))
 	{
-		jumpHeight = 0.f;
+		//jumpHeight = 0.f;
 		onGround = false;
+		this->velocity = this->normalVector*35.f;
+		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.5f;
 	}
-	else if (jumpHeight < jumpAllowed)
+	/*else if (jumpHeight < jumpAllowed)
 	{
 		position += normalVector * jumpHeight * deltaTime;
 		jumpHeight += 2000.f * deltaTime;
-	}
+	}*/
 	
 	//PC movement
 	if (movingCross(cameraForward, deltaTime)) {}
@@ -361,7 +373,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
 		this->moveKeyPressed = true;
-		position += forwardVector * deltaTime * speed;
+		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
 
 		if (resultVector.x < -0.05f)
@@ -392,7 +404,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
 		this->moveKeyPressed = true;
-		position += forwardVector * deltaTime * speed;
+		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
 
 		if (resultVector.x < -0.05f)
@@ -423,7 +435,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
 		this->moveKeyPressed = true;
-		position += forwardVector * deltaTime * speed;
+		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(cameraRight, rightVector);
 
 		if (resultVector.x < -0.05f)
@@ -454,7 +466,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
 		this->moveKeyPressed = true;
-		position += forwardVector * deltaTime * speed;
+		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(-cameraRight, rightVector);
 
 		if (resultVector.x < -0.05f)
@@ -857,11 +869,6 @@ bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) con
 	return inRange;
 }
 
-bool Player::repairedShip() const
-{
-	return repairCount >= 4;
-}
-
 bool Player::getHitByBat() const
 {
     if (holdingItem != nullptr)
@@ -1035,4 +1042,19 @@ void Player::checkMovement()
 		if (this->holdingItem != nullptr) this->setSpeed(25.f*0.65f);
 		else this->setSpeed(25.f);
 	}
+}
+
+void Player::updateVelocity(const DirectX::SimpleMath::Vector3& gravityVector)
+{
+	this->velocity += gravityVector;
+}
+
+void Player::resetVelocity()
+{
+	this->velocity = DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f);
+}
+
+void Player::velocityMove(const float& dt)
+{
+	this->position += velocity * dt;
 }

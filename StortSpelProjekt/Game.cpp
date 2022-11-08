@@ -307,7 +307,8 @@ GAMESTATE Game::Update()
 	if (testingVec || currentPlayer->getHitByBat()) currentPlayer->resetVelocity();
 	
 	//Player functions
-	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), hitNormal, dt, testingVec);
+	currentPlayer->rotate(hitNormal, testingVec);
+	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
 	currentPlayer->checkForStaticCollision(gameObjects);
 	currentPlayer->checkMovement();

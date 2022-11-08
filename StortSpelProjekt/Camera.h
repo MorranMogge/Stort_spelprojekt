@@ -7,7 +7,7 @@
 class Camera
 {
 private:
-	float fieldOfView = 0.75f;
+	float fieldOfView = 0.76f;
 	float maxFOV = 0.8f;
 	float minFOV = 0.6f;
 

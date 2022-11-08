@@ -109,13 +109,13 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	this->client = client;
 	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
 
-	normalVector = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 1.0f);
+	/*normalVector = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 1.0f);
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
 	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
 	normalVector = DirectX::XMVector3Normalize(normalVector);
 	rightVector = DirectX::XMVector3Normalize(rightVector);
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
-	this->rotate();
+	this->rotate();*/
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);
@@ -202,7 +202,6 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x * 0.3f);
 		}
 
-		this->rotate();
 		return true;
 	}
 
@@ -223,7 +222,6 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 			rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x * 0.3f);
 		}
 
-		this->rotate();
 		return true;
 	}
 
@@ -244,7 +242,6 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 			rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x * 0.3f);
 		}
 
-		this->rotate();
 		return true;
 	}
 
@@ -265,15 +262,24 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x * 0.3f);
 		}
 
-		this->rotate();
 		return true;
 	}
 
 	return false;
 }
 
-void Player::rotate()
+void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec)
 {
+	if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
+	else normalVector = DirectX::XMVectorSet(grav.x, grav.y, grav.z, 1.0f);
+
+	//Calculations
+	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
+	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
+	normalVector = DirectX::XMVector3Normalize(normalVector);
+	rightVector = DirectX::XMVector3Normalize(rightVector);
+	forwardVector = DirectX::XMVector3Normalize(forwardVector);
+
 	//X-Rotation
 	resultVector = DirectX::XMVector3Dot(normalVector, forwardVector);
 	if (resultVector.x < 0.0f)
@@ -325,18 +331,9 @@ void Player::rotate()
 	}
 }
 
-void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime, const bool& testingVec)
+void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, float deltaTime)
 {
 	if (dedge) return;
-	else if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
-	else normalVector = DirectX::XMVectorSet(grav.x, grav.y, grav.z, 1.0f);
-
-	//Calculations
-	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-	normalVector = DirectX::XMVector3Normalize(normalVector);
-	rightVector = DirectX::XMVector3Normalize(rightVector);
-	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
 	//Running
 	this->currentSpeed = this->speed;
@@ -476,8 +473,6 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 			if (resultVector.x > XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.5f);
 		}
 	}
-
-	this->rotate();
 }
 
 bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime) //Need to update if we want to use this
@@ -516,7 +511,7 @@ bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float d
 			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x * 0.3f);
 		}
 
-		this->rotate();
+		//this->rotate();
 		return true;
 	}
 
@@ -538,7 +533,7 @@ bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float d
 			rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x * 0.3f);
 		}
 
-		this->rotate();
+		//this->rotate();
 		return true;
 	}
 
@@ -560,7 +555,7 @@ bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float d
 			rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x * 0.3f);
 		}
 
-		this->rotate();
+		//this->rotate();
 		return true;
 	}
 
@@ -582,7 +577,7 @@ bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float d
 			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x * 0.3f);
 		}
 
-		this->rotate();
+		//this->rotate();
 		return true;
 	}
 
@@ -630,7 +625,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 				if (resultVector.x > XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.5f);
 			}
 
-			this->rotate();
+			//this->rotate();
 		}
 
 		//Walk backward
@@ -648,7 +643,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 				if (resultVector.x > DirectX::XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
 			}
 
-			this->rotate();
+			//this->rotate();
 		}
 
 		//Walk right
@@ -665,7 +660,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 				if (resultVector.x > DirectX::XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
 			}
 
-			this->rotate();
+			//this->rotate();
 		}
 
 		//Walk left
@@ -682,7 +677,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 				if (resultVector.x > DirectX::XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
 			}
 
-			this->rotate();
+			//this->rotate();
 		}
 	}
 

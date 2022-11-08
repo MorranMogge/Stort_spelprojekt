@@ -71,7 +71,6 @@ private:
 	void throwItem();
 	void resetRotationMatrix();
 	void handleItems();
-	void rotate();
 	bool movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 	bool moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 public:
@@ -80,8 +79,8 @@ public:
 	~Player();
 
 	//Move Functions
-
-	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime,  const bool& testingVec);
+	void rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec);
+	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, float deltaTime);
 	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime);
 	void checkMovement();
 	void updateVelocity(const DirectX::SimpleMath::Vector3& gravityVec);

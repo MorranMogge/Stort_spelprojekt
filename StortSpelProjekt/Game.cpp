@@ -309,9 +309,9 @@ GAMESTATE Game::Update()
 	//Player functions
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), hitNormal, dt, testingVec);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
-	//currentPlayer->movePos(velocity);
 	currentPlayer->checkForStaticCollision(gameObjects);
 	currentPlayer->checkMovement();
+	currentPlayer->velocityMove(dt);
 
 	for (int i = 0; i < components.size(); i++)
 	{

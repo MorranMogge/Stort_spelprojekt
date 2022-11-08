@@ -21,6 +21,7 @@ private:
 	//Movement variables
 	const float speedConstant = 100.f;
 	float speed = 25.f;
+	float currentSpeed;
 	DirectX::SimpleMath::Vector3 resultVector;
 	DirectX::SimpleMath::Vector3 velocity; //FINALLY ADDED THIS F*****G STUPID VARIABLE
 	
@@ -70,6 +71,7 @@ private:
 	DirectX::XMVECTOR southEastVector = SOUTH_EAST;
 	DirectX::XMVECTOR southWestVector = SOUTH_WEST;
 
+	void throwItem();
 	void resetRotationMatrix();
 	void handleItems();
 	void rotate();
@@ -87,6 +89,7 @@ public:
 	void checkMovement();
 	void updateVelocity(const DirectX::SimpleMath::Vector3& gravityVec);
 	void resetVelocity();
+	void velocityMove(const float& dt);
 	
 	//Set Functions
 

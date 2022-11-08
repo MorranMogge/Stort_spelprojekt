@@ -29,7 +29,6 @@ public:
 	void addComponent();
 	bool detectedComponent(GameObject* objectToCheck);
 	bool detectedComponent(Component* componentToCheck);
-	void takeOff();
 	void animateOnPickup();
 	void setAnimate(const bool& onOff);
 	virtual void update() override;

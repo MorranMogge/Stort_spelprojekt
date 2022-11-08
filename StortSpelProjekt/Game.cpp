@@ -209,14 +209,17 @@ void Game::drawObjects(bool drawDebug)
 	//Draw Game objects
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		gameObjects.at(i)->draw();
+		gameObjects[i]->draw();
 	}
 
-	gameObjects.at(1)->draw();
+	gameObjects[1]->draw();
 
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		this->gameObjects[i]->drawObjectWithTexture();
+		if (i != 5)
+		{
+			this->gameObjects[i]->drawObjectWithTexture();
+		}
 	}
 	for (int i = 0; i < players.size(); i++)
 	{

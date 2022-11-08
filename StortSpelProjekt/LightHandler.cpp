@@ -401,7 +401,7 @@ void LightHandler::drawShadows(const int &lightIndex, const std::vector<GameObje
 	//ny draw för meshes inladdade via fbx
 	for (int i = 0; i < gameObjects.size(); i++)	
 	{
-		gameObjects.at(i)->drawObject();
+		gameObjects[i]->drawObject();
 	}
 
 	//Unbind render targets & Depth Stencil

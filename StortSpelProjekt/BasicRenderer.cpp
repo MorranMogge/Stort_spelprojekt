@@ -261,9 +261,9 @@ void BasicRenderer::setUpSceneNormalMap(Camera& stageCamera)
 	immediateContext->PSSetShader(nullptr, nullptr, 0);
 
 
-	immediateContext->ClearRenderTargetView(rtv, clearColour);
-	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+	//immediateContext->ClearRenderTargetView(rtv, clearColour);
+	//immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+	//immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	immediateContext->IASetInputLayout(inputLayout_NormalMap);
 	immediateContext->VSSetShader(vs_normalMap, nullptr, 0);
@@ -274,9 +274,9 @@ void BasicRenderer::setUpSceneNormalMap(Camera& stageCamera)
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 
 	//Unbind shadowmap & structuredBuffer srv
-	ID3D11ShaderResourceView* nullRsv{ nullptr };
+	/*ID3D11ShaderResourceView* nullRsv{ nullptr };
 	immediateContext->PSSetShaderResources(3, 1, &nullRsv);
-	immediateContext->PSSetShaderResources(4, 1, &nullRsv);
+	immediateContext->PSSetShaderResources(4, 1, &nullRsv);*/
 }
 
 void BasicRenderer::geometryPass(Camera& stageCamera)

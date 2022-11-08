@@ -353,11 +353,6 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		this->velocity = this->normalVector*35.f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.5f;
 	}
-	/*else if (jumpHeight < jumpAllowed)
-	{
-		position += normalVector * jumpHeight * deltaTime;
-		jumpHeight += 2000.f * deltaTime;
-	}*/
 	
 	//PC movement
 	if (movingCross(cameraForward, deltaTime)) {}
@@ -365,7 +360,6 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Walking forward
 	else if (Input::KeyDown(KeyCode::W))
 	{
-		this->rotate();
 		rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
 		forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
 		normalVector = DirectX::XMVector3Normalize(normalVector);
@@ -396,7 +390,6 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Walking backward
 	else if (Input::KeyDown(KeyCode::S))
 	{
-		this->rotate();
 		rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
 		forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
 		normalVector = DirectX::XMVector3Normalize(normalVector);
@@ -427,7 +420,6 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Walking right
 	else if (Input::KeyDown(KeyCode::D))
 	{
-		this->rotate();
 		rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
 		forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
 		normalVector = DirectX::XMVector3Normalize(normalVector);
@@ -458,7 +450,6 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Walking left
 	else if (Input::KeyDown(KeyCode::A))
 	{
-		this->rotate();
 		rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
 		forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
 		normalVector = DirectX::XMVector3Normalize(normalVector);
@@ -486,16 +477,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		}
 	}
 
-	if (Input::KeyPress(KeyCode::K))
-	{
-		temp = !temp;
-		std::cout << "TEMP " << temp << "\n";
-	}
-
-	if (temp)
-	{
-		this->rotate();
-	}
+	this->rotate();
 }
 
 bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime)

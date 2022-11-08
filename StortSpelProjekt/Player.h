@@ -36,9 +36,6 @@ private:
 	bool holdingComp = false;
 	int onlineID;
 	int team;
-	float jumpAllowed = 300.f;
-	float jumpHeight = 300.f;
-
 
 	//Controller variables
 	bool controllerConnected = true;

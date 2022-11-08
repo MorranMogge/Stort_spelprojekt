@@ -54,11 +54,11 @@ Camera::~Camera()
 {
 }
 
-void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation)
+void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const DirectX::XMVECTOR& playerUp)
 {
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation);
-	upVector = XMVector3TransformCoord(DEFAULT_UP, playerRotation);
+	upVector = playerUp;
 
 	if (Input::KeyDown(KeyCode::ARROW_Up))
 	{

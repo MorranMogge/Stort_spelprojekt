@@ -26,6 +26,9 @@ public:
 	int getOnlineId();
 	int getOnlineType();
 
+	//set in use by equal to -1 if the item isnt in use
+	void setInUseBy(const int nr);
+
 	void setOnlineId(int Id);
 	void setOnlineType(int type);
 

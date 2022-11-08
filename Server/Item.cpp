@@ -46,6 +46,11 @@ int Item::getOnlineType()
 	return onlineType;
 }
 
+void Item::setInUseBy(const int nr)
+{
+	this->inUseBy = nr;
+}
+
 void Item::setOnlineId(int Id)
 {
 	this->onlineId = Id;

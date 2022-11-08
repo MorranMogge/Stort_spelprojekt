@@ -336,6 +336,7 @@ int main()
 			PositionRotation* prMatrixData = nullptr;
 			PlayerHit* playerHit = nullptr;
 			itemPosition* itemPos = nullptr;
+			ComponentDropped* cmpDropped = nullptr;
 
 			switch (packetId)
 			{
@@ -377,8 +378,33 @@ int main()
 			case PacketType::COMPONENTPOSITION:
 				compData = circBuffer->readData<ComponentData>();
 				
+				for (int i = 0; i < components.size(); i++)
+				{
+					if (components[i].getOnlineId() == compData->ComponentId)
+					{
+
+					}
+				}
+				//use later
+				
 				break;
 
+			case PacketType::COMPONENTDROPPED:
+				cmpDropped = circBuffer->readData<ComponentDropped>();
+
+				//find the component that is dropped
+				for (int i = 0; i < components.size(); i++)
+				{
+					if (components[i].getOnlineId() == cmpDropped->componentId)
+					{
+						components[i].setInUseBy(-1);
+					}
+				}
+				break;
+
+			case PacketType::COMPONENTPICKEDUP:
+
+				break;
 			case PacketType::PLAYERHIT:
 				playerHit = circBuffer->readData<PlayerHit>();
 				sendBinaryDataOnePlayer<PlayerHit>(*playerHit, data.users[playerHit->playerId]);

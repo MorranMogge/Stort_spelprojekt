@@ -144,9 +144,6 @@ void Game::loadObjects()
 		gameObjects[i]->getPhysComp()->setPosition(reactphysics3d::Vector3(gameObjects[i]->getPosV3().x, gameObjects[i]->getPosV3().y, gameObjects[i]->getPosV3().z));
 	}
 
-	baseballBat->setPlayer(currentPlayer);
-	baseballBat->setTestObj(gameObjects);
-	grenade->setGameObjects(gameObjects);
 	
 	if (!currentPlayer) { currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, &planetGravityField); players.emplace_back(currentPlayer); }
 	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
@@ -155,6 +152,9 @@ void Game::loadObjects()
 	{
 		gameObjects.emplace_back(players[i]);
 	}
+	baseballBat->setPlayer(currentPlayer);
+	baseballBat->setTestObj(gameObjects);
+	grenade->setGameObjects(gameObjects);
 }
 
 void Game::drawShadows()
@@ -356,7 +356,7 @@ GAMESTATE Game::Update()
 	
 	//Setting the camera at position
 	bool noWinners = true;
-	if (noWinners) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), currentPlayer->getUpVec());
+	if (noWinners) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), currentPlayer->getUpVec(), currentPlayer->getSpeed(), dt);
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
 		if (spaceShips[i]->getCompletion())

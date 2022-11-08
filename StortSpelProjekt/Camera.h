@@ -4,13 +4,12 @@
 #include "ConstantBufferNew.h"
 #include "GPU.h"
 
-#define MAXFOV 1.8f
-#define  MINFOV 0.5f
-
 class Camera
 {
 private:
-	float fieldOfView = 0.8f;
+	float fieldOfView = 0.75f;
+	float maxFOV = 0.8f;
+	float minFOV = 0.6f;
 
 	DirectX::XMFLOAT3 position;
 	ConstantBufferNew<cameraStruct> cameraBuffer;
@@ -20,6 +19,7 @@ private:
 	DirectX::XMMATRIX viewMatrix;
 	DirectX::XMMATRIX projMatrix;
 	DirectX::XMVECTOR cameraPos = DirectX::XMVectorSet(0.0f, 0.0f, -25.0f, 0.0f);
+	DirectX::XMVECTOR oldCameraPos = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	DirectX::XMVECTOR lookAtPos = DirectX::XMVectorSet(0.0f, 0.0f, -20.0f, 0.0f);
 
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
@@ -35,7 +35,7 @@ public:
 	~Camera();
 
 	void updateCamera();
-	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const DirectX::XMVECTOR& playerUp);
+	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const DirectX::XMVECTOR& playerUp, const float& playerSpeed, const float& deltaTime);
 	void winScene(const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation);
 	DirectX::XMVECTOR getForwardVector() const;
 	DirectX::XMVECTOR getRightVector() const;

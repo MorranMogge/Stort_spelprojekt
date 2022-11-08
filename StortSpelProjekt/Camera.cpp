@@ -54,23 +54,40 @@ Camera::~Camera()
 {
 }
 
-void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const DirectX::XMVECTOR& playerUp)
+void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const DirectX::XMVECTOR& playerUp, const float& playerSpeed, const float& deltaTime)
 {
+	upVector = playerUp;
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation);
-	upVector = playerUp;
 
-	if (Input::KeyDown(KeyCode::ARROW_Up))
+	/*if (Input::KeyDown(KeyCode::ARROW_Up))
 	{
 		if (fieldOfView > MINFOV) fieldOfView -= 0.005f;
 	}
 	else if (Input::KeyDown(KeyCode::ARROW_Down))
 	{
 		if (fieldOfView < MAXFOV) fieldOfView += 0.005f;
-	}
+	}*/
 
 	cameraPos = playerPosition + upVector * 60.f - forwardVector * 50.f;
 	lookAtPos = playerPosition;
+
+	if (XMVector3NotEqual(cameraPos, oldCameraPos))
+	{
+		if (playerSpeed < 26.f) minFOV = 0.75f;
+		else if (playerSpeed < 38.f) minFOV = 0.7f;
+		else minFOV = 0.65f;
+
+		if (fieldOfView > minFOV) fieldOfView -= deltaTime * 0.1f;
+		//else fieldOfView += deltaTime * 0.1f;
+	}
+	else
+	{
+		maxFOV = 0.75f;
+		if (fieldOfView < maxFOV) fieldOfView += deltaTime * 1.5f;
+	}
+
+	oldCameraPos = cameraPos;
 	updateCamera();
 }
 

@@ -89,14 +89,12 @@ public:
 	void velocityMove(const float& dt);
 	
 	//Set Functions
-
 	void setSpeed(float speed);
 	void setOnlineID(const int& id);
 	void setTeam(const int& team);
 	
 
 	//Get Functions
-
 	reactphysics3d::Vector3 getRayCastPos()const;
 	DirectX::XMVECTOR getUpVec() const;
 	DirectX::XMVECTOR getForwardVec() const;
@@ -105,6 +103,7 @@ public:
 	int getTeam() const;
 	int getOnlineID()const;
 	bool getHitByBat()const;
+	float getSpeed()const;
 
 	//Item related functions
 

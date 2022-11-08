@@ -480,7 +480,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	this->rotate();
 }
 
-bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime)
+bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime) //Need to update if we want to use this
 {
 	//Calculations
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
@@ -892,6 +892,11 @@ bool Player::getHitByBat() const
         }
     }
 	return dedge;
+}
+
+float Player::getSpeed()const
+{
+	return this->currentSpeed;
 }
 
 void Player::drawIcon()

@@ -93,6 +93,9 @@ void Game::loadObjects()
 	//Add to component array
 	components.emplace_back(component);
 
+	//Add player to player array
+	players.push_back(currentPlayer);
+
 	//Set active players/game objects for objects
 	testBat->setPlayer(currentPlayer);
 	testBat->setTestObj(gameObjects);
@@ -322,6 +325,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			std::cout << "Dude: " << (int)(dude < i + 1) << "\n";
 		}
 	}
+
 
 	//Load game objects
 	this->loadObjects();

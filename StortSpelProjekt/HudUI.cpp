@@ -6,12 +6,12 @@
 
 void HudUI::SpritePass()
 {
-	if (red)//landing
-	{
-		landing0.Draw();
-		landing1.Draw();
-		landing2.Draw();
-	}
+	//if (red)//landing
+	//{
+	//	landing0.Draw();
+	//	landing1.Draw();
+	//	landing2.Draw();
+	//}
 
 	if (red)
 	{
@@ -87,7 +87,7 @@ HudUI::HudUI()
 	landing0.Load(GPU::device, L"../Sprites/Bar.png");
 	landing0.SetScale(0.2f, 0.2f);
 
-	landing1 = GUISprite(Vector2(125, 550));
+	landing1 = GUISprite(125, (Min.y - Max.y) / 2);
 	landing1.Load(GPU::device, L"../Sprites/safeBox.png");
 	landing1.SetScale(0.2f, 0.2f);
 
@@ -189,7 +189,9 @@ void HudUI::handleInputs()
 {
 	using namespace DirectX::SimpleMath;
 	Vector2 rocketPos = landing2.GetPosition();
-	//&& rocketPos.y > Min.y
+	Vector2 safePos = landing1.GetPosition();
+
+
 
 	if (Input::KeyDown(KeyCode::W) || Input::KeyDown(KeyCode::ARROW_Up))
 	{

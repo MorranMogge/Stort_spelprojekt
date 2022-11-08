@@ -8,7 +8,7 @@ void Asteroid::explode(std::vector<Planet*>& planets, std::vector<GameObject*>& 
 	{
 		DirectX::XMFLOAT3 vecToObject = this->position;
 		subtractionXMFLOAT3(vecToObject, objects[j]->getPos());
-		if (getLength(vecToObject) >= 25.f)
+		if (getLength(vecToObject) <= 25.f)
 		{
 			objects[j]->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 			DirectX::XMFLOAT3 explosionRange = getSubtractionXMFLOAT3(this->position, objects[j]->getPos());
@@ -33,35 +33,56 @@ void Asteroid::explode(std::vector<Planet*>& planets, std::vector<GameObject*>& 
 			}
 		}
 	}
+	this->inactive = true;
 }
 
-Asteroid::Asteroid(Mesh* mesh, PhysicsWorld& physWorld, DirectX::XMFLOAT3 spawnPos, DirectX::XMFLOAT3 travelDirection, float speed)
+Asteroid::Asteroid(Mesh* mesh, PhysicsWorld& physWorld)
 {
 	this->asteroidMesh = mesh;
-	this->position = spawnPos;
-	this->direction = travelDirection;
-	this->speed = speed;
 	this->scale = DirectX::XMFLOAT3(1, 1, 1);
-	this->physComp = physWorld.returnAddedPhysComponent();
+	this->physComp = physWorld.returnAddedPhysComponent(reactphysics3d::CollisionShapeName::SPHERE, DirectX::XMFLOAT3(0,0,0), this->scale);
 	this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
+	this->inactive = false;
 }
 
 Asteroid::~Asteroid()
 {
 }
 
-void Asteroid::update(std::vector<Planet*>& planets, std::vector<GameObject*>& objects)
+bool Asteroid::isActive() const
 {
-	additionXMFLOAT3(this->position, getScalarMultiplicationXMFLOAT3(speed, direction));
+	return !inactive;
+}
+
+void Asteroid::spawnAsteroid(DirectX::XMFLOAT3 spawnPos, DirectX::XMFLOAT3 direction, float speed)
+{
+	this->position = spawnPos;
+	this->direction = direction;
+	this->speed = speed;
+	this->inactive = false;
+	this->physComp->setPosition(reactphysics3d::Vector3(this->position.x, this->position.y, this->position.z));
+}
+
+void Asteroid::moveAsteroid(const float& dt, std::vector<Planet*>& planets, std::vector<GameObject*>& objects)
+{
+	if (this->inactive) return;
+	additionXMFLOAT3(this->position, getScalarMultiplicationXMFLOAT3(speed*dt, direction));
 	this->physComp->setPosition(reactphysics3d::Vector3(this->position.x, this->position.y, this->position.z));
 	for (int i = 0; i < planets.size(); i++)
 	{
-		if (this->physComp->testBodiesOverlap(planets[i]->getPlanetCollider())) { this->explode(planets, objects); return; }
+		DirectX::XMFLOAT3 vecToPlanet = this->position;
+		subtractionXMFLOAT3(vecToPlanet, planets[i]->getPlanetPosition());
+		if ((getLength(vecToPlanet) - (this->scale.x + planets[i]->getSize())) <= 0)
+		{ 
+			this->explode(planets, objects); 
+			return; 
+		}
 	}
 }
 
 void Asteroid::draw()
 {
+	if (this->inactive) return;
 	this->asteroidMesh->position = this->position;
 	this->asteroidMesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f));
 	this->asteroidMesh->scale = this->scale;

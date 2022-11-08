@@ -11,7 +11,7 @@
 #include "GravityField.h"
 #include "PhysicsComponent.h"
 #include "Planet.h"
-#include "Asteroid.h"
+#include "AsteroidHandler.h"
 
 //Rendering
 #include "BasicRenderer.h"

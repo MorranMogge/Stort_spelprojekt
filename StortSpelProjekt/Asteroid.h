@@ -13,12 +13,16 @@ private:
 	DirectX::XMFLOAT3 position;
 	DirectX::XMFLOAT3 scale;
 	float speed;
+	bool inactive;
 
 	void explode(std::vector<Planet*>& planets, std::vector<GameObject *>& objects);
+
 public:
-	Asteroid(Mesh* mesh, PhysicsWorld& physWorld, DirectX::XMFLOAT3 spawnPos, DirectX::XMFLOAT3 travelDirection, float speed);
+	Asteroid(Mesh* mesh, PhysicsWorld& physWorld);
 	~Asteroid();
 
-	void update(std::vector<Planet*>& planets, std::vector<GameObject*>& objects);
+	bool isActive()const;
+	void spawnAsteroid(DirectX::XMFLOAT3 spawnPos, DirectX::XMFLOAT3 direction, float speed);
+	void moveAsteroid(const float& dt, std::vector<Planet*>& planets, std::vector<GameObject*>& objects);
 	void draw();
 };

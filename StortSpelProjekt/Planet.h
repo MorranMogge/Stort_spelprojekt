@@ -52,6 +52,7 @@ public:
 	//Calculates whether or not the player is within the gravity field of the planet
 	bool insideGravityField(const DirectX::SimpleMath::Vector3& position)const;
 	PhysicsComponent* getPlanetCollider()const;
+	float getSize(int index = 0)const;
 
 	//Draws the planet using regular pipeline stages
 	void drawPlanet();

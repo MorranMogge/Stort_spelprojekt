@@ -5,7 +5,6 @@
 
 void SettingsUI::HandleInputs()
 {
-	//Input::Update();
 	backText.IntersectMouse() ? backText.SetTint(DirectX::Colors::Green.v) : backText.SetTint(DirectX::Colors::White.v);
 
 	if (Input::KeyPress(KeyCode::MOUSE_L))
@@ -14,20 +13,9 @@ void SettingsUI::HandleInputs()
 		{
 			gameState = MENU;
 		}
-	}
 
-}
-
-void SettingsUI::TextPass()
-{
-
-}
-
-void SettingsUI::SpritePass()
-{
-	if (Input::KeyPress(KeyCode::MOUSE_L))
-	{
-		if (checkbox_true.IntersectMouse() || checkbox_false.IntersectMouse())
+		// click and intersects
+		if (checkbox_true.IntersectMouse() && !dropdown2 && !dropdown1 || checkbox_false.IntersectMouse() && !dropdown2 && !dropdown1)
 		{
 			fullscreen = !fullscreen;
 		}
@@ -39,26 +27,47 @@ void SettingsUI::SpritePass()
 		{
 			dropdown2 = !dropdown2;
 		}
-		else if (text720p2.IntersectMouse())
+
+		else if (text720p2.IntersectMouse() && dropdown1)
 		{
 			is720p = true;
 			dropdown1 = false;
 			dropdown2 = false;
 		}
-		else if (text1080p2.IntersectMouse())
+		else if (text1080p2.IntersectMouse() && dropdown1)
 		{
 			is720p = false;
 			dropdown1 = false;
 			dropdown2 = false;
 		}
+
+		else if (directxText2.IntersectMouse() && dropdown2)
+		{
+			isDirectx = true;
+			dropdown1 = false;
+			dropdown2 = false;
+		}
+		else if (vulkanText2.IntersectMouse() && dropdown2)
+		{
+			isDirectx = false;
+			dropdown1 = false;
+			dropdown2 = false;
+		}
+
+		// reset dropdown
 		else
 		{
 			dropdown1 = false;
 			dropdown2 = false;
 		}
-
 	}
 
+}
+
+void SettingsUI::SpritePass()
+{
+
+	//draw stage
 	settingsText.Draw();
 	backText.Draw();
 
@@ -74,6 +83,7 @@ void SettingsUI::SpritePass()
 	is720p ? text720p.Draw() : text1080p.Draw();
 	isDirectx ? directxText.Draw() : vulkanText.Draw();
 
+	//if any dropdown is expanded
 	if (dropdown1)
 	{
 		if (text1080p2.IntersectMouse())
@@ -207,19 +217,17 @@ SettingsUI::~SettingsUI()
 
 void SettingsUI::Draw()
 {
+	Input::Update();
 	HandleInputs();
 	GUI::Begin();
 	SpritePass();
-	TextPass();
 	GUI::End();
 
-	auto directxPos = directxText2.GetPosition();
-
-	imGui.spriteBegin();
-	imGui.spriteFloat("Directx X", directxPos.x, 0, 1280);
-	imGui.spriteFloat("Directx Y", directxPos.y, 0, 720);
-	imGui.spriteEnd();
-
-	directxText2.SetPosition(directxPos);
+	//auto directxPos = directxText2.GetPosition();
+	//imGui.spriteBegin();
+	//imGui.spriteFloat("Directx X", directxPos.x, 0, 1280);
+	//imGui.spriteFloat("Directx Y", directxPos.y, 0, 720);
+	//imGui.spriteEnd();
+	//directxText2.SetPosition(directxPos);
 
 }

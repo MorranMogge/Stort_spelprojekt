@@ -30,20 +30,17 @@ class SettingsUI final
 
 	GAMESTATE gameState;
 
-	bool fullscreen = false;
-	bool dropdown1 = false;
-	bool dropdown2 = true;
-	
-	bool isDirectx = true;
-	bool is720p = true;
-
 	void HandleInputs();
-
-	void TextPass();
 	void SpritePass();
 
-
 public:
+
+	bool fullscreen = false;
+	bool dropdown1 = false;
+	bool dropdown2 = false;
+
+	bool isDirectx = true;
+	bool is720p = true;
 
 	GAMESTATE GetGameState();
 

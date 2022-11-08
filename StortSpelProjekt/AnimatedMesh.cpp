@@ -5,12 +5,13 @@
 
 void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, const nodes& node, DirectX::XMFLOAT4X4& parentTrasform)
 {
+	std::cout << "Node Name: " << node.nodeName << "\n";
 	animationNode an = this->MySimp.animation[animationIndex];
 
 	DirectX::XMMATRIX currentNodeTrans = DirectX::XMLoadFloat4x4(&node.trasformation);
 	channels amnNode;
 
-	if (this->findNodeAnim(node.nodeName, an, amnNode))
+	if (this->findNodeAnim(node.nodeName, an, amnNode) && true)
 	{
 		DirectX::XMFLOAT3 Scaling;
 		this->InterpolateScaling(Scaling, animationTime, amnNode);
@@ -28,6 +29,14 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 		currentNodeTrans = DirectX::XMMatrixMultiply(currentNodeTrans, ScalingM);
 		currentNodeTrans = DirectX::XMMatrixMultiply(currentNodeTrans, RotationM);
 		currentNodeTrans = DirectX::XMMatrixMultiply(currentNodeTrans, TranslationM);
+	}
+	if (node.nodeName == "joint2")
+	{
+		if (GetAsyncKeyState('K'))
+		{
+		currentNodeTrans = DirectX::XMMatrixTranslation(5, 120, 0);
+
+		}
 	}
 
 	DirectX::XMMATRIX PrevNode = DirectX::XMLoadFloat4x4(&parentTrasform);
@@ -49,6 +58,11 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 	DirectX::XMStoreFloat4x4(&finalTransfrom, globalTrasform);
 	for (int i = 0, end = node.children.size(); i < end; i++)
 	{
+		if (node.nodeName == "RootNode")
+		{
+			i = 1;
+		}
+
 		uppdateMatrices(animationIndex, animationTime, *node.children[i], finalTransfrom);
 	}
 }
@@ -84,7 +98,7 @@ void AnimatedMesh::InterpolateRotation(DirectX::XMFLOAT4& res, float animationTi
 	const DirectX::XMVECTOR& start = DirectX::XMLoadFloat4(&animationNode.rotKeyFrame[lowRotaKey].Value);
 	const DirectX::XMVECTOR& end = DirectX::XMLoadFloat4(&animationNode.rotKeyFrame[nextRotation].Value);
 	DirectX::XMVECTOR vectorRez = DirectX::XMVectorLerp(start, end, factor);
-	vectorRez = DirectX::XMVector4Normalize(vectorRez);
+	vectorRez = DirectX::XMVector4Normalize(start);
 	DirectX::XMStoreFloat4(&res, vectorRez);
 }
 

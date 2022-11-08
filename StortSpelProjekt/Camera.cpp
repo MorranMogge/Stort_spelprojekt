@@ -79,7 +79,6 @@ void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::
 		else minFOV = 0.65f;
 
 		if (fieldOfView > minFOV) fieldOfView -= deltaTime * 0.1f;
-		//else fieldOfView += deltaTime * 0.1f;
 	}
 	else
 	{

@@ -130,35 +130,16 @@ void SpaceShip::addComponent()
 	this->currentComponents++;
 }
 
-void SpaceShip::takeOff()
-{
-	//Icon initiation
-	DirectX::XMFLOAT3  pos = this->position;
-	static float constant = this->position.Length() *1.2f;
-	DirectX::XMFLOAT3 upDir = this->getUpDirection();
-	constant += 0.1f;
-	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-
-	this->position = test;
-	this->updateBuffer();
-
-	//Update particle movement
-	if (this->particles != nullptr)
-	{
-		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
-		this->particles->setPosition(this->position);
-		this->particles->setRotation(this->getUpDirection());
-		this->particles->updateBuffer();
-	}
-}
-
 void SpaceShip::update()
 {
 }
 
 void SpaceShip::drawQuad()
 {
-	rocketStatusQuad->bindAndDraw(this->currentComponents, 0);//Changes texture depending on components
+	if (!(this->currentComponents >= this->compToComplete))
+	{
+		rocketStatusQuad->bindAndDraw(this->currentComponents, 0);//Changes texture depending on components
+	}
 }
 
 bool SpaceShip::getCompletion() const
@@ -168,6 +149,17 @@ bool SpaceShip::getCompletion() const
 
 void SpaceShip::drawParticles()
 {
+
+	//Update particle movement
+	if (this->particles != nullptr)
+	{
+		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
+		this->particles->setPosition(this->position);
+		this->particles->setRotation(this->getUpDirection());
+		this->particles->updateBuffer();
+	}
+
+
 	if (this->particles != nullptr)
 	{
 		this->particles->BindAndDraw(0);

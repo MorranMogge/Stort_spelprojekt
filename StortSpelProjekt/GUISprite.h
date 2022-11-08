@@ -15,7 +15,7 @@ public:
 	//Load
 	virtual void Load(ID3D11Device* device, const wchar_t* file) override;
 
-	//Get Funktions
+	//Get Functions
 	virtual const DirectX::SimpleMath::Vector2& GetPosition() const;
 	virtual const DirectX::SimpleMath::Vector2& GetOrigin() const;
 	virtual const DirectX::SimpleMath::Vector2& GetScale() const;

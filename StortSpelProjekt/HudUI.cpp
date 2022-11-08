@@ -6,7 +6,12 @@
 
 void HudUI::SpritePass()
 {
-
+	if (red)//landing
+	{
+		landing0.Draw();
+		landing1.Draw();
+		landing2.Draw();
+	}
 
 	if (red)
 	{
@@ -74,6 +79,22 @@ HudUI::HudUI()
 
 	#define PositionRed Vector2(50, 620)
 	#define PositionBlue Vector2(125, 620)
+	#define Max Vector2(125, 90)
+	#define Min Vector2(125, 550)
+
+
+	landing0 = GUISprite(Vector2(125, 320));
+	landing0.Load(GPU::device, L"../Sprites/Bar.png");
+	landing0.SetScale(0.2f, 0.2f);
+
+	landing1 = GUISprite(Vector2(125, 550));
+	landing1.Load(GPU::device, L"../Sprites/safeBox.png");
+	landing1.SetScale(0.2f, 0.2f);
+
+	landing2 = GUISprite(125,(Min.y - Max.y)/2);
+	landing2.Load(GPU::device, L"../Sprites/ship.png");
+	landing2.SetScale(0.2f, 0.2f);
+
 
 
 	redTeam0 = GUISprite(PositionRed);
@@ -164,9 +185,44 @@ HudUI::~HudUI()
 
 }
 
+void HudUI::handleInputs()
+{
+	using namespace DirectX::SimpleMath;
+	Vector2 rocketPos = landing2.GetPosition();
+	//&& rocketPos.y > Min.y
+
+	if (Input::KeyDown(KeyCode::W) || Input::KeyDown(KeyCode::ARROW_Up))
+	{
+		Vector2 test(rocketPos.x , rocketPos.y - 1);
+
+		if (rocketPos.y < Max.y)
+		{
+			landing2.SetPosition(Max);
+		}
+		else
+		{
+			landing2.SetPosition(test);
+		}
+	}
+	if (Input::KeyDown(KeyCode::S) || Input::KeyDown(KeyCode::ARROW_Down))
+	{
+		Vector2 test(rocketPos.x , rocketPos.y + 1);
+
+		if (rocketPos.y > Min.y)
+		{
+			landing2.SetPosition(Min);
+		}
+		else
+		{
+			landing2.SetPosition(test);
+		}
+	}
+}
+
 void HudUI::Draw()
 {
 	GUI::Begin();
 	SpritePass();
+	handleInputs();
 	GUI::End();
 }

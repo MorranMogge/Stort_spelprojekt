@@ -23,7 +23,7 @@ bool CreateInterfaces(const UINT& width, const UINT& height, HWND window, ID3D11
 	swapChainDesc.OutputWindow = window;
 	swapChainDesc.Windowed = true;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+	swapChainDesc.Flags = 0;
 
 	UINT flags = 0;
 	/*if (_DEBUG)

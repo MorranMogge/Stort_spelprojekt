@@ -18,6 +18,36 @@ void SettingsUI::HandleInputs()
 		if (checkbox_true.IntersectMouse() && !dropdown2 && !dropdown1 || checkbox_false.IntersectMouse() && !dropdown2 && !dropdown1)
 		{
 			fullscreen = !fullscreen;
+
+			if (fullscreen)
+			{
+				GPU::windowWidth = 1920;
+				GPU::windowHeight = 1080;
+				SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+				SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW);
+				GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+				GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+
+			}
+			else
+			{
+				GPU::windowWidth = 1280;
+				GPU::windowHeight = 720;
+				SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+				SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+
+				// get window client size
+				if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+				{
+					GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+					GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+				}
+
+				GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+				GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+			}
+
 		}
 		else if (dropDown.IntersectMouse())
 		{
@@ -36,6 +66,8 @@ void SettingsUI::HandleInputs()
 		}
 		else if (text1080p2.IntersectMouse() && dropdown1)
 		{
+
+			GPU::swapChain->SetFullscreenState(true, 0);
 			is720p = false;
 			dropdown1 = false;
 			dropdown2 = false;

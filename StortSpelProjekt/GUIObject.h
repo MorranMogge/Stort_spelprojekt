@@ -11,7 +11,7 @@ class GUI final
 
 	inline static bool init = false;
 public:
-
+	inline static HWND hWnd = nullptr;
 	inline static Microsoft::WRL::ComPtr<ID3D11RenderTargetView> spriteView;
 	inline static Microsoft::WRL::ComPtr<ID3D11RasterizerState> rss;
 	inline static Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;

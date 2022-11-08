@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "WindowHelper.h"
 #include "GPU.h"
+#include "GUIObject.h";
 #include "resource.h"
 #include "imGUI\imconfig.h"
 #include "imGUI\imgui.h"
@@ -10,6 +11,7 @@
 #include "imGUI\imstb_textedit.h"
 #include "imGUI\imstb_truetype.h"
 #include "imGUI\imgui_impl_win32.h"
+
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -55,7 +57,7 @@ bool SetupWindow(HINSTANCE instance, UINT& width, UINT& height, int nCmdShow, HW
 
 	RECT wr = { 0, 0, LONG(width), LONG(height) };
 
-	window = CreateWindowEx(
+	window = CreateWindowExW(
 		0, //style, 0, not need style
 		CLASS_NAME, //class name
 		L"Projekt", //window name
@@ -74,6 +76,8 @@ bool SetupWindow(HINSTANCE instance, UINT& width, UINT& height, int nCmdShow, HW
 		return false;
 	}
 
+	GUI::hWnd = window;
+	
 	WINDOWINFO info{};
 	if (GetWindowInfo(window, &info))
 	{

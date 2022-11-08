@@ -6,6 +6,9 @@ class SpaceShip;
 
 class HudUI final
 {
+	GUISprite landing0;
+	GUISprite landing1;
+	GUISprite landing2;
 
 	GUISprite redTeam0;
 	GUISprite redTeam1;
@@ -40,6 +43,6 @@ public:
 
 	HudUI();
 	~HudUI();
-
+	void handleInputs();
 	void Draw();
 };

@@ -112,7 +112,9 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
     float fres = FresnelEffect(normal, viewDir, 5);
     float3 frescolor = { 0 * fres, 0.75 * fres, 1 * fres };
 
-    
+    //return float4(normal, 0);
+ 
+    //return float4(bumpedNormalW, 0);
     return float4(((max(mat.ambient.xyz, 0.2f) /* + litResult.Specular*/) * diffuseColor + litResult.Diffuse) + frescolor, 1.0f);
 
 }

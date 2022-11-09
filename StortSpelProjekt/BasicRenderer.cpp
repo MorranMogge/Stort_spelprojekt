@@ -118,8 +118,9 @@ bool BasicRenderer::setUpShadowRastirizer(ID3D11Device* device)
 }
 
 BasicRenderer::BasicRenderer()
-	:clearColour{ 0.0f, 0.0f, 0.0f, 0.0f }
+	:clearColour{ 0.0f, 0.0f, 0.0f, 0.0f }, vs_normalMap(nullptr), ps_normalMap(nullptr), inputLayout_NormalMap(nullptr)
 {
+	
 }
 
 BasicRenderer::~BasicRenderer()
@@ -256,14 +257,17 @@ void BasicRenderer::setUpScene(Camera& stageCamera)
 void BasicRenderer::setUpSceneNormalMap(Camera& stageCamera)
 {
 
-	immediateContext->IASetInputLayout(nullptr);
+	/*immediateContext->IASetInputLayout(nullptr);
 	immediateContext->VSSetShader(nullptr,nullptr, 0);
-	immediateContext->PSSetShader(nullptr, nullptr, 0);
+	immediateContext->PSSetShader(nullptr, nullptr, 0);*/
 
 
 	//immediateContext->ClearRenderTargetView(rtv, clearColour);
 	//immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-	//immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+	
+	
+	
+	/*immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	immediateContext->IASetInputLayout(inputLayout_NormalMap);
 	immediateContext->VSSetShader(vs_normalMap, nullptr, 0);
@@ -271,12 +275,31 @@ void BasicRenderer::setUpSceneNormalMap(Camera& stageCamera)
 	immediateContext->RSSetViewports(1, &viewport);
 	immediateContext->RSSetState(shadowRastirizer);
 	immediateContext->PSSetShader(ps_normalMap, nullptr, 0);
-	immediateContext->PSSetSamplers(0, 1, &sampler);
+	immediateContext->PSSetSamplers(0, 1, &sampler);*/
 
 	//Unbind shadowmap & structuredBuffer srv
 	/*ID3D11ShaderResourceView* nullRsv{ nullptr };
 	immediateContext->PSSetShaderResources(3, 1, &nullRsv);
 	immediateContext->PSSetShaderResources(4, 1, &nullRsv);*/
+
+
+
+
+	//immediateContext->ClearRenderTargetView(rtv, clearColour);
+	//immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+	
+	
+	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	immediateContext->IASetInputLayout(inputLayout_NormalMap);
+	immediateContext->VSSetShader(vs_normalMap, nullptr, 0);
+	immediateContext->RSSetViewports(1, &viewport);
+	immediateContext->PSSetShader(ps_normalMap, nullptr, 0);
+	//immediateContext->PSSetSamplers(0, 1, &sampler);
+	//immediateContext->PSSetShaderResources(5, 1, &depthSrv);
+	stageCamera.PSbindPositionBuffer(1);
+	stageCamera.VSbindViewBuffer(1);
+	//immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+
 }
 
 void BasicRenderer::geometryPass(Camera& stageCamera)

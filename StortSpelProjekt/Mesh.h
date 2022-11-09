@@ -27,7 +27,7 @@ private:
 		DirectX::XMFLOAT3 pos; // Position
 		DirectX::XMFLOAT3 nor; // Normal
 		DirectX::XMFLOAT2 uv; // UV coordination
-		DirectX::XMFLOAT3 tangent;
+		//DirectX::XMFLOAT3 tangent;
 		vertex() {
 			pos = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };
 			uv = DirectX::XMFLOAT2{ 0.0f,0.0f };

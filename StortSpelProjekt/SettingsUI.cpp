@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SettingsUI.h"
 #include "Input.h"
+#include <filesystem>
 
 void ChangeResolution2(const unsigned int width, const unsigned int height)
 {
@@ -237,12 +238,32 @@ void SettingsUI::HandleInputs()
 			isDirectx = true;
 			dropdown1 = false;
 			dropdown2 = false;
+
+			if (std::filesystem::exists("dxgi.dll"))
+				std::filesystem::rename("dxgi.dll", "dxgi.dllb");
+
+			if (std::filesystem::exists("d3d11.dll"))
+				std::filesystem::rename("d3d11.dll", "d3d11.dllb");
+
+			system("start StortSpelProjekt.exe");
+
+			gameState = EXIT;
 		}
 		else if (vulkanText2.IntersectMouse() && dropdown2)
 		{
 			isDirectx = false;
 			dropdown1 = false;
 			dropdown2 = false;
+
+			if(std::filesystem::exists("dxgi.dllb"))
+				std::filesystem::rename("dxgi.dllb", "dxgi.dll");
+
+			if (std::filesystem::exists("d3d11.dllb"))
+				std::filesystem::rename("d3d11.dllb", "d3d11.dll");
+
+			system("start StortSpelProjekt.exe");
+
+			gameState = EXIT;
 		}
 
 		// reset dropdown
@@ -395,6 +416,15 @@ SettingsUI::SettingsUI()
 	resulotionText = GUISprite(330, 228);
 	resulotionText.Load(GPU::device, L"../Sprites/resolutionText.png");
 	resulotionText.SetScale(scale);
+
+	if (std::filesystem::exists("dxgi.dll") && std::filesystem::exists("d3d11.dll"))
+	{
+		isDirectx = false;
+	}
+	else
+	{
+		isDirectx = true;
+	}
 
 	gameState = NOCHANGE;
 }

@@ -64,11 +64,11 @@ void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::
 
 	if (Input::KeyDown(KeyCode::ARROW_Up))
 	{
-		if (fieldOfView > MINFOV) fieldOfView -= 0.005;
+		if (fieldOfView > MINFOV) fieldOfView -= 0.005f;
 	}
 	else if (Input::KeyDown(KeyCode::ARROW_Down))
 	{
-		if (fieldOfView < MAXFOV) fieldOfView += 0.005;
+		if (fieldOfView < MAXFOV) fieldOfView += 0.005f;
 	}
 
 	cameraPos = playerPosition + upVector * 60.f - forwardVector * 50.f;

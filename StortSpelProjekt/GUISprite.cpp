@@ -5,14 +5,19 @@
 
 GUISprite::GUISprite()
 {
+    BaseWidth = GPU::windowWidth / 1264.0f;
+    BaseHeight = GPU::windowHeight / 681.0f;
 }
 
 GUISprite::GUISprite(const float x, const float y, const float layer)
 {
-    m_Position = DirectX::SimpleMath::Vector2(x, y);
+    BaseWidth = GPU::windowWidth / 1264.0f;
+    BaseHeight = GPU::windowHeight / 681.0f;
+    
+    m_Position = DirectX::SimpleMath::Vector2(BaseWidth * x, BaseHeight * y);
     m_Layer = layer;
     //m_pOrigin =;
-    m_Scale = { 1, 1 };            //same scale as object
+    m_Scale = { BaseWidth * 1, BaseWidth * 1 };            //same scale as object
     m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
     m_Alpha = 1.0f;
     m_Rotation = 0.0f;
@@ -20,10 +25,15 @@ GUISprite::GUISprite(const float x, const float y, const float layer)
 
 GUISprite::GUISprite(const DirectX::SimpleMath::Vector2& position, float layer)
 {
+    BaseWidth = GPU::windowWidth / 1264.0f;
+    BaseHeight = GPU::windowHeight / 681.0f;
+
     m_Position = position;
+    m_Position.x *= BaseWidth;
+    m_Position.y *= BaseHeight;
     m_Layer = layer;
     //m_pOrigin =;
-    m_Scale = { 1, 1 };            //same scale as object
+    m_Scale = { BaseWidth * 1, BaseWidth * 1 };            //same scale as object
     m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
     m_Alpha = 1.0f;
     m_Rotation = 0.0f;
@@ -87,6 +97,8 @@ const float GUISprite::GetHeight() const
 void GUISprite::SetPosition(const DirectX::SimpleMath::Vector2& position)
 {
     m_Position = position;
+    m_Position.x *= BaseWidth;
+    m_Position.y *= BaseHeight;
 }
 
 void GUISprite::SetOrigin(const DirectX::SimpleMath::Vector2& origin)
@@ -97,10 +109,12 @@ void GUISprite::SetOrigin(const DirectX::SimpleMath::Vector2& origin)
 void GUISprite::SetScale(const DirectX::SimpleMath::Vector2& scale)
 {
     m_Scale = scale;
+    m_Scale.x *= BaseWidth;
+    m_Scale.y *= BaseHeight;
 }
 void GUISprite::SetScale(const float x, const float y)
 {
-    m_Scale = { x, y };
+    m_Scale = { BaseWidth * x, BaseWidth * y };
 }
 
 void GUISprite::SetTint(const DirectX::SimpleMath::Color& color)
@@ -138,8 +152,8 @@ bool GUISprite::IntersectMouse() const
 
 #pragma endregion
 
-#define InsideX mousePos.x > m_Position.x - (m_Width / 2.0f) && mousePos.x < m_Position.x + (m_Width / 2.0f)
-#define InsideY mousePos.y > m_Position.y - (m_Height / 2.0f) && mousePos.y < m_Position.y + (m_Height / 2.0f)
+#define InsideX mousePos.x > m_Position.x - (m_Width * m_Scale.x / 2.0f) && mousePos.x < m_Position.x + (m_Width * m_Scale.x / 2.0f)
+#define InsideY mousePos.y > m_Position.y - (m_Height * m_Scale.y / 2.0f) && mousePos.y < m_Position.y + (m_Height * m_Scale.y / 2.0f)
 #define Intersect InsideX && InsideY
 
     return Intersect;

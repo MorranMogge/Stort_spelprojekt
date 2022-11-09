@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "DirectXMathHelper.h"
 #include "SendingDataEvent.h"
+#include "MemoryLeackChecker.h"
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
@@ -105,33 +106,61 @@ Game::~Game()
 
 void Game::loadObjects()
 {
-	//Meshes vector contents
-	//Sphere, pinto, potion, bat, Player, component, grenade
-
 	using namespace DirectX;
 	using namespace DirectX::SimpleMath;
 
-	float planetSize = 40.f;
+	//Variables 
+	GameObject* planet;
+	SpaceShip* spaceShipRed;
+	SpaceShip* spaceShipBlue;
+	Potion* potion;
+	BaseballBat* testBat;
+	Grenade* grenade;
+	Component* component;
+
+	//Load extra textures
+	MaterialLibrary::LoadDefault();
+	MaterialLibrary::LoadMaterial("spaceshipTexture1.jpg");
+	MaterialLibrary::LoadMaterial("spaceshipTexture2.jpg");
+	MaterialLibrary::LoadMaterial("pintoRed.png");
+	MaterialLibrary::LoadMaterial("pintoBlue.png");
+	MaterialLibrary::LoadMaterial("Red.png");
+
+	//Meshes vector contents
+	//Sphere, pinto, potion, rocket, rocket, bat, Player, component, grenade
+	meshes.push_back(new Mesh("../Meshes/Sphere"));
+	meshes.push_back(new Mesh("../Meshes/pinto"));
+	meshes.push_back(new Mesh("../Meshes/potion"));
+	meshes.push_back(new Mesh("../Meshes/rocket"));
+	meshes.push_back(new Mesh("../Meshes/bat"));
+	meshes.push_back(new Mesh("../Meshes/component"));
+	meshes.push_back(new Mesh("../Meshes/grenade"));
+
+	planet = new GameObject(meshes[0], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(40.0f, 40.0f, 40.0f));
+	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
+	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+	gameObjects.emplace_back(planet);
+	if (IFONLINE) return;
 
 	//Here we can add base object we want in the beginning of the game
-	potion = new Potion("../Meshes/potion", DirectX::SimpleMath::Vector3(0, -40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2, 0, &planetGravityField);
-	baseballBat = new BaseballBat("../Meshes/bat", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4, 0, &planetGravityField);
-	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(40, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6, GRENADE, &planetGravityField);
+	potion = new Potion(meshes[2], Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), POTION, 0, &planetGravityField);
+	baseballBat = new BaseballBat(meshes[4], Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, &planetGravityField);
+	grenade = new Grenade(meshes[6], DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, &planetGravityField);
 	actualTestObjectForLandingVisuals = new SpaceShip(DirectX::SimpleMath::Vector3(100, 100, 0), 1, 1, &planetGravityField, DirectX::SimpleMath::Vector3(2.0f, 2.0f, 2.0f));
+	component = new Component(meshes[5], DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT, 0, &planetGravityField);
 
 	planetMeshes = new Mesh("../Meshes/Sphere");
 	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize)));
 	planetVector.back()->setPlanetShape(&physWolrd);
-	//for (int i = 1; i < 100; i++)
-	//{
-	//	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(rand()%100*i, rand() % 100 * i, rand() % 100)));
-	//	planetVector.back()->setPlanetShape(&physWolrd);
-	//}
 	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(-55.f, -55.f, -55.f)));
 	planetVector.back()->setPlanetShape(&physWolrd);
 	asteroids = new AsteroidHandler(planetMeshes, physWolrd);
-	//asteroids.emplace_back(new Asteroid(planetMeshes, physWolrd, DirectX::XMFLOAT3(100, 100, 100), DirectX::XMFLOAT3(-1, -1, -1), 0.05f));
 
+	currentPlayer = new Player(meshes[1], Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, client, 0, &planetGravityField);
+	atmosphere = new GameObject(meshes[0], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(43, 43, 43));
+	
+	spaceShipRed = new SpaceShip(meshes[3], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, &planetGravityField, Vector3(2, 2, 2));
+	spaceShipBlue = new SpaceShip(meshes[3], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, &planetGravityField, Vector3(2, 2, 2));
 	items.emplace_back(potion);
 	items.emplace_back(baseballBat);
 	items.emplace_back(grenade);
@@ -157,8 +186,14 @@ void Game::loadObjects()
 	baseballBat->setPlayer(currentPlayer);
 	baseballBat->setTestObj(gameObjects);
 	grenade->setGameObjects(gameObjects);
+	spaceShipRed->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+	spaceShipBlue->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+	spaceShips.emplace_back(spaceShipRed);
+	spaceShips.emplace_back(spaceShipBlue);
+	components.emplace_back(component);
 
 	physWolrd.setPlanets(planetVector);
+	baseballBat->setClient(client);
 }
 
 void Game::drawShadows()
@@ -206,17 +241,56 @@ void Game::drawObjects(bool drawDebug)
 	ltHandler.unbindSrv();
 }
 
+void Game::drawIcons()
+{
+	for (int i = 0; i < items.size(); i++)
+	{
+		this->items[i]->drawIcon();
+	}
+	for (int i = 0; i < components.size(); i++)
+	{
+		this->components[i]->drawIcon();
+	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->drawIcon();
+	}
+	for (int i = 0; i < spaceShips.size(); i++)
+	{
+		spaceShips[i]->drawQuad();
+	}
+}
+
 void Game::drawParticles()
 {
-	for (int i = 0; i < this->ptEmitters.size(); i++)
+	for (int i = 0; i < items.size(); i++)
 	{
-		if (!this->ptEmitters.at(i).isActive() && this->ptEmitters.at(i).isPassComplete())
+		this->items[i]->drawParticles();
+	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->drawParticles();
+	}
+	for (int i = 0; i < components.size(); i++)
+	{
+		this->components[i]->drawParticles();
+	}
+	for (int i = 0; i < spaceShips.size(); i++)
+	{
+		spaceShips[i]->drawParticles();
+	}
+}
+
+void Game::drawFresnel()
+{
+	GPU::immediateContext->PSSetConstantBuffers(2, 1, colorBuffer.getReferenceOf());
+	atmosphere->draw();
+	for (int i = 0; i < items.size(); i++)
+	{
+		if(items[i]->getId() == ObjID::GRENADE)
 		{
-			//turn off
-		}
-		else
-		{
-			this->ptEmitters.at(i).BindAndDraw(0);
+			Grenade* tempNade = (Grenade*)items[i];
+			tempNade->drawFresnel();
 		}
 	}
 }
@@ -242,6 +316,7 @@ void Game::randomizeObjectPos(GameObject* object)
 void Game::updateBuffers()
 {
 	//Update GameObjects
+	/*
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->updateBuffer();
@@ -251,20 +326,12 @@ void Game::updateBuffers()
 	{
 		onlineItems[i]->updateBuffer();
 	}
-
+	*/
 }
 
 void Game::handleKeybinds()
 {
 	if (GetAsyncKeyState('C')) physWolrd.addBoxToWorld();
-
-	if (Input::KeyPress(KeyCode::T))
-	{
-		DirectX::XMFLOAT3 test(this->ptEmitters.at(0).getPosition().x, this->ptEmitters.at(0).getPosition().y, this->ptEmitters.at(0).getPosition().z - 10);
-		this->ptEmitters.at(0).setPosition(test);
-		this->ptEmitters.at(0).setRotation(DirectX::XMFLOAT3(-1, 0, 0));
-		this->ptEmitters.at(0).updateBuffer();
-	}
 	if (Input::KeyPress(KeyCode::Y))
 	{
 		this->ptEmitters.at(0).setActive(false);
@@ -320,11 +387,12 @@ GAMESTATE Game::Update()
 	currentPlayer->checkMovement();
 	currentPlayer->velocityMove(dt);
 
+	//Check component pickup
 	for (int i = 0; i < components.size(); i++)
 	{
 		if (currentPlayer->pickupItem(components[i])) break;
 	}
-
+	//Check item pickup
 	for (int i = 0; i < items.size(); i++)
 	{
 		if (currentPlayer->pickupItem(items[i])) break;
@@ -332,10 +400,29 @@ GAMESTATE Game::Update()
 
 	grenade->updateExplosionCheck();
 	if (potion->isTimeToRun())
+	//Update item checks
+	for (int i = 0; i < items.size(); i++)
 	{
-		if (potion->timerGoing()) currentPlayer->setSpeed(50.f);
-		else currentPlayer->setSpeed(25.f);
+		int id = items[i]->getId();
+		switch (id)
+		{
+			case ObjID::GRENADE:
+			{
+				Grenade* tempNade = (Grenade*)items[i];
+				tempNade->updateExplosionCheck();
+			}	break;
+			case ObjID::POTION:
+			{
+				Potion* tempPotion = (Potion*)items[i];
+				if (tempPotion->isTimeToRun())
+				{
+					if (tempPotion->timerGoing()) currentPlayer->setSpeed(50.f);
+					else currentPlayer->setSpeed(25.f);
+				}
+			}	break;
+		}
 	}
+
 
 	//sending data to server
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
@@ -347,7 +434,6 @@ GAMESTATE Game::Update()
 	
 	//Physics related functions
 	if (!IFONLINE) physWolrd.update(dt);
-	
 	for (int i = 0; i < players.size(); i++)
 	{
 		
@@ -363,16 +449,55 @@ GAMESTATE Game::Update()
 	}
 	
 	//Setting the camera at position
-	bool noWinners = true;
-	if (noWinners) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX());
+	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX());
+
+	//Check Components online
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
 		if (spaceShips[i]->getCompletion())
 		{
-			if (currentPlayer->getTeam() ==  i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot());
+			if (currentPlayer->getTeam() ==  i) 
+			{
+				camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot());
+			}
 			grav = planetGravityField.calcGravFactor(this->spaceShips[i]->getPosV3());
 			this->spaceShips[i]->move(grav, dt);
-			noWinners = true;
+			endTimer += dt;
+		}
+	}
+	if (!IFONLINE) //Check Components offline
+	{
+		for (int i = 0; i < spaceShips.size(); i++)
+		{
+			for (int j = 0; j < components.size(); j++)
+			{
+				if (spaceShips[i]->detectedComponent(components[j]))
+				{
+					currentPlayer->releaseItem();
+					randomizeObjectPos(components[j]);
+					spaceShips[i]->addComponent();
+					spaceShips[i]->setAnimate(true);
+				}
+			}
+		}
+	}
+	//Check winstate
+	if (endTimer > 6)
+	{
+		for (int i = 0; i < spaceShips.size(); i++)
+		{
+			if (spaceShips[i]->isFinished())
+			{
+				int team = spaceShips[i]->getTeam();
+				if (currentPlayer->getTeam() == team)
+				{
+					return WIN;
+				}
+				else
+				{
+					return LOSE;
+				}
+			}
 		}
 	}
 	if (landingMinigame)
@@ -380,6 +505,17 @@ GAMESTATE Game::Update()
 		camera.landingMinigameScene(planetVector[0], actualTestObjectForLandingVisuals->getPosV3(), actualTestObjectForLandingVisuals->getRot());
 	}
 
+
+	//Update Line rendering buffer
+	this->updateBuffers();
+
+	//Play pickup animation
+	for (int i = 0; i < spaceShips.size(); i++)
+	{
+		spaceShips[i]->animateOnPickup();
+	}
+
+	//Updates gameObject physics components
 	this->updateBuffers();
 	
 	//Check if item icon should change to pickup icon 
@@ -391,6 +527,7 @@ GAMESTATE Game::Update()
 	{
 		this->components[i]->checkDistance((GameObject*)(currentPlayer));
 	}
+
 	//Debug keybinds
 	this->handleKeybinds();
 
@@ -407,11 +544,15 @@ void Game::Render()
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
 
+	//Render fresnel objects
+	basicRenderer.fresnelPrePass(this->camera);
+	this->drawFresnel();
+
+
 	//Render Skybox
 	basicRenderer.skyboxPrePass();
-	this->skybox.draw();
+	skybox.draw();
 	basicRenderer.depthUnbind();
-
 
 	//Render imgui & wireframe
 	imGui.react3D(wireframe, objectDraw, landingMinigame, dt);
@@ -419,47 +560,12 @@ void Game::Render()
 
 	//render billboard objects
 	basicRenderer.bilboardPrePass(this->camera);
-	for (int i = 0; i < items.size(); i++)
-	{
-		this->items[i]->drawIcon();
-	}
-	for (int i = 0; i < components.size(); i++)
-	{
-		this->components[i]->drawIcon();
-	}
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->drawIcon();
-	}
-	for (int i = 0; i < spaceShips.size(); i++)
-	{
-		spaceShips[i]->drawQuad();
-	}
+	drawIcons();
 
 	//Render Particles
 	basicRenderer.geometryPass(this->camera);
-	//drawParticles();
-	//this->ptEmitters.at(0).unbind();
-
-	//drawParticles();	//not in use, intended for drawing particles in game.cpp
-	for (int i = 0; i < items.size(); i++)
-	{
-		this->items[i]->drawParticles();
-	}
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->drawParticles();
-	}
-	for (int i = 0; i < components.size(); i++)
-	{
-		this->components[i]->drawParticles();
-	}
-	for (int i = 0; i < spaceShips.size(); i++)
-	{
-		spaceShips[i]->drawParticles();
-	}
+	drawParticles();
 	basicRenderer.geometryUnbind();
-
 
 	//Render UI (needs to render last)
 	ui.Draw();

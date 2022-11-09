@@ -26,6 +26,7 @@ private:
 	std::unique_ptr<DirectX::GamePad> gamePad;
 
 	//Used for delta time
+	float endTimer;
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> currentTime;
 	std::chrono::time_point<std::chrono::system_clock> lastUpdate;
@@ -41,7 +42,6 @@ private:
 
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
-
 	PhysicsWorld physWolrd;
 	std::vector<Planet*> planetVector;
 	AsteroidHandler* asteroids;
@@ -56,9 +56,12 @@ private:
 	Camera camera;
 	SkyboxObj skybox;
 	Player* currentPlayer;
-	SpaceShip* spaceShip;
+	//SpaceShip* spaceShip;
 	Mesh* planetMeshes;
 	SpaceShip* actualTestObjectForLandingVisuals;
+	GameObject* atmosphere;
+	std::vector<Component*> components;
+	std::vector<SpaceShip*> spaceShips;
 
 	//Items
 	Potion* potion;
@@ -80,8 +83,14 @@ private:
 	//HUD
 	HudUI ui;
 	
+	//Temp buffer for atmosphere
+	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
+
+
 	void loadObjects();
 	void drawShadows();
+	void drawFresnel();
+	void drawIcons();
 	void drawObjects(bool drawDebug);
 	void drawParticles();
 	void updateBuffers();

@@ -5,7 +5,7 @@
 using namespace DirectX;
 
 SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
-	:GameObject(useMesh, pos, DirectX::XMFLOAT3(0,0,0), id, field, scale), compToComplete(nrofComp), currentComponents(0)
+	:GameObject(useMesh, pos, DirectX::XMFLOAT3(0,0,0), id, field, scale), compToComplete(nrofComp), currentComponents(0), team(team), animate(false), counter(0.0f)
 {
 	//Set rotation to gravity field
 	this->setRot(this->getRotOrientedToGrav());
@@ -20,21 +20,27 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
+	this->particles2 = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
+
 
 	//Team switch
 	switch (team)
 	{
-	case 0: 
+	case 0:
 		HudUI::red = this;
-		mesh->matKey[0] = "spaceshipTexture1.jpg"; break;
-	case 1: 
-		HudUI::blue = this;
+		mesh->matKey[0] = "spaceshipTexture1.jpg";
 		break;
+
+	case 1:
+		HudUI::blue = this;
+		mesh->matKey[0] = "spaceshipTexture2.jpg";
+		break;
+
 	}
 }
 
 SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
-	:GameObject("../Meshes/rocket", pos, DirectX::XMFLOAT3(0, 0, 0), id, field, scale), compToComplete(nrofComp), currentComponents(0)
+	:GameObject("../Meshes/rocket", pos, DirectX::XMFLOAT3(0, 0, 0), id, field, scale), compToComplete(nrofComp), currentComponents(0), team(team), animate(false), counter(0.0f)
 {
 	//Set rotation to gravity field
 	this->setRot(this->getRotOrientedToGrav());
@@ -49,6 +55,7 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
+	this->particles2 = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 
 	//Team switch
 	switch (team)
@@ -60,6 +67,7 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 
 	case 1:
 		HudUI::blue = this;
+		mesh->matKey[0] = "spaceshipTexture2.jpg";
 		break;
 
 	}
@@ -68,23 +76,24 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 SpaceShip::~SpaceShip()
 {
 	//Delete components?
-	for (int i = 0; i < this->components.size(); i++)
-	{
-		delete this->components.at(i);
-	}
+	//for (int i = 0; i < this->components.size(); i++)
+	//{
+	//	delete this->components.at(i);
+	//}
 	delete this->particles;
+	delete this->particles2;
 	delete this->rocketStatusQuad;
 }
 
-int SpaceShip::getNrOfComponents()
+int SpaceShip::getTeam() const
+{
+	return this->team;
+}
+
+int SpaceShip::getNrOfComponents() const
 {
 	 return currentComponents;
 }
-
-//void SpaceShip::addComponent()
-//{
-//	this->componentsAdded++;
-//}
 
 bool SpaceShip::detectedComponent(GameObject* objectToCheck)
 {
@@ -93,6 +102,10 @@ bool SpaceShip::detectedComponent(GameObject* objectToCheck)
 	if (this->withinRadious(objectToCheck, 8.0f))
 	{
 		didDetect = true;
+	}
+	else
+	{
+		this->setScale(DirectX::XMFLOAT3(2, 2, 2));
 	}
 	return didDetect;
 }
@@ -104,6 +117,10 @@ bool SpaceShip::detectedComponent(Component* componentToCheck)
 	if (this->withinRadious(componentToCheck, 8.0f))
 	{
 		didDetect = true;
+	}
+	else
+	{
+		this->setScale(DirectX::XMFLOAT3(2, 2, 2));
 	}
 	return didDetect;
 }
@@ -117,7 +134,7 @@ void SpaceShip::takeOff()
 {
 	//Icon initiation
 	DirectX::XMFLOAT3  pos = this->position;
-	static float constant = (float)(this->position.Length() *1.2);
+	static float constant = this->position.Length() *1.2f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	constant += 0.1f;
 	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
@@ -141,7 +158,7 @@ void SpaceShip::update()
 
 void SpaceShip::drawQuad()
 {
-	rocketStatusQuad->bindAndDraw((int)this->components.size(), 0);//Changes texture depending on components
+	rocketStatusQuad->bindAndDraw(this->currentComponents, 0);//Changes texture depending on components
 }
 
 bool SpaceShip::getCompletion() const
@@ -155,6 +172,11 @@ void SpaceShip::drawParticles()
 	{
 		this->particles->BindAndDraw(0);
 	}
+
+	if (animate)
+	{
+		particles2->BindAndDraw(1);
+	}
 }
 
 bool SpaceShip::isFinished()
@@ -167,6 +189,63 @@ bool SpaceShip::isFinished()
 	return complete;
 }
 
+void SpaceShip::draw()
+{
+	//Team switch
+	switch (this->team)
+	{
+	case 0:
+		HudUI::red = this;
+		mesh->matKey[0] = "spaceshipTexture1.jpg";
+		break;
+
+	case 1:
+		HudUI::blue = this;
+		mesh->matKey[0] = "spaceshipTexture2.jpg";
+		break;
+
+	}
+
+	this->mesh->UpdateCB(position, rotation, scale);
+	this->mesh->DrawWithMat();
+}
+
+
+void SpaceShip::setAnimate(const bool& onOff)
+{
+	this->animate = onOff;
+	this->counter = 0;
+	this->timer.resetStartTime();
+}
+
+void SpaceShip::animateOnPickup()
+{
+	if (animate)
+	{
+		float animationDuration = 0.3f;
+
+		this->counter += this->timer.getDt();
+		auto scale = this->getScale();
+		float constant = 0.5;
+
+		if (this->counter > (animationDuration / 2))
+		{
+			this->setScale({ scale.x + (animationDuration / 2) - this->counter,scale.y + (animationDuration / 2) - this->counter,scale.z + (animationDuration / 2) - this->counter });
+		}
+		else
+		{
+			this->setScale({ scale.x + this->counter + constant,scale.y + this->counter + constant ,scale.z + this->counter + constant });
+		}
+
+		this->timer.resetStartTime();
+
+		if (this->counter > animationDuration)
+		{
+			this->counter = 0;
+			this->animate = false;
+		}
+	}
+}
 void SpaceShip::move(const DirectX::XMFLOAT3& grav, const float& deltaTime)
 {
 	upVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);

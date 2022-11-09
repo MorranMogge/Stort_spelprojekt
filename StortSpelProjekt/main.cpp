@@ -128,7 +128,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	#pragma region Deallocation
 	delete currentState;
 	
-
+	ChangeResolution(1920, 1080);
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();

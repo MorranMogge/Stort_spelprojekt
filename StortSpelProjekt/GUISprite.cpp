@@ -17,7 +17,6 @@ GUISprite::GUISprite(const float x, const float y, const float layer)
     
     m_Position = DirectX::SimpleMath::Vector2(BaseWidth * x, BaseHeight * y);
     m_Layer = layer;
-    //m_pOrigin =;
     m_Scale = { BaseWidth * 1, BaseWidth * 1 };            //same scale as object
     m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
     m_Alpha = 1.0f;
@@ -33,7 +32,6 @@ GUISprite::GUISprite(const DirectX::SimpleMath::Vector2& position, float layer)
     m_Position.x *= BaseWidth;
     m_Position.y *= BaseHeight;
     m_Layer = layer;
-    //m_pOrigin =;
     m_Scale = { BaseWidth * 1, BaseWidth * 1 };            //same scale as object
     m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
     m_Alpha = 1.0f;

@@ -92,3 +92,13 @@ bool SetupWindow(HINSTANCE instance, UINT& width, UINT& height, int nCmdShow, HW
 	ShowWindow(window, nCmdShow);
 	return true;
 }
+
+void ChangeResolution(const UINT width, const UINT height)
+{
+	DEVMODE devmode;
+	devmode.dmPelsWidth = width;
+	devmode.dmPelsHeight = height;
+	devmode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
+	devmode.dmSize = sizeof(DEVMODE);
+	ChangeDisplaySettingsW(&devmode, 0);
+}

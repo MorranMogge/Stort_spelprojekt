@@ -40,7 +40,7 @@ public:
 	bool dropdown2 = false;
 
 	bool isDirectx = true;
-	bool is720p = true;
+	inline static bool is720p = true;
 
 	GAMESTATE GetGameState();
 

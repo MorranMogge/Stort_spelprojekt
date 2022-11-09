@@ -156,10 +156,10 @@ GravityField* Planet::getGravityField() const
 
 void Planet::drawPlanet()
 {
-	this->mesh->position = this->position;
-	this->mesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(rotation);
-	this->mesh->scale = scale;
+	//this->mesh->position = this->position;
+	//this->mesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(rotation);
+	//this->mesh->scale = scale;
 
-	this->mesh->UpdateCB();
+	this->mesh->UpdateCB(this->position, DirectX::XMMatrixRotationRollPitchYawFromVector(rotation), scale);
 	this->mesh->DrawWithMat();
 }

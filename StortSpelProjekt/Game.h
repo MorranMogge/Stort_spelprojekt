@@ -21,7 +21,7 @@ private:
 	bool wireframe = false;
 	bool objectDraw = true;
 	bool drawDebug = false;
-	bool landingMinigame = true;
+	bool landingMinigame = false;
 
 	std::unique_ptr<DirectX::GamePad> gamePad;
 
@@ -60,8 +60,6 @@ private:
 	Mesh* planetMeshes;
 	SpaceShip* actualTestObjectForLandingVisuals;
 	GameObject* atmosphere;
-	std::vector<Component*> components;
-	std::vector<SpaceShip*> spaceShips;
 
 	//Items
 	Potion* potion;

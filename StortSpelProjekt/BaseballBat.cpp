@@ -73,19 +73,19 @@ void BaseballBat::setClient(Client* client)
 	this->client = client;
 }
 
-void BaseballBat::setTestObj(const std::vector<GameObject*>& objects)
+void BaseballBat::setGameObjects(const std::vector<GameObject*>& objects)
 {
 	this->objects = objects;
 }
 
-void BaseballBat::setGameObjects(const std::vector<Player*>& objects)
-{
-	for (int i = 0; i < objects.size(); i++)
-	{
-		//if (objects[i] != this->player) this->objects.push_back(objects[i]);
-		this->objects.push_back(objects[i]);
-	}
-}
+//void BaseballBat::setGameObjects(const std::vector<Player*>& objects)
+//{
+//	for (int i = 0; i < objects.size(); i++)
+//	{
+//		//if (objects[i] != this->player) this->objects.push_back(objects[i]);
+//		this->objects.push_back(objects[i]);
+//	}
+//}
 
 void BaseballBat::useItem()
 {

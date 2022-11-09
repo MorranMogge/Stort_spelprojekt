@@ -759,7 +759,7 @@ void Player::releaseItem()
 	}
 }
 
-bool Player::checkForStaticCollision(const std::vector<GameObject*>& gameObjects)
+bool Player::checkForStaticCollision(const std::vector<Planet*>& gameObjects)
 {
 	SimpleMath::Vector3 vecPoint = this->position;
 	vecPoint += 1.f * forwardVector;
@@ -768,8 +768,8 @@ bool Player::checkForStaticCollision(const std::vector<GameObject*>& gameObjects
 	int gameObjSize = (int)gameObjects.size();
 	for (int i = 0; i < gameObjSize; i++)
 	{
-		if (gameObjects[i]->getPhysComp()->getType() != reactphysics3d::BodyType::STATIC || gameObjects[i] == this->holdingItem) continue;
-		if (gameObjects[i]->getPhysComp()->testPointInside(point)) 
+		//if (gameObjects[i]->getPlanetCollider()->getType() != reactphysics3d::BodyType::STATIC || gameObjects[i] == this->holdingItem) continue;
+		if (gameObjects[i]->getPlanetCollider()->testPointInside(point))
 		{
 			this->position -= 1.f * forwardVector;
 			return true;

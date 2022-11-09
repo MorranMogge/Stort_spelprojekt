@@ -66,8 +66,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		}
 	}
 	this->loadObjects();
-	baseballBat->setGameObjects(players);
-	baseballBat->setClient(client);
 
 	currentTime = std::chrono::system_clock::now();
 	lastUpdate = currentTime;
@@ -91,16 +89,16 @@ Game::~Game()
 			delete this->gameObjects.at(i);
 		}
 	}
-	for (int i = 0; i < players.size(); i++)
+	for (int i = 0; i < meshes.size(); i++)
 	{
-		//delete players[i];
+		delete meshes[i];
 	}
 	for (int i = 0; i < planetVector.size(); i++)
 	{
 		delete planetVector[i];
 	}
 	delete asteroids;
-	delete planetMeshes;
+	delete atmosphere;
 	delete actualTestObjectForLandingVisuals;
 }
 
@@ -110,12 +108,8 @@ void Game::loadObjects()
 	using namespace DirectX::SimpleMath;
 
 	//Variables 
-	GameObject* planet;
 	SpaceShip* spaceShipRed;
 	SpaceShip* spaceShipBlue;
-	Potion* potion;
-	BaseballBat* testBat;
-	Grenade* grenade;
 	Component* component;
 
 	//Load extra textures
@@ -136,31 +130,32 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/component"));
 	meshes.push_back(new Mesh("../Meshes/grenade"));
 
-	planet = new GameObject(meshes[0], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(40.0f, 40.0f, 40.0f));
-	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
-	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-	gameObjects.emplace_back(planet);
 	if (IFONLINE) return;
 
-	//Here we can add base object we want in the beginning of the game
+	//SOLAR SYSTEM SETUP
+
+	float planetSize = 40.f;
+	planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize)));
+	planetVector.back()->setPlanetShape(&physWolrd);
+	planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(-55.f, -55.f, -55.f)));
+	planetVector.back()->setPlanetShape(&physWolrd);
+	asteroids = new AsteroidHandler(meshes[0], physWolrd);
+	
+	//Make sure the physics world has access to the planets
+	physWolrd.setPlanets(planetVector);
+
+	//CREATE ITEMS
 	potion = new Potion(meshes[2], Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), POTION, 0, &planetGravityField);
 	baseballBat = new BaseballBat(meshes[4], Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, &planetGravityField);
 	grenade = new Grenade(meshes[6], DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, &planetGravityField);
-	actualTestObjectForLandingVisuals = new SpaceShip(DirectX::SimpleMath::Vector3(100, 100, 0), 1, 1, &planetGravityField, DirectX::SimpleMath::Vector3(2.0f, 2.0f, 2.0f));
+	actualTestObjectForLandingVisuals = new SpaceShip( meshes[3], DirectX::SimpleMath::Vector3(100, 100, 0), 1, 1, &planetGravityField, DirectX::SimpleMath::Vector3(2.0f, 2.0f, 2.0f));
 	component = new Component(meshes[5], DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT, 0, &planetGravityField);
 
-	planetMeshes = new Mesh("../Meshes/Sphere");
-	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize)));
-	planetVector.back()->setPlanetShape(&physWolrd);
-	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(-55.f, -55.f, -55.f)));
-	planetVector.back()->setPlanetShape(&physWolrd);
-	asteroids = new AsteroidHandler(planetMeshes, physWolrd);
-
-	currentPlayer = new Player(meshes[1], Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, client, 0, &planetGravityField);
-	atmosphere = new GameObject(meshes[0], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(43, 43, 43));
 	
-	spaceShipRed = new SpaceShip(meshes[3], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, &planetGravityField, Vector3(2, 2, 2));
-	spaceShipBlue = new SpaceShip(meshes[3], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, &planetGravityField, Vector3(2, 2, 2));
+	//currentPlayer = new Player(meshes[1], Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, client, 0, &planetGravityField);
+	atmosphere = new GameObject(meshes[0], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(43, 43, 43));
+
+	//EMPLACE ITEMS
 	items.emplace_back(potion);
 	items.emplace_back(baseballBat);
 	items.emplace_back(grenade);
@@ -169,6 +164,11 @@ void Game::loadObjects()
 	{
 		gameObjects.emplace_back(items[i]);
 	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		gameObjects.emplace_back(players[i]);
+	}
+
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		physWolrd.addPhysComponent(gameObjects[i], reactphysics3d::CollisionShapeName::BOX);
@@ -176,24 +176,36 @@ void Game::loadObjects()
 	}
 
 	
-	if (!currentPlayer) { currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, &planetGravityField); players.emplace_back(currentPlayer); }
+	//SPACE SHIPS
+	spaceShipRed = new SpaceShip(meshes[3], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, &planetGravityField, Vector3(2, 2, 2));
+	spaceShipBlue = new SpaceShip(meshes[3], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, &planetGravityField, Vector3(2, 2, 2));
+	
+	spaceShips.emplace_back(spaceShipBlue);
+	spaceShips.emplace_back(spaceShipRed);
+	
+	for (int i = 0; i < spaceShips.size(); i++)
+	{
+		physWolrd.addPhysComponent(spaceShips[i], reactphysics3d::CollisionShapeName::BOX);
+		spaceShips[i]->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+		gameObjects.emplace_back(spaceShips[i]);
+	}
+
+	components.emplace_back(component);
+	gameObjects.emplace_back(component);
+	physWolrd.addPhysComponent(component, reactphysics3d::CollisionShapeName::BOX);
+	
+
+	if (!currentPlayer) { currentPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, &planetGravityField); players.emplace_back(currentPlayer); }
 	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
-	for (int i = 0; i < players.size(); i++)
-	{
-		gameObjects.emplace_back(players[i]);
-	}
-	baseballBat->setPlayer(currentPlayer);
-	baseballBat->setTestObj(gameObjects);
-	grenade->setGameObjects(gameObjects);
-	spaceShipRed->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-	spaceShipBlue->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-	spaceShips.emplace_back(spaceShipRed);
-	spaceShips.emplace_back(spaceShipBlue);
-	components.emplace_back(component);
+	currentPlayer->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+	gameObjects.emplace_back(currentPlayer);
 
-	physWolrd.setPlanets(planetVector);
+	baseballBat->setPlayer(currentPlayer);
+	baseballBat->setGameObjects(gameObjects);
 	baseballBat->setClient(client);
+
+	grenade->setGameObjects(gameObjects);
 }
 
 void Game::drawShadows()
@@ -217,10 +229,6 @@ void Game::drawObjects(bool drawDebug)
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->draw();
-	}
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->draw();
 	}
 	for (int i = 0; i < planetVector.size(); i++)
 	{
@@ -316,8 +324,8 @@ void Game::randomizeObjectPos(GameObject* object)
 void Game::updateBuffers()
 {
 	//Update GameObjects
-	/*
-	for (int i = 0; i < gameObjects.size(); i++)
+	
+	/*for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->updateBuffer();
 	}
@@ -325,8 +333,8 @@ void Game::updateBuffers()
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
 		onlineItems[i]->updateBuffer();
-	}
-	*/
+	}*/
+	
 }
 
 void Game::handleKeybinds()
@@ -383,7 +391,7 @@ GAMESTATE Game::Update()
 	//Player functions
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), hitNormal, dt, testingVec);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
-	currentPlayer->checkForStaticCollision(gameObjects);
+	currentPlayer->checkForStaticCollision(planetVector);
 	currentPlayer->checkMovement();
 	currentPlayer->velocityMove(dt);
 
@@ -515,9 +523,6 @@ GAMESTATE Game::Update()
 		spaceShips[i]->animateOnPickup();
 	}
 
-	//Updates gameObject physics components
-	this->updateBuffers();
-	
 	//Check if item icon should change to pickup icon 
 	for (int i = 0; i < items.size(); i++)
 	{

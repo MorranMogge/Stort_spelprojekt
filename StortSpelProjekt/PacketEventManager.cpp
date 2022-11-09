@@ -29,6 +29,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	SpaceShip* newSpaceShip = nullptr;
 	Item* item = nullptr;
 	BaseballBat* baseballbat = nullptr;
+	ConfirmComponentPickedUp* confirmCmpPickedUp = nullptr;
+	
 
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{
@@ -187,6 +189,20 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 				}
 			}
+			break;
+
+		case PacketType::COMPONENTCONFIRMEDPICKUP:
+			confirmCmpPickedUp = circularBuffer->readData<ConfirmComponentPickedUp>();
+			
+			for (int i = 0; i < players.size(); i++)
+			{
+				if (players[i]->getOnlineID() == confirmCmpPickedUp->playerPickUpId)
+				{
+					//en av spelarna plockade upp en component
+					std::cout << "Confirm pickup recv\n";
+				}
+			}
+
 			break;
 		}
 	}

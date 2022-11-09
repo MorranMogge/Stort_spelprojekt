@@ -92,9 +92,10 @@ Player::~Player()
 	}
 }
 
-Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
+Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team, GravityField* field)
     :GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team)
 {
+	this->onlineID = onlineId;
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	this->client = client;
@@ -128,9 +129,10 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	}
 }
 
-Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
+Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team, GravityField* field)
 	:GameObject(objectPath, pos, rot, id, field), holdingItem(nullptr), team(team)
 {
+	this->onlineID = onlineId;
 	this->client = client;
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -689,7 +691,13 @@ bool Player::pickupItem(Item* itemToPickup)
 			holdingItem->getPhysComp()->getRigidBody()->resetForce();
 			holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 			holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-
+			
+			ComponentRequestingPickUp rqstCmpPickUp;
+			rqstCmpPickUp.componentId = itemToPickup->getOnlineId();
+			rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;
+			rqstCmpPickUp.playerId = this->getOnlineID();
+			//skickar en förfrågan att plocka upp item
+			client->sendStuff<ComponentRequestingPickUp>(rqstCmpPickUp);
 		}
 	}
 

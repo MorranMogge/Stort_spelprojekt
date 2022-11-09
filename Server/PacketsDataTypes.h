@@ -118,11 +118,13 @@ struct ComponentAdded
 	int spaceShipTeam;
 };
 
-//enum = 16
-struct ComponentPickedUp
+//requesting to pick up component
+//enum = {16}
+struct ComponentRequestingPickUp
 {
 	int packetId;
 	int componentId;
+	int playerId;
 };
 
 //enum = 17
@@ -130,6 +132,14 @@ struct ItemPickedUp
 {
 	int packetId;
 	int itemId;
+};
+
+//enum = 18
+struct ConfirmComponentPickedUp
+{
+	int packetId;
+	int componentId;
+	int playerPickUpId;
 };
 
 //enum = 21

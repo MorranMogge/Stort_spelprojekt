@@ -337,6 +337,7 @@ int main()
 			PlayerHit* playerHit = nullptr;
 			itemPosition* itemPos = nullptr;
 			ComponentDropped* cmpDropped = nullptr;
+			ComponentRequestingPickUp* requestingCmpPickedUp = nullptr;
 
 			switch (packetId)
 			{
@@ -382,7 +383,7 @@ int main()
 				{
 					if (components[i].getOnlineId() == compData->ComponentId)
 					{
-
+						//kanske inte GÖRA NÅGOT EFTERSOM MAN KAN TA POSITION FRÅN DEN SOM ÄR IN USE NÄR MAN FÅR SPELAR POSITION
 					}
 				}
 				//use later
@@ -402,7 +403,30 @@ int main()
 				}
 				break;
 
-			case PacketType::COMPONENTPICKEDUP:
+			case PacketType::COMPONENTREQUESTINGPICKUP:
+				requestingCmpPickedUp = circBuffer->readData<ComponentRequestingPickUp>();
+				for (int i = 0; i < components.size(); i++)
+				{
+					//kollar efter rätt component
+					if (components[i].getOnlineId() == requestingCmpPickedUp->componentId)
+					{
+						//kollar om componenten inte används
+						if (components[i].getInUseById() != -1)
+						{
+							std::cout << "requesting item " << std::to_string(requestingCmpPickedUp->componentId)
+								<< ", player set as inuseby: " << std::to_string(requestingCmpPickedUp->playerId) << std::endl;
+
+							//skickar en bekräftelse till alla spelare att komponenten är upplockad av en spelare
+							ConfirmComponentPickedUp sendConfirmComponentData;
+							sendConfirmComponentData.playerPickUpId = requestingCmpPickedUp->playerId;
+							sendConfirmComponentData.componentId = requestingCmpPickedUp->componentId;
+							sendConfirmComponentData.packetId = PacketType::COMPONENTCONFIRMEDPICKUP;
+							sendBinaryDataAllPlayers<ConfirmComponentPickedUp>(sendConfirmComponentData, data);
+							components[i].setInUseBy(requestingCmpPickedUp->componentId);
+						}
+					}
+				}
+
 
 				break;
 			case PacketType::PLAYERHIT:
@@ -461,13 +485,16 @@ int main()
 		}
 
 
+		
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
 		{
-			std::cout << "timer test\n";
-			
+			SpawnComponent cData = SpawnOneComponent(components);
+			physWorld.addPhysComponent(components[components.size() - 1]);
+			components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
+			sendBinaryDataAllPlayers(cData, data);
 			startComponentTimer = std::chrono::system_clock::now();
 		}
-		
+
 
 		//skickar itemSpawn
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)

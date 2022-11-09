@@ -3,6 +3,7 @@
 #include <d3d11.h>
 #include "ConstantBufferNew.h"
 #include "GPU.h"
+#include "Planet.h"
 
 #define MAXFOV 0.8f
 #define  MINFOV 0.5f
@@ -37,6 +38,7 @@ public:
 	void updateCamera();
 	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation);
 	void winScene(const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation);
+	void landingMinigameScene(const Planet* planet, const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation);
 	DirectX::XMVECTOR getForwardVector() const;
 	DirectX::XMVECTOR getRightVector() const;
 	ID3D11Buffer* getViewBuffer();

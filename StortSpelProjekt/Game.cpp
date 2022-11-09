@@ -100,6 +100,7 @@ Game::~Game()
 	}
 	delete asteroids;
 	delete planetMeshes;
+	delete actualTestObjectForLandingVisuals;
 }
 
 void Game::loadObjects()
@@ -116,7 +117,8 @@ void Game::loadObjects()
 	potion = new Potion("../Meshes/potion", DirectX::SimpleMath::Vector3(0, -40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2, 0, &planetGravityField);
 	baseballBat = new BaseballBat("../Meshes/bat", DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4, 0, &planetGravityField);
 	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(40, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6, GRENADE, &planetGravityField);
-	
+	actualTestObjectForLandingVisuals = new SpaceShip(DirectX::SimpleMath::Vector3(100, 100, 0), 1, 1, &planetGravityField, DirectX::SimpleMath::Vector3(2.0f, 2.0f, 2.0f));
+
 	planetMeshes = new Mesh("../Meshes/Sphere");
 	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize)));
 	planetVector.back()->setPlanetShape(&physWolrd);
@@ -144,9 +146,6 @@ void Game::loadObjects()
 		gameObjects[i]->getPhysComp()->setPosition(reactphysics3d::Vector3(gameObjects[i]->getPosV3().x, gameObjects[i]->getPosV3().y, gameObjects[i]->getPosV3().z));
 	}
 
-	baseballBat->setPlayer(currentPlayer);
-	baseballBat->setTestObj(gameObjects);
-	grenade->setGameObjects(gameObjects);
 	
 	if (!currentPlayer) { currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, &planetGravityField); players.emplace_back(currentPlayer); }
 	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
@@ -155,6 +154,11 @@ void Game::loadObjects()
 	{
 		gameObjects.emplace_back(players[i]);
 	}
+	baseballBat->setPlayer(currentPlayer);
+	baseballBat->setTestObj(gameObjects);
+	grenade->setGameObjects(gameObjects);
+
+	physWolrd.setPlanets(planetVector);
 }
 
 void Game::drawShadows()
@@ -187,6 +191,8 @@ void Game::drawObjects(bool drawDebug)
 	{
 		planetVector[i]->drawPlanet();
 	}
+	actualTestObjectForLandingVisuals->updateBuffer();
+	actualTestObjectForLandingVisuals->draw();
 	asteroids->drawAsteroids();
 
 	//Draw light debug meshes
@@ -290,6 +296,7 @@ GAMESTATE Game::Update()
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 
+	actualTestObjectForLandingVisuals->movePos(DirectX::XMFLOAT3(-dt * 5.f, -dt * 5.f, 0.f));
 	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
 	asteroids->updateAsteroids(dt, planetVector, gameObjects);
 
@@ -368,7 +375,10 @@ GAMESTATE Game::Update()
 			noWinners = true;
 		}
 	}
-	
+	if (landingMinigame)
+	{
+		camera.landingMinigameScene(planetVector[0], actualTestObjectForLandingVisuals->getPosV3(), actualTestObjectForLandingVisuals->getRot());
+	}
 
 	this->updateBuffers();
 	
@@ -404,7 +414,7 @@ void Game::Render()
 
 
 	//Render imgui & wireframe
-	imGui.react3D(wireframe, objectDraw, dt);
+	imGui.react3D(wireframe, objectDraw, landingMinigame, dt);
 	if (wireframe) { physWolrd.renderReact3D(); playerVecRenderer.drawLines(); }
 
 	//render billboard objects

@@ -1,9 +1,11 @@
 #pragma once
 #include "GameObject.h"
 #include "GravityField.h"
-#include "PhysicsWorld.h"
+#include "PhysicsComponent.h"
 
 #define PLANETGRAVSIZE 10.f
+
+class PhysicsWorld;
 
 enum PlanetShape
 {

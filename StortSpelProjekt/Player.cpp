@@ -28,8 +28,8 @@ void Player::throwItem()
 	DirectX::XMFLOAT3 temp;
 	DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5.f + this->normalVector * 0.5f));
 	newNormalizeXMFLOAT3(temp);
-	if (this->moveKeyPressed) 
-	{ 
+	if (this->moveKeyPressed)
+	{
 		if (this->currentSpeed == this->speed) scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.095f, temp);
 		else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
 	}
@@ -102,20 +102,12 @@ Player::~Player()
 }
 
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
-    :GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0), currentSpeed(0)
+	:GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0), currentSpeed(0)
 {
 	this->rotationMX = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	this->client = client;
 	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
-
-	/*normalVector = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 1.0f);
-	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-	normalVector = DirectX::XMVector3Normalize(normalVector);
-	rightVector = DirectX::XMVector3Normalize(rightVector);
-	forwardVector = DirectX::XMVector3Normalize(forwardVector);
-	this->rotate();*/
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);
@@ -268,10 +260,14 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	return false;
 }
 
-void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec)
+void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const bool& changedPlanet)
 {
-	if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
+	if (dedge) return;
+	else if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 	else normalVector = DirectX::XMVectorSet(grav.x, grav.y, grav.z, 1.0f);
+
+	if (changedPlanet) flipping = true;
+	else if (onGround) flipping = false;
 
 	//Calculations
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
@@ -282,58 +278,87 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec)
 
 	//X-Rotation
 	resultVector = DirectX::XMVector3Dot(normalVector, forwardVector);
-	if (resultVector.x < 0.0f)
+	if (resultVector.x < 0.f)
 	{
 		resultVector = DirectX::XMVector3Cross(rightVector, normalVector);
 		resultVector = DirectX::XMVector3Normalize(resultVector);
 		resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, resultVector);
 
-		rotation *= DirectX::XMMatrixRotationAxis(rightVector, -resultVector.x);
-		rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, -resultVector.x);
+		if (flipping)
+		{
+			angle = resultVector.x / 500.f;
+			rotation *= DirectX::XMMatrixRotationAxis(rightVector, -angle);
+			rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, -angle);
+		}
+		else
+		{
+			rotation *= DirectX::XMMatrixRotationAxis(rightVector, -resultVector.x);
+			rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, -resultVector.x);
+		}
 	}
-	else if (resultVector.x > 0.0f)
+	else if (resultVector.x > 0.f)
 	{
 		resultVector = DirectX::XMVector3Cross(rightVector, normalVector);
 		resultVector = DirectX::XMVector3Normalize(resultVector);
 		resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, resultVector);
 
-		rotation *= DirectX::XMMatrixRotationAxis(rightVector, resultVector.x);
-		rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, resultVector.x);
+		if (flipping)
+		{
+			angle = resultVector.x / 500.f;
+			rotation *= DirectX::XMMatrixRotationAxis(rightVector, angle);
+			rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, angle);
+		}
+		else
+		{
+			rotation *= DirectX::XMMatrixRotationAxis(rightVector, resultVector.x);
+			rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, resultVector.x);
+		}
 	}
-
-	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-	normalVector = DirectX::XMVector3Normalize(normalVector);
-	rightVector = DirectX::XMVector3Normalize(rightVector);
-	forwardVector = DirectX::XMVector3Normalize(forwardVector);
-
-	resultVector = DirectX::XMVector3Dot(normalVector, forwardVector);
 
 	//Z-Rotation
 	resultVector = DirectX::XMVector3Dot(normalVector, rightVector);
-	if (resultVector.z < 0.0f)
+	if (resultVector.z < 0.f)
 	{
 		resultVector = DirectX::XMVector3Cross(normalVector, forwardVector);
 		resultVector = DirectX::XMVector3Normalize(resultVector);
 		resultVector = DirectX::XMVector3AngleBetweenNormals(rightVector, resultVector);
 
-		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, resultVector.z);
-		rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, resultVector.z);
+		if (flipping)
+		{
+			angle = resultVector.x / 500.f;
+			rotation *= DirectX::XMMatrixRotationAxis(forwardVector, angle);
+			rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, angle);
+		}
+		else
+		{
+			rotation *= DirectX::XMMatrixRotationAxis(forwardVector, resultVector.z);
+			rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, resultVector.z);
+		}
 	}
-	else if (resultVector.z > 0.0f)
+	else if (resultVector.z > 0.f)
 	{
 		resultVector = DirectX::XMVector3Cross(normalVector, forwardVector);
 		resultVector = DirectX::XMVector3Normalize(resultVector);
 		resultVector = DirectX::XMVector3AngleBetweenNormals(rightVector, resultVector);
 
-		rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -resultVector.z);
-		rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, -resultVector.z);
+		if (flipping)
+		{
+			angle = resultVector.x / 500.f;
+			rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -angle);
+			rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, -angle);
+		}
+		else
+		{
+			rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -resultVector.z);
+			rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, -resultVector.z);
+		}
 	}
 }
 
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, float deltaTime)
 {
 	if (dedge) return;
+	else if (flipping) return;
 
 	//Running
 	this->currentSpeed = this->speed;
@@ -345,24 +370,17 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Jumping
 	if (onGround && Input::KeyPress(KeyCode::SPACE))
 	{
-		//jumpHeight = 0.f;
 		onGround = false;
-		this->velocity = this->normalVector*35.f;
+		this->velocity = this->normalVector * 45.f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.5f;
 	}
-	
+
 	//PC movement
 	if (movingCross(cameraForward, deltaTime)) {}
 
 	//Walking forward
 	else if (Input::KeyDown(KeyCode::W))
 	{
-		rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-		forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-		normalVector = DirectX::XMVector3Normalize(normalVector);
-		rightVector = DirectX::XMVector3Normalize(rightVector);
-		forwardVector = DirectX::XMVector3Normalize(forwardVector);
-
 		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
@@ -387,12 +405,6 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Walking backward
 	else if (Input::KeyDown(KeyCode::S))
 	{
-		rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-		forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-		normalVector = DirectX::XMVector3Normalize(normalVector);
-		rightVector = DirectX::XMVector3Normalize(rightVector);
-		forwardVector = DirectX::XMVector3Normalize(forwardVector);
-
 		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
@@ -417,12 +429,6 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Walking right
 	else if (Input::KeyDown(KeyCode::D))
 	{
-		rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-		forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-		normalVector = DirectX::XMVector3Normalize(normalVector);
-		rightVector = DirectX::XMVector3Normalize(rightVector);
-		forwardVector = DirectX::XMVector3Normalize(forwardVector);
-
 		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(cameraRight, rightVector);
@@ -447,12 +453,6 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Walking left
 	else if (Input::KeyDown(KeyCode::A))
 	{
-		rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-		forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-		normalVector = DirectX::XMVector3Normalize(normalVector);
-		rightVector = DirectX::XMVector3Normalize(rightVector);
-		forwardVector = DirectX::XMVector3Normalize(forwardVector);
-
 		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(-cameraRight, rightVector);
@@ -698,7 +698,7 @@ int Player::getItemOnlineType() const
 
 int Player::getItemOnlineId() const
 {
-	
+
 	return holdingItem->getOnlineId();
 }
 
@@ -740,12 +740,12 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 
 void Player::addItem(Item* itemToHold)
 {
-    if (!this->holdingItem)
+	if (!this->holdingItem)
 	{
 		this->holdingItem = itemToHold;
 		this->holdingItem->setPickedUp(true);
 	}
-    holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
+	holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 }
 
 void Player::releaseItem()
@@ -776,7 +776,7 @@ bool Player::checkForStaticCollision(const std::vector<GameObject*>& gameObjects
 	for (int i = 0; i < gameObjSize; i++)
 	{
 		if (gameObjects[i]->getPhysComp()->getType() != reactphysics3d::BodyType::STATIC || gameObjects[i] == this->holdingItem) continue;
-		if (gameObjects[i]->getPhysComp()->testPointInside(point)) 
+		if (gameObjects[i]->getPhysComp()->testPointInside(point))
 		{
 			this->position -= 1.f * forwardVector;
 			return true;
@@ -785,7 +785,7 @@ bool Player::checkForStaticCollision(const std::vector<GameObject*>& gameObjects
 	return false;
 }
 
-bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet *>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
+bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
 {
 	if (!dedge)
 	{
@@ -804,7 +804,7 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 	for (int i = 0; i < gameObjSize; i++)
 	{
 		int id = gameObjects.at(i)->getId();
-		if ( gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
+		if (gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
 		{
 			//Maybe somehow return the index of the triangle hit to calculate new Normal
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
@@ -848,44 +848,44 @@ bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) con
 
 bool Player::getHitByBat() const
 {
-    if (holdingItem != nullptr)
-    {
-        DirectX::SimpleMath::Vector3 newPos = this->position; 
-        newPos += 4*forwardVector;
-        
-        PhysicsComponent* itemPhysComp = holdingItem->getPhysComp();
-        holdingItem->setPos(newPos);
-        itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z}));
-        
-        //Throw the Item
-        if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
-        {
-            //Set dynamic so it can be affected by forces
-	        itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+	if (holdingItem != nullptr)
+	{
+		DirectX::SimpleMath::Vector3 newPos = this->position;
+		newPos += 4 * forwardVector;
 
-            //Calculate the force vector
-            DirectX::XMFLOAT3 temp;
-            DirectX::XMStoreFloat3(&temp, (this->forwardVector*5+ this->getUpDirection()));
-            newNormalizeXMFLOAT3(temp);
+		PhysicsComponent* itemPhysComp = holdingItem->getPhysComp();
+		holdingItem->setPos(newPos);
+		itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z }));
 
-            //Apply the force
-            itemPhysComp->applyLocalTorque(reactphysics3d::Vector3(temp.x * 500, temp.y * 500, temp.z * 500));
-            itemPhysComp->applyForceToCenter(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z * 1000));
+		//Throw the Item
+		if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
+		{
+			//Set dynamic so it can be affected by forces
+			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+
+			//Calculate the force vector
+			DirectX::XMFLOAT3 temp;
+			DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5 + this->getUpDirection()));
+			newNormalizeXMFLOAT3(temp);
+
+			//Apply the force
+			itemPhysComp->applyLocalTorque(reactphysics3d::Vector3(temp.x * 500, temp.y * 500, temp.z * 500));
+			itemPhysComp->applyForceToCenter(reactphysics3d::Vector3(temp.x * 1000, temp.y * 1000, temp.z * 1000));
 			holdingItem->setPickedUp(false);
 
-            //You no longer "own" the item
-            //holdingItem = nullptr;
-        }
-        //Use the Item
-        else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
-        {
-            itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
-            holdingItem->useItem();
-            itemPhysComp->setIsAllowedToSleep(true);
-            itemPhysComp->setIsSleeping(true);
+			//You no longer "own" the item
+			//holdingItem = nullptr;
+		}
+		//Use the Item
+		else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
+		{
+			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+			holdingItem->useItem();
+			itemPhysComp->setIsAllowedToSleep(true);
+			itemPhysComp->setIsSleeping(true);
 			holdingItem->setPickedUp(false);
-        }
-    }
+		}
+	}
 	return dedge;
 }
 
@@ -973,12 +973,12 @@ void Player::update()
 		reactQuaternion = this->physComp->getRotation();
 		dx11Quaternion = DirectX::SimpleMath::Quaternion(DirectX::SimpleMath::Vector4(reactQuaternion.x, reactQuaternion.y, reactQuaternion.z, reactQuaternion.w));
 		this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
-		if (timer.getTimePassed(5.f)) 
-		{ 
-			dedge = false; 
+		if (timer.getTimePassed(5.f))
+		{
+			dedge = false;
 			this->physComp->resetForce();
 			this->physComp->resetTorque();
-			this->physComp->setType(reactphysics3d::BodyType::STATIC); 
+			this->physComp->setType(reactphysics3d::BodyType::STATIC);
 			this->position = SimpleMath::Vector3(0, 60, 0);
 			this->resetRotationMatrix();
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
@@ -1021,7 +1021,7 @@ void Player::checkMovement()
 {
 	if (holdingComp)
 	{
-		if (this->holdingItem != nullptr) this->setSpeed(25.f*0.65f);
+		if (this->holdingItem != nullptr) this->setSpeed(25.f * 0.65f);
 		else this->setSpeed(25.f);
 	}
 }
@@ -1038,5 +1038,5 @@ void Player::resetVelocity()
 
 void Player::velocityMove(const float& dt)
 {
-	this->position += velocity * dt;
+	this->position += velocity * dt; //CHANGE!
 }

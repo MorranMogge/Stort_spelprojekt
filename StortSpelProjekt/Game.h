@@ -23,6 +23,9 @@ private:
 	bool drawDebug = false;
 
 	std::unique_ptr<DirectX::GamePad> gamePad;
+	GravityField* field;
+	GravityField* oldField;
+	bool changedPlanet = false;
 
 	//Used for delta time
 	float dt;

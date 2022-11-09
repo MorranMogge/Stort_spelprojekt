@@ -22,6 +22,7 @@ private:
 	const float speedConstant = 100.f;
 	float speed = 25.f;
 	float currentSpeed;
+	float angle = 0.f;
 	DirectX::SimpleMath::Vector3 resultVector;
 	DirectX::SimpleMath::Vector3 velocity; //FINALLY ADDED THIS F*****G STUPID VARIABLE
 	
@@ -30,6 +31,7 @@ private:
 	DirectX::XMFLOAT4X4 rotationFloat;
 
 	//Status
+	bool flipping = false;
 	bool onGround = false;
 	bool dedge = false;
 	bool moveKeyPressed = false;
@@ -79,7 +81,7 @@ public:
 	~Player();
 
 	//Move Functions
-	void rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec);
+	void rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const bool& changedPlanet);
 	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, float deltaTime);
 	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime);
 	void checkMovement();

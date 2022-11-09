@@ -125,7 +125,7 @@ void Game::loadObjects()
 	//	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(rand()%100*i, rand() % 100 * i, rand() % 100)));
 	//	planetVector.back()->setPlanetShape(&physWolrd);
 	//}
-	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(-55.f, -55.f, -55.f)));
+	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(-65.f, -65.f, -65.f)));
 	planetVector.back()->setPlanetShape(&physWolrd);
 	asteroids = new AsteroidHandler(planetMeshes, physWolrd);
 	//asteroids.emplace_back(new Asteroid(planetMeshes, physWolrd, DirectX::XMFLOAT3(100, 100, 100), DirectX::XMFLOAT3(-1, -1, -1), 0.05f));
@@ -155,6 +155,9 @@ void Game::loadObjects()
 	baseballBat->setPlayer(currentPlayer);
 	baseballBat->setTestObj(gameObjects);
 	grenade->setGameObjects(gameObjects);
+
+	field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
+	oldField = field;
 }
 
 void Game::drawShadows()
@@ -294,6 +297,11 @@ GAMESTATE Game::Update()
 	asteroids->updateAsteroids(dt, planetVector, gameObjects);
 
 	//Calculate gravity factor
+	field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
+	if (field != oldField) changedPlanet = true;
+	else changedPlanet = false;
+	oldField = field;
+
 	grav = planetVector[0]->getClosestFieldFactor(planetVector, currentPlayer->getPosV3());
 	currentPlayer->updateVelocity(getScalarMultiplicationXMFLOAT3(dt, grav));
 	//additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
@@ -307,7 +315,7 @@ GAMESTATE Game::Update()
 	if (testingVec || currentPlayer->getHitByBat()) currentPlayer->resetVelocity();
 	
 	//Player functions
-	currentPlayer->rotate(hitNormal, testingVec);
+	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
 	currentPlayer->checkForStaticCollision(gameObjects);

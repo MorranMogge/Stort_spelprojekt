@@ -19,10 +19,10 @@ class Player: public GameObject
 {
 private:
 	//Movement variables
-	const float speedConstant = 100.f;
+	float angle = 0.f;
 	float speed = 25.f;
 	float currentSpeed;
-	float angle = 0.f;
+	const float speedConstant = 100.f;
 	DirectX::SimpleMath::Vector3 resultVector;
 	DirectX::SimpleMath::Vector3 velocity; //FINALLY ADDED THIS F*****G STUPID VARIABLE
 	
@@ -31,28 +31,28 @@ private:
 	DirectX::XMFLOAT4X4 rotationFloat;
 
 	//Status
+	int team;
+	int onlineID;
+	bool dedge = false;
 	bool flipping = false;
 	bool onGround = false;
-	bool dedge = false;
-	bool moveKeyPressed = false;
 	bool holdingComp = false;
-	int onlineID;
-	int team;
+	bool moveKeyPressed = false;
 
 	//Controller variables
-	bool controllerConnected = true;
 	float posX = 0.0f;
 	float posY = 0.0f;
-	float totalPos = 0.0f;
 	float throttle = 0.0f;
+	float totalPos = 0.0f;
+	bool controllerConnected = true;
 
 	//Other variables
 	Client* client;
-	Item* holdingItem;
 	TimeStruct timer;
+	Item* holdingItem;
 
-	BilboardObject* playerIcon;
 	ParticleEmitter* particles;
+	BilboardObject* playerIcon;
 
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
@@ -94,12 +94,11 @@ public:
 	void setOnlineID(const int& id);
 	void setTeam(const int& team);
 	
-
 	//Get Functions
 	reactphysics3d::Vector3 getRayCastPos()const;
-	DirectX::XMVECTOR getUpVec() const;
-	DirectX::XMVECTOR getForwardVec() const;
-	DirectX::XMVECTOR getRightVec() const;
+	DirectX::XMVECTOR getUpVector() const;
+	DirectX::XMVECTOR getForwardVector() const;
+	DirectX::XMVECTOR getRightVector() const;
 	DirectX::XMMATRIX getRotationMX();
 	int getTeam() const;
 	int getOnlineID()const;
@@ -107,7 +106,6 @@ public:
 	float getSpeed()const;
 
 	//Item related functions
-
 	bool pickupItem(Item *itemToPickup);
 	Item* getItem()const;
 	void addItem(Item* itemToHold);
@@ -116,14 +114,13 @@ public:
 	void releaseItem();
 
 	//Collision and checks
-
 	void hitByBat(const reactphysics3d::Vector3& force);
 	bool checkForStaticCollision(const std::vector<GameObject*>& gameObjects);
 	bool raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	
+	//Updating and rendering
 	void drawIcon();
 	void drawParticles();
-
 	void update();
 };

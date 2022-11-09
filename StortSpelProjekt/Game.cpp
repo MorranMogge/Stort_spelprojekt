@@ -365,7 +365,7 @@ GAMESTATE Game::Update()
 	
 	//Setting the camera at position
 	bool noWinners = true;
-	if (noWinners) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), currentPlayer->getUpVec(), currentPlayer->getSpeed(), dt);
+	if (noWinners) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), currentPlayer->getUpVector(), currentPlayer->getSpeed(), dt);
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
 		if (spaceShips[i]->getCompletion())

@@ -101,7 +101,7 @@ void Game::loadObjects()
 	spaceShip = new SpaceShip(tmpMesh, DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
 	spaceShip->setSrv(this->manager.getSrv("spaceshipTexture2.jpg"));
 
-	this->manager.getAnimData("../Meshes/chest.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
+	this->manager.getAnimData("../Meshes/L.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
 	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	this->sexyMan = new AnimatedMesh(tmpMesh, DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 69);
 	this->sexyMan->addData(animData);
@@ -109,7 +109,7 @@ void Game::loadObjects()
 
 	player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
 	
-	this->manager.getMeshData("../Meshes/player.obj",vBuff, iBuff, subMeshRanges, verticies);
+	this->manager.getMeshData("../Meshes/L1.fbx",vBuff, iBuff, subMeshRanges, verticies);
 	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	testCube = new GameObject(tmpMesh, DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 	testCube->setSrv(manager.getSrv("playerTexture.png"));
@@ -124,7 +124,7 @@ void Game::loadObjects()
 	physWolrd.addPhysComponent(testBat, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(potion, reactphysics3d::CollisionShapeName::BOX);
 	physWolrd.addPhysComponent(otherPlayer, reactphysics3d::CollisionShapeName::BOX);
-
+	
 	testCube->getPhysComp()->setPosition(reactphysics3d::Vector3(100, 120, 100));
 	potion->getPhysComp()->setPosition(reactphysics3d::Vector3(potion->getPosV3().x, potion->getPosV3().y, potion->getPosV3().z));
 	testBat->getPhysComp()->setPosition(reactphysics3d::Vector3(testBat->getPosV3().x, testBat->getPosV3().y, testBat->getPosV3().z));
@@ -334,8 +334,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->manager.loadMeshData("../Meshes/Baseball.obj");
 	this->manager.loadMeshData("../Meshes/Sphere.obj");
 	this->manager.loadMeshData("../Meshes/rocket.obj");
+	this->manager.loadMeshData("../Meshes/L.fbx");
 	//this->manager.loadMeshData("../Meshes/flos.fbx");
-	this->manager.loadMeshAndBoneData("../Meshes/chest.fbx");
+	this->manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
+	this->manager.loadMeshAndBoneData("../Meshes/L1.fbx");
 
 	//this->tempSRV = this->manager.getSrv();
 	MaterialLibrary::LoadDefault();

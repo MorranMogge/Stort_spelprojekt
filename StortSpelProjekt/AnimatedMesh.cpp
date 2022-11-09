@@ -5,47 +5,42 @@
 
 void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, const nodes& node, DirectX::XMFLOAT4X4& parentTrasform)
 {
-	std::cout << "Node Name: " << node.nodeName << "\n";
-	animationNode an = this->MySimp.animation[animationIndex];
-
-	DirectX::XMMATRIX currentNodeTrans = DirectX::XMLoadFloat4x4(&node.trasformation);
-	channels amnNode;
-
-	if (this->findNodeAnim(node.nodeName, an, amnNode) && true)
-	{
-		DirectX::XMFLOAT3 Scaling;
-		this->InterpolateScaling(Scaling, animationTime, amnNode);
-		DirectX::XMMATRIX ScalingM = DirectX::XMMatrixScaling(Scaling.x, Scaling.y, Scaling.z);
-
-		DirectX::XMFLOAT4 r;
-		this->InterpolateRotation(r, animationTime, amnNode);
-		DirectX::XMMATRIX RotationM = DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorSet(r.x, r.y, r.z, r.w));
-
-		DirectX::XMFLOAT3 Translation;
-		this->InterpolatePos(Translation, animationTime, amnNode);
-		DirectX::XMMATRIX TranslationM = DirectX::XMMatrixTranslation(Translation.x, Translation.y, Translation.z);
-
-		currentNodeTrans = DirectX::XMMatrixIdentity();
-		currentNodeTrans = DirectX::XMMatrixMultiply(currentNodeTrans, ScalingM);
-		currentNodeTrans = DirectX::XMMatrixMultiply(currentNodeTrans, RotationM);
-		currentNodeTrans = DirectX::XMMatrixMultiply(currentNodeTrans, TranslationM);
-	}
-	if (node.nodeName == "joint2")
-	{
-		if (GetAsyncKeyState('K'))
-		{
-		currentNodeTrans = DirectX::XMMatrixTranslation(5, 120, 0);
-
-		}
-	}
-
-	DirectX::XMMATRIX PrevNode = DirectX::XMLoadFloat4x4(&parentTrasform);
-	const DirectX::XMMATRIX globalTrasform = DirectX::XMMatrixMultiply(currentNodeTrans, PrevNode);
-
+	//std::cout << "Node Name: " << node.nodeName << "\n";
 	DirectX::XMFLOAT4X4 finalTransfrom;
 
 	if (MySimp.boneNameToIndex.find(node.nodeName) != MySimp.boneNameToIndex.end())
 	{
+		animationNode an = this->MySimp.animation[animationIndex];
+
+		DirectX::XMMATRIX currentNodeTrans = DirectX::XMLoadFloat4x4(&node.trasformation);
+		channels amnNode;
+
+
+
+		if (this->findNodeAnim(node.nodeName, an, amnNode) && true)
+		{
+			DirectX::XMFLOAT3 Scaling;
+			this->InterpolateScaling(Scaling, animationTime, amnNode);
+			DirectX::XMMATRIX ScalingM = DirectX::XMMatrixScaling(Scaling.x, Scaling.y, Scaling.z);
+
+			DirectX::XMFLOAT4 r;
+			this->InterpolateRotation(r, animationTime, amnNode);
+			DirectX::XMMATRIX RotationM = DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorSet(r.x, r.y, r.z, r.w));
+
+			DirectX::XMFLOAT3 Translation;
+			this->InterpolatePos(Translation, animationTime, amnNode);
+			DirectX::XMMATRIX TranslationM = DirectX::XMMatrixTranslation(Translation.x, Translation.y, Translation.z);
+
+			currentNodeTrans = DirectX::XMMatrixIdentity();
+			currentNodeTrans = DirectX::XMMatrixMultiply(currentNodeTrans, ScalingM);
+			currentNodeTrans = DirectX::XMMatrixMultiply(currentNodeTrans, RotationM);
+			currentNodeTrans = DirectX::XMMatrixMultiply(currentNodeTrans, TranslationM);
+		}
+
+		DirectX::XMMATRIX PrevNode = DirectX::XMLoadFloat4x4(&parentTrasform);
+		const DirectX::XMMATRIX globalTrasform = DirectX::XMMatrixMultiply(currentNodeTrans, PrevNode);
+
+
 		int id = MySimp.boneNameToIndex[node.nodeName];
 
 		DirectX::XMMATRIX boneOffset = DirectX::XMLoadFloat4x4(&MySimp.boneVector[id].offsetMatrix);
@@ -53,15 +48,15 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 		finalMesh = DirectX::XMMatrixTranspose(finalMesh);
 		DirectX::XMStoreFloat4x4(&finalTransfrom, finalMesh);
 		strucBuff.getIndexData(id) = finalTransfrom;
+		DirectX::XMStoreFloat4x4(&finalTransfrom, globalTrasform);
+	}
+	else
+	{
+		finalTransfrom = parentTrasform;
 	}
 
-	DirectX::XMStoreFloat4x4(&finalTransfrom, globalTrasform);
 	for (int i = 0, end = node.children.size(); i < end; i++)
 	{
-		if (node.nodeName == "RootNode")
-		{
-			i = 1;
-		}
 
 		uppdateMatrices(animationIndex, animationTime, *node.children[i], finalTransfrom);
 	}
@@ -210,7 +205,7 @@ AnimatedMesh::AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOA
 	:GameObject(useMesh, pos, rot, id)
 {
 	this->totalTime = 0;
-	this->setScale(DirectX::XMFLOAT3(0.20, 0.20, 0.20));
+	this->setScale(DirectX::XMFLOAT3(0.2, 0.2, 0.2));
 	this->updateBuffer();
 	//strucBuff.Initialize(GPU::device, GPU::immediateContext, finalTransforms);
 	///();

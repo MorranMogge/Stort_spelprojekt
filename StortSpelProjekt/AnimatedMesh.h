@@ -30,8 +30,8 @@ struct boneInfo
 struct IndexBoneData
 {
 	//int boneName;
-	int BoneIDs[4] = { 0 };
-	float Weights[4] = { 0 };
+	int BoneIDs[4] = { 0,0,0,0 };
+	float Weights[4] = { 0,0,0,0 };
 };
 
 

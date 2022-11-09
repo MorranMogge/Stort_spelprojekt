@@ -651,11 +651,16 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 
 	DirectX::XMFLOAT4X4 temp;
 	DirectX::XMStoreFloat4x4(&temp, DirectX::XMMatrixIdentity());
-	this->calculateBoneInverse(*aniData.rootNode, temp);
+	//this->calculateBoneInverse(*aniData.rootNode, temp);
+	//this->numberBone(pScene->mRootNode, -1, temp);
 	
 	std::vector<AnimatedVertex> vertexAVec;
 	vertexAVec.reserve(this->dataForMesh.vertexTriangle.size());
 	AnimatedVertex tempVertex;
+	while (this->aniData.boneDataVec.size() < this->dataForMesh.vertexTriangle.size())
+	{
+		this->aniData.boneDataVec.emplace_back();
+	}
 	for (int i = 0, end = this->dataForMesh.vertexTriangle.size(); i < end; i++)
 	{
 		tempVertex.pos = this->dataForMesh.vertexTriangle[i].pos;

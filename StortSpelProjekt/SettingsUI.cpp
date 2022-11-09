@@ -2,6 +2,47 @@
 #include "SettingsUI.h"
 #include "Input.h"
 
+void ChangeResolution2(const unsigned int width, const unsigned int height)
+{
+	DEVMODE devmode;
+	devmode.dmPelsWidth = width;
+	devmode.dmPelsHeight = height;
+	devmode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
+	devmode.dmSize = sizeof(DEVMODE);
+	ChangeDisplaySettingsW(&devmode, 0);
+}
+void ReInitSwapChain()
+{
+	GPU::swapChain->Release();
+
+	Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice = 0;
+	GPU::device->QueryInterface(__uuidof(IDXGIDevice), (void**)dxgiDevice.GetAddressOf());
+	Microsoft::WRL::ComPtr<IDXGIAdapter> dxgiAdapter = 0;
+	dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)dxgiAdapter.GetAddressOf());
+	Microsoft::WRL::ComPtr<IDXGIFactory> dxgiFactory = 0;
+	dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)dxgiFactory.GetAddressOf());
+
+	DXGI_SWAP_CHAIN_DESC sd = {};
+
+	sd.BufferDesc.Width = 0;
+	sd.BufferDesc.Height = 0;
+	sd.BufferDesc.RefreshRate.Numerator = 0;
+	sd.BufferDesc.RefreshRate.Denominator = 1;
+	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+
+	sd.SampleDesc.Count = 1;
+	sd.SampleDesc.Quality = 0;
+	sd.BufferUsage = DXGI_USAGE_UNORDERED_ACCESS | DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	sd.BufferCount = 1;
+	sd.OutputWindow = GUI::hWnd;
+	sd.Windowed = true;
+	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	sd.Flags = 0;
+
+	dxgiFactory->CreateSwapChain(GPU::device, &sd, &GPU::swapChain);
+}
 
 void SettingsUI::HandleInputs()
 {
@@ -23,36 +64,45 @@ void SettingsUI::HandleInputs()
 			{
 				if (is720p)
 				{
-					DEVMODE devmode;
-					devmode.dmPelsWidth = 1280;
-					devmode.dmPelsHeight = 720;
-					devmode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
-					devmode.dmSize = sizeof(DEVMODE);
-					ChangeDisplaySettingsW(&devmode, 0);
-
 					GPU::windowWidth = 1280;
 					GPU::windowHeight = 720;
+					ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+
 					SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 					SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW);
 					GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
 					GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+					// get window client size
+					if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+					{
+						GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+						GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+					}
+
+					ReInitSwapChain();
+					gameState = SETTINGS;
 				}
 				else
 				{
-					DEVMODE devmode;
-					devmode.dmPelsWidth = 1920;
-					devmode.dmPelsHeight = 1080;
-					devmode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
-					devmode.dmSize = sizeof(DEVMODE);
-					ChangeDisplaySettingsW(&devmode, 0);
-
 					GPU::windowWidth = 1920;
 					GPU::windowHeight = 1080;
+					ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+
 					SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 					SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW);
 					GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
 					GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
 
+					// get window client size
+					if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+					{
+						GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+						GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+					}
+
+					ReInitSwapChain();
+					gameState = SETTINGS;
 
 				}
 
@@ -61,16 +111,10 @@ void SettingsUI::HandleInputs()
 			{
 				if (is720p)
 				{
-
-					DEVMODE devmode;
-					devmode.dmPelsWidth = 1920;
-					devmode.dmPelsHeight = 1080;
-					devmode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
-					devmode.dmSize = sizeof(DEVMODE);
-					ChangeDisplaySettingsW(&devmode, 0);
-
 					GPU::windowWidth = 1280;
 					GPU::windowHeight = 720;
+					ChangeResolution2(1920, 1080);
+
 					SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
 					SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
 
@@ -83,19 +127,16 @@ void SettingsUI::HandleInputs()
 
 					GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
 					GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+					ReInitSwapChain();
+					gameState = SETTINGS;
 				}
 				else
 				{
-
-					DEVMODE devmode;
-					devmode.dmPelsWidth = 1920;
-					devmode.dmPelsHeight = 1080;
-					devmode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
-					devmode.dmSize = sizeof(DEVMODE);
-					ChangeDisplaySettingsW(&devmode, 0);
-
 					GPU::windowWidth = 1920;
 					GPU::windowHeight = 1080;
+					ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+
 					SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
 					SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
 
@@ -108,6 +149,9 @@ void SettingsUI::HandleInputs()
 
 					GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
 					GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+					ReInitSwapChain();
+					gameState = SETTINGS;
 				}
 
 			}
@@ -127,12 +171,18 @@ void SettingsUI::HandleInputs()
 			is720p = true;
 			dropdown1 = false;
 			dropdown2 = false;
-
 			GPU::windowWidth = 1280;
 			GPU::windowHeight = 720;
-			SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+			if (fullscreen)
+			{
+				ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+				SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+			}
+			else
+			{
+				SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+			}
 			SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
-
 			// get window client size
 			if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
 			{
@@ -143,38 +193,9 @@ void SettingsUI::HandleInputs()
 			GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
 			GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
 
-			GPU::swapChain->Release();
-
-			IDXGIDevice* dxgiDevice = 0;
-			GPU::device->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice);
-			IDXGIAdapter* dxgiAdapter = 0;
-			dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&dxgiAdapter);
-			IDXGIFactory* dxgiFactory = 0;
-			dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
-
-			DXGI_SWAP_CHAIN_DESC sd = {};
-
-			sd.BufferDesc.Width = 0;
-			sd.BufferDesc.Height = 0;
-			sd.BufferDesc.RefreshRate.Numerator = 0;
-			sd.BufferDesc.RefreshRate.Denominator = 1;
-			sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-			sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-
-			//Default
-			sd.SampleDesc.Count = 1;
-			sd.SampleDesc.Quality = 0;
-			sd.BufferUsage = DXGI_USAGE_UNORDERED_ACCESS | DXGI_USAGE_RENDER_TARGET_OUTPUT;
-			sd.BufferCount = 1;
-			sd.OutputWindow = GUI::hWnd;
-			sd.Windowed = true;
-			sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-			sd.Flags = 0;
-
-			dxgiFactory->CreateSwapChain(GPU::device, &sd, &GPU::swapChain);
-
+			ReInitSwapChain();
 			gameState = SETTINGS;
+
 		}
 		else if (text1080p2.IntersectMouse() && dropdown1)
 		{
@@ -184,7 +205,16 @@ void SettingsUI::HandleInputs()
 
 			GPU::windowWidth = 1920;
 			GPU::windowHeight = 1080;
-			SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+
+			if (fullscreen)
+			{
+				ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+				SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+			}
+			else
+			{
+				SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+			}
 			SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
 
 			// get window client size
@@ -197,37 +227,7 @@ void SettingsUI::HandleInputs()
 			GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
 			GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
 			
-			GPU::swapChain->Release();
-
-			IDXGIDevice* dxgiDevice = 0;
-			GPU::device->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice);
-			IDXGIAdapter* dxgiAdapter = 0;
-			dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&dxgiAdapter);
-			IDXGIFactory* dxgiFactory = 0;
-			dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
-
-			DXGI_SWAP_CHAIN_DESC sd = {};
-
-			sd.BufferDesc.Width = 0;
-			sd.BufferDesc.Height = 0;
-			sd.BufferDesc.RefreshRate.Numerator = 0;
-			sd.BufferDesc.RefreshRate.Denominator = 1;
-			sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-			sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-
-			//Default
-			sd.SampleDesc.Count = 1;
-			sd.SampleDesc.Quality = 0;
-			sd.BufferUsage = DXGI_USAGE_UNORDERED_ACCESS | DXGI_USAGE_RENDER_TARGET_OUTPUT;
-			sd.BufferCount = 1;
-			sd.OutputWindow = GUI::hWnd;
-			sd.Windowed = true;
-			sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-			sd.Flags = 0;
-
-			dxgiFactory->CreateSwapChain(GPU::device, &sd, &GPU::swapChain);
-
+			ReInitSwapChain();
 			gameState = SETTINGS;
 
 		}

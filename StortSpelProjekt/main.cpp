@@ -93,7 +93,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			{
 			case GAME:
 				delete currentState;
-				currentState = new Game(immediateContext, device, swapChain, window);
+				currentState = new Game(immediateContext, device, GPU::swapChain, window);
 				break;
 			case SETTINGS:
 				delete currentState;
@@ -122,7 +122,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 		
 		currentState->Render();
 
-		swapChain->Present(0, 0);
+		GPU::swapChain->Present(0, 0);
 	}
 
 	#pragma region Deallocation
@@ -138,7 +138,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	device->Release();
 	immediateContext->Release();
-	swapChain->Release();
+	GPU::swapChain->Release();
 
 	#pragma endregion
 	

@@ -19,10 +19,10 @@ bool CreateInterfaces(const UINT& width, const UINT& height, HWND window, ID3D11
 	swapChainDesc.SampleDesc.Quality = 0;
 
 	swapChainDesc.BufferUsage = DXGI_USAGE_UNORDERED_ACCESS | DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.BufferCount = 2;
+	swapChainDesc.BufferCount = 1;
 	swapChainDesc.OutputWindow = window;
 	swapChainDesc.Windowed = true;
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	swapChainDesc.Flags = 0;
 
 	UINT flags = 0;

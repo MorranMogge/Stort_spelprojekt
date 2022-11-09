@@ -32,6 +32,7 @@ class SettingsUI final
 
 	void HandleInputs();
 	void SpritePass();
+	void Init();
 
 public:
 

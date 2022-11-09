@@ -147,7 +147,7 @@ bool GUISprite::IntersectMouse() const
     //}
 
     ImVec2 mousePos = ImGui::GetMousePos();
-#define InsideX mousePos.x > m_Position.x * BaseWidth - (m_Width * m_Scale.x / 2.0f) * BaseWidth && mousePos.x < m_Position.x * BaseWidth + (m_Width * m_Scale.x / 2.0f) * BaseWidth
-#define InsideY mousePos.y > m_Position.y * BaseHeight - (m_Height * m_Scale.y / 2.0f) * BaseHeight && mousePos.y < m_Position.y * BaseHeight + (m_Height * m_Scale.y / 2.0f) * BaseHeight
+#define InsideX mousePos.x > m_Position.x/* * BaseWidth*/ - (m_Width * m_Scale.x / 2.0f)/* * BaseWidth*/ && mousePos.x < m_Position.x/* * BaseWidth*/ + (m_Width * m_Scale.x / 2.0f)/* * BaseWidth*/
+#define InsideY mousePos.y > m_Position.y/* * BaseHeight*/ - (m_Height * m_Scale.y / 2.0f)/* * BaseHeight*/ && mousePos.y < m_Position.y/* * BaseHeight*/ + (m_Height * m_Scale.y / 2.0f)/* * BaseHeight*/
     return InsideX && InsideY;
 }

@@ -171,11 +171,11 @@ HudUI::HudUI()
 
 
 	useControls = GUISprite(300 + left, 600 + upp);
-	useControls.Load(GPU::device, L"../Sprites/ThrowText.png");
+	useControls.Load(GPU::device, L"../Sprites/ThrowText2.png");
 	useControls.SetScale(0.40f * scaleFactor, 0.40f * scaleFactor);
 
 	useControls1 = GUISprite(290 + left, 570 + upp);
-	useControls1.Load(GPU::device, L"../Sprites/UseText.png");
+	useControls1.Load(GPU::device, L"../Sprites/UseText2.png");
 	useControls1.SetScale(0.40f * scaleFactor, 0.40f * scaleFactor);
 }
 

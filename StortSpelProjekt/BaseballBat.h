@@ -1,7 +1,7 @@
 #pragma once
 #include "Item.h"
 
-#define FORCECONSTANT 8000;
+#define FORCECONSTANT 40000;
 
 class Player;
 class Client;

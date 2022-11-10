@@ -912,7 +912,7 @@ void Player::draw()
 		break;
 
 	}
-	this->mesh->UpdateCB(position, rotation, scale);
+	//this->mesh->UpdateCB(position, rotation, scale);
 	this->mesh->DrawWithMat();
 }
 

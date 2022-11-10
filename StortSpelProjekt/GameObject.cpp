@@ -257,7 +257,7 @@ void GameObject::updateBuffer()
 	this->mesh->scale = this->scale;
 
 	//Update constantbuffer
-	//this->mesh->UpdateCB();
+	this->mesh->UpdateCB(this->position, this->rotation, this->scale);
 }
 
 void GameObject::setMesh(const std::string& meshPath)

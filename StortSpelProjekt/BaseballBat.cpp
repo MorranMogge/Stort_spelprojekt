@@ -98,7 +98,7 @@ void BaseballBat::useItem()
     PhysicsComponent* physComp;
 
     batComp->setPosition(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
-    batComp->setScale(DirectX::XMFLOAT3(4.0f, 4.0f, 4.0f));
+    batComp->setScale(DirectX::XMFLOAT3(2 * 4.0f, 2 * 4.0f, 2 * 4.0f));
 
 	bool collided = false;
 	for (int i = 0; i < objects.size(); i++)

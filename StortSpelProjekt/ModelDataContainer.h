@@ -7,6 +7,7 @@
 #include<string>
 #include<tuple>
 
+
 class ModelDataContainer
 {
 public:
@@ -32,7 +33,7 @@ private:
 	std::unordered_map<std::string, ID3D11ShaderResourceView*> srvMap;
 	std::unordered_map<std::string, ID3D11ShaderResourceView*>::iterator srvIt;
 
-	std::tuple <ID3D11Buffer*, ID3D11Buffer*> meshTupel;
+	std::tuple<ID3D11Buffer*, ID3D11Buffer*> meshTupel;
 
 	std::unordered_map<std::string, std::tuple <ID3D11Buffer*, ID3D11Buffer*, std::vector<int>, std::vector<int>>> meshMap;
 	std::unordered_map<std::string, std::tuple <ID3D11Buffer*, ID3D11Buffer*, std::vector<int>, std::vector<int>>>::iterator meshIt;

@@ -98,10 +98,13 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		std::cout << color.b << "\n";
 
 
+		material->Get(AI_MATKEY_SHININESS, color);
+		std::cout << "Shinyness:\n" << color.r << "\n";
+		std::cout << color.g << "\n";
+		std::cout << color.b << "\n";
+
 		aiString Path;
 		
-		
-
 		
 		if (material->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{

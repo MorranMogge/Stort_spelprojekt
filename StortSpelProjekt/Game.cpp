@@ -562,7 +562,7 @@ void Game::Render()
 	if (objectDraw) drawObjects(drawDebug);
 
 	basicRenderer.setUpSceneNormalMap(this->camera);
-	
+	ltHandler.bindLightBuffers();
 	//ltHandler.bindLightBuffers();
 	testCube->drawObjectWithNormalMap();
 

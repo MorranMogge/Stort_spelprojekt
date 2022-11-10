@@ -71,7 +71,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	currentTime = std::chrono::system_clock::now();
 	lastUpdate = currentTime;
 	gamePad = std::make_unique<DirectX::GamePad>();
-	playerVecRenderer.setPlayer(currentPlayer);
+	playerVecRenderer.setPlayer(currentPlayer, arrow);
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 	serverStart = std::chrono::system_clock::now();
@@ -324,7 +324,6 @@ GAMESTATE Game::Update()
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
 	currentPlayer->checkForStaticCollision(gameObjects);
-	currentPlayer->checkMovement();
 	currentPlayer->velocityMove(dt);
 
 	for (int i = 0; i < components.size(); i++)
@@ -341,21 +340,6 @@ GAMESTATE Game::Update()
 	{
 		randomizeObjectPos(this->testBat);
 	}*/
-
-	this->arrow->moveWithCamera(camera.getPosition(), DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getUpVector()), currentPlayer->getRotationMX());
-	if (components.size() > 0)
-	{
-		//Arrow pointing to spaceship
-		if (currentPlayer->isHoldingComp())
-		{
-			for (int i = 0; i < spaceShips.size(); i++)
-			{
-				if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField.calcGravFactor(arrow->getPosition()));
-			}
-		}
-		//Arrow pointing to component
-		else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), planetGravityField.calcGravFactor(arrow->getPosition()));
-	}
 
 	grenade->updateExplosionCheck();
 	if (potion->isTimeToRun())
@@ -401,8 +385,22 @@ GAMESTATE Game::Update()
 			noWinners = true;
 		}
 	}
-	
 
+	this->arrow->moveWithCamera(camera.getPosition(), DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getUpVector()), currentPlayer->getRotationMX());
+	if (components.size() > 0)
+	{
+		//Arrow pointing to spaceship
+		if (currentPlayer->isHoldingComp())
+		{
+			for (int i = 0; i < spaceShips.size(); i++)
+			{
+				if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField.calcGravFactor(arrow->getPosition()));
+			}
+		}
+		//Arrow pointing to component
+		else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), planetGravityField.calcGravFactor(arrow->getPosition()));
+	}
+	
 	this->updateBuffers();
 	
 	//Check if item icon should change to pickup icon 

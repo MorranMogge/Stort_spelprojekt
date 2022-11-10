@@ -60,7 +60,7 @@ void AsteroidHandler::spawnAsteroids(const Planet* planet, int nrOf)
 		scalarMultiplicationXMFLOAT3(-1, dir);
 		newNormalizeXMFLOAT3(dir);
 
-		asteroids[i]->spawnAsteroid(spawnPos, dir, rand() % 41 + 10);
+		asteroids[i]->spawnAsteroid(spawnPos, dir, (float)(rand() % 41 + 10));
 		//asteroids[i]->spawnAsteroid(,);
 	}
 }

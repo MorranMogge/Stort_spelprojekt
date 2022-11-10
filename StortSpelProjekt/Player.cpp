@@ -1008,9 +1008,19 @@ bool Player::isHoldingComp()
 {
 	if (holdingComp)
 	{
-		if (this->holdingItem != nullptr) this->setSpeed(25.f * 0.65f);
-		else this->setSpeed(25.f);
+		if (this->holdingItem != nullptr)
+		{
+			this->setSpeed(25.f * 0.65f);
+			return true;
+		}
+		else
+		{
+			this->setSpeed(25.f);
+			return false;
+		}
 	}
+
+	return false;
 }
 
 void Player::updateVelocity(const DirectX::SimpleMath::Vector3& gravityVector)

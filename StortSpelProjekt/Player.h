@@ -84,7 +84,6 @@ public:
 	void rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const bool& changedPlanet);
 	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime);
 	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime);
-	void checkMovement();
 	void updateVelocity(const DirectX::SimpleMath::Vector3& gravityVec);
 	void resetVelocity();
 	void velocityMove(const float& dt);
@@ -112,6 +111,7 @@ public:
 	int getItemOnlineType()const;
 	int getItemOnlineId()const;
 	void releaseItem();
+	bool isHoldingComp();
 
 	//Collision and checks
 	void hitByBat(const reactphysics3d::Vector3& force);

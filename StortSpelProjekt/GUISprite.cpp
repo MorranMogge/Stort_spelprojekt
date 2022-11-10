@@ -3,6 +3,7 @@
 #include <DDSTextureLoader.h>
 #include <WICTextureLoader.h>
 #include "ImGui/imgui.h"
+#include "SettingsUI.h"
 
 GUISprite::GUISprite()
 {
@@ -55,7 +56,10 @@ void GUISprite::Load(ID3D11Device* device, const wchar_t* file)
 
 const DirectX::SimpleMath::Vector2& GUISprite::GetPosition() const
 {
-    return m_Position;
+    auto pos = m_Position;
+    pos.x /= BaseWidth;
+    pos.y /= BaseHeight;
+    return pos;
 }
 
 const DirectX::SimpleMath::Vector2& GUISprite::GetOrigin() const
@@ -96,8 +100,8 @@ const float GUISprite::GetHeight() const
 void GUISprite::SetPosition(const DirectX::SimpleMath::Vector2& position)
 {
     m_Position = position;
-    m_Position *= BaseWidth;
-    m_Position *= BaseHeight;
+    m_Position.x *= BaseWidth;
+    m_Position.y *= BaseHeight;
 }
 
 void GUISprite::SetOrigin(const DirectX::SimpleMath::Vector2& origin)

@@ -58,7 +58,7 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 	for (int i = 0, end = node.children.size(); i < end; i++)
 	{
 
-		uppdateMatrices(animationIndex, animationTime, *node.children[i], finalTransfrom);
+		uppdateMatrices(animationIndex, animationTime, node.children[i], finalTransfrom);
 	}
 }
 
@@ -198,7 +198,7 @@ void AnimatedMesh::getTimeInTicks(float dt)
 	DirectX::XMFLOAT4X4 startMatrix;
 	DirectX::XMMATRIX temp = DirectX::XMMatrixIdentity();
 	DirectX::XMStoreFloat4x4(&startMatrix, temp);
-	this->uppdateMatrices(0, timeInTicks, *MySimp.rootNode, startMatrix);
+	this->uppdateMatrices(0, timeInTicks, MySimp.rootNode, startMatrix);
 }
 
 AnimatedMesh::AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
@@ -225,7 +225,6 @@ AnimatedMesh::AnimatedMesh()
 
 AnimatedMesh::~AnimatedMesh()
 {
-	delete this->MySimp.rootNode;
 }
 
 void AnimatedMesh::addData(const AnimationData& data)

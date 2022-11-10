@@ -145,6 +145,9 @@ BasicRenderer::~BasicRenderer()
 	pt_gShader->Release();
 	shadowSampler->Release();
 	shadowRastirizer->Release();
+
+	this->animLayout->Release();
+	this->vShaderAnim->Release();
 }
 
 void BasicRenderer::lightPrePass()

@@ -320,40 +320,37 @@ int ModelManager::findBoneID(const std::string& name)
 	return bone_ID;
 }
 
-void ModelManager::recParseNodes(nodes* node, const aiNode* ainode)
+void ModelManager::recParseNodes(nodes& node, const aiNode* ainode)
 {
-	node->nodeName = ainode->mName.C_Str();
-	this->aiMatrixToXMmatrix(ainode->mTransformation, node->trasformation);
+	node.nodeName = ainode->mName.C_Str();
+	this->aiMatrixToXMmatrix(ainode->mTransformation, node.trasformation);
 	if(ainode->mNumChildren > 0)
 	{
-		node->children.reserve(ainode->mNumChildren);
+		node.children.reserve(ainode->mNumChildren);
 		if (ainode->mNumChildren == 3)
 		{
 			int bp = 2;
 		}
 		for (int i = 0, end = ainode->mNumChildren; i < end; i++)
 		{
-			node->children.push_back(new nodes);
-			node->children[i]->parent = node;
-			recParseNodes(node->children[i], ainode->mChildren[i]);
+			node.children.emplace_back();
+			recParseNodes(node.children[i], ainode->mChildren[i]);
 		}
 	}
 }
 
 void ModelManager::parseNode(const aiScene* scene)
 {
-	this->aniData.rootNode = new nodes;
-	this->aniData.rootNode->parent = nullptr;
+	this->aniData.rootNode;
 	
-	this->aniData.rootNode->nodeName = scene->mRootNode->mName.C_Str();
-	this->aiMatrixToXMmatrix(scene->mRootNode->mTransformation, this->aniData.rootNode->trasformation);
+	this->aniData.rootNode.nodeName = scene->mRootNode->mName.C_Str();
+	this->aiMatrixToXMmatrix(scene->mRootNode->mTransformation, this->aniData.rootNode.trasformation);
 
-	aniData.rootNode->children.reserve(scene->mRootNode->mNumChildren);
+	aniData.rootNode.children.reserve(scene->mRootNode->mNumChildren);
 	for (size_t i = 0; i < scene->mRootNode->mNumChildren; i++)
 	{
-		aniData.rootNode->children.push_back(new nodes);
-		aniData.rootNode->children[aniData.rootNode->children.size() - 1]->parent = aniData.rootNode;
-		recParseNodes(aniData.rootNode->children[aniData.rootNode->children.size() - 1], scene->mRootNode->mChildren[i]);
+		aniData.rootNode.children.emplace_back();
+		recParseNodes(aniData.rootNode.children[aniData.rootNode.children.size() - 1], scene->mRootNode->mChildren[i]);
 	}
 }
 
@@ -521,11 +518,6 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 	std::vector<AnimatedVertex> vertexAVec;
 	vertexAVec.reserve(this->dataForMesh.vertexTriangle.size());
 	AnimatedVertex tempVertex;
-	//while (this->aniData.boneDataVec.size() < this->dataForMesh.vertexTriangle.size())
-	//{
-	//	this->aniData.boneDataVec.emplace_back();
-	//	IndexBoneData hej = this->aniData.boneDataVec[this->aniData.boneDataVec.size()];
-	//}
 	
 	auto mesh1 = pScene->mMeshes[0];
 	auto mesh2 = pScene->mMeshes[1];

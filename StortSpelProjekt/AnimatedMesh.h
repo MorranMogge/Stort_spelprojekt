@@ -37,18 +37,9 @@ struct IndexBoneData
 
 struct nodes
 {
-	std::vector<nodes*> children;
+	std::vector<nodes> children;
 	std::string nodeName;
-	nodes* parent;
 	DirectX::XMFLOAT4X4 trasformation;
-	~nodes()
-	{
-		for (int i = 0; i < children.size(); i++)
-		{
-			delete children[i];
-		}
-		delete parent;
-	}
 };
 
 struct float3KeyFrame
@@ -94,7 +85,7 @@ struct animationNode
 
 struct AnimationData
 {	
-	nodes* rootNode;
+	nodes rootNode;
 	std::vector<animationNode> animation;
 	std::map<std::string, int> boneNameToIndex;
 	std::vector<boneInfo> boneVector;

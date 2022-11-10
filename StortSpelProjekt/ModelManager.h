@@ -77,7 +77,7 @@ private:
 	void loadBones(const aiMesh* mesh, const int vertexOffset);
 	int findAndAddBoneID(const std::string& name);
 	int findBoneID(const std::string& name);
-	void recParseNodes(nodes* node, const aiNode* ainode);
+	void recParseNodes(nodes& node, const aiNode* ainode);
 	void parseNode(const aiScene* scene);
 	void parseAnimation(const aiScene* scene);
 

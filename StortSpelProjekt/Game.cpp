@@ -378,7 +378,7 @@ Game::~Game()
 	//delete tmpMesh;
 	//delete tmp;
 	/*delete tmp2;*/
-	
+	delete this->sexyMan;
 	wireBuffer->Release();
 }
 

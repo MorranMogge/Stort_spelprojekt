@@ -2,16 +2,17 @@
 #include "HudUI.h"
 #include "Input.h"
 #include "SpaceShip.h"
+#include "Time.h"
 
 
 void HudUI::SpritePass()
 {
-	//if (red)//landing
-	//{
-	//	landing0.Draw();
-	//	landing1.Draw();
-	//	landing2.Draw();
-	//}
+	if (red)//landing
+	{
+		landing0.Draw();
+		landing1.Draw();
+		landing2.Draw();
+	}
 
 	if (red)
 	{
@@ -72,16 +73,16 @@ void HudUI::SpritePass()
 }
 
 HudUI::HudUI()
+	:landingCounter(0.0f)
 {
 	using namespace DirectX::SimpleMath;
 
 	#define Scale 0.4f
-
 	#define PositionRed Vector2(50, 620)
 	#define PositionBlue Vector2(125, 620)
 	#define Max Vector2(125, 90)
 	#define Min Vector2(125, 550)
-
+	timer.startTime;
 
 	landing0 = GUISprite(Vector2(125, 320));
 	landing0.Load(GPU::device, L"../Sprites/Bar.png");
@@ -89,13 +90,11 @@ HudUI::HudUI()
 
 	landing1 = GUISprite(125, (Min.y - Max.y) / 2);
 	landing1.Load(GPU::device, L"../Sprites/safeBox.png");
-	landing1.SetScale(0.2f, 0.2f);
+	landing1.SetScale(0.2f, 0.06f);
 
 	landing2 = GUISprite(125,(Min.y - Max.y)/2);
 	landing2.Load(GPU::device, L"../Sprites/ship.png");
 	landing2.SetScale(0.2f, 0.2f);
-
-
 
 	redTeam0 = GUISprite(PositionRed);
 	redTeam0.Load(GPU::device, L"../Sprites/team_r_0.png");
@@ -187,19 +186,34 @@ HudUI::~HudUI()
 
 void HudUI::handleInputs()
 {
+	static float speed = 1.0f;
+
+	static float counterDown = 0;
+	if (counterDown<=0)
+	{
+		counterDown = (float)(rand() % 3 + 1);
+		speed = 1.0f * counterDown;
+	}
+	counterDown -= Time::DeltaTimeInSeconds();
+
+	std::cout << counterDown<< std::endl;
 	using namespace DirectX::SimpleMath;
 	Vector2 rocketPos = landing2.GetPosition();
 	Vector2 safePos = landing1.GetPosition();
+	float sinCurve = (sin(timer.getDt())*0.5) + 0.5;
 
 
-
+	//Move "safezone" sprite
+	landing1.SetPosition(Vector2(Max.x, 90 + sinCurve * 460));
+	
+	//Move player sprite
 	if (Input::KeyDown(KeyCode::W) || Input::KeyDown(KeyCode::ARROW_Up))
 	{
-		Vector2 test(rocketPos.x , rocketPos.y - 1);
+		Vector2 test(rocketPos.x , rocketPos.y - 3);
 
-		if (rocketPos.y < Max.y)
+		if (rocketPos.y < Max.y-25)
 		{
-			landing2.SetPosition(Max);
+			landing2.SetPosition(Vector2(Max.x, rocketPos.y));
 		}
 		else
 		{
@@ -208,16 +222,22 @@ void HudUI::handleInputs()
 	}
 	if (Input::KeyDown(KeyCode::S) || Input::KeyDown(KeyCode::ARROW_Down))
 	{
-		Vector2 test(rocketPos.x , rocketPos.y + 1);
+		Vector2 test(rocketPos.x , rocketPos.y + 3);
 
-		if (rocketPos.y > Min.y)
+		if (rocketPos.y > Min.y + 25)
 		{
-			landing2.SetPosition(Min);
+			landing2.SetPosition(Vector2(Max.x, rocketPos.y));
 		}
 		else
 		{
 			landing2.SetPosition(test);
 		}
+	}
+	
+	//Check sprite intersection
+	if (landing1.IntersectSprite(landing2))
+	{
+		//std::cout << "intersects" << std::endl;
 	}
 }
 

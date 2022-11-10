@@ -153,3 +153,12 @@ bool GUISprite::IntersectMouse() const
 #define InsideY mousePos.y > m_Position.y - (m_Height * m_Scale.y / 2.0f) && mousePos.y < m_Position.y + (m_Height * m_Scale.y / 2.0f)
     return InsideX && InsideY;
 }
+
+bool GUISprite::IntersectSprite(const GUISprite & toCheck) const
+{
+    using namespace DirectX::SimpleMath;
+    Vector2 mousePos = toCheck.GetPosition();
+#define InsideX mousePos.x > m_Position.x - (m_Width * m_Scale.x / 2.0f) && mousePos.x < m_Position.x + (m_Width * m_Scale.x / 2.0f)
+#define InsideY mousePos.y > m_Position.y - (m_Height * m_Scale.y / 2.0f) && mousePos.y < m_Position.y + (m_Height * m_Scale.y / 2.0f)
+    return InsideX && InsideY;
+}

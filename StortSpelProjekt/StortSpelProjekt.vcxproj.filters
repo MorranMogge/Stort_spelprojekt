@@ -443,6 +443,9 @@
     <ClInclude Include="Credits.h">
       <Filter>GUI</Filter>
     </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

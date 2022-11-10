@@ -18,6 +18,7 @@
 #include "CreditsMenu.h"
 #include "WinMenu.h"
 #include "LoseMenu.h"
+#include "Time.h"
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace, _In_ LPWSTR lpCmdLine, _In_ int nCmdShhow)
@@ -63,7 +64,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	GAMESTATE stateInfo = NOCHANGE;
 
 	MSG msg = {};
-	
+	Time::Start();
 
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
@@ -86,7 +87,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 		if (GetAsyncKeyState(VK_ESCAPE))
 			stateInfo = EXIT;
-
+		Time::Update();
 		if (stateInfo != NOCHANGE)
 		{
 			switch (stateInfo)

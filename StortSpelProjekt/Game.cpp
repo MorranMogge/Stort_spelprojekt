@@ -409,6 +409,11 @@ GAMESTATE Game::Update()
 			{
 				Grenade* tempNade = (Grenade*)items[i];
 				tempNade->updateExplosionCheck();
+				if (tempNade->getExploded() == true)
+				{
+					randomizeObjectPos(tempNade);
+					tempNade->setExploded(false);
+				}
 			}	break;
 			case ObjID::POTION:
 			{
@@ -474,7 +479,13 @@ GAMESTATE Game::Update()
 			{
 				if (spaceShips[i]->detectedComponent(components[j]))
 				{
-					currentPlayer->releaseItem();
+					if (currentPlayer->getItem() != nullptr)
+					{
+						if (currentPlayer->getItem()->getId() == ObjID::COMPONENT)
+						{
+							currentPlayer->releaseItem();
+						}
+					}
 					randomizeObjectPos(components[j]);
 					spaceShips[i]->addComponent();
 					spaceShips[i]->setAnimate(true);

@@ -2,6 +2,7 @@
 #include "GUISprite.h"
 #include "GUIText.h"
 #include "Player.h"
+#include "TimeStruct.h"
 class SpaceShip;
 
 class HudUI final
@@ -32,6 +33,10 @@ class HudUI final
 	GUISprite controls;
 	GUISprite useControls;
 	GUISprite useControls1;
+
+	TimeStruct rocketTimer;
+	TimeStruct timer;
+	float landingCounter;
 
 	void SpritePass();
 

@@ -35,7 +35,7 @@ public:
 
 	//Render
 	virtual void Draw();
-
+	bool IntersectSprite(const GUISprite& toCheck) const;
 	bool IntersectMouse() const;
 
 protected:

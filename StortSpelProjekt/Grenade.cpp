@@ -5,7 +5,7 @@
 #include "PhysicsComponent.h"
 
 Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
-	:Item(useMesh, pos, rot, id, onlineId, GRENADE, field), destructionIsImminent(false), timeToExplode(5.f), currentTime(0.0f)
+	:Item(useMesh, pos, rot, id, onlineId, GRENADE, field), destructionIsImminent(false), exploded(false), timeToExplode(5.f), currentTime(0.0f), explodePosition(0,0,0)
 {
 
 	//Particles
@@ -28,7 +28,7 @@ Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMF
 }
 
 Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
-	:Item(objectPath, pos, rot, id, onlineId, GRENADE, field), destructionIsImminent(false), timeToExplode(5.f), currentTime(0.0f)
+	:Item(objectPath, pos, rot, id, onlineId, GRENADE, field), destructionIsImminent(false), exploded(false), timeToExplode(5.f), currentTime(0.0f), explodePosition(0, 0, 0)
 {
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 36, DirectX::XMFLOAT2(2, 5), 4);
@@ -57,6 +57,8 @@ Grenade::~Grenade()
 void Grenade::explode()
 {
 	std::cout << "THE GRENADE EXPLODED\n";
+	exploded = true;
+	explodePosition = this->position;
 	int iterations = (int)gameObjects.size();
 	for (int i = 0; i < iterations; i++)
 	{
@@ -175,7 +177,7 @@ void Grenade::drawFresnel()
 		GPU::immediateContext->PSSetConstantBuffers(2, 1, this->colorBuffer.getReferenceOf());
 		this->explosionMesh->DrawWithMat();
 		this->explosionMesh->scale = DirectX::XMFLOAT3(this->explosionMesh->scale.x - (currentTime / 4) , this->explosionMesh->scale.y - (currentTime / 4), this->explosionMesh->scale.z - (currentTime / 4));
-		this->explosionMesh->UpdateCB(position, rotation, this->explosionMesh->scale);
+		this->explosionMesh->UpdateCB(explodePosition, rotation, this->explosionMesh->scale);
 	}
 }
 
@@ -188,4 +190,14 @@ void Grenade::useItem()
 		timer.resetStartTime();
 		timer2.resetStartTime();
 	}
+}
+
+bool Grenade::getExploded() const
+{
+	return this->exploded;
+}
+
+void Grenade::setExploded(const bool& onOff)
+{
+	this->exploded = onOff;
 }

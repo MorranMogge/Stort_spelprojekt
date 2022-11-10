@@ -100,6 +100,7 @@ Game::~Game()
 	}
 	delete asteroids;
 	delete planetMeshes;
+	delete arrow;
 }
 
 void Game::loadObjects()
@@ -116,6 +117,8 @@ void Game::loadObjects()
 	potion = new Potion("../Meshes/potion", DirectX::SimpleMath::Vector3(0, -40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 2, 0, &planetGravityField);
 	baseballBat = new BaseballBat("../Meshes/bat", DirectX::SimpleMath::Vector3(40, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 4, 0, &planetGravityField);
 	grenade = new Grenade("../Meshes/grenade", DirectX::SimpleMath::Vector3(40, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6, GRENADE, &planetGravityField);
+	arrow = new Arrow("../Meshes/arrow", DirectX::SimpleMath::Vector3(0, 40, 0));
+
 	
 	planetMeshes = new Mesh("../Meshes/Sphere");
 	planetVector.emplace_back(new Planet(planetMeshes, DirectX::XMFLOAT3(planetSize, planetSize, planetSize)));
@@ -182,6 +185,7 @@ void Game::drawObjects(bool drawDebug)
 	{
 		gameObjects[i]->draw();
 	}
+
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->draw();
@@ -243,6 +247,7 @@ void Game::updateBuffers()
 	{
 		gameObjects[i]->updateBuffer();
 	}
+	arrow->update();
 	
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
@@ -332,6 +337,26 @@ GAMESTATE Game::Update()
 		if (currentPlayer->pickupItem(items[i])) break;
 	}
 
+	/*if (Input::KeyPress(KeyCode::K))
+	{
+		randomizeObjectPos(this->testBat);
+	}*/
+
+	this->arrow->moveWithCamera(camera.getPosition(), DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getUpVector()), currentPlayer->getRotationMX());
+	if (components.size() > 0)
+	{
+		//Arrow pointing to spaceship
+		if (currentPlayer->isHoldingComp())
+		{
+			for (int i = 0; i < spaceShips.size(); i++)
+			{
+				if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField.calcGravFactor(arrow->getPosition()));
+			}
+		}
+		//Arrow pointing to component
+		else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), planetGravityField.calcGravFactor(arrow->getPosition()));
+	}
+
 	grenade->updateExplosionCheck();
 	if (potion->isTimeToRun())
 	{
@@ -370,7 +395,7 @@ GAMESTATE Game::Update()
 	{
 		if (spaceShips[i]->getCompletion())
 		{
-			if (currentPlayer->getTeam() ==  i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot());
+			if (currentPlayer->getTeam() == i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot());
 			grav = planetGravityField.calcGravFactor(this->spaceShips[i]->getPosV3());
 			this->spaceShips[i]->move(grav, dt);
 			noWinners = true;
@@ -404,6 +429,7 @@ void Game::Render()
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
+	arrow->draw();
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();

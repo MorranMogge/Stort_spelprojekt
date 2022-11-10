@@ -44,6 +44,7 @@ GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos
 	}
 	
 	// set position
+	this->position = pos;
 	this->mesh->position = pos;
 
 	// set rotation

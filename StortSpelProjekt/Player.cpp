@@ -135,6 +135,7 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 {
 	this->client = client;
 	this->rotationMX = XMMatrixIdentity();
+	this->setRot(this->getRotOrientedToGrav());
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
 
@@ -1003,7 +1004,7 @@ void Player::setTeam(const int& team)
 	}
 }
 
-void Player::checkMovement()
+bool Player::isHoldingComp()
 {
 	if (holdingComp)
 	{

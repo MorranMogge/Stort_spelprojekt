@@ -39,9 +39,8 @@ bool PlayerVectors::setUpVertexBuffer()
 void PlayerVectors::updateVertexBuffer()
 {
 	
-		vectors[0].position = vectors[1].position = vectors[2].position = 
-		vectors[3].position = vectors[4].position = vectors[5].position =
-		vectors[6].position = vectors[7].position = this->player->getPos();
+	vectors[0].position = vectors[1].position = this->arrow->getPosition();
+	vectors[2].position = vectors[3].position = vectors[4].position = vectors[5].position = vectors[6].position = vectors[7].position = this->player->getPos();
 		
 		vectors[1].position += this->player->getForwardVector() * 50;
 		vectors[3].position += this->player->getUpVector() * 50;
@@ -68,13 +67,13 @@ PlayerVectors::~PlayerVectors()
 	pShader->Release();
 }
 
-void PlayerVectors::setPlayer(Player* player)
+void PlayerVectors::setPlayer(Player* player, Arrow* arrow)
 {
 	this->player = player;
+	this->arrow = arrow;
 
-	vectors[0].position = vectors[1].position = vectors[2].position =
-		vectors[3].position = vectors[4].position = vectors[5].position = 
-		vectors[6].position = vectors[7].position = this->player->getPos();
+	vectors[0].position = vectors[1].position = this->arrow->getPosition();
+	vectors[2].position = vectors[3].position = vectors[4].position = vectors[5].position = vectors[6].position = vectors[7].position = this->player->getPos();
 
 	vectors[1].position += this->player->getForwardVector() * 100;
 	vectors[3].position += this->player->getUpVector() * 100;

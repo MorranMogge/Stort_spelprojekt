@@ -193,7 +193,6 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 			resultVector = DirectX::XMVector3AngleBetweenNormalsEst(forwardVector, northEastVector);
 			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x * 0.3f);
 		}
-
 		return true;
 	}
 
@@ -213,7 +212,6 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 			resultVector = DirectX::XMVector3AngleBetweenNormalsEst(forwardVector, northWestVector);
 			rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x * 0.3f);
 		}
-
 		return true;
 	}
 
@@ -233,7 +231,6 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 			resultVector = DirectX::XMVector3AngleBetweenNormalsEst(forwardVector, southEastVector);
 			rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x * 0.3f);
 		}
-
 		return true;
 	}
 
@@ -253,7 +250,6 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 			resultVector = DirectX::XMVector3AngleBetweenNormalsEst(forwardVector, southWestVector);
 			rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x * 0.3f);
 		}
-
 		return true;
 	}
 
@@ -285,12 +281,14 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 		resultVector = DirectX::XMVector3Normalize(resultVector);
 		resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, resultVector);
 
+		//Changing planet, rotating slow
 		if (flipping)
 		{
 			angle = resultVector.x * 0.002f;
 			rotation *= DirectX::XMMatrixRotationAxis(rightVector, -angle);
 			rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, -angle);
 		}
+		//Rotating fast like normal
 		else
 		{
 			rotation *= DirectX::XMMatrixRotationAxis(rightVector, -resultVector.x);
@@ -303,12 +301,14 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 		resultVector = DirectX::XMVector3Normalize(resultVector);
 		resultVector = DirectX::XMVector3AngleBetweenNormals(forwardVector, resultVector);
 
+		//Changing planet, rotating slow
 		if (flipping)
 		{
 			angle = resultVector.x * 0.002f;
 			rotation *= DirectX::XMMatrixRotationAxis(rightVector, angle);
 			rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, angle);
 		}
+		//Rotating fast like normal
 		else
 		{
 			rotation *= DirectX::XMMatrixRotationAxis(rightVector, resultVector.x);
@@ -324,12 +324,14 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 		resultVector = DirectX::XMVector3Normalize(resultVector);
 		resultVector = DirectX::XMVector3AngleBetweenNormals(rightVector, resultVector);
 
+		//Changing planet, rotating slow
 		if (flipping)
 		{
 			angle = resultVector.x * 0.002f;
 			rotation *= DirectX::XMMatrixRotationAxis(forwardVector, angle);
 			rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, angle);
 		}
+		//Rotating fast like normal
 		else
 		{
 			rotation *= DirectX::XMMatrixRotationAxis(forwardVector, resultVector.z);
@@ -342,12 +344,14 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 		resultVector = DirectX::XMVector3Normalize(resultVector);
 		resultVector = DirectX::XMVector3AngleBetweenNormals(rightVector, resultVector);
 
+		//Changing planet, rotating slow
 		if (flipping)
 		{
 			angle = resultVector.x * 0.002f;
 			rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -angle);
 			rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, -angle);
 		}
+		//Rotating fast like normal
 		else
 		{
 			rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -resultVector.z);
@@ -356,7 +360,7 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 	}
 }
 
-void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, float deltaTime)
+void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime)
 {
 	if (dedge) return;
 	else if (flipping) return;
@@ -912,7 +916,7 @@ DirectX::XMVECTOR Player::getRightVector() const
 	return this->rightVector;
 }
 
-DirectX::XMMATRIX Player::getRotationMX()
+DirectX::XMMATRIX Player::getRotationMX() const
 {
 	return this->rotationMX;
 }

@@ -82,7 +82,7 @@ public:
 
 	//Move Functions
 	void rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const bool& changedPlanet);
-	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, float deltaTime);
+	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime);
 	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime);
 	void checkMovement();
 	void updateVelocity(const DirectX::SimpleMath::Vector3& gravityVec);
@@ -99,7 +99,7 @@ public:
 	DirectX::XMVECTOR getUpVector() const;
 	DirectX::XMVECTOR getForwardVector() const;
 	DirectX::XMVECTOR getRightVector() const;
-	DirectX::XMMATRIX getRotationMX();
+	DirectX::XMMATRIX getRotationMX() const;
 	int getTeam() const;
 	int getOnlineID()const;
 	bool getHitByBat()const;

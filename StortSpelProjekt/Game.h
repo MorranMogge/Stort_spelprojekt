@@ -19,7 +19,7 @@ private:
 	ImGuiHelper imGui;
 	bool wireframe = false;
 	bool objectDraw = true;
-	bool drawDebug = false;
+	bool drawDebug = true;
 	bool landingMinigame = false;
 
 	std::unique_ptr<DirectX::GamePad> gamePad;

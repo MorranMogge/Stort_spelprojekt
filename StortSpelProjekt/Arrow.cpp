@@ -80,12 +80,30 @@ void Arrow::showDirection(const DirectX::XMVECTOR& goalPosition, const DirectX::
 	normalVector = DirectX::XMVectorSet(-gravity.x, -gravity.y, -gravity.z, 1.0f);
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
 	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-	normalVector = DirectX::XMVector3Normalize(normalVector);
 	rightVector = DirectX::XMVector3Normalize(rightVector);
-	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 	arrowVector = DirectX::XMVector3Normalize(arrowVector);
+	normalVector = DirectX::XMVector3Normalize(normalVector);
+	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
-	//Rotating
+	//Y-Rotation
+	resultVector = DirectX::XMVector3Dot(arrowVector, rightVector);
+	if (resultVector.x < 0.f)
+	{
+		resultVector = DirectX::XMVector3AngleBetweenNormals(arrowVector, forwardVector);
+		rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x);
+	}
+	else if (resultVector.x > 0.f)
+	{
+		resultVector = DirectX::XMVector3AngleBetweenNormals(arrowVector, forwardVector);
+		rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x);
+	}
+	else
+	{
+		resultVector = DirectX::XMVector3AngleBetweenNormals(arrowVector, forwardVector);
+		if (resultVector.x > XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x);
+	}
+
+	//X-Rotation
 	resultVector = DirectX::XMVector3Dot(arrowVector, rightVector);
 	if (resultVector.x < 0.f)
 	{
@@ -104,7 +122,7 @@ void Arrow::showDirection(const DirectX::XMVECTOR& goalPosition, const DirectX::
 	}
 
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
-	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
+	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);         //Only for show!!
 	normalVector = DirectX::XMVector3Normalize(normalVector);
 	rightVector = DirectX::XMVector3Normalize(rightVector);
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);

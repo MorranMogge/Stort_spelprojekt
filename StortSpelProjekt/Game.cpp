@@ -244,6 +244,8 @@ void Game::drawObjects(bool drawDebug)
 	if (drawDebug)
 	{
 		basicRenderer.bindAmbientShader();
+		arrow->draw();
+
 		ltHandler.drawDebugMesh();
 	}
 
@@ -479,8 +481,8 @@ GAMESTATE Game::Update()
 			if (currentPlayer->getTeam() == i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot());
 			this->spaceShips[i]->move(this->spaceShips[i]->getUpDirection(), -dt);
 			endTimer += dt;
-			arrow->removeArrow();
-			this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969));
+			arrow->removeArrow(); //Remove these completely by not drawing the meshes anymore
+			this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969)); //Remove these completely by not drawing the meshes anymore
 		}
 	}
 
@@ -495,7 +497,7 @@ GAMESTATE Game::Update()
 			}
 		}
 		//Arrow pointing to component
-		else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
+		else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), planetVector[0]->getClosestFieldFactor(planetVector, arrow->getPosition()));
 	}
 	
 	if (!IFONLINE) //Check Components offline
@@ -574,7 +576,6 @@ void Game::Render()
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
-	arrow->draw();
 
 	//Render fresnel objects
 	basicRenderer.fresnelPrePass(this->camera);

@@ -104,4 +104,8 @@ public:
 	bool getHitByBat()const;
 	void update();
 	void setTeam(const int& team);
+	void requestingPickUpItem(const std::vector<Item*>& items);
+
+	
+	void itemRecvFromServer(Item* item);
 };

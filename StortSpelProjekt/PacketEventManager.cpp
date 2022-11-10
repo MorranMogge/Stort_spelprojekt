@@ -67,12 +67,12 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::COMPONENTPOSITION:
 
 			compData = circularBuffer->readData<ComponentData>();
-			for (int i = 0; i < componentVector.size(); i++)
+			for (int i = 0; i < onlineItems.size(); i++)
 			{
-				if (componentVector[i]->getOnlineId() == compData->ComponentId)
+				if (onlineItems[i]->getOnlineId() == compData->ComponentId)
 				{
-					componentVector[i]->setPos(DirectX::XMFLOAT3(compData->x, compData->y, compData->z));
-					componentVector[i]->getPhysComp()->setRotation(compData->quat);
+					onlineItems[i]->setPos(DirectX::XMFLOAT3(compData->x, compData->y, compData->z));
+					onlineItems[i]->getPhysComp()->setRotation(compData->quat);
 				}
 			}
 			//std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
@@ -80,12 +80,15 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 		case PacketType::SPAWNCOMPONENT:
 			spawnComp = circularBuffer->readData<SpawnComponent>();
-			std::cout << spawnComp->x << " " << spawnComp->y << " " << spawnComp->z << "\n";
+			//std::cout << spawnComp->x << " " << spawnComp->y << " " << spawnComp->z << "\n";
+
 			newComponent = new Component("../Meshes/component", DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 				spawnComp->ComponentId, spawnComp->ComponentId, field);
+			std::cout << "SpawnComponent package compId: " << std::to_string(newComponent->getOnlineId()) << std::endl;
 			physWorld.addPhysComponent(newComponent);
-			componentVector.push_back(newComponent);
-			gameObjects.push_back(newComponent);
+			//componentVector.push_back(newComponent);
+			//gameObjects.push_back(newComponent);
+			onlineItems.push_back(newComponent);
  			std::cout << "Sucessfully recieved component from server: " << std::to_string(spawnComp->ComponentId) << std::endl;
 			break;
 		
@@ -193,13 +196,22 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 		case PacketType::COMPONENTCONFIRMEDPICKUP:
 			confirmCmpPickedUp = circularBuffer->readData<ConfirmComponentPickedUp>();
-			
 			for (int i = 0; i < players.size(); i++)
 			{
 				if (players[i]->getOnlineID() == confirmCmpPickedUp->playerPickUpId)
 				{
 					//en av spelarna plockade upp en component
-					std::cout << "Confirm pickup recv\n";
+					//std::cout << "Confirmed pickup recv comId: " << std::to_string(confirmCmpPickedUp->componentId) << std::endl;
+
+					for (int i = 0; i < onlineItems.size(); i++)
+					{
+						std::cout << "Confirm packet loop compId: " << std::to_string(onlineItems[i]->getOnlineId()) << std::endl;
+						if (confirmCmpPickedUp->componentId == onlineItems[i]->getOnlineId())
+						{
+							players[i]->itemRecvFromServer(onlineItems[i]);
+							break;
+						}
+					}
 				}
 			}
 

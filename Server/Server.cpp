@@ -212,6 +212,7 @@ void sendBinaryDataOnePlayer(const T& data, userData& user)
 int main()
 {
 	int itemid = 0;
+	int componentIdCounter = 0;
 	bool once = false;
 	TimeStruct physicsTimer;
 	PhysicsWorld physWorld;
@@ -233,6 +234,9 @@ int main()
 	//std::vector<player> players;
 	std::vector<Component> components;
 	std::vector<Component> items;
+
+	//ANVÄND DENNA FLR ALLA ITEMS OCH COMPONENTS
+	std::vector<Item*> onlineItems;
 
 	//sf::UdpSocket socket;
 	std::string connectionType, mode;
@@ -392,7 +396,7 @@ int main()
 
 			case PacketType::COMPONENTDROPPED:
 				cmpDropped = circBuffer->readData<ComponentDropped>();
-
+				std::cout << "dropped package recv compId: " << std::to_string(cmpDropped->componentId) << std::endl;
 				//find the component that is dropped
 				for (int i = 0; i < components.size(); i++)
 				{
@@ -405,17 +409,20 @@ int main()
 
 			case PacketType::COMPONENTREQUESTINGPICKUP:
 				requestingCmpPickedUp = circBuffer->readData<ComponentRequestingPickUp>();
+				//std::cout << "cmprequestpickup comp id: " << std::to_string(requestingCmpPickedUp->componentId) << std::endl;
+				std::cout << "components size: " << std::to_string(components.size()) << std::endl;
 				for (int i = 0; i < components.size(); i++)
 				{
 					//kollar efter rätt component
+					//std::cout << "Components id: " << std::to_string(components[i].getOnlineId()) << "packet compId: "
+					//	<< std::to_string(requestingCmpPickedUp->componentId) << std::endl;
 					if (components[i].getOnlineId() == requestingCmpPickedUp->componentId)
 					{
 						//kollar om componenten inte används
-						if (components[i].getInUseById() != -1)
+						if (components[i].getInUseById() == -1)
 						{
-							std::cout << "requesting item " << std::to_string(requestingCmpPickedUp->componentId)
-								<< ", player set as inuseby: " << std::to_string(requestingCmpPickedUp->playerId) << std::endl;
-
+							std::cout << "picked up componentId: " << std::to_string(requestingCmpPickedUp->componentId) 
+								<< ", by player: " << std::to_string(requestingCmpPickedUp->playerId) << std::endl;
 							//skickar en bekräftelse till alla spelare att komponenten är upplockad av en spelare
 							ConfirmComponentPickedUp sendConfirmComponentData;
 							sendConfirmComponentData.playerPickUpId = requestingCmpPickedUp->playerId;
@@ -423,6 +430,10 @@ int main()
 							sendConfirmComponentData.packetId = PacketType::COMPONENTCONFIRMEDPICKUP;
 							sendBinaryDataAllPlayers<ConfirmComponentPickedUp>(sendConfirmComponentData, data);
 							components[i].setInUseBy(requestingCmpPickedUp->componentId);
+						}
+						else
+						{
+							std::cout << "A Player couldnt pick up component: " << std::to_string(requestingCmpPickedUp->componentId) << std::endl;
 						}
 					}
 				}
@@ -478,10 +489,22 @@ int main()
 			{
 				if (components[i].getInUseById() == data.users[j].playerId)
 				{
+
 					components[i].setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
 				}
 			}
 			//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
+		}
+
+		for (int i = 0; i < onlineItems.size(); i++)
+		{
+			for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
+			{
+				if(onlineItems[i]->getInUseById() == data.users[j].playerId)
+				{
+					onlineItems[i]->setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
+				}
+			}
 		}
 
 
@@ -491,6 +514,7 @@ int main()
 			SpawnComponent cData = SpawnOneComponent(components);
 			physWorld.addPhysComponent(components[components.size() - 1]);
 			components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
+			components[components.size() - 1].setOnlineId(componentIdCounter++);
 			sendBinaryDataAllPlayers(cData, data);
 			startComponentTimer = std::chrono::system_clock::now();
 		}

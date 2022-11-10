@@ -29,16 +29,23 @@ void Player::handleItems()
 	if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
 	{
 		//allocates data to be sent
-		ComponentData c;
-		c.ComponentId = this->getItemOnlineId();
-		std::cout << c.ComponentId << "\n";
-		c.inUseBy = -1;
-		c.packetId = PacketType::COMPONENTPOSITION;
-		c.x = this->getPos().x;
-		c.y = this->getPos().y;
-		c.z = this->getPos().z;
+		ComponentDropped c;
+		std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
+		c.componentId = this->holdingItem->getOnlineId();
+		c.packetId = PacketType::COMPONENTDROPPED;
 		//sending data to server
-		client->sendStuff<ComponentData>(c);
+		client->sendStuff<ComponentDropped>(c);
+
+		//ComponentData c;
+		//c.ComponentId = this->getItemOnlineId();
+		//std::cout << c.ComponentId << "\n";
+		//c.inUseBy = -1;
+		//c.packetId = PacketType::COMPONENTPOSITION;
+		//c.x = this->getPos().x;
+		//c.y = this->getPos().y;
+		//c.z = this->getPos().z;
+		////sending data to server
+		//client->sendStuff<ComponentData>(c);
 
 		//Set dynamic so it can be affected by forces
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -59,17 +66,26 @@ void Player::handleItems()
 	//Use the Item
 	else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
 	{
-		//allocates data to be sent
-		ComponentData c;
-		c.ComponentId = this->getItemOnlineId();
-		c.inUseBy = -1;
-		c.packetId = PacketType::COMPONENTPOSITION;
-		c.x = this->getPos().x;
-		c.y = this->getPos().y;
-		c.z = this->getPos().z;
+		////allocates data to be sent
+		//ComponentData c;
+		//c.ComponentId = this->getItemOnlineId();
+		//c.inUseBy = -1;
+		//c.packetId = PacketType::COMPONENTPOSITION;
+		//c.x = this->getPos().x;
+		//c.y = this->getPos().y;
+		//c.z = this->getPos().z;
 
+		////sending data to server
+		//client->sendStuff<ComponentData>(c);
+
+		//allocates data to be sent
+		ComponentDropped c;
+
+		std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
+		c.componentId = this->holdingItem->getOnlineId();
+		c.packetId = PacketType::COMPONENTDROPPED;
 		//sending data to server
-		client->sendStuff<ComponentData>(c);
+		client->sendStuff<ComponentDropped>(c);
 
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 		holdingItem->useItem();
@@ -696,6 +712,7 @@ bool Player::pickupItem(Item* itemToPickup)
 			rqstCmpPickUp.componentId = itemToPickup->getOnlineId();
 			rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;
 			rqstCmpPickUp.playerId = this->getOnlineID();
+			std::cout << "sending 'component requesting pickup' from player id: " << std::to_string(this->onlineID) << std::endl;
 			//skickar en förfrågan att plocka upp item
 			client->sendStuff<ComponentRequestingPickUp>(rqstCmpPickUp);
 		}
@@ -981,4 +998,42 @@ void Player::setTeam(const int& team)
 	case 1:
 		mesh->matKey[0] = "pintoBlue.png"; break;
 	}
+}
+
+void Player::requestingPickUpItem(const std::vector<Item*>& items)
+{
+	if (Input::KeyPress(KeyCode::E))
+	{
+		std::cout << "items.size = " << std::to_string(items.size()) << std::endl;
+		for (int i = 0; i < items.size(); i++)
+		{
+			if (this->withinRadius(items[i], 5))
+			{
+				//addItem(items[i]);
+
+				//holdingItem->getPhysComp()->getRigidBody()->resetForce();
+				//holdingItem->getPhysComp()->getRigidBody()->resetTorque();
+				//holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+
+				ComponentRequestingPickUp rqstCmpPickUp;
+				rqstCmpPickUp.componentId = items[i]->getOnlineId();
+				rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;
+				rqstCmpPickUp.playerId = this->getOnlineID();
+				std::cout << "requesting pickup componentId: " << std::to_string(rqstCmpPickUp.componentId) << std::endl;
+				//skickar en förfrågan att plocka upp item
+				client->sendStuff<ComponentRequestingPickUp>(rqstCmpPickUp);
+				break;
+			}
+		}
+		
+	}
+}
+
+void Player::itemRecvFromServer(Item* item)
+{
+	addItem(item);
+
+	holdingItem->getPhysComp()->getRigidBody()->resetForce();
+	holdingItem->getPhysComp()->getRigidBody()->resetTorque();
+	holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 }

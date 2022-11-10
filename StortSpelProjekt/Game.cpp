@@ -397,15 +397,19 @@ GAMESTATE Game::Update()
 	currentPlayer->movePos(velocity);
 	currentPlayer->checkForStaticCollision(gameObjects);
 
-	for (int i = 0; i < components.size(); i++)
-	{
-		if (currentPlayer->pickupItem(components[i])) break;
-	}
+	//for (int i = 0; i < components.size(); i++)
+	//{
+	//	if (currentPlayer->pickupItem(components[i])) break;
+	//}
 
-	for (int i = 0; i < items.size(); i++)
-	{
-		if (currentPlayer->pickupItem(items[i])) break;
-	}
+	//for (int i = 0; i < items.size(); i++)
+	//{
+	//	if (currentPlayer->pickupItem(items[i])) break;
+	//}
+
+
+	currentPlayer->requestingPickUpItem(onlineItems);
+	
 
 	/*if (Input::KeyPress(KeyCode::K))
 	{
@@ -519,6 +523,10 @@ void Game::Render()
 	for (int i = 0; i < components.size(); i++)
 	{
 		this->components[i]->drawIcon();
+	}
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		this->onlineItems[i]->drawIcon();
 	}
 	for (int i = 0; i < players.size(); i++)
 	{

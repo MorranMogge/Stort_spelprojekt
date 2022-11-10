@@ -68,25 +68,24 @@ private:
 	//bones 
 	
 	AnimationData aniData;
+	unsigned VertexOffset;
+	bool ran = false;
 
 	void aiMatrixToXMmatrix(const aiMatrix4x4& in, DirectX::XMFLOAT4X4& out);
 	void normalizeWeights(float weights[]);
 	void addBoneData(const int vertexID, const int boneId, const float weight);
-	void loadBones(const aiMesh* mesh, const int mesh_index);
-	void numberBone(aiNode* node, int parentNode, const DirectX::XMFLOAT4X4& prevOffsets);
+	void loadBones(const aiMesh* mesh, const int vertexOffset);
 	int findAndAddBoneID(const std::string& name);
 	int findBoneID(const std::string& name);
 	void recParseNodes(nodes* node, const aiNode* ainode);
 	void parseNode(const aiScene* scene);
 	void parseAnimation(const aiScene* scene);
-	void calculateBoneInverse(const nodes& node, DirectX::XMFLOAT4X4& parentTrasform);
 
 public:
 	ModelManager();
 	ModelManager(ID3D11Device* device);
 	~ModelManager();
 	bool loadMeshData(const std::string& filePath);
-	bool loadBoneData(const std::string& filePath);
 	ID3D11ShaderResourceView* getSrv(const std::string key);
 	//std::vector<Mesh2*> getMeshes() const;
 	std::vector<ID3D11ShaderResourceView*> getTextureMaps() const;

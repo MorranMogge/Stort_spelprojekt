@@ -63,9 +63,11 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 
 		if (mesh->HasBones())
 		{
-			this->loadBones(scene->mMeshes[i], i);
+			this->loadBones(mesh, VertexOffset);
+			this->VertexOffset += mesh->mNumVertices;
+			this->aniData.boneDataVec;
+			int pb = 2;
 		}
-
 		
 		readNodes(mesh, scene);
 
@@ -116,68 +118,50 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 	std::vector<DWORD> indexTriangle;
 
 	vertex vertex;
-	
-
-	for (UINT i = 0; i < mesh->mNumVertices; i++)
+	if (mesh->HasTangentsAndBitangents())
 	{
-		vertex.pos.x = mesh->mVertices[i].x;
-		vertex.pos.y = mesh->mVertices[i].y;
-		vertex.pos.z = mesh->mVertices[i].z;
-
-		vertex.nor.x = mesh->mNormals[i].x;
-		vertex.nor.y = mesh->mNormals[i].y;
-		vertex.nor.z = mesh->mNormals[i].z;
-
-		//vertex.tangent.x = mesh->mTangents[i].x;
-		//vertex.tangent.y = mesh->mTangents[i].y;
-		//vertex.tangent.z = mesh->mTangents[i].z;
-		
-
-
-		if (mesh->mTextureCoords[0])
+		for (UINT i = 0; i < mesh->mNumVertices; i++)
 		{
-			vertex.uv.x = (float)mesh->mTextureCoords[0][i].x;
-			vertex.uv.y = (float)mesh->mTextureCoords[0][i].y;
+			vertex.pos.x = mesh->mVertices[i].x;
+			vertex.pos.y = mesh->mVertices[i].y;
+			vertex.pos.z = mesh->mVertices[i].z;
+
+			vertex.nor.x = mesh->mNormals[i].x;
+			vertex.nor.y = mesh->mNormals[i].y;
+			vertex.nor.z = mesh->mNormals[i].z;
+
+			if (mesh->mTextureCoords[0])
+			{
+				vertex.uv.x = (float)mesh->mTextureCoords[0][i].x;
+				vertex.uv.y = (float)mesh->mTextureCoords[0][i].y;
+			}
+
+			vertexTriangle.emplace_back(vertex);
+			dataForMesh.vertexTriangle.emplace_back(vertex);
 		}
-
-		vertexTriangle.emplace_back(vertex);
-		dataForMesh.vertexTriangle.emplace_back(vertex);
 	}
-	
-	/*for (int i = 0; i < dataForMesh.vertexTriangle.size(); i += 3)
+	else
 	{
-		DirectX::XMFLOAT2 UV1 = dataForMesh.vertexTriangle[i].uv;
-		DirectX::XMFLOAT2 UV2 = dataForMesh.vertexTriangle[i+1].uv;
-		DirectX::XMFLOAT2 UV3 = dataForMesh.vertexTriangle[i+2].uv;
+		for (UINT i = 0; i < mesh->mNumVertices; i++)
+		{
+			vertex.pos.x = mesh->mVertices[i].x;
+			vertex.pos.y = mesh->mVertices[i].y;
+			vertex.pos.z = mesh->mVertices[i].z;
 
-		DirectX::XMFLOAT3 Pos1 = dataForMesh.vertexTriangle[i].pos;
-		DirectX::XMFLOAT3 Pos2 = dataForMesh.vertexTriangle[i+1].pos;
-		DirectX::XMFLOAT3 Pos3 = dataForMesh.vertexTriangle[i+2].pos;
+			vertex.nor.x = mesh->mNormals[i].x;
+			vertex.nor.y = mesh->mNormals[i].y;
+			vertex.nor.z = mesh->mNormals[i].z;
 
-		DirectX::SimpleMath::Vector2 dAB = UV2;
-		dAB.x - UV1.x;
-		dAB.y - UV1.y;
-		
-		DirectX::SimpleMath::Vector2 dAC = UV3;
-		dAC.x - UV1.x;
-		dAC.y - UV1.y;
+			if (mesh->mTextureCoords[0])
+			{
+				vertex.uv.x = (float)mesh->mTextureCoords[0][i].x;
+				vertex.uv.y = (float)mesh->mTextureCoords[0][i].y;
+			}
 
-		DirectX::XMFLOAT3 edge1 = Pos2;
-		edge1.x - Pos1.x;
-		edge1.y - Pos1.y;
-		edge1.z - Pos1.z;
-
-		DirectX::XMFLOAT3 edge2 = Pos3;
-		edge2.x - Pos1.x;
-		edge2.y - Pos1.y;
-		edge2.z - Pos1.z;
-
-		float f = 1.0f / (dAB.x * dAC.y - dAC.x * dAB.y);
-
-		DirectX::XMFLOAT3 tangent;
-		tangent.x = f * (dAC.y * edge1.x - dAB.y * edge2);
-	}*/
-
+			vertexTriangle.emplace_back(vertex);
+			dataForMesh.vertexTriangle.emplace_back(vertex);
+		}
+	}
 
 	for (UINT i = 0; i < mesh->mNumFaces; i++)
 	{
@@ -189,10 +173,9 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 			dataForMesh.indexTriangle.emplace_back(face.mIndices[j]);
 		}
 	}
-	
+
 	this->submeshRanges.emplace_back(indexTriangle.size());
 	this->amountOfvertices.emplace_back(vertexTriangle.size());
-
 }
 
 std::vector<ID3D11Buffer*> ModelManager::getBuff() const
@@ -208,33 +191,13 @@ void ModelManager::setDevice(ID3D11Device* device)
 ModelManager::ModelManager()
 	:device(nullptr)
 {
+	this->VertexOffset = 0;
 
 }
 
 void ModelManager::aiMatrixToXMmatrix(const aiMatrix4x4& in, DirectX::XMFLOAT4X4& out)
 {
 	out = 
-		//DirectX::XMFLOAT4X4(
-		//	float(in.a1),
-		//	float(in.a2),
-		//	float(in.a3),
-		//	float(in.a4),
-
-		//	float(in.b1),
-		//	float(in.b2),
-		//	float(in.b3),
-		//	float(in.b4),
-
-		//	float(in.c1),
-		//	float(in.c2),
-		//	float(in.c3),
-		//	float(in.c4),
-
-		//	float(in.d1),
-		//	float(in.d2),
-		//	float(in.d3),
-		//	float(in.d4)
-		//);
 		DirectX::XMFLOAT4X4(
 		float(in.a1), float(in.b1), float(in.c1), float(in.d1),
 		float(in.a2), float(in.b2), float(in.c2), float(in.d2),
@@ -289,7 +252,10 @@ void ModelManager::addBoneData(const int vertexID, const int boneId, const float
 	//assert(0);
 }
 
-void ModelManager::loadBones(const aiMesh* mesh, const int mesh_index)
+static std::unordered_map<unsigned, int> s_vertex_indices;
+static unsigned int vertex_index_min = 999999999;
+static unsigned int vertex_index_max = 0;
+void ModelManager::loadBones(const aiMesh* mesh, const int vertexOffset)
 {
 	for (int i = 0; i < mesh->mNumBones; i++)
 	{
@@ -308,43 +274,17 @@ void ModelManager::loadBones(const aiMesh* mesh, const int mesh_index)
 		for (int j = 0; j < mesh->mBones[i]->mNumWeights; j++)
 		{
 			int vId = mesh->mBones[i]->mWeights[j].mVertexId;
-
+			vId += vertexOffset;
 			this->addBoneData(vId, bone_ID, mesh->mBones[i]->mWeights[j].mWeight);
+
+			if (s_vertex_indices.find(mesh->mBones[i]->mWeights[j].mVertexId) != s_vertex_indices.end())
+				s_vertex_indices[mesh->mBones[i]->mWeights[j].mVertexId] = 0;
+			++s_vertex_indices[mesh->mBones[i]->mWeights[j].mVertexId];
+
+			vertex_index_min = mesh->mBones[i]->mWeights[j].mVertexId < vertex_index_min ? mesh->mBones[i]->mWeights[j].mVertexId : vertex_index_min;
+			vertex_index_max = mesh->mBones[i]->mWeights[j].mVertexId > vertex_index_max ? mesh->mBones[i]->mWeights[j].mVertexId : vertex_index_max;
 		}
 	}
-}
-
-void ModelManager::numberBone(aiNode* node, int parentNode, const DirectX::XMFLOAT4X4& prevOffsets)
-{
-	int boneID = this->findBoneID(node->mName.data);
-	bool realNode = true;
-	if (boneID == -1)
-	{
-		realNode = false;
-		boneID = parentNode;
-	}
-	if (realNode)
-	{
-		this->aniData.boneVector[boneID].parentID = parentNode;
-	}
-	
-	DirectX::XMFLOAT4X4 floatMatrix;
-	this->aiMatrixToXMmatrix(node->mTransformation, floatMatrix);
-	DirectX::XMMATRIX tempMatrix = DirectX::XMLoadFloat4x4(&floatMatrix);
-	DirectX::XMMATRIX prevNodeOffMatrix = DirectX::XMLoadFloat4x4(&prevOffsets);
-	tempMatrix = DirectX::XMMatrixMultiply(prevNodeOffMatrix, tempMatrix);
-	DirectX::XMStoreFloat4x4(&floatMatrix, tempMatrix);
-
-	if (boneID != -1)
-	{
-		this->aniData.boneVector[boneID].offsetMatrix = floatMatrix;
-	}
-	
-	for (int i = 0; i < node->mNumChildren; i++)
-	{
-		this->numberBone(node->mChildren[i], boneID, floatMatrix);
-	}
-
 }
 
 int ModelManager::findAndAddBoneID(const std::string& name)
@@ -459,44 +399,10 @@ void ModelManager::parseAnimation(const aiScene* scene)
 	}
 }
 
-void ModelManager::calculateBoneInverse(const nodes& node, DirectX::XMFLOAT4X4& parentTrasform)
-{
-	DirectX::XMMATRIX currentNodeTrans = DirectX::XMLoadFloat4x4(&node.trasformation);
-	DirectX::XMMATRIX PrevNode = DirectX::XMLoadFloat4x4(&parentTrasform);
-	const DirectX::XMMATRIX globalTrasform = DirectX::XMMatrixMultiply(PrevNode, currentNodeTrans);
-	const DirectX::XMMATRIX globalTrasform1 = DirectX::XMMatrixMultiply(currentNodeTrans, PrevNode);
-	DirectX::XMFLOAT4X4 finalTransfrom;
-
-	if (this->aniData.boneNameToIndex.find(node.nodeName) != aniData.boneNameToIndex.end())
-	{
-		int id = aniData.boneNameToIndex[node.nodeName];
-		DirectX::XMVECTOR garbo;
-		DirectX::XMMATRIX inverse = DirectX::XMMatrixInverse(&garbo, globalTrasform1);
-		DirectX::XMStoreFloat4x4(&aniData.boneVector[id].offsetMatrix, inverse);
-		int bp = 2;
-	}
-
-	DirectX::XMStoreFloat4x4(&finalTransfrom, globalTrasform1);
-
-	for (int i = 0, length = node.children.size(); i < length; i++)
-	{
-		this->calculateBoneInverse(*node.children[i], finalTransfrom);
-	}
-}
-
-//void ModelManager::readAnimations(aiScene* scene)
-//{
-//	if (scene->HasAnimations())
-//	{
-//		for (int i = 0, end = scene->mNumAnimations; i < end; i++)
-//		{
-//			this->AnimationVec.push_back(scene->mAnimations[i]);
-//		}
-//	}
-//}
 
 ModelManager::ModelManager(ID3D11Device* device)
 {
+	this->VertexOffset = 0;
 	this->device = device;
 	ID3D11ShaderResourceView* tempSRV;
 	this->makeSRV(tempSRV, "../Textures/Missing.png");
@@ -510,6 +416,7 @@ ModelManager::~ModelManager()
 
 bool ModelManager::loadMeshData(const std::string& filePath)
 {
+	this->VertexOffset = 0;
 	Assimp::Importer importer;
 	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
 
@@ -572,50 +479,6 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	return true;
 }
 
-bool ModelManager::loadBoneData(const std::string& filePath)
-{
-	Assimp::Importer importer;
-	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
-
-	if (pScene == nullptr)
-	{
-		ErrorLog::Log("Cant read FBX-File!");
-		return false;
-	}
-
-	this->aiMatrixToXMmatrix(pScene->mRootNode->mTransformation, this->aniData.globalInverseTransform);
-	DirectX::XMMATRIX temp = DirectX::XMLoadFloat4x4(&this->aniData.globalInverseTransform);
-	temp = DirectX::XMMatrixInverse(nullptr, temp);
-	DirectX::XMStoreFloat4x4(&this->aniData.globalInverseTransform, temp);
-
-	aiMesh* mesh;
-	for (int i = 0, length = pScene->mNumMeshes; i < length; i++)
-	{
-		mesh = pScene->mMeshes[i];
-		if (mesh->HasBones())
-		{
-			for (int j = 0, length = mesh->mNumBones; j < length; j++)
-			{
-				{
-					std::cout << "Bone: " << mesh->mBones[j]->mName.C_Str() << "\n	"
-						<< mesh->mBones[j]->mOffsetMatrix.a1 << " " << mesh->mBones[j]->mOffsetMatrix.a2 << " " << mesh->mBones[j]->mOffsetMatrix.a3 << " " << mesh->mBones[j]->mOffsetMatrix.a4 << "\n	"
-						<< mesh->mBones[j]->mOffsetMatrix.b1 << " " << mesh->mBones[j]->mOffsetMatrix.b2 << " " << mesh->mBones[j]->mOffsetMatrix.b3 << " " << mesh->mBones[j]->mOffsetMatrix.b4 << "\n	"
-						<< mesh->mBones[j]->mOffsetMatrix.c1 << " " << mesh->mBones[j]->mOffsetMatrix.c2 << " " << mesh->mBones[j]->mOffsetMatrix.c3 << " " << mesh->mBones[j]->mOffsetMatrix.c4 << "\n	"
-						<< mesh->mBones[j]->mOffsetMatrix.d1 << " " << mesh->mBones[j]->mOffsetMatrix.d2 << " " << mesh->mBones[j]->mOffsetMatrix.d3 << " " << mesh->mBones[j]->mOffsetMatrix.d4 << "\n";
-				}
-			}
-
-
-			printf("has bones \n");
-
-			this->loadBones(pScene->mMeshes[i], i);
-		}
-	}
-
-	processNodes(pScene->mRootNode, pScene, filePath);
-	return true;
-}
-
 ID3D11ShaderResourceView* ModelManager::getSrv(const std::string key)
 {
 	return bank.getSrv(key);
@@ -628,6 +491,11 @@ std::vector<ID3D11ShaderResourceView*> ModelManager::getTextureMaps() const
 
 bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 {
+	if (bank.hasItem(filePath))
+	{
+		return false;
+	}
+
 	Assimp::Importer importer;
 	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate );
 
@@ -636,11 +504,9 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 		ErrorLog::Log("Cant read FBX-File!");
 		return false;
 	}
+	this->VertexOffset = 0;
+	this->aniData = {};
 
-	if (bank.hasItem(filePath) == true)
-	{
-		return false;
-	}
 	processNodes(pScene->mRootNode, pScene, filePath);
 	for (int i = 0, end = this->aniData.boneDataVec.size(); i < end; i++)
 	{
@@ -651,16 +517,19 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 
 	DirectX::XMFLOAT4X4 temp;
 	DirectX::XMStoreFloat4x4(&temp, DirectX::XMMatrixIdentity());
-	//this->calculateBoneInverse(*aniData.rootNode, temp);
-	//this->numberBone(pScene->mRootNode, -1, temp);
 	
 	std::vector<AnimatedVertex> vertexAVec;
 	vertexAVec.reserve(this->dataForMesh.vertexTriangle.size());
 	AnimatedVertex tempVertex;
-	while (this->aniData.boneDataVec.size() < this->dataForMesh.vertexTriangle.size())
-	{
-		this->aniData.boneDataVec.emplace_back();
-	}
+	//while (this->aniData.boneDataVec.size() < this->dataForMesh.vertexTriangle.size())
+	//{
+	//	this->aniData.boneDataVec.emplace_back();
+	//	IndexBoneData hej = this->aniData.boneDataVec[this->aniData.boneDataVec.size()];
+	//}
+	
+	auto mesh1 = pScene->mMeshes[0];
+	auto mesh2 = pScene->mMeshes[1];
+
 	for (int i = 0, end = this->dataForMesh.vertexTriangle.size(); i < end; i++)
 	{
 		tempVertex.pos = this->dataForMesh.vertexTriangle[i].pos;

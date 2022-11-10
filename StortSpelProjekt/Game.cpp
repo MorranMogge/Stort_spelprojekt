@@ -109,9 +109,9 @@ void Game::loadObjects()
 
 	player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
 	
-	this->manager.getMeshData("../Meshes/L1.fbx",vBuff, iBuff, subMeshRanges, verticies);
+	this->manager.getMeshData("../Meshes/player.obj",vBuff, iBuff, subMeshRanges, verticies);
 	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-	testCube = new GameObject(tmpMesh, DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+	testCube = new GameObject(tmpMesh, DirectX::SimpleMath::Vector3(0, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 5, DirectX::XMFLOAT3(0.20f, 0.20f, 0.20f));
 	testCube->setSrv(manager.getSrv("playerTexture.png"));
 
 	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
@@ -329,15 +329,15 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->iBuff = {};
 	this->animData;
 	this->manager.setDevice(device);
-	this->manager.loadMeshData("../Meshes/player.obj");
-	this->manager.loadMeshData("../Meshes/Planet.obj");
-	this->manager.loadMeshData("../Meshes/Baseball.obj");
-	this->manager.loadMeshData("../Meshes/Sphere.obj");
-	this->manager.loadMeshData("../Meshes/rocket.obj");
-	this->manager.loadMeshData("../Meshes/L.fbx");
+	//this->manager.loadMeshData("../Meshes/player.obj");
+	//this->manager.loadMeshData("../Meshes/Planet.obj");
+	//this->manager.loadMeshData("../Meshes/Baseball.obj");
+	//this->manager.loadMeshData("../Meshes/Sphere.obj");
+	//this->manager.loadMeshData("../Meshes/rocket.obj");
+	//this->manager.loadMeshData("../Meshes/L1.fbx");
 	//this->manager.loadMeshData("../Meshes/flos.fbx");
-	this->manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
-	this->manager.loadMeshAndBoneData("../Meshes/L1.fbx");
+	//this->manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
+	this->manager.loadMeshAndBoneData("../Meshes/L.fbx");
 
 	//this->tempSRV = this->manager.getSrv();
 	MaterialLibrary::LoadDefault();

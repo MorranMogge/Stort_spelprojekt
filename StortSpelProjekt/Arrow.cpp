@@ -21,15 +21,25 @@ Arrow::Arrow(const std::string& objectPath, const DirectX::XMFLOAT3& pos)
 	this->mesh->scale = scale;
 	this->scale = scale;
 
-	this->mesh->UpdateCB();
+	this->mesh->UpdateCB(position, rotation, scale);
+}
+
+Arrow::Arrow(Mesh* useMesh, const DirectX::XMFLOAT3& pos)
+{
+	this->mesh = useMesh;
+	this->position = pos;
+	this->mesh->position = pos;
+	this->rotation = DirectX::XMMatrixIdentity();
+	this->mesh->rotation = this->rotation;
+	scale = DirectX::XMFLOAT3(1, 1, 1);
+	this->mesh->scale = scale;
+	this->scale = scale;
+
+	this->mesh->UpdateCB(position, rotation, scale);
 }
 
 Arrow::~Arrow()
 {
-	if (this->mesh != nullptr)
-	{
-		delete this->mesh;
-	}
 }
 
 DirectX::XMVECTOR Arrow::getUpVectorArrow() const
@@ -99,8 +109,15 @@ void Arrow::showDirection(const DirectX::XMVECTOR& goalPosition, const DirectX::
 	rightVector = DirectX::XMVector3Normalize(rightVector);
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 }
+
+void Arrow::removeArrow()
+{
+	this->position = DirectX::XMFLOAT3(6969, 6969, 6969);
+}
+
 void Arrow::draw()
 {
+	this->mesh->UpdateCB(position, rotation, scale);
 	this->mesh->DrawWithMat();
 }
 
@@ -112,5 +129,5 @@ void Arrow::update()
 	this->mesh->scale = this->scale;
 
 	//Update constantbuffer
-	this->mesh->UpdateCB();
+	this->mesh->UpdateCB(position, rotation, scale);
 }

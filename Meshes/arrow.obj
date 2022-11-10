@@ -1,7 +1,7 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
 mtllib arrow.mtl
-g default
+g arrow_lambert16SG
 v 0.000000 1.000000 -1.844257
 v 0.000000 0.250000 -1.991318
 v 0.500000 0.250000 -0.397243

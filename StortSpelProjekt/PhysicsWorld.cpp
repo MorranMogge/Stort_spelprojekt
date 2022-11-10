@@ -230,8 +230,10 @@ void PhysicsWorld::addForceToObjects(const float& dt)
 	float constant = 1.f;
 	for (int i = 0; i < this->physObjects.size(); i++)
 	{
-		grav = planets[0]->getClosestFieldFactor(planets, this->physObjects[i]->getPosV3());;
+		GravityField* field = planets[0]->getClosestField(planets, this->physObjects[i]->getPosV3());
+		grav = field->calcGravFactor(this->physObjects[i]->getPosV3());
 		this->physObjects[i]->applyForceToCenter(this->physObjects[i]->getMass() * reactphysics3d::Vector3(98.2f * grav.x * dt * constant, 98.2f * grav.y * dt * constant, 98.2f * grav.z * dt * constant));
+		if (this->physObjects[i]->getParent() != nullptr) this->physObjects[i]->getParent()->setGravityField(field);
 	}
 }
 
@@ -279,7 +281,7 @@ PhysicsComponent* PhysicsWorld::returnAddedPhysComponent(reactphysics3d::Collisi
 	newComp->setPosition({ pos.x, pos.y, pos.z });
 	newComp->setLinearDampning(0.3f);
 	physObjects.emplace_back(newComp);
-
+	newComp->setParent(nullptr);
 	this->recreateVertexBuffer();
 	return newComp;
 }

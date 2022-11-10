@@ -132,6 +132,7 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/bat"));
 	meshes.push_back(new Mesh("../Meshes/component"));
 	meshes.push_back(new Mesh("../Meshes/grenade"));
+	meshes.push_back(new Mesh("../Meshes/arrow"));
 
 	if (IFONLINE) return;
 
@@ -153,7 +154,7 @@ void Game::loadObjects()
 	baseballBat = new BaseballBat(meshes[4], Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
 	grenade = new Grenade(meshes[6], DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
 	component = new Component(meshes[5], DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT, 0, planetGravityField);
-	arrow = new Arrow("../Meshes/arrow", DirectX::SimpleMath::Vector3(0, 40, 0));
+	arrow = new Arrow(meshes[7], DirectX::SimpleMath::Vector3(0, 40, 0));
 	
 	//currentPlayer = new Player(meshes[1], Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, client, 0, &planetGravityField);
 	atmosphere = new GameObject(meshes[0], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(43, 43, 43));
@@ -171,8 +172,6 @@ void Game::loadObjects()
 	{
 		gameObjects.emplace_back(players[i]);
 	}
-	field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
-	oldField = field;
 	
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
@@ -203,6 +202,8 @@ void Game::loadObjects()
 	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
 	gameObjects.emplace_back(currentPlayer);
+	field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
+	oldField = field;
 
 	baseballBat->setPlayer(currentPlayer);
 	baseballBat->setGameObjects(gameObjects);
@@ -378,7 +379,7 @@ GAMESTATE Game::Update()
 
 	//Calculate gravity factor
 	field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
-	if (field != oldField) changedPlanet = true;
+	if (field != oldField) { changedPlanet = true; currentPlayer->setGravityField(this->field); }
 	else changedPlanet = false;
 	oldField = field;
 
@@ -398,7 +399,7 @@ GAMESTATE Game::Update()
 	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
-	currentPlayer->checkForStaticCollision(gameObjects);
+	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
 
 	//Check component pickup
@@ -467,7 +468,8 @@ GAMESTATE Game::Update()
 	}
 	
 	//Setting the camera at position
-	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX());
+	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), currentPlayer->getUpVector(), currentPlayer->getSpeed(), dt);
+	this->arrow->moveWithCamera(camera.getPosition(), DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getUpVector()), currentPlayer->getRotationMX());
 
 	//Check Components online
 	for (int i = 0; i < spaceShips.size(); i++)
@@ -475,13 +477,13 @@ GAMESTATE Game::Update()
 		if (spaceShips[i]->getCompletion())
 		{
 			if (currentPlayer->getTeam() == i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot());
-			grav = planetGravityField.calcGravFactor(this->spaceShips[i]->getPosV3());
-			this->spaceShips[i]->move(grav, dt);
+			this->spaceShips[i]->move(this->spaceShips[i]->getUpDirection(), -dt);
 			endTimer += dt;
+			arrow->removeArrow();
+			this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969));
 		}
 	}
 
-	this->arrow->moveWithCamera(camera.getPosition(), DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getUpVector()), currentPlayer->getRotationMX());
 	if (components.size() > 0)
 	{
 		//Arrow pointing to spaceship
@@ -489,11 +491,11 @@ GAMESTATE Game::Update()
 		{
 			for (int i = 0; i < spaceShips.size(); i++)
 			{
-				if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField.calcGravFactor(arrow->getPosition()));
+				if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
 			}
 		}
 		//Arrow pointing to component
-		else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), planetGravityField.calcGravFactor(arrow->getPosition()));
+		else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
 	}
 	
 	if (!IFONLINE) //Check Components offline

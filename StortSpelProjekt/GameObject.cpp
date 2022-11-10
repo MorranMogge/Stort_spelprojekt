@@ -306,6 +306,11 @@ void GameObject::setMesh(Mesh* inMesh)
 	this->mesh->rotation = inMesh->rotation;
 }
 
+void GameObject::setGravityField(GravityField* field)
+{
+	this->activeField = field;
+}
+
 bool GameObject::withinBox(GameObject* object, float xRange, float yRange, float zRange) const
 {
 	using namespace DirectX;

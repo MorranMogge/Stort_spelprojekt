@@ -20,16 +20,18 @@ private:
 
 public:
 	Arrow(const std::string& objectPath, const DirectX::XMFLOAT3& pos);
+	Arrow(Mesh* useMesh, const DirectX::XMFLOAT3& pos);
 	~Arrow();
 
 	DirectX::XMVECTOR getUpVectorArrow() const;
 	DirectX::XMVECTOR getForwardVectorArrow() const;
 	DirectX::XMVECTOR getRightVectorArrow() const;
 	DirectX::XMVECTOR getArrowVectorArrow() const;
-
 	DirectX::XMVECTOR getPosition() const;
+
 	void moveWithCamera(const DirectX::XMVECTOR& cameraPosition, const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraUp, const DirectX::XMMATRIX& cameraRotation);
 	void showDirection(const DirectX::XMVECTOR& goalPosition, const DirectX::XMVECTOR& playerPosition, const DirectX::XMFLOAT3& gravity);
+	void removeArrow();
 	void draw();
 	void update();
 };

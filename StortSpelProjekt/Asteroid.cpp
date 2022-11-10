@@ -40,8 +40,8 @@ Asteroid::Asteroid(Mesh* mesh, PhysicsWorld& physWorld)
 {
 	this->asteroidMesh = mesh;
 	this->scale = DirectX::XMFLOAT3(1, 1, 1);
-	this->physComp = physWorld.returnAddedPhysComponent(reactphysics3d::CollisionShapeName::SPHERE, DirectX::XMFLOAT3(0,0,0), this->scale);
-	this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
+	//this->physComp = physWorld.returnAddedPhysComponent(reactphysics3d::CollisionShapeName::SPHERE, DirectX::XMFLOAT3(0,0,0), this->scale);
+	//this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
 	this->inactive = false;
 }
 
@@ -60,7 +60,7 @@ void Asteroid::spawnAsteroid(DirectX::XMFLOAT3 spawnPos, DirectX::XMFLOAT3 direc
 	this->direction = direction;
 	this->speed = speed;
 	this->inactive = false;
-	this->physComp->setPosition(reactphysics3d::Vector3(this->position.x, this->position.y, this->position.z));
+	//this->physComp->setPosition(reactphysics3d::Vector3(this->position.x, this->position.y, this->position.z));
 }
 
 void Asteroid::moveAsteroid(const float& dt, std::vector<Planet*>& planets, std::vector<GameObject*>& objects)
@@ -87,6 +87,6 @@ void Asteroid::draw()
 	this->asteroidMesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f));
 	this->asteroidMesh->scale = this->scale;
 
-	this->asteroidMesh->UpdateCB();
+	this->asteroidMesh->UpdateCB(this->position, DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f)), this->scale);
 	this->asteroidMesh->DrawWithMat();
 }

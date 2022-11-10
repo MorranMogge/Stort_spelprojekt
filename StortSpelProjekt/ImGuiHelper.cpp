@@ -58,7 +58,7 @@ void ImGuiHelper::setupImGui(float bgColour[])
 	style->Colors[ImGuiCol_TitleBgActive] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
 }
 
-void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, const float& dt)
+void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, bool& landingMinigame, const float& dt)
 {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -75,6 +75,7 @@ void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, const float& dt)
 			ImGui::Text(tmpStr.c_str());
 			ImGui::Checkbox("Draw collision boxes", &wireframe);
 			ImGui::Checkbox("Draw objects", &drawObjects);
+			ImGui::Checkbox("Landing Minigame", &landingMinigame);
 		}
 
 		ImGui::End();
@@ -83,3 +84,4 @@ void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, const float& dt)
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
+

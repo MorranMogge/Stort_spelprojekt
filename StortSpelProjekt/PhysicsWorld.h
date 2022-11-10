@@ -1,7 +1,7 @@
 #pragma once
 #include "PhysicsComponent.h"
-
 #include "Vertex.h"	//Used for creating the rendering triangles
+#include "Planet.h"
 
 class GameObject;
 
@@ -12,6 +12,7 @@ private:
 	UINT stride;
 	UINT offset;
 	reactphysics3d::uint64 nrOfTriangles;
+	std::vector<Planet *> planets;   
 
 	//Used for gravity
 	DirectX::XMFLOAT3 grav;
@@ -46,6 +47,7 @@ private:
 public:
 	PhysicsWorld(std::string worldName = "Planet SIS");
 	~PhysicsWorld();
+	void setPlanets(std::vector<Planet *>& planets);
 	void update(const float& dt);
 	void renderReact3D();
 	PhysicsComponent* getPlayerBox()const;

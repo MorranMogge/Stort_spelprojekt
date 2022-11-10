@@ -12,7 +12,6 @@
 #include "WindowHelper.h"
 #include "D3D11Helper.h"
 
-#include "GuiHandler.h"
 #include "ImGuiHelper.h"
 
 #include "SettingsMenu.h"
@@ -36,14 +35,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui::GetIO().IniFilename = nullptr;
 
-	bool fullscreen = false;
-	UINT WIDTH = 1280;
-	UINT HEIGHT = 720;
 	//UINT WIDTH = 1920;
 	//UINT HEIGHT = 1080;
-	HWND window;
+	UINT WIDTH = 1280;
+	UINT HEIGHT = 720;
 
-	Client* client = new Client();
+	HWND window;
 
 	if (!SetupWindow(hInstance, WIDTH, HEIGHT, nCmdShhow, window))
 	{
@@ -74,8 +71,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	{
 		if (Input::KeyPress(KeyCode::F1))
 		{
-			fullscreen = !fullscreen;
-			swapChain->SetFullscreenState(fullscreen, nullptr);
+			//fullscreen = !fullscreen;
+			//swapChain->SetFullscreenState(fullscreen, nullptr);
 			GPU::windowHeight = 1080;
 			GPU::windowWidth = 1920;
 		}
@@ -133,7 +130,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	#pragma region Deallocation
 	delete currentState;
 	
-	delete client;
 
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();

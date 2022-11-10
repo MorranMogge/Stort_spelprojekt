@@ -3,6 +3,7 @@
 #include <d3d11.h>
 #include "ConstantBufferNew.h"
 #include "GPU.h"
+#include "Planet.h"
 
 class Camera
 {
@@ -39,6 +40,7 @@ public:
 	void updateCamera();
 	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const DirectX::XMVECTOR& playerUp, const float& playerSpeed, const float& deltaTime);
 	void winScene(const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation);
+	void landingMinigameScene(const Planet* planet, const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation);
 	DirectX::XMVECTOR getForwardVector() const;
 	DirectX::XMVECTOR getRightVector() const;
 	DirectX::XMVECTOR getUpVector() const;

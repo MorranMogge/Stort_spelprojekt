@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Camera.h"
 #include "Input.h"
+#include "DirectXMathHelper.h"
 #include <string>
 using namespace DirectX;
 
@@ -8,6 +9,7 @@ void Camera::updateCamera()
 {
 	viewMatrix = DirectX::XMMatrixLookAtLH(cameraPos, lookAtPos, upVector);
 	projMatrix = DirectX::XMMatrixPerspectiveFovLH(fieldOfView, 1264.f / 681.f, 0.1f, 800.0f);
+
 	cameraBuffer.getData().viewProjMX = viewMatrix * projMatrix;
 	cameraBuffer.getData().viewProjMX = XMMatrixTranspose(cameraBuffer.getData().viewProjMX);
 
@@ -91,6 +93,19 @@ void Camera::winScene(const DirectX::XMVECTOR& shipPosition, const DirectX::XMMA
 
 	cameraPos = shipPosition + upVector * 40.f - forwardVector * 50.f;
 	lookAtPos = shipPosition;
+	updateCamera();
+}
+
+void Camera::landingMinigameScene(const Planet* planet, const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation)
+{
+	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, shipRotation);
+	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, shipRotation);
+	upVector = XMVector3TransformCoord(DEFAULT_UP, shipRotation);
+
+	DirectX::XMVECTOR middlePos = ((DirectX::XMVECTOR)planet->getPlanetPosition() + shipPosition) / 2.f;
+	middlePos += 1.25f*upVector*(DirectX::XMVECTOR)DirectX::SimpleMath::Vector3(planet->getSize() / 2.f, planet->getSize() / 2.f, planet->getSize() / 2.f);
+	lookAtPos = middlePos;
+	cameraPos = middlePos - forwardVector * 1.25f/fieldOfView * getLength((DirectX::SimpleMath::Vector3)middlePos);
 	updateCamera();
 }
 

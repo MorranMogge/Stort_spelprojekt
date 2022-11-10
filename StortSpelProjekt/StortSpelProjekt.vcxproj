@@ -187,7 +187,7 @@
     <ClInclude Include="GPU.h" />
     <ClInclude Include="GravityField.h" />
     <ClInclude Include="Grenade.h" />
-    <ClInclude Include="GuiHandler.h" />
+    <ClInclude Include="MenuUI.h" />
     <ClInclude Include="GUIObject.h" />
     <ClInclude Include="GUISprite.h" />
     <ClInclude Include="GUIText.h" />
@@ -216,6 +216,7 @@
     <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="Planet.h" />
+    <ClInclude Include="PlanetGenerator.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerVectors.h" />
     <ClInclude Include="Potion.h" />
@@ -289,7 +290,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GravityField.cpp" />
     <ClCompile Include="Grenade.cpp" />
-    <ClCompile Include="GuiHandler.cpp" />
+    <ClCompile Include="MenuUI.cpp" />
     <ClCompile Include="GUISprite.cpp" />
     <ClCompile Include="GUIText.cpp" />
     <ClCompile Include="HudUI.cpp" />
@@ -340,6 +341,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="PlanetGenerator.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerVectors.cpp" />
     <ClCompile Include="Potion.cpp" />
@@ -411,6 +413,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Fresnel_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

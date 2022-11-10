@@ -241,7 +241,7 @@ public:
 
 		worldCB.Update(&worldS, sizeof(MatrixS));
 	}
-	void UpdateCB()
+	void UpdateCB(const DirectX::SimpleMath::Vector3& position, const DirectX::XMMATRIX& rotation, const DirectX::SimpleMath::Vector3& scale)
 	{
 		using namespace DirectX;
 
@@ -255,7 +255,7 @@ public:
 		//		0, 0, 0, 1
 		//	};
 
-		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * this->rotation * XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
+		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * rotation * XMMatrixTranslation(position.x, position.y, position.z))}));
 		worldCB.Update(&worldS, sizeof(MatrixS));
 
 		static VectorS positionS;

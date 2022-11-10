@@ -10,7 +10,7 @@ bool CreateInterfaces(const UINT& width, const UINT& height, HWND window, ID3D11
 	swapChainDesc.BufferDesc.Height = height;
 	swapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
 	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
-	swapChainDesc.BufferDesc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
@@ -23,7 +23,7 @@ bool CreateInterfaces(const UINT& width, const UINT& height, HWND window, ID3D11
 	swapChainDesc.OutputWindow = window;
 	swapChainDesc.Windowed = true;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	swapChainDesc.Flags = 0;
+	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	UINT flags = 0;
 	/*if (_DEBUG)
@@ -41,10 +41,9 @@ bool CreateInterfaces(const UINT& width, const UINT& height, HWND window, ID3D11
 	GPU::immediateContext = immediateContext;
 	GPU::swapChain = swapChain;
 
-	GPU::windowWidth = 1264;
-	GPU::windowHeight = 681;
-	//GPU::windowWidth = 1920;
-	//GPU::windowHeight = 1080;
+
+	//GPU::windowWidth = 1264;
+	//GPU::windowHeight = 681;
 
 	return !FAILED(hr);
 }

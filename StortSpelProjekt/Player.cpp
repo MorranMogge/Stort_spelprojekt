@@ -5,7 +5,9 @@
 #include "BaseballBat.h"
 #include "Component.h"
 #include "PacketEnum.h"
+#include "HudUI.h"
 #include "Mesh.h"
+#include "SpaceShip.h"
 using namespace DirectX;
 
 void Player::throwItem()
@@ -76,7 +78,10 @@ void Player::handleItems()
 		c.z = this->getPos().z;
 
 		//sending data to server
-		client->sendStuff<ComponentData>(c);
+		if (this->client != nullptr)
+		{
+			client->sendStuff<ComponentData>(c);
+		}	
 
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 		holdingItem->useItem();
@@ -106,7 +111,8 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	this->client = client;
 	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
-
+	HudUI::player = this;
+	
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);
 
@@ -136,6 +142,8 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	this->setRot(this->getRotOrientedToGrav());
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
+
+	HudUI::player = this;
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);
@@ -743,14 +751,19 @@ void Player::releaseItem()
 		newData.x = this->holdingItem->getPosV3().x;
 		newData.y = this->holdingItem->getPosV3().y;
 		newData.z = this->holdingItem->getPosV3().z;
-		client->sendStuff<ComponentData>(newData);
+		//sending data to server
+		if (this->client != nullptr)
+		{
+			client->sendStuff<ComponentData>(newData);
+		}
 
 		this->holdingItem->setPickedUp(false);
+		this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 		this->holdingItem = nullptr;
 	}
 }
 
-bool Player::checkForStaticCollision(const std::vector<GameObject*>& gameObjects)
+bool Player::checkForStaticCollision(const std::vector<Planet*>& gameObjects, const std::vector<SpaceShip*>& spaceShips)
 {
 	SimpleMath::Vector3 vecPoint = this->position;
 	vecPoint += 1.f * forwardVector;
@@ -759,8 +772,16 @@ bool Player::checkForStaticCollision(const std::vector<GameObject*>& gameObjects
 	int gameObjSize = (int)gameObjects.size();
 	for (int i = 0; i < gameObjSize; i++)
 	{
-		if (gameObjects[i]->getPhysComp()->getType() != reactphysics3d::BodyType::STATIC || gameObjects[i] == this->holdingItem) continue;
-		if (gameObjects[i]->getPhysComp()->testPointInside(point))
+		//if (gameObjects[i]->getPlanetCollider()->getType() != reactphysics3d::BodyType::STATIC || gameObjects[i] == this->holdingItem) continue;
+		if (gameObjects[i]->getPlanetCollider()->testPointInside(point))
+		{
+			this->position -= 1.f * forwardVector;
+			return true;
+		}
+	}
+	for (int i = 0; i < spaceShips.size(); i++)
+	{
+		if (spaceShips[i]->getPhysComp()->testPointInside(point))
 		{
 			this->position -= 1.f * forwardVector;
 			return true;
@@ -787,8 +808,8 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 	int gameObjSize = (int)gameObjects.size();
 	for (int i = 0; i < gameObjSize; i++)
 	{
-		int id = gameObjects.at(i)->getId();
-		if (gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
+		if (gameObjects[i]->getPhysComp()->getType() != reactphysics3d::BodyType::STATIC) continue;
+		if ( gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
 		{
 			//Maybe somehow return the index of the triangle hit to calculate new Normal
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
@@ -877,6 +898,23 @@ float Player::getSpeed()const
 {
 	return this->currentSpeed;
 }
+void Player::draw()
+{
+	//Team switch
+	switch (team)
+	{
+	case 0:
+		mesh->matKey[0] = "pintoRed.png"; break;
+		break;
+
+	case 1:
+		mesh->matKey[0] = "pintoBlue.png"; break;
+		break;
+
+	}
+	this->mesh->UpdateCB(position, rotation, scale);
+	this->mesh->DrawWithMat();
+}
 
 void Player::drawIcon()
 {
@@ -935,6 +973,20 @@ Item* Player::getItem()const
 int Player::getOnlineID() const
 {
 	return this->onlineID;
+}
+
+bool Player::isHoldingItem() const
+{
+	bool isHolding = false;
+	if (this->holdingItem == nullptr)
+	{
+		isHolding = false;
+	}
+	else
+	{
+		isHolding = true;
+	}
+	return isHolding;
 }
 
 void Player::setSpeed(float speed)
@@ -1032,5 +1084,5 @@ void Player::resetVelocity()
 
 void Player::velocityMove(const float& dt)
 {
-	this->position += velocity * dt; //CHANGE!
+	this->position += velocity * dt;
 }

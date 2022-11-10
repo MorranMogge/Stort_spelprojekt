@@ -152,11 +152,11 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			std::cout << "Team: " << compAdded->spaceShipTeam << " gained progress!\n";
 			for (int i = 0; i < spaceShips.size(); i++)
 			{
-				if (i == compAdded->spaceShipTeam)
+				if (spaceShips[i]->getTeam() == compAdded->spaceShipTeam)
 				{
 					//Update hud or whatever
 					spaceShips[i]->addComponent();
-					spaceShips[i]->setAnimate(true);
+					//spaceShips[i]->setAnimate(true);
 				}
 			}
 			for (int i = 0; i < players.size(); i++)

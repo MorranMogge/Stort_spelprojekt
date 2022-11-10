@@ -15,7 +15,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	this->packetEventManager = new PacketEventManager();
 	//m�ste raderas******************
-	client = new Client();//("192.168.43.216");
+	client = new Client("192.168.43.244");
 	circularBuffer = client->getCircularBuffer();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -134,7 +134,7 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/grenade"));
 	meshes.push_back(new Mesh("../Meshes/arrow"));
 
-	if (IFONLINE) return;
+	//if (IFONLINE) return;
 
 	//SOLAR SYSTEM SETUP
 

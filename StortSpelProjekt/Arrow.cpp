@@ -7,24 +7,17 @@ Arrow::Arrow(const std::string& objectPath, const DirectX::XMFLOAT3& pos)
 {
 	OBJ testObj(objectPath);
 	this->mesh = new Mesh(testObj);
-
-	// load all materials for Obj
 	int nrOfMat = (int)testObj.mtl.materials.size();
 	for (int i = 0; i < nrOfMat; i++)
 	{
 		MaterialLibrary::LoadMaterial(testObj.mtl.materials[i]);
 	}
 
-	// set position
 	this->position = pos;
 	this->mesh->position = pos;
-
-	// set rotation
 	this->rotation = DirectX::XMMatrixIdentity();
 	this->mesh->rotation = this->rotation;
 	scale = DirectX::XMFLOAT3(1, 1, 1);
-
-	// set scale
 	this->mesh->scale = scale;
 	this->scale = scale;
 
@@ -66,7 +59,7 @@ DirectX::XMVECTOR Arrow::getPosition() const
 
 void Arrow::moveWithCamera(const DirectX::XMVECTOR& cameraPosition, const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraUp, const DirectX::XMMATRIX& cameraRotation)
 {
-	this->position = cameraPosition - cameraUp * 40.f + cameraForward * 40.f;
+	this->position = cameraPosition - cameraUp * 30.f + cameraForward * 40.f;
 	this->rotation = cameraRotation;
 }
 
@@ -80,7 +73,6 @@ void Arrow::showDirection(const DirectX::XMVECTOR& goalPosition, const DirectX::
 	normalVector = DirectX::XMVector3Normalize(normalVector);
 	rightVector = DirectX::XMVector3Normalize(rightVector);
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
-	
 	arrowVector = DirectX::XMVector3Normalize(arrowVector);
 
 	//Rotating

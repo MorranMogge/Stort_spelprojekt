@@ -27,6 +27,7 @@
 #include "BaseballBat.h"
 #include "SpaceShip.h"
 #include "Grenade.h"
+#include "Arrow.h"
 
 //User
 #include "Input.h"

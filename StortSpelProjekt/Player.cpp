@@ -2,11 +2,9 @@
 #include "PhysicsComponent.h"
 #include "Player.h"
 #include "DirectXMathHelper.h"
-#include "Potion.h"
 #include "BaseballBat.h"
 #include "Component.h"
 #include "PacketEnum.h"
-
 #include "Mesh.h"
 using namespace DirectX;
 
@@ -698,8 +696,7 @@ bool Player::pickupItem(Item* itemToPickup)
 		{
 			addItem(itemToPickup);
 
-			Component* tmp = dynamic_cast<Component*>(itemToPickup);
-			if (tmp) this->holdingComp = true;
+			if (itemToPickup->getId() == ObjID::COMPONENT) this->holdingComp = true;
 			else this->holdingComp = false;
 
 			holdingItem->getPhysComp()->getRigidBody()->resetForce();

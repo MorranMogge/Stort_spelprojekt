@@ -38,21 +38,21 @@ bool PlayerVectors::setUpVertexBuffer()
 
 void PlayerVectors::updateVertexBuffer()
 {
-	
-	vectors[0].position = vectors[1].position = this->arrow->getPosition();
-	vectors[2].position = vectors[3].position = vectors[4].position = vectors[5].position = vectors[6].position = vectors[7].position = this->player->getPos();
-		
-		vectors[1].position += this->player->getForwardVector() * 50;
-		vectors[3].position += this->player->getUpVector() * 50;
-		vectors[5].position += this->player->getRightVector() * 50;
-		vectors[7].position = {this->player->getRayCastPos().x, this->player->getRayCastPos().y, this->player->getRayCastPos().z};
-		//vectors[6].position = this->player->getRayCastPos();
-		//vectors[7].position = SimpleMath::Vector3(0, 0, 0);
 
-		D3D11_MAPPED_SUBRESOURCE resource;
-		GPU::immediateContext->Map(vBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-		memcpy(resource.pData, &vectors, NROFVERTICES * sizeof(Vertex));
-		GPU::immediateContext->Unmap(vBuffer, 0);
+	vectors[0].position = vectors[1].position = vectors[2].position = vectors[3].position = this->arrow->getPosition();
+	vectors[4].position = vectors[5].position = vectors[6].position = vectors[7].position = this->player->getPos();
+
+	vectors[1].position += this->arrow->getForwardVectorArrow() * 50;
+	vectors[3].position += this->arrow->getUpVectorArrow() * 50;
+	vectors[5].position += this->arrow->getArrowVectorArrow() * 50;
+	vectors[7].position = { this->player->getRayCastPos().x, this->player->getRayCastPos().y, this->player->getRayCastPos().z };
+	//vectors[6].position = this->player->getRayCastPos();
+	//vectors[7].position = SimpleMath::Vector3(0, 0, 0);
+
+	D3D11_MAPPED_SUBRESOURCE resource;
+	GPU::immediateContext->Map(vBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	memcpy(resource.pData, &vectors, NROFVERTICES * sizeof(Vertex));
+	GPU::immediateContext->Unmap(vBuffer, 0);
 }
 
 PlayerVectors::PlayerVectors()
@@ -72,12 +72,12 @@ void PlayerVectors::setPlayer(Player* player, Arrow* arrow)
 	this->player = player;
 	this->arrow = arrow;
 
-	vectors[0].position = vectors[1].position = this->arrow->getPosition();
-	vectors[2].position = vectors[3].position = vectors[4].position = vectors[5].position = vectors[6].position = vectors[7].position = this->player->getPos();
+	vectors[0].position = vectors[1].position = vectors[2].position = vectors[3].position = this->arrow->getPosition();
+	vectors[4].position = vectors[5].position = vectors[6].position = vectors[7].position = this->player->getPos();
 
-	vectors[1].position += this->player->getForwardVector() * 100;
-	vectors[3].position += this->player->getUpVector() * 100;
-	vectors[5].position += this->player->getRightVector() * 100;
+	vectors[1].position += this->arrow->getForwardVectorArrow() * 100;
+	vectors[3].position += this->arrow->getUpVectorArrow() * 100;
+	vectors[5].position += this->arrow->getArrowVectorArrow() * 100;
 	vectors[6].position += this->player->getUpVector() * -100.f;
 	vectors[7].position = SimpleMath::Vector3(0, 0, 0);
 

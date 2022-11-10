@@ -7,7 +7,7 @@
 
 void HudUI::SpritePass()
 {
-	if (red)//landing
+	if (Input::KeyDown(KeyCode::B))//landing
 	{
 		landing0.Draw();
 		landing1.Draw();
@@ -196,7 +196,7 @@ void HudUI::handleInputs()
 	}
 	counterDown -= Time::DeltaTimeInSeconds();
 
-	std::cout << counterDown<< std::endl;
+	//std::cout << counterDown<< std::endl;
 	using namespace DirectX::SimpleMath;
 	Vector2 rocketPos = landing2.GetPosition();
 	Vector2 safePos = landing1.GetPosition();
@@ -237,7 +237,7 @@ void HudUI::handleInputs()
 	//Check sprite intersection
 	if (landing1.IntersectSprite(landing2))
 	{
-		//std::cout << "intersects" << std::endl;
+		std::cout << "intersects" << std::endl;
 	}
 }
 
@@ -245,6 +245,7 @@ void HudUI::Draw()
 {
 	GUI::Begin();
 	SpritePass();
-	handleInputs();
+	if (Input::KeyDown(KeyCode::B)){ handleInputs(); }
+	//
 	GUI::End();
 }

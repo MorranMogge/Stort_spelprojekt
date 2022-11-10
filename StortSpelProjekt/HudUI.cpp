@@ -84,15 +84,15 @@ HudUI::HudUI()
 	#define Min Vector2(125, 550)
 	timer.startTime;
 
-	landing0 = GUISprite(Vector2(125, 320));
+	landing0 = GUISprite(Vector2(125, 320)); //bar
 	landing0.Load(GPU::device, L"../Sprites/Bar.png");
-	landing0.SetScale(0.2f, 0.2f);
+	landing0.SetScale(0.51f, 0.51f);
 
-	landing1 = GUISprite(125, (Min.y - Max.y) / 2);
+	landing1 = GUISprite(125, (Min.y - Max.y) / 2); //safebox
 	landing1.Load(GPU::device, L"../Sprites/safeBox.png");
 	landing1.SetScale(0.2f, 0.06f);
 
-	landing2 = GUISprite(125,(Min.y - Max.y)/2);
+	landing2 = GUISprite(125,(Min.y - Max.y)/2); //ship
 	landing2.Load(GPU::device, L"../Sprites/ship.png");
 	landing2.SetScale(0.2f, 0.2f);
 

@@ -8,6 +8,7 @@
 #include "PacketEnum.h"
 #include "HudUI.h"
 #include "Mesh.h"
+#include "SpaceShip.h"
 using namespace DirectX;
 
 void Player::throwItem()
@@ -759,7 +760,7 @@ void Player::releaseItem()
 	}
 }
 
-bool Player::checkForStaticCollision(const std::vector<Planet*>& gameObjects)
+bool Player::checkForStaticCollision(const std::vector<Planet*>& gameObjects, const std::vector<SpaceShip*>& spaceShips)
 {
 	SimpleMath::Vector3 vecPoint = this->position;
 	vecPoint += 1.f * forwardVector;
@@ -770,6 +771,14 @@ bool Player::checkForStaticCollision(const std::vector<Planet*>& gameObjects)
 	{
 		//if (gameObjects[i]->getPlanetCollider()->getType() != reactphysics3d::BodyType::STATIC || gameObjects[i] == this->holdingItem) continue;
 		if (gameObjects[i]->getPlanetCollider()->testPointInside(point))
+		{
+			this->position -= 1.f * forwardVector;
+			return true;
+		}
+	}
+	for (int i = 0; i < spaceShips.size(); i++)
+	{
+		if (spaceShips[i]->getPhysComp()->testPointInside(point))
 		{
 			this->position -= 1.f * forwardVector;
 			return true;
@@ -796,7 +805,7 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 	int gameObjSize = (int)gameObjects.size();
 	for (int i = 0; i < gameObjSize; i++)
 	{
-		int id = gameObjects.at(i)->getId();
+		if (gameObjects[i]->getPhysComp()->getType() != reactphysics3d::BodyType::STATIC) continue;
 		if ( gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
 		{
 			//Maybe somehow return the index of the triangle hit to calculate new Normal

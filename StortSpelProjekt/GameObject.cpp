@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "PhysicsComponent.h"
 #include "GameObject.h"
-
+#include "DirectXMathHelper.h"
 
 void GameObject::updatePhysCompRotation()
 {
@@ -126,7 +126,7 @@ void GameObject::setScale(const DirectX::XMFLOAT3& scale)
 	this->scale = scale;
 	
 	//if (this->physComp->getTypeName() == reactphysics3d::CollisionShapeName::BOX) 
-	this->physComp->setScale(scale);
+	//this->physComp->setScale(scale);
 }
 
 DirectX::XMFLOAT3 GameObject::getPos() const
@@ -223,6 +223,7 @@ DirectX::XMFLOAT3 GameObject::getUpDirection() const
 	{
 		std::cout << "Gravity field was nullptr, direction was not given" << std::endl;
 	}
+	newNormalizeXMFLOAT3(upDir);
 	return upDir;
 }
 

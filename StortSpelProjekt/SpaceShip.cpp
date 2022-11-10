@@ -92,7 +92,7 @@ int SpaceShip::getTeam() const
 
 int SpaceShip::getNrOfComponents() const
 {
-	 return currentComponents;
+	return this->currentComponents;
 }
 
 bool SpaceShip::detectedComponent(GameObject* objectToCheck)
@@ -105,7 +105,7 @@ bool SpaceShip::detectedComponent(GameObject* objectToCheck)
 	}
 	else
 	{
-		this->setScale(DirectX::XMFLOAT3(2, 2, 2));
+		if (this->scale.y != 2.f) this->setScale(DirectX::XMFLOAT3(2, 2, 2));
 	}
 	return didDetect;
 }
@@ -120,7 +120,7 @@ bool SpaceShip::detectedComponent(Component* componentToCheck)
 	}
 	else
 	{
-		this->setScale(DirectX::XMFLOAT3(2, 2, 2));
+		if (this->scale.y != 2.f) this->setScale(DirectX::XMFLOAT3(2, 2, 2));
 	}
 	return didDetect;
 }

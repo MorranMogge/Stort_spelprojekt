@@ -40,6 +40,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		}
 		//int playerid = client->initTEMPPLAYERS();
 
+		
+
 		this->client->setClientId(playerId);
 		int offset = 10;
 		int dude = (NROFPLAYERS) / 2;
@@ -50,14 +52,14 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			
 			if (playerId != i)
 			{
-				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude < i + 1), &planetGravityField);
+				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude < i + 1), planetGravityField);
 				tmpPlayer->setOnlineID(i);
 				physWolrd.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
 			}
 			else
 			{
-				currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, (int)(dude < i + 1), &planetGravityField);
+				currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, (int)(dude < i + 1), planetGravityField);
 				currentPlayer->setOnlineID(i);
 				players.push_back(currentPlayer);
 				delete tmpPlayer;
@@ -99,7 +101,6 @@ Game::~Game()
 	}
 	delete asteroids;
 	delete atmosphere;
-	delete actualTestObjectForLandingVisuals;
 }
 
 void Game::loadObjects()
@@ -140,16 +141,16 @@ void Game::loadObjects()
 	planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(-55.f, -55.f, -55.f)));
 	planetVector.back()->setPlanetShape(&physWolrd);
 	asteroids = new AsteroidHandler(meshes[0], physWolrd);
+	planetGravityField = planetVector[0]->getGravityField();
 	
 	//Make sure the physics world has access to the planets
 	physWolrd.setPlanets(planetVector);
 
 	//CREATE ITEMS
-	potion = new Potion(meshes[2], Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), POTION, 0, &planetGravityField);
-	baseballBat = new BaseballBat(meshes[4], Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, &planetGravityField);
-	grenade = new Grenade(meshes[6], DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, &planetGravityField);
-	actualTestObjectForLandingVisuals = new SpaceShip( meshes[3], DirectX::SimpleMath::Vector3(100, 100, 0), 1, 1, &planetGravityField, DirectX::SimpleMath::Vector3(2.0f, 2.0f, 2.0f));
-	component = new Component(meshes[5], DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT, 0, &planetGravityField);
+	potion = new Potion(meshes[2], Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), POTION, 0, planetGravityField);
+	baseballBat = new BaseballBat(meshes[4], Vector3(-10, 10, 15), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
+	grenade = new Grenade(meshes[6], DirectX::SimpleMath::Vector3(-10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
+	component = new Component(meshes[5], DirectX::SimpleMath::Vector3(10, -10, 15), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT, 0, planetGravityField);
 
 	
 	//currentPlayer = new Player(meshes[1], Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, client, 0, &planetGravityField);
@@ -172,20 +173,20 @@ void Game::loadObjects()
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		physWolrd.addPhysComponent(gameObjects[i], reactphysics3d::CollisionShapeName::BOX);
-		gameObjects[i]->getPhysComp()->setPosition(reactphysics3d::Vector3(gameObjects[i]->getPosV3().x, gameObjects[i]->getPosV3().y, gameObjects[i]->getPosV3().z));
+		//gameObjects[i]->getPhysComp()->setPosition(reactphysics3d::Vector3(gameObjects[i]->getPosV3().x, gameObjects[i]->getPosV3().y, gameObjects[i]->getPosV3().z));
 	}
 
 	
 	//SPACE SHIPS
-	spaceShipRed = new SpaceShip(meshes[3], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, &planetGravityField, Vector3(2, 2, 2));
-	spaceShipBlue = new SpaceShip(meshes[3], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, &planetGravityField, Vector3(2, 2, 2));
+	spaceShipRed = new SpaceShip(meshes[3], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
+	spaceShipBlue = new SpaceShip(meshes[3], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
 	
-	spaceShips.emplace_back(spaceShipBlue);
 	spaceShips.emplace_back(spaceShipRed);
+	spaceShips.emplace_back(spaceShipBlue);
 	
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
-		physWolrd.addPhysComponent(spaceShips[i], reactphysics3d::CollisionShapeName::BOX);
+		physWolrd.addPhysComponent(spaceShips[i], reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 4 * 0.75f, 0.75f));
 		spaceShips[i]->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 		gameObjects.emplace_back(spaceShips[i]);
 	}
@@ -193,12 +194,10 @@ void Game::loadObjects()
 	components.emplace_back(component);
 	gameObjects.emplace_back(component);
 	physWolrd.addPhysComponent(component, reactphysics3d::CollisionShapeName::BOX);
-	
 
-	if (!currentPlayer) { currentPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, &planetGravityField); players.emplace_back(currentPlayer); }
+	if (!currentPlayer) { currentPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, planetGravityField); players.emplace_back(currentPlayer); }
 	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
-	currentPlayer->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 	gameObjects.emplace_back(currentPlayer);
 
 	baseballBat->setPlayer(currentPlayer);
@@ -234,8 +233,6 @@ void Game::drawObjects(bool drawDebug)
 	{
 		planetVector[i]->drawPlanet();
 	}
-	actualTestObjectForLandingVisuals->updateBuffer();
-	actualTestObjectForLandingVisuals->draw();
 	asteroids->drawAsteroids();
 
 	//Draw light debug meshes
@@ -364,14 +361,13 @@ void Game::handleKeybinds()
 GAMESTATE Game::Update()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, &planetGravityField, spaceShips, onlineItems);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, planetGravityField, spaceShips, onlineItems);
 	
 	//Get newest delta time
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 
-	actualTestObjectForLandingVisuals->movePos(DirectX::XMFLOAT3(-dt * 5.f, -dt * 5.f, 0.f));
 	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
 	asteroids->updateAsteroids(dt, planetVector, gameObjects);
 
@@ -391,7 +387,7 @@ GAMESTATE Game::Update()
 	//Player functions
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), hitNormal, dt, testingVec);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
-	currentPlayer->checkForStaticCollision(planetVector);
+	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->checkMovement();
 	currentPlayer->velocityMove(dt);
 
@@ -468,7 +464,8 @@ GAMESTATE Game::Update()
 			{
 				camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot());
 			}
-			grav = planetGravityField.calcGravFactor(this->spaceShips[i]->getPosV3());
+			grav = planetGravityField->calcGravFactor(this->spaceShips[i]->getPosV3());
+			newNormalizeXMFLOAT3(grav);
 			this->spaceShips[i]->move(grav, dt);
 			endTimer += dt;
 		}
@@ -510,7 +507,8 @@ GAMESTATE Game::Update()
 	}
 	if (landingMinigame)
 	{
-		camera.landingMinigameScene(planetVector[0], actualTestObjectForLandingVisuals->getPosV3(), actualTestObjectForLandingVisuals->getRot());
+		//Here yo type the function below but replace testObject with your space ship
+		//camera.landingMinigameScene(planetVector[0], actualTestObjectForLandingVisuals->getPosV3(), actualTestObjectForLandingVisuals->getRot());
 	}
 
 

@@ -14,6 +14,7 @@
 #define FORCE 2500
 
 class Item;
+class SpaceShip;
 
 class Player: public GameObject
 {
@@ -122,7 +123,7 @@ public:
 	//Collision and checks
 
 	void hitByBat(const reactphysics3d::Vector3& force);
-	bool checkForStaticCollision(const std::vector<Planet*>& gameObjects);
+	bool checkForStaticCollision(const std::vector<Planet*>& gameObjects, const std::vector<SpaceShip*>& spaceShips);
 	bool raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	

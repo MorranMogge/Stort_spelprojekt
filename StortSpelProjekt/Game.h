@@ -41,7 +41,7 @@ private:
 	DirectX::XMFLOAT3 grav;
 
 	BasicRenderer basicRenderer;
-	GravityField planetGravityField;
+	GravityField* planetGravityField;
 	PhysicsWorld physWolrd;
 	std::vector<Planet*> planetVector;
 	AsteroidHandler* asteroids;
@@ -56,9 +56,7 @@ private:
 	Camera camera;
 	SkyboxObj skybox;
 	Player* currentPlayer;
-	//SpaceShip* spaceShip;
 	Mesh* planetMeshes;
-	SpaceShip* actualTestObjectForLandingVisuals;
 	GameObject* atmosphere;
 
 	//Items

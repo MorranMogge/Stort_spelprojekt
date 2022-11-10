@@ -78,23 +78,28 @@ MenuUI::MenuUI()
 
 	start = GUISprite(1000, 200);
 	start.Load(GPU::device, L"../Sprites/start.png");
+	start.SetScale(1, 1);
 
 	settings = GUISprite(1000, 300);
 	settings.Load(GPU::device, L"../Sprites/settings.png");
+	settings.SetScale(1, 1);
 
 	credits = GUISprite(1000, 400);
 	credits.Load(GPU::device, L"../Sprites/credit.png");
+	credits.SetScale(1, 1);
 
 	exit = GUISprite(1000, 500);
 	exit.Load(GPU::device, L"../Sprites/exit.png");
+	exit.SetScale(1, 1);
 
 	Loading = GUISprite(1264.0f / 2.0f, 681.0f / 2.0f);
 	Loading.Load(GPU::device, L"../Sprites/Loading.bmp");
+	Loading.SetScale(1, 1);
 
 	control = GUISprite(310 - left, 225 - upp);
 	control.Load(GPU::device, L"../Sprites/control.png");
 	control.SetScale(0.75, 0.75);
-	
+
 	useText = GUISprite(320 - left, 420 - upp);
 	useText.Load(GPU::device, L"../Sprites/UseText.png");
 	useText.SetScale(0.40f, 0.40f);

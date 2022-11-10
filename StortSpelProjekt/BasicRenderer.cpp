@@ -231,7 +231,7 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!setUpFresnelBlendState())															return false;
 	
 	
-	SetViewport(viewport, WIDTH, HEIGHT);
+	SetViewport(viewport, GPU::windowWidth, GPU::windowHeight);
 	SetViewport(shadowViewport, WidthAndHeight, WidthAndHeight);
 	
 	return true;

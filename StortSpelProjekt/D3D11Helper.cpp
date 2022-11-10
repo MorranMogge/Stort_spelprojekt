@@ -19,17 +19,16 @@ bool CreateInterfaces(const UINT& width, const UINT& height, HWND window, ID3D11
 	swapChainDesc.SampleDesc.Quality = 0;
 
 	swapChainDesc.BufferUsage = DXGI_USAGE_UNORDERED_ACCESS | DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.BufferCount = 2;
+	swapChainDesc.BufferCount = 1;
 	swapChainDesc.OutputWindow = window;
 	swapChainDesc.Windowed = true;
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	swapChainDesc.Flags = 0;
 
 	UINT flags = 0;
-	/*if (_DEBUG)
-	{
-		flags = D3D11_CREATE_DEVICE_DEBUG;
-	}*/
+#ifdef _DEBUG
+	flags = D3D11_CREATE_DEVICE_DEBUG;
+#endif
 
 	D3D_FEATURE_LEVEL featureLevels[] = {
 		D3D_FEATURE_LEVEL::D3D_FEATURE_LEVEL_11_1,
@@ -40,10 +39,6 @@ bool CreateInterfaces(const UINT& width, const UINT& height, HWND window, ID3D11
 	GPU::device = device;
 	GPU::immediateContext = immediateContext;
 	GPU::swapChain = swapChain;
-
-
-	//GPU::windowWidth = 1264;
-	//GPU::windowHeight = 681;
 
 	return !FAILED(hr);
 }

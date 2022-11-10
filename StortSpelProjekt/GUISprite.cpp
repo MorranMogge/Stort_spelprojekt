@@ -17,7 +17,6 @@ GUISprite::GUISprite(const float x, const float y, const float layer)
     
     m_Position = DirectX::SimpleMath::Vector2(BaseWidth * x, BaseHeight * y);
     m_Layer = layer;
-    //m_pOrigin =;
     m_Scale = { BaseWidth * 1, BaseWidth * 1 };            //same scale as object
     m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
     m_Alpha = 1.0f;
@@ -33,7 +32,6 @@ GUISprite::GUISprite(const DirectX::SimpleMath::Vector2& position, float layer)
     m_Position.x *= BaseWidth;
     m_Position.y *= BaseHeight;
     m_Layer = layer;
-    //m_pOrigin =;
     m_Scale = { BaseWidth * 1, BaseWidth * 1 };            //same scale as object
     m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
     m_Alpha = 1.0f;
@@ -149,8 +147,8 @@ bool GUISprite::IntersectMouse() const
     //}
 
     ImVec2 mousePos = ImGui::GetMousePos();
-#define InsideX mousePos.x > m_Position.x - (m_Width * m_Scale.x / 2.0f) && mousePos.x < m_Position.x + (m_Width * m_Scale.x / 2.0f)
-#define InsideY mousePos.y > m_Position.y - (m_Height * m_Scale.y / 2.0f) && mousePos.y < m_Position.y + (m_Height * m_Scale.y / 2.0f)
+#define InsideX mousePos.x > m_Position.x/* * BaseWidth*/ - (m_Width * m_Scale.x / 2.0f)/* * BaseWidth*/ && mousePos.x < m_Position.x/* * BaseWidth*/ + (m_Width * m_Scale.x / 2.0f)/* * BaseWidth*/
+#define InsideY mousePos.y > m_Position.y/* * BaseHeight*/ - (m_Height * m_Scale.y / 2.0f)/* * BaseHeight*/ && mousePos.y < m_Position.y/* * BaseHeight*/ + (m_Height * m_Scale.y / 2.0f)/* * BaseHeight*/
     return InsideX && InsideY;
 }
 

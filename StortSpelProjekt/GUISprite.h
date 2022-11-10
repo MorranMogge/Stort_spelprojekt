@@ -4,8 +4,9 @@
 class GUISprite final :public GUIObject
 {
 
-	inline static float BaseWidth, BaseHeight;
 public:
+
+	inline static float BaseWidth, BaseHeight;
 
 	GUISprite();
 	GUISprite(const float x, const float y, const float layer = 0.0f);

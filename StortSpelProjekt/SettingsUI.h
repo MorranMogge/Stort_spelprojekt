@@ -32,15 +32,16 @@ class SettingsUI final
 
 	void HandleInputs();
 	void SpritePass();
+	void Init();
 
 public:
 
-	bool fullscreen = false;
-	bool dropdown1 = false;
-	bool dropdown2 = false;
+	inline static bool fullscreen = false;
+	inline static bool dropdown1 = false;
+	inline static bool dropdown2 = false;
 
-	bool isDirectx = true;
-	bool is720p = true;
+	inline static bool isDirectx = true;
+	inline static bool is720p = true;
 
 	GAMESTATE GetGameState();
 

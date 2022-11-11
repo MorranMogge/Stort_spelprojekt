@@ -42,7 +42,7 @@ void Game::loadObjects()
 	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	this->sexyMan = new AnimatedMesh(tmpMesh, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0, 0, 0), 69);
 	this->sexyMan->addData(animData);
-	//sexyMan->setSrv(this->manager.getSrv("texture2.png"));
+	sexyMan->setSrv(this->manager.getSrv("../Textures/texture2.png"));
 	//physWolrd.addPhysComponent(sexyMan, reactphysics3d::CollisionShapeName::BOX);
 
 	planet = new GameObject(meshes[0], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(40.0f, 40.0f, 40.0f));
@@ -361,6 +361,9 @@ Game::~Game()
 		delete meshes[i];
 	}
 	wireBuffer->Release();
+
+	delete tmpMesh;
+	delete sexyMan;
 }
 
 GAMESTATE Game::Update()

@@ -478,7 +478,18 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 
 ID3D11ShaderResourceView* ModelManager::getSrv(const std::string key)
 {
-	return bank.getSrv(key);
+	ID3D11ShaderResourceView* empty = {};
+	ID3D11ShaderResourceView* ret = bank.getSrv(key);
+	if (ret == empty)
+	{
+		this->makeSRV(ret, key);
+		if (ret == empty)
+		{
+			return nullptr;
+		}
+		this->bank.addSrv(key, ret);
+	}
+	return ret;
 }
 
 std::vector<ID3D11ShaderResourceView*> ModelManager::getTextureMaps() const

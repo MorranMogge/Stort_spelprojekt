@@ -120,7 +120,7 @@ private:
 	//const aiNodeAnim* findNodeAnim(const std::string& nodeName, const aiAnimation* pAnimation);
 	bool findNodeAnim(const std::string& nodeName, const animationNode pAnimation, channels& res);
 
-	void getTimeInTicks(float dt);
+	void getTimeInTicks(const float& dt, const unsigned& animationIndex);
 
 	// forbidden code
 
@@ -134,5 +134,5 @@ public:
 
 	void addData(const AnimationData& data);
 
-	void draw(const float& dt, const int& animIndex);
+	void draw(const float& dt, const unsigned& animIndex);
 };

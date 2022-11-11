@@ -390,5 +390,5 @@ void GameObject::tmpDraw(UINT stride)
 void GameObject::setSrv(ID3D11ShaderResourceView* srv)
 {
 	this->srv = srv;
-	this->updateRotation();
+	//this->updateRotation();
 }

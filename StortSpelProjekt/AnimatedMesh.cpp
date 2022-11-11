@@ -194,7 +194,18 @@ void AnimatedMesh::getTimeInTicks(float dt)
 	{
 		timeInTicks -= MySimp.animation[0].duration;
 		totalTime = 0;
+		lastFramesTick = -1;
 	}
+	int wholeNumner = (int)timeInTicks;
+	if (wholeNumner != lastFramesTick)
+	{
+		lastFramesTick = wholeNumner;
+	}
+	else
+	{
+		return;
+	}
+
 	DirectX::XMFLOAT4X4 startMatrix;
 	DirectX::XMMATRIX temp = DirectX::XMMatrixIdentity();
 	DirectX::XMStoreFloat4x4(&startMatrix, temp);
@@ -205,7 +216,8 @@ AnimatedMesh::AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOA
 	:GameObject(useMesh, pos, rot, id)
 {
 	this->totalTime = 0;
-	this->setScale(DirectX::XMFLOAT3(0.2, 0.2, 0.2));
+	lastFramesTick = -1;
+	this->setScale(DirectX::XMFLOAT3(5, 5, 5));
 	this->updateBuffer();
 	//strucBuff.Initialize(GPU::device, GPU::immediateContext, finalTransforms);
 	///();

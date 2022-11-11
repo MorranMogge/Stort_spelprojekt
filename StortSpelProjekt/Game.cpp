@@ -101,11 +101,11 @@ void Game::loadObjects()
 	spaceShip = new SpaceShip(tmpMesh, DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 3, DirectX::SimpleMath::Vector3(2, 2, 2));
 	spaceShip->setSrv(this->manager.getSrv("spaceshipTexture2.jpg"));
 
-	this->manager.getAnimData("../Meshes/L.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
+	this->manager.getAnimData("../Meshes/pinto_Run.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
 	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	this->sexyMan = new AnimatedMesh(tmpMesh, DirectX::SimpleMath::Vector3(10, 14, 10), orientToPlanet(DirectX::SimpleMath::Vector3(10, 20, 10)), 69);
 	this->sexyMan->addData(animData);
-	sexyMan->setSrv(this->manager.getSrv("spaceshipTexture2.jpg"));
+	sexyMan->setSrv(this->manager.getSrv("texture2.png"));
 
 	player = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(22, 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1);
 	
@@ -329,15 +329,16 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->iBuff = {};
 	this->animData;
 	this->manager.setDevice(device);
-	//this->manager.loadMeshData("../Meshes/player.obj");
-	//this->manager.loadMeshData("../Meshes/Planet.obj");
-	//this->manager.loadMeshData("../Meshes/Baseball.obj");
-	//this->manager.loadMeshData("../Meshes/Sphere.obj");
-	//this->manager.loadMeshData("../Meshes/rocket.obj");
+	this->manager.loadMeshData("../Meshes/player.obj");
+	this->manager.loadMeshData("../Meshes/gob.obj");
+	this->manager.loadMeshData("../Meshes/Planet.obj");
+	this->manager.loadMeshData("../Meshes/Baseball.obj");
+	this->manager.loadMeshData("../Meshes/Sphere.obj");
+	this->manager.loadMeshData("../Meshes/rocket.obj");
 	//this->manager.loadMeshData("../Meshes/L1.fbx");
 	//this->manager.loadMeshData("../Meshes/flos.fbx");
-	//this->manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
-	this->manager.loadMeshAndBoneData("../Meshes/L.fbx");
+	this->manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
+	this->manager.loadMeshAndBoneData("../Meshes/w.fbx");
 
 	//this->tempSRV = this->manager.getSrv();
 	MaterialLibrary::LoadDefault();

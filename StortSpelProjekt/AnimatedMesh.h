@@ -104,6 +104,7 @@ private:
 	StructuredBuffer<DirectX::XMFLOAT4X4> strucBuff;
 
 	float totalTime;
+	int lastFramesTick;
 
 	void uppdateMatrices(int animationIndex, float animationTime, const nodes& node, DirectX::XMFLOAT4X4& parentTrasform);
 

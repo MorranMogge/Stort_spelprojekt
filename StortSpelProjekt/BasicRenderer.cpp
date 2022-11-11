@@ -143,11 +143,12 @@ BasicRenderer::~BasicRenderer()
 	pt_pShader->Release();
 	pt_UpdateShader->Release();
 	pt_gShader->Release();
+
+	animLayout->Release();
+	vShaderAnim->Release();
+
 	shadowSampler->Release();
 	shadowRastirizer->Release();
-
-	this->animLayout->Release();
-	this->vShaderAnim->Release();
 }
 
 void BasicRenderer::lightPrePass()

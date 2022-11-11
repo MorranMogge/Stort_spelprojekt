@@ -124,7 +124,7 @@ void sendBinaryDataAllPlayers(const T& data, serverData& serverData)
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
 		std::size_t recvSize;
-		if (serverData.users[i].tcpSocket.send(&data, sizeof(data), recvSize) != sf::Socket::Done)
+		if (serverData.users[i].tcpSocket.send(&data, sizeof(T), recvSize) != sf::Socket::Done)
 		{
 			//error
 			std::cout << "Couldnt send data to currentPlayer from array slot: " << std::to_string(i) << std::endl;
@@ -515,7 +515,7 @@ int main()
 			physWorld.addPhysComponent(components[components.size() - 1]);
 			components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
 			components[components.size() - 1].setOnlineId(componentIdCounter++);
-			sendBinaryDataAllPlayers(cData, data);
+			sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
 			startComponentTimer = std::chrono::system_clock::now();
 		}
 

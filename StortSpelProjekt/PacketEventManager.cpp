@@ -54,8 +54,6 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					}
 				}
 			}
-
-			//std::cout << "Checking return value from circular buffer player id.x: " << std::to_string(tst->playerId) << " y: " << std::to_string(tst->y) << std::endl;
 			break;
 
 		case PacketType::PACKETID:

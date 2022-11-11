@@ -159,6 +159,9 @@
     <ClCompile Include="Credits.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="AnimatedMesh.cpp" />
+    <ClCompile Include="ModelDataContainer.cpp" />
+    <ClCompile Include="ModelManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -443,6 +446,9 @@
     <ClInclude Include="Credits.h">
       <Filter>GUI</Filter>
     </ClInclude>
+    <ClInclude Include="AnimatedMesh.h" />
+    <ClInclude Include="ModelDataContainer.h" />
+    <ClInclude Include="ModelManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

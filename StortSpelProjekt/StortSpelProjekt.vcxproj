@@ -159,6 +159,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AnimatedMesh.h" />
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="BasicRenderer.h" />
     <ClInclude Include="BilboardObject.h" />
@@ -197,6 +198,8 @@
     <ClInclude Include="LoseUI.h" />
     <ClInclude Include="MaterialLibrary.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="ModelDataContainer.h" />
+    <ClInclude Include="ModelManager.h" />
     <ClInclude Include="MouseClass.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
@@ -264,6 +267,7 @@
     <ClInclude Include="WinUI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimatedMesh.cpp" />
     <ClCompile Include="CircularBufferClient.cpp" />
     <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="BaseballBat.cpp" />
@@ -322,6 +326,8 @@
     <ClCompile Include="LoseUI.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="ModelDataContainer.cpp" />
+    <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="MouseClass.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>

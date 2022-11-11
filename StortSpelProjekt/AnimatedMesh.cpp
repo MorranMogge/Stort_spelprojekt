@@ -47,7 +47,7 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 		DirectX::XMMATRIX finalMesh = DirectX::XMMatrixMultiply(boneOffset, globalTrasform);
 		finalMesh = DirectX::XMMatrixTranspose(finalMesh);
 		DirectX::XMStoreFloat4x4(&finalTransfrom, finalMesh);
-		strucBuff.getIndexData(id) = finalTransfrom;
+		strucBuff.getData(id) = finalTransfrom;
 		DirectX::XMStoreFloat4x4(&finalTransfrom, globalTrasform);
 	}
 	else

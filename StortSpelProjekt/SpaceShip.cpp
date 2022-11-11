@@ -35,7 +35,6 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 		HudUI::blue = this;
 		mesh->matKey[0] = "spaceshipTexture2.jpg";
 		break;
-
 	}
 }
 

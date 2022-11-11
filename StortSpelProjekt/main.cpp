@@ -87,7 +87,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 		if (GetAsyncKeyState(VK_ESCAPE))
 			stateInfo = EXIT;
-		Time::Update();
+
 		if (stateInfo != NOCHANGE)
 		{
 			switch (stateInfo)
@@ -124,6 +124,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 		currentState->Render();
 
 		GPU::swapChain->Present(0, 0);
+		Time::Update();
 	}
 
 	#pragma region Deallocation

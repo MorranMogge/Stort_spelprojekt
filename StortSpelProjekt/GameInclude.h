@@ -25,6 +25,7 @@
 #include "BaseballBat.h"
 #include "SpaceShip.h"
 #include "Grenade.h"
+#include "AnimatedMesh.h"
 
 //User
 #include "Input.h"
@@ -39,7 +40,5 @@
 #include "ImGuiHelper.h"
 #include "StructuredBuffer.h"
 #include "BufferTypes.h"
+#include "ModelManager.h"
 #include "PacketEventManager.h"
-
-
-

@@ -125,7 +125,7 @@ void GameObject::setScale(const DirectX::XMFLOAT3& scale)
 	this->scale = scale;
 	
 	//if (this->physComp->getTypeName() == reactphysics3d::CollisionShapeName::BOX) 
-	this->physComp->setScale(scale);
+	//this->physComp->setScale(scale);
 }
 
 DirectX::XMFLOAT3 GameObject::getPos() const
@@ -383,6 +383,7 @@ void GameObject::update()
 
 void GameObject::tmpDraw(UINT stride)
 {
+	this->mesh->UpdateCB(position, rotation, scale);
 	this->mesh->draw(this->srv, stride);
 }
 

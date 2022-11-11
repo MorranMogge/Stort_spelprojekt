@@ -36,6 +36,15 @@ private:
 
 	std::chrono::time_point<std::chrono::system_clock> serverStart;
 	
+	ModelManager manager;
+	ID3D11Buffer* vBuff;
+	ID3D11Buffer* iBuff;
+	Mesh* tmpMesh;
+	std::vector<int> subMeshRanges;
+	std::vector<int> verticies;
+	ID3D11ShaderResourceView* tempSRV;
+	AnimationData animData;
+	AnimatedMesh* sexyMan;
 	std::vector< Mesh*> meshes;
 
 	float serverTimerLength =  1.f / 30.0f;

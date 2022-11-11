@@ -494,7 +494,7 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 	}
 
 	Assimp::Importer importer;
-	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate );
+	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate);
 
 	if (pScene == nullptr)
 	{

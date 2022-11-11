@@ -36,6 +36,15 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/component"));
 	meshes.push_back(new Mesh("../Meshes/grenade"));
 
+	manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
+
+	this->manager.getAnimData("../Meshes/pinto_Run.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
+	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	this->sexyMan = new AnimatedMesh(tmpMesh, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0, 0, 0), 69);
+	this->sexyMan->addData(animData);
+	//sexyMan->setSrv(this->manager.getSrv("texture2.png"));
+	//physWolrd.addPhysComponent(sexyMan, reactphysics3d::CollisionShapeName::BOX);
+
 	planet = new GameObject(meshes[0], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(40.0f, 40.0f, 40.0f));
 	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
 	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
@@ -260,7 +269,7 @@ void Game::handleKeybinds()
 }
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), endTimer(0)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), endTimer(0), manager(ModelManager(device))
 {
 	//Setup client
 	this->packetEventManager = new PacketEventManager();
@@ -539,6 +548,8 @@ void Game::Render()
 	basicRenderer.fresnelPrePass(this->camera);
 	this->drawFresnel();
 
+	basicRenderer.changeToAnimation();
+	this->sexyMan->draw(dt, 0);
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();

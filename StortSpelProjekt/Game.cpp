@@ -40,7 +40,7 @@ void Game::loadObjects()
 
 	this->manager.getAnimData("../Meshes/pinto_Run.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
 	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-	this->sexyMan = new AnimatedMesh(tmpMesh, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0, 0, 0), 69);
+	this->currentPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0, 0, 0), PLAYER, client, 0, &planetGravityField);
 	this->sexyMan->addData(animData);
 	sexyMan->setSrv(this->manager.getSrv("../Textures/texture2.png"));
 	//physWolrd.addPhysComponent(sexyMan, reactphysics3d::CollisionShapeName::BOX);
@@ -84,7 +84,7 @@ void Game::loadObjects()
 	gameObjects.emplace_back(potion);
 	gameObjects.emplace_back(testBat);
 	gameObjects.emplace_back(grenade);
-	gameObjects.emplace_back(currentPlayer);
+	//gameObjects.emplace_back(currentPlayer);
 	gameObjects.emplace_back(component);
 	gameObjects.emplace_back(spaceShipRed);
 	gameObjects.emplace_back(spaceShipBlue);
@@ -553,6 +553,7 @@ void Game::Render()
 
 	basicRenderer.changeToAnimation();
 	this->sexyMan->draw(dt, 0);
+	currentPlayer->draw(dt, 0);
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();

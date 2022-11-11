@@ -226,8 +226,8 @@ void AnimatedMesh::getTimeInTicks(const float& dt, const unsigned& animationInde
 	this->uppdateMatrices(animationIndex, timeInTicks, MySimp.rootNode, startMatrix);
 }
 
-AnimatedMesh::AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id)
-	:GameObject(useMesh, pos, rot, id)
+AnimatedMesh::AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field)
+	:GameObject(useMesh, pos, rot, id, field)
 {
 	this->totalTime = 0;
 	lastFramesTick = -1;

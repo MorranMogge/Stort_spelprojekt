@@ -7,6 +7,7 @@
 #include "Potion.h"
 #include "TimeStruct.h"
 #include "Client.h"
+#include "AnimatedMesh.h"
 
 #include <GamePad.h>
 #include <iostream>
@@ -14,7 +15,7 @@
 
 class Item;
 
-class Player: public GameObject
+class Player: public AnimatedMesh
 {
 private:
 	//Movement variables
@@ -71,7 +72,7 @@ private:
 	void handleItems();
 public:
 	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int &team, GravityField* field = nullptr);
-	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field = nullptr);
+	//Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field = nullptr);
 	~Player();
 	void handleInputs(); 
 	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, float deltaTime,  const bool& testingVec);
@@ -83,7 +84,7 @@ public:
 	void setOnlineID(const int& id);
 
 	void releasePickup();
-	virtual void draw() override;
+	//virtual void draw() override;
 	void drawIcon();
 	void drawParticles();
 

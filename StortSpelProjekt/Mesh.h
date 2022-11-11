@@ -35,6 +35,7 @@ private:
 		};
 		vertex(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT2& uv, DirectX::XMFLOAT3& nor) : pos(pos), uv(uv), nor(nor) {};
 	};
+	DirectX::XMFLOAT4X4 matrix;
 public:
 
 	VertexBuffer vertexBuffer;
@@ -57,7 +58,7 @@ public:
 
 	Bound bound;
 
-	Mesh() {}
+	Mesh() { DirectX::XMStoreFloat4x4(&matrix, DirectX::XMMatrixIdentity()); }
 	Mesh(OBJ& obj)
 	{
 		Load(obj);
@@ -72,6 +73,21 @@ public:
 		CreateCB();
 	}
 	
+	Mesh(std::string path)
+	{
+		// load obj file
+		OBJ testObj(path);
+
+		// load all materials for Obj
+		int nrOfMat = (int)testObj.mtl.materials.size();
+		for (int i = 0; i < nrOfMat; i++)
+		{
+			MaterialLibrary::LoadMaterial(testObj.mtl.materials[i]);
+		}
+		Load(testObj);
+	}
+
+
 
 	void Load(OBJ& obj)
 	{
@@ -267,7 +283,22 @@ public:
 	{
 		submeshVerCounts.emplace_back(count);
 	}
-	void UpdateCB()
+	void setMatrix(DirectX::XMFLOAT4X4 matrix)
+	{
+		this->matrix = matrix;
+
+
+
+	}
+	void updateONLINE()
+	{
+		static MatrixS worldS;
+		DirectX::XMMATRIX xm = DirectX::XMLoadFloat4x4(&matrix);
+		DirectX::XMStoreFloat4x4(&worldS.matrix, xm);
+
+		worldCB.Update(&worldS, sizeof(MatrixS));
+	}
+	void UpdateCB(const DirectX::SimpleMath::Vector3& position, const DirectX::XMMATRIX& rotation, const DirectX::SimpleMath::Vector3& scale)
 	{
 		using namespace DirectX;
 
@@ -281,7 +312,7 @@ public:
 		//		0, 0, 0, 1
 		//	};
 
-		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * this->rotation * XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
+		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * rotation * XMMatrixTranslation(position.x, position.y, position.z))}));
 		worldCB.Update(&worldS, sizeof(MatrixS));
 
 		static VectorS positionS;

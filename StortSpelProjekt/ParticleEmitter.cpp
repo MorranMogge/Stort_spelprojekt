@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "ParticleEmitter.h"
+#include "stb_image.h"
 
+//----------------------------------------------- setUp Functions ------------------------------------------------//
 
 bool CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>&  PT_vertexBuffer, Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView>& particleUav, std::vector<particleStruct>& structVector)
 {
@@ -24,7 +26,7 @@ bool CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>&  PT_vertexBuffer, Micros
 	uavDesc.Format = DXGI_FORMAT_R32_FLOAT;
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 	uavDesc.Buffer.FirstElement = 0;
-	uavDesc.Buffer.NumElements = (UINT)size(structVector) * 8;//fel???
+	uavDesc.Buffer.NumElements = (UINT)size(structVector) * (sizeof(particleStruct)/4);//fel???
 	uavDesc.Buffer.Flags = 0;
 	
 	if (FAILED(GPU::device->CreateUnorderedAccessView(PT_vertexBuffer.Get(), &uavDesc, particleUav.GetAddressOf())))
@@ -35,11 +37,11 @@ bool CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>&  PT_vertexBuffer, Micros
 	return !FAILED(hr);
 }
 
-bool CreatePosActiveBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& posBuffer, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation)
+bool CreatePosActiveBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& posBuffer, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, bool drawOnlyWhenMoving)
 {
 	std::vector<DirectX::XMFLOAT4> data;
 	data.push_back(DirectX::XMFLOAT4(position.x, position.y, position.z, 1));
-	data.push_back(DirectX::XMFLOAT4(rotation.x, rotation.y, rotation.z, 0));
+	data.push_back(DirectX::XMFLOAT4(rotation.x, rotation.y, rotation.z, drawOnlyWhenMoving));
 
 	D3D11_BUFFER_DESC cBuffDesc = { 0 };
 	cBuffDesc.ByteWidth = (UINT)sizeof(DirectX::XMFLOAT4) * (UINT)data.size();						//size of buffer //Kolla senare funktion för att hitta närmaste multipel av 16 för int!
@@ -74,30 +76,91 @@ bool CreateTimeBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& timeBuffer, float &d
 	return !FAILED(hr);
 }
 
-bool CreateBlendState(Microsoft::WRL::ComPtr <ID3D11BlendState> &blendState)
+bool CreateShaderResource(const std::vector<std::string>& filenames, std::vector<Microsoft::WRL::ComPtr<ID3D11Texture2D>>& Textures, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& renderedTextureView)
 {
-	D3D11_BLEND_DESC desc{};
-	D3D11_RENDER_TARGET_BLEND_DESC& brt = desc.RenderTarget[0];
+	//variables
+	std::vector<unsigned char*> images;
+	int wth = 0;
+	int hth = 0;
+	int channels = 0;
 
-	brt.BlendEnable = true;
-	brt.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
-	brt.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+	for (int i = 0; i < filenames.size(); i++)
+	{
+		unsigned char* img = stbi_load(("../Sprites/" + filenames.at(i)).c_str(), &wth, &hth, &channels, STBI_rgb_alpha);
+		if (img == NULL)
+		{
+			return 0;
+		}
+		else
+		{
+			images.push_back(img);
+		}
+	}
 
-	brt.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
-	brt.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+	for (int i = 0; i < filenames.size(); i++)
+	{
+		D3D11_TEXTURE2D_DESC textureDesc = {};
+		textureDesc.Width = wth;
+		textureDesc.Height = hth;
+		textureDesc.MipLevels = 1u;
+		textureDesc.ArraySize = 1u;
+		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		textureDesc.SampleDesc.Count = 1u;
+		textureDesc.SampleDesc.Quality = 0;
+		textureDesc.Usage = D3D11_USAGE::D3D11_USAGE_IMMUTABLE;
+		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.CPUAccessFlags = 0u;
+		textureDesc.MiscFlags = 0u;
 
-	brt.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
-	brt.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+		D3D11_SUBRESOURCE_DATA data;
+		data.pSysMem = images[i];
+		data.SysMemPitch = wth * 4;
+		data.SysMemSlicePitch = 0;
 
-	brt.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL; //write all channels
-	HRESULT hr = GPU::device->CreateBlendState(&desc, blendState.GetAddressOf());
 
-	return !FAILED(hr);
+		//create texture
+		Microsoft::WRL::ComPtr<ID3D11Texture2D > tempTexture;
+		if (FAILED(GPU::device->CreateTexture2D(&textureDesc, &data, tempTexture.GetAddressOf())))
+		{
+			std::cerr << "failed to create texture" << std::endl;
+			return false;
+		}
+		Textures.push_back(tempTexture);
+
+		//ShaderResource view 
+		D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
+		shaderResourceViewDesc.Format = textureDesc.Format;
+		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		shaderResourceViewDesc.TextureCube.MipLevels = 1;
+		shaderResourceViewDesc.TextureCube.MostDetailedMip = 0;
+
+		//create shader resource view 
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> tempSrv;
+		if (FAILED(GPU::device->CreateShaderResourceView(Textures.at(i).Get(), &shaderResourceViewDesc, tempSrv.GetAddressOf())))
+		{
+			std::cerr << "failed to create texture view" << std::endl;
+			return false;
+		}
+		renderedTextureView.push_back(tempSrv);
+	}
+
+
+	for (int i = 0; i < filenames.size(); i++)
+	{
+		stbi_image_free(images[i]);
+	}
+
+	return true;
 }
 
-ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XMFLOAT3& Rot, const int& nrOfPT, const DirectX::XMFLOAT2& minMaxTime, int randRange)
-	:Position(Pos), Rotation(Rot), nrOfParticles(nrOfPT), active(true), renderPassComplete(true), minMaxLifetime(minMaxTime)
+//----------------------------------------------- Constructor ------------------------------------------------//
+
+ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XMFLOAT3& Rot, const int& nrOfPT, const DirectX::XMFLOAT2& minMaxTime, int randRange, bool onlyDrawMoving)
+	:Position(Pos), Rotation(Rot), nrOfParticles(nrOfPT), active(true), renderPassComplete(true), minMaxLifetime(minMaxTime), drawOnlyWhenMoving(onlyDrawMoving)
 {
+	//particle types
+	std::vector<std::string> textureNames{ "smoke.png", "icon_star.png" , "player3.png" , "player4.png" };
+
 	//Initilize timer
 	tStruct.startTime;
 
@@ -126,8 +189,15 @@ ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XM
 		}
 
 		float lifeTime = minMaxTime.x + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (minMaxTime.y - minMaxTime.x)));
-		particleStruct tempStruct(DirectX::XMFLOAT3(Pos.x + x, Pos.y + y, Pos.z + z), (float)i, lifeTime);
+		particleStruct tempStruct(DirectX::XMFLOAT3(/* + x*/0.0f+x , /*Pos.y + y*/0.0f+y, /*Pos.z + z*/0.0f+z ), DirectX::XMFLOAT3(Pos.x,Pos.y,Pos.z), (float)i, lifeTime, DirectX::XMFLOAT3(0,0,0), DirectX::XMFLOAT3(0, 0, 0));
 		this->PT_Data.push_back(tempStruct);
+	}
+
+
+	//Create texture & Srv
+	if (!CreateShaderResource(textureNames, this->PT_texture, this->PT_TXView))
+	{
+		std::cout << "error creating texture & srv!" << std::endl;
 	}
 
 	//Create particle vertex buffer & uav
@@ -137,7 +207,7 @@ ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XM
 	}
 
 	//Create position buffer
-	if (!CreatePosActiveBuffer(this->emitterPosBuffer, Pos, Rot))
+	if (!CreatePosActiveBuffer(this->emitterPosBuffer, Pos, Rot, drawOnlyWhenMoving))
 	{
 		std::cerr << "error creating Emitter Pos Buffer!" << std::endl;
 	}
@@ -148,13 +218,9 @@ ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XM
 	{
 		std::cerr << "error creating PT_time_Buffer!" << std::endl;
 	}
-
-	if (!CreateBlendState(this->blendState))
-	{
-		std::cerr << "error creating Blendstate!" << std::endl;
-	}
 }
 
+//----------------------------------------------- Functions ------------------------------------------------//
 
 ID3D11Buffer * ParticleEmitter::getVTXBuffer() const
 {
@@ -166,7 +232,7 @@ ID3D11Buffer* ParticleEmitter::getPosBuffer() const
 	return this->emitterPosBuffer.Get();
 }
 
-void ParticleEmitter::BindAndDraw()
+void ParticleEmitter::BindAndDraw(int textureIndex)
 {
 	//Variables
 	ID3D11Buffer* nullBuffer{ nullptr };
@@ -181,12 +247,12 @@ void ParticleEmitter::BindAndDraw()
 	tempBuff.push_back(this->emitterPosBuffer.Get());
 
 	
-	//Bind blendstate
-	GPU::immediateContext->OMSetBlendState(this->blendState.Get(), nullptr, 0xffffffffu);
-	
-	//Draw
+
 	GPU::immediateContext->IASetVertexBuffers(0, 1, this->PT_vertexBuffer.GetAddressOf(), &stride, &offset);	//Set VtxBuffer
-	GPU::immediateContext->Draw(nrOfPt, 0);																		//Draw (once per primitive?)
+	GPU::immediateContext->PSSetShaderResources(0, 1, this->PT_TXView.at(textureIndex).GetAddressOf());			//Bind Resources
+
+	//Draw
+	GPU::immediateContext->Draw(nrOfPt, 0);																		//Draw once per primitive
 
 	//Unbind UAV
 	GPU::immediateContext->IASetVertexBuffers(0, 1, &nullBuffer, &stride, &offset);								//unbind vertex shader
@@ -207,19 +273,7 @@ void ParticleEmitter::BindAndDraw()
 	}
 }
 
-void ParticleEmitter::unbind()
-{
-	//Variables
-	ID3D11GeometryShader* nullShader{ nullptr };
-	ID3D11UnorderedAccessView* nullUav{ nullptr };
-	ID3D11BlendState* nullBlendstate{ nullptr };
 
-	//Unbind shader & UAV, Reset Topology
-	GPU::immediateContext->GSSetShader(nullShader, nullptr, 0);													//Unbinding
-	GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);						//Reset Topology
-	GPU::immediateContext->CSSetUnorderedAccessViews(0, 1, &nullUav, nullptr);									//Unbind UAV
-	GPU::immediateContext->OMSetBlendState(nullBlendstate, nullptr, 0xffffffffu);								//Unbind blendstate
-}
 
 
 ID3D11UnorderedAccessView * ParticleEmitter::getUAV() const
@@ -242,7 +296,7 @@ void ParticleEmitter::updateBuffer()
 	//Update buffer
 	std::vector<DirectX::XMFLOAT4> data;
 	data.push_back(DirectX::XMFLOAT4(this->Position.x, this->Position.y, this->Position.z, this->active));
-	data.push_back(DirectX::XMFLOAT4(this->Rotation.x, this->Rotation.y, this->Rotation.z, 0));
+	data.push_back(DirectX::XMFLOAT4(this->Rotation.x, this->Rotation.y, this->Rotation.z, this->drawOnlyWhenMoving));
 
 	HRESULT hr = GPU::immediateContext->Map(this->emitterPosBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &map);
 	memcpy(map.pData, data.data(), sizeof(DirectX::XMFLOAT4) * data.size());

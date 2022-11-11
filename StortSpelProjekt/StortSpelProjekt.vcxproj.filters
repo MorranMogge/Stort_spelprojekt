@@ -38,9 +38,6 @@
     <ClCompile Include="ImGuiHelper.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="MouseClass.cpp">
-      <Filter>MouseClass</Filter>
-    </ClCompile>
     <ClCompile Include="MouseEvent.cpp">
       <Filter>MouseClass</Filter>
     </ClCompile>
@@ -68,9 +65,6 @@
     <ClCompile Include="D3D11Helper.cpp">
       <Filter>Handler/Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="GuiHandler.cpp">
-      <Filter>Handler/Helpers</Filter>
-    </ClCompile>
     <ClCompile Include="GUISprite.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
@@ -82,9 +76,6 @@
     </ClCompile>
     <ClCompile Include="WindowHelper.cpp">
       <Filter>Handler/Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="Credits.cpp">
-      <Filter>Game-States</Filter>
     </ClCompile>
     <ClCompile Include="SettingsUI.cpp">
       <Filter>GUI</Filter>
@@ -130,12 +121,44 @@
     <ClCompile Include="SpaceShip.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="BaseballBat.cpp" />
-    <ClCompile Include="Component.cpp" />
-    <ClCompile Include="mesh2.cpp" />
-    <ClCompile Include="ModelDataContainer.cpp" />
-    <ClCompile Include="ModelManager.cpp" />
-    <ClCompile Include="AnimatedMesh.cpp" />
+    <ClCompile Include="ClientHandler.cpp" />
+    <ClCompile Include="MouseClass.cpp" />
+    <ClCompile Include="PacketEventManager.cpp" />
+    <ClCompile Include="CircularBufferClient.cpp" />
+    <ClCompile Include="SendingDataEvent.cpp" />
+    <ClCompile Include="BaseballBat.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="BilboardObject.cpp">
+      <Filter>Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="WinMenu.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
+    <ClCompile Include="WinUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="HudUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Grenade.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="LoseUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="LoseMenu.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
+    <ClCompile Include="Credits.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -184,9 +207,6 @@
     <ClInclude Include="ImGuiHelper.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="MouseClass.h">
-      <Filter>MouseClass</Filter>
-    </ClInclude>
     <ClInclude Include="MouseEvent.h">
       <Filter>MouseClass</Filter>
     </ClInclude>
@@ -214,9 +234,6 @@
     <ClInclude Include="D3D11Helper.h">
       <Filter>Handler/Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="GuiHandler.h">
-      <Filter>Handler/Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="GUIObject.h">
       <Filter>GUI</Filter>
     </ClInclude>
@@ -234,9 +251,6 @@
     </ClInclude>
     <ClInclude Include="WindowHelper.h">
       <Filter>Handler/Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Credits.h">
-      <Filter>Game-States</Filter>
     </ClInclude>
     <ClInclude Include="SettingsUI.h">
       <Filter>GUI</Filter>
@@ -387,10 +401,48 @@
     </ClInclude>
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="Component.h" />
-    <ClInclude Include="mesh2.h" />
-    <ClInclude Include="ModelDataContainer.h" />
-    <ClInclude Include="ModelManager.h" />
-    <ClInclude Include="AnimatedMesh.h" />
+    <ClInclude Include="ClientHandler.h" />
+    <ClInclude Include="MouseClass.h" />
+    <ClInclude Include="PacketEventManager.h" />
+    <ClInclude Include="CircularBufferClient.h" />
+    <ClInclude Include="PacketsDataTypes.h" />
+    <ClInclude Include="SendingDataEvent.h" />
+    <ClInclude Include="BaseballBat.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="BilboardObject.h">
+      <Filter>Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="WinMenu.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="WinUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketEnum.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="HudUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Grenade.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="LoseUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="LoseMenu.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="Credits.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -484,7 +536,16 @@
     <FxCompile Include="playerVectorVertex.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="vShaderSkinning.hlsl">
+    <FxCompile Include="Bilboard_GS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Bilboard_PS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Bilboard_VS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Fresnel_PS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
@@ -496,6 +557,9 @@
   <ItemGroup>
     <None Include="Light.hlsli">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="Math.hlsli">
+      <Filter>Game-States</Filter>
     </None>
   </ItemGroup>
 </Project>

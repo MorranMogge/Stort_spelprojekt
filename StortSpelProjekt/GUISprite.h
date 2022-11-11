@@ -3,6 +3,8 @@
 
 class GUISprite final :public GUIObject
 {
+
+	inline static float BaseWidth, BaseHeight;
 public:
 
 	GUISprite();
@@ -26,6 +28,7 @@ public:
 	virtual void SetPosition(const DirectX::SimpleMath::Vector2& position);
 	virtual void SetOrigin(const DirectX::SimpleMath::Vector2& origin);
 	virtual void SetScale(const DirectX::SimpleMath::Vector2& scale);
+	virtual void SetScale(const float x, const float y);
 	virtual void SetTint(const DirectX::SimpleMath::Color& color);
 	virtual void SetAlpha(const float alpha);
 	virtual void SetRotation(const float rotation);

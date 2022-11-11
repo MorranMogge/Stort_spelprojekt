@@ -10,9 +10,16 @@ cbuffer posValue : register(b1)
     float3 offsetFromOrigin;
     float enable;
     float3 orientation;
+    float drawOnlyWhenMoving; //Determines if particles are drawn when object not moving
 };
 
-#define Offset 8
+cbuffer camUp : register(b2)
+{
+    float3 camUpDirection;
+    float padding;
+};
+
+#define Offset 15
     
 #define PositionX rawBuffer[DTid.x * Offset]
 #define PositionY rawBuffer[DTid.x * Offset + 1]
@@ -26,7 +33,17 @@ cbuffer posValue : register(b1)
 
 #define LifeTime rawBuffer[DTid.x * Offset + 7]
 
-#define Speed 1.0f
+#define CurrentDirectionX rawBuffer[DTid.x * Offset + 8]
+#define CurrentDirectionY rawBuffer[DTid.x * Offset + 9]
+#define CurrentDirectionZ rawBuffer[DTid.x * Offset + 10]
+
+#define IsActive rawBuffer[DTid.x * Offset + 11]
+
+#define BaseOffSetX rawBuffer[DTid.x * Offset + 12]
+#define BaseOffSetY rawBuffer[DTid.x * Offset + 13]
+#define BaseOffSetZ rawBuffer[DTid.x * Offset + 14]
+
+#define Speed 0.07f
 #define Range 100.0f
 
 // up vector from camera
@@ -47,17 +64,51 @@ cbuffer posValue : register(b1)
 void main(uint3 DTid : SV_DispatchThreadID)
 {
     // if SimulateTime bigger than LifeTime or not enabled, reset it to 0, else add delta time
-    SimulateTime = SimulateTime > LifeTime || !enable ? 0.0f : SimulateTime + deltaTime;
+    if (SimulateTime > LifeTime || !enable)
+    {
+        SimulateTime = 0.0f;
+        
+        CurrentDirectionX = orientation.x;
+        CurrentDirectionY = orientation.y;
+        CurrentDirectionZ = orientation.z;
+        
+        BaseOffSetX = offsetFromOrigin.x;
+        BaseOffSetY = offsetFromOrigin.y;
+        BaseOffSetZ = offsetFromOrigin.z;
+        
+        //IsActive = 0.0f;
+    }
+    else
+    {
+        float3 baseOffSet2 = float3(BaseOffSetX, BaseOffSetY, BaseOffSetZ);
+        if (drawOnlyWhenMoving)
+        {
+            if (baseOffSet2.x == offsetFromOrigin.x, baseOffSet2.y == offsetFromOrigin.y, baseOffSet2.z == offsetFromOrigin.z)
+            {
+                IsActive = 0.0f;
+            }
+            else
+            {
+                IsActive = 1.0f;
+            }
+        }
+        SimulateTime = SimulateTime + deltaTime;
+    }
     
-    const float3 eulerZ = normalize(cross(orientation, CameraUpVector)); // rotation Z
-    const float3 eulerX = normalize(cross(orientation, eulerZ)); // rotation X
+    const float3 currentDirection = float3(CurrentDirectionX, CurrentDirectionY, CurrentDirectionZ);
     
-#define EulerRotation float3x3(eulerX, orientation, eulerZ) // rotation matrix, 3x3 without translation
-#define RotatedStartPosition mul(EulerRotation, StartPosition) // oriented/rotated start position in local space
-#define RotatedLocalOffset (LocalOffset * orientation) // rotated local offset
+    const float3 eulerZ = normalize(cross(currentDirection, camUpDirection)); // rotation Z
+    const float3 eulerX = normalize(cross(currentDirection, eulerZ)); // rotation X
+    
+    #define EulerRotation float3x3(eulerX, currentDirection, eulerZ) // rotation matrix, 3x3 without translation
+    #define RotatedStartPosition mul(EulerRotation, StartPosition) // oriented/rotated start position in local space
+    #define RotatedLocalOffset (LocalOffset * currentDirection) // rotated local offset
+    
+    
+    float3 baseOffSet = float3(BaseOffSetX, BaseOffSetY, BaseOffSetZ);
     
     // position in world space
-    const float3 position = RotatedStartPosition + RotatedLocalOffset + offsetFromOrigin;
+    const float3 position = RotatedStartPosition + RotatedLocalOffset + baseOffSet;
     
     //apply position to buffer
     PositionX = position.x;

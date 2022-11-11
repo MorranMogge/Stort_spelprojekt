@@ -1,82 +1,87 @@
 #pragma once
 #define NOMINMAX
 #include "stdafx.h"
-#include <WinUser.h>
+#include "ImGui/imgui.h"
+#include "imGUI/imgui_impl_dx11.h"
+#include "imGUI/imgui_impl_win32.h"
 
 enum class KeyCode
 {
-	MOUSE_L = 0x01,
-	MOUSE_R = 0x02,
+	MOUSE_L = ImGuiKey_MouseLeft,
+	MOUSE_R = ImGuiKey_MouseRight,
+	MOUSE_M = ImGuiKey_MouseMiddle,
+	//ImGuiKey_MouseWheelX
+	//ImGuiKey_MouseWheelY
 
-	ENTER = 0x0D,
-	ESC = 0x1B,
-	SPACE = 0x20,
-	TAB = 0x09,
+	ENTER = ImGuiKey_Enter,
+	ESC = ImGuiKey_Escape,
+	SPACE = ImGuiKey_Space,
+	TAB = ImGuiKey_Tab,
 
-	ALT = 0x12,
-	ALT_L = 0xA4,
-	ALT_R = 0xA5,
+	ALT = ImGuiKey_LeftAlt,
+	ALT_L = ImGuiKey_LeftAlt,
+	ALT_R = ImGuiKey_RightAlt,
 
-	CTRL = 0x11,
-	CTRL_L = 0xA2,
-	CTRL_R = 0xA3,
+	CTRL = ImGuiKey_LeftCtrl,
+	CTRL_L = ImGuiKey_LeftCtrl,
+	CTRL_R = ImGuiKey_RightCtrl,
 
-	SHIFT = 0x10,
-	SHIFT_L = 0xA0,
-	SHIFT_R = 0xA1,
+	SHIFT = ImGuiKey_LeftShift,
+	SHIFT_L = ImGuiKey_LeftShift,
+	SHIFT_R = ImGuiKey_RightShift,
 
-	PRTSC = 0x2C,
-	INS = 0x2D,
-	DEL = 0x2E,
-	END = 0x23,
-	HOME = 0x24,
-	PGUP = 0x21,
-	PGDN = 0x22,
+	PRTSC = ImGuiKey_PrintScreen,
+	INS = ImGuiKey_Insert,
+	DEL = ImGuiKey_Delete,
+	END = ImGuiKey_End,
+	HOME = ImGuiKey_Home,
+	PGUP = ImGuiKey_PageUp,
+	PGDN = ImGuiKey_PageDown,
 
-	ARROW_Up = 0x26,
-	ARROW_Down = 0x28,
-	ARROW_Right = 0x27,
-	ARROW_Left = 0x25,
+	ARROW_Up = ImGuiKey_UpArrow,
+	ARROW_Down = ImGuiKey_DownArrow,
+	ARROW_Right = ImGuiKey_RightArrow,
+	ARROW_Left = ImGuiKey_LeftArrow,
 
-	F1 = 0x70,
-	F2 = 0x71,
-	F3 = 0x72,
-	F4 = 0x73,
-	F5 = 0x74,
-	F6 = 0x75,
-	F7 = 0x76,
-	F8 = 0x77,
-	F9 = 0x78,
-	F10 = 0x79,
-	F11 = 0x7A,
-	F12 = 0x7B,
+	F1 = ImGuiKey_F1,
+	F2 = ImGuiKey_F2,
+	F3 = ImGuiKey_F3,
+	F4 = ImGuiKey_F4,
+	F5 = ImGuiKey_F5,
+	F6 = ImGuiKey_F6,
+	F7 = ImGuiKey_F7,
+	F8 = ImGuiKey_F8,
+	F9 = ImGuiKey_F9,
+	F10 = ImGuiKey_F10,
+	F11 = ImGuiKey_F11,
+	F12 = ImGuiKey_F12,
 
-	A = 0x41,
-	B = 0x42,
-	C = 0x43,
-	D = 0x44,
-	E = 0x45,
-	F = 0x46,
-	G = 0x47,
-	H = 0x48,
-	I = 0x49,
-	J = 0x4A,
-	K = 0x4B,
-	L = 0x4C,
-	M = 0x4D,
-	N = 0x4E,
-	O = 0x4F,
-	P = 0x50,
-	Q = 0x51,
-	R = 0x52,
-	S = 0x53,
-	T = 0x54,
-	U = 0x55,
-	V = 0x56,
-	W = 0x57,
-	X = 0x58,
-	Y = 0x59,
-	Z = 0x5A,
+	A = ImGuiKey_A,
+	B = ImGuiKey_B,
+	C = ImGuiKey_C,
+	D = ImGuiKey_D,
+	E = ImGuiKey_E,
+	F = ImGuiKey_F,
+	G = ImGuiKey_G,
+	H = ImGuiKey_H,
+	I = ImGuiKey_I,
+	J = ImGuiKey_J,
+	K = ImGuiKey_K,
+	L = ImGuiKey_L,
+	M = ImGuiKey_M,
+	N = ImGuiKey_N,
+	O = ImGuiKey_O,
+	P = ImGuiKey_P,
+	Q = ImGuiKey_Q,
+	R = ImGuiKey_R,
+	S = ImGuiKey_S,
+	T = ImGuiKey_T,
+	U = ImGuiKey_U,
+	V = ImGuiKey_V,
+	W = ImGuiKey_W,
+	X = ImGuiKey_X,
+	Y = ImGuiKey_Y,
+	Z = ImGuiKey_Z,
 
 };
 
@@ -87,37 +92,29 @@ public:
 	//return true as long as key holding down
 	static bool KeyDown(const KeyCode key)
 	{
-		if (GetAsyncKeyState((int)key))
-		{
-			state[key].upTrigged = false;
-			return true;
-		}
-		else if (GetAsyncKeyState((int)key) == 0)
-		{
-			state[key].trigged = false;
-		}
-		return false;
+		return ImGui::IsKeyDown((ImGuiKey)key);
 	}
 
 	//return true ONCE key press
 	static bool KeyPress(const KeyCode key)
 	{
-		return (KeyDown(key) && !state[key].trigged) ? (state[key].trigged = true) : false;
+		return ImGui::IsKeyPressed((ImGuiKey)key, false);
 	}
 
 	//return true ONCE key release
 	static bool KeyUp(const KeyCode key)
 	{
-		return (!KeyDown(key) && !state[key].upTrigged) ? (state[key].upTrigged = true) : false;
+		return ImGui::IsKeyReleased((ImGuiKey)key);
 	}
 
-private:
-
-	struct State final
+	//call this if imgui didnt exist in current game state
+	static void Update()
 	{
-		bool trigged : 1 = false;
-		bool upTrigged : 1 = true;
-	};
-	inline static std::unordered_map<KeyCode, State> state;
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+		ImGui::Render();
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	}
 
 };

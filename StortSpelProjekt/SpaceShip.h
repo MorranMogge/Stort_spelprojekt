@@ -1,15 +1,43 @@
 #pragma once
 #include "GameObject.h"
+#include "BilboardObject.h"
+#include "Component.h"
+#include "TimeStruct.h"
 
 class SpaceShip : public GameObject
 {
 private:
-	std::vector<GameObject*> components;
-	int nrOfComponents;
+	//std::vector<GameObject*> components;
+	BilboardObject* rocketStatusQuad;
+	DirectX::XMVECTOR upVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	ParticleEmitter* particles;
+	ParticleEmitter* particles2;
+	int compToComplete;
+	int currentComponents;
+	TimeStruct timer;
+	float counter;
+	bool animate;
+	int team;
+
 public:
-	SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1),const int & nrofComp = 3);
-	SpaceShip(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1), const int & nrofComp = 3);
+
+	SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1),const int & nrofComp = 4);
+	SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1), const int & nrofComp = 4);
 	~SpaceShip();
+	int getTeam() const;
+	int getNrOfComponents() const;//
+	void addComponent();
 	bool detectedComponent(GameObject* objectToCheck);
+	bool detectedComponent(Component* componentToCheck);
+	void takeOff();
+	void animateOnPickup();
+	void setAnimate(const bool& onOff);
 	virtual void update() override;
+	void drawQuad();
+	bool getCompletion()const;
+	void drawParticles();
+	bool isFinished();
+	virtual void draw() override;
+	void move(const DirectX::XMFLOAT3& grav, const float& deltaTime);
 };
+

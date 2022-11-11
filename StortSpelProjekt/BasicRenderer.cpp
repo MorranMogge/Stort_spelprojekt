@@ -44,15 +44,60 @@ bool BasicRenderer::setUp_Sky_InputLayout(ID3D11Device* device, const std::strin
 
 bool BasicRenderer::setUp_PT_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode)
 {
-	D3D11_INPUT_ELEMENT_DESC inputDesc[4] =
+	D3D11_INPUT_ELEMENT_DESC inputDesc[7] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"DELTA", 0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"START_POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"LIFETIME", 0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{"LIFETIME", 0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"DIRECTION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"ISON", 0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BASE_OFFSET", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	HRESULT hr = device->CreateInputLayout(inputDesc, (UINT)std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &pt_inputLayout);
+
+	return !FAILED(hr);
+}
+
+bool BasicRenderer::setUpBlendState()
+{
+	D3D11_BLEND_DESC desc{};
+	D3D11_RENDER_TARGET_BLEND_DESC& brt = desc.RenderTarget[0];
+
+	brt.BlendEnable = true;
+	brt.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
+	brt.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+
+	brt.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+	brt.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+
+	brt.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
+	brt.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+
+	brt.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL; //write all channels
+	HRESULT hr = GPU::device->CreateBlendState(&desc, &this->blendState);
+
+	return !FAILED(hr);
+}
+
+bool BasicRenderer::setUpFresnelBlendState()
+{
+	D3D11_BLEND_DESC desc{};
+	D3D11_RENDER_TARGET_BLEND_DESC& brt = desc.RenderTarget[0];
+
+	brt.BlendEnable = true;
+	brt.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
+	brt.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+
+	brt.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_MAX;//D3D11_BLEND_OP_ADD;
+	brt.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_MAX;//D3D11_BLEND_OP_ADD;
+
+	brt.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
+	brt.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+
+	brt.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL; //write all channels
+	HRESULT hr = GPU::device->CreateBlendState(&desc, &this->fresnelBlendState);
 
 	return !FAILED(hr);
 }
@@ -149,6 +194,13 @@ BasicRenderer::~BasicRenderer()
 
 	shadowSampler->Release();
 	shadowRastirizer->Release();
+	bill_vShader->Release();
+	bill_pShader->Release();
+	bill_gShader->Release();
+	PT_dsState->Release();
+	blendState->Release();
+	Fresnel_PS->Release();
+	fresnelBlendState->Release();
 }
 
 void BasicRenderer::lightPrePass()
@@ -164,7 +216,7 @@ void BasicRenderer::lightPrePass()
 
 bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT)
 {
-	int WidthAndHeight = 2048;
+	int WidthAndHeight = 512;
 
 	std::string vShaderByteCode;
 	std::string vShaderByteCodeForAnim;
@@ -192,7 +244,15 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadVertexShader(device, vs_Skybox, vShaderByteCode, "Skybox_VS"))					return false;
 	if (!setUp_Sky_InputLayout(device, vShaderByteCode))									return false;
 	if (!LoadPixelShader(device, ps_Skybox, "Skybox_PS"))									return false;
-
+	if (!LoadVertexShader(device, bill_vShader, vShaderByteCode, "Bilboard_VS"))			return false;
+	if (!LoadPixelShader(device, bill_pShader, "Bilboard_PS"))								return false;
+	if (!LoadGeometryShader(device, bill_gShader, "Bilboard_GS"))							return false;
+	if (!CreatePT_DSState(PT_dsState))														return false;
+	if (!setUpBlendState())																	return false;
+	if (!LoadPixelShader(device, Fresnel_PS, "Fresnel_PS"))									return false;
+	if (!setUpFresnelBlendState())															return false;
+	
+	
 	SetViewport(viewport, WIDTH, HEIGHT);
 	SetViewport(shadowViewport, WidthAndHeight, WidthAndHeight);
 	
@@ -245,6 +305,9 @@ void BasicRenderer::setUpScene(Camera& stageCamera)
 void BasicRenderer::geometryPass(Camera& stageCamera)
 {
 	//re-use same depth buffer as geometry pass.
+	immediateContext->OMSetBlendState(blendState, nullptr, 0xffffffffu);
+	immediateContext->OMSetDepthStencilState(PT_dsState,0);							
+	immediateContext->PSSetSamplers(0, 1, &sampler);
 	immediateContext->CSSetShader(pt_UpdateShader, nullptr, 0);							//Set ComputeShader
 	immediateContext->VSSetShader(pt_vShader, nullptr, 0);								//SetVTXShader
 	immediateContext->PSSetShader(pt_pShader, nullptr, 0);								//Set PSShader
@@ -253,6 +316,8 @@ void BasicRenderer::geometryPass(Camera& stageCamera)
 	immediateContext->IASetInputLayout(pt_inputLayout);									//Input layout = float3 position for each vertex
 	stageCamera.GSbindViewBuffer(0);													//Set matrix [world],[view]
 	stageCamera.GSbindPositionBuffer(1);												//Set camera pos for 
+	stageCamera.CSbindUpBuffer(2);
+	stageCamera.GSbindUpBuffer(3);
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
 }
 
@@ -280,7 +345,46 @@ void BasicRenderer::skyboxPrePass()
 	immediateContext->PSSetShader(ps_Skybox, nullptr, 0);								//Set PSShader
 }
 
+void BasicRenderer::bilboardPrePass(Camera& stageCamera)
+{
+	immediateContext->OMSetDepthStencilState(PT_dsState, 0);
+	immediateContext->OMSetBlendState(blendState, nullptr, 0xffffffffu);
+	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	immediateContext->IASetInputLayout(inputLayout_Skybox);
+	immediateContext->VSSetShader(bill_vShader, nullptr, 0);
+	immediateContext->PSSetShader(bill_pShader, nullptr, 0);
+	immediateContext->PSSetSamplers(0, 1, &sampler);
+	immediateContext->GSSetShader(bill_gShader, nullptr, 0);
+	stageCamera.GSbindViewBuffer(1);													//Set matrix [world],[view]
+	stageCamera.GSbindPositionBuffer(2);												//Set camera pos for 
+	stageCamera.GSbindUpBuffer(3);
+	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
+}
+
 void BasicRenderer::bindAmbientShader()
 {
 	immediateContext->PSSetShader(ApShader, nullptr, 0);
+}
+
+void BasicRenderer::geometryUnbind()
+{
+	//Variables
+	ID3D11GeometryShader* nullShader{ nullptr };
+	ID3D11UnorderedAccessView* nullUav{ nullptr };
+	ID3D11BlendState* nullBlendstate{ nullptr };
+
+	//Unbind shader & UAV, Reset Topology
+	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
+	GPU::immediateContext->GSSetShader(nullShader, nullptr, 0);													//Unbinding
+	GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);						//Reset Topology
+	GPU::immediateContext->CSSetUnorderedAccessViews(0, 1, &nullUav, nullptr);									//Unbind UAV
+	GPU::immediateContext->OMSetBlendState(nullBlendstate, nullptr, 0xffffffffu);								//Unbind blendstate
+}
+
+void BasicRenderer::fresnelPrePass(Camera& stageCamera)
+{
+	immediateContext->OMSetBlendState(fresnelBlendState, nullptr, 0xffffffffu);
+	immediateContext->OMSetDepthStencilState(PT_dsState, 0);
+	immediateContext->PSSetShader(Fresnel_PS, nullptr, 0);
+	stageCamera.PSbindPositionBuffer(1);
 }

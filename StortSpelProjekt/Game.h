@@ -1,27 +1,6 @@
 #pragma once
-#define NOMINMAX
-#include "PhysicsWorld.h"
-#include "State.h"
-#include "BasicRenderer.h"
-#include "Mesh.h"
-#include "Input.h"
-#include "MouseClass.h"
-#include "GravityField.h"
-#include <chrono>
-#include "ShaderLoader.h"
-#include "ImGuiHelper.h"
-
-#include "Player.h"
-#include "Camera.h"
-#include "LightHandler.h"
-#include "Light.h"
-#include "StructuredBuffer.h"
-#include "BufferTypes.h"
-#include "LightHandler.h"
-#include "Potion.h"
-#include "AnimatedMesh.h"
 #include "GameInclude.h"
-#include "ModelManager.h"
+
 
 struct wirefameInfo
 {
@@ -29,73 +8,85 @@ struct wirefameInfo
 	float padding;
 };
 
+const int NROFPLAYERS = 1;
+static bool IFONLINE = false;
+
 class Game : public State
 {
 private:
-
-	ID3D11Buffer* vBuff;
-	ID3D11Buffer* iBuff;
-	Mesh* tmpMesh;
-	std::vector<int> subMeshRanges;
-	std::vector<int> verticies;
-	ID3D11ShaderResourceView* tempSRV;
-	AnimationData animData;
-
-
 	ID3D11DeviceContext* immediateContext;
-	ModelManager manager;
+
 	ImGuiHelper imGui;
-	bool wireframe = true;
+	bool wireframe = false;
 	bool objectDraw = true;
-	bool drawDebug = true;
+	bool drawDebug = false;
 	wirefameInfo reactWireframeInfo;
 	ID3D11Buffer* wireBuffer;
 	D3D11_MAPPED_SUBRESOURCE subData;
 
 	std::unique_ptr<DirectX::GamePad> gamePad;
-
+	float endTimer;
 	float dt;
-	std::chrono::time_point<std::chrono::system_clock> start;
+	std::chrono::time_point<std::chrono::system_clock> currentTime;
+	std::chrono::time_point<std::chrono::system_clock> lastUpdate;
 
 	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT3 grav;
 
+	std::chrono::time_point<std::chrono::system_clock> serverStart;
+	
+	std::vector< Mesh*> meshes;
+
+	float serverTimerLength =  1.f / 30.0f;
+	Client* client;
+
 	BasicRenderer basicRenderer;
 	GravityField planetGravityField;
-
 	PhysicsWorld physWolrd;
-	SkyboxObj skybox;
+
+
+	PacketEventManager* packetEventManager;
+	std::vector<Player*> players;
+	std::vector<Item*> onlineItems;
+
+	//variables to handle packets
+	CircularBufferClient* circularBuffer;
+
 	Camera camera;
-	Player* player;
-	Player* tmp;
-	Potion* tmp2;
-	GameObject* planet;
-	AnimatedMesh* sexyMan;
-	GameObject* testCube;
-	SpaceShip* spaceShip;
-	Potion* potion;			//not in use
-	BaseballBat* testBat;
-	Player* otherPlayer;
+	SkyboxObj skybox;
+	Player* currentPlayer;
+	GameObject* atmosphere;
+	std::vector<Component*> components;
+	std::vector<SpaceShip*> spaceShips;
 
 	LightHandler ltHandler;
+	ImGuiHelper* imguiHelper;
 	PlayerVectors playerVecRenderer;
 
 	//Objects
 	std::vector<GameObject*> gameObjects;
+	std::vector<Item*> items;
 	std::vector<ParticleEmitter> ptEmitters;
 	
+	//HUD
+	HudUI ui;
 	
+	//Temp buffer for atmosphere
+	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
+
 
 	void loadObjects();
 	void drawShadows();
+	void drawFresnel();
+	void drawIcons();
 	void drawObjects(bool drawDebug);
 	void drawParticles();
 	bool setUpWireframe();
 	void updateBuffers();
 	void handleKeybinds();
-	DirectX::SimpleMath::Vector3 orientToPlanet(const DirectX::XMFLOAT3 &position);
-
+	void randomizeObjectPos(GameObject* item);
+	HWND* window;
 
 public:
 	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window);
@@ -105,3 +96,4 @@ public:
 	virtual GAMESTATE Update() override;
 	virtual void Render() override;
 };
+

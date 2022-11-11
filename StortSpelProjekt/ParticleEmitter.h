@@ -12,12 +12,12 @@
 class ParticleEmitter
 {
 private:
-	
+	std::vector < Microsoft::WRL::ComPtr<ID3D11Texture2D>> PT_texture;					//Textures
+	std::vector < Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> PT_TXView;			//Texture views
 	Microsoft::WRL::ComPtr <ID3D11UnorderedAccessView> PT_UAV;			//UAV for vertex shader
 	Microsoft::WRL::ComPtr<ID3D11Buffer> PT_vertexBuffer;				//Vertex buffer
 	Microsoft::WRL::ComPtr<ID3D11Buffer> emitterPosBuffer;				//Position buffer
 	Microsoft::WRL::ComPtr<ID3D11Buffer> timeBuffer;					//Time buffer, contains delta time
-	Microsoft::WRL::ComPtr <ID3D11BlendState> blendState;				//Blendstate for PT_Pixel shader
 
 	TimeStruct tStruct;
 	std::vector<particleStruct> PT_Data;								//Particle Data (pos, delta time, lifetime)//Add speed?
@@ -27,12 +27,12 @@ private:
 	int nrOfParticles;													//Nr of points in buffer
 	bool active;														//Particle emitter state
 	bool renderPassComplete;											//Particles need to render one time after switched to inactive
+	bool drawOnlyWhenMoving;
 
 public:
 
-	ParticleEmitter(const DirectX::XMFLOAT3 &Pos, const DirectX::XMFLOAT3 &Rot, const int &nrOfPT, const DirectX::XMFLOAT2 &minMaxLifetime, int randRange = 10);
-	void BindAndDraw();
-	void unbind();
+	ParticleEmitter(const DirectX::XMFLOAT3 &Pos, const DirectX::XMFLOAT3 &Rot, const int &nrOfPT, const DirectX::XMFLOAT2 &minMaxLifetime, int randRange = 10, bool onlyDrawMoving = false);
+	void BindAndDraw(int textureIndex);
 	void updateBuffer();												//Updates position, rotation & state (emitter on or off)
 	ID3D11Buffer* getVTXBuffer() const;
 	ID3D11Buffer* getPosBuffer() const;

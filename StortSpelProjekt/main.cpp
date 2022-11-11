@@ -12,7 +12,6 @@
 #include "WindowHelper.h"
 #include "D3D11Helper.h"
 
-#include "GuiHandler.h"
 #include "ImGuiHelper.h"
 
 //Ta bort innan merge med main?
@@ -22,6 +21,8 @@
 
 #include "SettingsMenu.h"
 #include "CreditsMenu.h"
+#include "WinMenu.h"
+#include "LoseMenu.h"
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace, _In_ LPWSTR lpCmdLine, _In_ int nCmdShhow)
@@ -39,11 +40,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui::GetIO().IniFilename = nullptr;
 
-	UINT WIDTH = 1280;
-	UINT HEIGHT = 720;
-	HWND window;
+	UINT WIDTH = 1920;
+	UINT HEIGHT = 1080;
 
-	Client* client = new Client();
+	HWND window;
 
 	/*Assimp::Importer importer;
 
@@ -70,19 +70,23 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX11_Init(device, immediateContext);
 
-	//State* currentState = new Game(immediateContext, device, swapChain, mouse, window);
 	State* currentState = new Menu();
 	GAMESTATE stateInfo = NOCHANGE;
 
 	MSG msg = {};
-
-	float clearColour[4]{ 0,0,0,0 };
-
-	ImGuiHelper imGuiHelper(client);
-	imGuiHelper.setupImGui(clearColour);
+	
 
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
+		if (Input::KeyPress(KeyCode::F1))
+		{
+			//fullscreen = !fullscreen;
+			//swapChain->SetFullscreenState(fullscreen, nullptr);
+			GPU::windowHeight = 1080;
+			GPU::windowWidth = 1920;
+		}
+
+		stateInfo = currentState->Update();
 
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
@@ -90,11 +94,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			DispatchMessage(&msg);
 		}
 		Sound::Update();
-
-		
-
-
-		stateInfo = currentState->Update();
 
 		if (GetAsyncKeyState(VK_ESCAPE))
 			stateInfo = EXIT;
@@ -115,6 +114,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 				delete currentState;
 				currentState = new CreditsMenu();
 				break;
+			case WIN:
+				delete currentState;
+				currentState = new WinMenu();
+				break;
+			case LOSE:
+				delete currentState;
+				currentState = new LoseMenu();
+				break;
 			case MENU:
 				delete currentState;
 				currentState = new Menu();
@@ -126,14 +133,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 		
 		currentState->Render();
 
-		//immediateContext->ClearRenderTargetView(rtv, clearColour);
-		/*immediateContext->OMSetRenderTargets(1, &rtv, dsView);
-		immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		immediateContext->RSSetViewports(1, &viewport);
-
-		currentState->DrawUI();
-		*/
-		//imGuiHelper.drawInterface("test");
 		swapChain->Present(0, 0);
 	}
 
@@ -142,6 +141,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	
 	delete client;
 	 
+
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();

@@ -2,8 +2,8 @@
 #include "GravityField.h"
 #include "DirectXMathHelper.h"
 
-GravityField::GravityField(float gravityConstant, DirectX::XMFLOAT3 planetCenterPoint)
-    :gravityConstant(gravityConstant), planetCenterPoint(planetCenterPoint)
+GravityField::GravityField(const float& gravityConstant, const DirectX::XMFLOAT3& planetCenterPoint, const float& radius)
+    :gravityConstant(gravityConstant), planetCenterPoint(planetCenterPoint), radius(radius)
 {
 }
 
@@ -16,13 +16,21 @@ DirectX::XMFLOAT3 GravityField::calcGravFactor(DirectX::XMFLOAT3 objectPosition)
     float x = (objectPosition.x - planetCenterPoint.x);
     float y = (objectPosition.y - planetCenterPoint.y);
     float z = (objectPosition.z - planetCenterPoint.z);
-    float length = sqrt(x * x + y * y + z * z);
+    newNormalizeXMFLOAT3(objectPosition);
+    scalarMultiplicationXMFLOAT3(-gravityConstant, objectPosition);
+    /*float length = sqrt(x * x + y * y + z * z);
     float factor = gravityConstant / length;
     objectPosition.x *= -factor;
     objectPosition.y *= -factor;
-    objectPosition.z *= -factor;
+    objectPosition.z *= -factor;*/
 
-    return objectPosition;
+    //return objectPosition;
+
+    using namespace DirectX::SimpleMath;
+
+    Vector3 result((Vector3(objectPosition) - planetCenterPoint) * -1);
+    result.Normalize();
+    return result;
 }
 
 DirectX::XMFLOAT3 GravityField::calcGravFactor(DirectX::SimpleMath::Vector3 objectPosition)
@@ -30,11 +38,13 @@ DirectX::XMFLOAT3 GravityField::calcGravFactor(DirectX::SimpleMath::Vector3 obje
     float x = (objectPosition.x - planetCenterPoint.x);
     float y = (objectPosition.y - planetCenterPoint.y);
     float z = (objectPosition.z - planetCenterPoint.z);
-    float length = sqrt(x * x + y * y + z * z);
+    newNormalizeXMFLOAT3(objectPosition);
+    scalarMultiplicationXMFLOAT3(-gravityConstant, objectPosition);
+   /* float length = sqrt(x * x + y * y + z * z);
     float factor = gravityConstant / length;
     objectPosition.x *= -factor;
     objectPosition.y *= -factor;
-    objectPosition.z *= -factor;
+    objectPosition.z *= -factor;*/
 
     return objectPosition;
 }

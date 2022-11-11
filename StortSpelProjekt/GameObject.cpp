@@ -2,12 +2,19 @@
 #include "PhysicsComponent.h"
 #include "GameObject.h"
 
-GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale)
-	:position(pos), mesh(useMesh), objectID(id), scale(scale), physComp(nullptr), srv(nullptr)
+
+void GameObject::updatePhysCompRotation()
+{
+	DirectX::SimpleMath::Quaternion dx11Quaternion = DirectX::XMQuaternionRotationMatrix(this->rotation);
+	reactphysics3d::Quaternion reactQuaternion = reactphysics3d::Quaternion(dx11Quaternion.x, dx11Quaternion.y, dx11Quaternion.z, dx11Quaternion.w);
+	this->physComp->setRotation(reactQuaternion);
+}
+
+GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale)
+	:position(pos), objectID(id), scale(scale), physComp(nullptr), activeField(field)
 {
 
-
-
+	this->mesh = useMesh;
 
 	// set position
 	mesh->position = pos;
@@ -74,7 +81,6 @@ GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos
 	this->mesh->scale = scale;
 	this->scale = scale;
 
-	this->mesh->UpdateCB();
 }
 
 GameObject::GameObject()
@@ -105,10 +111,13 @@ GameObject::GameObject()
 
 GameObject::~GameObject()
 {
-	if (this->mesh != nullptr)
-	{
-		delete this->mesh;
-	}
+	//if (this->mesh != nullptr)
+	//{
+	//	delete this->mesh;
+	//}
+	//this->mesh = nullptr;
+	//this->activeField = nullptr;
+	//this->physComp = nullptr;
 }
 
 void GameObject::movePos(const DirectX::XMFLOAT3& offset)
@@ -140,6 +149,9 @@ void GameObject::setScale(const DirectX::XMFLOAT3& scale)
 {
 	this->mesh->scale = scale;
 	this->scale = scale;
+	
+	//if (this->physComp->getTypeName() == reactphysics3d::CollisionShapeName::BOX) 
+	this->physComp->setScale(scale);
 }
 
 DirectX::XMFLOAT3 GameObject::getPos() const
@@ -157,9 +169,36 @@ DirectX::XMMATRIX GameObject::getRot() const
 	return this->rotation;
 }
 
+DirectX::XMFLOAT3 GameObject::getRotXM() const
+{
+	return DirectX::SimpleMath::Quaternion::CreateFromRotationMatrix(this->rotation).ToEuler();
+}
+
 DirectX::XMFLOAT3 GameObject::getScale() const
 {
 	return this->scale;
+}
+
+DirectX::XMFLOAT4X4 GameObject::getMatrix() const
+{
+	DirectX::XMFLOAT4X4 temp;
+	DirectX::XMStoreFloat4x4(&temp, DirectX::XMMatrixTranspose({ (DirectX::XMMatrixScaling(scale.x, scale.y, scale.z)
+		* this->rotation * DirectX::XMMatrixTranslation(this->position.x, this->position.y, this->position.z))}));
+	return temp;
+}
+
+void GameObject::setMatrix(DirectX::XMFLOAT4X4 matrix)
+{
+	this->mesh->setMatrix(matrix);
+	this->position.x = matrix._14;
+	this->position.y = matrix._24;
+	this->position.z = matrix._34;
+	this->physComp->setPosition(reactphysics3d::Vector3{ position.x,position.y, position.z });
+}
+
+void GameObject::updateMatrixOnline()
+{
+	this->mesh->updateONLINE();
 }
 
 Bound* GameObject::getBounds() const
@@ -177,6 +216,62 @@ PhysicsComponent* GameObject::getPhysComp() const
 	return this->physComp;
 }
 
+void GameObject::orientToUpDirection()
+{
+	using namespace DirectX::SimpleMath;
+	if (this->activeField != nullptr)
+	{
+		Vector3 yAxis(this->activeField->calcGravFactor(this->position) * -1);
+		Vector3 zAxis = yAxis.Cross({ 0, 0, 1 });
+		zAxis.Normalize();
+
+		Vector3 xAxis = yAxis.Cross(zAxis);
+		xAxis.Normalize();
+		this->rotation = Matrix(xAxis, yAxis, zAxis);
+	}
+	else
+	{
+		std::cout << "Gravity field was nullptr, rotation was not changed" << std::endl;
+	}
+}
+
+DirectX::XMFLOAT3 GameObject::getUpDirection() const
+{
+	DirectX::XMFLOAT3 upDir(0, 0, 0);
+	if (this->activeField != nullptr)
+	{
+		using namespace DirectX::SimpleMath;
+		Vector3 yAxis(this->activeField->calcGravFactor(this->position) * -1);
+		upDir = yAxis;
+	}
+	else
+	{
+		std::cout << "Gravity field was nullptr, direction was not given" << std::endl;
+	}
+	return upDir;
+}
+
+DirectX::XMFLOAT3 GameObject::getRotOrientedToGrav() const
+{
+	using namespace DirectX::SimpleMath;
+
+	DirectX::XMFLOAT3 finalRot(0,0,0);
+
+	if (this->activeField != nullptr)
+	{
+		Vector3 yAxis( this->activeField->calcGravFactor(this->position) * -1);
+		finalRot = Quaternion::LookRotation({ 0, 0, -1 }, yAxis).ToEuler();
+	}
+	else
+	{
+		std::cout << "Gravity field was nullptr, rotation was not given" << std::endl;
+	}
+
+	return finalRot;
+
+}
+
+
 void GameObject::updateBuffer()
 {
 	//Set mesh pos & rot to current member variable pos/rot
@@ -185,7 +280,7 @@ void GameObject::updateBuffer()
 	this->mesh->scale = this->scale;
 
 	//Update constantbuffer
-	this->mesh->UpdateCB();
+	//this->mesh->UpdateCB();
 }
 
 void GameObject::setMesh(const std::string& meshPath)
@@ -284,7 +379,17 @@ bool GameObject::withinRadious(GameObject* object, float radius) const
 
 void GameObject::draw()
 {
+	this->mesh->UpdateCB(position, rotation, scale);
 	this->mesh->DrawWithMat();
+}
+
+void GameObject::updateRotation()
+{
+	this->position = this->physComp->getPosV3();
+	this->reactQuaternion = this->physComp->getRotation();
+	this->dx11Quaternion = DirectX::SimpleMath::Quaternion(DirectX::SimpleMath::Vector4(reactQuaternion.x, reactQuaternion.y, reactQuaternion.z, reactQuaternion.w));
+	this->mesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
+	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
 }
 
 int GameObject::getId()
@@ -310,4 +415,5 @@ void GameObject::tmpDraw(UINT stride)
 void GameObject::setSrv(ID3D11ShaderResourceView* srv)
 {
 	this->srv = srv;
+	this->updateRotation();
 }

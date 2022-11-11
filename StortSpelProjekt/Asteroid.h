@@ -6,7 +6,6 @@
 class Asteroid
 {
 private:
-	PhysicsComponent* physComp;
 	Mesh* asteroidMesh;
 
 	DirectX::XMFLOAT3 direction;

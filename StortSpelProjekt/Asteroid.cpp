@@ -41,6 +41,9 @@ Asteroid::Asteroid(Mesh* mesh)
 	this->asteroidMesh = mesh;
 	this->scale = DirectX::XMFLOAT3(10, 10, 10);
 	this->inactive = false;
+	this->direction = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
+	this->position = DirectX::XMFLOAT3(6969.f, 6969.f, 6969.f);
+	this->speed = 0.f;
 }
 
 Asteroid::~Asteroid()

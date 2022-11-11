@@ -13,6 +13,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	MaterialLibrary::LoadMaterial("pintoBlue.png");
 	MaterialLibrary::LoadMaterial("Red.png");
 
+	meshes.push_back(new Mesh("../Meshes/Sphere"));
+	meshes.push_back(new Mesh("../Meshes/pinto"));
+
 	this->packetEventManager = new PacketEventManager();
 	//m�ste raderas******************
 	client = new Client("192.168.43.244");
@@ -52,14 +55,14 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			
 			if (playerId != i)
 			{
-				tmpPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude < i + 1), planetGravityField);
+				tmpPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude < i + 1), planetGravityField);
 				tmpPlayer->setOnlineID(i);
 				physWolrd.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
 			}
 			else
 			{
-				currentPlayer = new Player("../Meshes/pinto", DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, (int)(dude < i + 1), planetGravityField);
+				currentPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, (int)(dude < i + 1), planetGravityField);
 				currentPlayer->setOnlineID(i);
 				players.push_back(currentPlayer);
 				delete tmpPlayer;
@@ -68,6 +71,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		}
 	}
 	this->loadObjects();
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->setGravityField(planetGravityField);
+	}
 
 	currentTime = std::chrono::system_clock::now();
 	lastUpdate = currentTime;
@@ -100,7 +107,6 @@ Game::~Game()
 		delete planetVector[i];
 	}
 	delete asteroids;
-	delete planetMeshes;
 	delete arrow;
 	delete atmosphere;
 }
@@ -125,8 +131,6 @@ void Game::loadObjects()
 
 	//Meshes vector contents
 	//Sphere, pinto, potion, rocket, rocket, bat, Player, component, grenade
-	meshes.push_back(new Mesh("../Meshes/Sphere"));
-	meshes.push_back(new Mesh("../Meshes/pinto"));
 	meshes.push_back(new Mesh("../Meshes/potion"));
 	meshes.push_back(new Mesh("../Meshes/rocket"));
 	meshes.push_back(new Mesh("../Meshes/bat"));
@@ -170,7 +174,7 @@ void Game::loadObjects()
 	}
 	for (int i = 0; i < players.size(); i++)
 	{
-		gameObjects.emplace_back(players[i]);
+		if (players[i] != currentPlayer) gameObjects.emplace_back(players[i]);
 	}
 	
 	for (int i = 0; i < gameObjects.size(); i++)
@@ -372,7 +376,7 @@ void Game::handleKeybinds()
 GAMESTATE Game::Update()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, planetVector[0]->getGravityField(), spaceShips, onlineItems);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, planetGravityField, spaceShips, onlineItems, meshes);
 	
 	//Get newest delta time
 	lastUpdate = currentTime;

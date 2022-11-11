@@ -3,7 +3,7 @@
 #include "TimeStruct.h"
 
 #define MAXASTEROIDS 10
-#define TIMEBEFOREASTEROIDS 60
+#define TIMEBEFOREASTEROIDS 120
 
 class AsteroidHandler
 {

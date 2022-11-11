@@ -71,12 +71,6 @@ void AsteroidHandler::updateAsteroids(const float& dt, std::vector<Planet*>& pla
 	{
 		this->asteroids[i]->moveAsteroid(dt, planets, objects);
 	}
-	/*bool active = false;
-	for (int i = 0; i < activeAsteroids; i++)
-	{
-		if (this->asteroids[i]->isActive()) active = true;
-	}
-	if (!active) this->spawnAsteroids(planets[0]);*/
 }
 
 void AsteroidHandler::drawAsteroids()

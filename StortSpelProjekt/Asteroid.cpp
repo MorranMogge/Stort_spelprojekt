@@ -20,14 +20,14 @@ void Asteroid::explode(std::vector<Planet*>& planets, std::vector<GameObject*>& 
 			Player* hitPlayer = dynamic_cast<Player*>(objects[j]);
 			if (hitPlayer != nullptr)
 			{
-				newForce = this->physComp->getMass() * 2500 * factor;
+				newForce = this->scale.x * 2500 * factor;
 				scalarMultiplicationXMFLOAT3(newForce, explosionRange);
 				hitPlayer->hitByBat(reactphysics3d::Vector3(explosionRange.x, explosionRange.y, explosionRange.z));
 			}
 			//Add force to object
 			else
 			{
-				newForce = this->physComp->getMass() * 5000 * factor;
+				newForce = this->scale.x * 5000 * factor;
 				scalarMultiplicationXMFLOAT3(newForce, explosionRange);
 				objects[j]->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(explosionRange.x, explosionRange.y, explosionRange.z));
 			}
@@ -36,12 +36,10 @@ void Asteroid::explode(std::vector<Planet*>& planets, std::vector<GameObject*>& 
 	this->inactive = true;
 }
 
-Asteroid::Asteroid(Mesh* mesh, PhysicsWorld& physWorld)
+Asteroid::Asteroid(Mesh* mesh)
 {
 	this->asteroidMesh = mesh;
-	this->scale = DirectX::XMFLOAT3(1, 1, 1);
-	//this->physComp = physWorld.returnAddedPhysComponent(reactphysics3d::CollisionShapeName::SPHERE, DirectX::XMFLOAT3(0,0,0), this->scale);
-	//this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
+	this->scale = DirectX::XMFLOAT3(10, 10, 10);
 	this->inactive = false;
 }
 
@@ -60,14 +58,12 @@ void Asteroid::spawnAsteroid(DirectX::XMFLOAT3 spawnPos, DirectX::XMFLOAT3 direc
 	this->direction = direction;
 	this->speed = speed;
 	this->inactive = false;
-	//this->physComp->setPosition(reactphysics3d::Vector3(this->position.x, this->position.y, this->position.z));
 }
 
 void Asteroid::moveAsteroid(const float& dt, std::vector<Planet*>& planets, std::vector<GameObject*>& objects)
 {
 	if (this->inactive) return;
 	additionXMFLOAT3(this->position, getScalarMultiplicationXMFLOAT3(speed*dt, direction));
-	this->physComp->setPosition(reactphysics3d::Vector3(this->position.x, this->position.y, this->position.z));
 	for (int i = 0; i < planets.size(); i++)
 	{
 		DirectX::XMFLOAT3 vecToPlanet = this->position;

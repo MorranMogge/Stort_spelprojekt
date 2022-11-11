@@ -143,7 +143,7 @@ void Game::loadObjects()
 	planetVector.back()->setPlanetShape(&physWolrd);
 	planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(-55.f, -55.f, -55.f)));
 	planetVector.back()->setPlanetShape(&physWolrd);
-	asteroids = new AsteroidHandler(meshes[0], physWolrd);
+	asteroids = new AsteroidHandler(meshes[0]);
 	planetGravityField = planetVector[0]->getGravityField();
 	
 	//Make sure the physics world has access to the planets

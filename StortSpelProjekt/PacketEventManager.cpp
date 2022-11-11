@@ -74,7 +74,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			spawnComp = circularBuffer->readData<SpawnComponent>();
 			std::cout << "Comp ID: " << spawnComp->ComponentId << "\n";
 			newComponent = new Component("../Meshes/component", DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
-				spawnComp->ComponentId, spawnComp->ComponentId, field);
+				COMPONENT, spawnComp->ComponentId, field);
 			physWorld.addPhysComponent(newComponent);
 			componentVector.push_back(newComponent);
 			gameObjects.push_back(newComponent);

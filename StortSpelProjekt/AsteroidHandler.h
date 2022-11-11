@@ -3,7 +3,7 @@
 #include "TimeStruct.h"
 
 #define MAXASTEROIDS 10
-#define TIMEBEFOREASTEROIDS 120
+#define TIMEBEFOREASTEROIDS 60
 
 class AsteroidHandler
 {
@@ -14,8 +14,8 @@ private:
 	int activeAsteroids;
 
 public:
-	AsteroidHandler(const std::vector<Mesh*>& meshes, PhysicsWorld& physWorld);
-	AsteroidHandler(Mesh* meshes, PhysicsWorld& physWorld);
+	AsteroidHandler(const std::vector<Mesh*>& meshes);
+	AsteroidHandler(Mesh* meshes);
 	~AsteroidHandler();
 
 	bool ifTimeToSpawnAsteroids();

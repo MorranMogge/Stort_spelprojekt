@@ -18,7 +18,7 @@ private:
 	void explode(std::vector<Planet*>& planets, std::vector<GameObject *>& objects);
 
 public:
-	Asteroid(Mesh* mesh, PhysicsWorld& physWorld);
+	Asteroid(Mesh* mesh);
 	~Asteroid();
 
 	bool isActive()const;

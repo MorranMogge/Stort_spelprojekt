@@ -2,23 +2,23 @@
 #include "AsteroidHandler.h"
 #include "DirectXMathHelper.h"
 
-AsteroidHandler::AsteroidHandler(const std::vector<Mesh*>& meshes, PhysicsWorld& physWorld)
+AsteroidHandler::AsteroidHandler(const std::vector<Mesh*>& meshes)
 	:activeAsteroids(0)
 {
 	timer.resetStartTime();
 	for (int i = 0; i < MAXASTEROIDS; i++)
 	{
-		asteroids.emplace_back(new Asteroid(meshes[rand() % (int)meshes.size()], physWorld));
+		asteroids.emplace_back(new Asteroid(meshes[rand() % (int)meshes.size()]));
 	}
 }
 
-AsteroidHandler::AsteroidHandler(Mesh* meshes, PhysicsWorld& physWorld)
+AsteroidHandler::AsteroidHandler(Mesh* meshes)
 	:activeAsteroids(0)
 {
 	timer.resetStartTime();
 	for (int i = 0; i < MAXASTEROIDS; i++)
 	{
-		asteroids.emplace_back(new Asteroid(meshes, physWorld));
+		asteroids.emplace_back(new Asteroid(meshes));
 	}
 }
 

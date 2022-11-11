@@ -68,13 +68,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
-		if (Input::KeyPress(KeyCode::F1))
-		{
-			//fullscreen = !fullscreen;
-			//swapChain->SetFullscreenState(fullscreen, nullptr);
-			GPU::windowHeight = 1080;
-			GPU::windowWidth = 1920;
-		}
 
 		stateInfo = currentState->Update();
 

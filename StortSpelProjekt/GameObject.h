@@ -35,11 +35,8 @@ protected:
 	DirectX::XMFLOAT3 scale;
 
 public:
-	GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
-	GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
-	GameObject(ID3D11Buffer* vBuff, ID3D11Buffer* iBuff, std::vector<int>& subMeshRanges, std::vector<int>& verticies, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
-	GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id,GravityField* field = nullptr, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
-	GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id,GravityField* field = nullptr , const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
+	GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field = nullptr, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
+	GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field = nullptr, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
 	GameObject();
 	virtual ~GameObject();
 	void movePos(const DirectX::XMFLOAT3& offset);

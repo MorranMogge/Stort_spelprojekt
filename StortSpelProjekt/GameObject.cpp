@@ -27,36 +27,10 @@ GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const Direct
 	mesh->scale = scale;
 	this->scale = scale;
 
-	this->mesh->UpdateCB();
 }
 
-GameObject::GameObject(ID3D11Buffer* vBuff, ID3D11Buffer* iBuff, std::vector<int>& subMeshRanges, std::vector<int>& verticies, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale)
-	:position(pos), objectID(id), scale(scale), physComp(nullptr), srv(nullptr)
-{
-	// load obj file
-
-	this->mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-
-
-
-
-	// set position
-	this->mesh->position = pos;
-
-	// set rotation
-	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMVectorSet(rot.x, rot.y, rot.z, 1.0f));
-	this->mesh->rotation = this->rotation;
-
-	// set scale
-	this->mesh->scale = scale;
-	this->scale = scale;
-
-	this->mesh->UpdateCB();
-}
-
-
-GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale)
-	:position(pos), objectID(id), scale(scale), physComp(nullptr), srv(nullptr)
+GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale)
+	:position(pos), objectID(id), scale(scale), physComp(nullptr), activeField(field)
 {
 	// load obj file
 	OBJ testObj(meshPath);

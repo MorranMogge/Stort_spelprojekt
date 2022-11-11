@@ -153,7 +153,7 @@ void Game::loadObjects()
 	potion = new Potion(meshes[2], Vector3(0, 0, -42),Vector3(0.0f, 0.0f, 0.0f), POTION, 0, planetGravityField);
 	baseballBat = new BaseballBat(meshes[4], Vector3(0, 0, 42), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
 	grenade = new Grenade(meshes[6], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
-	component = new Component(meshes[5], DirectX::SimpleMath::Vector3(0, -42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT, 0, planetGravityField);
+	//component = new Component(meshes[5], DirectX::SimpleMath::Vector3(0, -42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT, 0, planetGravityField);
 	arrow = new Arrow(meshes[7], DirectX::SimpleMath::Vector3(0, 42, 0));
 	
 	//currentPlayer = new Player(meshes[1], Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, client, 0, &planetGravityField);
@@ -181,11 +181,11 @@ void Game::loadObjects()
 
 	
 	//SPACE SHIPS
-	spaceShipRed = new SpaceShip(meshes[3], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
+	/*spaceShipRed = new SpaceShip(meshes[3], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
 	spaceShipBlue = new SpaceShip(meshes[3], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
 	
 	spaceShips.emplace_back(spaceShipRed);
-	spaceShips.emplace_back(spaceShipBlue);
+	spaceShips.emplace_back(spaceShipBlue);*/
 	
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
@@ -194,9 +194,9 @@ void Game::loadObjects()
 		gameObjects.emplace_back(spaceShips[i]);
 	}
 
-	components.emplace_back(component);
-	gameObjects.emplace_back(component);
-	physWolrd.addPhysComponent(component, reactphysics3d::CollisionShapeName::BOX);
+	//components.emplace_back(component);
+	//gameObjects.emplace_back(component);
+	//physWolrd.addPhysComponent(component, reactphysics3d::CollisionShapeName::BOX);
 
 	if (!currentPlayer) { currentPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, planetGravityField); players.emplace_back(currentPlayer); }
 	currentPlayer->setPhysComp(physWolrd.getPlayerBox());

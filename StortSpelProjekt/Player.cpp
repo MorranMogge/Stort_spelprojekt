@@ -294,7 +294,7 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 		//Changing planet, rotating slow
 		if (flipping)
 		{
-			angle = resultVector.x * 0.002f;
+			angle = resultVector.x * 0.02f;
 			rotation *= DirectX::XMMatrixRotationAxis(rightVector, -angle);
 			rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, -angle);
 		}
@@ -314,7 +314,7 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 		//Changing planet, rotating slow
 		if (flipping)
 		{
-			angle = resultVector.x * 0.002f;
+			angle = resultVector.x * 0.02f;
 			rotation *= DirectX::XMMatrixRotationAxis(rightVector, angle);
 			rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, angle);
 		}
@@ -343,7 +343,7 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 		//Changing planet, rotating slow
 		if (flipping)
 		{
-			angle = resultVector.x * 0.002f;
+			angle = resultVector.x * 0.02f;
 			rotation *= DirectX::XMMatrixRotationAxis(forwardVector, angle);
 			rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, angle);
 		}
@@ -363,7 +363,7 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 		//Changing planet, rotating slow
 		if (flipping)
 		{
-			angle = resultVector.x * 0.002f;
+			angle = resultVector.x * 0.02f;
 			rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -angle);
 			rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, -angle);
 		}

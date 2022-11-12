@@ -108,7 +108,9 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	:GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0), currentSpeed(0)
 {
 	this->rotationMX = XMMatrixIdentity();
+	this->rotation = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	angleVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	this->client = client;
 	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
 	HudUI::player = this;
@@ -139,8 +141,9 @@ Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 {
 	this->client = client;
 	this->rotationMX = XMMatrixIdentity();
-	this->setRot(this->getRotOrientedToGrav());
+	this->rotation = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	angleVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
 
 	HudUI::player = this;
@@ -323,6 +326,12 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 		}
 	}
 
+	//Updating vectors
+	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
+	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
+	rightVector = DirectX::XMVector3Normalize(rightVector);
+	forwardVector = DirectX::XMVector3Normalize(forwardVector);
+
 	//Z-Rotation
 	resultVector = DirectX::XMVector3Dot(normalVector, rightVector);
 	if (resultVector.z < 0.f)
@@ -365,6 +374,12 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 			rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, -resultVector.z);
 		}
 	}
+
+	//Updating vectors
+	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
+	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
+	rightVector = DirectX::XMVector3Normalize(rightVector);
+	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 }
 
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime)
@@ -484,6 +499,17 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 			resultVector = DirectX::XMVector3AngleBetweenNormalsEst(-cameraRight, forwardVector);
 			if (resultVector.x > XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.5f);
 		}
+	}
+
+	//REMOVE AT END!!
+	if (Input::KeyDown(KeyCode::I))
+	{
+		position += cameraForward * deltaTime * this->currentSpeed;
+	}
+
+	if (Input::KeyDown(KeyCode::L))
+	{
+		position += cameraRight * deltaTime * this->currentSpeed;
 	}
 }
 

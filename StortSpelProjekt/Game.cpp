@@ -79,7 +79,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	currentTime = std::chrono::system_clock::now();
 	lastUpdate = currentTime;
 	gamePad = std::make_unique<DirectX::GamePad>();
-	playerVecRenderer.setPlayer(currentPlayer, arrow);
+	playerVecRenderer.setPlayer(currentPlayer, camera);
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 	serverStart = std::chrono::system_clock::now();

@@ -58,7 +58,7 @@ void ImGuiHelper::setupImGui(float bgColour[])
 	style->Colors[ImGuiCol_TitleBgActive] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
 }
 
-void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, bool& landingMinigame, const float& dt)
+void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, bool& landingMinigame, const float& dt, bool& velocityCamera)
 {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -76,6 +76,7 @@ void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, bool& landingMinig
 			ImGui::Checkbox("Draw collision boxes", &wireframe);
 			ImGui::Checkbox("Draw objects", &drawObjects);
 			ImGui::Checkbox("Landing Minigame", &landingMinigame);
+			ImGui::Checkbox("Camera with velocity", &velocityCamera);
 		}
 
 		ImGui::End();

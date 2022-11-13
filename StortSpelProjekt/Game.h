@@ -56,6 +56,8 @@ private:
 	CircularBufferClient* circularBuffer;
 
 	Camera camera;
+	bool velocityCamera = false;
+
 	Arrow* arrow;
 	SkyboxObj skybox;
 	Player* currentPlayer;

@@ -62,10 +62,15 @@ void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation);
 	
-	cameraPos = playerPosition + upVector * 60.f - forwardVector * 50.f;
 	lookAtPos = playerPosition;
+	logicalPos = playerPosition + upVector * 60.f - forwardVector * 50.f;
 
-	if (XMVector3NotEqual(cameraPos, oldCameraPos))
+	cameraPos = logicalPos;
+
+	//velocityVector = XMVectorSubtract(logicalPos, cameraPos);
+	//cameraPos += velocityVector * deltaTime * 2.f;
+
+	/*if (XMVector3NotEqual(cameraPos, oldCameraPos))
 	{
 		if (playerSpeed < 26.f) minFOV = 0.76f;
 		else if (playerSpeed < 38.f) minFOV = 0.7f;
@@ -80,25 +85,45 @@ void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::
 		if (fieldOfView < maxFOV) fieldOfView += deltaTime * 1.5f;
 	}
 
-	oldCameraPos = cameraPos;
+	oldCameraPos = cameraPos;*/
+	updateCamera();
+}
+
+void Camera::moveVelocity(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const DirectX::XMVECTOR& playerUp, const float& playerSpeed, const float& deltaTime)
+{
+	//logicalUp = playerUp;
+
+	//Actual camera
+	logicalUp = XMVector3TransformCoord(DEFAULT_UP, playerRotation);
+	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation);
+	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation);
+	lookAtPos = playerPosition;
+	logicalPos = playerPosition + logicalUp * 60.f - forwardVector * 50.f;
+
+	//The showing camera
+	velocityVector = XMVectorSubtract(logicalPos, cameraPos);
+	cameraPos += velocityVector * deltaTime * 2.f;
+	velocityVector = XMVectorSubtract(logicalUp, upVector);
+	upVector += velocityVector * deltaTime * 2.f;
+
 	updateCamera();
 }
 
 void Camera::winScene(const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation)
 {
-	/*rotationMX = shipRotation;
+	rotationMX = shipRotation;
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
 	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
 
 	cameraPos = shipPosition + upVector * 40.f - forwardVector * 50.f;
 	lookAtPos = shipPosition;
-	updateCamera();*/
+	updateCamera();
 }
 
 void Camera::landingMinigameScene(const Planet* planet, const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation)
 {
-	/*rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, shipRotation);
+	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, shipRotation);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, shipRotation);
 	upVector = XMVector3TransformCoord(DEFAULT_UP, shipRotation);
 
@@ -106,7 +131,7 @@ void Camera::landingMinigameScene(const Planet* planet, const DirectX::XMVECTOR&
 	middlePos += 1.25f*upVector*(DirectX::XMVECTOR)DirectX::SimpleMath::Vector3(planet->getSize() / 2.f, planet->getSize() / 2.f, planet->getSize() / 2.f);
 	lookAtPos = middlePos;
 	cameraPos = middlePos - forwardVector * 1.25f/fieldOfView * getLength((DirectX::SimpleMath::Vector3)middlePos);
-	updateCamera();*/
+	updateCamera();
 }
 
 DirectX::XMVECTOR Camera::getForwardVector() const

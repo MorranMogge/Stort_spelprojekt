@@ -21,6 +21,7 @@ private:
 	DirectX::XMMATRIX viewMatrix;
 	DirectX::XMMATRIX projMatrix;
 	DirectX::XMMATRIX rotationMX;
+	DirectX::XMVECTOR logicalPos = DirectX::XMVectorSet(0.0f, 60.0f, -30.0f, 0.0f);
 	DirectX::XMVECTOR cameraPos = DirectX::XMVectorSet(0.0f, 60.0f, -30.0f, 0.0f);
 	DirectX::XMVECTOR oldCameraPos = cameraPos;
 	DirectX::XMVECTOR lookAtPos = DirectX::XMVectorSet(0.0f, 42.0f, 0.0f, 0.0f);
@@ -31,7 +32,11 @@ private:
 
 	DirectX::XMVECTOR rightVector = DEFAULT_RIGHT;
 	DirectX::XMVECTOR forwardVector = DEFAULT_FORWARD;
-	DirectX::XMVECTOR upVector = DEFAULT_UP;
+	DirectX::XMVECTOR logicalUp = DEFAULT_UP;
+	DirectX::XMVECTOR upVector = logicalUp;
+
+
+	DirectX::XMVECTOR velocityVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 public:
 	Camera();
@@ -39,6 +44,8 @@ public:
 
 	void updateCamera();
 	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const DirectX::XMVECTOR& playerUp, const float& playerSpeed, const float& deltaTime);
+	void moveVelocity(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const DirectX::XMVECTOR& playerUp, const float& playerSpeed, const float& deltaTime);
+
 	void winScene(const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation);
 	void landingMinigameScene(const Planet* planet, const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation);
 	DirectX::XMVECTOR getForwardVector() const;

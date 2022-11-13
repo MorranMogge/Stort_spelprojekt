@@ -482,7 +482,9 @@ GAMESTATE Game::Update()
 	}
 	
 	//Setting the camera at position
-	camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), currentPlayer->getUpVector(), currentPlayer->getSpeed(), dt);
+	if (!velocityCamera) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), currentPlayer->getUpVector(), currentPlayer->getSpeed(), dt);
+	else camera.moveVelocity(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), currentPlayer->getUpVector(), currentPlayer->getSpeed(), dt);
+	
 	this->arrow->moveWithCamera(camera.getPosition(), DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getUpVector()), currentPlayer->getRotationMX());
 
 	//Check Components online
@@ -610,7 +612,7 @@ void Game::Render()
 	basicRenderer.depthUnbind();
 
 	//Render imgui & wireframe
-	imGui.react3D(wireframe, objectDraw, landingMinigame, dt);
+	imGui.react3D(wireframe, objectDraw, landingMinigame, dt, velocityCamera);
 	if (wireframe) { physWolrd.renderReact3D(); playerVecRenderer.drawLines(); }
 
 	//render billboard objects

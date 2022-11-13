@@ -29,7 +29,7 @@ public:
 	DirectX::XMVECTOR getArrowVectorArrow() const;
 	DirectX::XMVECTOR getPosition() const;
 
-	void moveWithCamera(const DirectX::XMVECTOR& cameraPosition, const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraUp, const DirectX::XMMATRIX& cameraRotation);
+	void moveWithCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& playerUp, const DirectX::XMMATRIX& playerRotation);
 	void showDirection(const DirectX::XMVECTOR& goalPosition, const DirectX::XMVECTOR& playerPosition, const DirectX::XMFLOAT3& gravity);
 	void removeArrow();
 	void draw();

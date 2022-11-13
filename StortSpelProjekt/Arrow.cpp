@@ -67,10 +67,10 @@ DirectX::XMVECTOR Arrow::getPosition() const
 	return this->position;
 }
 
-void Arrow::moveWithCamera(const DirectX::XMVECTOR& cameraPosition, const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraUp, const DirectX::XMMATRIX& cameraRotation)
+void Arrow::moveWithCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& playerUp, const DirectX::XMMATRIX& playerRotation)
 {
-	this->position = cameraPosition - cameraUp * 30.f + cameraForward * 40.f;
-	this->rotation = cameraRotation;
+	this->position = playerPosition + playerUp * 10.f + cameraForward * 10.f;
+	this->rotation = playerRotation;
 }
 
 void Arrow::showDirection(const DirectX::XMVECTOR& goalPosition, const DirectX::XMVECTOR& playerPosition, const DirectX::XMFLOAT3& gravity)

@@ -58,19 +58,16 @@ Camera::~Camera()
 
 void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const DirectX::XMVECTOR& playerUp, const float& playerSpeed, const float& deltaTime)
 {
+	//Actual camera
 	upVector = playerUp;
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation);
-	
 	lookAtPos = playerPosition;
-	logicalPos = playerPosition + upVector * 60.f - forwardVector * 50.f;
+	cameraPos = playerPosition + upVector * 60.f - forwardVector * 50.f;
+	logicalPos = cameraPos;
 
-	cameraPos = logicalPos;
-
-	//velocityVector = XMVectorSubtract(logicalPos, cameraPos);
-	//cameraPos += velocityVector * deltaTime * 2.f;
-
-	/*if (XMVector3NotEqual(cameraPos, oldCameraPos))
+	//Changing FOV if player moving faster
+	if (XMVector3NotEqual(cameraPos, oldCameraPos))
 	{
 		if (playerSpeed < 26.f) minFOV = 0.76f;
 		else if (playerSpeed < 38.f) minFOV = 0.7f;
@@ -85,7 +82,7 @@ void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::
 		if (fieldOfView < maxFOV) fieldOfView += deltaTime * 1.5f;
 	}
 
-	oldCameraPos = cameraPos;*/
+	oldCameraPos = cameraPos;
 	updateCamera();
 }
 
@@ -106,6 +103,23 @@ void Camera::moveVelocity(const DirectX::XMVECTOR& playerPosition, const DirectX
 	velocityVector = XMVectorSubtract(logicalUp, upVector);
 	upVector += velocityVector * deltaTime * 2.f;
 
+	//Changing FOV if player moving faster
+	if (XMVector3NotEqual(cameraPos, oldCameraPos))
+	{
+		if (playerSpeed < 26.f) minFOV = 0.76f;
+		else if (playerSpeed < 38.f) minFOV = 0.7f;
+		else minFOV = 0.65f;
+
+		if (fieldOfView > (minFOV + 0.01f)) fieldOfView -= deltaTime * 0.1f;
+		else if (fieldOfView < (minFOV - 0.01f))  fieldOfView += deltaTime * 0.1f;
+	}
+	else
+	{
+		maxFOV = 0.75f;
+		if (fieldOfView < maxFOV) fieldOfView += deltaTime * 1.5f;
+	}
+
+	oldCameraPos = cameraPos;
 	updateCamera();
 }
 
@@ -151,7 +165,7 @@ DirectX::XMVECTOR Camera::getUpVector() const
 
 DirectX::XMVECTOR Camera::getPosition() const
 {
-	return this->cameraPos;
+	return this->logicalPos;
 }
 
 void Camera::VSbindPositionBuffer(const int& slot)

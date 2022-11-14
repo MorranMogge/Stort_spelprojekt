@@ -108,7 +108,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 
 	for (UINT i = 0; i < node->mNumChildren; i++)
 	{
-		processNodes(node->mChildren[i], scene, filePath);
+		processNodes(node->mChildren[i], scene, filePath, wantToBone);
 	}
 }
 

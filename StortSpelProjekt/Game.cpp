@@ -42,7 +42,7 @@ void Game::loadObjects()
 
 	this->manager.getAnimData("../Meshes/pinto_Run.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
 	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-	this->currentPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0, 0, 0), PLAYER, client, 0, redTeamColour, blueTeamColour, &planetGravityField);
+	this->sexyMan = new AnimatedMesh(tmpMesh, DirectX::XMFLOAT3(0, 42, 0), DirectX::XMFLOAT3(0, 0, 0), 69);
 	this->sexyMan->addData(animData);
 	//sexyMan->setSrv(this->manager.getSrv("../Textures/texture2.png"));
 	//physWolrd.addPhysComponent(sexyMan, reactphysics3d::CollisionShapeName::BOX);
@@ -53,9 +53,11 @@ void Game::loadObjects()
 	gameObjects.emplace_back(planet);
 	if (IFONLINE) return;
 
+	this->currentPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0, 0, 0), PLAYER, client, 0, redTeamColour, blueTeamColour, &planetGravityField);
+	this->currentPlayer->addData(animData);
 	//Here we can add base object we want in the beginning of the game
 	atmosphere = new GameObject(meshes[0], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(43, 43, 43));
-	currentPlayer = new Player(meshes[1], Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, client, 0, &planetGravityField);
+	//currentPlayer = new Player(meshes[1], Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, client, 0, &planetGravityField);
 	potion = new Potion(meshes[2], Vector3(10, 10, 15),Vector3(0.0f, 0.0f, 0.0f), POTION, 0, &planetGravityField);
 	spaceShipRed = new SpaceShip(meshes[3], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, &planetGravityField, Vector3(2, 2, 2));
 	spaceShipBlue = new SpaceShip(meshes[3], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, &planetGravityField, Vector3(2, 2, 2));
@@ -293,6 +295,12 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->colorBuffer.getData() = DirectX::XMFLOAT4(0.0f, 0.55f, 0.75f, 3.8f);
 	this->colorBuffer.applyData();
 
+	manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
+	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/pintoBlue.png");
+	ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/pintoRed.png");
+	this->manager.getAnimData("../Meshes/pinto_Run.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
+	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+
 	if (IFONLINE)
 	{
 		client->connectToServer();
@@ -317,15 +325,17 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			Player* tmpPlayer = nullptr;
 			if (playerId != i)
 			{
-				tmpPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude < i + 1), &planetGravityField);
+				tmpPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, & planetGravityField);
 				tmpPlayer->setOnlineID(i);
+				tmpPlayer->addData(animData);
 				physWolrd.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
 			}
 			else
 			{
-				currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, (int)(dude < i+1), &planetGravityField);
+				currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 40, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, (int)(dude < i+1), redTeamColour, blueTeamColour, &planetGravityField);
 				currentPlayer->setOnlineID(i);
+				currentPlayer->addData(animData);
 				players.push_back(currentPlayer);
 				delete tmpPlayer;
 			}

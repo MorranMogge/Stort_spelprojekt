@@ -18,6 +18,7 @@
 #include "CreditsMenu.h"
 #include "WinMenu.h"
 #include "LoseMenu.h"
+#include "PlanetGenerator.h"
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace, _In_ LPWSTR lpCmdLine, _In_ int nCmdShhow)
@@ -61,7 +62,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX11_Init(device, immediateContext);
 
-	State* currentState = new Menu();
+	//State* currentState = new Menu();
+	State* currentState = new PlanetGenerator();
+
 	GAMESTATE stateInfo = NOCHANGE;
 
 	MSG msg = {};

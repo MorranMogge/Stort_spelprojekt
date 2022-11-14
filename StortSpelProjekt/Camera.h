@@ -54,6 +54,7 @@ public:
 	DirectX::XMVECTOR getPosition() const;
 	ID3D11Buffer* getViewBuffer();
 	ID3D11Buffer* getPositionBuffer();
+	void setPosition(const DirectX::XMFLOAT3& position);
 
 	void VSbindPositionBuffer(const int &slot);
 	void VSbindViewBuffer(const int& slot);

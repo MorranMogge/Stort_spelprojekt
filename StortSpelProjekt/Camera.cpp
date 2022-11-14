@@ -168,6 +168,13 @@ DirectX::XMVECTOR Camera::getPosition() const
 	return this->logicalPos;
 }
 
+void Camera::setPosition(const DirectX::XMFLOAT3& position)
+{
+	this->cameraPos = DirectX::XMVectorSet(position.x, position.y, position.z, 1.f);
+	this->lookAtPos = cameraPos + DirectX::XMVectorSet(0.f, 0.f, 10.f, 1.f);
+	this->updateCamera();
+}
+
 void Camera::VSbindPositionBuffer(const int& slot)
 {
 	GPU::immediateContext->VSSetConstantBuffers(slot, 1, this->positionBuffer.getReferenceOf());

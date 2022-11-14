@@ -55,7 +55,7 @@ bool Asteroid::isActive() const
 	return !inactive;
 }
 
-void Asteroid::spawnAsteroid(DirectX::XMFLOAT3 spawnPos, DirectX::XMFLOAT3 direction, float speed)
+void Asteroid::spawnAsteroid(const DirectX::XMFLOAT3& spawnPos, const DirectX::XMFLOAT3& direction, const float& speed)
 {
 	this->position = spawnPos;
 	this->direction = direction;

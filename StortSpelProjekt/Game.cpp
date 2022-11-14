@@ -7,6 +7,8 @@
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
+	srand(time(0));
+
 	MaterialLibrary::LoadDefault();
 	MaterialLibrary::LoadMaterial("spaceshipTexture1.jpg");
 	MaterialLibrary::LoadMaterial("pintoRed.png");
@@ -141,12 +143,17 @@ void Game::loadObjects()
 	//if (IFONLINE) return;
 
 	//SOLAR SYSTEM SETUP
-
 	float planetSize = 40.f;
-	planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize)));
-	planetVector.back()->setPlanetShape(&physWolrd);
-	planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(-55.f, -55.f, -55.f)));
-	planetVector.back()->setPlanetShape(&physWolrd);
+	int nrPlanets = (rand() % 3) + 1;
+
+	for (int i = 0; i < nrPlanets; i++)
+	{
+		if (i == 0) planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
+		else if (i == 1) planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
+		else planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f)));
+		planetVector.back()->setPlanetShape(&physWolrd);
+	}
+
 	asteroids = new AsteroidHandler(meshes[0]);
 	planetGravityField = planetVector[0]->getGravityField();
 	

@@ -398,8 +398,8 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	if (onGround && Input::KeyPress(KeyCode::SPACE))
 	{
 		onGround = false;
-		this->velocity = this->normalVector * 45.f;
-		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.5f;
+		this->velocity = this->normalVector * 40.f;
+		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
 
 	//PC movement

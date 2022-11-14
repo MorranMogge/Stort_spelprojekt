@@ -71,7 +71,8 @@ private:
 	void resetRotationMatrix();
 	void handleItems();
 public:
-	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int &team, GravityField* field = nullptr);
+	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int &team, 
+		ID3D11ShaderResourceView* redTeamColor, ID3D11ShaderResourceView* blueTeamColor, GravityField* field = nullptr);
 	//Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field = nullptr);
 	~Player();
 	void handleInputs(); 

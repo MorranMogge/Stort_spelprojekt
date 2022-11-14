@@ -98,7 +98,9 @@ Player::~Player()
 	}
 }
 
-Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
+Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team,
+	ID3D11ShaderResourceView* redTeamColor, ID3D11ShaderResourceView* blueTeamColor, GravityField* field)
+
     :AnimatedMesh(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0)
 {
 	this->rotationMX = XMMatrixIdentity();
@@ -132,9 +134,9 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	switch (team)
 	{
 	case 0:
-		mesh->matKey[0] = "pintoRed.png"; break;
+		this->setSrv(redTeamColor); break;
 	case 1:
-		break;
+		this->setSrv(blueTeamColor); break;
 	}
 }
 

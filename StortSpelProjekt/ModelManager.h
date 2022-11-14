@@ -56,7 +56,7 @@ private:
 	std::vector<int> amountOfvertices;
 	std::vector<ID3D11Buffer*> vecIndexBuff;
 	bool makeSRV(ID3D11ShaderResourceView*& srv, std::string finalFilePath);
-	void processNodes(aiNode* node, const aiScene* scene, const std::string& filePath);
+	void processNodes(aiNode* node, const aiScene* scene, const std::string& filePath, bool wantToBone = false);
 	void readNodes(aiMesh* mesh, const aiScene* scene);
 	std::vector<Mesh2*> meshes;
 	std::vector<ID3D11ShaderResourceView*> diffuseMaps;
@@ -69,7 +69,6 @@ private:
 	
 	AnimationData aniData;
 	unsigned VertexOffset;
-	bool ran = false;
 
 	void aiMatrixToXMmatrix(const aiMatrix4x4& in, DirectX::XMFLOAT4X4& out);
 	void normalizeWeights(float weights[]);

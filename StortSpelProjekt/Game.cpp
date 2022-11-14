@@ -25,6 +25,8 @@ void Game::loadObjects()
 	MaterialLibrary::LoadMaterial("pintoRed.png");
 	MaterialLibrary::LoadMaterial("pintoBlue.png");
 	MaterialLibrary::LoadMaterial("Red.png");
+	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/pintoBlue.png");
+	ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/pintoRed.png");
 
 	//Meshes vector contents
 	//Sphere, pinto, potion, rocket, rocket, bat, Player, component, grenade
@@ -40,9 +42,9 @@ void Game::loadObjects()
 
 	this->manager.getAnimData("../Meshes/pinto_Run.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
 	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-	this->currentPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0, 0, 0), PLAYER, client, 0, &planetGravityField);
+	this->currentPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0, 0, 0), PLAYER, client, 0, redTeamColour, blueTeamColour, &planetGravityField);
 	this->sexyMan->addData(animData);
-	sexyMan->setSrv(this->manager.getSrv("../Textures/texture2.png"));
+	//sexyMan->setSrv(this->manager.getSrv("../Textures/texture2.png"));
 	//physWolrd.addPhysComponent(sexyMan, reactphysics3d::CollisionShapeName::BOX);
 
 	planet = new GameObject(meshes[0], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(40.0f, 40.0f, 40.0f));

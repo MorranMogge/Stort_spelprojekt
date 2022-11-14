@@ -47,7 +47,7 @@ bool ModelManager::makeSRV(ID3D11ShaderResourceView*& srv, std::string finalFile
 	return true;
 }
 
-void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::string& filePath)
+void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::string& filePath, bool wantToBone)
 {
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
@@ -61,7 +61,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		//h�r srv inl�sning
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];		
 
-		if (mesh->HasBones())
+		if (mesh->HasBones() && wantToBone)
 		{
 			this->loadBones(mesh, VertexOffset);
 			this->VertexOffset += mesh->mNumVertices;
@@ -515,7 +515,7 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 	this->VertexOffset = 0;
 	this->aniData = {};
 
-	processNodes(pScene->mRootNode, pScene, filePath);
+	processNodes(pScene->mRootNode, pScene, filePath, true);
 	for (int i = 0, end = this->aniData.boneDataVec.size(); i < end; i++)
 	{
 		this->normalizeWeights(this->aniData.boneDataVec[i].Weights);

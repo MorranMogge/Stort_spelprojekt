@@ -38,7 +38,7 @@ bool LoadVertexShader(ID3D11Device* device, ID3D11VertexShader*& vShader, const 
 
 		return !FAILED(hr);
 	}
-	ErrorLog::Log("Failed to create Domain shader!");
+	ErrorLog::Log("Failed to create Vertex shader!");
 	return false;
 }
 

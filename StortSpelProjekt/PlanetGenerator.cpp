@@ -209,14 +209,27 @@ void PlanetGenerator::createIcoSphere()
     //triangles.emplace_back(icoSphere[5], icoSphere[10], icoSphere[3]);  //20
 
     int subdivisions = 1;
+    int size = triangles.size();
+   /* for (int i = 0; i < subdivisions; i++)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            Vertex newTriangle[3];
+            newTriangle[0].position = getScalarMultiplicationXMFLOAT3(0.5f, (getAdditionXMFLOAT3(triangles[i].vertices[0].position, triangles[i].vertices[1].position)));
+            newTriangle[1].position = getScalarMultiplicationXMFLOAT3(0.5f, (getAdditionXMFLOAT3(triangles[i].vertices[1].position, triangles[i].vertices[2].position)));
+            newTriangle[2].position = getScalarMultiplicationXMFLOAT3(0.5f, (getAdditionXMFLOAT3(triangles[i].vertices[2].position, triangles[i].vertices[0].position)));
+            triangles.emplace_back(Triangle(newTriangle[0].position, newTriangle[1].position, newTriangle[2].position));
+        }
+    }*/
+
     for (int i = 0; i < triangles.size(); i++)
     {
         vertices.push_back(triangles[i].vertices[0]);
-        vertices.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 1.f);
+        vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
         vertices.push_back(triangles[i].vertices[1]);
-        vertices.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 1.f);
+        vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
         vertices.push_back(triangles[i].vertices[2]);
-        vertices.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 1.f);
+        vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
 
         lines.push_back(triangles[i].vertices[0]);
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
@@ -231,6 +244,12 @@ void PlanetGenerator::createIcoSphere()
         lines.push_back(triangles[i].vertices[0]);
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
     }
+
+    /*for (int i = 0; i < vertices.size(); i++)
+    {
+        if (getLength(vertices[i].position) != 1.f) std::cout << "LENGTH: " << getLength(vertices[i].position) << "\n";
+        vertices[i].position.Normalize();
+    }*/
 }
 
 PlanetGenerator::PlanetGenerator()
@@ -244,6 +263,7 @@ PlanetGenerator::PlanetGenerator()
     this->setVertexBuffers();
     this->setWorldMatrix();
     camera.setPosition(DirectX::XMFLOAT3(0.f, 0.f, -10.f));
+    LoadVertexShader(GPU::device, vShader, "playerVectorVertex");
     LoadPixelShader(GPU::device, pShader, "plaverVectorPixel");
 }
 
@@ -251,6 +271,9 @@ PlanetGenerator::~PlanetGenerator()
 {
     triangleBuffer->Release();
     lineBuffer->Release();
+
+    vShader->Release();
+    pShader->Release();
     /*delete planet;
     for (int i = 0; i < meshes.size(); i++)
     {
@@ -265,10 +288,10 @@ GAMESTATE PlanetGenerator::Update()
     if (GetAsyncKeyState('A')) this->cameraPosition.x -= 0.05f;
     if (GetAsyncKeyState('D')) this->cameraPosition.x += 0.05f;
 
-    for (int i = 0; i < lines.size(); i++)
+    for (int i = 0; i < vertices.size(); i++)
     {
-        if (getLength(lines[i].position) > 1.f) std::cout << "LENGTH: " << getLength(lines[i].position) << "\n";
-        lines[i].position.Normalize();
+        if (getLength(vertices[i].position) != 1.f) std::cout << "LENGTH: " << getLength(vertices[i].position) << "\n";
+        vertices[i].position.Normalize();
     }
     this->camera.setPosition(cameraPosition);
     return NOCHANGE;
@@ -278,6 +301,7 @@ void PlanetGenerator::Render()
 {
     renderer.setUpScene();
     //GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+    GPU::immediateContext->VSSetShader(vShader, nullptr, 0);
     GPU::immediateContext->PSSetShader(pShader, nullptr, 0);
     GPU::immediateContext->VSSetConstantBuffers(0, 1, &worldMatrixBuffer);
     

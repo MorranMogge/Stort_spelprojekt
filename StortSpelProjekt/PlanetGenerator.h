@@ -22,41 +22,39 @@ struct Triangle
 	}
 };
 
-//const double GoldenRatio = 1.61803398875;
-//const float GoldenRatio = 1.f/(1.f + sqrt(5.f))*0.5f;
-//const float GoldenRatio = (1.f + sqrt(5.f)) * 0.5f;
-
-const float phi = (1.0f + sqrt(5.0f)) * 0.5f; // golden ratio
-const float a = 1.0f;
-const float GoldenRatio = 1.0f / phi;
-
+const float GoldenRatio = 1.0f / ((1.0f + sqrt(5.0f)) * 0.5f);
 
 class PlanetGenerator : public State
 {
 private:
 	//D3D11 stuff
+	ID3D11Buffer* worldMatrixBuffer;
 	ID3D11Buffer* triangleBuffer;
 	ID3D11Buffer* lineBuffer;
 	ID3D11PixelShader* pShader;
-	DirectX::XMFLOAT3 cameraPosition;
-
-	int horizontal;
-	int vertical;
-	UINT stride;
-	UINT offset;
+	ID3D11VertexShader* vShader;
 	DirectX::XMFLOAT4X4 worldMatrix;
-	ID3D11Buffer* worldMatrixBuffer;
-	Camera camera;
 
-	PlanetType typeOfSphere;
-	Planet* planet;
-	std::vector<Mesh*> meshes;
 
-	BasicRenderer renderer;
-	ImGuiHelper imGuiHelper;
-
+	
+	//Used for sphere generation
 	std::vector<Vertex> vertices;
 	std::vector<Vertex> lines;
+	PlanetType typeOfSphere;
+	int subdivisions;
+	int horizontal;
+	int vertical;
+
+
+	//Used for rendering
+	BasicRenderer renderer;
+	ImGuiHelper imGuiHelper;
+	UINT offset;
+	UINT stride;
+	Camera camera;
+	DirectX::XMFLOAT3 cameraPosition;
+
+	std::vector<Mesh*> meshes;
 
 	bool setVertexBuffers();
 	bool setWorldMatrix();

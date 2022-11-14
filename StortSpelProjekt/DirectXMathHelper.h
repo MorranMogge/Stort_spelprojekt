@@ -1,6 +1,8 @@
 #pragma once
 #include <DirectXMath.h>
 
+DirectX::XMFLOAT3 getAdditionXMFLOAT3(DirectX::XMFLOAT3 argOne, const DirectX::XMFLOAT3& argTwo);
+
 DirectX::XMFLOAT3 getSubtractionXMFLOAT3(DirectX::XMFLOAT3 argOne, const DirectX::XMFLOAT3& argTwo);
 
 void subtractionXMFLOAT3(DirectX::XMFLOAT3& argOne, const DirectX::XMFLOAT3& argTwo);

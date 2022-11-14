@@ -382,7 +382,9 @@ void BasicRenderer::geometryUnbind()
 }
 
 void BasicRenderer::fresnelPrePass(Camera& stageCamera)
-{
+{ 
+	immediateContext->IASetInputLayout(inputLayout);
+	immediateContext->VSSetShader(vShader, nullptr, 0);
 	immediateContext->OMSetBlendState(fresnelBlendState, nullptr, 0xffffffffu);
 	immediateContext->OMSetDepthStencilState(PT_dsState, 0);
 	immediateContext->PSSetShader(Fresnel_PS, nullptr, 0);

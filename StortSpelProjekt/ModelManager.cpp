@@ -66,7 +66,6 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 			this->loadBones(mesh, VertexOffset);
 			this->VertexOffset += mesh->mNumVertices;
 			this->aniData.boneDataVec;
-			int pb = 2;
 		}
 		
 		readNodes(mesh, scene);
@@ -134,6 +133,7 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 			{
 				vertex.uv.x = (float)mesh->mTextureCoords[0][i].x;
 				vertex.uv.y = (float)mesh->mTextureCoords[0][i].y;
+				vertex.uv.y = 1.0f - vertex.uv.y;
 			}
 
 			vertexTriangle.emplace_back(vertex);

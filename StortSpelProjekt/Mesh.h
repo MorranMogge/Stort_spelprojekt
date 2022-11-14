@@ -193,9 +193,7 @@ public:
 
 	void draw(ID3D11ShaderResourceView* srv, UINT stride = sizeof(vertex))
 	{
-
 		worldCB.BindToVS(0u);
-
 		//UINT stride = stride;
 		UINT offset = 0;
 

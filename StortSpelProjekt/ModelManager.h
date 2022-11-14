@@ -22,8 +22,8 @@
 struct AnimatedVertex
 {
 	DirectX::XMFLOAT3 pos; // Position
-	DirectX::XMFLOAT2 uv; // UV coordination
 	DirectX::XMFLOAT3 nor; // Normal
+	DirectX::XMFLOAT2 uv; // UV coordination
 
 	DirectX::XMINT4 boneId;
 	DirectX::XMFLOAT4 weights;

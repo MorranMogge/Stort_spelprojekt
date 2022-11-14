@@ -84,6 +84,8 @@ void Game::loadObjects()
 	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
 
+	players.push_back(currentPlayer);
+
 	//Add to obj array
 	gameObjects.emplace_back(potion);
 	gameObjects.emplace_back(testBat);
@@ -118,10 +120,13 @@ void Game::drawShadows()
 	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
 	{
 		ltHandler.drawShadows(i, gameObjects);
+		ltHandler.drawShadows(i, players);
 	}
 
 	basicRenderer.depthPrePass();
 	ltHandler.drawShadows(0, gameObjects, &camera);
+	basicRenderer.changeToAnimation();
+	ltHandler.drawShadows(0, players, &camera);
 	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
 }
 
@@ -559,13 +564,14 @@ void Game::Render()
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
 
+	basicRenderer.changeToAnimation();
+	this->sexyMan->draw(dt, 0);
+	currentPlayer->draw(dt, 0);
+
 	//Render fresnel objects
 	basicRenderer.fresnelPrePass(this->camera);
 	this->drawFresnel();
 
-	basicRenderer.changeToAnimation();
-	this->sexyMan->draw(dt, 0);
-	currentPlayer->draw(dt, 0);
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();

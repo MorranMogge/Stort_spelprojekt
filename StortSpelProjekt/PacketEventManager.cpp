@@ -30,6 +30,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	Item* item = nullptr;
 	BaseballBat* baseballbat = nullptr;
 	ConfirmComponentPickedUp* confirmCmpPickedUp = nullptr;
+	ComponentPosition* cmpPosition = nullptr;
 	
 
 	while (circularBuffer->getIfPacketsLeftToRead())
@@ -86,7 +87,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			physWorld.addPhysComponent(newComponent);
 			//componentVector.push_back(newComponent);
 			//gameObjects.push_back(newComponent);
-			onlineItems.push_back(newComponent);
+			onlineItems.emplace_back(newComponent);
  			std::cout << "Sucessfully recieved component from server: " << std::to_string(spawnComp->ComponentId) << std::endl;
 			break;
 		
@@ -201,19 +202,34 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					//en av spelarna plockade upp en component
 					//std::cout << "Confirmed pickup recv comId: " << std::to_string(confirmCmpPickedUp->componentId) << std::endl;
 
-					for (int i = 0; i < onlineItems.size(); i++)
+					for (int j = 0; j < onlineItems.size(); j++)
 					{
-						std::cout << "Confirm packet loop compId: " << std::to_string(onlineItems[i]->getOnlineId()) << std::endl;
-						if (confirmCmpPickedUp->componentId == onlineItems[i]->getOnlineId())
+						if (confirmCmpPickedUp->componentId == onlineItems[j]->getOnlineId())
 						{
-							players[i]->itemRecvFromServer(onlineItems[i]);
+							std::cout << "ConfirmPacket, picked up component Id: " << std::to_string(confirmCmpPickedUp->componentId) << std::endl;
+							players[i]->itemRecvFromServer(onlineItems[j]);
 							break;
 						}
 					}
 				}
 			}
-
+			std::cout << "Done with it uwu\n";
 			break;
+
+		case PacketType::COMPONENTPOSITIONNEW:
+			cmpPosition = circularBuffer->readData<ComponentPosition>();
+
+			for (int i = 0; i < onlineItems.size(); i++)
+			{
+				if (onlineItems[i]->getOnlineId() == cmpPosition->ComponentId)
+				{
+					onlineItems[i]->setPos(DirectX::XMFLOAT3(cmpPosition->x, cmpPosition->y, cmpPosition->z));
+					onlineItems[i]->getPhysComp()->setRotation(cmpPosition->quat);
+				}
+			}
+			//std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
+			break;
+
 		}
 	}
 }

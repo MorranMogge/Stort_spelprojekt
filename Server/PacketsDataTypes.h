@@ -22,7 +22,7 @@ struct testPosition
 };
 
 //enum = 5
-struct ComponentData
+struct ComponentData //ANVÄNDS INTE
 {
 	int packetId;
 	int ComponentId;
@@ -140,6 +140,17 @@ struct ConfirmComponentPickedUp
 	int packetId;
 	int componentId;
 	int playerPickUpId;
+};
+
+//enum = 19
+struct ComponentPosition
+{
+	int packetId;
+	int ComponentId;
+	float x;
+	float y;
+	float z;
+	reactphysics3d::Quaternion quat;
 };
 
 //enum = 21

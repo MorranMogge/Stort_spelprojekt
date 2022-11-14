@@ -370,6 +370,11 @@ void GameObject::drawObjectWithTexture()
 	this->mesh->drawWithTexture(this->srv);
 }
 
+void GameObject::drawObjectWithNormalMap()
+{
+	this->mesh->drawWithNormalMap(this->srv, this->normalMap);
+}
+
 void GameObject::drawObject()
 {
 	this->mesh->draw();
@@ -378,4 +383,9 @@ void GameObject::drawObject()
 void GameObject::setSrv(ID3D11ShaderResourceView* srv)
 {
 	this->srv = srv;
+}
+
+void GameObject::setNormalMap(ID3D11ShaderResourceView* srv)
+{
+	this->normalMap = srv;
 }

@@ -106,7 +106,8 @@ void Game::loadObjects()
 	this->manager.getMeshData("../Meshes/goblin2.fbx", vBuff, iBuff, subMeshRanges, verticies);
 	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	testCube = new GameObject(tmpMesh, Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
-	testCube->setSrv(this->manager.getSrv("playerTexture.png"));
+	testCube->setSrv(this->manager.getSrv("Goblin_BaseColor.png"));
+	testCube->setNormalMap(this->manager.getSrv("Goblin_Normal.png"));
 
 
 	//otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), PLAYER, & planetGravityField);
@@ -208,7 +209,11 @@ void Game::drawObjects(bool drawDebug)
 
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		this->gameObjects[i]->drawObjectWithTexture();
+		if (i != 5)
+		{
+			this->gameObjects[i]->drawObjectWithTexture();
+
+		}
 	}
 	for (int i = 0; i < players.size(); i++)
 	{
@@ -549,6 +554,10 @@ void Game::Render()
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
+
+	basicRenderer.setUpSceneNormalMap(this->camera);
+	ltHandler.bindLightBuffers();
+	testCube->drawObjectWithNormalMap();
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();

@@ -27,13 +27,15 @@ private:
 		DirectX::XMFLOAT3 pos; // Position
 		DirectX::XMFLOAT2 uv; // UV coordination
 		DirectX::XMFLOAT3 nor; // Normal
+		DirectX::XMFLOAT3 tangent; // Normal
 
 		vertex() {
 			pos = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };
 			uv = DirectX::XMFLOAT2{ 0.0f,0.0f };
 			nor = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };
+			tangent = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };
 		};
-		vertex(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT2& uv, DirectX::XMFLOAT3& nor) : pos(pos), uv(uv), nor(nor) {};
+		vertex(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT2& uv, DirectX::XMFLOAT3& nor) : pos(pos), uv(uv), nor(nor), tangent(tangent) {};
 	};
 public:
 
@@ -195,6 +197,29 @@ public:
 			startVertex += this->amountOfVertices[i];
 		}
 	}
+
+	void drawWithNormalMap(ID3D11ShaderResourceView* diffuseMap, ID3D11ShaderResourceView* normalMap)
+	{
+
+		worldCB.BindToVS(0u);
+
+		UINT stride = sizeof(vertex);
+		UINT offset = 0;
+
+		int startIndex = 0;
+		int startVertex = 0;
+		GPU::immediateContext->PSSetShaderResources(0, 1, &diffuseMap);
+		GPU::immediateContext->PSSetShaderResources(7, 1, &normalMap);
+		GPU::immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuff, &stride, &offset);
+		GPU::immediateContext->IASetIndexBuffer(this->indexBuff, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+		for (int i = 0; i < submeshRanges.size(); i++)
+		{
+			GPU::immediateContext->DrawIndexed(submeshRanges[i], startIndex, startVertex);
+			startIndex += submeshRanges[i];
+			startVertex += this->amountOfVertices[i];
+		}
+	}
+
 	//Draw mesh utan textur
 	void draw()
 	{

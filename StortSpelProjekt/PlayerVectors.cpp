@@ -38,22 +38,21 @@ bool PlayerVectors::setUpVertexBuffer()
 
 void PlayerVectors::updateVertexBuffer()
 {
-	
-		vectors[0].position = vectors[1].position = vectors[2].position = 
-		vectors[3].position = vectors[4].position = vectors[5].position =
-		vectors[6].position = vectors[7].position = this->player->getPos();
-		
-		vectors[1].position += this->player->getForwardVec() * 50;
-		vectors[3].position += this->player->getUpVec() * 50;
-		vectors[5].position += this->player->getRightVec() * 50;
-		vectors[7].position = {this->player->getRayCastPos().x, this->player->getRayCastPos().y, this->player->getRayCastPos().z};
-		//vectors[6].position = this->player->getRayCastPos();
-		//vectors[7].position = SimpleMath::Vector3(0, 0, 0);
+	vectors[0].position = vectors[1].position = vectors[2].position = vectors[3].position =
+	vectors[4].position = vectors[5].position = vectors[6].position = vectors[7].position = this->player->getPos();
 
-		D3D11_MAPPED_SUBRESOURCE resource;
-		GPU::immediateContext->Map(vBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-		memcpy(resource.pData, &vectors, NROFVERTICES * sizeof(Vertex));
-		GPU::immediateContext->Unmap(vBuffer, 0);
+	vectors[1].position += this->player->getForwardVector() * 50;
+	vectors[3].position += this->player->getRightVector() * 50;
+	vectors[5].position += this->camera->getRightVector() * 50;
+	vectors[7].position += this->player->getUpVector() * 50;
+
+	//vectors[6].position = this->player->getRayCastPos();
+	//vectors[7].position = SimpleMath::Vector3(0, 0, 0);
+
+	D3D11_MAPPED_SUBRESOURCE resource;
+	GPU::immediateContext->Map(vBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	memcpy(resource.pData, &vectors, NROFVERTICES * sizeof(Vertex));
+	GPU::immediateContext->Unmap(vBuffer, 0);
 }
 
 PlayerVectors::PlayerVectors()
@@ -68,19 +67,18 @@ PlayerVectors::~PlayerVectors()
 	pShader->Release();
 }
 
-void PlayerVectors::setPlayer(Player* player)
+void PlayerVectors::setPlayer(Player* player, Camera camera)
 {
 	this->player = player;
+	this->camera = &camera;
 
-	vectors[0].position = vectors[1].position = vectors[2].position =
-		vectors[3].position = vectors[4].position = vectors[5].position = 
-		vectors[6].position = vectors[7].position = this->player->getPos();
-
-	vectors[1].position += this->player->getForwardVec() * 100;
-	vectors[3].position += this->player->getUpVec() * 100;
-	vectors[5].position += this->player->getRightVec() * 100;
-	vectors[6].position += this->player->getUpVec() * -100.f;
-	vectors[7].position = SimpleMath::Vector3(0, 0, 0);
+	vectors[0].position = vectors[1].position = vectors[2].position = vectors[3].position =
+	vectors[4].position = vectors[5].position = vectors[6].position = vectors[7].position = this->player->getPos();
+	
+	vectors[1].position += this->player->getForwardVector() * 100;
+	vectors[3].position += this->player->getRightVector() * 100;
+	vectors[5].position += this->camera->getRightVector() * 100;
+	vectors[7].position += this->player->getUpVector() * 100;
 
 	vectors[0].normal = DirectX::SimpleMath::Vector3(1, 0, 0);
 	vectors[1].normal = DirectX::SimpleMath::Vector3(1, 0, 0);

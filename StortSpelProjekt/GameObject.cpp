@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "PhysicsComponent.h"
 #include "GameObject.h"
-
+#include "DirectXMathHelper.h"
 
 void GameObject::updatePhysCompRotation()
 {
@@ -45,6 +45,7 @@ GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos
 	}
 	
 	// set position
+	this->position = pos;
 	this->mesh->position = pos;
 
 	// set rotation
@@ -126,7 +127,7 @@ void GameObject::setScale(const DirectX::XMFLOAT3& scale)
 	this->scale = scale;
 	
 	//if (this->physComp->getTypeName() == reactphysics3d::CollisionShapeName::BOX) 
-	this->physComp->setScale(scale);
+	//this->physComp->setScale(scale);
 }
 
 DirectX::XMFLOAT3 GameObject::getPos() const
@@ -223,6 +224,7 @@ DirectX::XMFLOAT3 GameObject::getUpDirection() const
 	{
 		std::cout << "Gravity field was nullptr, direction was not given" << std::endl;
 	}
+	newNormalizeXMFLOAT3(upDir);
 	return upDir;
 }
 
@@ -255,7 +257,7 @@ void GameObject::updateBuffer()
 	this->mesh->scale = this->scale;
 
 	//Update constantbuffer
-	//this->mesh->UpdateCB();
+	this->mesh->UpdateCB(this->position, this->rotation, this->scale);
 }
 
 void GameObject::setMesh(const std::string& meshPath)
@@ -302,6 +304,11 @@ void GameObject::setMesh(Mesh* inMesh)
 
 	// set rotation
 	this->mesh->rotation = inMesh->rotation;
+}
+
+void GameObject::setGravityField(GravityField* field)
+{
+	this->activeField = field;
 }
 
 bool GameObject::withinBox(GameObject* object, float xRange, float yRange, float zRange) const

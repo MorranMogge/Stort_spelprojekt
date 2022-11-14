@@ -11,7 +11,7 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 	this->setRot(this->getRotOrientedToGrav());
 
 	//Icon initiation
-	float constant = 65.0f;
+	float constant = 60.0f;
 	std::vector<std::string> filenames{ "p0.png", "p1.png", "p2.png", "p3.png", "p4.png" };
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
@@ -46,7 +46,7 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 	this->setRot(this->getRotOrientedToGrav());
 
 	//Icon initiation
-	float constant = 65.0f;
+	float constant = 60.f;
 	std::vector<std::string> filenames{ "p0.png", "p1.png", "p2.png", "p3.png", "p4.png" };
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
@@ -92,7 +92,7 @@ int SpaceShip::getTeam() const
 
 int SpaceShip::getNrOfComponents() const
 {
-	 return currentComponents;
+	return this->currentComponents;
 }
 
 bool SpaceShip::detectedComponent(GameObject* objectToCheck)
@@ -105,7 +105,7 @@ bool SpaceShip::detectedComponent(GameObject* objectToCheck)
 	}
 	else
 	{
-		this->setScale(DirectX::XMFLOAT3(2, 2, 2));
+		if (this->scale.y != 2.f) this->setScale(DirectX::XMFLOAT3(2, 2, 2));
 	}
 	return didDetect;
 }
@@ -120,7 +120,7 @@ bool SpaceShip::detectedComponent(Component* componentToCheck)
 	}
 	else
 	{
-		this->setScale(DirectX::XMFLOAT3(2, 2, 2));
+		if (this->scale.y != 2.f) this->setScale(DirectX::XMFLOAT3(2, 2, 2));
 	}
 	return didDetect;
 }

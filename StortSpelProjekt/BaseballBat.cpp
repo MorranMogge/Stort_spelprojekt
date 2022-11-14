@@ -73,32 +73,32 @@ void BaseballBat::setClient(Client* client)
 	this->client = client;
 }
 
-void BaseballBat::setTestObj(const std::vector<GameObject*>& objects)
+void BaseballBat::setGameObjects(const std::vector<GameObject*>& objects)
 {
 	this->objects = objects;
 }
 
-void BaseballBat::setGameObjects(const std::vector<Player*>& objects)
-{
-	for (int i = 0; i < objects.size(); i++)
-	{
-		//if (objects[i] != this->player) this->objects.push_back(objects[i]);
-		this->objects.push_back(objects[i]);
-	}
-}
+//void BaseballBat::setGameObjects(const std::vector<Player*>& objects)
+//{
+//	for (int i = 0; i < objects.size(); i++)
+//	{
+//		//if (objects[i] != this->player) this->objects.push_back(objects[i]);
+//		this->objects.push_back(objects[i]);
+//	}
+//}
 
 void BaseballBat::useItem()
 {
 	std::cout << "Used bat!\n";
 	batPos = this->player->getPos();
-	batPos += this->player->getForwardVec() * 10;
+	batPos += this->player->getForwardVector() * 10;
 	savedPos = this->getPosV3(); //Used to reset the baseball bats position at the end of the function
 
     PhysicsComponent* batComp = this->getPhysComp();
     PhysicsComponent* physComp;
 
     batComp->setPosition(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
-    batComp->setScale(DirectX::XMFLOAT3(4.0f, 4.0f, 4.0f));
+    batComp->setScale(DirectX::XMFLOAT3(2 * 4.0f, 2 * 4.0f, 2 * 4.0f));
 
 	bool collided = false;
 	for (int i = 0; i < objects.size(); i++)
@@ -118,7 +118,7 @@ void BaseballBat::useItem()
             //Calculate the force vector
             float newForce = batComp->getMass() * force;
             batPos = objects[i]->getPosV3() - this->player->getPosV3();
-            batPos += this->player->getUpVec();
+            batPos += this->player->getUpVector();
             newNormalizeXMFLOAT3(batPos);
             scalarMultiplicationXMFLOAT3(newForce, batPos);
 

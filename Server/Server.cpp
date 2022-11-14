@@ -19,7 +19,7 @@
 #include "DirectXMathHelper.h"
 #include "TimeStruct.h"
 
-const short MAXNUMBEROFPLAYERS = 2;
+const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
 
 struct userData

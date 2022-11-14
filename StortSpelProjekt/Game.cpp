@@ -144,7 +144,7 @@ void Game::loadObjects()
 
 	//SOLAR SYSTEM SETUP
 	float planetSize = 40.f;
-	int nrPlanets = (rand() % 3) + 1;
+	int nrPlanets = 3; // (rand() % 3) + 1;
 
 	for (int i = 0; i < nrPlanets; i++)
 	{

@@ -42,6 +42,12 @@
     <ClCompile Include="RandomizeSpawn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ServerPlanet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerGravField.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="player.h">
@@ -78,6 +84,12 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="TimeStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerGravField.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerPlanet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

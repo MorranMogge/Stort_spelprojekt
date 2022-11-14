@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "Component.h"
+#include "ServerPlanet.h"
 
 class GameObject;
 
@@ -15,6 +16,7 @@ private:
 	reactphysics3d::Vector3 temp;
 
 	std::vector<PhysicsComponent *> physObjects;
+	std::vector<Planet*> planets;
 		
 	reactphysics3d::PhysicsCommon com;
 	reactphysics3d::PhysicsWorld* world;
@@ -29,6 +31,7 @@ private:
 public:
 	PhysicsWorld(std::string worldName = "Planet SIS");
 	~PhysicsWorld();
+	void setPlanets(std::vector<Planet*>& planets);
 	void update(const float& dt);
 	void renderReact3D();
 	PhysicsComponent* getPlayerBox()const;

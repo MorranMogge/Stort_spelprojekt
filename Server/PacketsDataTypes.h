@@ -104,6 +104,13 @@ struct ComponentAdded
 	int spaceShipTeam;
 };
 
+//enum = 16
+struct SpawnPlanets
+{
+	int packetId;
+
+};
+
 //enum = 21
 struct PlayerHit
 {

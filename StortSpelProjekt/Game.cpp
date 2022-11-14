@@ -464,7 +464,6 @@ GAMESTATE Game::Update()
 		}
 	}
 
-
 	//sending data to server
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
 	{
@@ -472,7 +471,6 @@ GAMESTATE Game::Update()
 		serverStart = std::chrono::system_clock::now();
 	}
 
-	
 	//Physics related functions
 	if (!IFONLINE) physWolrd.update(dt);
 	for (int i = 0; i < players.size(); i++)

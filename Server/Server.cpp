@@ -506,8 +506,7 @@ int main()
 		{
 			for (int i = 0; i < 10; i++)
 			{
-				physWorld.update(timerLength/10.f);
-
+				physWorld.update(timerLength / 10.f);
 			}
 
 			//Check if any components are near after the physics update

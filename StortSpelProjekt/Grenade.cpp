@@ -7,6 +7,7 @@
 Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
 	:Item(useMesh, pos, rot, id, onlineId, GRENADE, field), destructionIsImminent(false), timeToExplode(5.f), currentTime(0.0f)
 {
+	counter = 1.0f;
 	sfx.load(L"../Sounds/explosion.wav");
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
@@ -88,6 +89,7 @@ void Grenade::explode()
 			}
 		}
 	}
+	counter = 1.0f;
 	this->explosionMesh->scale = DirectX::XMFLOAT3(27, 27, 27);
 	this->destructionIsImminent = false;
 }
@@ -95,6 +97,7 @@ void Grenade::explode()
 void Grenade::updateExplosionCheck()
 {
 	if (destructionIsImminent && this->timer.getTimePassed(this->timeToExplode)) this->explode();
+	else if (destructionIsImminent && this->timer.getTimePassed(counter)) {counter++; sfx.stop(); sfx.play(); }
 }
 
 void Grenade::setGameObjects(const std::vector<GameObject*>& gameObjects)

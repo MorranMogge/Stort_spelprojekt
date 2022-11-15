@@ -12,6 +12,7 @@ private:
 	bool destructionIsImminent;
 	float timeToExplode;
 	float currentTime;
+	float counter;
 	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
 	Mesh* explosionMesh;
 

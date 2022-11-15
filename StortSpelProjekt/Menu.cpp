@@ -4,13 +4,12 @@
 #include "Console.h"
 #include "SoundCollection.h"
 #include "GPU.h"
-
+#include "SoundLibrary.h"
 
 Menu::Menu()
 {
-	menuMusic.load(L"../Sounds/menuMusic.wav");
-	menuMusic.setVolume(0.5f);
-	menuMusic.play(true);
+	SoundLibrary::menuMusic.setVolume(0.5f);
+	SoundLibrary::menuMusic.play(true);
 
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 }

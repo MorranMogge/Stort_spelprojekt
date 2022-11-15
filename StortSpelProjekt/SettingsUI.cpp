@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SettingsUI.h"
 #include "Input.h"
+#include "SoundLibrary.h"
 
 
 void SettingsUI::HandleInputs()
@@ -10,8 +11,12 @@ void SettingsUI::HandleInputs()
 
 	if (Input::KeyPress(KeyCode::MOUSE_L))
 	{
+		SoundLibrary::clickSfx.stop();
+		SoundLibrary::clickSfx.play();
 		if (backText.GetTint() == DirectX::Colors::Green.v)
 		{
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = MENU;
 		}
 	}

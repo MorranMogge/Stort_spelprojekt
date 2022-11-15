@@ -6,6 +6,7 @@
 #include "Console.h"
 #include "MemoryLeackChecker.h"
 #include "SoundCollection.h"
+#include "SoundLibrary.h"
 #include "Client.h"
 #include "Game.h"
 #include "Menu.h"
@@ -26,6 +27,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	srand((unsigned)time(0));
 
 	SoundCollection::Load();
+	SoundLibrary soundLibrary;
 
 	Console::Activate(); // activate console for cout and cin, to destroy console call "Console::Destroy();" 
 	std::cout << "test print \n"; //test print
@@ -61,7 +63,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX11_Init(device, immediateContext);
 
-	Sound::Update();
+
 
 	State* currentState = new Menu();
 	GAMESTATE stateInfo = NOCHANGE;

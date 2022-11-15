@@ -4,6 +4,7 @@
 #include"Input.h"
 #include "SettingsUI.h"
 #include "Credits.h"
+#include "SoundLibrary.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -39,19 +40,29 @@ void MenuUI::HandleInputs()
 	{
 		if (start.GetTint() == DirectX::Colors::Green.v)
 		{
+			SoundLibrary::menuMusic.stop();
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = GAME;
 			isLoading = true;
 		}
 		else if (settings.GetTint() == DirectX::Colors::Green.v)
 		{
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = SETTINGS;
 		}
 		else if (credits.GetTint() == DirectX::Colors::Green.v)
 		{
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = CREDITS;
 		}
 		else if (exit.GetTint() == DirectX::Colors::Green.v)
 		{
+			SoundLibrary::menuMusic.stop();
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = EXIT;
 		}
 

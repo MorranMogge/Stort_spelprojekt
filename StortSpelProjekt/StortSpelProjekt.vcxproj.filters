@@ -453,6 +453,7 @@
     <ClInclude Include="Credits.h">
       <Filter>GUI</Filter>
     </ClInclude>
+    <ClInclude Include="SoundLibrary.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

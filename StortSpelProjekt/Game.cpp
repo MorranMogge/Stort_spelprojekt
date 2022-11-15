@@ -142,24 +142,23 @@ void Game::loadObjects()
 	//if (IFONLINE) return;
 
 	//SOLAR SYSTEM SETUP
-	//float planetSize = 40.f;
-	//int nrPlanets = 3; // (rand() % 3) + 1;
-
-	//NEED TO FIX OFFLINE MODE TOO!
-	/*for (int i = 0; i < nrPlanets; i++)
+	if (!IFONLINE)
 	{
-		if (i == 0) planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
-		else if (i == 1) planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
-		else planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f)));
-		planetVector.back()->setPlanetShape(&physWorld);
-	}*/
+		float planetSize = 40.f;
+		int nrPlanets = 3; // (rand() % 3) + 1;
+		for (int i = 0; i < nrPlanets; i++)
+		{
+			if (i == 0) planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
+			else if (i == 1) planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
+			else planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f)));
+			planetVector.back()->setPlanetShape(&physWorld);
+		}
+		physWorld.setPlanets(planetVector);
+	}
 
 	asteroids = new AsteroidHandler(meshes[0]);
 	planetGravityField = new GravityField(4.f * 9.82f, DirectX::XMFLOAT3(0.f, 0.f, 0.f), 40.f);
 	
-	//Make sure the physics world has access to the planets
-	if (!IFONLINE) physWorld.setPlanets(planetVector);
-
 	//CREATE ITEMS
 	potion = new Potion(meshes[2], Vector3(0, 0, -42),Vector3(0.0f, 0.0f, 0.0f), POTION, 0, planetGravityField);
 	baseballBat = new BaseballBat(meshes[4], Vector3(0, 0, 42), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);

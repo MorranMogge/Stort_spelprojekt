@@ -262,9 +262,7 @@ int main()
 	float itemSpawnTimerLength = 20.0f;
 
 	setupTcp(data);
-
 	acceptPlayers(data);
-
 	sendIdToAllPlayers(data);
 
 	//Wait 3 seconds since we can lose some data if we directly send information about space ships

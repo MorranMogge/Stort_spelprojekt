@@ -44,11 +44,14 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
     const float3 specular = specularTex.Sample(samplerState, uv).xyz * mat.specular;
     const float3 viewDir = normalize(cameraPosition.xyz - worldPosition.xyz);
     
+    float fres = FresnelEffect(normal, viewDir, 5);
+    
+    
+    
     LightResult litResult = { { 0, 0, 0 }, { 0, 0, 0 } };
     for (int i = 0; i < nrOfLights; ++i)
     {
         float4 lightWorldPosition = mul(worldPosition, lights[i].view);
-        
         #define POINT_LIGHT 0
         #define DIRECTIONAL_LIGHT 1
         #define SPOT_LIGHT 2
@@ -60,7 +63,33 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
         {
             case DIRECTIONAL_LIGHT:
                 lightDir = normalize(-lights[i].direction.xyz);
+                
+
                 result = ComputeDirectionalLight(lights[i], lightDir, normal, viewDir, diffuseColor, specular, mat.specularPower);
+                
+                //if (result.Diffuse.x < 0.25)
+                //{
+                //    result.Diffuse = 0;
+
+                //}
+                //else if (result.Diffuse.x > 0.25 && result.Diffuse.x < 0.5)
+                //{
+                //    result.Diffuse = 0.5;
+                //}
+                //else if (result.Diffuse.x > 0.5 && result.Diffuse.x < 0.75)
+                //{
+                //    result.Diffuse = 0.75;
+                //}
+                //else if (result.Diffuse.x > 0.75 && result.Diffuse.x < 1)
+                //{
+                //    result.Diffuse = 1;
+                //}
+            
+                //float4 rimDot = 1 - dot(normal, -lightDir);
+                fres *= saturate(dot(normal, lightDir));
+                
+                
+                //result = temp;
                 break;
             
             case POINT_LIGHT:
@@ -80,12 +109,8 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
         litResult.Diffuse += result.Diffuse * shadowFactor;
         litResult.Specular += result.Specular * shadowFactor;
     }
-    
-    //float fres = FresnelEffect(normal, viewDir, 5);
-    //float3 frescolor = { 0 * fres, 0.75 * fres, 1 * fres };
-    
-    
-    return float4(((max(mat.ambient.xyz, 0.2f) /* + litResult.Specular*/) * diffuseColor + litResult.Diffuse) /*+ frescolor*/, 1.0f);
+    float3 frescolor = { 0 * fres, 0.35 * fres, 0.65 * fres };
+    return float4(((max(mat.ambient.xyz, 0.2f) /* + litResult.Specular*/) * diffuseColor + litResult.Diffuse) + frescolor, 1.0f);
 
 }
 

@@ -182,6 +182,7 @@ BasicRenderer::~BasicRenderer()
 	blendState->Release();
 	Fresnel_PS->Release();
 	fresnelBlendState->Release();
+	InvFresnel_PS->Release();
 }
 
 void BasicRenderer::lightPrePass()
@@ -228,6 +229,7 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!CreatePT_DSState(PT_dsState))														return false;
 	if (!setUpBlendState())																	return false;
 	if (!LoadPixelShader(device, Fresnel_PS, "Fresnel_PS"))									return false;
+	if (!LoadPixelShader(device, InvFresnel_PS, "InvFresnel_PS"))							return false;
 	if (!setUpFresnelBlendState())															return false;
 	
 	
@@ -360,4 +362,9 @@ void BasicRenderer::fresnelPrePass(Camera& stageCamera)
 	immediateContext->OMSetDepthStencilState(PT_dsState, 0);
 	immediateContext->PSSetShader(Fresnel_PS, nullptr, 0);
 	stageCamera.PSbindPositionBuffer(1);
+}
+
+void BasicRenderer::invFresnelPrePass()
+{
+	immediateContext->PSSetShader(InvFresnel_PS, nullptr, 0);
 }

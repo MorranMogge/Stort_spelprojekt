@@ -12,6 +12,13 @@ class MenuUI final
 	GUISprite credits;
 	GUISprite exit;
 
+	GUISprite start2;
+	GUISprite settings2;
+	GUISprite credits2;
+	GUISprite exit2;
+
+	bool hit_start, hit_setting, hit_credits, hit_exit;
+
 	GUISprite control;
 	GUISprite useText;
 	GUISprite throwText;

@@ -58,6 +58,84 @@ bool PlanetGenerator::setWorldMatrix()
     return !FAILED(hr);
 }
 
+void PlanetGenerator::recreateVertexBuffers()
+{
+    this->vertices.clear();
+    this->lines.clear();
+    int currentSubdivisions = planetImGuiStruct.currentSubdivisions;
+
+    triangleBuffer->Release();
+    lineBuffer->Release();
+
+    for (int i = 0; i < sphereMeshes[currentSubdivisions%(sphereMeshes.size())].size(); i++)
+    {
+        /*for (int j = 0; j < 3; j++)
+        {
+            sphereMeshes[currentSubdivisions][i].vertices[j].position.x += 0.1f * 0.01f * (rand() % 101);
+            sphereMeshes[currentSubdivisions][i].vertices[j].position.y += 0.1f * 0.01f * (rand() % 101);
+            sphereMeshes[currentSubdivisions][i].vertices[j].position.z += 0.1f * 0.01f * (rand() % 101);
+        }*/
+
+        vertices.push_back(sphereMeshes[currentSubdivisions][i].vertices[0]);
+        vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
+        vertices.push_back(sphereMeshes[currentSubdivisions][i].vertices[1]);
+        vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
+        vertices.push_back(sphereMeshes[currentSubdivisions][i].vertices[2]);
+        vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
+
+        lines.push_back(sphereMeshes[currentSubdivisions][i].vertices[0]);
+        lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
+        lines.push_back(sphereMeshes[currentSubdivisions][i].vertices[1]);
+        lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
+        lines.push_back(sphereMeshes[currentSubdivisions][i].vertices[1]);
+        lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
+        lines.push_back(sphereMeshes[currentSubdivisions][i].vertices[2]);
+        lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
+        lines.push_back(sphereMeshes[currentSubdivisions][i].vertices[2]);
+        lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
+        lines.push_back(sphereMeshes[currentSubdivisions][i].vertices[0]);
+        lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
+    }
+
+    for (int i = 0; i < vertices.size(); i++)
+    {
+        vertices[i].position.Normalize();
+        //vertices[i].position.x += 0.1f * 0.01f *(rand() % 101);
+        //vertices[i].position.y += 0.1f * 0.01f * (rand() % 101);
+        //vertices[i].position.z += 0.1f * 0.01f * (rand() % 101);
+    }
+
+    for (int i = 0; i < lines.size(); i++)
+    {
+        lines[i].position.Normalize();
+    }
+
+   
+
+    D3D11_BUFFER_DESC bufferDesc = {};
+    bufferDesc.ByteWidth = UINT(sizeof(Vertex) * this->vertices.size());
+    bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    bufferDesc.MiscFlags = 0;
+    bufferDesc.StructureByteStride = 0;
+
+    D3D11_SUBRESOURCE_DATA data = {};
+    
+    data.pSysMem = this->vertices.data();
+    data.SysMemPitch = 0;
+    data.SysMemSlicePitch = 0;
+
+    GPU::device->CreateBuffer(&bufferDesc, &data, &triangleBuffer);
+
+    bufferDesc.ByteWidth = UINT(sizeof(Vertex) * this->lines.size());
+    data.pSysMem = this->lines.data();
+
+    GPU::device->CreateBuffer(&bufferDesc, &data, &lineBuffer);
+
+    lastSubdivisions = planetImGuiStruct.currentSubdivisions;
+}
+
 void PlanetGenerator::createInitialSphere()
 {
     switch (typeOfSphere)
@@ -207,14 +285,16 @@ void PlanetGenerator::createIcoSphere()
     //triangles.emplace_back(icoSphere[9], icoSphere[7], icoSphere[3]);   //19
     //triangles.emplace_back(icoSphere[5], icoSphere[10], icoSphere[3]);  //20
 
-    int subdivisions = 1;
+    int maxSubdivisions = 5;
     DirectX::XMFLOAT3 posOne;
     DirectX::XMFLOAT3 posTwo;
     DirectX::XMFLOAT3 posThree;
     Vertex newTriangle[4];
     std::vector<Triangle> newTriangleVec;
 
-    for (int i = 0; i < subdivisions; i++)
+    sphereMeshes.push_back(triangles);
+
+    for (int i = 0; i < maxSubdivisions; i++)
     {
         int size = triangles.size();
         for (int i = 0; i < size; i++)
@@ -231,6 +311,18 @@ void PlanetGenerator::createIcoSphere()
             posTwo = getScalarMultiplicationXMFLOAT3(0.5f, (getAdditionXMFLOAT3(triangles[i].vertices[1].position, triangles[i].vertices[2].position)));
             posThree = getScalarMultiplicationXMFLOAT3(0.5f, (getAdditionXMFLOAT3(triangles[i].vertices[2].position, triangles[i].vertices[0].position)));
 
+           /* posOne.x += 0.1f * 0.01f * (rand() % 101);
+            posOne.y += 0.1f * 0.01f * (rand() % 101);
+            posOne.z += 0.1f * 0.01f * (rand() % 101);
+
+            posTwo.x += 0.1f * 0.01f * (rand() % 101);
+            posTwo.y += 0.1f * 0.01f * (rand() % 101);
+            posTwo.z += 0.1f * 0.01f * (rand() % 101);
+
+            posThree.x += 0.1f * 0.01f * (rand() % 101);
+            posThree.y += 0.1f * 0.01f * (rand() % 101);
+            posThree.z += 0.1f * 0.01f * (rand() % 101);*/
+
             newTriangle[0].position = triangles[i].vertices[0].position;
             newTriangle[1].position = posOne;
             newTriangle[2].position = posThree;
@@ -242,8 +334,8 @@ void PlanetGenerator::createIcoSphere()
             newTriangleVec.emplace_back(Triangle(newTriangle[0].position, newTriangle[1].position, newTriangle[2].position));
 
             newTriangle[0].position = posThree;
-            newTriangle[1].position = triangles[i].vertices[2].position;
-            newTriangle[2].position = posTwo;
+            newTriangle[1].position = posTwo;
+            newTriangle[2].position = triangles[i].vertices[2].position;
             newTriangleVec.emplace_back(Triangle(newTriangle[0].position, newTriangle[1].position, newTriangle[2].position));
 
             newTriangle[0].position = posOne;
@@ -262,26 +354,26 @@ void PlanetGenerator::createIcoSphere()
         triangles = newTriangleVec;
     }
 
-    for (int i = 0; i < triangles.size(); i++)
+    for (int i = 0; i < sphereMeshes[0].size(); i++)
     {
-        vertices.push_back(triangles[i].vertices[0]);
+        vertices.push_back(sphereMeshes[0][i].vertices[0]);
         vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
-        vertices.push_back(triangles[i].vertices[1]);
+        vertices.push_back(sphereMeshes[0][i].vertices[1]);
         vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
-        vertices.push_back(triangles[i].vertices[2]);
+        vertices.push_back(sphereMeshes[0][i].vertices[2]);
         vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
 
-        lines.push_back(triangles[i].vertices[0]);
+        lines.push_back(sphereMeshes[0][i].vertices[0]);
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
-        lines.push_back(triangles[i].vertices[1]);
+        lines.push_back(sphereMeshes[0][i].vertices[1]);
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
-        lines.push_back(triangles[i].vertices[1]);
+        lines.push_back(sphereMeshes[0][i].vertices[1]);
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
-        lines.push_back(triangles[i].vertices[2]);
+        lines.push_back(sphereMeshes[0][i].vertices[2]);
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
-        lines.push_back(triangles[i].vertices[2]);
+        lines.push_back(sphereMeshes[0][i].vertices[2]);
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
-        lines.push_back(triangles[i].vertices[0]);
+        lines.push_back(sphereMeshes[0][i].vertices[0]);
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
     }
 
@@ -289,7 +381,7 @@ void PlanetGenerator::createIcoSphere()
     {
         //if (getLength(vertices[i].position) != 1.f) std::cout << "LENGTH: " << getLength(vertices[i].position) << "\n";
         vertices[i].position.Normalize();
-        vertices[i].normal = vertices[i].position;
+        //vertices[i].normal = vertices[i].position;
             
     }
 
@@ -301,7 +393,7 @@ void PlanetGenerator::createIcoSphere()
 }
 
 PlanetGenerator::PlanetGenerator()
-    :camera(Camera()), cameraPosition(DirectX::XMFLOAT3(0.f, 0.f, -10.f))
+    :camera(Camera()), cameraPosition(DirectX::XMFLOAT3(0.f, 0.f, -10.f)), lastSubdivisions(0)
 {
     /*meshes.emplace_back(new Mesh());
     planet = new Planet(meshes[0]);*/
@@ -331,13 +423,14 @@ PlanetGenerator::~PlanetGenerator()
 
 GAMESTATE PlanetGenerator::Update()
 {
-    if (GetAsyncKeyState('W')) this->cameraPosition.y += 0.01f;
-    if (GetAsyncKeyState('S')) this->cameraPosition.y -= 0.01f;
+    if (GetAsyncKeyState('I')) this->cameraPosition.y += 0.01f;
+    if (GetAsyncKeyState('J')) this->cameraPosition.y -= 0.01f;
     if (GetAsyncKeyState('A')) this->cameraPosition.x -= 0.01f;
     if (GetAsyncKeyState('D')) this->cameraPosition.x += 0.01f;
-    if (GetAsyncKeyState('I')) this->cameraPosition.z += 0.01f;
-    if (GetAsyncKeyState('J')) this->cameraPosition.z -= 0.01f;
+    if (GetAsyncKeyState('W')) this->cameraPosition.z += 0.01f;
+    if (GetAsyncKeyState('S')) this->cameraPosition.z -= 0.01f;
 
+    if (planetImGuiStruct.currentSubdivisions != lastSubdivisions) this->recreateVertexBuffers();
    /* for (int i = 0; i < vertices.size(); i++)
     {
         if (getLength(vertices[i].position) != 1.f) std::cout << "LENGTH: " << getLength(vertices[i].position) << "\n";
@@ -354,11 +447,18 @@ void PlanetGenerator::Render()
     GPU::immediateContext->PSSetShader(pShader, nullptr, 0);
     GPU::immediateContext->VSSetConstantBuffers(0, 1, &worldMatrixBuffer);
     
-    GPU::immediateContext->IASetVertexBuffers(0, 1, &triangleBuffer, &stride, &offset);
-    GPU::immediateContext->Draw(this->vertices.size(), 0);
+    if (planetImGuiStruct.renderTriangles)
+    {
+        GPU::immediateContext->IASetVertexBuffers(0, 1, &triangleBuffer, &stride, &offset);
+        GPU::immediateContext->Draw(this->vertices.size(), 0);
+    }
+    if (planetImGuiStruct.renderLines)
+    {
+        GPU::immediateContext->IASetVertexBuffers(0, 1, &lineBuffer, &stride, &offset);
+        GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+        GPU::immediateContext->Draw(this->lines.size(), 0);
+    }
     
-    GPU::immediateContext->IASetVertexBuffers(0, 1, &lineBuffer, &stride, &offset);
-    GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-    GPU::immediateContext->Draw(this->lines.size(), 0);
 
+    imGuiHelper.planetEditor(planetImGuiStruct);
 }

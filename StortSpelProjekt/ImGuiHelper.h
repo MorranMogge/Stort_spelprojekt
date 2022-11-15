@@ -13,6 +13,8 @@
 #include "imGUI\imstb_truetype.h"
 #include "imGUI\imgui_impl_win32.h"
 
+struct PlanetImGuiInfo;
+
 class ImGuiHelper
 {
 private:
@@ -26,4 +28,5 @@ public:
 	void drawInterface(std::string message);
 	void setupImGui(float bgColour[]);
 	void react3D(bool& wireframe, bool& drawObjects, bool& landingMinigame, const float &dt, bool& velocityCamera);
+	void planetEditor(PlanetImGuiInfo& planetImGuiStruct);
 };

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ImGuiHelper.h"
+#include "PlanetGenerator.h"
 
 ImGuiHelper::ImGuiHelper(Client*& client)
 	:client(client)
@@ -86,3 +87,28 @@ void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, bool& landingMinig
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
+void ImGuiHelper::planetEditor(PlanetImGuiInfo& planetImGuiStruct)
+{
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+
+
+
+	ImGui::NewFrame();
+	{
+		bool begun = ImGui::Begin("Planet Editor");
+		if (begun)
+		{
+			ImGui::SliderInt("Subdivisions", &planetImGuiStruct.currentSubdivisions, 0, 5);
+			ImGui::SliderInt("Random Factor", &planetImGuiStruct.randomizedFactor, 0, 100);
+			ImGui::Checkbox("Render Triangles", &planetImGuiStruct.renderTriangles);
+			ImGui::Checkbox("Render Lines", &planetImGuiStruct.renderLines);
+
+		}
+
+		ImGui::End();
+	}
+	ImGui::EndFrame();
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}

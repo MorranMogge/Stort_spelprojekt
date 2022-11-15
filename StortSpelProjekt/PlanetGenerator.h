@@ -4,6 +4,14 @@
 #include "BasicRenderer.h"
 #include "ImGuiHelper.h"
 
+struct PlanetImGuiInfo
+{
+	int currentSubdivisions = 0;
+	int randomizedFactor = 0;
+	bool renderTriangles = true;
+	bool renderLines = true;
+};
+
 enum PlanetType
 {
 	UV,
@@ -35,11 +43,13 @@ private:
 	ID3D11VertexShader* vShader;
 	DirectX::XMFLOAT4X4 worldMatrix;
 
+	PlanetImGuiInfo planetImGuiStruct;
+
 	//Used for sphere generation
 	std::vector<Vertex> vertices;
 	std::vector<Vertex> lines;
 	PlanetType typeOfSphere;
-	int subdivisions;
+	int lastSubdivisions;
 	int horizontal;
 	int vertical;
 
@@ -57,6 +67,7 @@ private:
 
 	bool setVertexBuffers();
 	bool setWorldMatrix();
+	void recreateVertexBuffers();
 	void createInitialSphere();
 	void createQuadSphere();
 	void createUVSphere();

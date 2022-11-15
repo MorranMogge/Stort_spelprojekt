@@ -16,7 +16,7 @@ bool PlanetGenerator::setVertexBuffers()
 
     D3D11_BUFFER_DESC bufferDesc = {};
     bufferDesc.ByteWidth = sizeof(Vertex) * this->vertices.size();
-    bufferDesc.Usage = D3D11_USAGE_DYNAMIC;//D3D11_USAGE_IMMUTABLE;
+    bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
     bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     bufferDesc.MiscFlags = 0;
@@ -24,7 +24,6 @@ bool PlanetGenerator::setVertexBuffers()
 
     D3D11_SUBRESOURCE_DATA data = {};
     data.pSysMem = vertices.data();
-    //data.pSysMem = lines.data();
     data.SysMemPitch = 0;
     data.SysMemSlicePitch = 0;
 
@@ -209,18 +208,59 @@ void PlanetGenerator::createIcoSphere()
     //triangles.emplace_back(icoSphere[5], icoSphere[10], icoSphere[3]);  //20
 
     int subdivisions = 1;
-    int size = triangles.size();
-   /* for (int i = 0; i < subdivisions; i++)
+    DirectX::XMFLOAT3 posOne;
+    DirectX::XMFLOAT3 posTwo;
+    DirectX::XMFLOAT3 posThree;
+    Vertex newTriangle[4];
+    std::vector<Triangle> newTriangleVec;
+
+    for (int i = 0; i < subdivisions; i++)
     {
+        int size = triangles.size();
         for (int i = 0; i < size; i++)
         {
-            Vertex newTriangle[3];
-            newTriangle[0].position = getScalarMultiplicationXMFLOAT3(0.5f, (getAdditionXMFLOAT3(triangles[i].vertices[0].position, triangles[i].vertices[1].position)));
-            newTriangle[1].position = getScalarMultiplicationXMFLOAT3(0.5f, (getAdditionXMFLOAT3(triangles[i].vertices[1].position, triangles[i].vertices[2].position)));
-            newTriangle[2].position = getScalarMultiplicationXMFLOAT3(0.5f, (getAdditionXMFLOAT3(triangles[i].vertices[2].position, triangles[i].vertices[0].position)));
-            triangles.emplace_back(Triangle(newTriangle[0].position, newTriangle[1].position, newTriangle[2].position));
+            //posOne = getScalarMultiplicationXMFLOAT3(0.3333333f, getAdditionXMFLOAT3(triangles[i].vertices[2].position, (getAdditionXMFLOAT3(triangles[i].vertices[0].position, triangles[i].vertices[1].position))));
+            //for (int k = 0; k < 3; k++)
+            //{
+            //    newTriangle[0].position = posOne;                                   //Middle
+            //    newTriangle[1].position = triangles[i].vertices[k].position;
+            //    newTriangle[2].position = triangles[i].vertices[(k+1)%3].position;
+            //    newTriangleVec.emplace_back(Triangle(newTriangle[0].position, newTriangle[1].position, newTriangle[2].position));
+            //}
+            posOne = getScalarMultiplicationXMFLOAT3(0.5f, (getAdditionXMFLOAT3(triangles[i].vertices[0].position, triangles[i].vertices[1].position)));
+            posTwo = getScalarMultiplicationXMFLOAT3(0.5f, (getAdditionXMFLOAT3(triangles[i].vertices[1].position, triangles[i].vertices[2].position)));
+            posThree = getScalarMultiplicationXMFLOAT3(0.5f, (getAdditionXMFLOAT3(triangles[i].vertices[2].position, triangles[i].vertices[0].position)));
+
+            newTriangle[0].position = triangles[i].vertices[0].position;
+            newTriangle[1].position = posOne;
+            newTriangle[2].position = posThree;
+            newTriangleVec.emplace_back(Triangle(newTriangle[0].position, newTriangle[1].position, newTriangle[2].position));
+
+            newTriangle[0].position = posOne;
+            newTriangle[1].position = triangles[i].vertices[1].position;
+            newTriangle[2].position = posTwo;
+            newTriangleVec.emplace_back(Triangle(newTriangle[0].position, newTriangle[1].position, newTriangle[2].position));
+
+            newTriangle[0].position = posThree;
+            newTriangle[1].position = triangles[i].vertices[2].position;
+            newTriangle[2].position = posTwo;
+            newTriangleVec.emplace_back(Triangle(newTriangle[0].position, newTriangle[1].position, newTriangle[2].position));
+
+            newTriangle[0].position = posOne;
+            newTriangle[1].position = posTwo;
+            newTriangle[2].position = posThree;
+            newTriangleVec.emplace_back(Triangle(newTriangle[0].position, newTriangle[1].position, newTriangle[2].position));
+
+
+
+            //newTriangle[0].position = getScalarMultiplicationXMFLOAT3(0.5f, (getAdditionXMFLOAT3(triangles[i].vertices[0].position, triangles[i].vertices[1].position)));
+            //newTriangle[1].position = getScalarMultiplicationXMFLOAT3(0.5f, (getAdditionXMFLOAT3(triangles[i].vertices[1].position, triangles[i].vertices[2].position)));
+            //newTriangle[2].position = getScalarMultiplicationXMFLOAT3(0.5f, (getAdditionXMFLOAT3(triangles[i].vertices[2].position, triangles[i].vertices[0].position)));
         }
-    }*/
+        sphereMeshes.push_back(newTriangleVec);
+        triangles.clear();
+        triangles = newTriangleVec;
+    }
 
     for (int i = 0; i < triangles.size(); i++)
     {
@@ -245,11 +285,19 @@ void PlanetGenerator::createIcoSphere()
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
     }
 
-    /*for (int i = 0; i < vertices.size(); i++)
+    for (int i = 0; i < vertices.size(); i++)
     {
-        if (getLength(vertices[i].position) != 1.f) std::cout << "LENGTH: " << getLength(vertices[i].position) << "\n";
+        //if (getLength(vertices[i].position) != 1.f) std::cout << "LENGTH: " << getLength(vertices[i].position) << "\n";
         vertices[i].position.Normalize();
-    }*/
+        vertices[i].normal = vertices[i].position;
+            
+    }
+
+    for (int i = 0; i < lines.size(); i++)
+    {
+        //if (getLength(vertices[i].position) != 1.f) std::cout << "LENGTH: " << getLength(vertices[i].position) << "\n";
+        lines[i].position.Normalize();
+    }
 }
 
 PlanetGenerator::PlanetGenerator()
@@ -283,16 +331,18 @@ PlanetGenerator::~PlanetGenerator()
 
 GAMESTATE PlanetGenerator::Update()
 {
-    if (GetAsyncKeyState('W')) this->cameraPosition.y += 0.05f;
-    if (GetAsyncKeyState('S')) this->cameraPosition.y -= 0.05f;
-    if (GetAsyncKeyState('A')) this->cameraPosition.x -= 0.05f;
-    if (GetAsyncKeyState('D')) this->cameraPosition.x += 0.05f;
+    if (GetAsyncKeyState('W')) this->cameraPosition.y += 0.01f;
+    if (GetAsyncKeyState('S')) this->cameraPosition.y -= 0.01f;
+    if (GetAsyncKeyState('A')) this->cameraPosition.x -= 0.01f;
+    if (GetAsyncKeyState('D')) this->cameraPosition.x += 0.01f;
+    if (GetAsyncKeyState('I')) this->cameraPosition.z += 0.01f;
+    if (GetAsyncKeyState('J')) this->cameraPosition.z -= 0.01f;
 
-    for (int i = 0; i < vertices.size(); i++)
+   /* for (int i = 0; i < vertices.size(); i++)
     {
         if (getLength(vertices[i].position) != 1.f) std::cout << "LENGTH: " << getLength(vertices[i].position) << "\n";
         vertices[i].position.Normalize();
-    }
+    }*/
     this->camera.setPosition(cameraPosition);
     return NOCHANGE;
 }
@@ -300,7 +350,6 @@ GAMESTATE PlanetGenerator::Update()
 void PlanetGenerator::Render()
 {
     renderer.setUpScene();
-    //GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
     GPU::immediateContext->VSSetShader(vShader, nullptr, 0);
     GPU::immediateContext->PSSetShader(pShader, nullptr, 0);
     GPU::immediateContext->VSSetConstantBuffers(0, 1, &worldMatrixBuffer);

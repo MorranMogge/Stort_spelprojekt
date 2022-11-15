@@ -8,5 +8,5 @@ struct VSout
 
 float4 main(VSout input) : SV_TARGET
 {
-	return float4(input.normal, 1.0f);
+    return input.worldPosition;//float4(input.normal, 1.0f);
 }

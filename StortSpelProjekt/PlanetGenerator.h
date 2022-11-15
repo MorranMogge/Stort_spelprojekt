@@ -35,8 +35,6 @@ private:
 	ID3D11VertexShader* vShader;
 	DirectX::XMFLOAT4X4 worldMatrix;
 
-
-	
 	//Used for sphere generation
 	std::vector<Vertex> vertices;
 	std::vector<Vertex> lines;
@@ -53,6 +51,7 @@ private:
 	UINT stride;
 	Camera camera;
 	DirectX::XMFLOAT3 cameraPosition;
+	std::vector<std::vector<Triangle>> sphereMeshes;
 
 	std::vector<Mesh*> meshes;
 

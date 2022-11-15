@@ -498,7 +498,7 @@ GAMESTATE Game::Update()
 	{
 		if (spaceShips[i]->getCompletion())
 		{
-			if (currentPlayer->getTeam() == i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot());
+			if (currentPlayer->getTeam() == i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot()); currentPlayer->setVibration(true);
 			this->spaceShips[i]->move(this->spaceShips[i]->getUpDirection(), -dt);
 			endTimer += dt;
 			arrow->removeArrow(); //Remove these completely by not drawing the meshes anymore
@@ -550,6 +550,7 @@ GAMESTATE Game::Update()
 	//Check winstate
 	if (endTimer > 6)
 	{
+		this->currentPlayer->setVibration(false);
 		for (int i = 0; i < spaceShips.size(); i++)
 		{
 			if (spaceShips[i]->isFinished())

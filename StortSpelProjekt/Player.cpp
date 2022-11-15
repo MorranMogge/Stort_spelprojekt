@@ -388,8 +388,7 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime)
 {
-	if (dedge) return;
-	else if (flipping) return;
+	if (dedge || flipping) return;
 
 	//Running
 	this->currentSpeed = this->speed;
@@ -615,18 +614,19 @@ bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float d
 
 void Player::moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime, const std::unique_ptr<DirectX::GamePad>& gamePad)
 {
-	if (dedge) return;
-	else if (flipping) return;
+	//Checking vibration time
+	if (timeToVibrate) gamePad->SetVibration(0, 0.1f, 0.1f, 0.f, 0.f);
+	else gamePad->SetVibration(0, 0.f, 0.f, 0.f, 0.f);
+	
+	if (dedge || flipping) return;
 
 	auto state = gamePad->GetState(0);
 	if (state.IsConnected())
 	{
-		if (holdingComp && this->holdingItem != nullptr) gamePad->SetVibration(0, 1.f, 1.f, 1.f, 1.f);
-		else gamePad->SetVibration(0, 0.f, 0.f, 0.f, 0.f);
-
 		posX = state.thumbSticks.leftX;
 		posY = state.thumbSticks.leftY;
 
+		//Running
 		this->currentSpeed = this->speed;
 		if (state.IsAPressed())
 		{
@@ -787,6 +787,7 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 {
 	this->physComp->setType(reactphysics3d::BodyType::DYNAMIC);
 	this->dedge = true;
+	this->timeToVibrate = true;
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);
 	timer.resetStartTime();
@@ -830,6 +831,7 @@ bool Player::checkForStaticCollision(const std::vector<Planet*>& gameObjects, co
 	SimpleMath::Vector3 vecPoint = this->position;
 	vecPoint += 1.f * forwardVector;
 	reactphysics3d::Vector3 point(vecPoint.x, vecPoint.y, vecPoint.z);
+	bool timeToVibrate = false;
 
 	int gameObjSize = (int)gameObjects.size();
 	for (int i = 0; i < gameObjSize; i++)
@@ -846,6 +848,7 @@ bool Player::checkForStaticCollision(const std::vector<Planet*>& gameObjects, co
 		if (spaceShips[i]->getPhysComp()->testPointInside(point))
 		{
 			this->position -= 1.f * forwardVector;
+			this->timeToVibrate = true;
 			return true;
 		}
 	}
@@ -971,6 +974,7 @@ float Player::getSpeed()const
 {
 	return this->currentSpeed;
 }
+
 void Player::draw()
 {
 	//Team switch
@@ -1085,6 +1089,7 @@ void Player::update()
 		if (timer.getTimePassed(5.f))
 		{
 			dedge = false;
+			this->timeToVibrate = false;
 			this->physComp->resetForce();
 			this->physComp->resetTorque();
 			this->physComp->setType(reactphysics3d::BodyType::STATIC);
@@ -1124,6 +1129,11 @@ void Player::setTeam(const int& team)
 	case 1:
 		mesh->matKey[0] = "pintoBlue.png"; break;
 	}
+}
+
+void Player::setVibration(const bool& vibrateTime)
+{
+	this->timeToVibrate = vibrateTime;
 }
 
 bool Player::isHoldingComp()

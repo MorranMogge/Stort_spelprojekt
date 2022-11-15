@@ -48,6 +48,7 @@ private:
 	float posY = 0.0f;
 	float throttle = 0.0f;
 	float totalPos = 0.0f;
+	bool timeToVibrate = false;
 	bool controllerConnected = true;
 
 	//Other variables
@@ -96,6 +97,7 @@ public:
 	void setSpeed(float speed);
 	void setOnlineID(const int& id);
 	void setTeam(const int& team);
+	void setVibration(const bool& vibrateTime);
 	
 	//Get Functions
 	reactphysics3d::Vector3 getRayCastPos()const;

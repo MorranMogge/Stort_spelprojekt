@@ -15,10 +15,10 @@ void MenuUI::SpritePass()
 		return;
 	}
 
-	start.Draw();
-	settings.Draw();
-	credits.Draw();
-	exit.Draw();
+	hit_start ? start2.Draw() : start.Draw();
+	hit_setting? settings2.Draw() :settings.Draw();
+	hit_credits ? credits2.Draw() : credits.Draw();
+	hit_exit ? exit2.Draw() : exit.Draw();
 	control.Draw();
 	objective.Draw();
 	useText.Draw();
@@ -30,27 +30,28 @@ void MenuUI::SpritePass()
 void MenuUI::HandleInputs()
 {
 	Input::Update();
-	start.IntersectMouse() ? start.SetTint(DirectX::Colors::Green.v) : start.SetTint(DirectX::Colors::White.v);
-	settings.IntersectMouse() ? settings.SetTint(DirectX::Colors::Green.v) : settings.SetTint(DirectX::Colors::White.v);
-	credits.IntersectMouse() ? credits.SetTint(DirectX::Colors::Green.v) : credits.SetTint(DirectX::Colors::White.v);
-	exit.IntersectMouse() ? exit.SetTint(DirectX::Colors::Green.v) : exit.SetTint(DirectX::Colors::White.v);
+
+	hit_start = start.IntersectMouse();
+	hit_setting = settings.IntersectMouse();
+	hit_credits = credits.IntersectMouse();
+	hit_exit = exit.IntersectMouse();
 
 	if (Input::KeyPress(KeyCode::MOUSE_L))
 	{
-		if (start.GetTint() == DirectX::Colors::Green.v)
+		if (hit_start)
 		{
 			gameState = GAME;
 			isLoading = true;
 		}
-		else if (settings.GetTint() == DirectX::Colors::Green.v)
+		else if (hit_setting)
 		{
 			gameState = SETTINGS;
 		}
-		else if (credits.GetTint() == DirectX::Colors::Green.v)
+		else if (hit_credits)
 		{
 			gameState = CREDITS;
 		}
-		else if (exit.GetTint() == DirectX::Colors::Green.v)
+		else if (hit_exit)
 		{
 			gameState = EXIT;
 		}
@@ -76,21 +77,39 @@ MenuUI::MenuUI()
 #define upp 60
 #define left 80
 
+#define scale 0.4f,0.4f
+
 	start = GUISprite(1000, 200);
-	start.Load(GPU::device, L"../Sprites/start.png");
-	start.SetScale(1, 1);
+	start.Load(GPU::device, L"../Sprites/Menu/start.png");
+	start.SetScale(scale);
 
 	settings = GUISprite(1000, 300);
-	settings.Load(GPU::device, L"../Sprites/settings.png");
-	settings.SetScale(1, 1);
+	settings.Load(GPU::device, L"../Sprites/Menu/settings.png");
+	settings.SetScale(scale);
 
 	credits = GUISprite(1000, 400);
-	credits.Load(GPU::device, L"../Sprites/credit.png");
-	credits.SetScale(1, 1);
+	credits.Load(GPU::device, L"../Sprites/Menu/credits.png");
+	credits.SetScale(scale);
 
 	exit = GUISprite(1000, 500);
-	exit.Load(GPU::device, L"../Sprites/exit.png");
-	exit.SetScale(1, 1);
+	exit.Load(GPU::device, L"../Sprites/Menu/exit.png");
+	exit.SetScale(scale);
+
+	start2 = GUISprite(1000, 200);
+	start2.Load(GPU::device, L"../Sprites/Menu/start2_r.png");
+	start2.SetScale(scale);
+
+	settings2 = GUISprite(1000, 300);
+	settings2.Load(GPU::device, L"../Sprites/Menu/settings2_r.png");
+	settings2.SetScale(scale);
+
+	credits2 = GUISprite(1000, 400);
+	credits2.Load(GPU::device, L"../Sprites/Menu/credits2_r.png");
+	credits2.SetScale(scale);
+
+	exit2 = GUISprite(1000, 500);
+	exit2.Load(GPU::device, L"../Sprites/Menu/exit2_r.png");
+	exit2.SetScale(scale);
 
 	Loading = GUISprite(1264.0f / 2.0f, 681.0f / 2.0f);
 	Loading.Load(GPU::device, L"../Sprites/Loading.bmp");

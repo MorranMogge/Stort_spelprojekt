@@ -831,7 +831,7 @@ bool Player::checkForStaticCollision(const std::vector<Planet*>& gameObjects, co
 	SimpleMath::Vector3 vecPoint = this->position;
 	vecPoint += 1.f * forwardVector;
 	reactphysics3d::Vector3 point(vecPoint.x, vecPoint.y, vecPoint.z);
-	bool timeToVibrate = false;
+	this->timeToVibrate = false;
 
 	int gameObjSize = (int)gameObjects.size();
 	for (int i = 0; i < gameObjSize; i++)

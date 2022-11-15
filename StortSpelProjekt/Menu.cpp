@@ -8,6 +8,10 @@
 
 Menu::Menu()
 {
+	menuMusic.load(L"../Sounds/menuMusic.wav");
+	menuMusic.setVolume(0.5f);
+	menuMusic.play(true);
+
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 }
 

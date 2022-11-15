@@ -7,7 +7,7 @@
 Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
 	:Item(useMesh, pos, rot, id, onlineId, GRENADE, field), destructionIsImminent(false), timeToExplode(5.f), currentTime(0.0f)
 {
-
+	sfx.load(L"../Sounds/explosion.wav");
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
 
@@ -56,6 +56,8 @@ Grenade::~Grenade()
 
 void Grenade::explode()
 {
+	sfx.stop();
+	sfx.play();
 	std::cout << "THE GRENADE EXPLODED\n";
 	int iterations = (int)gameObjects.size();
 	for (int i = 0; i < iterations; i++)

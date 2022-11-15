@@ -3,10 +3,17 @@
 #include "DirectXMathHelper.h"
 #include "SendingDataEvent.h"
 #include "MemoryLeackChecker.h"
+#include "SoundCollection.h"
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
+
+	gameMusic.load(L"../Sounds/Gold Rush Final.wav");
+	gameMusic.play(true);
+	gameMusic.setVolume(0.5f);
+	
+
 	MaterialLibrary::LoadDefault();
 	MaterialLibrary::LoadMaterial("spaceshipTexture1.jpg");
 	MaterialLibrary::LoadMaterial("pintoRed.png");

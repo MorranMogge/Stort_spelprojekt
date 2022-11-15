@@ -32,6 +32,9 @@ private:
 	DirectX::XMMATRIX rotationMX;
 	DirectX::XMFLOAT4X4 rotationFloat;
 
+	//SFX
+	Sound pickUpSfx;
+
 	//Status
 	int team;
 	int onlineID;

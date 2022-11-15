@@ -61,6 +61,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX11_Init(device, immediateContext);
 
+	Sound::Update();
+
 	State* currentState = new Menu();
 	GAMESTATE stateInfo = NOCHANGE;
 

@@ -44,5 +44,7 @@
 #include "BufferTypes.h"
 #include "PacketEventManager.h"
 
+#include "SoundCollection.h"
+
 
 

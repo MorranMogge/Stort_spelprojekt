@@ -107,6 +107,8 @@ Player::~Player()
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
 	:GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0), currentSpeed(0)
 {
+	pickUpSfx.load(L"../Sounds/pickupCoin.wav");
+
 	this->rotationMX = XMMatrixIdentity();
 	this->rotation = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -726,7 +728,7 @@ bool Player::pickupItem(Item* itemToPickup)
 	bool successfulPickup = false;
 	if (Input::KeyDown(KeyCode::E))
 	{
-		if (this->withinRadius(itemToPickup, 5))
+		if (!holdingItem && this->withinRadius(itemToPickup, 5))
 		{
 			addItem(itemToPickup);
 
@@ -736,6 +738,8 @@ bool Player::pickupItem(Item* itemToPickup)
 			holdingItem->getPhysComp()->getRigidBody()->resetForce();
 			holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 			holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+			pickUpSfx.stop();
+			pickUpSfx.play();
 		}
 	}
 

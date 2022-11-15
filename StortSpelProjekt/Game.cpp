@@ -59,7 +59,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			{
 				tmpPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude < i + 1), planetGravityField);
 				tmpPlayer->setOnlineID(i);
-				physWolrd.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
+				physWorld.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
 			}
 			else
@@ -146,19 +146,20 @@ void Game::loadObjects()
 	float planetSize = 40.f;
 	int nrPlanets = 3; // (rand() % 3) + 1;
 
-	for (int i = 0; i < nrPlanets; i++)
+	//NEED TO FIX OFFLINE MODE TOO!
+	/*for (int i = 0; i < nrPlanets; i++)
 	{
 		if (i == 0) planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
 		else if (i == 1) planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
 		else planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f)));
-		planetVector.back()->setPlanetShape(&physWolrd);
-	}
+		planetVector.back()->setPlanetShape(&physWorld);
+	}*/
 
 	asteroids = new AsteroidHandler(meshes[0]);
-	planetGravityField = planetVector[0]->getGravityField();
+	planetGravityField = new GravityField(4.f * 9.82f, DirectX::XMFLOAT3(0.f, 0.f, 0.f), 40.f);
 	
 	//Make sure the physics world has access to the planets
-	physWolrd.setPlanets(planetVector);
+	if (!IFONLINE) physWorld.setPlanets(planetVector);
 
 	//CREATE ITEMS
 	potion = new Potion(meshes[2], Vector3(0, 0, -42),Vector3(0.0f, 0.0f, 0.0f), POTION, 0, planetGravityField);
@@ -185,7 +186,7 @@ void Game::loadObjects()
 	
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		physWolrd.addPhysComponent(gameObjects[i], reactphysics3d::CollisionShapeName::BOX);
+		physWorld.addPhysComponent(gameObjects[i], reactphysics3d::CollisionShapeName::BOX);
 		//gameObjects[i]->getPhysComp()->setPosition(reactphysics3d::Vector3(gameObjects[i]->getPosV3().x, gameObjects[i]->getPosV3().y, gameObjects[i]->getPosV3().z));
 	}
 
@@ -202,12 +203,12 @@ void Game::loadObjects()
 		component = new Component(meshes[5], DirectX::SimpleMath::Vector3(0, -42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT, 0, planetGravityField);
 		components.emplace_back(component);
 		gameObjects.emplace_back(component);
-		physWolrd.addPhysComponent(component, reactphysics3d::CollisionShapeName::BOX);
+		physWorld.addPhysComponent(component, reactphysics3d::CollisionShapeName::BOX);
 	}
 	
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
-		physWolrd.addPhysComponent(spaceShips[i], reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 4 * 0.75f, 0.75f));
+		physWorld.addPhysComponent(spaceShips[i], reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 4 * 0.75f, 0.75f));
 		spaceShips[i]->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 		gameObjects.emplace_back(spaceShips[i]);
 	}
@@ -215,10 +216,10 @@ void Game::loadObjects()
 
 
 	if (!currentPlayer) { currentPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, planetGravityField); players.emplace_back(currentPlayer); }
-	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
+	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
 	gameObjects.emplace_back(currentPlayer);
-	field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
+	field = new GravityField(4.f * 9.82f, DirectX::XMFLOAT3(0.f, 0.f, 0.f), 40.f);
 	oldField = field;
 
 	baseballBat->setPlayer(currentPlayer);
@@ -363,7 +364,7 @@ void Game::updateBuffers()
 
 void Game::handleKeybinds()
 {
-	if (GetAsyncKeyState('C')) physWolrd.addBoxToWorld();
+	if (GetAsyncKeyState('C')) physWorld.addBoxToWorld();
 	if (Input::KeyPress(KeyCode::Y))
 	{
 		this->ptEmitters.at(0).setActive(false);
@@ -388,7 +389,7 @@ void Game::handleKeybinds()
 GAMESTATE Game::Update()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, planetGravityField, spaceShips, onlineItems, meshes);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector);
 	
 	//Get newest delta time
 	lastUpdate = currentTime;
@@ -399,12 +400,12 @@ GAMESTATE Game::Update()
 	asteroids->updateAsteroids(dt, planetVector, gameObjects);
 
 	//Calculate gravity factor
-	field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
+	if (planetVector.size() > 0) field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
 	if (field != oldField) { changedPlanet = true; currentPlayer->setGravityField(this->field); }
 	else changedPlanet = false;
 	oldField = field;
 
-	grav = planetVector[0]->getClosestFieldFactor(planetVector, currentPlayer->getPosV3());
+	if (planetVector.size() > 0) grav = planetVector[0]->getClosestFieldFactor(planetVector, currentPlayer->getPosV3());
 	currentPlayer->updateVelocity(getScalarMultiplicationXMFLOAT3(dt, grav));
 	//additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
 
@@ -472,7 +473,7 @@ GAMESTATE Game::Update()
 	}
 
 	//Physics related functions
-	if (!IFONLINE) physWolrd.update(dt);
+	if (!IFONLINE) physWorld.update(dt);
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->updateMatrixOnline();
@@ -618,7 +619,7 @@ void Game::Render()
 
 	//Render imgui & wireframe
 	imGui.react3D(wireframe, objectDraw, landingMinigame, dt, velocityCamera);
-	if (wireframe) { physWolrd.renderReact3D(); playerVecRenderer.drawLines(); }
+	if (wireframe) { physWorld.renderReact3D(); playerVecRenderer.drawLines(); }
 
 	//render billboard objects
 	basicRenderer.bilboardPrePass(this->camera);

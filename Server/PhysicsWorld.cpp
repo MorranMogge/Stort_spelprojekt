@@ -1,9 +1,10 @@
 #include "PhysicsWorld.h"
-
 #include <time.h>
 #include "PhysicsComponent.h"
 #include "DirectXMathHelper.h"
 #include "ServerGravField.h"
+#include "ServerPlanet.h"
+
 
 void PhysicsWorld::setUpBaseScenario()
 {
@@ -110,3 +111,13 @@ void PhysicsWorld::addPhysComponent(PhysicsComponent* newComp, const DirectX::XM
 	physObjects.emplace_back(newComp);
 }
 
+PhysicsComponent* PhysicsWorld::returnAddedPhysComponent(reactphysics3d::CollisionShapeName shape, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& scale)
+{
+	PhysicsComponent* newComp = new PhysicsComponent();
+	newComp->initiateComponent(&this->com, this->world, shape, scale);
+	newComp->setPosition({ pos.x, pos.y, pos.z });
+	newComp->setLinearDampning(0.3f);
+	physObjects.emplace_back(newComp);
+	newComp->setParent(nullptr);
+	return newComp;
+}

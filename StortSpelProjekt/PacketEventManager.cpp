@@ -12,7 +12,7 @@ PacketEventManager::~PacketEventManager()
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips
-	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes)
+	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -29,6 +29,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	SpaceShip* newSpaceShip = nullptr;
 	Item* item = nullptr;
 	BaseballBat* baseballbat = nullptr;
+	SpawnPlanets* planetData = nullptr;
+	Planet* planet = nullptr;
 
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{
@@ -78,16 +80,16 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			physWorld.addPhysComponent(newComponent);
 			componentVector.push_back(newComponent);
 			gameObjects.push_back(newComponent);
- 			std::cout << "Sucessfully recieved component from server: " << std::to_string(spawnComp->ComponentId) << std::endl;
+			std::cout << "Sucessfully recieved component from server: " << std::to_string(spawnComp->ComponentId) << std::endl;
 			break;
-		
+
 		case PacketType::POSITIONROTATION:
 			prMatrixData = circularBuffer->readData<PositionRotation>();
 
 			for (int i = 0; i < players.size(); i++)
 			{
 				//std::cout << std::to_string(players[i]->getMatrix()._14) << std::endl;
-				
+
 				if (prMatrixData->playerId == i)
 				{
 					if (playerId != i)
@@ -107,7 +109,6 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			break;
 
 		case PacketType::ITEMSPAWN:
-
 			itemSpawn = circularBuffer->readData<ItemSpawn>();
 			baseballbat = new BaseballBat("../Meshes/rocket", DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
 				DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), itemSpawn->itemId, itemSpawn->itemId, field);
@@ -182,6 +183,15 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 				}
 			}
+			break;
+		case PacketType::SPAWNPLANETS:
+			planetData = circularBuffer->readData<SpawnPlanets>();
+			std::cout << "Received planet!\n";
+			planet = new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos));
+			planetVector.emplace_back(planet);
+			planetVector.back()->setPlanetShape(&physWorld);
+			physWorld.setPlanets(planetVector);
+			std::cout << "Planets eventmanager " << planetVector.size() << "\n";
 			break;
 		}
 	}

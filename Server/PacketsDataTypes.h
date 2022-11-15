@@ -108,7 +108,10 @@ struct ComponentAdded
 struct SpawnPlanets
 {
 	int packetId;
-
+	float xPos;
+	float yPos;
+	float zPos;
+	float size;
 };
 
 //enum = 21

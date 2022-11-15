@@ -59,7 +59,7 @@ Camera::~Camera()
 void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const DirectX::XMVECTOR& playerUp, const float& playerSpeed, const float& deltaTime)
 {
 	//Actual camera
-	upVector = playerUp;
+	upVector = XMVector3TransformCoord(DEFAULT_UP, playerRotation);
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation);
 	lookAtPos = playerPosition;
@@ -88,8 +88,6 @@ void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::
 
 void Camera::moveVelocity(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const DirectX::XMVECTOR& playerUp, const float& playerSpeed, const float& deltaTime)
 {
-	//logicalUp = playerUp;
-
 	//Actual camera
 	logicalUp = XMVector3TransformCoord(DEFAULT_UP, playerRotation);
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation);

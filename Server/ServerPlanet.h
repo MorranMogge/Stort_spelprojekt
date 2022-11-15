@@ -1,10 +1,10 @@
 #pragma once
 #include "ServerGravField.h"
-#include "PhysicsComponent.h"
 #include <vector>
 
 #define PLANETGRAVSIZE 10.f
 
+class PhysicsComponent;
 class PhysicsWorld;
 
 enum PlanetShape
@@ -17,7 +17,6 @@ enum PlanetShape
 class Planet
 {
 private:
-	Mesh* mesh;
 	GravityField* gravField;
 
 	DirectX::SimpleMath::Vector3 position;	//Center point of the planet
@@ -31,7 +30,7 @@ private:
 	PhysicsComponent* planetCollisionBox;
 
 public:
-	Planet(Mesh* useMesh = nullptr, const DirectX::SimpleMath::Vector3& scale = DirectX::XMFLOAT3(1.f, 1.f, 1.f), const DirectX::XMFLOAT3& pos = DirectX::XMFLOAT3(0.f, 0.f, 0.f), const float& gravityFactor = 4.f * 9.82f);
+	Planet(const DirectX::SimpleMath::Vector3& scale = DirectX::XMFLOAT3(1.f, 1.f, 1.f), const DirectX::XMFLOAT3& pos = DirectX::XMFLOAT3(0.f, 0.f, 0.f), const float& gravityFactor = 4.f * 9.82f);
 	~Planet();
 
 	//Sets the shape of the planet, can be used to create box shaped planets
@@ -55,7 +54,4 @@ public:
 	bool insideGravityField(const DirectX::SimpleMath::Vector3& position)const;
 	PhysicsComponent* getPlanetCollider()const;
 	float getSize(int index = 0)const;
-
-	//Draws the planet using regular pipeline stages
-	void drawPlanet();
 };

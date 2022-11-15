@@ -1,9 +1,9 @@
+#include "PhysicsWorld.h"
 #include "ServerPlanet.h"
 #include "DirectXMathHelper.h"
-#include "PhysicsWorld.h"
 
-Planet::Planet(Mesh* useMesh = nullptr, const DirectX::SimpleMath::Vector3& scale, const DirectX::XMFLOAT3& pos, const float& gravityFactor)
-	:mesh(useMesh), position(pos), rotation(DirectX::XMFLOAT3(0.f, 0.f, 0.f)), scale(scale), rotSpeed(0), gravityFactor(gravityFactor), planetCollisionBox(nullptr)
+Planet::Planet(const DirectX::SimpleMath::Vector3& scale, const DirectX::XMFLOAT3& pos, const float& gravityFactor)
+	:position(pos), rotation(DirectX::XMFLOAT3(0.f, 0.f, 0.f)), scale(scale), rotSpeed(0), gravityFactor(gravityFactor), planetCollisionBox(nullptr)
 {
 	this->planetShape = NONDISCLOSEDSHAPE;
 	this->gravField = new GravityField(gravityFactor, pos, scale.x);
@@ -152,14 +152,4 @@ float Planet::getSize(int index) const
 GravityField* Planet::getGravityField() const
 {
 	return this->gravField;
-}
-
-void Planet::drawPlanet()
-{
-	//this->mesh->position = this->position;
-	//this->mesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(rotation);
-	//this->mesh->scale = scale;
-
-	this->mesh->UpdateCB(this->position, DirectX::XMMatrixRotationRollPitchYawFromVector(rotation), scale);
-	this->mesh->DrawWithMat();
 }

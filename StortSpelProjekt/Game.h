@@ -44,7 +44,7 @@ private:
 
 	BasicRenderer basicRenderer;
 	GravityField* planetGravityField;
-	PhysicsWorld physWolrd;
+	PhysicsWorld physWorld;
 	std::vector<Planet*> planetVector;
 	AsteroidHandler* asteroids;
 

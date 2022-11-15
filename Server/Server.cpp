@@ -1,4 +1,5 @@
 #include "PhysicsWorld.h"
+#include "ServerPlanet.h"
 
 #include <iostream>
 #include <string>
@@ -308,8 +309,28 @@ int main()
 		threadData[i].circBuffer = circBuffer;
 		recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
 	}
-	
 
+	//Spawning planets to clients
+	std::vector<Planet*> planetVector;
+	float planetSize = 40.f;
+	//int nrPlanets = 1;
+	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
+	planetVector.back()->setPlanetShape(&physWorld);
+	physWorld.setPlanets(planetVector);
+
+	for (int i = 0; i < planetVector.size(); i++)
+	{
+		SpawnPlanets planetData;
+		planetData.packetId = PacketType::SPAWNPLANETS;
+		planetData.xPos = 0.f;
+		planetData.yPos = 0.f;
+		planetData.zPos = 0.f;
+		planetData.size = planetSize;
+		sendBinaryDataAllPlayers<SpawnPlanets>(planetData, data);
+		std::cout << "Spawned a planet!\n";
+	}
+
+	//Starting timer
 	start = std::chrono::system_clock::now();
 	startComponentTimer = std::chrono::system_clock::now();
 	itemSpawnTimer = std::chrono::system_clock::now();

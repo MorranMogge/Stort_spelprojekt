@@ -188,7 +188,6 @@ void Game::loadObjects()
 		//gameObjects[i]->getPhysComp()->setPosition(reactphysics3d::Vector3(gameObjects[i]->getPosV3().x, gameObjects[i]->getPosV3().y, gameObjects[i]->getPosV3().z));
 	}
 
-	
 	//SPACE SHIPS
 	if (!IFONLINE)
 	{
@@ -381,7 +380,6 @@ void Game::handleKeybinds()
 	{
 		drawDebug = false;
 	}
-	
 }
 
 GAMESTATE Game::Update()
@@ -423,7 +421,7 @@ GAMESTATE Game::Update()
 	//Player functions
 	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
-	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
+	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt, gamePad);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
 
@@ -491,10 +489,9 @@ GAMESTATE Game::Update()
 	}
 	
 	//Setting the camera at position
-	if (!velocityCamera) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), currentPlayer->getUpVector(), currentPlayer->getSpeed(), dt);
-	else camera.moveVelocity(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), currentPlayer->getUpVector(), currentPlayer->getSpeed(), dt);
-	
-	this->arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
+	if (!velocityCamera) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), currentPlayer->getSpeed(), dt);
+	else camera.moveVelocity(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), currentPlayer->getSpeed(), dt);
+	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
 	//Check Components online
 	for (int i = 0; i < spaceShips.size(); i++)
@@ -521,6 +518,7 @@ GAMESTATE Game::Update()
 		}
 		//Arrow pointing to component
 		else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
+		currentPlayer->colliedWIthComponent(components);
 	}
 	
 	if (!IFONLINE) //Check Components offline

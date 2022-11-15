@@ -190,6 +190,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk North-East
 	if (Input::KeyDown(KeyCode::W) && Input::KeyDown(KeyCode::D))
 	{
+		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
 
@@ -209,6 +210,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk North-West
 	else if (Input::KeyDown(KeyCode::W) && Input::KeyDown(KeyCode::A))
 	{
+		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
 
@@ -228,6 +230,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk South-East
 	else if (Input::KeyDown(KeyCode::S) && Input::KeyDown(KeyCode::D))
 	{
+		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
 
@@ -247,6 +250,7 @@ bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime
 	//Walk South-West
 	else if (Input::KeyDown(KeyCode::S) && Input::KeyDown(KeyCode::A))
 	{
+		this->moveKeyPressed = true;
 		position += forwardVector * deltaTime * this->currentSpeed;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
 
@@ -501,16 +505,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 		}
 	}
 
-	//REMOVE AT END!!
-	if (Input::KeyDown(KeyCode::I))
-	{
-		position += cameraForward * deltaTime * this->currentSpeed;
-	}
-
-	if (Input::KeyDown(KeyCode::L))
-	{
-		position += cameraRight * deltaTime * this->currentSpeed;
-	}
+	if (!Input::KeyDown(KeyCode::W) && !Input::KeyDown(KeyCode::A) && !Input::KeyDown(KeyCode::S) && !Input::KeyDown(KeyCode::D)) this->moveKeyPressed = false;
 }
 
 bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime) //Need to update if we want to use this
@@ -534,8 +529,9 @@ bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float d
 	//Walking North-East
 	if (posY > 0.0f && posX > 0.0f)
 	{
+		this->moveKeyPressed = true;
 		totalPos = posX + posY;
-		position += forwardVector * totalPos * deltaTime * 20.0f;
+		position += forwardVector * totalPos * deltaTime * this->currentSpeed * 0.8f;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
 
 		if (resultVector.x > -0.6f)
@@ -554,8 +550,9 @@ bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float d
 	//Walking North-West
 	else if (posY > 0.0f && posX < 0.0f)
 	{
+		this->moveKeyPressed = true;
 		totalPos = abs(posX) + posY;
-		position += forwardVector * totalPos * deltaTime * 20.0f;
+		position += forwardVector * totalPos * deltaTime * this->currentSpeed * 0.8f;
 		resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
 
 		if (resultVector.x < 0.6f)
@@ -574,8 +571,9 @@ bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float d
 	//Walking South-East
 	else if (posY < 0.0f && posX > 0.0f)
 	{
+		this->moveKeyPressed = true;
 		totalPos = posX + abs(posY);
-		position += forwardVector * totalPos * deltaTime * 20.0f;
+		position += forwardVector * totalPos * deltaTime * this->currentSpeed * 0.8f;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
 
 		if (resultVector.x < 0.6f)
@@ -594,8 +592,9 @@ bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float d
 	//Walking South-West
 	else if (posY < 0.0f && posX < 0.0f)
 	{
+		this->moveKeyPressed = true;
 		totalPos = abs(posX) + abs(posY);
-		position += forwardVector * totalPos * deltaTime * 20.0f;
+		position += forwardVector * totalPos * deltaTime * this->currentSpeed * 0.8f;
 		resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
 
 		if (resultVector.x > -0.6f)
@@ -614,20 +613,32 @@ bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float d
 	return false;
 }
 
-void Player::moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime)
+void Player::moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime, const std::unique_ptr<DirectX::GamePad>& gamePad)
 {
-	if (controllerConnected)
+	if (dedge) return;
+	else if (flipping) return;
+
+	auto state = gamePad->GetState(0);
+	if (state.IsConnected())
 	{
-		//Controller movement
-		auto state = gamePad->GetState(0);
-		controllerConnected = state.IsConnected();
+		if (holdingComp && this->holdingItem != nullptr) gamePad->SetVibration(0, 1.f, 1.f, 1.f, 1.f);
+		else gamePad->SetVibration(0, 0.f, 0.f, 0.f, 0.f);
 
 		posX = state.thumbSticks.leftX;
 		posY = state.thumbSticks.leftY;
 
+		this->currentSpeed = this->speed;
 		if (state.IsAPressed())
 		{
-			deltaTime *= 2.f;
+			this->currentSpeed *= 1.5f;
+		}
+
+		//Jumping
+		if (onGround && state.IsYPressed())
+		{
+			onGround = false;
+			this->velocity = this->normalVector * 40.f;
+			if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 		}
 
 		//Controller movement
@@ -636,8 +647,9 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		//Walk forward
 		else if (posY > 0.0f)
 		{
+			this->moveKeyPressed = true;
 			resultVector = DirectX::XMVector3Dot(cameraForward, rightVector);
-			position += forwardVector * posY * deltaTime * speed;
+			position += forwardVector * posY * deltaTime * this->currentSpeed;
 
 			if (resultVector.x < -0.05f)
 			{
@@ -659,14 +671,22 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		//Walk backward
 		else if (posY < 0.0f)
 		{
+			this->moveKeyPressed = true;
 			resultVector = DirectX::XMVector3Dot(-cameraForward, rightVector);
-			position += forwardVector * posY * deltaTime * -speed;
+			position += forwardVector * posY * deltaTime * -this->currentSpeed;
 
-			if (resultVector.x < -0.05f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.1f);
-			else if (resultVector.x > 0.05f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.1f);
+			if (resultVector.x < -0.05f)
+			{
+				resultVector = DirectX::XMVector3AngleBetweenNormalsEst(-cameraForward, forwardVector);
+				rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x * 0.5f);
+			}
+			else if (resultVector.x > 0.05f)
+			{
+				resultVector = DirectX::XMVector3AngleBetweenNormalsEst(-cameraForward, forwardVector);
+				rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x * 0.5f);
+			}
 			else
 			{
-				//Checking where it is
 				resultVector = DirectX::XMVector3AngleBetweenNormalsEst(-cameraForward, forwardVector);
 				if (resultVector.x > DirectX::XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.02f);
 			}
@@ -675,11 +695,20 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		//Walk right
 		else if (posX > 0.0f)
 		{
-			position += forwardVector * posX * deltaTime * speed;
+			this->moveKeyPressed = true;
+			position += forwardVector * posX * deltaTime * this->currentSpeed;
 			resultVector = DirectX::XMVector3Dot(cameraRight, rightVector);
 
-			if (resultVector.x < -0.05f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.1f);
-			else if (resultVector.z > 0.05f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.1f);
+			if (resultVector.x < -0.05f)
+			{
+				resultVector = DirectX::XMVector3AngleBetweenNormalsEst(cameraRight, forwardVector);
+				rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x * 0.5f);
+			}
+			else if (resultVector.z > 0.05f)
+			{
+				resultVector = DirectX::XMVector3AngleBetweenNormalsEst(cameraRight, forwardVector);
+				rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x * 0.5f);
+			}
 			else
 			{
 				resultVector = DirectX::XMVector3AngleBetweenNormalsEst(cameraRight, forwardVector);
@@ -690,11 +719,20 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		//Walk left
 		else if (posX < 0.0f)
 		{
-			position += forwardVector * posX * deltaTime * -speed;
+			this->moveKeyPressed = true;
+			position += forwardVector * posX * deltaTime * -this->currentSpeed;
 			resultVector = DirectX::XMVector3Dot(-cameraRight, rightVector);
 
-			if (resultVector.x < -0.05f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, -0.1f);
-			else if (resultVector.z > 0.05f) rotation *= DirectX::XMMatrixRotationAxis(normalVector, 0.1f);
+			if (resultVector.x < -0.05f)
+			{
+				resultVector = DirectX::XMVector3AngleBetweenNormalsEst(-cameraRight, forwardVector);
+				rotation *= DirectX::XMMatrixRotationAxis(normalVector, -resultVector.x * 0.5f);
+			}
+			else if (resultVector.z > 0.05f)
+			{
+				resultVector = DirectX::XMVector3AngleBetweenNormalsEst(-cameraRight, forwardVector);
+				rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x * 0.5f);
+			}
 			else
 			{
 				resultVector = DirectX::XMVector3AngleBetweenNormalsEst(-cameraRight, forwardVector);
@@ -703,7 +741,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		}
 	}
 
-	if (!Input::KeyDown(KeyCode::W) && !Input::KeyDown(KeyCode::A) && !Input::KeyDown(KeyCode::S) && !Input::KeyDown(KeyCode::D)) this->moveKeyPressed = false;
+	if (posX == 0.0f && posY == 0.0f) this->moveKeyPressed = false;
 }
 
 int Player::getItemOnlineType() const
@@ -717,7 +755,6 @@ int Player::getItemOnlineType() const
 
 int Player::getItemOnlineId() const
 {
-
 	return holdingItem->getOnlineId();
 }
 
@@ -738,7 +775,6 @@ bool Player::pickupItem(Item* itemToPickup)
 			holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 		}
 	}
-
 	return successfulPickup;
 }
 
@@ -875,6 +911,17 @@ bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) con
 	}
 
 	return inRange;
+}
+
+void Player::colliedWIthComponent(const std::vector<Component*>& components)
+{
+	for (int i = 0; i < components.size(); i++)
+	{
+		collided = this->physComp->testBodiesOverlap(components[i]->getPhysComp());
+	}
+
+	if (collided) this->setSpeed(25.f * 0.55f);
+	else this->setSpeed(25.f);
 }
 
 bool Player::getHitByBat() const
@@ -1085,7 +1132,7 @@ bool Player::isHoldingComp()
 	{
 		if (this->holdingItem != nullptr)
 		{
-			this->setSpeed(25.f * 0.65f);
+			this->setSpeed(25.f * 0.55f);
 			return true;
 		}
 		else

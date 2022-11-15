@@ -15,6 +15,7 @@
 
 class Item;
 class SpaceShip;
+class Component;
 
 class Player: public GameObject
 {
@@ -37,6 +38,7 @@ private:
 	int onlineID;
 	bool dedge = false;
 	bool flipping = false;
+	bool collided = false;
 	bool onGround = false;
 	bool holdingComp = false;
 	bool moveKeyPressed = false;
@@ -85,7 +87,7 @@ public:
 	//Move Functions
 	void rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const bool& changedPlanet);
 	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime);
-	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const DirectX::XMFLOAT3& grav, const std::unique_ptr<DirectX::GamePad>& gamePad, float deltaTime);
+	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime, const std::unique_ptr<DirectX::GamePad>& gamePad);
 	void updateVelocity(const DirectX::SimpleMath::Vector3& gravityVec);
 	void resetVelocity();
 	void velocityMove(const float& dt);
@@ -121,6 +123,7 @@ public:
 	bool checkForStaticCollision(const std::vector<Planet*>& gameObjects, const std::vector<SpaceShip*>& spaceShips);
 	bool raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
+	void colliedWIthComponent(const std::vector<Component*>& components);
 	
 	//Updating and rendering
 	void drawIcon();

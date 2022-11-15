@@ -186,7 +186,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			break;
 		case PacketType::SPAWNPLANETS:
 			planetData = circularBuffer->readData<SpawnPlanets>();
-			std::cout << "Received planet!\n";
+			std::cout << "Received planet\n";
 			planet = new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos));
 			planetVector.emplace_back(planet);
 			planetVector.back()->setPlanetShape(&physWorld);

@@ -7,8 +7,6 @@
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
-	srand(time(0));
-
 	MaterialLibrary::LoadDefault();
 	MaterialLibrary::LoadMaterial("spaceshipTexture1.jpg");
 	MaterialLibrary::LoadMaterial("pintoRed.png");
@@ -144,8 +142,8 @@ void Game::loadObjects()
 	//if (IFONLINE) return;
 
 	//SOLAR SYSTEM SETUP
-	float planetSize = 40.f;
-	int nrPlanets = 3; // (rand() % 3) + 1;
+	//float planetSize = 40.f;
+	//int nrPlanets = 3; // (rand() % 3) + 1;
 
 	//NEED TO FIX OFFLINE MODE TOO!
 	/*for (int i = 0; i < nrPlanets; i++)

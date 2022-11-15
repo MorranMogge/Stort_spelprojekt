@@ -97,7 +97,7 @@ void Camera::moveVelocity(const DirectX::XMVECTOR& playerPosition, const DirectX
 
 	//The showing camera
 	velocityVector = XMVectorSubtract(logicalPos, cameraPos);
-	cameraPos += velocityVector * deltaTime * 2.f;
+	cameraPos += velocityVector * deltaTime * 5.f;
 	velocityVector = XMVectorSubtract(logicalUp, upVector);
 	upVector += velocityVector * deltaTime * 2.f;
 

@@ -271,26 +271,30 @@ int main()
 	physicsTimer.resetStartTime();
 	while (!physicsTimer.getTimePassed(3.0f)) continue;
 
-	//Spawning planets to clients
+	//Spawning planets
+	srand(time(0));
 	std::vector<Planet*> planetVector;
 	float planetSize = 40.f;
-	//int nrPlanets = 1;
-	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
-	planetVector.back()->setPlanetShape(&physWorld);
-	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(45.f, 45.f, 45.f)));
-	planetVector.back()->setPlanetShape(&physWorld);
+	int nrPlanets = (rand() % 3) + 1;
+	for (int i = 0; i < nrPlanets; i++)
+	{
+		if (i == 0) planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
+		else if (i == 1) planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
+		else planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f)));
+		planetVector.back()->setPlanetShape(&physWorld);
+	}
 	physWorld.setPlanets(planetVector);
 
 	for (int i = 0; i < planetVector.size(); i++)
 	{
 		SpawnPlanets planetData;
 		planetData.packetId = PacketType::SPAWNPLANETS;
-		planetData.xPos = 45.f * i;
-		planetData.yPos = 45.f * i;
-		planetData.zPos = 45.f * i;
-		planetData.size = planetSize - (0.2f * i * planetSize);
+		planetData.xPos = planetVector[i]->getPlanetPosition().x;
+		planetData.yPos = planetVector[i]->getPlanetPosition().y;
+		planetData.zPos = planetVector[i]->getPlanetPosition().z;
+		planetData.size = planetVector[i]->getSize();
 		sendBinaryDataAllPlayers<SpawnPlanets>(planetData, data);
-		std::cout << "Spawned a planet!\n";
+		std::cout << "Sent a planet\n";
 	}
 
 	//Sends information about the space ships to the clients

@@ -7,6 +7,9 @@ using namespace DirectX;
 SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
 	:GameObject(useMesh, pos, DirectX::XMFLOAT3(0,0,0), id, field, scale), compToComplete(nrofComp), currentComponents(0), team(team), animate(false), counter(0.0f)
 {
+	using namespace DirectX;
+	using namespace DirectX::SimpleMath;
+
 	//Set rotation to gravity field
 	this->setRot(this->getRotOrientedToGrav());
 
@@ -22,6 +25,10 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 	this->particles = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 	this->particles2 = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 
+	//CapZone
+	float constant2 = 48.0f;
+	DirectX::XMFLOAT3 offset2(upDir.x * constant2, upDir.y * constant2, upDir.z * constant2);
+	zone = new CaptureZone(offset2, this->getRotXM(), DirectX::XMFLOAT3(8, 8, 8));
 
 	//Team switch
 	switch (team)
@@ -41,6 +48,9 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
 	:GameObject("../Meshes/rocket", pos, DirectX::XMFLOAT3(0, 0, 0), id, field, scale), compToComplete(nrofComp), currentComponents(0), team(team), animate(false), counter(0.0f)
 {
+	using namespace DirectX;
+	using namespace DirectX::SimpleMath;
+
 	//Set rotation to gravity field
 	this->setRot(this->getRotOrientedToGrav());
 
@@ -55,6 +65,9 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 	//Particles
 	this->particles = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 	this->particles2 = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
+
+	//CapZone
+	zone = new CaptureZone(pos, this->getRotXM(), DirectX::XMFLOAT3(4, 4, 4));
 
 	//Team switch
 	switch (team)
@@ -79,6 +92,7 @@ SpaceShip::~SpaceShip()
 	//{
 	//	delete this->components.at(i);
 	//}
+	delete this->zone;
 	delete this->particles;
 	delete this->particles2;
 	delete this->rocketStatusQuad;
@@ -170,6 +184,11 @@ void SpaceShip::drawParticles()
 	}
 }
 
+void SpaceShip::drawFresnel()
+{
+	this->zone->draw();
+}
+
 bool SpaceShip::isFinished()
 {
 	bool complete = false;
@@ -196,7 +215,6 @@ void SpaceShip::draw()
 		break;
 
 	}
-
 	this->mesh->UpdateCB(position, rotation, scale);
 	this->mesh->DrawWithMat();
 }

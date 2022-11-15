@@ -29,7 +29,7 @@ void Game::loadObjects()
 	//Meshes vector contents
 	//Sphere, pinto, potion, rocket, rocket, bat, Player, component, grenade
 	meshes.push_back(new Mesh("../Meshes/Sphere"));
-	meshes.push_back(new Mesh("../Meshes/atmoSphere"));
+	meshes.push_back(new Mesh("../Meshes/reverseSphere"));
 	meshes.push_back(new Mesh("../Meshes/pinto"));
 	meshes.push_back(new Mesh("../Meshes/potion"));
 	meshes.push_back(new Mesh("../Meshes/rocket"));
@@ -37,11 +37,12 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/component"));
 	meshes.push_back(new Mesh("../Meshes/grenade"));
 
+
 	planet = new GameObject(meshes[0], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(40.0f, 40.0f, 40.0f));
 	physWolrd.addPhysComponent(planet, reactphysics3d::CollisionShapeName::SPHERE, planet->getScale());
 	planet->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 	gameObjects.emplace_back(planet);
-	atmosphere = new GameObject(meshes[1], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(43, 43, 43));
+	atmosphere = new GameObject(meshes[1], Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET, nullptr, XMFLOAT3(63, 63, 63));
 	if (IFONLINE) return;
 
 	//Here we can add base object we want in the beginning of the game
@@ -182,6 +183,11 @@ void Game::drawFresnel()
 {
 	GPU::immediateContext->PSSetConstantBuffers(2, 1, colorBuffer.getReferenceOf());
 	atmosphere->draw();
+
+	for (int i = 0; i < spaceShips.size(); i++)
+	{
+		spaceShips[i]->drawFresnel();
+	}
 	for (int i = 0; i < items.size(); i++)
 	{
 		if(items[i]->getId() == ObjID::GRENADE)

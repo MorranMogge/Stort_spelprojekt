@@ -61,9 +61,40 @@ bool ModelDataContainer::getIndexMeshBuffers(const std::string key, ID3D11Buffer
 	return true;
 }
 
+ConstantBuffer* ModelDataContainer::getMaterial(const std::string& key, ConstantBuffer* constantBuff)
+{
+	std::unordered_map<std::string, ConstantBuffer*>::iterator constantBuffIt;
+	constantBuffIt = constantBuffMap.find(key);
+	
+	if (this->constantBuffMap.find(key) != this->constantBuffMap.end())
+	{
+		return constantBuffMap[key];
+	}
+
+	return nullptr;
+}
+
 void ModelDataContainer::addSrv(std::string key, ID3D11ShaderResourceView* srv)
 {
 	this->srvMap.insert(std::pair<std::string, ID3D11ShaderResourceView*>(key, srv));
+}
+
+void ModelDataContainer::addMaterial(const std::string& key, ConstantBuffer* buffer)
+{
+	this->constantBuffMap.insert(std::pair<std::string, ConstantBuffer*>(key, buffer));
+}
+
+bool ModelDataContainer::hasMaterial(const std::string& key)
+{
+	std::unordered_map<std::string, ConstantBuffer*>::iterator constantBuffIt;
+
+	constantBuffIt = this->constantBuffMap.find((const std::string)key);
+	if (constantBuffIt != this->constantBuffMap.end())
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void ModelDataContainer::addMeshBuffers(std::string key, ID3D11Buffer* vertexBuf, ID3D11Buffer* indexBuf, std::vector<int>& subMeshRanges, std::vector<int>& amountOfVertces)

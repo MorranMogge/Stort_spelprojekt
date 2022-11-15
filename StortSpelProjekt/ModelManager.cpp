@@ -77,13 +77,69 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		aiColor3D color(0.f, 0.f, 0.f);
 		material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 
-		//få mat_key namn
-		aiString name;
-		material->Get(AI_MATKEY_NAME, name);
 
 
 		aiString Path;
 		
+
+
+		aiString name;
+		material->Get(AI_MATKEY_NAME, name);
+		std::cout << name.C_Str() << "\n";
+		if (bank.hasMaterial(name.C_Str()) == false)
+		{
+			MaterialS materialToAdd;
+			
+			material->Get(AI_MATKEY_COLOR_AMBIENT, color);
+			materialToAdd.ambient = DirectX::SimpleMath::Vector4{ color.r,color.g,color.b, 0};
+
+			material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+			materialToAdd.diffuse = DirectX::SimpleMath::Vector4{ color.r, color.g, color.b, 0 };
+
+			material->Get(AI_MATKEY_COLOR_SPECULAR, color);
+			materialToAdd.specular = DirectX::SimpleMath::Vector3{ color.r, color.g, color.b };
+
+			material->Get(AI_MATKEY_SHININESS, color);
+			//materialToAdd.specularPower = (float)(color.r + color.g + color.b);
+			materialToAdd.specularPower = (float)color.r;
+
+			ConstantBuffer cbuffer(&materialToAdd, sizeof(MaterialS));
+			bank.addMaterial(name.C_Str(), &cbuffer);
+
+			ConstantBuffer* tmp = bank.getMaterial("default", nullptr);
+			tmp->GetAddressOf();
+			
+		}
+		
+
+	
+		std::cout << name.C_Str() << "\n";
+		material->Get(AI_MATKEY_COLOR_AMBIENT, color);
+
+		std::cout << "AMBIENT:\n" << color.r << "\n";
+		std::cout << color.g << "\n";
+		std::cout << color.b << "\n";
+
+		//få mat_key namn
+
+		material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+
+		std::cout << "DIFFUSE:\n" << color.r << "\n";
+		std::cout << color.g << "\n";
+		std::cout << color.b << "\n";
+
+		material->Get(AI_MATKEY_COLOR_SPECULAR, color);
+		std::cout << "Specular:\n" << color.r << "\n";
+		std::cout << color.g << "\n";
+		std::cout << color.b << "\n";
+
+
+		material->Get(AI_MATKEY_SHININESS, color);
+		std::cout << "Shinyness:\n" << color.r << "\n";
+		std::cout << color.g << "\n";
+		std::cout << color.b << "\n";
+
+
 		
 		if (material->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
@@ -370,4 +426,13 @@ std::vector<ID3D11ShaderResourceView*> ModelManager::getTextureMaps() const
 bool ModelManager::getMeshData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces)
 {
 	return bank.getIndexMeshBuffers(filePath, indexBuffer, vertexBuffer, submeshRanges, amountOfVertces);
+}
+
+void ModelManager::getMaterialData(const std::string& filePath, ConstantBuffer*& constantBuff)
+{
+	if (bank.hasItem(filePath))
+	{
+
+	}
+		//bank.
 }

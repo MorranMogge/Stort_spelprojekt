@@ -33,7 +33,6 @@ struct vertex
 	vertex(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT2& uv, DirectX::XMFLOAT3& nor, DirectX::XMFLOAT3& tangent) : pos(pos), uv(uv), nor(nor), tangent(tangent) {};
 };
 
-
 class ModelManager
 {
 private:
@@ -50,6 +49,15 @@ private:
 	
 	struct meshData dataForMesh;
 	
+	struct MaterialS
+	{
+		DirectX::SimpleMath::Vector4 ambient{ 0.0f, 0.0f, 0.0f, 0.0f };
+		DirectX::SimpleMath::Vector4 diffuse{ 1.0f, 1.0f, 1.0f, 1.0f };
+		DirectX::SimpleMath::Vector3 specular{ 0.0f, 0.0f, 0.0f };
+		float specularPower = 16.0f;
+	};
+
+
 	//SubmeshRanges är antalet draws som skall göras per submesh
 	std::vector<int> submeshRanges;
 	//AmountOfVerticies är base vertex location - start index för första vertex som skall läsas för mesh / submesh
@@ -75,5 +83,6 @@ public:
 	std::vector<ID3D11ShaderResourceView*> getTextureMaps() const;
 	//Fyller parametrarna med meshdata om nyckeln finns
 	bool getMeshData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces);
+	void getMaterialData(const std::string& filePath, ConstantBuffer*& constantBuff);
 	void setDevice(ID3D11Device* device);
 };

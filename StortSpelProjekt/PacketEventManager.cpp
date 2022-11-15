@@ -191,7 +191,6 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			planetVector.emplace_back(planet);
 			planetVector.back()->setPlanetShape(&physWorld);
 			physWorld.setPlanets(planetVector);
-			std::cout << "Planets eventmanager " << planetVector.size() << "\n";
 			break;
 		}
 	}

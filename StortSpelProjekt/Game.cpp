@@ -111,6 +111,7 @@ Game::~Game()
 	delete asteroids;
 	delete arrow;
 	delete atmosphere;
+	delete planetGravityField;
 }
 
 void Game::loadObjects()
@@ -219,7 +220,7 @@ void Game::loadObjects()
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
 	gameObjects.emplace_back(currentPlayer);
-	field = new GravityField(4.f * 9.82f, DirectX::XMFLOAT3(0.f, 0.f, 0.f), 40.f);
+	field = nullptr;//new GravityField(4.f * 9.82f, DirectX::XMFLOAT3(0.f, 0.f, 0.f), 40.f);
 	oldField = field;
 
 	baseballBat->setPlayer(currentPlayer);
@@ -408,6 +409,11 @@ GAMESTATE Game::Update()
 	if (planetVector.size() > 0) grav = planetVector[0]->getClosestFieldFactor(planetVector, currentPlayer->getPosV3());
 	currentPlayer->updateVelocity(getScalarMultiplicationXMFLOAT3(dt, grav));
 	//additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
+
+	if (planetVector.size() > 0)
+	{
+		for (int i = 0; i < gameObjects.size(); i++) gameObjects[i]->setGravityField(planetVector[0]->getClosestField(planetVector, gameObjects[i]->getPosV3()));
+	}
 
 	//Raycasting
 	static DirectX::XMFLOAT3 hitPos;

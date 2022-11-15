@@ -271,6 +271,28 @@ int main()
 	physicsTimer.resetStartTime();
 	while (!physicsTimer.getTimePassed(3.0f)) continue;
 
+	//Spawning planets to clients
+	std::vector<Planet*> planetVector;
+	float planetSize = 40.f;
+	//int nrPlanets = 1;
+	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
+	planetVector.back()->setPlanetShape(&physWorld);
+	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(45.f, 45.f, 45.f)));
+	planetVector.back()->setPlanetShape(&physWorld);
+	physWorld.setPlanets(planetVector);
+
+	for (int i = 0; i < planetVector.size(); i++)
+	{
+		SpawnPlanets planetData;
+		planetData.packetId = PacketType::SPAWNPLANETS;
+		planetData.xPos = 45.f * i;
+		planetData.yPos = 45.f * i;
+		planetData.zPos = 45.f * i;
+		planetData.size = planetSize - (0.2f * i * planetSize);
+		sendBinaryDataAllPlayers<SpawnPlanets>(planetData, data);
+		std::cout << "Spawned a planet!\n";
+	}
+
 	//Sends information about the space ships to the clients
 	for (int i = 0; i < spaceShipPos.size(); i++)
 	{
@@ -308,26 +330,6 @@ int main()
 		threadData[i].pos[2] = -22.0f;
 		threadData[i].circBuffer = circBuffer;
 		recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
-	}
-
-	//Spawning planets to clients
-	std::vector<Planet*> planetVector;
-	float planetSize = 40.f;
-	//int nrPlanets = 1;
-	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
-	planetVector.back()->setPlanetShape(&physWorld);
-	physWorld.setPlanets(planetVector);
-
-	for (int i = 0; i < planetVector.size(); i++)
-	{
-		SpawnPlanets planetData;
-		planetData.packetId = PacketType::SPAWNPLANETS;
-		planetData.xPos = 0.f;
-		planetData.yPos = 0.f;
-		planetData.zPos = 0.f;
-		planetData.size = planetSize;
-		sendBinaryDataAllPlayers<SpawnPlanets>(planetData, data);
-		std::cout << "Spawned a planet!\n";
 	}
 
 	//Starting timer
@@ -629,6 +631,11 @@ int main()
 		}
 		
 	}
+
+	/*for (int i = 0; i < planetVector.size(); i++)
+	{
+		delete planetVector[i];
+	}*/
     return 0;
 
 	//Hidden code

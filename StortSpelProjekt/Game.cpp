@@ -11,7 +11,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	gameMusic.load(L"../Sounds/Gold Rush Final.wav");
 	gameMusic.play(true);
-	gameMusic.setVolume(0.5f);
+	gameMusic.setVolume(0.75f);
 	
 
 	MaterialLibrary::LoadDefault();

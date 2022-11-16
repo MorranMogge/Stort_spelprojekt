@@ -9,6 +9,7 @@ Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMF
 {
 	counter = 1.0f;
 	sfx.load(L"../Sounds/explosion.wav");
+	explosion.load(L"../Sounds/explodeGrenade.wav");
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
 
@@ -57,8 +58,8 @@ Grenade::~Grenade()
 
 void Grenade::explode()
 {
-	sfx.stop();
-	sfx.play();
+	explosion.stop();
+	explosion.play();
 	std::cout << "THE GRENADE EXPLODED\n";
 	int iterations = (int)gameObjects.size();
 	for (int i = 0; i < iterations; i++)

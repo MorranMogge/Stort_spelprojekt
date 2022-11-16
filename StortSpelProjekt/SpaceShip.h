@@ -19,6 +19,7 @@ private:
 	bool animate;
 	int team;
 	Sound compAddedSfx;
+	Sound engineTakeOff;
 
 public:
 

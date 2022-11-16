@@ -15,6 +15,7 @@ private:
 	float counter;
 	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
 	Mesh* explosionMesh;
+	Sound explosion;
 
 public:
 	Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field = nullptr);

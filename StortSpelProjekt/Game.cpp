@@ -43,8 +43,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		}
 		//int playerid = client->initTEMPPLAYERS();
 
-		
-
 		this->client->setClientId(playerId);
 		int offset = 10;
 		int dude = (NROFPLAYERS) / 2;
@@ -154,6 +152,9 @@ void Game::loadObjects()
 			else planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f)));
 			planetVector.back()->setPlanetShape(&physWorld);
 		}
+
+		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(40.f, 40.f, 40.f), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
+		planetVector.back()->setPlanetShape(&physWorld);
 		physWorld.setPlanets(planetVector);
 	}
 
@@ -387,7 +388,8 @@ GAMESTATE Game::Update()
 {
 	//read the packets received from the server
 	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector);
-	
+	planetVector.back()->movePlanet(0.01f);
+
 	//Get newest delta time
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();

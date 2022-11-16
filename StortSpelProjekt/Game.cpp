@@ -78,7 +78,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	currentTime = std::chrono::system_clock::now();
 	lastUpdate = currentTime;
-	gamePad = std::make_unique<DirectX::GamePad>();
+	//gamePad = std::make_unique<DirectX::GamePad>();
 	playerVecRenderer.setPlayer(currentPlayer, camera);
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
@@ -110,6 +110,7 @@ Game::~Game()
 	delete arrow;
 	delete atmosphere;
 	delete planetGravityField;
+	delete gamePad;
 }
 
 void Game::loadObjects()
@@ -210,20 +211,20 @@ void Game::loadObjects()
 		gameObjects.emplace_back(spaceShips[i]);
 	}
 
-
-
 	if (!currentPlayer) { currentPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, planetGravityField); players.emplace_back(currentPlayer); }
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
 	gameObjects.emplace_back(currentPlayer);
-	field = nullptr;//new GravityField(4.f * 9.82f, DirectX::XMFLOAT3(0.f, 0.f, 0.f), 40.f);
+	field = nullptr;
 	oldField = field;
 
 	baseballBat->setPlayer(currentPlayer);
 	baseballBat->setGameObjects(gameObjects);
 	baseballBat->setClient(client);
-
 	grenade->setGameObjects(gameObjects);
+
+	gamePad = new GamePad();
+	currentPlayer->setGamePad(gamePad);
 }
 
 void Game::drawShadows()
@@ -418,53 +419,46 @@ GAMESTATE Game::Update()
 	bool testingVec = this->currentPlayer->raycast(gameObjects, planetVector, hitPos, hitNormal);
 	if (testingVec || currentPlayer->getHitByBat()) currentPlayer->resetVelocity();
 	
-	//Player functions
-	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
-	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
-	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt, gamePad);
-	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
-	currentPlayer->velocityMove(dt);
-
-	//Check component pickup
-	for (int i = 0; i < components.size(); i++)
-	{
-		if (currentPlayer->pickupItem(components[i])) break;
-	}
-	//Check item pickup
-	for (int i = 0; i < items.size(); i++)
-	{
-		if (currentPlayer->pickupItem(items[i])) break;
-	}
-
-	/*if (Input::KeyPress(KeyCode::K))
-	{
-		randomizeObjectPos(this->testBat);
-	}*/
-
-	grenade->updateExplosionCheck();
-	if (potion->isTimeToRun())
 	//Update item checks
 	for (int i = 0; i < items.size(); i++)
 	{
 		int id = items[i]->getId();
 		switch (id)
 		{
-			case ObjID::GRENADE:
+		case ObjID::GRENADE:
+		{
+			Grenade* tempNade = (Grenade*)items[i];
+			tempNade->updateExplosionCheck();
+		}	break;
+		case ObjID::POTION:
+		{
+			Potion* tempPotion = (Potion*)items[i];
+			if (tempPotion->isTimeToRun())
 			{
-				Grenade* tempNade = (Grenade*)items[i];
-				tempNade->updateExplosionCheck();
-			}	break;
-			case ObjID::POTION:
-			{
-				Potion* tempPotion = (Potion*)items[i];
-				if (tempPotion->isTimeToRun())
+				if (tempPotion->timerGoing())
 				{
-					if (tempPotion->timerGoing()) currentPlayer->setSpeed(50.f);
-					else currentPlayer->setSpeed(25.f);
+					currentPlayer->setSpeed(50.f);
 				}
-			}	break;
+				else currentPlayer->setSpeed(25.f);
+			}
+		}	break;
 		}
 	}
+
+	//Player functions
+	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
+	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
+	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
+	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
+	currentPlayer->velocityMove(dt);
+
+	//Check pickups
+	currentPlayer->pickupItem(items, components);
+
+	/*if (Input::KeyPress(KeyCode::K))
+	{
+		randomizeObjectPos(this->testBat);
+	}*/
 
 	//sending data to server
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
@@ -498,7 +492,7 @@ GAMESTATE Game::Update()
 	{
 		if (spaceShips[i]->getCompletion())
 		{
-			if (currentPlayer->getTeam() == i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot()); currentPlayer->setVibration(true);
+			if (currentPlayer->getTeam() == i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot()); currentPlayer->setVibration(0.1f, 0.1f);
 			this->spaceShips[i]->move(this->spaceShips[i]->getUpDirection(), -dt);
 			endTimer += dt;
 			arrow->removeArrow(); //Remove these completely by not drawing the meshes anymore
@@ -550,7 +544,7 @@ GAMESTATE Game::Update()
 	//Check winstate
 	if (endTimer > 6)
 	{
-		this->currentPlayer->setVibration(false);
+		this->currentPlayer->setVibration(0.f, 0.f);
 		for (int i = 0; i < spaceShips.size(); i++)
 		{
 			if (spaceShips[i]->isFinished())

@@ -38,7 +38,6 @@ private:
 	int onlineID;
 	bool dedge = false;
 	bool flipping = false;
-	bool collided = false;
 	bool onGround = false;
 	bool holdingComp = false;
 	bool moveKeyPressed = false;
@@ -48,8 +47,8 @@ private:
 	float posY = 0.0f;
 	float throttle = 0.0f;
 	float totalPos = 0.0f;
-	bool timeToVibrate = false;
-	bool controllerConnected = true;
+	DirectX::GamePad* gamePad;
+	DirectX::GamePad::ButtonStateTracker tracker;
 
 	//Other variables
 	Client* client;
@@ -88,7 +87,7 @@ public:
 	//Move Functions
 	void rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const bool& changedPlanet);
 	void move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime);
-	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime, const std::unique_ptr<DirectX::GamePad>& gamePad);
+	void moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime);
 	void updateVelocity(const DirectX::SimpleMath::Vector3& gravityVec);
 	void resetVelocity();
 	void velocityMove(const float& dt);
@@ -97,7 +96,8 @@ public:
 	void setSpeed(float speed);
 	void setOnlineID(const int& id);
 	void setTeam(const int& team);
-	void setVibration(const bool& vibrateTime);
+	void setVibration(float vibration1, float vibration2);
+	void setGamePad(DirectX::GamePad* gamePad);
 	
 	//Get Functions
 	reactphysics3d::Vector3 getRayCastPos()const;
@@ -111,7 +111,7 @@ public:
 	float getSpeed()const;
 
 	//Item related functions
-	bool pickupItem(Item *itemToPickup);
+	bool pickupItem(const std::vector <Item *>& items, const std::vector <Component*>& components);
 	Item* getItem()const;
 	void addItem(Item* itemToHold);
 	int getItemOnlineType()const;

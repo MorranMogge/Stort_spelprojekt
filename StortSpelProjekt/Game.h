@@ -22,7 +22,7 @@ private:
 	bool drawDebug = true;
 	bool landingMinigame = false;
 
-	std::unique_ptr<DirectX::GamePad> gamePad;
+	DirectX::GamePad* gamePad;
 	GravityField* field;
 	GravityField* oldField;
 	bool changedPlanet = false;

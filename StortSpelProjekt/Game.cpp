@@ -41,9 +41,15 @@ void Game::loadObjects()
 	manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
 
 	this->manager.getAnimData("../Meshes/pinto_Run.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
-	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-	this->sexyMan = new AnimatedMesh(tmpMesh, DirectX::XMFLOAT3(0, 42, 0), DirectX::XMFLOAT3(0, 0, 0), 69);
-	this->sexyMan->addData(animData);
+	int offsettt = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+		this->sexyMan = new AnimatedMesh(tmpMesh, DirectX::XMFLOAT3(0.f, (float)(42 + offsettt), 0.f), DirectX::XMFLOAT3(0, 0, 0), 69);
+		this->sexyMan->addData(animData);
+		this->sexyMen.push_back(this->sexyMan);
+		offsettt += 2;
+	}
 	//sexyMan->setSrv(this->manager.getSrv("../Textures/texture2.png"));
 	//physWolrd.addPhysComponent(sexyMan, reactphysics3d::CollisionShapeName::BOX);
 
@@ -149,7 +155,6 @@ void Game::drawObjects(bool drawDebug)
 	}
 
 	//Unbind light
-	ltHandler.unbindSrv();
 }
 
 void Game::drawIcons()
@@ -371,11 +376,15 @@ Game::~Game()
 
 	for (int i = 0; i < this->gameObjects.size(); i++)
 	{
-		delete this->gameObjects.at(i);
+		delete this->gameObjects[i];
 	}
 	for (int i = 0; i < meshes.size(); i++)
 	{
 		delete meshes[i];
+	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		delete players[i];
 	}
 	wireBuffer->Release();
 
@@ -551,6 +560,14 @@ GAMESTATE Game::Update()
 	//Debug keybinds
 	this->handleKeybinds();
 
+	//animations
+	this->sexyMan->updateAnim(dt, 0, 1);
+	for (int i = 0; i < sexyMen.size(); i++)
+	{
+		this->sexyMen[i]->updateAnim(dt, 0, 1);
+	}
+	this->currentPlayer->updateAnim(dt, 0, 1);
+
 	return NOCHANGE;
 }
 
@@ -565,8 +582,13 @@ void Game::Render()
 	if (objectDraw) drawObjects(drawDebug);
 
 	basicRenderer.changeToAnimation();
-	this->sexyMan->draw(dt, 0);
-	currentPlayer->draw(dt, 0);
+	for (int i = 0; i < sexyMen.size(); i++)
+	{
+		this->sexyMen[i]->draw();
+	}
+	currentPlayer->draw();
+
+	ltHandler.unbindSrv();
 
 	//Render fresnel objects
 	basicRenderer.fresnelPrePass(this->camera);

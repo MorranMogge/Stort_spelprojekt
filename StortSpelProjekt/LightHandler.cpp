@@ -395,7 +395,7 @@ void LightHandler::drawShadows(const int& lightIndex, const std::vector<Player*>
 	//Draw Objects
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		gameObjects[i]->draw(0,0);
+		gameObjects[i]->draw();
 	}
 
 	//Unbind render targets & Depth Stencil

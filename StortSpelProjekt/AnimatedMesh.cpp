@@ -10,25 +10,25 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 
 	if (MySimp.boneNameToIndex.find(node.nodeName) != MySimp.boneNameToIndex.end())
 	{
-		animationNode an = this->MySimp.animation[animationIndex];
+		animationNode& an = this->MySimp.animation[animationIndex];
+		animationNode& basic = this->MySimp.animation[0];
 
 		DirectX::XMMATRIX currentNodeTrans = DirectX::XMLoadFloat4x4(&node.trasformation);
 		channels amnNode;
-
-
-
+		channels originalPose;
+		this->findNodeAnim(node.nodeName, basic, originalPose);
 		if (this->findNodeAnim(node.nodeName, an, amnNode))
 		{
 			DirectX::XMFLOAT3 Scaling;
-			this->InterpolateScaling(Scaling, animationTime, amnNode);
+			this->InterpolateScaling(Scaling, animationTime, amnNode, originalPose);
 			DirectX::XMMATRIX ScalingM = DirectX::XMMatrixScaling(Scaling.x, Scaling.y, Scaling.z);
 
 			DirectX::XMFLOAT4 r;
-			this->InterpolateRotation(r, animationTime, amnNode);
+			this->InterpolateRotation(r, animationTime, amnNode, originalPose);
 			DirectX::XMMATRIX RotationM = DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorSet(r.x, r.y, r.z, r.w));
 
 			DirectX::XMFLOAT3 Translation;
-			this->InterpolatePos(Translation, animationTime, amnNode);
+			this->InterpolatePos(Translation, animationTime, amnNode, originalPose);
 			DirectX::XMMATRIX TranslationM = DirectX::XMMatrixTranslation(Translation.x, Translation.y, Translation.z);
 
 			currentNodeTrans = DirectX::XMMatrixIdentity();
@@ -55,7 +55,7 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 		finalTransfrom = parentTrasform;
 	}
 
-	for (int i = 0, end = node.children.size(); i < end; i++)
+	for (int i = 0, end = (int)node.children.size(); i < end; i++)
 	{
 
 		uppdateMatrices(animationIndex, animationTime, node.children[i], finalTransfrom);
@@ -64,7 +64,7 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 
 void AnimatedMesh::findlowRotationNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm)
 {
-	for (int i = 0, end = nodeAnm.rotKeyFrame.size() - 1; i < end; i++)
+	for (int i = 0, end = (int)nodeAnm.rotKeyFrame.size() - 1; i < end; i++)
 	{
 		if (AnimationTimeTicks < nodeAnm.rotKeyFrame[i + 1].Time)
 		{
@@ -76,8 +76,13 @@ void AnimatedMesh::findlowRotationNode(int& out, const float& AnimationTimeTicks
 	return;
 }
 
-void AnimatedMesh::InterpolateRotation(DirectX::XMFLOAT4& res, float animationTime, const channels& animationNode)
+void AnimatedMesh::InterpolateRotation(DirectX::XMFLOAT4& res, float animationTime, const channels& animationNode, const channels& target)
 {
+	double t1;
+	double t2;
+	DirectX::XMVECTOR start = {};
+	DirectX::XMVECTOR end = {};
+	double factor;
 	if (animationNode.rotKeyFrame.size() == 1)
 	{
 		res = animationNode.rotKeyFrame[0].Value;
@@ -86,24 +91,34 @@ void AnimatedMesh::InterpolateRotation(DirectX::XMFLOAT4& res, float animationTi
 	int lowRotaKey = 0;
 	this->findlowRotationNode(lowRotaKey, animationTime, animationNode);
 	//new
-		res = animationNode.rotKeyFrame[lowRotaKey].Value;
-		return;
+		//res = animationNode.rotKeyFrame[lowRotaKey].Value;
+		//return;
 	//end new
 	int nextRotation = lowRotaKey + 1;
-	float t1 = animationNode.rotKeyFrame[lowRotaKey].Time;
-	float t2 = animationNode.rotKeyFrame[nextRotation].Time;
+	t1 = animationNode.rotKeyFrame[lowRotaKey].Time;
+	start = DirectX::XMLoadFloat4(&animationNode.rotKeyFrame[lowRotaKey].Value);
+	if (!this->returning)
+	{
+		t2 = animationNode.rotKeyFrame[nextRotation].Time;
+		end = DirectX::XMLoadFloat4(&animationNode.rotKeyFrame[nextRotation].Value);
+		factor = (animationTime - t1) / (t2 - t1);
+	}
+	else
+	{
+		t2 = t1;
+		t1 = target.rotKeyFrame[0].Time;
+		end = DirectX::XMLoadFloat4(&target.rotKeyFrame[0].Value);
+		factor = this->oldTime;
+	}
 
-	float factor = (animationTime - t1) / (t2 - t1);
-	const DirectX::XMVECTOR& start = DirectX::XMLoadFloat4(&animationNode.rotKeyFrame[lowRotaKey].Value);
-	const DirectX::XMVECTOR& end = DirectX::XMLoadFloat4(&animationNode.rotKeyFrame[nextRotation].Value);
-	DirectX::XMVECTOR vectorRez = DirectX::XMVectorLerp(start, end, factor);
+	DirectX::XMVECTOR vectorRez = DirectX::XMVectorLerp(start, end, (float)factor);
 	vectorRez = DirectX::XMVector4Normalize(start);
 	DirectX::XMStoreFloat4(&res, vectorRez);
 }
 
 void AnimatedMesh::findlowScaleNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm)
 {
-	for (int i = 0, end = nodeAnm.scalKeyFrames.size() - 1; i < end; i++)
+	for (int i = 0, end = (int)nodeAnm.scalKeyFrames.size() - 1; i < end; i++)
 	{
 		if (AnimationTimeTicks < nodeAnm.scalKeyFrames[i + 1].Time)
 		{
@@ -115,8 +130,13 @@ void AnimatedMesh::findlowScaleNode(int& out, const float& AnimationTimeTicks, c
 	return;
 }
 
-void AnimatedMesh::InterpolateScaling(DirectX::XMFLOAT3& res, float animationTime, const channels& animationNode)
+void AnimatedMesh::InterpolateScaling(DirectX::XMFLOAT3& res, float animationTime, const channels& animationNode, const channels& target)
 {
+	double t1;
+	double t2;
+	DirectX::XMVECTOR start = {};
+	DirectX::XMVECTOR end = {};
+	double factor;
 	if (animationNode.scalKeyFrames.size() == 1)
 	{
 		res = animationNode.scalKeyFrames[0].Value;
@@ -125,24 +145,34 @@ void AnimatedMesh::InterpolateScaling(DirectX::XMFLOAT3& res, float animationTim
 	int lowRotaKey = 0;
 	this->findlowScaleNode(lowRotaKey, animationTime, animationNode);
 	//new
-		res = animationNode.scalKeyFrames[lowRotaKey].Value;
-		return;
+		//res = animationNode.scalKeyFrames[lowRotaKey].Value;
+		//return;
 	//end new
 	int nextRotation = lowRotaKey + 1;
-	float t1 = animationNode.scalKeyFrames[lowRotaKey].Time;
-	float t2 = animationNode.scalKeyFrames[nextRotation].Time;
+	t1 = animationNode.scalKeyFrames[lowRotaKey].Time;
+	start = DirectX::XMLoadFloat3(&animationNode.scalKeyFrames[lowRotaKey].Value);
+	if (!this->returning)
+	{
+		t2 = animationNode.scalKeyFrames[nextRotation].Time;
+		end = DirectX::XMLoadFloat3(&animationNode.scalKeyFrames[nextRotation].Value);
+		factor = (animationTime - t1) / (t2 - t1);
+	}
+	else
+	{
+		t2 = t1;
+		t1 = target.scalKeyFrames[0].Time;
+		end = DirectX::XMLoadFloat3(&target.scalKeyFrames[0].Value);
+		factor = this->oldTime;
+	}
 
-	float factor = (animationTime - t1) / (t2 - t1);
-	const DirectX::XMVECTOR& start = DirectX::XMLoadFloat3(&animationNode.scalKeyFrames[lowRotaKey].Value);
-	const DirectX::XMVECTOR& end = DirectX::XMLoadFloat3(&animationNode.scalKeyFrames[nextRotation].Value);
-	//res = start + factor * (end-start);
-	DirectX::XMVECTOR vectorRez = DirectX::XMVectorLerp(start, end, factor);
+	DirectX::XMVECTOR vectorRez = DirectX::XMVectorLerp(start, end, (float) factor);
+	//vectorRez = DirectX::XMVector3Normalize(start);
 	DirectX::XMStoreFloat3(&res, vectorRez);
 }
 
 void AnimatedMesh::findlowPosNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm)
 {
-	for (int i = 0, end = nodeAnm.posKeyFrames.size() - 1; i < end; i++)
+	for (int i = 0, end = (int)nodeAnm.posKeyFrames.size() - 1; i < end; i++)
 	{
 		if (AnimationTimeTicks < nodeAnm.posKeyFrames[i + 1].Time)
 		{
@@ -154,8 +184,13 @@ void AnimatedMesh::findlowPosNode(int& out, const float& AnimationTimeTicks, con
 	return;
 }
 
-void AnimatedMesh::InterpolatePos(DirectX::XMFLOAT3& res, float animationTime, const channels& animationNode)
+void AnimatedMesh::InterpolatePos(DirectX::XMFLOAT3& res, float animationTime, const channels& animationNode, const channels& target)
 {
+	double t1;
+	double t2;
+	DirectX::XMVECTOR start = {};
+	DirectX::XMVECTOR end = {};
+	double factor;
 	if (animationNode.posKeyFrames.size() == 1)
 	{
 		res = animationNode.posKeyFrames[0].Value;
@@ -164,25 +199,34 @@ void AnimatedMesh::InterpolatePos(DirectX::XMFLOAT3& res, float animationTime, c
 	int lowRotaKey = 0;
 	this->findlowPosNode(lowRotaKey, animationTime, animationNode);
 	//new
-		res = animationNode.posKeyFrames[lowRotaKey].Value;
-		return;
+		//res = animationNode.posKeyFrames[lowRotaKey].Value;
+		//return;
 	//end new
 	int nextRotation = lowRotaKey + 1;
-	float t1 = animationNode.posKeyFrames[lowRotaKey].Time;
-	float t2 = animationNode.posKeyFrames[nextRotation].Time;
+	t1 = animationNode.posKeyFrames[lowRotaKey].Time;
+	start = DirectX::XMLoadFloat3(&animationNode.posKeyFrames[lowRotaKey].Value);
+	if (!this->returning)
+	{
+		t2 = animationNode.posKeyFrames[nextRotation].Time;
+		end = DirectX::XMLoadFloat3(&animationNode.posKeyFrames[nextRotation].Value);
+		factor = (animationTime - t1) / (t2 - t1);
+	}
+	else
+	{
+		t2 = t1;
+		t1 = target.posKeyFrames[0].Time;
+		end = DirectX::XMLoadFloat3(&target.posKeyFrames[0].Value);
+		factor = this->oldTime;
+	}
 
-	float factor = (animationTime - t1) / (t2 - t1);
-	const DirectX::XMVECTOR& start = DirectX::XMLoadFloat3(&animationNode.posKeyFrames[lowRotaKey].Value);
-	const DirectX::XMVECTOR& end = DirectX::XMLoadFloat3(&animationNode.posKeyFrames[nextRotation].Value);
-	//res = start + factor * (end-start);
-	DirectX::XMVECTOR vectorRez = DirectX::XMVectorLerp(start, end, factor);
-	//vectorRez = DirectX::XMVector4Normalize(vectorRez);
-	DirectX::XMStoreFloat3(&res, start);
+	DirectX::XMVECTOR vectorRez = DirectX::XMVectorLerp(start, end, (float) factor);
+	//vectorRez = DirectX::XMVector3Normalize(start);
+	DirectX::XMStoreFloat3(&res, vectorRez);
 }
 
-bool AnimatedMesh::findNodeAnim(const std::string& nodeName,  const animationNode pAnimation, channels& res)
+bool AnimatedMesh::findNodeAnim(const std::string& nodeName, const animationNode& pAnimation, channels& res)
 {
-	for (int i = 0, end = pAnimation.mChannels.size(); i < end; i++)
+	for (int i = 0, end = (int)pAnimation.mChannels.size(); i < end; i++)
 	{
 		if (pAnimation.mChannels[i].mNodeName == nodeName)
 		{
@@ -195,58 +239,31 @@ bool AnimatedMesh::findNodeAnim(const std::string& nodeName,  const animationNod
 
 void AnimatedMesh::getTimeInTicks(const float& dt, const unsigned& animationIndex)
 {
-	this->totalTime += dt;
-	float tps = MySimp.animation[0].ticksPerSecond;
+	double tps = MySimp.animation[0].ticksPerSecond;
 	if (tps == 0)
 	{
 		tps = 25.f;
 	}
-	float timeInTicks = totalTime * tps;
+	double timeInTicks = totalTime * tps;
 	if (timeInTicks >= MySimp.animation[0].duration)
 	{
 		timeInTicks -= MySimp.animation[0].duration;
 		totalTime = 0;
-		lastFramesTick = -1;
-	}
-	int wholeNumner = (int)timeInTicks;
-	if (wholeNumner != lastFramesTick)
-	{
-		//std::cout << "new Tick, last was: " << lastFramesTick << " new tick is: " << wholeNumner << std::endl;
-		lastFramesTick = wholeNumner;
-	}
-	else
-	{
-		std::cout << "old tick" << std::endl;
-		return;
 	}
 
 	DirectX::XMFLOAT4X4 startMatrix;
 	DirectX::XMMATRIX temp = DirectX::XMMatrixIdentity();
 	DirectX::XMStoreFloat4x4(&startMatrix, temp);
-	this->uppdateMatrices(animationIndex, timeInTicks, MySimp.rootNode, startMatrix);
+	this->uppdateMatrices(animationIndex, (float)timeInTicks, MySimp.rootNode, startMatrix);
 }
 
 AnimatedMesh::AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field)
 	:GameObject(useMesh, pos, rot, id, field)
 {
 	this->totalTime = 0;
-	lastFramesTick = -1;
-	this->setScale(DirectX::XMFLOAT3(5, 5, 5));
-	this->updateBuffer();
-	//strucBuff.Initialize(GPU::device, GPU::immediateContext, finalTransforms);
-	///();
-}
-
-AnimatedMesh::AnimatedMesh(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id)
-	:GameObject(objectPath, pos, rot, id)
-{
-	//strucBuff.Initialize(GPU::device, GPU::immediateContext, finalTransforms);
-
-}
-
-AnimatedMesh::AnimatedMesh()
-{
-	//strucBuff.Initialize(GPU::device, GPU::immediateContext, finalTransforms);
+	oldAnimId = 0;
+	oldTime = 0;
+	returning = false;
 }
 
 AnimatedMesh::~AnimatedMesh()
@@ -266,23 +283,48 @@ void AnimatedMesh::addData(const AnimationData& data)
 		tempfloatvec.push_back(identityFloat);
 	}
 	strucBuff.Initialize(GPU::device, GPU::immediateContext, tempfloatvec);
-
-	//std::vector<DirectX::XMFLOAT4X4> structVector(boneVector.size());
-	//this->boneStrucBuf.Initialize(GPU::device, GPU::immediateContext, structVector);
 }
 
-void AnimatedMesh::draw(const float& dt, const unsigned& animationIndex)
+void AnimatedMesh::updateAnim(const float& dt, const unsigned& animIndex, float animationSpeed)
 {
-	if (this->MySimp.animation.size() <= animationIndex)
+	if (this->MySimp.animation.size() <= animIndex)
 	{
 		ErrorLog::Log("Invalid Animation Id!");
 		return;
 	}
-	DirectX::XMFLOAT4X4 identityFloat;
-	DirectX::XMStoreFloat4x4(&identityFloat, DirectX::XMMatrixIdentity());
-	this->getTimeInTicks(dt, animationIndex);
+	if (GetAsyncKeyState('W') || GetAsyncKeyState('A') || GetAsyncKeyState('S') || GetAsyncKeyState('D') || GetAsyncKeyState(' '))
+	{
+		this->totalTime += dt;
+		returning = false;
+		DirectX::XMFLOAT4X4 identityFloat;
+		DirectX::XMStoreFloat4x4(&identityFloat, DirectX::XMMatrixIdentity());
+		float AnimTime = dt * animationSpeed;
+		this->getTimeInTicks(AnimTime, animIndex);
+		oldAnimId = animIndex;
+	}
+	else
+	{
+		if (!returning)
+		{
+			returning = true;
+			this->oldTime = 1.0f;
+		}
+		else if (oldTime <= 0)
+		{
+			returning = false;
+		}
+		float timeOffset = dt * 4;
+		oldTime -= timeOffset;
+		if (oldTime <= 0)
+		{
+			oldTime = 0;
+		}
+	}
+}
+
+void AnimatedMesh::draw()
+{
 	strucBuff.applyData();
 	strucBuff.BindToVS(0);
-
 	this->tmpDraw(sizeof(AnimatedVertex));
 }

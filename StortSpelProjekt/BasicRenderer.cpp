@@ -283,6 +283,10 @@ void BasicRenderer::setUpScene()
 
 void BasicRenderer::changeToAnimation()
 {
+	immediateContext->RSSetState(shadowRastirizer);
+	immediateContext->PSSetSamplers(1, 1, &shadowSampler);
+	immediateContext->PSSetShader(pShader, nullptr, 0);
+	immediateContext->PSSetSamplers(0, 1, &sampler);
 	immediateContext->IASetInputLayout(this->animLayout);
 	immediateContext->VSSetShader(this->vShaderAnim, nullptr, 0);
 }

@@ -39,7 +39,7 @@ struct nodes
 {
 	std::vector<nodes> children;
 	std::string nodeName;
-	DirectX::XMFLOAT4X4 trasformation;
+	DirectX::XMFLOAT4X4 trasformation = {};
 };
 
 struct float3KeyFrame
@@ -87,11 +87,11 @@ struct AnimationData
 {	
 	nodes rootNode;
 	std::vector<animationNode> animation;
-	std::map<std::string, int> boneNameToIndex;
+	std::unordered_map<std::string, int> boneNameToIndex;
 	std::vector<boneInfo> boneVector;
 	std::vector<IndexBoneData> boneDataVec;
 	StructuredBuffer<DirectX::XMFLOAT4X4> boneStrucBuf;
-	DirectX::XMFLOAT4X4 globalInverseTransform;
+	DirectX::XMFLOAT4X4 globalInverseTransform = {};
 };
 
 class AnimatedMesh : public GameObject
@@ -104,35 +104,38 @@ private:
 	StructuredBuffer<DirectX::XMFLOAT4X4> strucBuff;
 
 	float totalTime;
-	int lastFramesTick;
 
 	void uppdateMatrices(int animationIndex, float animationTime, const nodes& node, DirectX::XMFLOAT4X4& parentTrasform);
+	void returnMatrices(int animationIndex, float animationTime, const nodes& node, DirectX::XMFLOAT4X4& parentTrasform);
 
 	void findlowRotationNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm);
-	void InterpolateRotation(DirectX::XMFLOAT4& res, float animationTime, const channels& animationNode);
+	void InterpolateRotation(DirectX::XMFLOAT4& res, float animationTime, const channels& animationNode, const channels& target);
 
 	void findlowScaleNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm);
-	void InterpolateScaling(DirectX::XMFLOAT3& res, float animationTime, const channels& animationNode);
+	void InterpolateScaling(DirectX::XMFLOAT3& res, float animationTime, const channels& animationNode, const channels& target);
 
 	void findlowPosNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm);
-	void InterpolatePos(DirectX::XMFLOAT3& res, float animationTime, const channels& animationNode);
+	void InterpolatePos(DirectX::XMFLOAT3& res, float animationTime, const channels& animationNode, const channels& target);
 
 	//const aiNodeAnim* findNodeAnim(const std::string& nodeName, const aiAnimation* pAnimation);
-	bool findNodeAnim(const std::string& nodeName, const animationNode pAnimation, channels& res);
+	bool findNodeAnim(const std::string& nodeName, const animationNode& pAnimation, channels& res);
 
 	void getTimeInTicks(const float& dt, const unsigned& animationIndex);
+	void returnToBind();
 
-	// forbidden code
+	bool returning;
+	float oldTime;
+	int oldAnimId;
 
 public:
 	AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field = nullptr);
-	AnimatedMesh(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
-	AnimatedMesh(ID3D11Buffer* vertexBuff, ID3D11Buffer* indexBuff, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertices);
-	AnimatedMesh();
+	//AnimatedMesh(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
+	//AnimatedMesh(ID3D11Buffer* vertexBuff, ID3D11Buffer* indexBuff, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertices);
+	//AnimatedMesh();
 	~AnimatedMesh();
 
 
 	void addData(const AnimationData& data);
-
-	void draw(const float& dt, const unsigned& animIndex);
+	void updateAnim(const float& dt, const unsigned& animIndex, float animationSpeed = 1.0f);
+	void draw();
 };

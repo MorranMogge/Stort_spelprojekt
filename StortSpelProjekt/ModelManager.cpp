@@ -125,9 +125,8 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 			vertex.pos.y = mesh->mVertices[i].y;
 			vertex.pos.z = mesh->mVertices[i].z;
 
-			vertex.nor.x = mesh->mNormals[i].x;
-			vertex.nor.y = mesh->mNormals[i].y;
-			vertex.nor.z = mesh->mNormals[i].z;
+			mesh->mNormals->Normalize();
+			vertex.nor = DirectX::XMFLOAT3(mesh->mNormals->x, mesh->mNormals->y, mesh->mNormals->z);
 
 			if (mesh->mTextureCoords[0])
 			{
@@ -257,7 +256,7 @@ static unsigned int vertex_index_min = 999999999;
 static unsigned int vertex_index_max = 0;
 void ModelManager::loadBones(const aiMesh* mesh, const int vertexOffset)
 {
-	for (int i = 0; i < mesh->mNumBones; i++)
+	for (unsigned i = 0; i < mesh->mNumBones; i++)
 	{
 		std::string boneName = (mesh->mBones[i]->mName.data);
 		int bone_ID = this->findAndAddBoneID(boneName);
@@ -271,7 +270,7 @@ void ModelManager::loadBones(const aiMesh* mesh, const int vertexOffset)
 			this->aniData.boneVector.push_back(bi);
 		}
 
-		for (int j = 0; j < mesh->mBones[i]->mNumWeights; j++)
+		for (unsigned j = 0; j < mesh->mBones[i]->mNumWeights; j++)
 		{
 			int vId = mesh->mBones[i]->mWeights[j].mVertexId;
 			vId += vertexOffset;
@@ -294,7 +293,7 @@ int ModelManager::findAndAddBoneID(const std::string& name)
 
 	if (this->aniData.boneNameToIndex.find(boneName) == this->aniData.boneNameToIndex.end())
 	{
-		bone_ID = this->aniData.boneNameToIndex.size();
+		bone_ID = (int)this->aniData.boneNameToIndex.size();
 		this->aniData.boneNameToIndex.insert(std::pair<std::string, int>(boneName, bone_ID));
 	}
 	else
@@ -505,7 +504,8 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 	}
 
 	Assimp::Importer importer;
-	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate);
+	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
+	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
 
 	if (pScene == nullptr)
 	{

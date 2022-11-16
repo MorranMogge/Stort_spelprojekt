@@ -82,7 +82,6 @@ void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, bool& landingMinig
 
 			ImGui::Checkbox("Draw collision boxes", &wireframe);
 			ImGui::Checkbox("Draw objects", &drawObjects);
-			ImGui::ColorEdit3("Wireframe colour", wClr);
 
 			if (ImGui::Button("vram Usage"))
 			{

@@ -19,7 +19,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	this->packetEventManager = new PacketEventManager();
 	//m�ste raderas******************
-	client = new Client("192.168.43.244");
+	client = new Client("192.168.43.251");
 	circularBuffer = client->getCircularBuffer();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -54,7 +54,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			
 			if (playerId != i)
 			{
-				tmpPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, client, (int)(dude < i + 1), planetGravityField);
+				tmpPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, i, client, (int)(dude < i + 1), planetGravityField);
 				tmpPlayer->setOnlineID(i);
 				physWolrd.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
@@ -62,7 +62,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			else
 			{
 				std::cout << "Player online id: " << std::to_string(i) << " \n";
-				currentPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, (int)(dude < i + 1), planetGravityField);
+				currentPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, playerId, client, (int)(dude < i + 1), planetGravityField);
 				currentPlayer->setOnlineID(i);
 				players.push_back(currentPlayer);
 				delete tmpPlayer;
@@ -207,7 +207,7 @@ void Game::loadObjects()
 
 
 
-	if (!currentPlayer) { currentPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client, 0, planetGravityField); players.emplace_back(currentPlayer); }
+	if (!currentPlayer) { currentPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client->getPlayerId(), client, 0, planetGravityField); players.emplace_back(currentPlayer); }
 	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
 	gameObjects.emplace_back(currentPlayer);
@@ -243,6 +243,11 @@ void Game::drawObjects(bool drawDebug)
 	{
 		if (gameObjects[i] == currentPlayer) continue;
 		else gameObjects[i]->draw();
+	}
+
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		onlineItems[i]->draw();
 	}
 	currentPlayer->updateBuffer();
 	currentPlayer->draw();
@@ -421,10 +426,17 @@ GAMESTATE Game::Update()
 	currentPlayer->velocityMove(dt);
 
 	//Check component pickup
-	for (int i = 0; i < components.size(); i++)
+	if (!IFONLINE)
 	{
-		if (currentPlayer->pickupItem(components[i])) break;
+		for (int i = 0; i < components.size(); i++)
+		{
+			if (currentPlayer->pickupItem(components[i])) break;
+		}
 	}
+	//Check component pickup
+
+	currentPlayer->requestingPickUpItem(onlineItems);
+	
 	//Check item pickup
 	for (int i = 0; i < items.size(); i++)
 	{

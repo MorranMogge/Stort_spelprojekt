@@ -127,7 +127,6 @@ public:
 	void drawParticles();
 	virtual void draw() override;
 	void update();
-	void setTeam(const int& team);
 	void requestingPickUpItem(const std::vector<Item*>& items);
 
 	

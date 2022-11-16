@@ -511,7 +511,7 @@ int main()
 		
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
 		{
-			SpawnComponent cData = SpawnOneComponent(components);
+			SpawnComponent cData = SpawnOneComponent(components, spaceShipPos);
 			physWorld.addPhysComponent(components[components.size() - 1]);
 			components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
 			components[components.size() - 1].setOnlineId(componentIdCounter++);

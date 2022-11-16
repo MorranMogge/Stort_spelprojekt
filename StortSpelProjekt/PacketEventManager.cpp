@@ -68,11 +68,11 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::COMPONENTPOSITION:
 
 			compData = circularBuffer->readData<ComponentData>();
-			for (int i = 0; i < onlineItems.size(); i++)
+			for (int i = 0; i < componentVector.size(); i++)
 			{
-				if (onlineItems[i]->getOnlineId() == compData->ComponentId)
+				if (componentVector[i]->getOnlineId() == compData->ComponentId)
 				{
-					onlineItems[i]->setPos(DirectX::XMFLOAT3(compData->x, compData->y, compData->z));
+					componentVector[i]->setPos(DirectX::XMFLOAT3(compData->x, compData->y, compData->z));
 					//onlineItems[i]->getPhysComp()->setRotation(compData->quat);
 				}
 			}
@@ -86,9 +86,9 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			newComponent = new Component(meshes[5], DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 				COMPONENT, spawnComp->ComponentId, field);
 			physWorld.addPhysComponent(newComponent);
-			//componentVector.push_back(newComponent);
-			//gameObjects.push_back(newComponent);
 			onlineItems.push_back(newComponent);
+			//gameObjects.push_back(newComponent);
+			//componentVector.push_back(newComponent);
  			std::cout << "Sucessfully recieved component from server: " << std::to_string(spawnComp->ComponentId) << std::endl;
 			break;
 		
@@ -132,12 +132,12 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::ITEMPOSITION:
 			itemPosData = circularBuffer->readData<itemPosition>();
 			//std::cout << "item pos, item id: " << std::to_string(itemPosData->itemId) << std::endl;
-			for (int i = 0; i < onlineItems.size(); i++)
+			for (int i = 0; i < componentVector.size(); i++)
 			{
-				//std::cout << "vector item id: " << std::to_string(onlineItems[i]->getOnlineId()) << ", recv Data itemid: " << std::to_string(itemPosData->itemId) << std::endl;
-				if (onlineItems[i]->getOnlineId() == itemPosData->itemId)
+				//std::cout << "vector item id: " << std::to_string(componentVector[i]->getOnlineId()) << ", recv Data itemid: " << std::to_string(itemPosData->itemId) << std::endl;
+				if (componentVector[i]->getOnlineId() == itemPosData->itemId)
 				{
-					onlineItems[i]->setPos(DirectX::XMFLOAT3(itemPosData->x, itemPosData->y, itemPosData->z));
+					componentVector[i]->setPos(DirectX::XMFLOAT3(itemPosData->x, itemPosData->y, itemPosData->z));
 					break;
 				}
 
@@ -233,7 +233,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", pos x: " << std::to_string(cmpPosition->x)
 						<< ", y: " << std::to_string(cmpPosition->y) << std::endl;
 					onlineItems[i]->setPos(DirectX::XMFLOAT3(cmpPosition->x, cmpPosition->y, cmpPosition->z));
-					//onlineItems[i]->getPhysComp()->setRotation(cmpPosition->quat);
+					//componentVector[i]->getPhysComp()->setRotation(cmpPosition->quat);
 				}
 			}
 			

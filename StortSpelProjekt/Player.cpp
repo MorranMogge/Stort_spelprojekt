@@ -18,7 +18,10 @@ void Player::throwItem()
 	c.componentId = this->holdingItem->getOnlineId();
 	c.packetId = PacketType::COMPONENTDROPPED;
 	//sending data to server
-	client->sendStuff<ComponentDropped>(c);
+	if (client != nullptr)
+	{
+		client->sendStuff<ComponentDropped>(c);
+	}
 
 	//Calculate the force vector
 	DirectX::XMFLOAT3 temp;

@@ -24,17 +24,18 @@ void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Play
 
 	
 	//holds a component
-	if (currentPlayer->getItemOnlineType() == 0)
-	{
-		ComponentData c;
-		c.ComponentId = currentPlayer->getItemOnlineId();
-		c.inUseBy = client->getPlayerId();
-		c.packetId = PacketType::COMPONENTPOSITION;
-		c.x = currentPlayer->getPos().x;
-		c.y = currentPlayer->getPos().y;
-		c.z = currentPlayer->getPos().z;
-		client->sendStuff<ComponentData>(c);
-	}
+	//if (currentPlayer->getItemOnlineType() == 0)
+	//{
+	//	std::cout << "sent compData\n";
+	//	ComponentData c;
+	//	c.ComponentId = currentPlayer->getItemOnlineId();
+	//	c.inUseBy = client->getPlayerId();
+	//	c.packetId = PacketType::COMPONENTPOSITION;
+	//	c.x = currentPlayer->getPos().x;
+	//	c.y = currentPlayer->getPos().y;
+	//	c.z = currentPlayer->getPos().z;
+	//	client->sendStuff<ComponentData>(c);
+	//}
 		//hitta current players item och bara skicka den dattan ****************************************
 		//currentPlayer->
 		//only sends component data if the player is holding the item

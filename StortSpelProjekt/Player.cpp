@@ -13,16 +13,15 @@ using namespace DirectX;
 void Player::throwItem()
 {
 	//allocates data to be sent
-	ComponentData c;
-	c.ComponentId = this->getItemOnlineId();
-	std::cout << "Item: " << c.ComponentId << "\n";
-	c.inUseBy = -1;
-	c.packetId = PacketType::COMPONENTPOSITION;
-	c.x = this->getPos().x;
-	c.y = this->getPos().y;
-	c.z = this->getPos().z;
+	ComponentDropped c;
+	std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
+	c.componentId = this->holdingItem->getOnlineId();
+	c.packetId = PacketType::COMPONENTDROPPED;
 	//sending data to server
-	client->sendStuff<ComponentData>(c);
+	if (client != nullptr)
+	{
+		client->sendStuff<ComponentDropped>(c);
+	}
 
 	//Calculate the force vector
 	DirectX::XMFLOAT3 temp;
@@ -68,19 +67,28 @@ void Player::handleItems()
 	//Use the Item
 	else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
 	{
-		//allocates data to be sent
-		ComponentData c;
-		c.ComponentId = this->getItemOnlineId();
-		c.inUseBy = -1;
-		c.packetId = PacketType::COMPONENTPOSITION;
-		c.x = this->getPos().x;
-		c.y = this->getPos().y;
-		c.z = this->getPos().z;
+		////allocates data to be sent
+		//ComponentData c;
+		//c.ComponentId = this->getItemOnlineId();
+		//c.inUseBy = -1;
+		//c.packetId = PacketType::COMPONENTPOSITION;
+		//c.x = this->getPos().x;
+		//c.y = this->getPos().y;
+		//c.z = this->getPos().z;
 
+		////sending data to server
+		//client->sendStuff<ComponentData>(c);
+
+		//allocates data to be sent
+		ComponentDropped c;
+
+		std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
+		c.componentId = this->holdingItem->getOnlineId();
+		c.packetId = PacketType::COMPONENTDROPPED;
 		//sending data to server
 		if (this->client != nullptr)
 		{
-			client->sendStuff<ComponentData>(c);
+			client->sendStuff<ComponentDropped>(c);
 		}	
 
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -104,9 +112,10 @@ Player::~Player()
 	}
 }
 
-Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
-	:GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0), currentSpeed(0)
+Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team, GravityField* field)
+    :GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team), currentSpeed(0)
 {
+	this->onlineID = onlineId;
 	this->rotationMX = XMMatrixIdentity();
 	this->rotation = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -136,9 +145,10 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	}
 }
 
-Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
-	:GameObject(objectPath, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0), speed(25.f), currentSpeed(0)
+Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team, GravityField* field)
+	:GameObject(objectPath, pos, rot, id, field), holdingItem(nullptr), team(team), speed(25.f), currentSpeed(0)
 {
+	this->onlineID = onlineId;
 	this->client = client;
 	this->rotationMX = XMMatrixIdentity();
 	this->rotation = XMMatrixIdentity();
@@ -1077,6 +1087,44 @@ void Player::setTeam(const int& team)
 	case 1:
 		mesh->matKey[0] = "pintoBlue.png"; break;
 	}
+}
+
+void Player::requestingPickUpItem(const std::vector<Item*>& items)
+{
+	if (Input::KeyPress(KeyCode::E))
+	{
+		std::cout << "items.size = " << std::to_string(items.size()) << std::endl;
+		for (int i = 0; i < items.size(); i++)
+		{
+			if (this->withinRadius(items[i], 5))
+			{
+				//addItem(items[i]);
+
+				//holdingItem->getPhysComp()->getRigidBody()->resetForce();
+				//holdingItem->getPhysComp()->getRigidBody()->resetTorque();
+				//holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+
+				ComponentRequestingPickUp rqstCmpPickUp;
+				rqstCmpPickUp.componentId = items[i]->getOnlineId();
+				rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;
+				rqstCmpPickUp.playerId = this->getOnlineID();
+				std::cout << "requesting pickup componentId: " << std::to_string(rqstCmpPickUp.componentId) << std::endl;
+				//skickar en f�rfr�gan att plocka upp item
+				client->sendStuff<ComponentRequestingPickUp>(rqstCmpPickUp);
+				break;
+			}
+		}
+		
+	}
+}
+
+void Player::itemRecvFromServer(Item* item)
+{
+	addItem(item);
+
+	holdingItem->getPhysComp()->getRigidBody()->resetForce();
+	holdingItem->getPhysComp()->getRigidBody()->resetTorque();
+	holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 }
 
 bool Player::isHoldingComp()

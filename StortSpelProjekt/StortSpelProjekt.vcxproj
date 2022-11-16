@@ -220,6 +220,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerVectors.h" />
     <ClInclude Include="Potion.h" />
+    <ClInclude Include="Profiler.h" />
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderTargetView.h" />
     <ClInclude Include="SamplerState.h" />
@@ -248,7 +249,6 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="MemoryLeackChecker.h" />
     <ClInclude Include="Menu.h" />
-    <ClInclude Include="PackageTypes.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="State.h" />
@@ -345,6 +345,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerVectors.cpp" />
     <ClCompile Include="Potion.cpp" />
+    <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="SendingDataEvent.cpp" />
     <ClCompile Include="SettingsMenu.cpp" />
     <ClCompile Include="SettingsUI.cpp" />

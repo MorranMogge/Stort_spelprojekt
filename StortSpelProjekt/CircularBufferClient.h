@@ -2,7 +2,7 @@
 #include<iostream>
 #include<string>
 
-static const unsigned int SIZEOFBUFFER = 20000;
+static const unsigned int SIZEOFBUFFER = 200000;
 
 class CircularBufferClient
 {

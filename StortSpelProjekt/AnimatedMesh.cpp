@@ -294,6 +294,7 @@ void AnimatedMesh::updateAnim(const float& dt, const unsigned& animIndex, float 
 	}
 	if (GetAsyncKeyState('W') || GetAsyncKeyState('A') || GetAsyncKeyState('S') || GetAsyncKeyState('D') || GetAsyncKeyState(' '))
 	{
+		state = 1;
 		this->totalTime += dt;
 		returning = false;
 		DirectX::XMFLOAT4X4 identityFloat;
@@ -304,20 +305,27 @@ void AnimatedMesh::updateAnim(const float& dt, const unsigned& animIndex, float 
 	}
 	else
 	{
-		if (!returning)
+		if (state == 1)
 		{
 			returning = true;
+			state = 2;
 			this->oldTime = 1.0f;
 		}
 		else if (oldTime <= 0)
 		{
 			returning = false;
+			state = 0;
+			this->totalTime = 0;
 		}
 		float timeOffset = dt * 4;
 		oldTime -= timeOffset;
 		if (oldTime <= 0)
 		{
 			oldTime = 0;
+		}
+		if (state != 0)
+		{
+			this->getTimeInTicks(totalTime, animIndex);
 		}
 	}
 }

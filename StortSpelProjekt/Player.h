@@ -34,6 +34,8 @@ private:
 
 	//SFX
 	Sound pickUpSfx;
+	Sound walkingSound;
+	Sound playerHitSound;
 
 	//Status
 	int team;

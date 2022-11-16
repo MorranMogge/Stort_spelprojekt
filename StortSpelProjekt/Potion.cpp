@@ -5,6 +5,7 @@
 Potion::Potion(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
 	:Item(useMesh, pos, rot, id, onlineId, 1, field)
 {
+	sfx.load(L"../Sounds/powerUp.wav");
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 3);
 
@@ -38,6 +39,8 @@ Potion::~Potion()
 
 void Potion::useItem()
 {
+	sfx.stop();
+	sfx.play();
 	this->setPos({ -100, -100, -100 });
 	timeToRun = true;
 	timer.resetStartTime();

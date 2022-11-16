@@ -64,7 +64,7 @@ void Grenade::explode()
 	int iterations = (int)gameObjects.size();
 	for (int i = 0; i < iterations; i++)
 	{
-		if (gameObjects[i] == this) continue;
+		if (gameObjects[i] == this || gameObjects[i]->getPhysComp()->getType() == reactphysics3d::BodyType::STATIC) continue;
 		if (this->withinRadious(gameObjects[i], 25))
 		{
 			gameObjects[i]->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);

@@ -61,13 +61,15 @@ bool ModelDataContainer::getIndexMeshBuffers(const std::string key, ID3D11Buffer
 	return true;
 }
 
-ConstantBuffer* ModelDataContainer::getMaterial(const std::string& key, ConstantBuffer* constantBuff)
+ConstantBuffer* ModelDataContainer::getMaterial(const std::string& key, ConstantBuffer*& constantBuff)
 {
 	std::unordered_map<std::string, ConstantBuffer*>::iterator constantBuffIt;
 	constantBuffIt = constantBuffMap.find(key);
 	
-	if (this->constantBuffMap.find(key) != this->constantBuffMap.end())
+	if (constantBuffIt != this->constantBuffMap.end())
 	{
+		constantBuff = constantBuffMap[key];
+		return constantBuffIt->second;
 		return constantBuffMap[key];
 	}
 
@@ -91,6 +93,7 @@ bool ModelDataContainer::hasMaterial(const std::string& key)
 	constantBuffIt = this->constantBuffMap.find((const std::string)key);
 	if (constantBuffIt != this->constantBuffMap.end())
 	{
+		std::cout << "match in unordered map key: " << key << "\n";
 		return true;
 	}
 

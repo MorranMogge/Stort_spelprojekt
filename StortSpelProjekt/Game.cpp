@@ -67,6 +67,9 @@ void Game::loadObjects()
 	otherPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6);
 	otherPlayer->setSrv(manager.getSrv("playerTexture.png"));*/
 
+	ConstantBuffer* cbuff;
+	this->manager.getMaterialData("default", cbuff);
+
 	using namespace DirectX;
 	using namespace DirectX::SimpleMath;
 
@@ -79,7 +82,9 @@ void Game::loadObjects()
 	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	planet = new GameObject(tmpMesh, Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET,nullptr, XMFLOAT3(planetSize, planetSize, planetSize));
 	planet->setSrv(manager.getSrv("planetTexture.png"));
-
+	//planet->setMaterial(cbuff);
+	
+	
 
 	currentPlayer = new Player("../Meshes/pinto", Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, &planetGravityField);
 	
@@ -349,6 +354,18 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->manager.loadMeshData("../Meshes/goblin2.fbx");
 	
 
+	
+	//ConstantBuffer* cbuff = this->manager.getMaterialData("default", cbuff2);
+	
+	
+
+
+	
+
+	//cbuff->GetAddressOf();
+	//cbuff->Get();
+	int hej = 10;
+	//this->manager.getMaterialData()
 		
 	MaterialLibrary::LoadDefault();
 	MaterialLibrary::LoadMaterial("spaceshipTexture1.jpg");
@@ -586,6 +603,7 @@ void Game::Render()
 	this->currentPlayer->drawParticles();
 	basicRenderer.geometryUnbind();
 
+	ltHandler.unbindSrv();
 
 	//Render UI (needs to render last)
 	ui.Draw();

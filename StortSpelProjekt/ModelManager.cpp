@@ -88,6 +88,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		std::cout << name.C_Str() << "\n";
 		if (bank.hasMaterial(name.C_Str()) == false)
 		{
+			//ändra till dynamiskt eller 
 			MaterialS materialToAdd;
 			
 			material->Get(AI_MATKEY_COLOR_AMBIENT, color);
@@ -102,42 +103,47 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 			material->Get(AI_MATKEY_SHININESS, color);
 			//materialToAdd.specularPower = (float)(color.r + color.g + color.b);
 			materialToAdd.specularPower = (float)color.r;
-
 			ConstantBuffer cbuffer(&materialToAdd, sizeof(MaterialS));
+			
 			bank.addMaterial(name.C_Str(), &cbuffer);
 
-			ConstantBuffer* tmp = bank.getMaterial("default", nullptr);
-			tmp->GetAddressOf();
+
+			//testar
+			//ConstantBuffer* tmp = bank.getMaterial("default", nullptr);
+			//tmp->Get();
+			//tmp->GetAddressOf();
+			//tmp->BindToPS(0u);
 			
+
 		}
 		
 
 	
-		std::cout << name.C_Str() << "\n";
+		
 		material->Get(AI_MATKEY_COLOR_AMBIENT, color);
 
-		std::cout << "AMBIENT:\n" << color.r << "\n";
+		/*std::cout << "AMBIENT:\n" << color.r << "\n";
 		std::cout << color.g << "\n";
-		std::cout << color.b << "\n";
+		std::cout << color.b << "\n";*/
 
 		//få mat_key namn
 
 		material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 
-		std::cout << "DIFFUSE:\n" << color.r << "\n";
+		/*std::cout << "DIFFUSE:\n" << color.r << "\n";
 		std::cout << color.g << "\n";
-		std::cout << color.b << "\n";
+		std::cout << color.b << "\n";*/
 
 		material->Get(AI_MATKEY_COLOR_SPECULAR, color);
-		std::cout << "Specular:\n" << color.r << "\n";
+		/*std::cout << "Specular:\n" << color.r << "\n";
 		std::cout << color.g << "\n";
-		std::cout << color.b << "\n";
+		std::cout << color.b << "\n";*/
 
 
 		material->Get(AI_MATKEY_SHININESS, color);
-		std::cout << "Shinyness:\n" << color.r << "\n";
+		/*std::cout << "Shinyness:\n" << color.r << "\n";
 		std::cout << color.g << "\n";
-		std::cout << color.b << "\n";
+		std::cout << color.b << "\n";*/
 
 
 		
@@ -428,11 +434,12 @@ bool ModelManager::getMeshData(const std::string& filePath, ID3D11Buffer*& verte
 	return bank.getIndexMeshBuffers(filePath, indexBuffer, vertexBuffer, submeshRanges, amountOfVertces);
 }
 
-void ModelManager::getMaterialData(const std::string& filePath, ConstantBuffer*& constantBuff)
+ConstantBuffer* ModelManager::getMaterialData(const std::string& filePath, ConstantBuffer*& constantBuff)
 {
 	if (bank.hasItem(filePath))
 	{
-
+		return bank.getMaterial(filePath, constantBuff);
 	}
-		//bank.
+
+	return nullptr;
 }

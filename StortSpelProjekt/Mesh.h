@@ -293,7 +293,9 @@ public:
 			else
 				MaterialLibrary::textures["default_Specular.png"].BindToPS(2u);// default Specular
 
-			MaterialLibrary::materials[matKey[i]].BindToPS(0u);
+			//MaterialLibrary::materials[matKey[i]].BindToPS(0u);
+
+			
 
 			GPU::immediateContext->DrawIndexed(submeshVerCounts[i], currentVer, 0);
 			currentVer += submeshVerCounts[i];

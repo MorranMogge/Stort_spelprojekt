@@ -233,9 +233,9 @@ void BasicRenderer::setUpScene()
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 
 	//Unbind shadowmap & structuredBuffer srv
-	ID3D11ShaderResourceView* nullRsv{ nullptr };
-	immediateContext->PSSetShaderResources(3, 1, &nullRsv);
-	immediateContext->PSSetShaderResources(4, 1, &nullRsv);
+	//ID3D11ShaderResourceView* nullRsv{ nullptr };
+	//immediateContext->PSSetShaderResources(3, 1, &nullRsv);
+	//immediateContext->PSSetShaderResources(4, 1, &nullRsv);
 }
 
 void BasicRenderer::setUpScene(Camera& stageCamera)
@@ -276,9 +276,9 @@ void BasicRenderer::setUpSceneNormalMap(Camera& stageCamera)
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 
 	//Unbind shadowmap & structuredBuffer srv
-	ID3D11ShaderResourceView* nullSRV{ nullptr };
-	immediateContext->PSSetShaderResources(3, 1, &nullSRV);
-	immediateContext->PSSetShaderResources(4, 1, &nullSRV);
+	//ID3D11ShaderResourceView* nullSRV{ nullptr };
+	//immediateContext->PSSetShaderResources(3, 1, &nullSRV);
+	//immediateContext->PSSetShaderResources(4, 1, &nullSRV);
 }
 
 void BasicRenderer::geometryPass(Camera& stageCamera)
@@ -311,6 +311,8 @@ void BasicRenderer::depthPrePass()
 
 void BasicRenderer::depthUnbind()
 {
+	//ID3D11RenderTargetView* nullRTV{ nullptr };
+	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
 	immediateContext->PSSetShader(pShader, nullptr, 0);

@@ -14,5 +14,6 @@ public:
 	virtual ~Potion();
 
 	virtual void useItem() override;
-	bool isTimeToRun();
+	bool isTimeToRun() const;
+	bool timerGoing();
 };

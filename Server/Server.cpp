@@ -491,6 +491,8 @@ int main()
 					components[i].setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
 				}
 			}
+			//std::cout << "component in useBy: " << std::to_string(components[i].getInUseById()) << std::endl;
+			
 			//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
 		}
 

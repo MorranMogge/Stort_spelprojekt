@@ -77,9 +77,6 @@
     <ClCompile Include="WindowHelper.cpp">
       <Filter>Handler/Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="Credits.cpp">
-      <Filter>Game-States</Filter>
-    </ClCompile>
     <ClCompile Include="SettingsUI.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
@@ -144,7 +141,7 @@
     <ClCompile Include="Component.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="GuiHandler.cpp">
+    <ClCompile Include="MenuUI.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="LoseUI.cpp">
@@ -153,18 +150,13 @@
     <ClCompile Include="LoseMenu.cpp">
       <Filter>Game-States</Filter>
     </ClCompile>
-    <ClCompile Include="Profiler.cpp" />
-    <ClCompile Include="Client.cpp">
-      <Filter>Online</Filter>
-    </ClCompile>
-    <ClCompile Include="CircularBufferClient.cpp">
-      <Filter>Online</Filter>
-    </ClCompile>
-    <ClCompile Include="PacketEventManager.cpp">
-      <Filter>Online</Filter>
-    </ClCompile>
-    <ClCompile Include="SendingDataEvent.cpp">
-      <Filter>Online</Filter>
+    <ClCompile Include="Asteroid.cpp" />
+    <ClCompile Include="AsteroidHandler.cpp" />
+    <ClCompile Include="Arrow.cpp" />
+    <ClCompile Include="PlanetGenerator.cpp" />
+    <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="Credits.cpp">
+      <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -258,9 +250,6 @@
     </ClInclude>
     <ClInclude Include="WindowHelper.h">
       <Filter>Handler/Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Credits.h">
-      <Filter>Game-States</Filter>
     </ClInclude>
     <ClInclude Include="SettingsUI.h">
       <Filter>GUI</Filter>
@@ -428,7 +417,7 @@
     <ClInclude Include="Component.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="GuiHandler.h">
+    <ClInclude Include="MenuUI.h">
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="LoseUI.h">
@@ -559,6 +548,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Bilboard_VS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Fresnel_PS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

@@ -7,9 +7,9 @@ DirectX::XMFLOAT3 randomizeObjectPos()
     DirectX::XMFLOAT3 position(0.f, 0.0f, 0.0f);
     DirectX::SimpleMath::Vector3 randomPos = {};
 
-    int xPos = rand() % 201 - 100;
-    int yPos = rand() % 201 - 100;
-    int zPos = rand() % 201 - 100;
+    float xPos = (float)(rand() % 201 - 100);
+    float yPos = (float)(rand() % 201 - 100);
+    float zPos = (float)(rand() % 201 - 100);
 
     randomPos.x = xPos;
     randomPos.y = yPos;

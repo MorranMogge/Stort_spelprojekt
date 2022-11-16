@@ -43,8 +43,13 @@ void Potion::useItem()
 	timer.resetStartTime();
 }
 
-bool Potion::isTimeToRun()
+bool Potion::isTimeToRun() const
 {
-	if (timeToRun && this->timer.getTimePassed(5.f)) timeToRun = false;
 	return this->timeToRun;
+}
+
+bool Potion::timerGoing()
+{
+	if (this->timer.getTimePassed(5.f)) timeToRun = false;
+	return timeToRun;
 }

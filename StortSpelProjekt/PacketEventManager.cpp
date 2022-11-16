@@ -10,9 +10,9 @@ PacketEventManager::~PacketEventManager()
 {
 }
 
-void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int &NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
-	std::vector<Component *>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject *>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips
-	, std::vector<Item*>& onlineItems)
+void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
+	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips
+	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -82,11 +82,9 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 		case PacketType::SPAWNCOMPONENT:
 			spawnComp = circularBuffer->readData<SpawnComponent>();
-			//std::cout << spawnComp->x << " " << spawnComp->y << " " << spawnComp->z << "\n";
-
-			newComponent = new Component("../Meshes/component", DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
-				spawnComp->ComponentId, spawnComp->ComponentId, field);
-			std::cout << "SpawnComponent package compId: " << std::to_string(newComponent->getOnlineId()) << std::endl;
+			std::cout << "Comp ID: " << spawnComp->ComponentId << "\n";
+			newComponent = new Component(meshes[5], DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+				COMPONENT, spawnComp->ComponentId, field);
 			physWorld.addPhysComponent(newComponent);
 			//componentVector.push_back(newComponent);
 			//gameObjects.push_back(newComponent);
@@ -126,7 +124,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), itemSpawn->itemId, itemSpawn->itemId, field);
 			physWorld.addPhysComponent(baseballbat);
 			onlineItems.push_back(baseballbat);
-
+			gameObjects.push_back(baseballbat);
 			std::cout << "item spawned: " << std::to_string(itemSpawn->itemId) << std::endl;
 		
 			break;
@@ -154,7 +152,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			spaceShipPos = circularBuffer->readData<SpaceShipPosition>();
 			//Create correct spaceship depending on team
 			std::cout << "Spawned spaceship\n";
-			newSpaceShip = new SpaceShip(DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, DirectX::SimpleMath::Vector3(2, 2, 2), 4);
+			newSpaceShip = new SpaceShip(meshes[3], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, DirectX::SimpleMath::Vector3(2, 2, 2), 4);
 			spaceShips.push_back(newSpaceShip);
 			gameObjects.push_back(newSpaceShip);
 			physWorld.addPhysComponent(newSpaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3 * 0.75f, 0.75f));
@@ -168,10 +166,11 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			std::cout << "Team: " << compAdded->spaceShipTeam << " gained progress!\n";
 			for (int i = 0; i < spaceShips.size(); i++)
 			{
-				if (i == compAdded->spaceShipTeam)
+				if (spaceShips[i]->getTeam() == compAdded->spaceShipTeam)
 				{
 					//Update hud or whatever
 					spaceShips[i]->addComponent();
+					spaceShips[i]->setAnimate(true);
 				}
 			}
 			for (int i = 0; i < players.size(); i++)
@@ -185,9 +184,9 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					int yPos = rand() % 201 - 100;
 					int zPos = rand() % 201 - 100;
 
-					randomPos.x = xPos;
-					randomPos.y = yPos;
-					randomPos.z = zPos;
+					randomPos.x = (float)xPos;
+					randomPos.y = (float)yPos;
+					randomPos.z = (float)zPos;
 
 					randomPos.Normalize();
 					randomPos *= 100;

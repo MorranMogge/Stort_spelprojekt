@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "PhysicsComponent.h"
 #include "GameObject.h"
-
+#include "DirectXMathHelper.h"
 
 void GameObject::updatePhysCompRotation()
 {
@@ -11,10 +11,10 @@ void GameObject::updatePhysCompRotation()
 }
 
 GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale)
-	:position(pos), mesh(useMesh), objectID(id), scale(scale), physComp(nullptr), activeField(field)
+	:position(pos), objectID(id), scale(scale), physComp(nullptr), activeField(field)
 {
 
-
+	this->mesh = useMesh;
 
 	// set position
 	mesh->position = pos;
@@ -26,6 +26,7 @@ GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const Direct
 	// set scale
 	mesh->scale = scale;
 	this->scale = scale;
+
 }
 
 GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale)
@@ -44,6 +45,7 @@ GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos
 	}
 
 	// set position
+	this->position = pos;
 	this->mesh->position = pos;
 
 	// set rotation
@@ -54,7 +56,6 @@ GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos
 	this->mesh->scale = scale;
 	this->scale = scale;
 
-	this->mesh->UpdateCB();
 }
 
 GameObject::GameObject()
@@ -85,10 +86,13 @@ GameObject::GameObject()
 
 GameObject::~GameObject()
 {
-	if (this->mesh != nullptr)
-	{
-		delete this->mesh;
-	}
+	//if (this->mesh != nullptr)
+	//{
+	//	delete this->mesh;
+	//}
+	//this->mesh = nullptr;
+	//this->activeField = nullptr;
+	//this->physComp = nullptr;
 }
 
 void GameObject::movePos(const DirectX::XMFLOAT3& offset)
@@ -102,6 +106,7 @@ void GameObject::setPos(const DirectX::XMFLOAT3& pos)
 {
 	this->position = pos;
 	this->physComp->setPosition(reactphysics3d::Vector3{ pos.x,pos.y, pos.z });
+
 }
 
 void GameObject::setRot(const DirectX::XMFLOAT3& rot)
@@ -122,7 +127,7 @@ void GameObject::setScale(const DirectX::XMFLOAT3& scale)
 	this->scale = scale;
 
 	//if (this->physComp->getTypeName() == reactphysics3d::CollisionShapeName::BOX) 
-	this->physComp->setScale(scale);
+	//this->physComp->setScale(scale);
 }
 
 DirectX::XMFLOAT3 GameObject::getPos() const
@@ -219,6 +224,7 @@ DirectX::XMFLOAT3 GameObject::getUpDirection() const
 	{
 		std::cout << "Gravity field was nullptr, direction was not given" << std::endl;
 	}
+	newNormalizeXMFLOAT3(upDir);
 	return upDir;
 }
 
@@ -251,7 +257,7 @@ void GameObject::updateBuffer()
 	this->mesh->scale = this->scale;
 
 	//Update constantbuffer
-	this->mesh->UpdateCB();
+	this->mesh->UpdateCB(this->position, this->rotation, this->scale);
 }
 
 void GameObject::setMesh(const std::string& meshPath)
@@ -298,6 +304,11 @@ void GameObject::setMesh(Mesh* inMesh)
 
 	// set rotation
 	this->mesh->rotation = inMesh->rotation;
+}
+
+void GameObject::setGravityField(GravityField* field)
+{
+	this->activeField = field;
 }
 
 bool GameObject::withinBox(GameObject* object, float xRange, float yRange, float zRange) const
@@ -350,6 +361,7 @@ bool GameObject::withinRadious(GameObject* object, float radius) const
 
 void GameObject::draw()
 {
+	this->mesh->UpdateCB(position, rotation, scale);
 	this->mesh->DrawWithMat();
 }
 

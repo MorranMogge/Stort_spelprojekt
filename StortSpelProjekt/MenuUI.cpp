@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "GuiHandler.h"
+#include "MenuUI.h"
 #include "GPU.h"
 #include"Input.h"
 #include "SettingsUI.h"
@@ -7,9 +7,8 @@
 
 using namespace DirectX::SimpleMath;
 
-void GuiHandler::SpritePass()
+void MenuUI::SpritePass()
 {
-
 	if (isLoading)
 	{
 		Loading.Draw();
@@ -28,95 +27,49 @@ void GuiHandler::SpritePass()
 
 }
 
-void GuiHandler::HandleInputs()
+void MenuUI::HandleInputs()
 {
+	Input::Update();
+	start.IntersectMouse() ? start.SetTint(DirectX::Colors::Green.v) : start.SetTint(DirectX::Colors::White.v);
+	settings.IntersectMouse() ? settings.SetTint(DirectX::Colors::Green.v) : settings.SetTint(DirectX::Colors::White.v);
+	credits.IntersectMouse() ? credits.SetTint(DirectX::Colors::Green.v) : credits.SetTint(DirectX::Colors::White.v);
+	exit.IntersectMouse() ? exit.SetTint(DirectX::Colors::Green.v) : exit.SetTint(DirectX::Colors::White.v);
 
-#pragma region start
-
-	if (start.IntersectMouse())
+	if (Input::KeyPress(KeyCode::MOUSE_L))
 	{
-		start.SetTint(DirectX::Colors::Green.v);
-
-		if (Input::KeyPress(KeyCode::MOUSE_L))
+		if (start.GetTint() == DirectX::Colors::Green.v)
 		{
 			gameState = GAME;
 			isLoading = true;
 		}
-	}
-	else
-	{
-		start.SetTint(DirectX::Colors::White.v);
-	}
-
-#pragma endregion
-
-#pragma region settings
-
-	if (settings.IntersectMouse())
-	{
-		settings.SetTint(DirectX::Colors::Green.v);
-
-		if (Input::KeyPress(KeyCode::MOUSE_L))
+		else if (settings.GetTint() == DirectX::Colors::Green.v)
 		{
 			gameState = SETTINGS;
 		}
-	}
-	else
-	{
-		settings.SetTint(DirectX::Colors::White.v);
-	}
-
-#pragma endregion
-
-#pragma region credits
-
-	if (credits.IntersectMouse())
-	{
-		credits.SetTint(DirectX::Colors::Green.v);
-
-		if (Input::KeyPress(KeyCode::MOUSE_L))
+		else if (credits.GetTint() == DirectX::Colors::Green.v)
 		{
 			gameState = CREDITS;
 		}
-	}
-	else
-	{
-		credits.SetTint(DirectX::Colors::White.v);
-	}
-
-#pragma endregion
-
-#pragma region exit
-
-	if (exit.IntersectMouse())
-	{
-		exit.SetTint(DirectX::Colors::Green.v);
-
-		if (Input::KeyPress(KeyCode::MOUSE_L))
+		else if (exit.GetTint() == DirectX::Colors::Green.v)
 		{
 			gameState = EXIT;
 		}
-	}
-	else
-	{
-		exit.SetTint(DirectX::Colors::White.v);
-	}
 
-#pragma endregion
+	}
 
 }
 
-void GuiHandler::TextPass()
+void MenuUI::TextPass()
 {
 
 }
 
-GAMESTATE GuiHandler::GetGameState()
+GAMESTATE MenuUI::GetGameState()
 {
 	return gameState;
 }
 
-GuiHandler::GuiHandler()
+MenuUI::MenuUI()
 {
 	GUI::Init();
 
@@ -135,7 +88,7 @@ GuiHandler::GuiHandler()
 	exit = GUISprite(1000, 500);
 	exit.Load(GPU::device, L"../Sprites/exit.png");
 
-	Loading = GUISprite(GPU::windowWidth/ 2.0f, GPU::windowHeight / 2.0f);
+	Loading = GUISprite(1264.0f / 2.0f, 681.0f / 2.0f);
 	Loading.Load(GPU::device, L"../Sprites/Loading.bmp");
 
 	control = GUISprite(310 - left, 225 - upp);
@@ -144,15 +97,15 @@ GuiHandler::GuiHandler()
 	
 	useText = GUISprite(320 - left, 420 - upp);
 	useText.Load(GPU::device, L"../Sprites/UseText.png");
-	useText.SetScale(0.40, 0.40);
+	useText.SetScale(0.40f, 0.40f);
 
 	throwText = GUISprite(340 - left, 500 - upp);
 	throwText.Load(GPU::device, L"../Sprites/ThrowText.png");
-	throwText.SetScale(0.40, 0.40);
+	throwText.SetScale(0.40f, 0.40f);
 
 	pickText = GUISprite(322 - left, 580 - upp);
 	pickText.Load(GPU::device, L"../Sprites/PickText.png");
-	pickText.SetScale(0.40, 0.40);
+	pickText.SetScale(0.40f, 0.40f);
 
 	objective = GUISprite(310 - left, 675 - upp);
 	objective.Load(GPU::device, L"../Sprites/Objective.png");
@@ -161,7 +114,7 @@ GuiHandler::GuiHandler()
 	gameState = NOCHANGE;
 }
 
-void GuiHandler::Draw()
+void MenuUI::Draw()
 {
 	HandleInputs();
 	GUI::Begin();

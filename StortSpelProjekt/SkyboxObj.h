@@ -12,8 +12,8 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> textureCube;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureCubeView;
-	GameObject* skyBoxMesh;
-
+	GameObject* skyBoxObj;
+	Mesh* skyBoxMesh;
 public:
 
 	SkyboxObj();

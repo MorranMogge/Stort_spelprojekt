@@ -6,6 +6,8 @@
 
 void HudUI::SpritePass()
 {
+
+
 	if (red)
 	{
 		switch (red->getNrOfComponents())
@@ -40,6 +42,28 @@ void HudUI::SpritePass()
 		}
 	}
 
+	if (player)
+	{
+		switch (player->isHoldingItem())
+		{
+		case 1:
+			useControls.Draw();
+			useControls1.Draw(); break;
+		}
+	}
+
+	if (Input::KeyDown(KeyCode::TAB))
+	{
+		blackBackground.Draw();
+		control.Draw();
+		objective.Draw();
+		useText.Draw();
+		throwText.Draw();
+		pickText.Draw();
+	}
+
+	controls.Draw();
+
 }
 
 HudUI::HudUI()
@@ -50,6 +74,7 @@ HudUI::HudUI()
 
 	#define PositionRed Vector2(50, 620)
 	#define PositionBlue Vector2(125, 620)
+
 
 	redTeam0 = GUISprite(PositionRed);
 	redTeam0.Load(GPU::device, L"../Sprites/team_r_0.png");
@@ -88,10 +113,50 @@ HudUI::HudUI()
 	blueTeam3.Load(GPU::device, L"../Sprites/team_b_3.png");
 	blueTeam3.SetScale(Scale, Scale);
 
-	blueTeam4 = GUISprite(100 + 100, 100);
+	blueTeam4 = GUISprite(PositionBlue);
 	blueTeam4.Load(GPU::device, L"../Sprites/team_b_4.png");
 	blueTeam4.SetScale(Scale, Scale);
 
+	#define upp 50
+	#define left 350
+
+	#define scaleFactor 0.5f
+	control = GUISprite(310 + left, 225 + upp);
+	control.Load(GPU::device, L"../Sprites/control.png");
+	control.SetScale(0.75f * scaleFactor, 0.75f * scaleFactor);
+
+	useText = GUISprite(317 + left, 320 + upp);
+	useText.Load(GPU::device, L"../Sprites/UseText.png");
+	useText.SetScale(0.40f * scaleFactor, 0.40f * scaleFactor);
+
+	throwText = GUISprite(327 + left, 360 + upp);
+	throwText.Load(GPU::device, L"../Sprites/ThrowText.png");
+	throwText.SetScale(0.40f * scaleFactor, 0.40f * scaleFactor);
+
+	pickText = GUISprite(318 + left, 400 + upp);
+	pickText.Load(GPU::device, L"../Sprites/PickText.png");
+	pickText.SetScale(0.40f * scaleFactor, 0.40f * scaleFactor);
+
+	objective = GUISprite(310 + left, 450 + upp);
+	objective.Load(GPU::device, L"../Sprites/Objective.png");
+	objective.SetScale(0.75f * scaleFactor, 0.75f * scaleFactor);
+
+	blackBackground = GUISprite(310 + left, 300 + upp);
+	blackBackground.Load(GPU::device, L"../Sprites/BackHudTransparent.png");
+	blackBackground.SetScale(1.0f, 1.0f);
+
+	controls = GUISprite(1150,650);
+	controls.Load(GPU::device, L"../Sprites/DisplayControls.png");
+	controls.SetScale(1.0f, 1.0f);
+
+
+	useControls = GUISprite(300 + left, 600 + upp);
+	useControls.Load(GPU::device, L"../Sprites/ThrowText.png");
+	useControls.SetScale(0.40f * scaleFactor, 0.40f * scaleFactor);
+
+	useControls1 = GUISprite(290 + left, 570 + upp);
+	useControls1.Load(GPU::device, L"../Sprites/UseText.png");
+	useControls1.SetScale(0.40f * scaleFactor, 0.40f * scaleFactor);
 }
 
 HudUI::~HudUI()

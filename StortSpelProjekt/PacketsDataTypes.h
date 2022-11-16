@@ -150,7 +150,7 @@ struct ComponentPosition
 	float x;
 	float y;
 	float z;
-	reactphysics3d::Quaternion quat;
+	//reactphysics3d::Quaternion quat;
 };
 
 //enum = 21

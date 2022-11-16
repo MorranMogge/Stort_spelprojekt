@@ -4,6 +4,7 @@
 class Item
 {
 private:
+	// THESE POSITIONS ARENT UPDATED IN getPosXMFLOAT3(), BUT WORK IN getposition()
 	float xPos;
 	float yPos;
 	float zPos;

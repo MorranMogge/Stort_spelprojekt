@@ -86,7 +86,7 @@ float Item::getposition(char whichPos)
 
 DirectX::XMFLOAT3 Item::getPosXMFLOAT3()const
 {
-	return DirectX::XMFLOAT3(xPos, yPos, zPos);
+	return DirectX::XMFLOAT3(this->physComp->getPosV3().x, this->physComp->getPosV3().y, this->physComp->getPosV3().z);
 }
 
 void Item::setPosition(float pos[3])

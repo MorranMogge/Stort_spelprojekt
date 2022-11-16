@@ -267,7 +267,7 @@ int main()
 	start = std::chrono::system_clock::now();
 
 	float timerLength = 1.f / 30.0f;
-	float timerComponentLength = 5.0f;
+	float timerComponentLength = 20.0f;
 	float itemSpawnTimerLength = 20.0f;
 
 	setupTcp(data);
@@ -621,11 +621,11 @@ int main()
 			{
 				ComponentPosition compPosition;
 				compPosition.ComponentId = components[i].getOnlineId();
-				compPosition.packetId = PacketType::COMPONENTPOSITION;
-				compPosition.x = components[i].getPosXMFLOAT3().x;
-				compPosition.y = components[i].getPosXMFLOAT3().y;
-				compPosition.z = components[i].getPosXMFLOAT3().z;
-				compPosition.quat = components[i].getPhysicsComponent()->getRotation();
+				compPosition.packetId = PacketType::COMPONENTPOSITIONNEW;
+				compPosition.x = components[i].getposition('x');
+				compPosition.y = components[i].getposition('y');
+				compPosition.z = components[i].getposition('z');
+				//compPosition.quat = components[i].getPhysicsComponent()->getRotation();
 				sendBinaryDataAllPlayers<ComponentPosition>(compPosition, data);
 
 			}

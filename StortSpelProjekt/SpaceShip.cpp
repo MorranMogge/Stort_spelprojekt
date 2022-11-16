@@ -25,10 +25,13 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 	this->particles = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 	this->particles2 = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 
+	tempMesh = new Mesh("../Meshes/zone");
+
+
 	//CapZone
 	float constant2 = 48.0f;
 	DirectX::XMFLOAT3 offset2(upDir.x * constant2, upDir.y * constant2, upDir.z * constant2);
-	zone = new CaptureZone(offset2, this->getRotXM(), DirectX::XMFLOAT3(8, 8, 8));
+	zone = new CaptureZone(tempMesh, offset2, this->getRotXM(),field, DirectX::XMFLOAT3(8, 8, 8));
 
 	//Team switch
 	switch (team)
@@ -66,8 +69,12 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 	this->particles = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 	this->particles2 = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 
+	tempMesh = new Mesh("../Meshes/zone");
+
 	//CapZone
-	zone = new CaptureZone(pos, this->getRotXM(), DirectX::XMFLOAT3(4, 4, 4));
+	float constant2 = 48.0f;
+	DirectX::XMFLOAT3 offset2(upDir.x * constant2, upDir.y * constant2, upDir.z * constant2);
+	zone = new CaptureZone(tempMesh, offset2, this->getRotXM(), field, DirectX::XMFLOAT3(8, 8, 8));
 
 	//Team switch
 	switch (team)
@@ -96,6 +103,7 @@ SpaceShip::~SpaceShip()
 	delete this->particles;
 	delete this->particles2;
 	delete this->rocketStatusQuad;
+	delete this->tempMesh;
 }
 
 int SpaceShip::getTeam() const
@@ -186,7 +194,17 @@ void SpaceShip::drawParticles()
 
 void SpaceShip::drawFresnel()
 {
-	this->zone->draw();
+	switch (this->team)
+	{
+	case 0:
+		this->zone->setColor(DirectX::XMFLOAT3(1, 0, 0));
+		break;
+
+	case 1:
+		this->zone->setColor(DirectX::XMFLOAT3(0, 0.7f, 1.0f));
+		break;
+	}
+	this->zone->drawFresnel();
 }
 
 bool SpaceShip::isFinished()
@@ -205,15 +223,12 @@ void SpaceShip::draw()
 	switch (this->team)
 	{
 	case 0:
-		HudUI::red = this;
 		mesh->matKey[0] = "spaceshipTexture1.jpg";
 		break;
 
 	case 1:
-		HudUI::blue = this;
 		mesh->matKey[0] = "spaceshipTexture2.jpg";
 		break;
-
 	}
 	this->mesh->UpdateCB(position, rotation, scale);
 	this->mesh->DrawWithMat();

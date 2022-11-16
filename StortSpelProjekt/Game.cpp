@@ -181,9 +181,7 @@ void Game::drawParticles()
 
 void Game::drawFresnel()
 {
-	GPU::immediateContext->PSSetConstantBuffers(2, 1, colorBuffer.getReferenceOf());
-	atmosphere->draw();
-
+	//Regular
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
 		spaceShips[i]->drawFresnel();
@@ -196,6 +194,10 @@ void Game::drawFresnel()
 			tempNade->drawFresnel();
 		}
 	}
+	//Inverse
+	basicRenderer.invFresnelPrePass();
+	GPU::immediateContext->PSSetConstantBuffers(2, 1, colorBuffer.getReferenceOf());
+	atmosphere->draw();
 }
 
 void Game::randomizeObjectPos(GameObject* object)

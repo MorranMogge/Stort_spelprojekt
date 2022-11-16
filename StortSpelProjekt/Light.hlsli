@@ -36,7 +36,7 @@ float3 DoSpecular(Light light, float3 ViewDir, float3 lightDir, float3 normal, f
     float3 H = normalize(lightDir + ViewDir);
     float NdotH = max(0, dot(normal, H));
 
-    return light.color.xyz * pow(NdotH, 0 /*specularPower*/);
+    return light.color.xyz * pow(NdotH, specularPower);
 }
 float DoAttenuation(Light light, float distance)
 {
@@ -50,7 +50,25 @@ float DoAttenuation(Light light, float distance)
 LightResult ComputeDirectionalLight(Light L, float3 lightDir, float3 normal, float3 toEye, float3 diffuse, float3 specular, float spacularPower)
 {
     LightResult result = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
-    const float diffuseFactor = dot(lightDir, normal);
+    float diffuseFactor = dot(lightDir, normal);
+    
+    //if (diffuseFactor < 0.25)
+    //{
+    //    diffuseFactor = 0;
+
+    //}
+    //else if (diffuseFactor > 0.25 && diffuseFactor < 0.5)
+    //{
+    //    diffuseFactor = 0.5;
+    //}
+    //else if (diffuseFactor > 0.5 && diffuseFactor < 0.75)
+    //{
+    //    diffuseFactor = 0.75;
+    //}
+    //else if (diffuseFactor > 0.75 && diffuseFactor < 1)
+    //{
+    //    diffuseFactor = 1;
+    //}
     
     [flatten]
     if (diffuseFactor > 0.0f)

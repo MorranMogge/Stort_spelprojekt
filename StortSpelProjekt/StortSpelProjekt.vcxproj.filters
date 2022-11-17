@@ -166,6 +166,8 @@
     <ClCompile Include="CaptureZone.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="ControlMenu.cpp" />
+    <ClCompile Include="ControlUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -462,6 +464,8 @@
     <ClInclude Include="CaptureZone.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
+    <ClInclude Include="ControlMenu.h" />
+    <ClInclude Include="ControlUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

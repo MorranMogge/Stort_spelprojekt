@@ -18,6 +18,7 @@
 #include "CreditsMenu.h"
 #include "WinMenu.h"
 #include "LoseMenu.h"
+#include "ControlMenu.h"
 #include "Time.h"
 
 
@@ -104,6 +105,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			case LOSE:
 				delete currentState;
 				currentState = new LoseMenu();
+				break;
+			case CONTROL:
+				delete currentState;
+				currentState = new ControlMenu();
 				break;
 			case MENU:
 				delete currentState;

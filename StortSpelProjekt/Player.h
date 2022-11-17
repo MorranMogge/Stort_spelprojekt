@@ -45,6 +45,7 @@ private:
 	bool onGround = false;
 	bool holdingComp = false;
 	bool moveKeyPressed = false;
+	bool keyEPressed;
 
 	//Controller variables
 	float posX = 0.0f;
@@ -56,6 +57,7 @@ private:
 	//Other variables
 	Client* client;
 	TimeStruct timer;
+	TimeStruct keyPressTimer;
 	Item* holdingItem;
 
 	ParticleEmitter* particles;

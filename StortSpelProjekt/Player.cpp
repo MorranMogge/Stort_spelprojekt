@@ -66,8 +66,9 @@ void Player::handleItems()
 		this->throwItem();
 	}
 	//Use the Item
-	else if (Input::KeyPress(KeyCode::E))
+	else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))
 	{
+		keyPressTimer.resetStartTime();
 		//allocates data to be sent
 		ComponentData c;
 		c.ComponentId = this->getItemOnlineId();
@@ -766,6 +767,10 @@ bool Player::pickupItem(Item* itemToPickup)
 			holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 			pickUpSfx.stop();
 			pickUpSfx.play();
+
+			keyPressTimer.resetStartTime();
+
+			keyEPressed = false;
 		}
 	}
 

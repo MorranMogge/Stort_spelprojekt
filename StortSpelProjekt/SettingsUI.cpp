@@ -11,8 +11,6 @@ void SettingsUI::HandleInputs()
 
 	if (Input::KeyPress(KeyCode::MOUSE_L))
 	{
-		SoundLibrary::clickSfx.stop();
-		SoundLibrary::clickSfx.play();
 		if (backText.GetTint() == DirectX::Colors::Green.v)
 		{
 			SoundLibrary::clickSfx.stop();

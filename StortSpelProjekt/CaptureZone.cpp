@@ -2,7 +2,7 @@
 #include "CaptureZone.h"
 
 
-CaptureZone::CaptureZone(Mesh* useMesh, DirectX::SimpleMath::Vector3 position, DirectX::SimpleMath::Vector3 rotation, GravityField* field, DirectX::SimpleMath::Vector3 scale, DirectX::SimpleMath::Vector3 color)
+CaptureZone::CaptureZone(Mesh* useMesh, const DirectX::SimpleMath::Vector3 & position, const DirectX::SimpleMath::Vector3 & rotation, GravityField* field, const DirectX::SimpleMath::Vector3 & scale, const DirectX::SimpleMath::Vector3 & color)
 	:GameObject(useMesh, position, rotation, ObjID::MOVABLE, field, scale)
 {	
 	//Set up color buffer
@@ -18,17 +18,13 @@ void CaptureZone::setColor(const DirectX::SimpleMath::Vector3 & color)
 	this->colorBuffer.applyData();
 }
 
-bool CaptureZone::detectedObject(GameObject* objectToCheck)
+bool CaptureZone::detectedObject(GameObject* objectToCheck) const
 {
 	bool didDetect = false;
 	
 	if (this->withinRadious(objectToCheck, this->scale.x))
 	{
 		didDetect = true;
-	}
-	else
-	{
-		this->setScale(DirectX::XMFLOAT3(2, 2, 2));
 	}
 	return didDetect;
 }

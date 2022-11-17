@@ -66,28 +66,9 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
                 
 
                 result = ComputeDirectionalLight(lights[i], lightDir, normal, viewDir, diffuseColor, specular, mat.specularPower);
-                
-                //if (result.Diffuse.x < 0.25)
-                //{
-                //    result.Diffuse = 0;
-
-                //}
-                //else if (result.Diffuse.x > 0.25 && result.Diffuse.x < 0.5)
-                //{
-                //    result.Diffuse = 0.5;
-                //}
-                //else if (result.Diffuse.x > 0.5 && result.Diffuse.x < 0.75)
-                //{
-                //    result.Diffuse = 0.75;
-                //}
-                //else if (result.Diffuse.x > 0.75 && result.Diffuse.x < 1)
-                //{
-                //    result.Diffuse = 1;
-                //}
             
                 //float4 rimDot = 1 - dot(normal, -lightDir);
                 fres *= saturate(dot(normal, lightDir));
-                
                 
                 //result = temp;
                 break;

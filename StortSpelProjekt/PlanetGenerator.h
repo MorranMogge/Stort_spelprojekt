@@ -46,8 +46,9 @@ private:
 	PlanetImGuiInfo planetImGuiStruct;
 
 	//Used for sphere generation
-	std::vector<Vertex> vertices;
+	std::vector<Vertex*> vertices;
 	std::vector<Vertex> lines;
+	std::vector<Vertex*> newVertices;
 	PlanetType typeOfSphere;
 	int lastSubdivisions;
 	int horizontal;
@@ -62,6 +63,7 @@ private:
 	Camera camera;
 	DirectX::XMFLOAT3 cameraPosition;
 	std::vector<std::vector<Triangle>> sphereMeshes;
+	std::vector<std::vector<Triangle*>> triangleAdresses;
 
 	std::vector<Mesh*> meshes;
 

@@ -23,7 +23,7 @@ bool PlanetGenerator::setVertexBuffers()
     bufferDesc.StructureByteStride = 0;
 
     D3D11_SUBRESOURCE_DATA data = {};
-    data.pSysMem = vertices.data();
+    data.pSysMem = *vertices.data();
     data.SysMemPitch = 0;
     data.SysMemSlicePitch = 0;
 
@@ -67,6 +67,7 @@ void PlanetGenerator::recreateVertexBuffers()
     triangleBuffer->Release();
     lineBuffer->Release();
 
+    bool newVertice = true;
     for (int i = 0; i < sphereMeshes[currentSubdivisions%(sphereMeshes.size())].size(); i++)
     {
         /*for (int j = 0; j < 3; j++)
@@ -76,12 +77,32 @@ void PlanetGenerator::recreateVertexBuffers()
             sphereMeshes[currentSubdivisions][i].vertices[j].position.z += 0.1f * 0.01f * (rand() % 101);
         }*/
 
-        vertices.push_back(sphereMeshes[currentSubdivisions][i].vertices[0]);
+        for (int j = 0; j < 3; j++)
+        {
+            newVertice = true;
+            Vertex* vertex = &sphereMeshes[currentSubdivisions][i].vertices[j];
+            vertex->position.Normalize();
+            vertex->normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
+            vertex->uv = DirectX::SimpleMath::Vector2(1.f);
+            int loops = vertices.size();
+            for (int k = 0; k < loops; k++)
+            {
+                if (*vertices[k] == *vertex)
+                {
+                    vertices.push_back(vertices[k]);
+                    newVertice = false;
+                    break;
+                }
+            }
+            if (newVertice) vertices.push_back(vertex);
+        }
+
+        /*vertices.push_back(sphereMeshes[currentSubdivisions][i].vertices[0]);
         vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
         vertices.push_back(sphereMeshes[currentSubdivisions][i].vertices[1]);
         vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
         vertices.push_back(sphereMeshes[currentSubdivisions][i].vertices[2]);
-        vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
+        vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);*/
 
         lines.push_back(sphereMeshes[currentSubdivisions][i].vertices[0]);
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
@@ -97,13 +118,13 @@ void PlanetGenerator::recreateVertexBuffers()
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
     }
 
-    for (int i = 0; i < vertices.size(); i++)
+    vertices[0]->position.z -= 1.0f;
+   /* for (int i = 0; i < vertices.size(); i++)
     {
-        vertices[i].position.Normalize();
-        //vertices[i].position.x += 0.1f * 0.01f *(rand() % 101);
-        //vertices[i].position.y += 0.1f * 0.01f * (rand() % 101);
-        //vertices[i].position.z += 0.1f * 0.01f * (rand() % 101);
-    }
+        vertices[i]->position.x += 0.1f * 0.01f * (rand() % 101);
+        vertices[i]->position.y += 0.1f * 0.01f * (rand() % 101);
+        vertices[i]->position.z += 0.1f * 0.01f * (rand() % 101);
+    }*/
 
     for (int i = 0; i < lines.size(); i++)
     {
@@ -122,7 +143,7 @@ void PlanetGenerator::recreateVertexBuffers()
 
     D3D11_SUBRESOURCE_DATA data = {};
     
-    data.pSysMem = this->vertices.data();
+    data.pSysMem = *vertices.data();
     data.SysMemPitch = 0;
     data.SysMemSlicePitch = 0;
 
@@ -285,7 +306,7 @@ void PlanetGenerator::createIcoSphere()
     //triangles.emplace_back(icoSphere[9], icoSphere[7], icoSphere[3]);   //19
     //triangles.emplace_back(icoSphere[5], icoSphere[10], icoSphere[3]);  //20
 
-    int maxSubdivisions = 5;
+    int maxSubdivisions = 4;
     DirectX::XMFLOAT3 posOne;
     DirectX::XMFLOAT3 posTwo;
     DirectX::XMFLOAT3 posThree;
@@ -354,35 +375,90 @@ void PlanetGenerator::createIcoSphere()
         triangles = newTriangleVec;
     }
 
-    for (int i = 0; i < sphereMeshes[0].size(); i++)
+    /*for (int i = 0; i < sphereMeshes.size(); i++)
     {
-        vertices.push_back(sphereMeshes[0][i].vertices[0]);
+        std::vector<Triangle*> addresses;
+        for (int j = 0; j < sphereMeshes[i].size(); j++) 
+        {
+            Triangle* newStuff = &sphereMeshes[i][j];
+            addresses.emplace_back();
+            for (int k = 0; k < addresses.size(); k++)
+            {
+                if (addresses[k]->vertices[0] == newStuff)
+                {
+
+                }
+            }
+        }
+    }*/
+    bool newVertice = true;
+
+    for (int i = 0; i < sphereMeshes[1].size(); i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            newVertice = true;
+            Vertex* vertex = &sphereMeshes[1][i].vertices[j];
+            vertex->position.Normalize();
+            vertex->normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
+            vertex->uv = DirectX::SimpleMath::Vector2(1.f);
+            int loops = vertices.size();
+            for (int k = 0; k < loops; k++)
+            {
+                if (*vertices[k] == *vertex)
+                {
+                    vertices.push_back(vertices[k]);
+                    newVertice = false;
+                    break;
+                }
+            }
+            if (newVertice) vertices.push_back(vertex);
+        }
+        /*vertices.push_back(sphereMeshes[0][i].vertices[0]);
         vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
         vertices.push_back(sphereMeshes[0][i].vertices[1]);
         vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
         vertices.push_back(sphereMeshes[0][i].vertices[2]);
-        vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
+        vertices.back().normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);*/
 
-        lines.push_back(sphereMeshes[0][i].vertices[0]);
+        lines.push_back(sphereMeshes[1][i].vertices[0]);
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
-        lines.push_back(sphereMeshes[0][i].vertices[1]);
+        lines.push_back(sphereMeshes[1][i].vertices[1]);
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
-        lines.push_back(sphereMeshes[0][i].vertices[1]);
+        lines.push_back(sphereMeshes[1][i].vertices[1]);
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
-        lines.push_back(sphereMeshes[0][i].vertices[2]);
+        lines.push_back(sphereMeshes[1][i].vertices[2]);
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
-        lines.push_back(sphereMeshes[0][i].vertices[2]);
+        lines.push_back(sphereMeshes[1][i].vertices[2]);
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
-        lines.push_back(sphereMeshes[0][i].vertices[0]);
+        lines.push_back(sphereMeshes[1][i].vertices[0]);
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
     }
 
+    //bool newVertice = true;
+    //for (int i = 0; i < vertices.size(); i++)
+    //{
+    //    newVertice = true;
+    //    int loops = newVertices.size();
+    //    for (int j = 0; j < loops; j++)
+    //    {
+    //        if (vertices[i] == *newVertices[j])
+    //        {
+    //            newVertice = false;
+    //            newVertices.emplace_back(newVertices[j]);
+    //        }
+    //    }
+    //    if (newVertice) newVertices.emplace_back(&vertices[i]);
+    //    //if (getLength(vertices[i].position) != 1.f) std::cout << "LENGTH: " << getLength(vertices[i].position) << "\n";
+    //    //vertices[i].position.Normalize();
+    //    //vertices[i].normal = vertices[i].position;
+    //    newVertices.back()->position.Normalize();
+    //}
+
     for (int i = 0; i < vertices.size(); i++)
     {
-        //if (getLength(vertices[i].position) != 1.f) std::cout << "LENGTH: " << getLength(vertices[i].position) << "\n";
-        vertices[i].position.Normalize();
-        //vertices[i].normal = vertices[i].position;
-            
+        //vertices[i]->position.Normalize();
+        //vertices[i]->normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
     }
 
     for (int i = 0; i < lines.size(); i++)

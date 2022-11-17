@@ -78,42 +78,43 @@ MenuUI::MenuUI()
 #define upp 60
 #define left 80
 
-#define center 632
+#define centerX 632
+#define centerY 340
 #define scale 0.3f,0.3f
 
-	start = GUISprite(center, 300);
+	start = GUISprite(centerX, 300);
 	start.Load(GPU::device, L"../Sprites/Menu/start.png");
 	start.SetScale(scale);
 
-	settings = GUISprite(center, 300 + 75);
+	settings = GUISprite(centerX, 300 + 75);
 	settings.Load(GPU::device, L"../Sprites/Menu/settings.png");
 	settings.SetScale(scale);
 
-	credits = GUISprite(center, 300 + 75 * 2);
+	credits = GUISprite(centerX, 300 + 75 * 2);
 	credits.Load(GPU::device, L"../Sprites/Menu/credits.png");
 	credits.SetScale(scale);
 
-	exit = GUISprite(center, 300 + 75 * 3);
+	exit = GUISprite(centerX, 300 + 75 * 3);
 	exit.Load(GPU::device, L"../Sprites/Menu/exit.png");
 	exit.SetScale(scale);
 
-	start2 = GUISprite(center, 300);
+	start2 = GUISprite(centerX, 300);
 	start2.Load(GPU::device, L"../Sprites/Menu/start2_r.png");
 	start2.SetScale(scale);
 
-	settings2 = GUISprite(center, 300 + 75);
+	settings2 = GUISprite(centerX, 300 + 75);
 	settings2.Load(GPU::device, L"../Sprites/Menu/settings2_r.png");
 	settings2.SetScale(scale);
 
-	credits2 = GUISprite(center, 300 + 75 * 2);
+	credits2 = GUISprite(centerX, 300 + 75 * 2);
 	credits2.Load(GPU::device, L"../Sprites/Menu/credits2_r.png");
 	credits2.SetScale(scale);
 
-	exit2 = GUISprite(center, 300 + 75 * 3);
+	exit2 = GUISprite(centerX, 300 + 75 * 3);
 	exit2.Load(GPU::device, L"../Sprites/Menu/exit2_r.png");
 	exit2.SetScale(scale);
 
-	Loading = GUISprite(1264.0f / 2.0f, 681.0f / 2.0f);
+	Loading = GUISprite(centerX, centerY);
 	Loading.Load(GPU::device, L"../Sprites/Loading.bmp");
 	Loading.SetScale(1, 1);
 
@@ -137,7 +138,7 @@ MenuUI::MenuUI()
 	objective.Load(GPU::device, L"../Sprites/Objective.png");
 	objective.SetScale(0.75f, 0.75f);
 
-	title = GUISprite(center, 340-200);
+	title = GUISprite(centerX, 340-200);
 	title.Load(GPU::device, L"../Sprites/title.png");
 	title.SetScale(0.6f, 0.6f);
 

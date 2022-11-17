@@ -159,6 +159,9 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Asteroid.h" />
+    <ClInclude Include="AsteroidHandler.h" />
+    <ClInclude Include="Arrow.h" />
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="BasicRenderer.h" />
     <ClInclude Include="BilboardObject.h" />
@@ -167,7 +170,6 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="BufferTypes.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="CaptureZone.h" />
     <ClInclude Include="CircularBufferClient.h" />
     <ClInclude Include="ClientHandler.h" />
     <ClInclude Include="Component.h" />
@@ -213,9 +215,12 @@
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="PhysicsWorld.h" />
+    <ClInclude Include="Planet.h" />
+    <ClInclude Include="PlanetGenerator.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerVectors.h" />
     <ClInclude Include="Potion.h" />
+    <ClInclude Include="Profiler.h" />
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderTargetView.h" />
     <ClInclude Include="SamplerState.h" />
@@ -244,7 +249,6 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="MemoryLeackChecker.h" />
     <ClInclude Include="Menu.h" />
-    <ClInclude Include="PackageTypes.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="State.h" />
@@ -254,7 +258,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="Time.h" />
     <ClInclude Include="TimeStruct.h" />
     <ClInclude Include="Topology.h" />
     <ClInclude Include="UnorderedAccessView.h" />
@@ -266,7 +269,9 @@
     <ClInclude Include="WinUI.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CaptureZone.cpp" />
+    <ClCompile Include="Asteroid.cpp" />
+    <ClCompile Include="AsteroidHandler.cpp" />
+    <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="CircularBufferClient.cpp" />
     <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="BaseballBat.cpp" />
@@ -335,9 +340,12 @@
     <ClCompile Include="MouseEvent.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="PlanetGenerator.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerVectors.cpp" />
     <ClCompile Include="Potion.cpp" />
+    <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="SendingDataEvent.cpp" />
     <ClCompile Include="SettingsMenu.cpp" />
     <ClCompile Include="SettingsUI.cpp" />
@@ -408,12 +416,6 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Fresnel_PS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="InvFresnel_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>

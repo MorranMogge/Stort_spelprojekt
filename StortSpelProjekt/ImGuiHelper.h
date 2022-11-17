@@ -26,8 +26,8 @@ public:
 	void drawInterface(std::string message);
 	void setupImGui(float bgColour[]);
 	void react3D(bool& wireframe, bool& drawObjects, DirectX::XMFLOAT3& wireframeClr, const float &dt);
-
 	void spriteBegin();
 	void spriteFloat(std::string name, float& x, float min, float max);
 	void spriteEnd();
+	void react3D(bool& wireframe, bool& drawObjects, bool& landingMinigame, const float &dt, bool& velocityCamera);
 };

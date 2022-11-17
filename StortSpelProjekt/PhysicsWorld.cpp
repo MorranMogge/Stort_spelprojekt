@@ -214,6 +214,11 @@ PhysicsWorld::~PhysicsWorld()
 	wireframeMode->Release();
 }
 
+void PhysicsWorld::setPlanets(std::vector<Planet*>& planets)
+{
+	this->planets = planets;
+}
+
 void PhysicsWorld::update(const float& dt)
 {
 	this->addForceToObjects(dt);
@@ -222,12 +227,13 @@ void PhysicsWorld::update(const float& dt)
 
 void PhysicsWorld::addForceToObjects(const float& dt)
 {
-	float constant = 0.25f;
+	float constant = 1.f;
 	for (int i = 0; i < this->physObjects.size(); i++)
 	{
-		temp = this->physObjects[i]->getPosition();
-		grav = normalizeXMFLOAT3(DirectX::XMFLOAT3(-temp.x, -temp.y, -temp.z));
-		this->physObjects[i]->applyForceToCenter(this->physObjects[i]->getMass() * reactphysics3d::Vector3(9820.f * grav.x * dt * constant, 9820.f * grav.y * dt * constant, 9820.f * grav.z * dt * constant));
+		GravityField* field = planets[0]->getClosestField(planets, this->physObjects[i]->getPosV3());
+		grav = field->calcGravFactor(this->physObjects[i]->getPosV3());
+		this->physObjects[i]->applyForceToCenter(this->physObjects[i]->getMass() * reactphysics3d::Vector3(98.2f * grav.x * dt * constant, 98.2f * grav.y * dt * constant, 98.2f * grav.z * dt * constant));
+		if (this->physObjects[i]->getParent() != nullptr) this->physObjects[i]->getParent()->setGravityField(field);
 	}
 }
 
@@ -259,11 +265,24 @@ void PhysicsWorld::addPhysComponent(GameObject* gameObj, reactphysics3d::Collisi
 	PhysicsComponent* newComp = new PhysicsComponent();
 	newComp->initiateComponent(&this->com, this->world, shape, scale);
 	newComp->setPosition({ gameObj->getPos().x, gameObj->getPos().y, gameObj->getPos().z });
+	newComp->setRotation(DirectX::XMQuaternionRotationMatrix(gameObj->getRot()));
 	newComp->setLinearDampning(0.3f);
 	gameObj->setPhysComp(newComp);
 	newComp->setParent(gameObj);
 	physObjects.emplace_back(newComp);
 
 	this->recreateVertexBuffer();
+}
+
+PhysicsComponent* PhysicsWorld::returnAddedPhysComponent(reactphysics3d::CollisionShapeName shape, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& scale)
+{
+	PhysicsComponent* newComp = new PhysicsComponent();
+	newComp->initiateComponent(&this->com, this->world, shape, scale);
+	newComp->setPosition({ pos.x, pos.y, pos.z });
+	newComp->setLinearDampning(0.3f);
+	physObjects.emplace_back(newComp);
+	newComp->setParent(nullptr);
+	this->recreateVertexBuffer();
+	return newComp;
 }
 

@@ -13,13 +13,11 @@ private:
 	DirectX::XMMATRIX playerRotationMX;
 	DirectX::XMVECTOR playerPosition = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
+	bool collided = false;
+
 	float fieldOfView = 0.76f;
 	float maxFOV = 0.8f;
 	float minFOV = 0.6f;
-
-
-	bool collided = false;
-
 
 	DirectX::XMFLOAT3 position;
 	ConstantBufferNew<cameraStruct> cameraBuffer;
@@ -43,6 +41,7 @@ private:
 	DirectX::XMVECTOR upVector = logicalUp;
 
 	DirectX::XMVECTOR velocityVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	DirectX::XMVECTOR parentPos = logicalPos;
 	DirectX::SimpleMath::Vector3 planetVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	DirectX::SimpleMath::Vector3 cameraVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 

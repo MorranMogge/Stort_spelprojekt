@@ -135,31 +135,25 @@ void Camera::collisionCamera(Player* player, const std::vector<Planet*>& planets
 	this->playerPosition = player->getPosV3();
 	this->playerSpeed = player->getSpeed();
 
-	collided = false;
-
 	//Actual camera
-	logicalUp = XMVector3TransformCoord(DEFAULT_UP, playerRotationMX);
+	logicalUp = XMVector3TransformCoord(DEFAULT_UP, playerRotationMX); // DO NOT NEED TO CHECK THE PLANET IM STANDING ON
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotationMX);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotationMX);
 	lookAtPos = playerPosition;
-	//logicalPos = playerPosition + logicalUp * 60.f - forwardVector * 50.f;
+	logicalPos = playerPosition + logicalUp * 60.f - forwardVector * 50.f;
 
 	//Checking collision with planets
 	for (int i = 0; i < planets.size(); i++)
 	{
 		planetVector = DirectX::XMVectorSet(planets[i]->getSize(), planets[i]->getSize(), planets[i]->getSize(), 0.0f);
 		cameraVector = XMVectorSubtract(planets[i]->getPlanetPosition(), logicalPos);
-		cameraVector = DirectX::XMVectorSet(abs(cameraVector.x), abs(cameraVector.y), abs(cameraVector.z), 0.f); //	 CHECK IF THE POSITION OVER IS COLLIDING!!
-		if (XMVector3LessOrEqual(cameraVector, planetVector)) { collided = true; std::cout << "COLLIDED\n"; }
-	}
-
-	if (collided)
-	{
-		logicalPos -= logicalUp * 0.05f;
-	}
-	else
-	{
-		logicalPos = playerPosition + logicalUp * 60.f - forwardVector * 50.f;
+		cameraVector = DirectX::XMVectorSet(abs(cameraVector.x), abs(cameraVector.y), abs(cameraVector.z), 0.f);
+		while  (XMVector3LessOrEqual(cameraVector, planetVector))
+		{ 
+			logicalPos -= logicalUp * 20.f;
+			cameraVector = XMVectorSubtract(planets[i]->getPlanetPosition(), logicalPos);
+			cameraVector = DirectX::XMVectorSet(abs(cameraVector.x), abs(cameraVector.y), abs(cameraVector.z), 0.f);
+		}
 	}
 
 	//The showing camera

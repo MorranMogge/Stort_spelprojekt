@@ -56,12 +56,16 @@ Camera::~Camera()
 {
 }
 
-void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const float& playerSpeed, const float& deltaTime)
+void Camera::moveCamera(Player* player, const float& deltaTime)
 {
+	this->playerRotationMX = player->getRotationMX();
+	this->playerPosition = player->getPosV3();
+	this->playerSpeed = player->getSpeed();
+
 	//Actual camera
-	upVector = XMVector3TransformCoord(DEFAULT_UP, playerRotation);
-	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation);
-	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation);
+	upVector = XMVector3TransformCoord(DEFAULT_UP, playerRotationMX);
+	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotationMX);
+	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotationMX);
 	lookAtPos = playerPosition;
 	cameraPos = playerPosition + upVector * 60.f - forwardVector * 50.f;
 	logicalPos = cameraPos;
@@ -86,12 +90,16 @@ void Camera::moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::
 	updateCamera();
 }
 
-void Camera::moveVelocity(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation, const float& playerSpeed, const float& deltaTime)
+void Camera::moveVelocity(Player* player, const float& deltaTime)
 {
+	this->playerSpeed = player->getSpeed();
+	this->playerPosition = player->getPosV3();
+	this->playerRotationMX = player->getRotationMX();
+
 	//Actual camera
-	logicalUp = XMVector3TransformCoord(DEFAULT_UP, playerRotation);
-	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotation);
-	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotation);
+	logicalUp = XMVector3TransformCoord(DEFAULT_UP, playerRotationMX);
+	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotationMX);
+	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotationMX);
 	lookAtPos = playerPosition;
 	logicalPos = playerPosition + logicalUp * 60.f - forwardVector * 50.f;
 
@@ -99,7 +107,66 @@ void Camera::moveVelocity(const DirectX::XMVECTOR& playerPosition, const DirectX
 	velocityVector = XMVectorSubtract(logicalPos, cameraPos);
 	cameraPos += velocityVector * deltaTime * 5.f;
 	velocityVector = XMVectorSubtract(logicalUp, upVector);
-	upVector += velocityVector * deltaTime * 2.f;
+	upVector += velocityVector * deltaTime * 5.f;
+
+	//Changing FOV if player moving faster
+	if (XMVector3NotEqual(cameraPos, oldCameraPos))
+	{
+		if (playerSpeed < 26.f) minFOV = 0.76f;
+		else if (playerSpeed < 38.f) minFOV = 0.7f;
+		else minFOV = 0.65f;
+
+		if (fieldOfView > (minFOV + 0.01f)) fieldOfView -= deltaTime * 0.1f;
+		else if (fieldOfView < (minFOV - 0.01f))  fieldOfView += deltaTime * 0.1f;
+	}
+	else
+	{
+		maxFOV = 0.75f;
+		if (fieldOfView < maxFOV) fieldOfView += deltaTime * 1.5f;
+	}
+
+	oldCameraPos = cameraPos;
+	updateCamera();
+}
+
+void Camera::collisionCamera(Player* player, const std::vector<Planet*>& planets, const float& deltaTime)
+{
+	this->playerRotationMX = player->getRotationMX();
+	this->playerPosition = player->getPosV3();
+	this->playerSpeed = player->getSpeed();
+
+	collided = false;
+
+	//Actual camera
+	logicalUp = XMVector3TransformCoord(DEFAULT_UP, playerRotationMX);
+	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotationMX);
+	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotationMX);
+	lookAtPos = playerPosition;
+	//logicalPos = playerPosition + logicalUp * 60.f - forwardVector * 50.f;
+
+	//Checking collision with planets
+	for (int i = 0; i < planets.size(); i++)
+	{
+		planetVector = DirectX::XMVectorSet(planets[i]->getSize(), planets[i]->getSize(), planets[i]->getSize(), 0.0f);
+		cameraVector = XMVectorSubtract(planets[i]->getPlanetPosition(), logicalPos);
+		cameraVector = DirectX::XMVectorSet(abs(cameraVector.x), abs(cameraVector.y), abs(cameraVector.z), 0.f); //	 CHECK IF THE POSITION OVER IS COLLIDING!!
+		if (XMVector3LessOrEqual(cameraVector, planetVector)) { collided = true; std::cout << "COLLIDED\n"; }
+	}
+
+	if (collided)
+	{
+		logicalPos -= logicalUp * 0.05f;
+	}
+	else
+	{
+		logicalPos = playerPosition + logicalUp * 60.f - forwardVector * 50.f;
+	}
+
+	//The showing camera
+	velocityVector = XMVectorSubtract(logicalPos, cameraPos);
+	cameraPos += velocityVector * deltaTime * 5.f;
+	velocityVector = XMVectorSubtract(logicalUp, upVector);
+	upVector += velocityVector * deltaTime * 5.f;
 
 	//Changing FOV if player moving faster
 	if (XMVector3NotEqual(cameraPos, oldCameraPos))
@@ -123,10 +190,10 @@ void Camera::moveVelocity(const DirectX::XMVECTOR& playerPosition, const DirectX
 
 void Camera::winScene(const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation)
 {
-	rotationMX = shipRotation;
-	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, rotationMX);
-	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, rotationMX);
-	upVector = XMVector3TransformCoord(DEFAULT_UP, rotationMX);
+	playerRotationMX = shipRotation;
+	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotationMX);
+	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotationMX);
+	upVector = XMVector3TransformCoord(DEFAULT_UP, playerRotationMX);
 
 	cameraPos = shipPosition + upVector * 40.f - forwardVector * 50.f;
 	lookAtPos = shipPosition;

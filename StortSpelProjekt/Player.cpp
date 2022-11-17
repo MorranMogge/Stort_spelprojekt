@@ -549,7 +549,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	if (!Input::KeyDown(KeyCode::W) && !Input::KeyDown(KeyCode::A) && !Input::KeyDown(KeyCode::S) && !Input::KeyDown(KeyCode::D)) this->moveKeyPressed = false;
 }
 
-bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime) //Need to update if we want to use this
+bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime)
 {
 	//Calculations
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);

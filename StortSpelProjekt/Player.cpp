@@ -105,7 +105,7 @@ void Player::handleItems()
 			this->throwItem();
 		}
 		//Use item
-		else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
+		else if (this->holdingItem != nullptr && Input::KeyPress(KeyCode::T) && Input::KeyPress(KeyCode::T))
 		{
 			//allocates data to be sent
 			ComponentData c;
@@ -430,6 +430,9 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 {
 	if (dedge || flipping) return;
 
+	auto state = this->gamePad->GetState(0);
+	if (state.IsConnected()) return;
+
 	//Running
 	this->currentSpeed = this->speed;
 	if (Input::KeyDown(KeyCode::SHIFT))
@@ -438,7 +441,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	}
 
 	//Jumping
-	if (onGround && Input::KeyPress(KeyCode::SPACE))
+	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
 		this->velocity = this->normalVector * 40.f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;

@@ -37,8 +37,6 @@ class MenuUI final
 	GUIText testText;
 
 	void HandleInputs();
-
-	void TextPass();
 	void SpritePass();
 
 public:

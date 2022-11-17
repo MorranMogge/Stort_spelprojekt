@@ -61,11 +61,6 @@ void MenuUI::HandleInputs()
 
 }
 
-void MenuUI::TextPass()
-{
-
-}
-
 GAMESTATE MenuUI::GetGameState()
 {
 	return gameState;
@@ -150,6 +145,5 @@ void MenuUI::Draw()
 	HandleInputs();
 	GUI::Begin();
 	SpritePass();
-	TextPass();
 	GUI::End();
 }

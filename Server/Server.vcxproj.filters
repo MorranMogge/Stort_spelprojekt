@@ -95,5 +95,8 @@
     <ClInclude Include="SpawnComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestObj.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

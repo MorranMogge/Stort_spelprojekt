@@ -23,9 +23,6 @@ GameObject::GameObject( const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& r
 GameObject::GameObject()
 {
 	this->rotation = DirectX::XMMatrixIdentity();
-
-	//Update constantbuffer
-	this->updateBuffer();
 }
 
 

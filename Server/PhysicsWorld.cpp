@@ -100,3 +100,17 @@ void PhysicsWorld::addPhysComponent(PhysicsComponent* newComp, const DirectX::XM
 	physObjects.emplace_back(newComp);
 }
 
+void PhysicsWorld::addPhysComponent(GameObject* gameObj, reactphysics3d::CollisionShapeName shape, const DirectX::XMFLOAT3& scale)
+{
+	PhysicsComponent* newComp = new PhysicsComponent();
+	newComp->initiateComponent(&this->com, this->world, shape, scale);
+	newComp->setPosition({ gameObj->getPos().x, gameObj->getPos().y, gameObj->getPos().z });
+	//newComp->setRotation(DirectX::XMQuaternionRotationMatrix(gameObj->getRot()));
+	
+	newComp->setLinearDampning(0.3f);
+	gameObj->setPhysComp(newComp);
+	newComp->setParent(gameObj);
+	physObjects.emplace_back(newComp);
+
+}
+

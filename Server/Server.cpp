@@ -1,4 +1,5 @@
 #include "PhysicsWorld.h"
+#include "GameObject.h"
 
 #include <iostream>
 #include <string>
@@ -18,6 +19,9 @@
 #include "RandomizeSpawn.h"
 #include "DirectXMathHelper.h"
 #include "TimeStruct.h"
+
+
+#include "TestObj.h"
 
 #include <d3d11_4.h>
 #include <dxgi1_6.h>
@@ -219,6 +223,10 @@ int main()
 	Component planetComp;
 	physWorld.addPhysComponent(planetComp, reactphysics3d::CollisionShapeName::SPHERE, DirectX::XMFLOAT3(40, 40, 40));
 	planetComp.getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
+
+
+	TestObj* t = new TestObj();
+
 
 	std::string identifier;
 	std::string s = "empty";

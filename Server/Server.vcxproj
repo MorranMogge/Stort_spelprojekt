@@ -151,7 +151,7 @@
     <ClCompile Include="RandomizeSpawn.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="GameObject.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="SpawnComponent.cpp" />
   </ItemGroup>
@@ -160,7 +160,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="DirectXMathHelper.h" />
     <ClInclude Include="GameObject.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Item.h" />
     <ClInclude Include="ObjectId.h" />
@@ -172,6 +172,7 @@
     <ClInclude Include="player.h" />
     <ClInclude Include="RandomizeSpawn.h" />
     <ClInclude Include="SpawnComponent.h" />
+    <ClInclude Include="TestObj.h" />
     <ClInclude Include="TimeStruct.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

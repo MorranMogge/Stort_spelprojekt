@@ -1,8 +1,8 @@
 #pragma once
 #include <SimpleMath.h>
+#include"PhysicsComponent.h"
 
-#include "reactphysics3d/reactphysics3d.h"
-#include <d3d11.h>
+
 
 class PhysicsComponent;
 
@@ -22,7 +22,6 @@ protected:
 
 public:
 	GameObject(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
-	GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1));
 	GameObject();
 	void movePos(const DirectX::XMFLOAT3& offset);
 	void setPos(const DirectX::XMFLOAT3& pos);
@@ -44,7 +43,6 @@ public:
 	bool withinBox(GameObject* object, float x, float y, float z) const;
 	bool withinRadious(GameObject* object, float radius) const;
 	void updatePhysCompRotation();
-	virtual void draw();
 	void updateRotation();
 	virtual void update(); //This updates the hitboxes
 };

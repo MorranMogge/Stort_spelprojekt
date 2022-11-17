@@ -96,7 +96,7 @@ void ImGuiHelper::spriteBegin()
 	ImGui::NewFrame();
 }
 
-void ImGuiHelper::spriteFloat(std::string name,float& x, float min, float max)
+void ImGuiHelper::spriteFloat(const std::string name,float& x, const float min, const float max)
 {
 	ImGui::Begin("sprite pos: ");
 

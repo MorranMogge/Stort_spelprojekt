@@ -69,3 +69,9 @@ float getLength(DirectX::XMFLOAT3 argOne)
 {
     return sqrt(argOne.x * argOne.x + argOne.y * argOne.y + argOne.z * argOne.z);
 }
+
+bool withinVicinityTwoPoints(float length, DirectX::XMFLOAT3 posOne, const DirectX::XMFLOAT3& posTwo)
+{
+    subtractionXMFLOAT3(posOne, posTwo);
+    return getLength(posOne)<=length;
+}

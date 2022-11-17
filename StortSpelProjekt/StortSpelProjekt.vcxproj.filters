@@ -101,9 +101,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>User</Filter>
     </ClCompile>
-    <ClCompile Include="Client.cpp">
-      <Filter>User</Filter>
-    </ClCompile>
     <ClCompile Include="ParticleEmitter.cpp">
       <Filter>Particles</Filter>
     </ClCompile>
@@ -123,9 +120,6 @@
     </ClCompile>
     <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="MouseClass.cpp" />
-    <ClCompile Include="PacketEventManager.cpp" />
-    <ClCompile Include="CircularBufferClient.cpp" />
-    <ClCompile Include="SendingDataEvent.cpp" />
     <ClCompile Include="BaseballBat.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
@@ -156,15 +150,21 @@
     <ClCompile Include="LoseMenu.cpp">
       <Filter>Game-States</Filter>
     </ClCompile>
+    <ClCompile Include="Asteroid.cpp" />
+    <ClCompile Include="AsteroidHandler.cpp" />
+    <ClCompile Include="Arrow.cpp" />
+    <ClCompile Include="PlanetGenerator.cpp" />
+    <ClCompile Include="Planet.cpp" />
     <ClCompile Include="Credits.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="CaptureZone.cpp" />
-    <ClCompile Include="ControlUI.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="ControlMenu.cpp">
-      <Filter>Game-States</Filter>
+    <ClCompile Include="CircularBufferClient.cpp" />
+    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="PacketEventManager.cpp" />
+    <ClCompile Include="Profiler.cpp" />
+    <ClCompile Include="SendingDataEvent.cpp" />
+    <ClCompile Include="CaptureZone.cpp">
+      <Filter>GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -352,9 +352,6 @@
     <ClInclude Include="OBJ.h">
       <Filter>Structs</Filter>
     </ClInclude>
-    <ClInclude Include="PackageTypes.h">
-      <Filter>Structs</Filter>
-    </ClInclude>
     <ClInclude Include="PerspectiveCamera.h">
       <Filter>Structs</Filter>
     </ClInclude>
@@ -385,9 +382,6 @@
     <ClInclude Include="Camera.h">
       <Filter>User</Filter>
     </ClInclude>
-    <ClInclude Include="Client.h">
-      <Filter>User</Filter>
-    </ClInclude>
     <ClInclude Include="ParticleEmitter.h">
       <Filter>Particles</Filter>
     </ClInclude>
@@ -410,10 +404,6 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="ClientHandler.h" />
     <ClInclude Include="MouseClass.h" />
-    <ClInclude Include="PacketEventManager.h" />
-    <ClInclude Include="CircularBufferClient.h" />
-    <ClInclude Include="PacketsDataTypes.h" />
-    <ClInclude Include="SendingDataEvent.h" />
     <ClInclude Include="BaseballBat.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
@@ -424,9 +414,6 @@
       <Filter>Game-States</Filter>
     </ClInclude>
     <ClInclude Include="WinUI.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="PacketEnum.h">
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="HudUI.h">
@@ -447,18 +434,33 @@
     <ClInclude Include="LoseMenu.h">
       <Filter>Game-States</Filter>
     </ClInclude>
-    <ClInclude Include="Credits.h">
-      <Filter>GUI</Filter>
+    <ClInclude Include="Profiler.h" />
+    <ClInclude Include="Client.h">
+      <Filter>Online</Filter>
     </ClInclude>
-    <ClInclude Include="Time.h">
-      <Filter>Structs</Filter>
+    <ClInclude Include="CircularBufferClient.h">
+      <Filter>Online</Filter>
     </ClInclude>
-    <ClInclude Include="CaptureZone.h" />
-    <ClInclude Include="ControlUI.h">
-      <Filter>GUI</Filter>
+    <ClInclude Include="PacketEventManager.h">
+      <Filter>Online</Filter>
     </ClInclude>
-    <ClInclude Include="ControlMenu.h">
-      <Filter>Game-States</Filter>
+    <ClInclude Include="PacketsDataTypes.h">
+      <Filter>Online</Filter>
+    </ClInclude>
+    <ClInclude Include="SendingDataEvent.h">
+      <Filter>Online</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketEnum.h">
+      <Filter>Online</Filter>
+    </ClInclude>
+    <ClInclude Include="Asteroid.h" />
+    <ClInclude Include="AsteroidHandler.h" />
+    <ClInclude Include="Arrow.h" />
+    <ClInclude Include="Credits.h" />
+    <ClInclude Include="Planet.h" />
+    <ClInclude Include="PlanetGenerator.h" />
+    <ClInclude Include="CaptureZone.h">
+      <Filter>GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -512,6 +514,9 @@
     </Filter>
     <Filter Include="Skybox">
       <UniqueIdentifier>{62f9e9b5-3e39-45cd-8b93-d997529a61e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Online">
+      <UniqueIdentifier>{8dc99f62-6498-4f24-915a-6c0d232cf63d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -71,6 +71,7 @@ void Client::setClientId(int nr)
 
 void Client::connectToServer(std::string ipAddress, int port)
 {
+	std::cout << "Tries to connect to server ip adress: " << ipAddress << std::endl;
 	if (tcpSocket.connect(ipAddress, port) != sf::Socket::Done)
 	{
 		std::cout << "Couldnt connect\n";
@@ -79,6 +80,10 @@ void Client::connectToServer(std::string ipAddress, int port)
 	{
 		std::cout << "Was able to connect\n";
 	}
+
+	
+	this->ip = ipAddress;
+	this->port = port;
 	data.endThread = false;
 	this->setupThread();
 	this->isConnected = true;
@@ -87,6 +92,8 @@ void Client::connectToServer(std::string ipAddress, int port)
 
 void Client::connectToServer()
 {
+	std::cout << "Tries to connect to server ip adress: " << this->ip << std::endl;
+
 	if (data.socket.connect(this->ip, this->port) != sf::Socket::Done)
 	{
 		std::cout << "Couldnt connect\n";
@@ -95,6 +102,7 @@ void Client::connectToServer()
 	{
 		std::cout << "Was able to connect\n";
 	}
+
 
 	data.endThread = false;
 	this->setupThread();

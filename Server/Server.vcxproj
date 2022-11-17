@@ -144,17 +144,26 @@
     <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="RandomizeSpawn.cpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="GameObject.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="SpawnComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="DirectXMathHelper.h" />
+    <ClInclude Include="GameObject.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="ObjectId.h" />
     <ClInclude Include="PacketEnum.h" />
     <ClInclude Include="Packethandler.h" />
     <ClInclude Include="PacketsDataTypes.h" />

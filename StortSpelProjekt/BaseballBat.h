@@ -25,8 +25,8 @@ public:
 
 	void setPlayer(Player* player);
 	void setClient(Client* client);
-	void setTestObj(const std::vector<GameObject *>& objects);
-	void setGameObjects(const std::vector<Player*>& objects);
+	void setGameObjects(const std::vector<GameObject *>& objects);
+	//void setGameObjects(const std::vector<Player*>& objects);
 	// Inherited via Item
 	virtual void useItem() override;
 

@@ -356,6 +356,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	//Load game objects
 	this->loadObjects();
 
+	DirectX::XMVECTOR start = { 1,1,1,1 };
+	DirectX::XMVECTOR end = { 10,10,10,10 };
+	DirectX::XMVECTOR res1 = DirectX::XMVectorLerp(start, end, 0.1);
+	DirectX::XMVECTOR res2 = DirectX::XMVectorLerp(start, end, 0.9);
 
 	//Init delta time
 	currentTime = std::chrono::system_clock::now();
@@ -564,7 +568,7 @@ GAMESTATE Game::Update()
 	this->sexyMan->updateAnim(dt, 0, 1);
 	for (int i = 0; i < sexyMen.size(); i++)
 	{
-		this->sexyMen[i]->updateAnim(dt, 0, 1);
+		//this->sexyMen[i]->updateAnim(dt, 0, 1);
 	}
 	this->currentPlayer->updateAnim(dt, 0, 1);
 

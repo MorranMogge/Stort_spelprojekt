@@ -158,6 +158,16 @@
     <ClCompile Include="Credits.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="CircularBufferClient.cpp" />
+    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="PacketEventManager.cpp" />
+    <ClCompile Include="Profiler.cpp" />
+    <ClCompile Include="SendingDataEvent.cpp" />
+    <ClCompile Include="CaptureZone.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlMenu.cpp" />
+    <ClCompile Include="ControlUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -445,6 +455,17 @@
     <ClInclude Include="PacketEnum.h">
       <Filter>Online</Filter>
     </ClInclude>
+    <ClInclude Include="Asteroid.h" />
+    <ClInclude Include="AsteroidHandler.h" />
+    <ClInclude Include="Arrow.h" />
+    <ClInclude Include="Credits.h" />
+    <ClInclude Include="Planet.h" />
+    <ClInclude Include="PlanetGenerator.h" />
+    <ClInclude Include="CaptureZone.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlMenu.h" />
+    <ClInclude Include="ControlUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -551,6 +572,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Fresnel_PS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="InvFresnel_PS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

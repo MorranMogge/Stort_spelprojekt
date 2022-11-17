@@ -2,6 +2,8 @@
 #include "GUISprite.h"
 #include <DDSTextureLoader.h>
 #include <WICTextureLoader.h>
+#include "ImGui/imgui.h"
+#include "SettingsUI.h"
 
 GUISprite::GUISprite()
 {
@@ -16,7 +18,6 @@ GUISprite::GUISprite(const float x, const float y, const float layer)
     
     m_Position = DirectX::SimpleMath::Vector2(BaseWidth * x, BaseHeight * y);
     m_Layer = layer;
-    //m_pOrigin =;
     m_Scale = { BaseWidth * 1, BaseWidth * 1 };            //same scale as object
     m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
     m_Alpha = 1.0f;
@@ -32,7 +33,6 @@ GUISprite::GUISprite(const DirectX::SimpleMath::Vector2& position, float layer)
     m_Position.x *= BaseWidth;
     m_Position.y *= BaseHeight;
     m_Layer = layer;
-    //m_pOrigin =;
     m_Scale = { BaseWidth * 1, BaseWidth * 1 };            //same scale as object
     m_Tint = DirectX::Colors::White.v;  //.v - xmvextor should be able to store in it
     m_Alpha = 1.0f;
@@ -54,9 +54,12 @@ void GUISprite::Load(ID3D11Device* device, const wchar_t* file)
 
 }
 
-const DirectX::SimpleMath::Vector2& GUISprite::GetPosition() const
+const DirectX::SimpleMath::Vector2 GUISprite::GetPosition() const
 {
-    return m_Position;
+    auto pos = m_Position;
+    pos.x /= BaseWidth;
+    pos.y /= BaseHeight;
+    return pos;
 }
 
 const DirectX::SimpleMath::Vector2& GUISprite::GetOrigin() const
@@ -139,22 +142,25 @@ void GUISprite::Draw()
 
 bool GUISprite::IntersectMouse() const
 {
-#pragma region GetMousePos
+    //static POINT mousePos;
+    //if (GetCursorPos(&mousePos))
+    //{
+    //    if (ScreenToClient(GetActiveWindow()/*FindWindowW(L"Window Class", L"Projekt")*/, &mousePos))
+    //    {
+    //    }
+    //}
 
-    static POINT mousePos;
-    if (GetCursorPos(&mousePos))
-    {
-        if (ScreenToClient(FindWindowW(L"Window Class", L"Projekt"), &mousePos))
-        {
+    ImVec2 mousePos = ImGui::GetMousePos();
+#define InsideX mousePos.x > m_Position.x/* * BaseWidth*/ - (m_Width * m_Scale.x / 2.0f)/* * BaseWidth*/ && mousePos.x < m_Position.x/* * BaseWidth*/ + (m_Width * m_Scale.x / 2.0f)/* * BaseWidth*/
+#define InsideY mousePos.y > m_Position.y/* * BaseHeight*/ - (m_Height * m_Scale.y / 2.0f)/* * BaseHeight*/ && mousePos.y < m_Position.y/* * BaseHeight*/ + (m_Height * m_Scale.y / 2.0f)/* * BaseHeight*/
+    return InsideX && InsideY;
+}
 
-        }
-    }
-
-#pragma endregion
-
+bool GUISprite::IntersectSprite(const GUISprite & toCheck) const
+{
+    using namespace DirectX::SimpleMath;
+    Vector2 mousePos = toCheck.GetPosition();
 #define InsideX mousePos.x > m_Position.x - (m_Width * m_Scale.x / 2.0f) && mousePos.x < m_Position.x + (m_Width * m_Scale.x / 2.0f)
 #define InsideY mousePos.y > m_Position.y - (m_Height * m_Scale.y / 2.0f) && mousePos.y < m_Position.y + (m_Height * m_Scale.y / 2.0f)
-#define Intersect InsideX && InsideY
-
-    return Intersect;
+    return InsideX && InsideY;
 }

@@ -8,7 +8,7 @@ struct wirefameInfo
 };
 
 const int NROFPLAYERS = 1;
-static bool IFONLINE = true;
+static bool IFONLINE = false;
 
 class Game : public State
 {
@@ -19,7 +19,7 @@ private:
 	ImGuiHelper imGui;
 	bool wireframe = false;
 	bool objectDraw = true;
-	bool drawDebug = true;
+	bool drawDebug = false;
 	bool landingMinigame = false;
 
 	std::unique_ptr<DirectX::GamePad> gamePad;
@@ -62,7 +62,6 @@ private:
 	SkyboxObj skybox;
 	Player* currentPlayer;
 	Mesh* planetMeshes;
-	GameObject* atmosphere;
 
 	//Items
 	Potion* potion;
@@ -83,9 +82,6 @@ private:
 
 	//HUD
 	HudUI ui;
-	
-	//Temp buffer for atmosphere
-	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
 
 
 	void loadObjects();

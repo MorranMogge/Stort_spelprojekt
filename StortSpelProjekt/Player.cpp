@@ -405,7 +405,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	}
 
 	//Jumping
-	if (onGround && Input::KeyPress(KeyCode::SPACE))
+	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
 		onGround = false;
 		this->velocity = this->normalVector * 45.f;

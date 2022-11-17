@@ -8,8 +8,7 @@ using namespace DirectX;
 void Camera::updateCamera()
 {
 	viewMatrix = DirectX::XMMatrixLookAtLH(cameraPos, lookAtPos, upVector);
-	projMatrix = DirectX::XMMatrixPerspectiveFovLH(fieldOfView, 1264.f / 681.f, 0.1f, 800.0f);
-
+	projMatrix = DirectX::XMMatrixPerspectiveFovLH(fieldOfView, (float)GPU::windowWidth / (float)GPU::windowHeight, 0.1f, 800.0f);
 	cameraBuffer.getData().viewProjMX = viewMatrix * projMatrix;
 	cameraBuffer.getData().viewProjMX = XMMatrixTranspose(cameraBuffer.getData().viewProjMX);
 
@@ -42,7 +41,7 @@ Camera::Camera()
 	this->upVectorBuffer.getData().padding = 0;
 		
 	viewMatrix = DirectX::XMMatrixLookAtLH(cameraPos, lookAtPos, upVector);
-	projMatrix = DirectX::XMMatrixPerspectiveFovLH(0.8f, 1264.f / 681.f, 0.1f, 800.0f);
+	projMatrix = DirectX::XMMatrixPerspectiveFovLH(0.8f, (float)GPU::windowWidth / (float)GPU::windowHeight, 0.1f, 800.0f);
 	cameraBuffer.getData().viewProjMX = viewMatrix * projMatrix;
 	cameraBuffer.getData().viewProjMX = XMMatrixTranspose(cameraBuffer.getData().viewProjMX);
 

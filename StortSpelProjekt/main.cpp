@@ -18,6 +18,8 @@
 #include "CreditsMenu.h"
 #include "WinMenu.h"
 #include "LoseMenu.h"
+#include "ControlMenu.h"
+#include "Time.h"
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace, _In_ LPWSTR lpCmdLine, _In_ int nCmdShhow)
@@ -35,8 +37,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui::GetIO().IniFilename = nullptr;
 
-	//UINT WIDTH = 1920;
-	//UINT HEIGHT = 1080;
 	UINT WIDTH = 1280;
 	UINT HEIGHT = 720;
 
@@ -65,17 +65,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	GAMESTATE stateInfo = NOCHANGE;
 
 	MSG msg = {};
-	
+	Time::Start();
 
 	while (msg.message != WM_QUIT && stateInfo != EXIT)
 	{
-		if (Input::KeyPress(KeyCode::F1))
-		{
-			//fullscreen = !fullscreen;
-			//swapChain->SetFullscreenState(fullscreen, nullptr);
-			GPU::windowHeight = 1080;
-			GPU::windowWidth = 1920;
-		}
 
 		stateInfo = currentState->Update();
 
@@ -95,7 +88,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			{
 			case GAME:
 				delete currentState;
-				currentState = new Game(immediateContext, device, swapChain, window);
+				currentState = new Game(immediateContext, device, GPU::swapChain, window);
 				break;
 			case SETTINGS:
 				delete currentState;
@@ -113,6 +106,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 				delete currentState;
 				currentState = new LoseMenu();
 				break;
+			case CONTROL:
+				delete currentState;
+				currentState = new ControlMenu();
+				break;
 			case MENU:
 				delete currentState;
 				currentState = new Menu();
@@ -124,13 +121,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 		
 		currentState->Render();
 
-		swapChain->Present(0, 0);
+		GPU::swapChain->Present(0, 0);
+		Time::Update();
 	}
 
 	#pragma region Deallocation
 	delete currentState;
 	
-
+	ChangeResolution(1920, 1080);
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
@@ -140,7 +138,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	device->Release();
 	immediateContext->Release();
-	swapChain->Release();
+	GPU::swapChain->Release();
 
 	#pragma endregion
 	

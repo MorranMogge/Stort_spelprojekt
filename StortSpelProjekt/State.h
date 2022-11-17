@@ -10,7 +10,8 @@ enum GAMESTATE
 	NOCHANGE,
 	EXIT,
 	WIN,
-	LOSE
+	LOSE,
+	CONTROL
 };
 
 class State

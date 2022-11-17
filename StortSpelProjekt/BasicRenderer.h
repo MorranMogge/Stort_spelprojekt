@@ -47,7 +47,7 @@ private:
 	ID3D11BlendState* blendState;				//Blendstate for PT_Pixel shader
 	ID3D11BlendState* fresnelBlendState;
 	ID3D11PixelShader* Fresnel_PS;
-
+	ID3D11PixelShader* InvFresnel_PS;
 
 	bool setUpInputLayout(ID3D11Device* device, const std::string &vShaderByteCode);
 	bool setUp_PT_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode);
@@ -74,4 +74,5 @@ public:
 	void bindAmbientShader();
 	void geometryUnbind();
 	void fresnelPrePass(Camera& stageCamera);
+	void invFresnelPrePass();
 };

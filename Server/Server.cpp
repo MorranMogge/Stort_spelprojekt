@@ -73,6 +73,7 @@ bool receiveDataUdp(sf::Packet& receivedPacket, serverData &data, unsigned short
 	else
 	{
 		std::cout << "UDP failure\n";
+		return false;
 	}
 };
 

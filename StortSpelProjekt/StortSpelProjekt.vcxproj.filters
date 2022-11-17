@@ -159,7 +159,9 @@
     <ClCompile Include="Credits.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="CaptureZone.cpp" />
+    <ClCompile Include="CaptureZone.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -447,7 +449,9 @@
     <ClInclude Include="Time.h">
       <Filter>Structs</Filter>
     </ClInclude>
-    <ClInclude Include="CaptureZone.h" />
+    <ClInclude Include="CaptureZone.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

@@ -110,7 +110,7 @@ public:
 
 
 	//Get Funktions
-	virtual const DirectX::SimpleMath::Vector2& GetPosition() const = 0;
+	virtual const DirectX::SimpleMath::Vector2 GetPosition() const = 0;
 	//virtual const DirectX::SimpleMath::Vector3& GetPosition() const = 0;
 	virtual const DirectX::SimpleMath::Vector2& GetOrigin() const = 0;
 	virtual const DirectX::SimpleMath::Vector2& GetScale() const = 0; //vector gives posibility to non-uniform scaling

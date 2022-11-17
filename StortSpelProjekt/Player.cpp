@@ -342,7 +342,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	if (onGround && Input::KeyPress(KeyCode::SPACE))
 	{
 		jumpHeight = 0.f;
-		onGround = false;
+		//onGround = false;
 	}
 	else if (jumpHeight < jumpAllowed)
 	{

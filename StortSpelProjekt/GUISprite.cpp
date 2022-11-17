@@ -54,7 +54,7 @@ void GUISprite::Load(ID3D11Device* device, const wchar_t* file)
 
 }
 
-const DirectX::SimpleMath::Vector2& GUISprite::GetPosition() const
+const DirectX::SimpleMath::Vector2 GUISprite::GetPosition() const
 {
     auto pos = m_Position;
     pos.x /= BaseWidth;

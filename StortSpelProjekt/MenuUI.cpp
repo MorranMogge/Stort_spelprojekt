@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "MenuUI.h"
 #include "GPU.h"
-#include"Input.h"
+#include "Input.h"
 #include "SettingsUI.h"
 #include "Credits.h"
 
@@ -19,11 +19,9 @@ void MenuUI::SpritePass()
 	hit_setting? settings2.Draw() :settings.Draw();
 	hit_credits ? credits2.Draw() : credits.Draw();
 	hit_exit ? exit2.Draw() : exit.Draw();
-	control.Draw();
+	hit_control ? control2.Draw() : control.Draw();
+
 	objective.Draw();
-	useText.Draw();
-	throwText.Draw();
-	pickText.Draw();
 	title.Draw();
 
 }
@@ -36,6 +34,7 @@ void MenuUI::HandleInputs()
 	hit_setting = settings.IntersectMouse();
 	hit_credits = credits.IntersectMouse();
 	hit_exit = exit.IntersectMouse();
+	hit_control = control.IntersectMouse();
 
 	if (Input::KeyPress(KeyCode::MOUSE_L))
 	{
@@ -55,6 +54,10 @@ void MenuUI::HandleInputs()
 		else if (hit_exit)
 		{
 			gameState = EXIT;
+		}
+		else if (hit_control)
+		{
+			gameState = CONTROL;
 		}
 
 	}
@@ -81,15 +84,19 @@ MenuUI::MenuUI()
 	start.Load(GPU::device, L"../Sprites/Menu/start.png");
 	start.SetScale(scale);
 
-	settings = GUISprite(centerX, 300 + 75);
+	control = GUISprite(centerX, 300 + 75 * 1);
+	control.Load(GPU::device, L"../Sprites/Menu/control.png");
+	control.SetScale(scale);
+
+	settings = GUISprite(centerX, 300 + 75 * 2);
 	settings.Load(GPU::device, L"../Sprites/Menu/settings.png");
 	settings.SetScale(scale);
 
-	credits = GUISprite(centerX, 300 + 75 * 2);
+	credits = GUISprite(centerX, 300 + 75 * 3);
 	credits.Load(GPU::device, L"../Sprites/Menu/credits.png");
 	credits.SetScale(scale);
 
-	exit = GUISprite(centerX, 300 + 75 * 3);
+	exit = GUISprite(centerX, 300 + 75 * 4);
 	exit.Load(GPU::device, L"../Sprites/Menu/exit.png");
 	exit.SetScale(scale);
 
@@ -97,37 +104,25 @@ MenuUI::MenuUI()
 	start2.Load(GPU::device, L"../Sprites/Menu/start2_r.png");
 	start2.SetScale(scale);
 
-	settings2 = GUISprite(centerX, 300 + 75);
+	control2 = GUISprite(centerX, 300 + 75 * 1);
+	control2.Load(GPU::device, L"../Sprites/Menu/control2_r.png");
+	control2.SetScale(scale);
+
+	settings2 = GUISprite(centerX, 300 + 75 * 2);
 	settings2.Load(GPU::device, L"../Sprites/Menu/settings2_r.png");
 	settings2.SetScale(scale);
 
-	credits2 = GUISprite(centerX, 300 + 75 * 2);
+	credits2 = GUISprite(centerX, 300 + 75 * 3);
 	credits2.Load(GPU::device, L"../Sprites/Menu/credits2_r.png");
 	credits2.SetScale(scale);
 
-	exit2 = GUISprite(centerX, 300 + 75 * 3);
+	exit2 = GUISprite(centerX, 300 + 75 * 4);
 	exit2.Load(GPU::device, L"../Sprites/Menu/exit2_r.png");
 	exit2.SetScale(scale);
 
 	Loading = GUISprite(centerX, centerY);
 	Loading.Load(GPU::device, L"../Sprites/Loading.bmp");
 	Loading.SetScale(1, 1);
-
-	control = GUISprite(310 - left, 225 - upp);
-	control.Load(GPU::device, L"../Sprites/control.png");
-	control.SetScale(0.75, 0.75);
-
-	useText = GUISprite(320 - left, 420 - upp);
-	useText.Load(GPU::device, L"../Sprites/UseText.png");
-	useText.SetScale(0.40f, 0.40f);
-
-	throwText = GUISprite(340 - left, 500 - upp);
-	throwText.Load(GPU::device, L"../Sprites/ThrowText.png");
-	throwText.SetScale(0.40f, 0.40f);
-
-	pickText = GUISprite(322 - left, 580 - upp);
-	pickText.Load(GPU::device, L"../Sprites/PickText.png");
-	pickText.SetScale(0.40f, 0.40f);
 
 	objective = GUISprite(310 - left, 675 - upp);
 	objective.Load(GPU::device, L"../Sprites/Objective.png");
@@ -137,7 +132,6 @@ MenuUI::MenuUI()
 	title.Load(GPU::device, L"../Sprites/title.png");
 	title.SetScale(0.6f, 0.6f);
 
-	gameState = NOCHANGE;
 }
 
 void MenuUI::Draw()

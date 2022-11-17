@@ -159,8 +159,12 @@
     <ClCompile Include="Credits.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="CaptureZone.cpp">
-      <Filter>GameObjects</Filter>
+    <ClCompile Include="CaptureZone.cpp" />
+    <ClCompile Include="ControlUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlMenu.cpp">
+      <Filter>Game-States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -449,8 +453,12 @@
     <ClInclude Include="Time.h">
       <Filter>Structs</Filter>
     </ClInclude>
-    <ClInclude Include="CaptureZone.h">
-      <Filter>GameObjects</Filter>
+    <ClInclude Include="CaptureZone.h" />
+    <ClInclude Include="ControlUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlMenu.h">
+      <Filter>Game-States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

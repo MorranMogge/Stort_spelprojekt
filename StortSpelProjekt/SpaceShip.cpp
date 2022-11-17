@@ -29,7 +29,7 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 
 
 	//CapZone
-	float constant2 = 48.0f;
+	float constant2 = 40.0f;
 	DirectX::XMFLOAT3 offset2(upDir.x * constant2, upDir.y * constant2, upDir.z * constant2);
 	zone = new CaptureZone(tempMesh, offset2, this->getRotXM(),field, DirectX::XMFLOAT3(8, 8, 8));
 
@@ -72,7 +72,7 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 	tempMesh = new Mesh("../Meshes/zone");
 
 	//CapZone
-	float constant2 = 48.0f;
+	float constant2 = 40.0f;
 	DirectX::XMFLOAT3 offset2(upDir.x * constant2, upDir.y * constant2, upDir.z * constant2);
 	zone = new CaptureZone(tempMesh, offset2, this->getRotXM(), field, DirectX::XMFLOAT3(8, 8, 8));
 

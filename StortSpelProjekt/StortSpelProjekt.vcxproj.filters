@@ -158,6 +158,11 @@
     <ClCompile Include="Credits.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="CircularBufferClient.cpp" />
+    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="PacketEventManager.cpp" />
+    <ClCompile Include="Profiler.cpp" />
+    <ClCompile Include="SendingDataEvent.cpp" />
     <ClCompile Include="CaptureZone.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
@@ -448,9 +453,12 @@
     <ClInclude Include="PacketEnum.h">
       <Filter>Online</Filter>
     </ClInclude>
-    <ClInclude Include="Time.h">
-      <Filter>Structs</Filter>
-    </ClInclude>
+    <ClInclude Include="Asteroid.h" />
+    <ClInclude Include="AsteroidHandler.h" />
+    <ClInclude Include="Arrow.h" />
+    <ClInclude Include="Credits.h" />
+    <ClInclude Include="Planet.h" />
+    <ClInclude Include="PlanetGenerator.h" />
     <ClInclude Include="CaptureZone.h">
       <Filter>GameObjects</Filter>
     </ClInclude>

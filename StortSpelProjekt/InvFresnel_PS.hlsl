@@ -31,5 +31,5 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
     float fres = FresnelEffect(normal, viewDir, 1.5 /*color.w*/);
     float4 frescolor = { /* color.x * */fres, /*color.y * */fres, /*color.z * */fres, fres };
     
-    return color * saturate(pow(1 - frescolor, 8));
+    return color * saturate(pow(1 - frescolor, 4));
 }

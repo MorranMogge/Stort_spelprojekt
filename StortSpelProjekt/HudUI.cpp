@@ -200,7 +200,7 @@ void HudUI::handleInputs()
 	using namespace DirectX::SimpleMath;
 	Vector2 rocketPos = landing2.GetPosition();
 	Vector2 safePos = landing1.GetPosition();
-	float sinCurve = (sin(timer.getDt())*0.5) + 0.5;
+	float sinCurve = (sin(timer.getDt())*0.5f) + 0.5f;
 
 
 	//Move "safezone" sprite

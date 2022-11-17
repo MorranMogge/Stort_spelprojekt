@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "WindowHelper.h"
 #include "GPU.h"
-#include "GUIObject.h";
+#include "GUIObject.h"
 #include "resource.h"
 #include "imGUI\imconfig.h"
 #include "imGUI\imgui.h"

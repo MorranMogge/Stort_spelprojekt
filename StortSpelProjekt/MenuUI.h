@@ -24,6 +24,9 @@ class MenuUI final
 	GUISprite throwText;
 	GUISprite pickText;
 
+	GUISprite title;
+	
+
 	GUISprite objective;
 
 	bool isLoading = false;

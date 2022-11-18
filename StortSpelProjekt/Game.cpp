@@ -482,7 +482,7 @@ GAMESTATE Game::Update()
 	
 	//Setting the camera at position
 	if (!velocityCamera) camera.collisionCamera(currentPlayer, planetVector, dt);
-	else camera.moveVelocity(currentPlayer, dt);
+	else camera.moveCamera(currentPlayer, dt);
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
 	//Check Components online

@@ -148,11 +148,9 @@ void Camera::collisionCamera(Player* player, const std::vector<Planet*>& planets
 		planetVector = DirectX::XMVectorSet(planets[i]->getSize(), planets[i]->getSize(), planets[i]->getSize(), 0.0f);
 		cameraVector = XMVectorSubtract(planets[i]->getPlanetPosition(), logicalPos);
 		cameraVector = DirectX::XMVectorSet(abs(cameraVector.x), abs(cameraVector.y), abs(cameraVector.z), 0.f);
-		while  (XMVector3LessOrEqual(cameraVector, planetVector))
+		if  (XMVector3LessOrEqual(cameraVector, planetVector))
 		{ 
-			logicalPos -= logicalUp * 20.f;
-			cameraVector = XMVectorSubtract(planets[i]->getPlanetPosition(), logicalPos);
-			cameraVector = DirectX::XMVectorSet(abs(cameraVector.x), abs(cameraVector.y), abs(cameraVector.z), 0.f);
+			logicalPos -= rightVector * 60.f;
 		}
 	}
 

@@ -34,7 +34,7 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 
 		if (this->findNodeAnim(node.nodeName, an, amnNode))
 		{
-			//this->findNodeAnim(node.nodeName, basic, originalPose);
+			this->findNodeAnim(node.nodeName, basic, originalPose);
 
 			DirectX::XMFLOAT3 Scaling;
 			this->InterpolateScaling(Scaling, animationTime, amnNode, originalPose);
@@ -226,6 +226,7 @@ bool AnimatedMesh::findNodeAnim(const std::string& nodeName, const animationNode
 {
 	for (int i = 0, end = (int)pAnimation.mChannels.size(); i < end; i++)
 	{
+		//can be optimized
 		if (pAnimation.mChannels[i].mNodeName == nodeName)
 		{
 			res = pAnimation.mChannels[i];

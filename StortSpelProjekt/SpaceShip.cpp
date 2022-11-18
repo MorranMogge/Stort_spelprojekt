@@ -11,6 +11,7 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 	engineTakeOff.load(L"../Sounds/shipTakeOff.wav");
 	engineTakeOff.setVolume(0.5f);
 
+	using namespace DirectX::SimpleMath;
 
 	//Set rotation to gravity field
 	this->setRot(this->getRotOrientedToGrav());
@@ -27,6 +28,13 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 	this->particles = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 	this->particles2 = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 
+	tempMesh = new Mesh("../Meshes/zone");
+
+
+	//CapZone
+	float constant2 = 40.0f;
+	DirectX::XMFLOAT3 offset2(upDir.x * constant2, upDir.y * constant2, upDir.z * constant2);
+	zone = new CaptureZone(tempMesh, offset2, this->getRotXM(),field, DirectX::XMFLOAT3(8, 8, 8));
 
 	//Team switch
 	switch (team)
@@ -40,13 +48,15 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 		HudUI::blue = this;
 		mesh->matKey[0] = "spaceshipTexture2.jpg";
 		break;
-
 	}
 }
 
 SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
 	:GameObject("../Meshes/rocket", pos, DirectX::XMFLOAT3(0, 0, 0), id, field, scale), compToComplete(nrofComp), currentComponents(0), team(team), animate(false), counter(0.0f)
 {
+	using namespace DirectX;
+	using namespace DirectX::SimpleMath;
+
 	//Set rotation to gravity field
 	this->setRot(this->getRotOrientedToGrav());
 
@@ -61,6 +71,13 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 	//Particles
 	this->particles = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 	this->particles2 = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
+
+	tempMesh = new Mesh("../Meshes/zone");
+
+	//CapZone
+	float constant2 = 40.0f;
+	DirectX::XMFLOAT3 offset2(upDir.x * constant2, upDir.y * constant2, upDir.z * constant2);
+	zone = new CaptureZone(tempMesh, offset2, this->getRotXM(), field, DirectX::XMFLOAT3(8, 8, 8));
 
 	//Team switch
 	switch (team)
@@ -85,9 +102,11 @@ SpaceShip::~SpaceShip()
 	//{
 	//	delete this->components.at(i);
 	//}
+	delete this->zone;
 	delete this->particles;
 	delete this->particles2;
 	delete this->rocketStatusQuad;
+	delete this->tempMesh;
 }
 
 int SpaceShip::getTeam() const
@@ -141,35 +160,16 @@ void SpaceShip::addComponent()
 	}
 }
 
-void SpaceShip::takeOff()
-{
-	//Icon initiation
-	DirectX::XMFLOAT3  pos = this->position;
-	static float constant = this->position.Length() *1.2f;
-	DirectX::XMFLOAT3 upDir = this->getUpDirection();
-	constant += 0.1f;
-	DirectX::XMFLOAT3 test(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-
-	this->position = test;
-	this->updateBuffer();
-
-	//Update particle movement
-	if (this->particles != nullptr)
-	{
-		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
-		this->particles->setPosition(this->position);
-		this->particles->setRotation(this->getUpDirection());
-		this->particles->updateBuffer();
-	}
-}
-
 void SpaceShip::update()
 {
 }
 
 void SpaceShip::drawQuad()
 {
-	rocketStatusQuad->bindAndDraw(this->currentComponents, 0);//Changes texture depending on components
+	if (!(this->currentComponents >= this->compToComplete))
+	{
+		rocketStatusQuad->bindAndDraw(this->currentComponents, 0);//Changes texture depending on components
+	}
 }
 
 bool SpaceShip::getCompletion() const
@@ -179,6 +179,17 @@ bool SpaceShip::getCompletion() const
 
 void SpaceShip::drawParticles()
 {
+
+	//Update particle movement
+	if (this->particles != nullptr)
+	{
+		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
+		this->particles->setPosition(this->position);
+		this->particles->setRotation(this->getUpDirection());
+		this->particles->updateBuffer();
+	}
+
+
 	if (this->particles != nullptr)
 	{
 		this->particles->BindAndDraw(0);
@@ -188,6 +199,21 @@ void SpaceShip::drawParticles()
 	{
 		particles2->BindAndDraw(1);
 	}
+}
+
+void SpaceShip::drawFresnel()
+{
+	switch (this->team)
+	{
+	case 0:
+		this->zone->setColor(DirectX::XMFLOAT3(1, 0, 0));
+		break;
+
+	case 1:
+		this->zone->setColor(DirectX::XMFLOAT3(0, 0.7f, 1.0f));
+		break;
+	}
+	this->zone->drawFresnel();
 }
 
 bool SpaceShip::isFinished()
@@ -206,17 +232,13 @@ void SpaceShip::draw()
 	switch (this->team)
 	{
 	case 0:
-		HudUI::red = this;
 		mesh->matKey[0] = "spaceshipTexture1.jpg";
 		break;
 
 	case 1:
-		HudUI::blue = this;
 		mesh->matKey[0] = "spaceshipTexture2.jpg";
 		break;
-
 	}
-
 	this->mesh->UpdateCB(position, rotation, scale);
 	this->mesh->DrawWithMat();
 }

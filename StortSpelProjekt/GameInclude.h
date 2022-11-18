@@ -43,6 +43,7 @@
 #include "StructuredBuffer.h"
 #include "BufferTypes.h"
 #include "PacketEventManager.h"
+#include "Profiler.h"
 
 #include "SoundCollection.h"
 

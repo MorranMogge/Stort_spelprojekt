@@ -33,20 +33,32 @@ VSout main(VShaderIn input)
     VSout output;
     
     const float4 startPosition = float4(input.position, 1.0f);
-    float3 sumPos = float3(0, 0, 0);
-    sumPos += mul(startPosition, Tx[input.boneIndex[0]] * input.weights[0]);
-    sumPos += mul(startPosition, Tx[input.boneIndex[1]] * input.weights[1]);
-    sumPos += mul(startPosition, Tx[input.boneIndex[2]] * input.weights[2]);
-    sumPos += mul(startPosition, Tx[input.boneIndex[3]] * input.weights[3]);
+    float4x4 boneTransformation = float4x4(
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0
+    );
+    boneTransformation += Tx[input.boneIndex[0]] * input.weights[0];
+    boneTransformation += Tx[input.boneIndex[1]] * input.weights[1];
+    boneTransformation += Tx[input.boneIndex[2]] * input.weights[2];
+    boneTransformation += Tx[input.boneIndex[3]] * input.weights[3];
 
     output.uv = input.uv;
 
-    //Calculate position of vertex in world
-    output.worldPosition = mul(float4(sumPos, 1.0f), worldM);
-    //output.worldPosition = mul(float4(input.position, 1.0f), worldM);
-    output.position = mul(output.worldPosition, camViewProjM);
+    output.position = mul(float4(input.position, 1.0f), boneTransformation);
+    output.position = mul(output.position, worldM);
+    output.worldPosition = output.position;
+    output.position = mul(output.position, camViewProjM);
+    
 
     //Calculate the normal vector against the world matrix only.
+    //output.normal = mul(float4(input.normal, 0.0f), boneTransformation).xyz;
+    //output.normal = mul(float4(output.normal, 0.0f), worldM).xyz;
+    //output.normal = normalize(output.normal);
+    //output.normal = -output.normal;
     output.normal = normalize(mul(input.normal, (float3x3) worldM));
+    
+    
     return output;
 }

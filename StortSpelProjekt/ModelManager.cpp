@@ -125,8 +125,10 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 			vertex.pos.y = mesh->mVertices[i].y;
 			vertex.pos.z = mesh->mVertices[i].z;
 
-			mesh->mNormals->Normalize();
-			vertex.nor = DirectX::XMFLOAT3(mesh->mNormals->x, mesh->mNormals->y, mesh->mNormals->z);
+			//mesh->mNormals->Normalize();
+			vertex.nor.x = mesh->mNormals[i].x;
+			vertex.nor.y = mesh->mNormals[i].y;
+			vertex.nor.z = mesh->mNormals[i].z;
 
 			if (mesh->mTextureCoords[0])
 			{
@@ -522,16 +524,10 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 	}
 	parseNode(pScene);
 	parseAnimation(pScene);
-
-	DirectX::XMFLOAT4X4 temp;
-	DirectX::XMStoreFloat4x4(&temp, DirectX::XMMatrixIdentity());
 	
 	std::vector<AnimatedVertex> vertexAVec;
 	vertexAVec.reserve(this->dataForMesh.vertexTriangle.size());
 	AnimatedVertex tempVertex;
-	
-	auto mesh1 = pScene->mMeshes[0];
-	auto mesh2 = pScene->mMeshes[1];
 
 	for (int i = 0, end = this->dataForMesh.vertexTriangle.size(); i < end; i++)
 	{

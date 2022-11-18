@@ -287,8 +287,8 @@ AnimatedMesh::AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOA
 	oldAnimId = 0;
 	oldTime = 0;
 	returning = false;
-	this->setScale(DirectX::XMFLOAT3(2, 2, 2));
-	this->updateBuffer();
+	//this->setScale(DirectX::XMFLOAT3(0.02, 0.02, 0.02));
+	//this->updateBuffer();
 }
 
 AnimatedMesh::~AnimatedMesh()
@@ -343,7 +343,7 @@ void AnimatedMesh::updateAnim(const float& dt, const unsigned& animIndex, float 
 		}
 		else if (state == 2)
 		{
-			float timeOffset = dt * 2;
+			float timeOffset = dt * 6;
 			oldTime += timeOffset;
 			//std::cout << "returning, Time ofsett is: " << oldTime << std::endl;
 		}

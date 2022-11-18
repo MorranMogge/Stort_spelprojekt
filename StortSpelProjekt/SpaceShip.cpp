@@ -38,12 +38,10 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 	{
 	case 0:
 		HudUI::red = this;
-		mesh->matKey[0] = "spaceshipTexture1.jpg";
 		break;
 
 	case 1:
 		HudUI::blue = this;
-		mesh->matKey[0] = "spaceshipTexture2.jpg";
 		break;
 	}
 }
@@ -81,12 +79,10 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 	{
 	case 0:
 		HudUI::red = this;
-		mesh->matKey[0] = "spaceshipTexture1.jpg"; 
 		break;
 
 	case 1:
 		HudUI::blue = this;
-		mesh->matKey[0] = "spaceshipTexture2.jpg";
 		break;
 
 	}
@@ -126,7 +122,9 @@ bool SpaceShip::detectedComponent(GameObject* objectToCheck)
 	}
 	else
 	{
+		float rad = zone->getRadius();
 		if (this->scale.y != 2.f) this->setScale(DirectX::XMFLOAT3(2, 2, 2));
+		if (zone->getScale().y != rad) zone->setScale(DirectX::XMFLOAT3(rad, rad, rad));
 	}
 	return didDetect;
 }
@@ -141,7 +139,9 @@ bool SpaceShip::detectedComponent(Component* componentToCheck)
 	}
 	else
 	{
+		float rad = zone->getRadius();
 		if (this->scale.y != 2.f) this->setScale(DirectX::XMFLOAT3(2, 2, 2));
+		if (zone->getScale().y != rad) zone->setScale(DirectX::XMFLOAT3(rad, rad, rad));
 	}
 	return didDetect;
 }
@@ -220,16 +220,6 @@ bool SpaceShip::isFinished()
 void SpaceShip::draw()
 {
 	//Team switch
-	switch (this->team)
-	{
-	case 0:
-		mesh->matKey[0] = "spaceshipTexture1.jpg";
-		break;
-
-	case 1:
-		mesh->matKey[0] = "spaceshipTexture2.jpg";
-		break;
-	}
 	this->mesh->UpdateCB(position, rotation, scale);
 	this->mesh->DrawWithMat();
 }
@@ -250,15 +240,18 @@ void SpaceShip::animateOnPickup()
 
 		this->counter += this->timer.getDt();
 		auto scale = this->getScale();
+		auto zoneScale = this->zone->getScale();
 		float constant = 0.5;
 
 		if (this->counter > (animationDuration / 2))
 		{
 			this->setScale({ scale.x + (animationDuration / 2) - this->counter,scale.y + (animationDuration / 2) - this->counter,scale.z + (animationDuration / 2) - this->counter });
+			this->zone->setScale({ zoneScale.x + (animationDuration / 4) - this->counter,zoneScale.y + (animationDuration / 4) - this->counter,zoneScale.z + (animationDuration / 4) - this->counter });
 		}
 		else
 		{
 			this->setScale({ scale.x + this->counter + constant,scale.y + this->counter + constant ,scale.z + this->counter + constant });
+			this->zone->setScale({ zoneScale.x + this->counter + constant,zoneScale.y + this->counter + constant ,zoneScale.z + this->counter + constant });
 		}
 
 		this->timer.resetStartTime();

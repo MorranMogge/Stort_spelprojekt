@@ -135,6 +135,10 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/component"));
 	meshes.push_back(new Mesh("../Meshes/grenade"));
 	meshes.push_back(new Mesh("../Meshes/arrow"));
+	meshes.push_back(new Mesh("../Meshes/saturn1"));
+	meshes.push_back(new Mesh("../Meshes/N1"));
+
+
 
 	//Planet::Planet( useMesh,scale, pos, gravityFactor, Mesh * atmoMesh, const DirectX::SimpleMath::Vector3 & atmoColor, const float& atmoDensity)
 
@@ -184,8 +188,8 @@ void Game::loadObjects()
 	//SPACE SHIPS
 	if (!IFONLINE)
 	{
-		spaceShipRed = new SpaceShip(meshes[4], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
-		spaceShipBlue = new SpaceShip(meshes[4], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
+		spaceShipRed = new SpaceShip(meshes[10], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
+		spaceShipBlue = new SpaceShip(meshes[9], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
 
 		spaceShips.emplace_back(spaceShipRed);
 		spaceShips.emplace_back(spaceShipBlue);

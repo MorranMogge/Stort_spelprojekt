@@ -3,7 +3,7 @@
 
 
 CaptureZone::CaptureZone(Mesh* useMesh, const DirectX::SimpleMath::Vector3 & position, const DirectX::SimpleMath::Vector3 & rotation, GravityField* field, const DirectX::SimpleMath::Vector3 & scale, const DirectX::SimpleMath::Vector3 & color)
-	:GameObject(useMesh, position, rotation, ObjID::MOVABLE, field, scale)
+	:GameObject(useMesh, position, rotation, ObjID::MOVABLE, field, scale), radius(scale.x)
 {	
 	//Set up color buffer
 	this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
@@ -33,4 +33,15 @@ void CaptureZone::drawFresnel()
 {
 	GPU::immediateContext->PSSetConstantBuffers(2, 1, this->colorBuffer.getReferenceOf());
 	this->draw();
+}
+
+float CaptureZone::getRadius() const
+{
+	return this->radius;
+}
+
+void CaptureZone::setRadius(const float& radius)
+{
+	this->radius = radius;
+	this->setScale(DirectX::XMFLOAT3(radius, radius, radius));
 }

@@ -65,19 +65,10 @@ void Player::handleItems()
 		this->throwItem();
 	}
 	//Use the Item
-	else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
-	{
-		////allocates data to be sent
-		//ComponentData c;
-		//c.ComponentId = this->getItemOnlineId();
-		//c.inUseBy = -1;
-		//c.packetId = PacketType::COMPONENTPOSITION;
-		//c.x = this->getPos().x;
-		//c.y = this->getPos().y;
-		//c.z = this->getPos().z;
-
+	else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))
+	{	
+		keyPressTimer.resetStartTime();
 		////sending data to server
-		//client->sendStuff<ComponentData>(c);
 
 		//allocates data to be sent
 		ComponentDropped c;
@@ -92,11 +83,29 @@ void Player::handleItems()
 		}	
 
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+		if (holdingItem->getId() == GRENADE)
+		{
+			DirectX::XMFLOAT3 temp;
+			DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5.f + this->normalVector * 0.5f));
+			newNormalizeXMFLOAT3(temp);
+			if (this->moveKeyPressed)
+			{
+				if (this->currentSpeed == this->speed) scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.095f, temp);
+				else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
+			}
+
+
+			//Set dynamic so it can be affected by forces
+			this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
+			//Apply the force
+			this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
+		}
 		holdingItem->useItem();
-		itemPhysComp->setIsAllowedToSleep(true);
-		itemPhysComp->setIsSleeping(true);
+		//itemPhysComp->setIsAllowedToSleep(true);
+		//itemPhysComp->setIsSleeping(true);
 		holdingItem->setPickedUp(false);
 		holdingItem = nullptr;
+
 	}
 }
 
@@ -115,6 +124,11 @@ Player::~Player()
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team, GravityField* field)
     :GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team), currentSpeed(0)
 {
+	pickUpSfx.load(L"../Sounds/pickupCoin.wav");
+	playerHitSound.load(L"../Sounds/mixkit-sick-man-sneeze-2213.wav");
+	//walkingSound.setVolume(0.25f);
+
+
 	this->onlineID = onlineId;
 	this->rotationMX = XMMatrixIdentity();
 	this->rotation = XMMatrixIdentity();
@@ -396,6 +410,11 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 {
 	if (dedge) return;
 	else if (flipping) return;
+	/*if (walkingSound.getState() != DirectX::SoundState::PLAYING)
+	{
+		walkingSound.stop();
+		walkingSound.play();
+	}*/
 
 	//Running
 	this->currentSpeed = this->speed;
@@ -734,9 +753,9 @@ int Player::getItemOnlineId() const
 bool Player::pickupItem(Item* itemToPickup)
 {
 	bool successfulPickup = false;
-	if (Input::KeyDown(KeyCode::E))
+	if (Input::KeyPress(KeyCode::E))
 	{
-		if (this->withinRadius(itemToPickup, 5))
+		if (!holdingItem && this->withinRadius(itemToPickup, 5))
 		{
 			addItem(itemToPickup);
 
@@ -746,6 +765,12 @@ bool Player::pickupItem(Item* itemToPickup)
 			holdingItem->getPhysComp()->getRigidBody()->resetForce();
 			holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 			holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+			pickUpSfx.stop();
+			pickUpSfx.play();
+
+			keyPressTimer.resetStartTime();
+
+			keyEPressed = false;
 		}
 	}
 
@@ -759,6 +784,9 @@ void Player::setOnlineID(const int& id)
 
 void Player::hitByBat(const reactphysics3d::Vector3& force)
 {
+	playerHitSound.stop();
+	playerHitSound.play();
+
 	this->physComp->setType(reactphysics3d::BodyType::DYNAMIC);
 	this->dedge = true;
 	this->physComp->applyForceToCenter(force);

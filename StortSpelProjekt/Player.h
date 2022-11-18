@@ -32,6 +32,11 @@ private:
 	DirectX::XMMATRIX rotationMX;
 	DirectX::XMFLOAT4X4 rotationFloat;
 
+	//SFX
+	Sound pickUpSfx;
+	Sound walkingSound;
+	Sound playerHitSound;
+
 	//Status
 	int team;
 	int onlineID;
@@ -40,6 +45,7 @@ private:
 	bool onGround = false;
 	bool holdingComp = false;
 	bool moveKeyPressed = false;
+	bool keyEPressed;
 
 	//Controller variables
 	float posX = 0.0f;
@@ -51,6 +57,7 @@ private:
 	//Other variables
 	Client* client;
 	TimeStruct timer;
+	TimeStruct keyPressTimer;
 	Item* holdingItem;
 
 	ParticleEmitter* particles;

@@ -2,12 +2,14 @@
 #include "Planet.h"
 #include "DirectXMathHelper.h"
 #include "PhysicsWorld.h"
+#include <complex>
 
 Planet::Planet(Mesh* useMesh, const DirectX::SimpleMath::Vector3& scale, const DirectX::XMFLOAT3& pos, const float& gravityFactor, Mesh* atmoMesh, const DirectX::SimpleMath::Vector3& atmoColor, const float & atmoDensity)
-	:mesh(useMesh), position(pos), rotation(DirectX::XMFLOAT3(0.f,0.f,0.f)), scale(scale), rotSpeed(0), gravityFactor(gravityFactor), planetCollisionBox(nullptr)
+	:mesh(useMesh), position(pos), rotation(DirectX::XMFLOAT3(0.f,0.f,0.f)), scale(scale), rotSpeed(DirectX::SimpleMath::Vector3(0,0,0)), gravityFactor(gravityFactor), planetCollisionBox(nullptr), rotDegrees(0)
 {
 	this->planetShape = NONDISCLOSEDSHAPE;
 	this->gravField = new GravityField(gravityFactor, pos, scale.x);
+	this->originPoint = pos;
 	
 	//Set atmosphere mesh
 	this->atmosphere = atmoMesh;
@@ -51,6 +53,21 @@ void Planet::setPlanetShape(PhysicsWorld* physWorld, const PlanetShape& shape)
 	}
 	this->planetCollisionBox = physWorld->returnAddedPhysComponent(shapeName, this->position, this->scale/sizeCorrector);
 	this->planetCollisionBox->setType(reactphysics3d::BodyType::STATIC);
+}
+
+void Planet::setVelocity(const float& speed)
+{
+	this->velocity = speed;
+}
+
+void Planet::setRotationSpeed(const DirectX::SimpleMath::Vector3& rotSpeed)
+{
+	this->rotSpeed = rotSpeed;
+}
+
+void Planet::setRotation(const DirectX::SimpleMath::Vector3& rotation)
+{
+	this->rotation = rotation;
 }
 
 float Planet::getFieldFactor() const
@@ -165,6 +182,18 @@ float Planet::getSize(int index) const
 	
 }
 
+void Planet::rotateAroundPoint(const DirectX::XMFLOAT3& point)
+{
+	float deg = rotDegrees * (DirectX::XM_PI / 180.f);
+	rotDegrees += this->velocity*0.1f;
+	DirectX::SimpleMath::Vector3 factor(sin(deg), cos(deg), 1.0f);
+	this->position = this->originPoint * factor;
+}
+
+void Planet::rotatePlanet()
+{
+	this->rotation += rotSpeed;
+}
 void Planet::setColor(const DirectX::SimpleMath::Vector3& color)
 {
 	//Set up color buffer

@@ -45,5 +45,7 @@
 #include "PacketEventManager.h"
 #include "Profiler.h"
 
+#include "SoundCollection.h"
+
 
 

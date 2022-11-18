@@ -253,6 +253,7 @@
     <ClInclude Include="MemoryLeackChecker.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SoundLibrary.h" />
     <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="stb_image.h" />

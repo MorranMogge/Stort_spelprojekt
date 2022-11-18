@@ -7,7 +7,9 @@
 Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
 	:Item(useMesh, pos, rot, id, onlineId, GRENADE, field), destructionIsImminent(false), exploded(false), timeToExplode(5.f), currentTime(0.0f), explodePosition(0,0,0)
 {
-
+	counter = 1.0f;
+	sfx.load(L"../Sounds/explosion.wav");
+	explosion.load(L"../Sounds/explodeGrenade.wav");
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
 
@@ -56,13 +58,15 @@ Grenade::~Grenade()
 
 void Grenade::explode()
 {
+	explosion.stop();
+	explosion.play();
 	std::cout << "THE GRENADE EXPLODED\n";
 	exploded = true;
 	explodePosition = this->position;
 	int iterations = (int)gameObjects.size();
 	for (int i = 0; i < iterations; i++)
 	{
-		if (gameObjects[i] == this) continue;
+		if (gameObjects[i] == this || gameObjects[i]->getPhysComp()->getType() == reactphysics3d::BodyType::STATIC) continue;
 		if (this->withinRadious(gameObjects[i], 25))
 		{
 			gameObjects[i]->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -88,6 +92,7 @@ void Grenade::explode()
 			}
 		}
 	}
+	counter = 1.0f;
 	this->explosionMesh->scale = DirectX::XMFLOAT3(27, 27, 27);
 	this->destructionIsImminent = false;
 }
@@ -95,6 +100,7 @@ void Grenade::explode()
 void Grenade::updateExplosionCheck()
 {
 	if (destructionIsImminent && this->timer.getTimePassed(this->timeToExplode)) this->explode();
+	else if (destructionIsImminent && this->timer.getTimePassed(counter)) {counter++; sfx.stop(); sfx.play(); }
 }
 
 void Grenade::setGameObjects(const std::vector<GameObject*>& gameObjects)

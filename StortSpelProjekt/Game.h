@@ -16,6 +16,8 @@ private:
 	ID3D11DeviceContext* immediateContext;
 	HWND* window;
 
+	Sound gameMusic;
+
 	ImGuiHelper imGui;
 	bool wireframe = false;
 	bool objectDraw = true;

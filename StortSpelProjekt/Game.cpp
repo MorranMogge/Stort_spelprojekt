@@ -3,11 +3,15 @@
 #include "DirectXMathHelper.h"
 #include "SendingDataEvent.h"
 #include "MemoryLeackChecker.h"
+#include "SoundCollection.h"
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
 {
 	this->packetEventManager = new PacketEventManager();
+	gameMusic.load(L"../Sounds/Gold Rush Final.wav");
+	gameMusic.play(true);
+	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
 	client = new Client("192.168.43.251");
 	circularBuffer = client->getCircularBuffer();
@@ -69,6 +73,17 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	{
 		players[i]->setGravityField(planetGravityField);
 	}
+
+	field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
+	oldField = field;
+
+	//Set items baseball bat
+	baseballBat->setPlayer(currentPlayer);
+	baseballBat->setGameObjects(gameObjects);
+	baseballBat->setClient(client);
+
+	//Set items grenade
+	grenade->setGameObjects(gameObjects);
 
 	//Init delta time
 	currentTime = std::chrono::system_clock::now();
@@ -203,19 +218,12 @@ void Game::loadObjects()
 	}
 
 	//Initilize player
-	if (!currentPlayer && !IFONLINE) { currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client->getPlayerId(), client, 0, planetGravityField); players.emplace_back(currentPlayer); }
-	field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
-	oldField = field;
-
-
-	//Set items baseball bat
-	baseballBat->setPlayer(currentPlayer);
-	baseballBat->setGameObjects(gameObjects);
-	baseballBat->setClient(client);
-
-
-	//Set items grenade
-	grenade->setGameObjects(gameObjects);
+	if (!currentPlayer && !IFONLINE) 
+	{ 
+		currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client->getPlayerId(), client, 0, planetGravityField); 
+		players.emplace_back(currentPlayer);
+	}
+	
 }
 
 void Game::drawShadows()
@@ -518,7 +526,7 @@ GAMESTATE Game::Update()
 			this->spaceShips[i]->move(this->spaceShips[i]->getUpDirection(), -dt);
 			endTimer += dt;
 			arrow->removeArrow(); //Remove these completely by not drawing the meshes anymore
-			this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969)); //Remove these completely by not drawing the meshes anymore
+			if (currentPlayer->getTeam() == i) this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969)); //Remove these completely by not drawing the meshes anymore
 		}
 	}
 

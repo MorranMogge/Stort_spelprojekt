@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SettingsUI.h"
 #include "Input.h"
+#include "SoundLibrary.h"
 #include <filesystem>
 
 void ChangeResolution2(const unsigned int width, const unsigned int height)
@@ -53,6 +54,8 @@ void SettingsUI::HandleInputs()
 	{
 		if (backText.GetTint() == DirectX::Colors::Green.v)
 		{
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = MENU;
 		}
 

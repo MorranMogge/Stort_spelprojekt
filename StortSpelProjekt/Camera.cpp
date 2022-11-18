@@ -222,7 +222,7 @@ DirectX::XMVECTOR Camera::getUpVector() const
 
 DirectX::XMVECTOR Camera::getPosition() const
 {
-	return this->logicalPos;
+	return this->cameraPos;
 }
 
 void Camera::setPosition(const DirectX::XMFLOAT3& position)

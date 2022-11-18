@@ -59,11 +59,11 @@ void Player::handleItems()
 	PhysicsComponent* itemPhysComp = holdingItem->getPhysComp();
 	holdingItem->setPos(newPos);
 	itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z }));
-	auto state = this->gamePad->GetState(0);
 
 	//Controller functions
-	if (state.IsConnected())
+	if (this->gamePad != nullptr)
 	{
+		auto state = this->gamePad->GetState(0);
 		tracker.Update(state);
 
 		//Throw item
@@ -104,47 +104,47 @@ void Player::handleItems()
 			this->throwItem();
 		}
 		//Use the Item
-	else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))
-	{	
-		keyPressTimer.resetStartTime();
-		////sending data to server
-
-		//allocates data to be sent
-		ComponentDropped c;
-
-		std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
-		c.componentId = this->holdingItem->getOnlineId();
-		c.packetId = PacketType::COMPONENTDROPPED;
-		//sending data to server
-		if (this->client != nullptr)
+		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))
 		{
-			client->sendStuff<ComponentDropped>(c);
-		}	
+			keyPressTimer.resetStartTime();
+			////sending data to server
 
-		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
-		if (holdingItem->getId() == GRENADE)
-		{
-			DirectX::XMFLOAT3 temp;
-			DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5.f + this->normalVector * 0.5f));
-			newNormalizeXMFLOAT3(temp);
-			if (this->moveKeyPressed)
+			//allocates data to be sent
+			ComponentDropped c;
+
+			std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
+			c.componentId = this->holdingItem->getOnlineId();
+			c.packetId = PacketType::COMPONENTDROPPED;
+			//sending data to server
+			if (this->client != nullptr)
 			{
-				if (this->currentSpeed == this->speed) scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.095f, temp);
-				else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
+				client->sendStuff<ComponentDropped>(c);
 			}
 
+			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+			if (holdingItem->getId() == GRENADE)
+			{
+				DirectX::XMFLOAT3 temp;
+				DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5.f + this->normalVector * 0.5f));
+				newNormalizeXMFLOAT3(temp);
+				if (this->moveKeyPressed)
+				{
+					if (this->currentSpeed == this->speed) scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.095f, temp);
+					else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
+				}
 
-			//Set dynamic so it can be affected by forces
-			this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
-			//Apply the force
-			this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
+
+				//Set dynamic so it can be affected by forces
+				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
+				//Apply the force
+				this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
+			}
+			holdingItem->useItem();
+			//itemPhysComp->setIsAllowedToSleep(true);
+			//itemPhysComp->setIsSleeping(true);
+			holdingItem->setPickedUp(false);
+			holdingItem = nullptr;
 		}
-		holdingItem->useItem();
-		//itemPhysComp->setIsAllowedToSleep(true);
-		//itemPhysComp->setIsSleeping(true);
-		holdingItem->setPickedUp(false);
-		holdingItem = nullptr;
-	}
 	}
 }
 
@@ -199,7 +199,7 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 }
 
 Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team, GravityField* field)
-	:GameObject(objectPath, pos, rot, id, field), holdingItem(nullptr), team(team), speed(25.f), currentSpeed(0)
+	:GameObject(objectPath, pos, rot, id, field), holdingItem(nullptr), team(team), currentSpeed(0)
 {
 	this->onlineID = onlineId;
 	this->client = client;
@@ -452,9 +452,7 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime)
 {
 	if (dedge || flipping) return;
-
-	auto state = this->gamePad->GetState(0);
-	if (state.IsConnected()) return;
+	if (this->gamePad != nullptr) return;
 
 	//Running
 	this->currentSpeed = this->speed;
@@ -681,9 +679,9 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 {
 	if (dedge || flipping) return;
 
-	auto state = gamePad->GetState(0);
-	if (state.IsConnected())
+	if (this->gamePad != nullptr)
 	{
+		auto state = gamePad->GetState(0);
 		posX = state.thumbSticks.leftX;
 		posY = state.thumbSticks.leftY;
 
@@ -697,7 +695,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		//Jumping
 		if (onGround && state.IsAPressed())
 		{
-			this->velocity = this->normalVector * 40.f;
+			this->velocity = this->normalVector * 30.f;
 			if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 		}
 
@@ -822,11 +820,11 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 {
 	if (this->isHoldingItem()) return false;
 	bool successfulPickup = false;
-	auto state = this->gamePad->GetState(0);
-
+	
 	//Controller pickup
-	if (state.IsConnected())
+	if (this->gamePad != nullptr)
 	{
+		auto state = this->gamePad->GetState(0);
 		tracker.Update(state);
 		if (tracker.x == GamePad::ButtonStateTracker::PRESSED)
 		{
@@ -841,6 +839,10 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 					holdingItem->getPhysComp()->getRigidBody()->resetForce();
 					holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 					holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+					keyPressTimer.resetStartTime();
+					pickUpSfx.stop();
+					pickUpSfx.play();
+					return true;
 				}
 			}
 
@@ -854,11 +856,10 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 					holdingItem->getPhysComp()->getRigidBody()->resetForce();
 					holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 					holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+					keyPressTimer.resetStartTime();
 					pickUpSfx.stop();
 					pickUpSfx.play();
-
-					keyPressTimer.resetStartTime();
-					keyEPressed = false;
+					return true;
 				}
 			}
 		}
@@ -876,6 +877,10 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 				holdingItem->getPhysComp()->getRigidBody()->resetForce();
 				holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 				holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+				keyPressTimer.resetStartTime();
+				pickUpSfx.stop();
+				pickUpSfx.play();
+				return true;
 			}
 		}
 
@@ -889,6 +894,10 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 				holdingItem->getPhysComp()->getRigidBody()->resetForce();
 				holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 				holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+				keyPressTimer.resetStartTime();
+				pickUpSfx.stop();
+				pickUpSfx.play();
+				return true;
 			}
 		}
 	}
@@ -907,7 +916,7 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 
 	this->physComp->setType(reactphysics3d::BodyType::DYNAMIC);
 	this->dedge = true;
-	this->gamePad->SetVibration(0, 0.1f, 0.1f, 0.f, 0.f);
+	if (this->gamePad != nullptr) this->gamePad->SetVibration(0, 0.1f, 0.1f, 0.f, 0.f);
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);
 	timer.resetStartTime();
@@ -967,7 +976,6 @@ bool Player::checkForStaticCollision(const std::vector<Planet*>& gameObjects, co
 		if (spaceShips[i]->getPhysComp()->testPointInside(point))
 		{
 			this->position -= 1.f * forwardVector;
-			this->gamePad->SetVibration(0, 0.1f, 0.1f, 0.f, 0.f);
 			return true;
 		}
 	}
@@ -1032,13 +1040,9 @@ void Player::colliedWIthComponent(const std::vector<Component*>& components)
 {
 	bool collided = false;
 
-	for (int i = 0; i < components.size(); i++)
-	{
-		collided = this->physComp->testBodiesOverlap(components[i]->getPhysComp());
-	}
-
-	if (collided) this->setSpeed(25.f * 0.55f);
-	else this->setSpeed(25.f);
+	for (int i = 0; i < components.size(); i++) collided = this->physComp->testBodiesOverlap(components[i]->getPhysComp());
+	if (collided) this->setSpeed(20.f * 0.55f);
+	else this->setSpeed(20.f);
 }
 
 bool Player::getHitByBat() const
@@ -1165,11 +1169,10 @@ void Player::update()
 		if (timer.getTimePassed(5.f))
 		{
 			dedge = false;
-			this->gamePad->SetVibration(0, 0.f, 0.f, 0.f, 0.f);
+			if (this->gamePad != nullptr) this->gamePad->SetVibration(0, 0.f, 0.f, 0.f, 0.f);
 			this->physComp->resetForce();
 			this->physComp->resetTorque();
 			this->physComp->setType(reactphysics3d::BodyType::STATIC);
-			this->position = SimpleMath::Vector3(0, 60, 0);
 			this->resetRotationMatrix();
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
@@ -1209,13 +1212,14 @@ void Player::setTeam(const int& team)
 
 void Player::setVibration(float vibration1, float vibration2)
 {
-	this->gamePad->SetVibration(0, vibration1, vibration2, 0.f, 0.f);
+	if (this->gamePad != nullptr) this->gamePad->SetVibration(0, vibration1, vibration2, 0.f, 0.f);
 }
 
 void Player::setGamePad(DirectX::GamePad* gamePad)
 {
 	this->gamePad = gamePad;
 }
+
 void Player::requestingPickUpItem(const std::vector<Item*>& items)
 {
 	if (Input::KeyPress(KeyCode::E))
@@ -1237,11 +1241,11 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 				rqstCmpPickUp.playerId = this->getOnlineID();
 				std::cout << "requesting pickup componentId: " << std::to_string(rqstCmpPickUp.componentId) << std::endl;
 				//skickar en f�rfr�gan att plocka upp item
+				keyPressTimer.resetStartTime();
 				client->sendStuff<ComponentRequestingPickUp>(rqstCmpPickUp);
 				break;
 			}
 		}
-		
 	}
 }
 
@@ -1260,12 +1264,12 @@ bool Player::isHoldingComp()
 	{
 		if (this->holdingItem != nullptr)
 		{
-			this->setSpeed(25.f * 0.55f);
+			this->setSpeed(20.f * 0.55f);
 			return true;
 		}
 		else
 		{
-			this->setSpeed(25.f);
+			this->setSpeed(20.f);
 			return false;
 		}
 	}

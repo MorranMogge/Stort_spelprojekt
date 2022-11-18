@@ -22,9 +22,8 @@ class Player: public GameObject
 private:
 	//Movement variables
 	float angle = 0.f;
-	float speed = 25.f;
+	float speed = 20.f;
 	float currentSpeed;
-	const float speedConstant = 100.f;
 	DirectX::SimpleMath::Vector3 resultVector;
 	DirectX::SimpleMath::Vector3 angleVector;
 	DirectX::SimpleMath::Vector3 velocity; //FINALLY ADDED THIS F*****G STUPID VARIABLE
@@ -46,7 +45,6 @@ private:
 	bool onGround = false;
 	bool holdingComp = false;
 	bool moveKeyPressed = false;
-	bool keyEPressed;
 
 	//Controller variables
 	float posX = 0.0f;

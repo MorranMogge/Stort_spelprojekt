@@ -179,4 +179,4 @@ struct SpawnPlanets
 	float yPos;
 	float zPos;
 	float size;
-}
+};

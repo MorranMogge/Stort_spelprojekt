@@ -13,17 +13,16 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	gameMusic.play(true);
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
-	client = new Client("192.168.43.251");
+	client = new Client("192.168.43.244");
 	circularBuffer = client->getCircularBuffer();
 
 	//Setup rendering
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
 
 	//Setup Lights
-	ltHandler.addLight(DirectX::XMFLOAT3(-90, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 1, 0),1);
+	ltHandler.addLight(DirectX::XMFLOAT3(-90, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 1);
 	ltHandler.addLight(DirectX::XMFLOAT3(16 + 7, 42 + 17, 12 + 7), DirectX::XMFLOAT3(0, 0.3f, 1.0f), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 	ltHandler.addLight(DirectX::XMFLOAT3(-10 - 5, -45 - 17, -10 - 7), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
-	
 
 	//Load game objects
 	this->loadObjects();
@@ -47,10 +46,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
 		{
 			Player* tmpPlayer = nullptr;
-			
+
 			if (playerId != i)
 			{
-				tmpPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, i, client, (int)(dude < i + 1), planetGravityField);
+				tmpPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, i, client, (int)(dude < i + 1), planetGravityField);
 				tmpPlayer->setOnlineID(i);
 				physWorld.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
@@ -58,15 +57,20 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			else
 			{
 				std::cout << "Player online id: " << std::to_string(i) << " \n";
-				currentPlayer = new Player(meshes[1], DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, playerId, client, (int)(dude < i + 1), planetGravityField);
+				currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, playerId, client, (int)(dude < i + 1), planetGravityField);
 				currentPlayer->setOnlineID(i);
 				players.push_back(currentPlayer);
 				delete tmpPlayer;
 			}
 			std::cout << "Dude: " << (int)(dude < i + 1) << "\n";
 		}
+
+		int hej = 5;
+		gamePad = new DirectX::GamePad();
+		currentPlayer->setGamePad(gamePad);
 	}
-	currentPlayer->setPhysComp(physWolrd.getPlayerBox());
+
+	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
 	gameObjects.emplace_back(currentPlayer);
 	for (int i = 0; i < players.size(); i++)
@@ -74,7 +78,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		players[i]->setGravityField(planetGravityField);
 	}
 
-	field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
+	field = nullptr;
 	oldField = field;
 
 	//Set items baseball bat
@@ -95,7 +99,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	serverStart = std::chrono::system_clock::now();
 	this->window = &window;
 }
-
 
 Game::~Game()
 {
@@ -119,7 +122,6 @@ Game::~Game()
 	}
 	delete asteroids;
 	delete arrow;
-	delete atmosphere;
 	delete planetGravityField;
 	delete gamePad;
 }
@@ -173,15 +175,15 @@ void Game::loadObjects()
 
 	asteroids = new AsteroidHandler(meshes[0]);
 	planetGravityField = new GravityField(4.f * 9.82f, DirectX::XMFLOAT3(0.f, 0.f, 0.f), 40.f);
-	
+
 	//Make sure the physics world has access to the planets
 
 	//CREATE ITEMS 	//Sphere, reverseSphere, pinto, potion, rocket, bat, component, grenade, arrow
-	potion = new Potion(meshes[3], Vector3(0, 0, -42),Vector3(0.0f, 0.0f, 0.0f), POTION, 0, planetGravityField);
+	potion = new Potion(meshes[3], Vector3(0, 0, -42), Vector3(0.0f, 0.0f, 0.0f), POTION, 0, planetGravityField);
 	baseballBat = new BaseballBat(meshes[5], Vector3(0, 0, 42), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
 	grenade = new Grenade(meshes[7], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
 	arrow = new Arrow(meshes[8], DirectX::SimpleMath::Vector3(0, 42, 0));
-	
+
 	//currentPlayer = new Player(meshes[1], Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, client, 0, &planetGravityField);
 
 
@@ -199,11 +201,10 @@ void Game::loadObjects()
 		if (players[i] != currentPlayer) gameObjects.emplace_back(players[i]);
 	}
 
-	
 	//Add phys components
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		physWolrd.addPhysComponent(gameObjects[i], reactphysics3d::CollisionShapeName::BOX);
+		physWorld.addPhysComponent(gameObjects[i], reactphysics3d::CollisionShapeName::BOX);
 	}
 
 	//SPACE SHIPS
@@ -228,12 +229,13 @@ void Game::loadObjects()
 	}
 
 	//Initilize player
-	if (!currentPlayer && !IFONLINE) 
-	{ 
-		currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client->getPlayerId(), client, 0, planetGravityField); 
+	if (!currentPlayer && !IFONLINE)
+	{
+		currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client->getPlayerId(), client, 0, planetGravityField);
 		players.emplace_back(currentPlayer);
+		gamePad = new GamePad();
+		currentPlayer->setGamePad(gamePad);
 	}
-	
 }
 
 void Game::drawShadows()
@@ -242,7 +244,7 @@ void Game::drawShadows()
 	{
 		ltHandler.drawShadows(i, gameObjects);
 	}
-	
+
 	basicRenderer.depthPrePass();
 	ltHandler.drawShadows(0, gameObjects, &camera);
 	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
@@ -339,7 +341,7 @@ void Game::drawFresnel()
 	}
 	for (int i = 0; i < items.size(); i++)
 	{
-		if(items[i]->getId() == ObjID::GRENADE)
+		if (items[i]->getId() == ObjID::GRENADE)
 		{
 			Grenade* tempNade = (Grenade*)items[i];
 			tempNade->drawFresnel();
@@ -374,18 +376,18 @@ void Game::randomizeObjectPos(GameObject* object)
 void Game::updateBuffers()
 {
 	//Update GameObjects
-	
+
 	/*for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->updateBuffer();
 	}
 	arrow->update();
-	
+
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
 		onlineItems[i]->updateBuffer();
 	}*/
-	
+
 }
 
 void Game::handleKeybinds()
@@ -446,34 +448,19 @@ GAMESTATE Game::Update()
 	hitNormal = DirectX::XMFLOAT3(grav.x, grav.y, grav.z);
 	bool testingVec = this->currentPlayer->raycast(gameObjects, planetVector, hitPos, hitNormal);
 	if (testingVec || currentPlayer->getHitByBat()) currentPlayer->resetVelocity();
-	
+
 	//Player functions
 	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
-	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), grav, gamePad, dt);
+	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
 
 	//Check component pickup
-	if (!IFONLINE)
-	{
-		for (int i = 0; i < components.size(); i++)
-		{
-			if (currentPlayer->pickupItem(components[i])) break;
-		}
-	}
-	//Check component pickup
-
+	if (!IFONLINE) currentPlayer->pickupItem(items, components);
 	currentPlayer->requestingPickUpItem(onlineItems);
-	
-	//Check item pickup
-	for (int i = 0; i < items.size(); i++)
-	{
-		if (currentPlayer->pickupItem(items[i])) break;
-	}
 
 	grenade->updateExplosionCheck();
-	if (potion->isTimeToRun())
 	//Update item checks
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -488,27 +475,11 @@ GAMESTATE Game::Update()
 		case ObjID::POTION:
 		{
 			Potion* tempPotion = (Potion*)items[i];
-			if (tempPotion->isTimeToRun())
-			{
-				Grenade* tempNade = (Grenade*)items[i];
-				tempNade->updateExplosionCheck();
-				if (tempNade->getExploded() == true)
-				{
-					randomizeObjectPos(tempNade);
-					tempNade->setExploded(false);
-				}
-			}	break;
-			case ObjID::POTION:
-			{
-				Potion* tempPotion = (Potion*)items[i];
-				if (tempPotion->isTimeToRun())
-				{
-					currentPlayer->setSpeed(50.f);
-				}
-				else currentPlayer->setSpeed(25.f);
-			}
+			if (tempPotion->timerGoing()) currentPlayer->setSpeed(50.f);
+			else currentPlayer->setSpeed(20.f);
 		}	break;
 		}
+		break;
 	}
 
 	//Player functions
@@ -547,9 +518,9 @@ GAMESTATE Game::Update()
 	{
 		gameObjects[i]->update();
 	}
-	
+
 	//Setting the camera at position
-	if (!velocityCamera) camera.collisionCamera(currentPlayer, planetVector, dt);
+	if (!velocityCamera) camera.moveVelocity(currentPlayer, dt);
 	else camera.moveCamera(currentPlayer, dt);
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
@@ -580,7 +551,7 @@ GAMESTATE Game::Update()
 		else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
 		currentPlayer->colliedWIthComponent(components);
 	}
-	
+
 	if (!IFONLINE) //Check Components offline
 	{
 		for (int i = 0; i < spaceShips.size(); i++)
@@ -639,7 +610,6 @@ GAMESTATE Game::Update()
 		//camera.landingMinigameScene(planetVector[0], actualTestObjectForLandingVisuals->getPosV3(), actualTestObjectForLandingVisuals->getRot());
 	}
 
-
 	//Update Line rendering buffer
 	this->updateBuffers();
 
@@ -670,7 +640,7 @@ void Game::Render()
 	//Render shadow maps
 	basicRenderer.lightPrePass();
 	drawShadows();
-	
+
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);

@@ -44,7 +44,7 @@ private:
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> currentTime;
 	std::chrono::time_point<std::chrono::system_clock> lastUpdate;
-	
+
 	//Server related variables
 	std::chrono::time_point<std::chrono::system_clock> serverStart;
 	float serverTimerLength =  1.f / 30.0f;

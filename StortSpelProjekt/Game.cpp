@@ -450,35 +450,35 @@ GAMESTATE Game::updateComponentGame()
 		if (currentPlayer->pickupItem(items[i])) break;
 	}
 
-	grenade->updateExplosionCheck();
-	if (potion->isTimeToRun())
-		//Update item checks
-		for (int i = 0; i < items.size(); i++)
+	//grenade->updateExplosionCheck();
+	//if (potion->isTimeToRun())
+	//Update item checks
+	for (int i = 0; i < items.size(); i++)
+	{
+		int id = items[i]->getId();
+		switch (id)
 		{
-			int id = items[i]->getId();
-			switch (id)
+		case ObjID::GRENADE:
+		{
+			Grenade* tempNade = (Grenade*)items[i];
+			tempNade->updateExplosionCheck();
+			if (tempNade->getExploded() == true)
 			{
-			case ObjID::GRENADE:
-			{
-				Grenade* tempNade = (Grenade*)items[i];
-				tempNade->updateExplosionCheck();
-				if (tempNade->getExploded() == true)
-				{
-					randomizeObjectPos(tempNade);
-					tempNade->setExploded(false);
-				}
-			}	break;
-			case ObjID::POTION:
-			{
-				Potion* tempPotion = (Potion*)items[i];
-				if (tempPotion->isTimeToRun())
-				{
-					if (tempPotion->timerGoing()) currentPlayer->setSpeed(50.f);
-					else currentPlayer->setSpeed(25.f);
-				}
-			}	break;
+				randomizeObjectPos(tempNade);
+				tempNade->setExploded(false);
 			}
+		}	break;
+		case ObjID::POTION:
+		{
+			Potion* tempPotion = (Potion*)items[i];
+			if (tempPotion->isTimeToRun())
+			{
+				if (tempPotion->timerGoing()) currentPlayer->setSpeed(50.f);
+				else currentPlayer->setSpeed(25.f);
+			}
+		}	break;
 		}
+	}
 
 
 	//sending data to server
@@ -572,7 +572,12 @@ GAMESTATE Game::updateComponentGame()
 	//Check winstate
 	if (endTimer > 6)
 	{
-		for (int i = 0; i < spaceShips.size(); i++)
+		if (endTimer > 10) currentMinigame = MiniGames::LANDINGSPACESHIP;
+
+		//Fade into black
+
+
+		/*for (int i = 0; i < spaceShips.size(); i++)
 		{
 			if (spaceShips[i]->isFinished())
 			{
@@ -586,7 +591,7 @@ GAMESTATE Game::updateComponentGame()
 					return LOSE;
 				}
 			}
-		}
+		}*/
 	}
 
 	//Play pickup animation

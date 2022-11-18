@@ -2,6 +2,7 @@
 
 #include "GUISprite.h"
 #include "State.h"
+#include <GamePad.h>
 
 class ControlUI final
 {
@@ -10,9 +11,20 @@ class ControlUI final
 	GUISprite throwText;
 	GUISprite pickText;
 
+	GUISprite a, b, y, x;
+	GUISprite arrow;
+
+	GUISprite LB, LT, L_Move;
+
+	GUISprite RB, RT, R_Move;
+
+	GUISprite start;
+
 	GUISprite backText;
 
-	GAMESTATE gameState;
+	GAMESTATE gameState = NOCHANGE;
+
+	std::unique_ptr<DirectX::GamePad> gamePad;
 
 	void HandleInputs();
 	void SpritePass();

@@ -61,10 +61,25 @@ void ControlUI::HandleInputs()
 
 void ControlUI::SpritePass()
 {
-	useText.Draw();
-	throwText.Draw();
-	pickText.Draw();
-	control.Draw();
+	//auto state = gamePad->GetState(0);
+
+	a.Draw();
+	b.Draw();
+	x.Draw();
+	y.Draw();
+	arrow.Draw();
+
+	//if (!state.IsConnected())
+	//{
+
+	//}
+	//else
+	//{
+	//	useText.Draw();
+	//	throwText.Draw();
+	//	pickText.Draw();
+	//	control.Draw();
+	//}
 
 	backText.Draw();
 
@@ -98,7 +113,28 @@ ControlUI::ControlUI()
 	backText = GUISprite(75 + 70, 600);
 	backText.Load(GPU::device, L"../Sprites/backText.png");
 
-	gameState = NOCHANGE;
+#define scale 0.5f, 0.5f
+
+	a = GUISprite(322 + left, 100 + upp);
+	a.Load(GPU::device, L"../Sprites/control/a.png");
+	a.SetScale(scale);
+
+	b = GUISprite(322 + left, 175 + upp);
+	b.Load(GPU::device, L"../Sprites/control/b.png");
+	b.SetScale(scale);
+
+	y = GUISprite(322 + left, 250 + upp);
+	y.Load(GPU::device, L"../Sprites/control/y.png");
+	y.SetScale(scale);
+
+	x = GUISprite(322 + left, 325 + upp);
+	x.Load(GPU::device, L"../Sprites/control/x.png");
+	x.SetScale(scale);
+
+	arrow = GUISprite(322 + left, 450 + upp);
+	arrow.Load(GPU::device, L"../Sprites/control/Arrow.png");
+	arrow.SetScale(0.3f, 0.3f);
+
 }
 
 ControlUI::~ControlUI()

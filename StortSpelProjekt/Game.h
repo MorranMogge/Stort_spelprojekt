@@ -1,6 +1,13 @@
 #pragma once
 #include "GameInclude.h"
 
+enum MiniGames
+{
+	COMPONENTCOLLECTION,
+	LANDINGSPACESHIP,
+	KINGOFTHEHILL
+};
+
 struct wirefameInfo
 {
 	DirectX::XMFLOAT3 wireframeClr;
@@ -15,6 +22,9 @@ class Game : public State
 private:
 	ID3D11DeviceContext* immediateContext;
 	HWND* window;
+
+	MiniGames currentMinigame;
+	GAMESTATE currentGameState;
 
 	Sound gameMusic;
 
@@ -94,6 +104,9 @@ private:
 	void drawParticles();
 	void updateBuffers();
 	void handleKeybinds();
+	GAMESTATE updateComponentGame();
+	GAMESTATE updateLandingGame();
+	GAMESTATE updateKingOfTheHillGame();
 	void randomizeObjectPos(GameObject* item);
 
 public:

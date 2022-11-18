@@ -6,7 +6,7 @@
 #include "SoundCollection.h"
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), currentMinigame(MiniGames::COMPONENTCOLLECTION)
 {
 	this->packetEventManager = new PacketEventManager();
 	gameMusic.load(L"../Sounds/Gold Rush Final.wav");
@@ -401,16 +401,9 @@ void Game::handleKeybinds()
 	}
 }
 
-GAMESTATE Game::Update()
+GAMESTATE Game::updateComponentGame()
 {
-	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, planetGravityField, spaceShips, onlineItems, meshes);
-	
 	//Get newest delta time
-	lastUpdate = currentTime;
-	currentTime = std::chrono::system_clock::now();
-	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
-
 	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
 	asteroids->updateAsteroids(dt, planetVector, gameObjects);
 
@@ -431,7 +424,7 @@ GAMESTATE Game::Update()
 	hitNormal = DirectX::XMFLOAT3(grav.x, grav.y, grav.z);
 	bool testingVec = this->currentPlayer->raycast(gameObjects, planetVector, hitPos, hitNormal);
 	if (testingVec || currentPlayer->getHitByBat()) currentPlayer->resetVelocity();
-	
+
 	//Player functions
 	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
@@ -450,7 +443,7 @@ GAMESTATE Game::Update()
 	//Check component pickup
 
 	currentPlayer->requestingPickUpItem(onlineItems);
-	
+
 	//Check item pickup
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -459,12 +452,12 @@ GAMESTATE Game::Update()
 
 	grenade->updateExplosionCheck();
 	if (potion->isTimeToRun())
-	//Update item checks
-	for (int i = 0; i < items.size(); i++)
-	{
-		int id = items[i]->getId();
-		switch (id)
+		//Update item checks
+		for (int i = 0; i < items.size(); i++)
 		{
+			int id = items[i]->getId();
+			switch (id)
+			{
 			case ObjID::GRENADE:
 			{
 				Grenade* tempNade = (Grenade*)items[i];
@@ -484,8 +477,8 @@ GAMESTATE Game::Update()
 					else currentPlayer->setSpeed(25.f);
 				}
 			}	break;
+			}
 		}
-	}
 
 
 	//sending data to server
@@ -495,7 +488,7 @@ GAMESTATE Game::Update()
 		serverStart = std::chrono::system_clock::now();
 	}
 
-	
+
 	//Physics related functions
 	if (!IFONLINE) physWolrd.update(dt);
 	for (int i = 0; i < players.size(); i++)
@@ -510,11 +503,11 @@ GAMESTATE Game::Update()
 	{
 		gameObjects[i]->update();
 	}
-	
+
 	//Setting the camera at position
 	if (!velocityCamera) camera.moveCamera(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), currentPlayer->getUpVector(), currentPlayer->getSpeed(), dt);
 	else camera.moveVelocity(currentPlayer->getPosV3(), currentPlayer->getRotationMX(), currentPlayer->getUpVector(), currentPlayer->getSpeed(), dt);
-	
+
 	this->arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
 	//Check Components online
@@ -543,7 +536,7 @@ GAMESTATE Game::Update()
 		//Arrow pointing to component
 		else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
 	}
-	
+
 	if (!IFONLINE) //Check Components offline
 	{
 		for (int i = 0; i < spaceShips.size(); i++)
@@ -595,15 +588,6 @@ GAMESTATE Game::Update()
 			}
 		}
 	}
-	if (landingMinigame)
-	{
-		//Here yo type the function below but replace testObject with your space ship
-		//camera.landingMinigameScene(planetVector[0], actualTestObjectForLandingVisuals->getPosV3(), actualTestObjectForLandingVisuals->getRot());
-	}
-
-
-	//Update Line rendering buffer
-	this->updateBuffers();
 
 	//Play pickup animation
 	for (int i = 0; i < spaceShips.size(); i++)
@@ -620,6 +604,67 @@ GAMESTATE Game::Update()
 	{
 		this->components[i]->checkDistance((GameObject*)(currentPlayer));
 	}
+
+	return NOCHANGE;
+}
+
+GAMESTATE Game::updateLandingGame()
+{
+	//Here yo type the function below but replace testObject with your space ship
+	camera.landingMinigameScene(planetVector[0], spaceShips[currentPlayer->getTeam()]->getPosV3(), spaceShips[currentPlayer->getTeam()]->getRot());
+	DirectX::SimpleMath::Vector3 moveDir = getScalarMultiplicationXMFLOAT3(1, (planetVector[0]->getGravityField()->calcGravFactor(spaceShips[currentPlayer->getTeam()]->getPos())));
+
+	spaceShips[currentPlayer->getTeam()]->move(moveDir, dt);
+	moveDir.Normalize();
+	if (getLength(spaceShips[currentPlayer->getTeam()]->getPosV3()) <= planetVector[0]->getSize())
+	{
+		spaceShips[currentPlayer->getTeam()]->setPos(moveDir * planetVector[0]->getSize());
+		currentMinigame = MiniGames::COMPONENTCOLLECTION;
+	}
+
+	return NOCHANGE;
+}
+
+GAMESTATE Game::updateKingOfTheHillGame()
+{
+	return NOCHANGE;
+
+}
+
+GAMESTATE Game::Update()
+{
+	//read the packets received from the server
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, planetGravityField, spaceShips, onlineItems, meshes);
+	
+	lastUpdate = currentTime;
+	currentTime = std::chrono::system_clock::now();
+	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
+
+	if (Input::KeyPress(KeyCode::P)) 
+	{ 
+		currentMinigame = MiniGames::LANDINGSPACESHIP;
+		DirectX::XMFLOAT3 newRot = spaceShips[currentPlayer->getTeam()]->getUpDirection();
+		spaceShips[currentPlayer->getTeam()]->setPos(newRot * DirectX::SimpleMath::Vector3(150, 150, 150));
+	}
+
+	//Simulate the current minigame on client side
+	switch (currentMinigame)
+	{
+	case COMPONENTCOLLECTION:
+		currentGameState = this->updateComponentGame();
+		break;
+	case LANDINGSPACESHIP:
+		currentGameState = this->updateLandingGame();
+		break;
+	case KINGOFTHEHILL:
+		currentGameState = this->updateKingOfTheHillGame();
+		break;
+	default:
+		break;
+	}
+
+	//Update Line rendering buffer
+	this->updateBuffers();
 
 	//Debug keybinds
 	this->handleKeybinds();

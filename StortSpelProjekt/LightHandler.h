@@ -49,6 +49,7 @@ public:
 	ID3D11Buffer* getViewBuffer(const int& lightIndex) const;
 	int getNrOfLights() const;
 	void drawShadows(const int &lightIndex, const std::vector<GameObject*> &gameObjects, Camera* stageCamera = nullptr);
+	void drawShadows(const int& lightIndex, const std::vector<Planet*>& planets, Camera* stageCamera = nullptr);
 	void bindLightBuffers();
 	void drawDebugMesh();
 	void unbindSrv();

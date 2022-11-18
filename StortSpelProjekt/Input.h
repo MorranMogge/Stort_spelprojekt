@@ -103,7 +103,7 @@ public:
 	//return true ONCE key release
 	static bool KeyUp(const KeyCode key)
 	{
-		return ImGui::IsKeyReleased((ImGuiKey)key);
+		return ImGui::IsKeyReleased((ImGuiKey)key); 
 	}
 
 	//call this if imgui didnt exist in current game state

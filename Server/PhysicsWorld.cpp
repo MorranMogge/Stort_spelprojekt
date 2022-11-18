@@ -93,7 +93,7 @@ void PhysicsWorld::addBoxToWorld(DirectX::XMFLOAT3 dimensions, float mass, Direc
 	physObjects[vectorSize]->setLinearDampning(1.3f);
 }
 
-void PhysicsWorld::addPhysComponent(Component& pos, reactphysics3d::CollisionShapeName shape, const DirectX::XMFLOAT3& scale)
+void PhysicsWorld::addPhysComponent(Item& pos, reactphysics3d::CollisionShapeName shape, const DirectX::XMFLOAT3& scale)
 {
 	PhysicsComponent* newComp = new PhysicsComponent();
 	newComp->initiateComponent(&this->com, this->world, shape, scale);
@@ -101,6 +101,7 @@ void PhysicsWorld::addPhysComponent(Component& pos, reactphysics3d::CollisionSha
 	newComp->setPosition({ pos.getposition('x'), pos.getposition('y'), pos.getposition('z') });
 	newComp->setLinearDampning(0.3f);
 	physObjects.emplace_back(newComp);
+	
 }
 
 void PhysicsWorld::addPhysComponent(PhysicsComponent* newComp, const DirectX::XMFLOAT3& pos, reactphysics3d::CollisionShapeName shape, const DirectX::XMFLOAT3& scale)

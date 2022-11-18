@@ -33,6 +33,11 @@ private:
 	DirectX::XMMATRIX rotationMX;
 	DirectX::XMFLOAT4X4 rotationFloat;
 
+	//SFX
+	Sound pickUpSfx;
+	Sound walkingSound;
+	Sound playerHitSound;
+
 	//Status
 	int team;
 	int onlineID;
@@ -41,6 +46,7 @@ private:
 	bool onGround = false;
 	bool holdingComp = false;
 	bool moveKeyPressed = false;
+	bool keyEPressed;
 
 	//Controller variables
 	float posX = 0.0f;
@@ -53,6 +59,7 @@ private:
 	//Other variables
 	Client* client;
 	TimeStruct timer;
+	TimeStruct keyPressTimer;
 	Item* holdingItem;
 
 	ParticleEmitter* particles;
@@ -80,8 +87,8 @@ private:
 	bool movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 	bool moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 public:
-	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int &team, GravityField* field = nullptr);
-	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field = nullptr);
+	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int &team, GravityField* field = nullptr);
+	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team, GravityField* field = nullptr);
 	~Player();
 
 	//Move Functions
@@ -132,4 +139,8 @@ public:
 	void drawParticles();
 	virtual void draw() override;
 	void update();
+	void requestingPickUpItem(const std::vector<Item*>& items);
+
+	
+	void itemRecvFromServer(Item* item);
 };

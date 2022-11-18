@@ -22,7 +22,7 @@ struct testPosition
 };
 
 //enum = 5
-struct ComponentData
+struct ComponentData //ANV�NDS INTE
 {
 	int packetId;
 	int ComponentId;
@@ -53,6 +53,20 @@ struct ItemSpawn
 	float x;
 	float y;
 	float z;
+};
+
+//enum = 8
+struct ComponentDropped
+{
+	int packetId;
+	int componentId;
+};
+
+//enum = 9
+struct ItemDropped
+{
+	int packetId;
+	int componentId;
 };
 
 //assign the player with an id that the server has created
@@ -104,14 +118,39 @@ struct ComponentAdded
 	int spaceShipTeam;
 };
 
-//enum = 16
-struct SpawnPlanets
+//requesting to pick up component
+//enum = {16}
+struct ComponentRequestingPickUp
 {
 	int packetId;
-	float xPos;
-	float yPos;
-	float zPos;
-	float size;
+	int componentId;
+	int playerId;
+};
+
+//enum = 17
+struct ItemPickedUp
+{
+	int packetId;
+	int itemId;
+};
+
+//enum = 18
+struct ConfirmComponentPickedUp
+{
+	int packetId;
+	int componentId;
+	int playerPickUpId;
+};
+
+//enum = 19
+struct ComponentPosition
+{
+	int packetId;
+	int ComponentId;
+	float x;
+	float y;
+	float z;
+	//reactphysics3d::Quaternion quat;
 };
 
 //enum = 21
@@ -123,3 +162,21 @@ struct PlayerHit
 	float yForce;
 	float zForce;
 };
+
+//enum = 22
+struct PlayerId
+{
+	int packetId;
+	int playerId;
+	int teamId;
+};
+
+//enum = 23
+struct SpawnPlanets
+{
+	int packetId;
+	float xPos;
+	float yPos;
+	float zPos;
+	float size;
+}

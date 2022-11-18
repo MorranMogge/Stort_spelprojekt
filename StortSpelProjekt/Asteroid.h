@@ -21,7 +21,7 @@ public:
 	~Asteroid();
 
 	bool isActive()const;
-	void spawnAsteroid(DirectX::XMFLOAT3 spawnPos, DirectX::XMFLOAT3 direction, float speed);
+	void spawnAsteroid(const DirectX::XMFLOAT3& spawnPos, const DirectX::XMFLOAT3& direction, const float& speed);
 	void moveAsteroid(const float& dt, std::vector<Planet*>& planets, std::vector<GameObject*>& objects);
 	void draw();
 };

@@ -4,8 +4,9 @@
 class GUISprite final :public GUIObject
 {
 
-	inline static float BaseWidth, BaseHeight;
 public:
+
+	inline static float BaseWidth, BaseHeight;
 
 	GUISprite();
 	GUISprite(const float x, const float y, const float layer = 0.0f);
@@ -14,8 +15,8 @@ public:
 	//Load
 	virtual void Load(ID3D11Device* device, const wchar_t* file) override;
 
-	//Get Funktions
-	virtual const DirectX::SimpleMath::Vector2& GetPosition() const;
+	//Get Functions
+	virtual const DirectX::SimpleMath::Vector2 GetPosition() const;
 	virtual const DirectX::SimpleMath::Vector2& GetOrigin() const;
 	virtual const DirectX::SimpleMath::Vector2& GetScale() const;
 	virtual const DirectX::SimpleMath::Color& GetTint() const;
@@ -35,7 +36,7 @@ public:
 
 	//Render
 	virtual void Draw();
-
+	bool IntersectSprite(const GUISprite& toCheck) const;
 	bool IntersectMouse() const;
 
 protected:

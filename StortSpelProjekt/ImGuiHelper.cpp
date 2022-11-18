@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ImGuiHelper.h"
+#include "Profiler.h"
 
 ImGuiHelper::ImGuiHelper(Client*& client)
 	:client(client)
@@ -73,8 +74,20 @@ void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, bool& landingMinig
 		{
 			std::string tmpStr = "FPS: " + std::to_string(fps);
 			ImGui::Text(tmpStr.c_str());
+
+			ImVec4 col(0.0f, 0.8f, 0.0f, 1.0f);
+			ImGui::TextColored(col, ("Vram: " + std::to_string(getVramUsage())).c_str());
+			ImGui::TextColored(col, ("Ram: " + std::to_string(getRamUsage())).c_str());
+
+
 			ImGui::Checkbox("Draw collision boxes", &wireframe);
 			ImGui::Checkbox("Draw objects", &drawObjects);
+
+			if (ImGui::Button("vram Usage"))
+			{
+				std::cout << std::to_string(getVramUsage());
+			}
+			
 			ImGui::Checkbox("Landing Minigame", &landingMinigame);
 			ImGui::Checkbox("Camera with velocity", &velocityCamera);
 		}
@@ -86,3 +99,25 @@ void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, bool& landingMinig
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
+void ImGuiHelper::spriteBegin()
+{
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+}
+
+void ImGuiHelper::spriteFloat(const std::string name,float& x, const float min, const float max)
+{
+	ImGui::Begin("sprite pos: ");
+
+	ImGui::SliderFloat(std::string(name + " X: ").c_str(), &x, min, max);
+
+	ImGui::End();
+}
+
+void ImGuiHelper::spriteEnd()
+{
+	ImGui::EndFrame();
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}

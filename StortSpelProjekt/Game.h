@@ -16,10 +16,12 @@ private:
 	ID3D11DeviceContext* immediateContext;
 	HWND* window;
 
+	Sound gameMusic;
+
 	ImGuiHelper imGui;
 	bool wireframe = false;
 	bool objectDraw = true;
-	bool drawDebug = true;
+	bool drawDebug = false;
 	bool landingMinigame = false;
 
 	DirectX::GamePad* gamePad;
@@ -62,7 +64,6 @@ private:
 	SkyboxObj skybox;
 	Player* currentPlayer;
 	Mesh* planetMeshes;
-	GameObject* atmosphere;
 
 	//Items
 	Potion* potion;
@@ -83,9 +84,6 @@ private:
 
 	//HUD
 	HudUI ui;
-	
-	//Temp buffer for atmosphere
-	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
 
 
 	void loadObjects();

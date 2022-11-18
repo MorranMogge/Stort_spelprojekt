@@ -10,6 +10,7 @@ private:
 
 public:
 	Component();
+	Component(int onlineId, int onlineType);
 
 	virtual void use() override;
 };

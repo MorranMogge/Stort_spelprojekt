@@ -225,7 +225,7 @@ int main()
 	planetComp.getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 
 
-	TestObj* t = new TestObj();
+	
 
 
 	std::string identifier;
@@ -350,6 +350,7 @@ int main()
 			itemPosition* itemPos = nullptr;
 			ComponentDropped* cmpDropped = nullptr;
 			ComponentRequestingPickUp* requestingCmpPickedUp = nullptr;
+			baseballBatSpawn* baseBallBatData = nullptr;
 
 			switch (packetId)
 			{
@@ -455,32 +456,18 @@ int main()
 
 			case PacketType::ITEMPOSITION:
 				itemPos = circBuffer->readData<itemPosition>();
+				for (int i = 0; i < onlineItems.size(); i++)
+				{
+					if(onlineItems[i]->getOnlineId()==itemPos->itemId) //finding the correct item
+					{
+						//set the data
+					}
+				}
 
-				//for (int i = 0; i < items.size(); i++)
-				//{
-				//	//First check which component
-				//	if (i == itemPos->itemId && items[i].getInUseById() != itemPos->inUseBy)
-				//	{
-				//		for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
-				//		{
-				//			if (itemPos->inUseBy == data.users[j].playerId && items[i].getInUseById() == -1)
-				//			{
-				//				items[i].setInUseBy(itemPos->inUseBy);
-				//				//components[i].setPosition(compData->x, compData->y, compData->z);
-				//				//components[i].setInUseBy(compData->inUseBy);
-				//			}
-				//			else if (itemPos->inUseBy == -1)
-				//			{
-				//				items[i].setInUseBy(-1);
-				//				items[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
-				//				items[i].setPosition(compData->x, compData->y, compData->z);
-				//				items[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
-				//			}
+				break;
 
-				//		}
-				//	}
-
-				//}
+			case PacketType::BASEBALLBATSPAWN://ändras så att servern skickar och client tar emot
+				baseBallBatData = circBuffer->readData<baseballBatSpawn>();
 
 				break;
 
@@ -490,39 +477,39 @@ int main()
 		}
 
 		//checks all components player position
-		for (int i = 0; i < components.size(); i++)
-		{
-			for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
-			{
-				if (components[i].getInUseById() == data.users[j].playerId)
-				{
-					components[i].setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
-				}
-			}
-			//std::cout << "component in useBy: " << std::to_string(components[i].getInUseById()) << std::endl;
-			
-			//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
-		}
-
-		//for (int i = 0; i < onlineItems.size(); i++)
+		//for (int i = 0; i < components.size(); i++)
 		//{
 		//	for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
 		//	{
-		//		if(onlineItems[i]->getInUseById() == data.users[j].playerId)
+		//		if (components[i].getInUseById() == data.users[j].playerId)
 		//		{
-		//			onlineItems[i]->setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
+		//			components[i].setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
 		//		}
 		//	}
+		//	//std::cout << "component in useBy: " << std::to_string(components[i].getInUseById()) << std::endl;
+		//	
+		//	//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
 		//}
+
+		for (int i = 0; i < onlineItems.size(); i++)
+		{
+			for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
+			{
+				if(onlineItems[i]->getInUseById() == data.users[j].playerId)
+				{
+					onlineItems[i]->setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
+				}
+			}
+		}
 
 
 		
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
 		{
-			SpawnComponent cData = SpawnOneComponent(components, spaceShipPos);
+			SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
 			physWorld.addPhysComponent(components[components.size() - 1]);
-			components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
-			components[components.size() - 1].setOnlineId(componentIdCounter++);
+			onlineItems[onlineItems.size() - 1]->setPosition(cData.x, cData.y, cData.z);
+			onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
 			sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
 			startComponentTimer = std::chrono::system_clock::now();
 		}
@@ -657,6 +644,11 @@ int main()
 		}
 		
 
+	}
+
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		delete onlineItems[i];
 	}
     return 0;
 

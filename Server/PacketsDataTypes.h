@@ -170,3 +170,13 @@ struct PlayerId
 	int playerId;
 	int teamId;
 };
+
+//enum 23
+struct baseballBatSpawn
+{
+	int packetId;
+	int baseBallBatId;
+	int xPos;
+	int yPos;
+	int zPos;
+};

@@ -30,7 +30,6 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	Item* item = nullptr;
 	BaseballBat* baseballbat = nullptr;
 	SpawnPlanets* planetData = nullptr;
-	Planet* planet = nullptr;
 	ConfirmComponentPickedUp* confirmCmpPickedUp = nullptr;
 	ComponentPosition* cmpPosition = nullptr;
 	
@@ -202,8 +201,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::SPAWNPLANETS:
 			planetData = circularBuffer->readData<SpawnPlanets>();
 			std::cout << "Received planet\n";
-			planet = new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos));
-			planetVector.emplace_back(planet);
+			planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos)));
 			planetVector.back()->setPlanetShape(&physWorld);
 			physWorld.setPlanets(planetVector);
 			break;

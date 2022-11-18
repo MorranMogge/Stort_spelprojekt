@@ -668,18 +668,14 @@ int main()
 				//sendBinaryDataAllPlayers<itemPosition>(itemsPosData, data);
 			}
 
-			start = std::chrono::system_clock::now();
-
-			
+			start = std::chrono::system_clock::now();	
 		}
-		
-
 	}
 
-	/*for (int i = 0; i < planetVector.size(); i++)
+	for (int i = 0; i < planetVector.size(); i++)
 	{
 		delete planetVector[i];
-	}*/
+	}
     return 0;
 
 	//Hidden code

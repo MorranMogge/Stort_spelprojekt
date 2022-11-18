@@ -28,6 +28,7 @@ void Camera::updateCamera()
 Camera::Camera()
 {
 	this->position = { 0.0f, 0.0f, 0.0f };
+	playerRotationMX = XMMatrixIdentity();
 
 	cameraBuffer.Initialize(GPU::device, GPU::immediateContext);
 	positionBuffer.Initialize(GPU::device, GPU::immediateContext);

@@ -15,10 +15,10 @@ Menu::Menu()
 	meshes.push_back(new Mesh("../Meshes/Sphere"));
 	for (int i = 0; i < 4; i++)
 	{
-		planets.push_back(new Planet(meshes.back(), DirectX::XMFLOAT3(i + 0.5f, i + 0.5f, i + 0.5f), DirectX::XMFLOAT3(0 + i * 10, 0 + i * 10, 0)));
+		planets.push_back(new Planet(meshes.back(), DirectX::XMFLOAT3(i + 0.5f, i + 0.5f, i + 0.5f), DirectX::XMFLOAT3(0.f + i * 10.f, 0.f + i * 10.f, 0.f)));
 		planets[i]->setVelocity((4 - i*0.7f)*0.25f);
-		planets[i]->setRotation(DirectX::SimpleMath::Vector3(1.2f * i, 0.2 * i, 0.7 * i));
-		planets[i]->setRotationSpeed(DirectX::SimpleMath::Vector3(0.000 * i, 0.002 * (4-i), 0.000 * i));
+		planets[i]->setRotation(DirectX::SimpleMath::Vector3(1.2f * i, 0.2f * i, 0.7f * i));
+		planets[i]->setRotationSpeed(DirectX::SimpleMath::Vector3(0.000f * i, 0.002f * (4-i), 0.000f * i));
 
 	}
 	cam.setPosition(DirectX::XMFLOAT3(20, 0, -70));

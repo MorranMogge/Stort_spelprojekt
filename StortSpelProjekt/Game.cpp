@@ -74,6 +74,17 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		players[i]->setGravityField(planetGravityField);
 	}
 
+	field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
+	oldField = field;
+
+	//Set items baseball bat
+	baseballBat->setPlayer(currentPlayer);
+	baseballBat->setGameObjects(gameObjects);
+	baseballBat->setClient(client);
+
+	//Set items grenade
+	grenade->setGameObjects(gameObjects);
+
 	//Init delta time
 	currentTime = std::chrono::system_clock::now();
 	lastUpdate = currentTime;
@@ -207,19 +218,12 @@ void Game::loadObjects()
 	}
 
 	//Initilize player
-	if (!currentPlayer && !IFONLINE) { currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client->getPlayerId(), client, 0, planetGravityField); players.emplace_back(currentPlayer); }
-	field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
-	oldField = field;
-
-
-	//Set items baseball bat
-	baseballBat->setPlayer(currentPlayer);
-	baseballBat->setGameObjects(gameObjects);
-	baseballBat->setClient(client);
-
-
-	//Set items grenade
-	grenade->setGameObjects(gameObjects);
+	if (!currentPlayer && !IFONLINE) 
+	{ 
+		currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client->getPlayerId(), client, 0, planetGravityField); 
+		players.emplace_back(currentPlayer);
+	}
+	
 }
 
 void Game::drawShadows()

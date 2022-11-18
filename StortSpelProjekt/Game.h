@@ -5,7 +5,8 @@ enum MiniGames
 {
 	COMPONENTCOLLECTION,
 	LANDINGSPACESHIP,
-	KINGOFTHEHILL
+	KINGOFTHEHILL,
+	INTERMISSION
 };
 
 struct wirefameInfo
@@ -95,6 +96,13 @@ private:
 	//HUD
 	HudUI ui;
 
+	//InterMissionVariables
+	DirectX::XMFLOAT3 flightPos;
+	int Stage = 0;
+	DirectX::XMFLOAT3 flightPosTeam1;
+	DirectX::XMFLOAT3 flightPosTeam2;
+
+
 
 	void loadObjects();
 	void drawShadows();
@@ -107,6 +115,7 @@ private:
 	GAMESTATE updateComponentGame();
 	GAMESTATE updateLandingGame();
 	GAMESTATE updateKingOfTheHillGame();
+	GAMESTATE updateIntermission();
 	void randomizeObjectPos(GameObject* item);
 
 public:

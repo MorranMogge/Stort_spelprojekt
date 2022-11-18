@@ -631,6 +631,30 @@ GAMESTATE Game::updateKingOfTheHillGame()
 
 }
 
+GAMESTATE Game::updateIntermission()
+{
+	int speed = 2;
+	DirectX::XMFLOAT3 midpoint = this->flightPos;
+	DirectX::XMFLOAT3 camOffsett = midpoint;
+	camOffsett.z -= 20;
+
+		if (this->Stage == 0) 
+		{
+			DirectX newPos = this->spaceShips[1]->getPos();
+			this->spaceShips[0]->setPos();
+		}
+		else if (this->Stage == 1)
+		{
+
+		}
+
+	
+	this->spaceShips;
+	this->camera.setPosition(midpoint);
+
+	return NOCHANGE;
+}
+
 GAMESTATE Game::Update()
 {
 	//read the packets received from the server
@@ -657,6 +681,9 @@ GAMESTATE Game::Update()
 		currentGameState = this->updateLandingGame();
 		break;
 	case KINGOFTHEHILL:
+		currentGameState = this->updateKingOfTheHillGame();
+		break;
+	case INTERMISSION:
 		currentGameState = this->updateKingOfTheHillGame();
 		break;
 	default:

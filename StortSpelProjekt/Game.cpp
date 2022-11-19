@@ -5,9 +5,11 @@
 #include "MemoryLeackChecker.h"
 #include "SoundCollection.h"
 
-Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
+Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), currentMinigame(MiniGames::COMPONENTCOLLECTION)
 {
+	this->HEIGHT = HEIGHT;
+	this->WIDTH = WIDTH;
 	this->packetEventManager = new PacketEventManager();
 	gameMusic.load(L"../Sounds/Gold Rush Final.wav");
 	gameMusic.play(true);
@@ -633,24 +635,42 @@ GAMESTATE Game::updateKingOfTheHillGame()
 
 GAMESTATE Game::updateIntermission()
 {
-	int speed = 2;
-	DirectX::XMFLOAT3 midpoint = this->flightPos;
-	DirectX::XMFLOAT3 camOffsett = midpoint;
-	camOffsett.z -= 20;
+	float camSpeed = 30 * dt;
+	int xOffset = this->WIDTH * 0.5;
+	int yOffset = this->HEIGHT * 0.25;
+	DirectX::XMFLOAT3 camPos;
+	DirectX::XMStoreFloat3(&camPos, camera.getRealPosition());
+	camPos.x += camSpeed;
+	//DirectX::XMFLOAT3 midPos = camPos;
+	//midPos.z += -20;
 
-		if (this->Stage == 0) 
-		{
-			DirectX newPos = this->spaceShips[1]->getPos();
-			this->spaceShips[0]->setPos();
-		}
-		else if (this->Stage == 1)
-		{
+	//if (this->Stage == 0 || true) 
+	//{
+	//	if (this->spaceShips[0]->getPos().x == midPos.x + xOffset)
+	//	{
+	//		this->Stage = 1;
+	//	}
+	//	DirectX::XMFLOAT3 newPos = this->spaceShips[1]->getPos();
+	//	newPos.x += (camSpeed * 2);
 
-		}
+	//	this->spaceShips[0]->setPos(newPos);
+	//	newPos.x -= xOffset;
+	//	this->spaceShips[1]->setPos(newPos);
+	//}
+	//else if (this->Stage == 1)
+	//{
 
-	
-	this->spaceShips;
-	this->camera.setPosition(midpoint);
+	//}
+
+	DirectX::XMFLOAT3 spacePos = this->spaceShips[0]->getPos();
+	spacePos.x += camSpeed*1.5;
+	this->spaceShips[0]->setPos(spacePos);
+
+	spacePos = this->spaceShips[1]->getPos();
+	spacePos.x += camSpeed*1.5;
+	this->spaceShips[1]->setPos(spacePos);
+
+	this->camera.setPosition(camPos);
 
 	return NOCHANGE;
 }
@@ -671,6 +691,20 @@ GAMESTATE Game::Update()
 		spaceShips[currentPlayer->getTeam()]->setPos(newRot * DirectX::SimpleMath::Vector3(150, 150, 150));
 	}
 
+	if (Input::KeyPress(KeyCode::L))
+	{
+		currentMinigame = MiniGames::INTERMISSION;
+		this->camera.setPosition(DirectX::XMFLOAT3(100.f, 0.f, 0.f));
+		this->camera.setCameraLookAt(DirectX::XMFLOAT3(100.f, 0.f, 10.f));
+
+		this->spaceShips[0]->setRot(DirectX::XMFLOAT3(0, 0, -DirectX::XM_PI * 0.5));
+		this->spaceShips[1]->setRot(DirectX::XMFLOAT3(0, 0, -DirectX::XM_PI * 0.5));
+
+		this->spaceShips[0]->setPos(DirectX::XMFLOAT3(80, 7, 50));
+		this->spaceShips[1]->setPos(DirectX::XMFLOAT3(40, -7, 50));
+		this->Stage = 0;
+	}
+
 	//Simulate the current minigame on client side
 	switch (currentMinigame)
 	{
@@ -684,7 +718,7 @@ GAMESTATE Game::Update()
 		currentGameState = this->updateKingOfTheHillGame();
 		break;
 	case INTERMISSION:
-		currentGameState = this->updateKingOfTheHillGame();
+		currentGameState = this->updateIntermission();
 		break;
 	default:
 		break;

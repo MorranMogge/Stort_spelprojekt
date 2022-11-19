@@ -101,6 +101,8 @@ private:
 	int Stage = 0;
 	DirectX::XMFLOAT3 flightPosTeam1;
 	DirectX::XMFLOAT3 flightPosTeam2;
+	UINT HEIGHT;
+	UINT WIDTH;
 
 
 
@@ -119,7 +121,7 @@ private:
 	void randomizeObjectPos(GameObject* item);
 
 public:
-	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window);
+	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT);
 	virtual ~Game() override;
 
 	// Inherited via State

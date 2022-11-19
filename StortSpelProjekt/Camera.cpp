@@ -167,6 +167,11 @@ DirectX::XMVECTOR Camera::getPosition() const
 	return this->logicalPos;
 }
 
+DirectX::XMVECTOR Camera::getRealPosition() const
+{
+	return this->cameraPos;
+}
+
 void Camera::setPosition(const DirectX::XMFLOAT3& position)
 {
 	this->cameraPos = DirectX::XMVectorSet(position.x, position.y, position.z, 1.f);

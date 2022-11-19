@@ -644,7 +644,7 @@ GAMESTATE Game::updateIntermission()
 
 	if (this->Stage == 0) 
 	{
-		if (this->spaceShips[0]->getPos().x >= camPos.x + 15)
+		if (this->spaceShips[0]->getPos().x + camSpeed >= camPos.x + 14)
 		{
 			//DirectX::XMFLOAT3 temp = camPos;
 			//temp.x += 20;
@@ -656,7 +656,7 @@ GAMESTATE Game::updateIntermission()
 		}
 		else
 		{
-			camSpeed *= 1.5;
+			camSpeed *= 2;
 		}
 	}
 	else if (this->Stage == 1)
@@ -702,8 +702,8 @@ GAMESTATE Game::Update()
 		this->spaceShips[0]->setRot(DirectX::XMFLOAT3(0, 0, -DirectX::XM_PI * 0.5));
 		this->spaceShips[1]->setRot(DirectX::XMFLOAT3(0, 0, -DirectX::XM_PI * 0.5));
 
-		this->spaceShips[0]->setPos(DirectX::XMFLOAT3(80, 7, 50));
-		this->spaceShips[1]->setPos(DirectX::XMFLOAT3(40, -7, 50));
+		this->spaceShips[0]->setPos(DirectX::XMFLOAT3(35, 7, 50));
+		this->spaceShips[1]->setPos(DirectX::XMFLOAT3(05, -7, 50));
 		this->Stage = 0;
 	}
 

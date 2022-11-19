@@ -134,6 +134,7 @@ public:
 	//AnimatedMesh();
 	~AnimatedMesh();
 
+	bool addAnimations(std::string& fileName);
 
 	void addData(const AnimationData& data);
 	void updateAnim(const float& dt, const unsigned& animIndex, float animationSpeed = 1.0f);

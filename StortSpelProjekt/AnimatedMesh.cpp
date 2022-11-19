@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "AnimatedMesh.h"
 #include "ModelManager.h"
+#include <assimp/cimport.h>
+
 /*
                                ______________                               
                         ,===:'.,            `-._                           
@@ -269,6 +271,54 @@ AnimatedMesh::AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOA
 
 AnimatedMesh::~AnimatedMesh()
 {
+}
+
+bool AnimatedMesh::addAnimations(std::string& filePath)
+{
+	Assimp::Importer importer;
+	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
+	if (pScene == nullptr)
+	{
+		return false;
+	}
+
+	for (int i = 0, end = pScene->mNumAnimations; i < end; i++)
+	{
+		this->MySimp.animation.emplace_back();
+		this->MySimp.animation[this->MySimp.animation.size() - 1].mName = pScene->mAnimations[i]->mName.C_Str();
+		this->MySimp.animation[this->MySimp.animation.size() - 1].duration = pScene->mAnimations[i]->mDuration;
+		this->MySimp.animation[this->MySimp.animation.size() - 1].ticksPerSecond = pScene->mAnimations[i]->mTicksPerSecond;
+
+		this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels.reserve(pScene->mAnimations[i]->mNumChannels);
+		for (int j = 0, length = pScene->mAnimations[i]->mNumChannels; j < length; j++)
+		{
+			this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels.emplace_back();
+			this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].mNodeName = pScene->mAnimations[i]->mChannels[j]->mNodeName.C_Str();
+
+			this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].posKeyFrames.reserve(pScene->mAnimations[i]->mChannels[j]->mNumPositionKeys);
+			this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].rotKeyFrame.reserve(pScene->mAnimations[i]->mChannels[j]->mNumRotationKeys);
+			this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].scalKeyFrames.reserve(pScene->mAnimations[i]->mChannels[j]->mNumScalingKeys);
+
+			for (int k = 0, length = pScene->mAnimations[i]->mChannels[j]->mNumPositionKeys; k < length; k++)
+			{
+				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].posKeyFrames.emplace_back();
+				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].posKeyFrames[k].Time = pScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mTime;
+				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].posKeyFrames[k].addAiVector3D(pScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mValue);
+			}
+			for (int k = 0, length = pScene->mAnimations[i]->mChannels[j]->mNumRotationKeys; k < length; k++)
+			{
+				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].rotKeyFrame.emplace_back();
+				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].rotKeyFrame[k].Time = pScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mTime;
+				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].rotKeyFrame[k].addAiQuaternion(pScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue);
+			}
+			for (int k = 0, length = pScene->mAnimations[i]->mChannels[j]->mNumScalingKeys; k < length; k++)
+			{
+				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].scalKeyFrames.emplace_back();
+				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].scalKeyFrames[k].Time = pScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mTime;
+				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].scalKeyFrames[k].addAiVector3D(pScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mValue);
+			}
+		}
+	}
 }
 
 void AnimatedMesh::addData(const AnimationData& data)

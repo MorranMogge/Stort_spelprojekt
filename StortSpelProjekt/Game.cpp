@@ -635,39 +635,41 @@ GAMESTATE Game::updateKingOfTheHillGame()
 
 GAMESTATE Game::updateIntermission()
 {
-	float camSpeed = 30 * dt;
-	int xOffset = this->WIDTH * 0.5;
-	int yOffset = this->HEIGHT * 0.25;
+	float camSpeed = 10 * dt;
 	DirectX::XMFLOAT3 camPos;
 	DirectX::XMStoreFloat3(&camPos, camera.getRealPosition());
 	camPos.x += camSpeed;
 	//DirectX::XMFLOAT3 midPos = camPos;
 	//midPos.z += -20;
 
-	//if (this->Stage == 0 || true) 
-	//{
-	//	if (this->spaceShips[0]->getPos().x == midPos.x + xOffset)
-	//	{
-	//		this->Stage = 1;
-	//	}
-	//	DirectX::XMFLOAT3 newPos = this->spaceShips[1]->getPos();
-	//	newPos.x += (camSpeed * 2);
+	if (this->Stage == 0) 
+	{
+		if (this->spaceShips[0]->getPos().x >= camPos.x + 15)
+		{
+			//DirectX::XMFLOAT3 temp = camPos;
+			//temp.x += 20;
+			//this->spaceShips[0]->setPos(temp);
+			//temp.x -= 40;
+			//this->spaceShips[1]->setPos(temp);
 
-	//	this->spaceShips[0]->setPos(newPos);
-	//	newPos.x -= xOffset;
-	//	this->spaceShips[1]->setPos(newPos);
-	//}
-	//else if (this->Stage == 1)
-	//{
-
-	//}
+			this->Stage = 1;
+		}
+		else
+		{
+			camSpeed *= 1.5;
+		}
+	}
+	else if (this->Stage == 1)
+	{
+		//timer
+	}
 
 	DirectX::XMFLOAT3 spacePos = this->spaceShips[0]->getPos();
-	spacePos.x += camSpeed*1.5;
+	spacePos.x += camSpeed;
 	this->spaceShips[0]->setPos(spacePos);
 
 	spacePos = this->spaceShips[1]->getPos();
-	spacePos.x += camSpeed*1.5;
+	spacePos.x += camSpeed;
 	this->spaceShips[1]->setPos(spacePos);
 
 	this->camera.setPosition(camPos);

@@ -137,6 +137,7 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/arrow"));
 	meshes.push_back(new Mesh("../Meshes/saturn1"));
 	meshes.push_back(new Mesh("../Meshes/N1"));
+	meshes.push_back(new Mesh("../Meshes/k2"));
 
 
 
@@ -207,7 +208,7 @@ void Game::loadObjects()
 	}
 
 	//Initilize player
-	if (!currentPlayer && !IFONLINE) { currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client->getPlayerId(), client, 0, planetGravityField); players.emplace_back(currentPlayer); }
+	if (!currentPlayer && !IFONLINE) { currentPlayer = new Player(meshes[11], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client->getPlayerId(), client, 0, planetGravityField); players.emplace_back(currentPlayer); }
 	field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
 	oldField = field;
 

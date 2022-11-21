@@ -599,9 +599,6 @@ GAMESTATE Game::updateComponentGame()
 		//camera.landingMinigameScene(planetVector[0], actualTestObjectForLandingVisuals->getPosV3(), actualTestObjectForLandingVisuals->getRot());
 	}
 
-	//Update Line rendering buffer
-	this->updateBuffers();
-
 	//Play pickup animation
 	for (int i = 0; i < spaceShips.size(); i++)
 	{

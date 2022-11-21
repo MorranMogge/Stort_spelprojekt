@@ -72,25 +72,38 @@ void Player::handleItems()
 		//Use item
 		else if (this->holdingItem != nullptr && tracker.x == ButtonState::PRESSED)
 		{
-			//allocates data to be sent
-			ComponentData c;
-			c.ComponentId = this->getItemOnlineId();
-			c.inUseBy = -1;
-			c.packetId = PacketType::COMPONENTPOSITION;
-			c.x = this->getPos().x;
-			c.y = this->getPos().y;
-			c.z = this->getPos().z;
+			ComponentDropped c;
 
+			std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
+			c.componentId = this->holdingItem->getOnlineId();
+			c.packetId = PacketType::COMPONENTDROPPED;
 			//sending data to server
 			if (this->client != nullptr)
 			{
-				client->sendStuff<ComponentData>(c);
+				client->sendStuff<ComponentDropped>(c);
 			}
 
 			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+			if (holdingItem->getId() == GRENADE)
+			{
+				DirectX::XMFLOAT3 temp;
+				DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5.f + this->normalVector * 0.5f));
+				newNormalizeXMFLOAT3(temp);
+				if (this->moveKeyPressed)
+				{
+					if (this->currentSpeed == this->speed) scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.095f, temp);
+					else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
+				}
+
+
+				//Set dynamic so it can be affected by forces
+				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
+				//Apply the force
+				this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
+			}
 			holdingItem->useItem();
-			itemPhysComp->setIsAllowedToSleep(true);
-			itemPhysComp->setIsSleeping(true);
+			//itemPhysComp->setIsAllowedToSleep(true);
+			//itemPhysComp->setIsSleeping(true);
 			holdingItem->setPickedUp(false);
 			holdingItem = nullptr;
 		}

@@ -13,7 +13,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	gameMusic.play(true);
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
-	client = new Client();// ("192.168.43.244");
+	client = new Client();
 	circularBuffer = client->getCircularBuffer();
 
 	//Setup rendering
@@ -65,7 +65,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			std::cout << "Dude: " << (int)(dude < i + 1) << "\n";
 		}
 
-		int hej = 5;
 		gamePad = new DirectX::GamePad();
 		currentPlayer->setGamePad(gamePad);
 	}

@@ -190,3 +190,10 @@ struct CreateZone
 	float zPos;
 	float scale;
 };
+
+//enum = 25
+struct LandingMiniGameOver
+{
+	int packetId;
+	float points;
+};

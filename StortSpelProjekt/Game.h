@@ -90,6 +90,9 @@ private:
 
 	//HUD
 	HudUI ui;
+	LandingHud landingUi;
+
+	float landingMiniGamePoints = 0;
 
 	//InterMissionVariables
 	int Stage = 0;
@@ -106,7 +109,6 @@ private:
 	void drawIcons();
 	void drawObjects(bool drawDebug);
 	void drawParticles();
-	void updateBuffers();
 	void handleKeybinds();
 	GAMESTATE updateComponentGame();
 	GAMESTATE updateLandingGame();

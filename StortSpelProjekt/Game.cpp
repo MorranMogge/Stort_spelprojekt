@@ -383,23 +383,6 @@ void Game::randomizeObjectPos(GameObject* object)
 	object->setPos(randomPos);
 }
 
-void Game::updateBuffers()
-{
-	//Update GameObjects
-
-	/*for (int i = 0; i < gameObjects.size(); i++)
-	{
-		gameObjects[i]->updateBuffer();
-	}
-	arrow->update();
-
-	for (int i = 0; i < onlineItems.size(); i++)
-	{
-		onlineItems[i]->updateBuffer();
-	}*/
-
-}
-
 void Game::handleKeybinds()
 {
 	if (GetAsyncKeyState('C')) physWorld.addBoxToWorld();
@@ -644,12 +627,23 @@ GAMESTATE Game::updateLandingGame()
 	camera.landingMinigameScene(planetVector[0], spaceShips[currentPlayer->getTeam()]->getPosV3(), spaceShips[currentPlayer->getTeam()]->getRot());
 	DirectX::SimpleMath::Vector3 moveDir = getScalarMultiplicationXMFLOAT3(1, (planetVector[0]->getGravityField()->calcGravFactor(spaceShips[currentPlayer->getTeam()]->getPos())));
 
-	spaceShips[currentPlayer->getTeam()]->move(moveDir, dt);
 	moveDir.Normalize();
+	moveDir *= 0.5f;
+	spaceShips[currentPlayer->getTeam()]->move(moveDir, dt);
+	if (landingUi.handleInputs(dt)) landingMiniGamePoints += 100*dt;
 	if (getLength(spaceShips[currentPlayer->getTeam()]->getPosV3()) <= planetVector[0]->getSize())
 	{
+		moveDir.Normalize();
 		spaceShips[currentPlayer->getTeam()]->setPos(moveDir * planetVector[0]->getSize());
 		currentMinigame = MiniGames::COMPONENTCOLLECTION;
+		std::cout << "Total points " << landingMiniGamePoints << std::endl;
+
+		//Send data to server
+		LandingMiniGameOver totalPoints;
+		totalPoints.packetId = PacketType::LANDINGMINIGAMEOVER;
+		totalPoints.points = landingMiniGamePoints;
+
+		client->sendStuff<LandingMiniGameOver>(totalPoints);
 	}
 
 	return NOCHANGE;
@@ -783,8 +777,6 @@ GAMESTATE Game::Update()
 		break;
 	}
 
-	//Update Line rendering buffer
-	this->updateBuffers();
 
 	//Debug keybinds
 	this->handleKeybinds();
@@ -827,5 +819,17 @@ void Game::Render()
 
 	//Render UI (needs to render last)
 	ui.Draw();
+	switch (currentMinigame)
+	{
+	case COMPONENTCOLLECTION:
+		break;
+	case LANDINGSPACESHIP:
+		landingUi.draw();
+		break;
+	case KINGOFTHEHILL:
+		break;
+	default:
+		break;
+	}
 }
 

@@ -181,7 +181,6 @@ struct SpawnPlanets
 	float size;
 };
 
-
 //enum 24
 struct CreateZone
 {
@@ -190,4 +189,11 @@ struct CreateZone
 	float yPos;
 	float zPos;
 	float scale;
+};
+
+//enum = 25
+struct LandingMiniGameOver
+{
+	int packetId;
+	float points;
 };

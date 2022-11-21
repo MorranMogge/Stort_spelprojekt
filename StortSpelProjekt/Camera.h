@@ -57,6 +57,7 @@ public:
 	ID3D11Buffer* getPositionBuffer();
 	void setPosition(const DirectX::XMFLOAT3& position);
 	void setCameraLookAt(const DirectX::XMFLOAT3& position);
+	void setRotToStart();
 
 	void VSbindPositionBuffer(const int &slot);
 	void VSbindViewBuffer(const int& slot);

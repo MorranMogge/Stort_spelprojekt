@@ -97,10 +97,10 @@ private:
 	HudUI ui;
 
 	//InterMissionVariables
-	DirectX::XMFLOAT3 flightPos;
 	int Stage = 0;
-	DirectX::XMFLOAT3 flightPosTeam1;
-	DirectX::XMFLOAT3 flightPosTeam2;
+	float totalTime;
+	DirectX::XMFLOAT3 centerPos;
+	DirectX::XMFLOAT2 offset;
 	UINT HEIGHT;
 	UINT WIDTH;
 

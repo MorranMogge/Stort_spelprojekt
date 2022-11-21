@@ -635,44 +635,44 @@ GAMESTATE Game::updateKingOfTheHillGame()
 
 GAMESTATE Game::updateIntermission()
 {
-	float camSpeed = 10 * dt;
-	DirectX::XMFLOAT3 camPos;
-	DirectX::XMStoreFloat3(&camPos, camera.getRealPosition());
-	camPos.x += camSpeed;
-	//DirectX::XMFLOAT3 midPos = camPos;
-	//midPos.z += -20;
+	//float camSpeed = 10 * dt;
+	//totalTime += dt;
+	//DirectX::XMFLOAT3 camPos;
+	//DirectX::XMStoreFloat3(&camPos, camera.getRealPosition());
+	//camPos.x += camSpeed;
+	////DirectX::XMFLOAT3 midPos = camPos;
+	////midPos.z += -20;
 
-	if (this->Stage == 0) 
-	{
-		if (this->spaceShips[0]->getPos().x + camSpeed >= camPos.x + 14)
-		{
-			//DirectX::XMFLOAT3 temp = camPos;
-			//temp.x += 20;
-			//this->spaceShips[0]->setPos(temp);
-			//temp.x -= 40;
-			//this->spaceShips[1]->setPos(temp);
+	//if (this->Stage == 0) 
+	//{
+	//	if (this->centerPos.x + camSpeed >= camPos.x)
+	//	{
+	//		this->Stage = 1;
+	//	}
+	//	else
+	//	{
+	//		camSpeed *= 2;
+	//	}
+	//}
+	//else if (this->Stage == 1)
+	//{
+	//	//timer
+	//}
 
-			this->Stage = 1;
-		}
-		else
-		{
-			camSpeed *= 2;
-		}
-	}
-	else if (this->Stage == 1)
-	{
-		//timer
-	}
+	//this->centerPos.x += camSpeed;
+	//DirectX::XMFLOAT3 spacePos = centerPos;
+	//spacePos.x += offset.x;
+	//spacePos.y += offset.y;
+	//spacePos.y += sin(totalTime + offset.x);
+	//this->spaceShips[0]->setPos(spacePos);
 
-	DirectX::XMFLOAT3 spacePos = this->spaceShips[0]->getPos();
-	spacePos.x += camSpeed;
-	this->spaceShips[0]->setPos(spacePos);
+	//spacePos = centerPos;
+	//spacePos.x -= offset.x;
+	//spacePos.y -= offset.y;
+	//spacePos.y += sin(totalTime);
+	//this->spaceShips[1]->setPos(spacePos);
 
-	spacePos = this->spaceShips[1]->getPos();
-	spacePos.x += camSpeed;
-	this->spaceShips[1]->setPos(spacePos);
-
-	this->camera.setPosition(camPos);
+	//this->camera.setPosition(camPos);
 
 	return NOCHANGE;
 }
@@ -696,14 +696,17 @@ GAMESTATE Game::Update()
 	if (Input::KeyPress(KeyCode::L))
 	{
 		currentMinigame = MiniGames::INTERMISSION;
-		this->camera.setPosition(DirectX::XMFLOAT3(100.f, 0.f, 0.f));
-		this->camera.setCameraLookAt(DirectX::XMFLOAT3(100.f, 0.f, 10.f));
+		this->camera.setPosition(DirectX::XMFLOAT3(100.f, 0.f, 300.f));
+		this->camera.setRotToStart();
+		this->camera.setCameraLookAt(DirectX::XMFLOAT3(150.f, 0, 300.f));
 
-		this->spaceShips[0]->setRot(DirectX::XMFLOAT3(0, 0, -DirectX::XM_PI * 0.5));
-		this->spaceShips[1]->setRot(DirectX::XMFLOAT3(0, 0, -DirectX::XM_PI * 0.5));
+		this->spaceShips[0]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
+		this->spaceShips[1]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
 
-		this->spaceShips[0]->setPos(DirectX::XMFLOAT3(35, 7, 50));
-		this->spaceShips[1]->setPos(DirectX::XMFLOAT3(05, -7, 50));
+		this->centerPos = DirectX::XMFLOAT3(150, 0, 20);
+		this->offset = DirectX::XMFLOAT2(15, 7);
+		this->spaceShips[0]->setPos(DirectX::XMFLOAT3(150, 7, 95));
+		this->spaceShips[1]->setPos(DirectX::XMFLOAT3(150, -7, 300));
 		this->Stage = 0;
 	}
 

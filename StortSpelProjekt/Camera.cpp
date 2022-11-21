@@ -186,6 +186,13 @@ void Camera::setCameraLookAt(const DirectX::XMFLOAT3& position)
 	this->updateCamera();
 }
 
+void Camera::setRotToStart()
+{
+	rightVector = DEFAULT_RIGHT;
+	forwardVector = DEFAULT_FORWARD;
+	upVector = DEFAULT_UP;
+}
+
 void Camera::VSbindPositionBuffer(const int& slot)
 {
 	GPU::immediateContext->VSSetConstantBuffers(slot, 1, this->positionBuffer.getReferenceOf());

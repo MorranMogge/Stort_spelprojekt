@@ -3,14 +3,21 @@
 #include <d3d11.h>
 #include "ConstantBufferNew.h"
 #include "GPU.h"
-
-#define MAXFOV 0.8f
-#define  MINFOV 0.5f
+#include "Planet.h"
+#include "Player.h"
 
 class Camera
 {
 private:
-	float fieldOfView = 0.8f;
+	float playerSpeed = 0.f;
+	DirectX::XMMATRIX playerRotationMX;
+	DirectX::XMVECTOR playerPosition = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	bool collided = false;
+
+	float fieldOfView = 0.76f;
+	float maxFOV = 0.8f;
+	float minFOV = 0.6f;
 
 	DirectX::XMFLOAT3 position;
 	ConstantBufferNew<cameraStruct> cameraBuffer;
@@ -19,8 +26,10 @@ private:
 
 	DirectX::XMMATRIX viewMatrix;
 	DirectX::XMMATRIX projMatrix;
-	DirectX::XMVECTOR cameraPos = DirectX::XMVectorSet(0.0f, 0.0f, -25.0f, 0.0f);
-	DirectX::XMVECTOR lookAtPos = DirectX::XMVectorSet(0.0f, 0.0f, -20.0f, 0.0f);
+	DirectX::XMVECTOR logicalPos = DirectX::XMVectorSet(0.0f, 60.0f, -30.0f, 0.0f);
+	DirectX::XMVECTOR cameraPos = DirectX::XMVectorSet(0.0f, 60.0f, -30.0f, 0.0f);
+	DirectX::XMVECTOR oldCameraPos = cameraPos;
+	DirectX::XMVECTOR lookAtPos = DirectX::XMVectorSet(0.0f, 42.0f, 0.0f, 0.0f);
 
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
@@ -28,19 +37,33 @@ private:
 
 	DirectX::XMVECTOR rightVector = DEFAULT_RIGHT;
 	DirectX::XMVECTOR forwardVector = DEFAULT_FORWARD;
-	DirectX::XMVECTOR upVector = DEFAULT_UP;
+	DirectX::XMVECTOR logicalUp = DEFAULT_UP;
+	DirectX::XMVECTOR upVector = logicalUp;
+
+	DirectX::XMVECTOR velocityVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	DirectX::XMVECTOR parentPos = logicalPos;
+	DirectX::SimpleMath::Vector3 planetVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	DirectX::SimpleMath::Vector3 cameraVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 public:
 	Camera();
 	~Camera();
 
 	void updateCamera();
-	void moveCamera(const DirectX::XMVECTOR& playerPosition, const DirectX::XMMATRIX& playerRotation);
+	void moveCamera(Player* player, const float& deltaTime);
+	void moveVelocity(Player* player, const float& deltaTime);
+	void collisionCamera(Player* player, const std::vector<Planet*>& planets, const float& deltaTime);
+
 	void winScene(const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation);
+	void landingMinigameScene(const Planet* planet, const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation);
 	DirectX::XMVECTOR getForwardVector() const;
 	DirectX::XMVECTOR getRightVector() const;
+	DirectX::XMVECTOR getUpVector() const;
+	DirectX::XMVECTOR getPosition() const;
 	ID3D11Buffer* getViewBuffer();
 	ID3D11Buffer* getPositionBuffer();
+	void setPosition(const DirectX::XMFLOAT3& position);
+	void setCameraLookAt(const DirectX::XMFLOAT3& position);
 
 	void VSbindPositionBuffer(const int &slot);
 	void VSbindViewBuffer(const int& slot);

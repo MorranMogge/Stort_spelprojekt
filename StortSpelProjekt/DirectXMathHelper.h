@@ -16,3 +16,5 @@ void newNormalizeXMFLOAT3(DirectX::XMFLOAT3& argOne);
 DirectX::XMFLOAT3 getScalarMultiplicationXMFLOAT3(const float& scalar, DirectX::XMFLOAT3 argOne);
 
 float getLength(DirectX::XMFLOAT3 argOne);
+
+bool withinVicinityTwoPoints(float length, DirectX::XMFLOAT3 posOne, const DirectX::XMFLOAT3& posTwo);

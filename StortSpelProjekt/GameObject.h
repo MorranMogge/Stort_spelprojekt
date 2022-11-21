@@ -46,6 +46,7 @@ public:
 	void setScale(const DirectX::XMFLOAT3& scale);
 	void setMesh(const std::string& meshPath);
 	void setMesh(Mesh* inMesh);
+	void setGravityField(GravityField* field);
 	DirectX::XMFLOAT3 getPos() const;
 	DirectX::SimpleMath::Vector3 getPosV3()const;
 	DirectX::XMMATRIX getRot() const;

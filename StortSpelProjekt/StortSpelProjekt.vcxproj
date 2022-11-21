@@ -159,7 +159,9 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AnimatedMesh.h" />
+    <ClInclude Include="Asteroid.h" />
+    <ClInclude Include="AsteroidHandler.h" />
+    <ClInclude Include="Arrow.h" />
     <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="BasicRenderer.h" />
     <ClInclude Include="BilboardObject.h" />
@@ -168,11 +170,14 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="BufferTypes.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CaptureZone.h" />
     <ClInclude Include="CircularBufferClient.h" />
     <ClInclude Include="ClientHandler.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferNew.h" />
+    <ClInclude Include="ControlMenu.h" />
+    <ClInclude Include="ControlUI.h" />
     <ClInclude Include="Credits.h" />
     <ClInclude Include="CreditsMenu.h" />
     <ClInclude Include="DepthStencilState.h" />
@@ -198,8 +203,6 @@
     <ClInclude Include="LoseUI.h" />
     <ClInclude Include="MaterialLibrary.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="ModelDataContainer.h" />
-    <ClInclude Include="ModelManager.h" />
     <ClInclude Include="MouseClass.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
@@ -215,9 +218,12 @@
     <ClInclude Include="PerspectiveCamera.h" />
     <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="PhysicsWorld.h" />
+    <ClInclude Include="Planet.h" />
+    <ClInclude Include="PlanetGenerator.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerVectors.h" />
     <ClInclude Include="Potion.h" />
+    <ClInclude Include="Profiler.h" />
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="RenderTargetView.h" />
     <ClInclude Include="SamplerState.h" />
@@ -246,8 +252,8 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="MemoryLeackChecker.h" />
     <ClInclude Include="Menu.h" />
-    <ClInclude Include="PackageTypes.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SoundLibrary.h" />
     <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="stb_image.h" />
@@ -267,7 +273,10 @@
     <ClInclude Include="WinUI.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AnimatedMesh.cpp" />
+    <ClCompile Include="Asteroid.cpp" />
+    <ClCompile Include="AsteroidHandler.cpp" />
+    <ClCompile Include="Arrow.cpp" />
+    <ClCompile Include="CaptureZone.cpp" />
     <ClCompile Include="CircularBufferClient.cpp" />
     <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="BaseballBat.cpp" />
@@ -276,6 +285,8 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="ControlMenu.cpp" />
+    <ClCompile Include="ControlUI.cpp" />
     <ClCompile Include="Credits.cpp" />
     <ClCompile Include="CreditsMenu.cpp" />
     <ClCompile Include="D3D11Helper.cpp" />
@@ -326,8 +337,6 @@
     <ClCompile Include="LoseUI.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="ModelDataContainer.cpp" />
-    <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="MouseClass.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -338,9 +347,12 @@
     <ClCompile Include="MouseEvent.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="PlanetGenerator.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerVectors.cpp" />
     <ClCompile Include="Potion.cpp" />
+    <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="SendingDataEvent.cpp" />
     <ClCompile Include="SettingsMenu.cpp" />
     <ClCompile Include="SettingsUI.cpp" />
@@ -416,6 +428,9 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
+    <FxCompile Include="InvFresnel_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -474,10 +489,6 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-    </FxCompile>
-    <FxCompile Include="vShaderSkinning.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>

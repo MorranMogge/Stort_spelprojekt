@@ -53,6 +53,7 @@ private:
 
 	bool setUpInputLayout(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout* iLayout);
 	bool setUpInputLayoutAnim(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout*& iLayout);
+	ID3D11PixelShader* InvFresnel_PS;
 
 	bool setUpInputLayout(ID3D11Device* device, const std::string &vShaderByteCode);
 	bool setUp_PT_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode);
@@ -80,4 +81,5 @@ public:
 	void bindAmbientShader();
 	void geometryUnbind();
 	void fresnelPrePass(Camera& stageCamera);
+	void invFresnelPrePass();
 };

@@ -1,7 +1,6 @@
 #pragma once
 #include "GameInclude.h"
 
-
 struct wirefameInfo
 {
 	DirectX::XMFLOAT3 wireframeClr;
@@ -15,27 +14,32 @@ class Game : public State
 {
 private:
 	ID3D11DeviceContext* immediateContext;
+	HWND* window;
+
+	Sound gameMusic;
 
 	ImGuiHelper imGui;
 	bool wireframe = false;
 	bool objectDraw = true;
 	bool drawDebug = false;
-	wirefameInfo reactWireframeInfo;
-	ID3D11Buffer* wireBuffer;
-	D3D11_MAPPED_SUBRESOURCE subData;
+	bool landingMinigame = false;
 
-	std::unique_ptr<DirectX::GamePad> gamePad;
+	DirectX::GamePad* gamePad;
+	GravityField* field;
+	GravityField* oldField;
+	bool changedPlanet = false;
+
+	//Used for delta time
 	float endTimer;
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> currentTime;
 	std::chrono::time_point<std::chrono::system_clock> lastUpdate;
-
-	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
-	DirectX::XMFLOAT3 velocity;
-	DirectX::XMFLOAT3 grav;
-
-	std::chrono::time_point<std::chrono::system_clock> serverStart;
 	
+	//Server related variables
+	std::chrono::time_point<std::chrono::system_clock> serverStart;
+	float serverTimerLength =  1.f / 30.0f;
+	Client* client;
+
 	ModelManager manager;
 	ID3D11Buffer* vBuff;
 	ID3D11Buffer* iBuff;
@@ -46,15 +50,15 @@ private:
 	AnimationData animData;
 	AnimatedMesh* sexyMan;
 
-	std::vector< Mesh*> meshes;
-
-	float serverTimerLength =  1.f / 30.0f;
-	Client* client;
+	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
+	DirectX::XMFLOAT3 velocity;
+	DirectX::XMFLOAT3 grav;
 
 	BasicRenderer basicRenderer;
-	GravityField planetGravityField;
-	PhysicsWorld physWolrd;
-
+	GravityField* planetGravityField;
+	PhysicsWorld physWorld;
+	std::vector<Planet*> planetVector;
+	AsteroidHandler* asteroids;
 
 	PacketEventManager* packetEventManager;
 	std::vector<Player*> players;
@@ -64,26 +68,32 @@ private:
 	CircularBufferClient* circularBuffer;
 
 	Camera camera;
+	bool velocityCamera = false;
+
+	Arrow* arrow;
 	SkyboxObj skybox;
 	Player* currentPlayer;
-	GameObject* atmosphere;
-	std::vector<Component*> components;
-	std::vector<SpaceShip*> spaceShips;
+	Mesh* planetMeshes;
 
+	//Items
+	Potion* potion;
+	BaseballBat* baseballBat;
+	Grenade* grenade;
+
+	//Objects
+	std::vector<Component*> components;
+	std::vector<GameObject*> gameObjects;
+	std::vector<SpaceShip*> spaceShips;
+	std::vector<Item*> items;
+	std::vector< Mesh*> meshes;
+	
 	LightHandler ltHandler;
 	ImGuiHelper* imguiHelper;
 	PlayerVectors playerVecRenderer;
-
-	//Objects
-	std::vector<GameObject*> gameObjects;
-	std::vector<Item*> items;
 	std::vector<ParticleEmitter> ptEmitters;
-	
+
 	//HUD
 	HudUI ui;
-	
-	//Temp buffer for atmosphere
-	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
 
 
 	void loadObjects();
@@ -92,11 +102,9 @@ private:
 	void drawIcons();
 	void drawObjects(bool drawDebug);
 	void drawParticles();
-	bool setUpWireframe();
 	void updateBuffers();
 	void handleKeybinds();
 	void randomizeObjectPos(GameObject* item);
-	HWND* window;
 
 public:
 	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window);

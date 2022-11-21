@@ -10,6 +10,8 @@
 #include "PhysicsWorld.h"
 #include "GravityField.h"
 #include "PhysicsComponent.h"
+#include "Planet.h"
+#include "AsteroidHandler.h"
 
 //Rendering
 #include "BasicRenderer.h"
@@ -26,6 +28,7 @@
 #include "SpaceShip.h"
 #include "Grenade.h"
 #include "AnimatedMesh.h"
+#include "Arrow.h"
 
 //User
 #include "Input.h"
@@ -42,3 +45,10 @@
 #include "BufferTypes.h"
 #include "ModelManager.h"
 #include "PacketEventManager.h"
+#include "PacketEventManager.h"
+#include "Profiler.h"
+
+#include "SoundCollection.h"
+
+
+

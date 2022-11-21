@@ -32,7 +32,7 @@ GAMESTATE LoseUI::GetGameState()
 
 LoseUI::LoseUI()
 {
-	loseText = GUISprite(GPU::windowWidth / 2.0f, 300);
+	loseText = GUISprite(1264.0f / 2.0f, 300);
 	loseText.Load(GPU::device, L"../Sprites/loseText.png");
 
 	backText = GUISprite(75 + 70, 600);

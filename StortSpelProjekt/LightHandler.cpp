@@ -435,6 +435,39 @@ void LightHandler::drawShadows(const int &lightIndex, const std::vector<GameObje
 	//GPU::immediateContext->OMSetRenderTargets(1, &nullRtv, nullDsView);							
 }
 
+void LightHandler::drawShadows(const int& lightIndex, const std::vector<Planet*>& planets, Camera* stageCamera)
+{
+	//Variables
+	ID3D11RenderTargetView* nullRtv{ nullptr };
+	ID3D11DepthStencilView* nullDsView{ nullptr };
+
+	if (stageCamera != nullptr)
+	{
+		//Set view buffer
+		stageCamera->VSbindViewBuffer(1);
+	}
+	else
+	{
+		//Set view buffer
+		GPU::immediateContext->VSSetConstantBuffers(1, 1, this->viewBuffers.at(lightIndex).GetAddressOf());
+
+		//Clear Depth Stencil
+		GPU::immediateContext->ClearDepthStencilView(this->depthViews.at(lightIndex).Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+
+		//Set render targets
+		GPU::immediateContext->OMSetRenderTargets(1, &nullRtv, this->depthViews.at(lightIndex).Get());
+	}
+
+	//Draw Objects
+	for (int i = 0; i < planets.size(); i++)
+	{
+		planets[i]->drawPlanet();
+	}
+
+	//Unbind render targets & Depth Stencil
+	GPU::immediateContext->OMSetRenderTargets(1, &nullRtv, nullDsView);
+}
+
 void LightHandler::bindLightBuffers()
 {
 	GPU::immediateContext->PSSetShaderResources(3, 1, this->shadowSrv.GetAddressOf());				//Bind Srv's //ShadowMap(s)

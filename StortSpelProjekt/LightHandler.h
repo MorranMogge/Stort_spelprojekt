@@ -51,6 +51,7 @@ public:
 	int getNrOfLights() const;
 	void drawShadows(const int& lightIndex, const std::vector<Player*>& gameObjects, Camera* stageCamera = nullptr);
 	void drawShadows(const int &lightIndex, const std::vector<GameObject*> &gameObjects, Camera* stageCamera = nullptr);
+	void drawShadows(const int& lightIndex, const std::vector<Planet*>& planets, Camera* stageCamera = nullptr);
 	void bindLightBuffers();
 	void drawDebugMesh();
 	void unbindSrv();

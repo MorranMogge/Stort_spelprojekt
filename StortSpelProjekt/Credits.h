@@ -1,6 +1,7 @@
 #pragma once
 #include "GUISprite.h"
 #include "State.h"
+#include "Sound.h"
 
 class Credits final
 {

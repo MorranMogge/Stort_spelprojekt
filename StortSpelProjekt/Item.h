@@ -3,8 +3,8 @@
 #include "ParticleEmitter.h"
 #include "BilboardObject.h"
 #include "TimeStruct.h"
+#include "Sound.h"
 
-//L�gga in mutex s� att inte flera spelar kan ta samma item.
 class Item : public GameObject
 {
 private:
@@ -15,6 +15,7 @@ protected:
 	TimeStruct tStruct;
 	BilboardObject* itemIcon;
 	ParticleEmitter* particles;
+	Sound sfx;
 	bool withinPlayerReach;
 	bool pickedUp;
 

@@ -8,27 +8,31 @@ class MenuUI final
 	GUISprite spriteWeaponBox;
 
 	GUISprite start;
+	GUISprite control;
 	GUISprite settings;
 	GUISprite credits;
 	GUISprite exit;
 
-	GUISprite control;
-	GUISprite useText;
-	GUISprite throwText;
-	GUISprite pickText;
+	GUISprite start2;
+	GUISprite control2;
+	GUISprite settings2;
+	GUISprite credits2;
+	GUISprite exit2;
+
+	bool hit_start, hit_setting, hit_credits, hit_exit, hit_control;
+
+	GUISprite title;
 
 	GUISprite objective;
 
 	bool isLoading = false;
 	GUISprite Loading;
 
-	GAMESTATE gameState;
+	GAMESTATE gameState = NOCHANGE;
 
 	GUIText testText;
 
 	void HandleInputs();
-
-	void TextPass();
 	void SpritePass();
 
 public:

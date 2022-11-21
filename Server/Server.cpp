@@ -457,17 +457,11 @@ int main()
 				//				items[i].setPosition(compData->x, compData->y, compData->z);
 				//				items[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
 				//			}
-
 				//		}
 				//	}
-
 				//}
-
 				break;
-
 			}
-
-			
 		}
 
 		//checks all components player position

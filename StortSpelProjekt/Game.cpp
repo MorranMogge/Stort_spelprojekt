@@ -233,13 +233,13 @@ void Game::loadObjects()
 
 	//Initilize player
 	if (!currentPlayer && !IFONLINE)
-	{ 
-		currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), 1, client->getPlayerId(), client, 0, planetGravityField); 
+	{
+		currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), 1, client->getPlayerId(), client, 0, planetGravityField);
 		players.emplace_back(currentPlayer);
 		gamePad = new GamePad();
 		currentPlayer->setGamePad(gamePad);
 	}
-	
+
 	if (!IFONLINE)
 	{
 		captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), planetGravityField, DirectX::SimpleMath::Vector3(10.f, 10.f, 10.f));
@@ -581,6 +581,13 @@ GAMESTATE Game::updateComponentGame()
 		{
 			if (spaceShips[i]->isFinished())
 			{
+				this->currentMinigame = MiniGames::STARTINTERMISSION;
+
+				//Send data to server
+				/*IntermissionStart startOfIntermission;
+				startOfIntermission.packetId = PacketType::STARTINTERMISSION;
+				client->sendStuff<IntermissionStart>(startOfIntermission);*/
+
 				int team = spaceShips[i]->getTeam();
 				if (currentPlayer->getTeam() == team)
 				{
@@ -592,11 +599,6 @@ GAMESTATE Game::updateComponentGame()
 				}
 			}
 		}
-	}
-	if (landingMinigame)
-	{
-		//Here yo type the function below but replace testObject with your space ship
-		//camera.landingMinigameScene(planetVector[0], actualTestObjectForLandingVisuals->getPosV3(), actualTestObjectForLandingVisuals->getRot());
 	}
 
 	//Play pickup animation
@@ -618,6 +620,14 @@ GAMESTATE Game::updateComponentGame()
 	return NOCHANGE;
 }
 
+GAMESTATE Game::startLanding()
+{
+	DirectX::XMFLOAT3 newRot = spaceShips[currentPlayer->getTeam()]->getUpDirection();
+	spaceShips[currentPlayer->getTeam()]->setPos(newRot * DirectX::SimpleMath::Vector3(150, 150, 150));
+	currentMinigame = LANDINGSPACESHIP;
+	return GAMESTATE::NOCHANGE;
+}
+
 GAMESTATE Game::updateLandingGame()
 {
 	//Here yo type the function below but replace testObject with your space ship
@@ -627,28 +637,53 @@ GAMESTATE Game::updateLandingGame()
 	moveDir.Normalize();
 	moveDir *= 0.5f;
 	spaceShips[currentPlayer->getTeam()]->move(moveDir, dt);
-	if (landingUi.handleInputs(dt)) landingMiniGamePoints += 100*dt;
+	if (landingUi.handleInputs(dt)) landingMiniGamePoints += 100 * dt;
 	if (getLength(spaceShips[currentPlayer->getTeam()]->getPosV3()) <= planetVector[0]->getSize())
 	{
 		moveDir.Normalize();
 		spaceShips[currentPlayer->getTeam()]->setPos(moveDir * planetVector[0]->getSize());
-		currentMinigame = MiniGames::COMPONENTCOLLECTION;
+		currentMinigame = MiniGames::KINGOFTHEHILL;
 		std::cout << "Total points " << landingMiniGamePoints << std::endl;
 
 		//Send data to server
 		LandingMiniGameOver totalPoints;
 		totalPoints.packetId = PacketType::LANDINGMINIGAMEOVER;
 		totalPoints.points = landingMiniGamePoints;
-
 		client->sendStuff<LandingMiniGameOver>(totalPoints);
 	}
+	return NOCHANGE;
+}
 
+GAMESTATE Game::startKotH()
+{
+	//Set up planets
+	//Set up capture zone
+
+	currentMinigame = MiniGames::KINGOFTHEHILL;
 	return NOCHANGE;
 }
 
 GAMESTATE Game::updateKingOfTheHillGame()
 {
-	std::cout << "HEJEHEJEHEJEHJ";
+	return NOCHANGE;
+}
+
+GAMESTATE Game::startIntermission()
+{
+	this->camera.setPosition(DirectX::XMFLOAT3(100.f, 0.f, 300.f));
+	this->camera.setRotToStart();
+	this->camera.setCameraLookAt(DirectX::XMFLOAT3(150.f, 0, 300.f));
+
+	this->spaceShips[0]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
+	this->spaceShips[1]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
+
+	this->centerPos = DirectX::XMFLOAT3(150, 0, 400);
+	this->offset = DirectX::XMFLOAT2(15, 7);
+	//this->spaceShips[0]->setPos(DirectX::XMFLOAT3(150, 7, 95));
+	//this->spaceShips[1]->setPos(DirectX::XMFLOAT3(150, -7, 290));
+	this->Stage = 0;
+
+	currentMinigame = INTERMISSION;
 	return NOCHANGE;
 }
 
@@ -665,9 +700,7 @@ GAMESTATE Game::updateIntermission()
 	camPos.x += 50;
 	this->camera.setCameraLookAt(camPos);
 
-
-
-	if (this->Stage == 0) 
+	if (this->Stage == 0)
 	{
 		if (this->centerPos.z - camSpeed <= camPos.z)
 		{
@@ -695,7 +728,7 @@ GAMESTATE Game::updateIntermission()
 			this->spaceShips[0]->setRot(spaceShips[0]->getRotOrientedToGrav());
 			this->spaceShips[1]->setRot(spaceShips[1]->getRotOrientedToGrav());
 
-			currentMinigame = LANDINGSPACESHIP;
+			currentMinigame = STARTLANDING;
 			return GAMESTATE::NOCHANGE;
 		}
 	}
@@ -713,7 +746,6 @@ GAMESTATE Game::updateIntermission()
 	spacePos.y += sin(totalTime);
 	this->spaceShips[1]->setPos(spacePos);
 
-
 	return NOCHANGE;
 }
 
@@ -721,39 +753,10 @@ GAMESTATE Game::Update()
 {
 	//read the packets received from the server
 	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone);
-	
+
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
-
-	if (Input::KeyPress(KeyCode::P)) 
-	{ 
-		currentMinigame = MiniGames::LANDINGSPACESHIP;
-		DirectX::XMFLOAT3 newRot = spaceShips[currentPlayer->getTeam()]->getUpDirection();
-		spaceShips[currentPlayer->getTeam()]->setPos(newRot * DirectX::SimpleMath::Vector3(150, 150, 150));
-	}
-
-	if (Input::KeyPress(KeyCode::K))
-	{
-		currentMinigame = MiniGames::KINGOFTHEHILL;
-		std::cout << "HO\n";
-	}
-	if (Input::KeyPress(KeyCode::L))
-	{
-		currentMinigame = MiniGames::INTERMISSION;
-		this->camera.setPosition(DirectX::XMFLOAT3(100.f, 0.f, 300.f));
-		this->camera.setRotToStart();
-		this->camera.setCameraLookAt(DirectX::XMFLOAT3(150.f, 0, 300.f));
-
-		this->spaceShips[0]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
-		this->spaceShips[1]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
-
-		this->centerPos = DirectX::XMFLOAT3(150, 0, 400);
-		this->offset = DirectX::XMFLOAT2(15, 7);
-		//this->spaceShips[0]->setPos(DirectX::XMFLOAT3(150, 7, 95));
-		//this->spaceShips[1]->setPos(DirectX::XMFLOAT3(150, -7, 290));
-		this->Stage = 0;
-	}
 
 	//Simulate the current minigame on client side
 	switch (currentMinigame)
@@ -770,10 +773,17 @@ GAMESTATE Game::Update()
 	case INTERMISSION:
 		currentGameState = this->updateIntermission();
 		break;
-	default:
+	case STARTINTERMISSION:
+		currentGameState = this->startIntermission();
+			break;
+	case STARTLANDING:
+		currentGameState = this->startLanding();
 		break;
+	case STARTKTH:
+		currentGameState = this->startKotH();
+	default:
+			break;
 	}
-
 
 	//Debug keybinds
 	this->handleKeybinds();

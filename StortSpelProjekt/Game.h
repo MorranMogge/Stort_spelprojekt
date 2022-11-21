@@ -6,7 +6,10 @@ enum MiniGames
 	COMPONENTCOLLECTION,
 	LANDINGSPACESHIP,
 	KINGOFTHEHILL,
-	INTERMISSION
+	INTERMISSION,
+	STARTINTERMISSION,
+	STARTLANDING,
+	STARTKTH
 };
 
 struct wirefameInfo
@@ -111,8 +114,11 @@ private:
 	void drawParticles();
 	void handleKeybinds();
 	GAMESTATE updateComponentGame();
+	GAMESTATE startLanding();
 	GAMESTATE updateLandingGame();
+	GAMESTATE startKotH();
 	GAMESTATE updateKingOfTheHillGame();
+	GAMESTATE startIntermission();
 	GAMESTATE updateIntermission();
 	void randomizeObjectPos(GameObject* item);
 

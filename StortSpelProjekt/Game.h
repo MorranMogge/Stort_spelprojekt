@@ -34,7 +34,7 @@ private:
 	bool drawDebug = false;
 	bool landingMinigame = false;
 
-	std::unique_ptr<DirectX::GamePad> gamePad;
+	DirectX::GamePad* gamePad;
 	GravityField* field;
 	GravityField* oldField;
 	bool changedPlanet = false;
@@ -56,7 +56,7 @@ private:
 
 	BasicRenderer basicRenderer;
 	GravityField* planetGravityField;
-	PhysicsWorld physWolrd;
+	PhysicsWorld physWorld;
 	std::vector<Planet*> planetVector;
 	AsteroidHandler* asteroids;
 

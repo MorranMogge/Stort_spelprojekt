@@ -61,9 +61,9 @@ void Player::handleItems()
 	itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z }));
 
 	//Controller functions
-	if (this->gamePad != nullptr)
+	auto state = this->gamePad->GetState(0);
+	if (state.IsConnected())
 	{
-		auto state = this->gamePad->GetState(0);
 		tracker.Update(state);
 
 		//Throw item
@@ -695,9 +695,9 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 {
 	if (dedge || flipping) return;
 
-	if (this->gamePad != nullptr)
+	auto state = this->gamePad->GetState(0);
+	if (state.IsConnected())
 	{
-		auto state = gamePad->GetState(0);
 		posX = state.thumbSticks.leftX;
 		posY = state.thumbSticks.leftY;
 
@@ -837,10 +837,10 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 	if (this->isHoldingItem()) return false;
 	bool successfulPickup = false;
 	
+	auto state = this->gamePad->GetState(0);
 	//Controller pickup
-	if (this->gamePad != nullptr)
+	if (state.IsConnected())
 	{
-		auto state = this->gamePad->GetState(0);
 		tracker.Update(state);
 		if (tracker.x == GamePad::ButtonStateTracker::PRESSED)
 		{
@@ -932,7 +932,8 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 
 	this->physComp->setType(reactphysics3d::BodyType::DYNAMIC);
 	this->dedge = true;
-	if (this->gamePad != nullptr) this->gamePad->SetVibration(0, 0.1f, 0.1f, 0.f, 0.f);
+	auto state = this->gamePad->GetState(0);
+	if (state.IsConnected()) this->gamePad->SetVibration(0, 0.1f, 0.1f, 0.f, 0.f);
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);
 	timer.resetStartTime();
@@ -1185,7 +1186,8 @@ void Player::update()
 		if (timer.getTimePassed(5.f))
 		{
 			dedge = false;
-			if (this->gamePad != nullptr) this->gamePad->SetVibration(0, 0.f, 0.f, 0.f, 0.f);
+			auto state = this->gamePad->GetState(0);
+			if (state.IsConnected()) this->gamePad->SetVibration(0, 0.f, 0.f, 0.f, 0.f);
 			this->physComp->resetForce();
 			this->physComp->resetTorque();
 			this->physComp->setType(reactphysics3d::BodyType::STATIC);
@@ -1228,7 +1230,8 @@ void Player::setTeam(const int& team)
 
 void Player::setVibration(float vibration1, float vibration2)
 {
-	if (this->gamePad != nullptr) this->gamePad->SetVibration(0, vibration1, vibration2, 0.f, 0.f);
+	auto state = this->gamePad->GetState(0);
+	if (state.IsConnected()) this->gamePad->SetVibration(0, vibration1, vibration2, 0.f, 0.f);
 }
 
 void Player::setGamePad(DirectX::GamePad* gamePad)

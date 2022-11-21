@@ -13,7 +13,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	gameMusic.play(true);
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
-	client = new Client("192.168.43.244");
+	client = new Client();// ("192.168.43.244");
 	circularBuffer = client->getCircularBuffer();
 
 	//Setup rendering

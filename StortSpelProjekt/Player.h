@@ -22,7 +22,7 @@ class Player: public GameObject
 private:
 	//Movement variables
 	float angle = 0.f;
-	float speed = 20.f;
+	float speed = 0.5f;
 	float currentSpeed;
 	DirectX::SimpleMath::Vector3 resultVector;
 	DirectX::SimpleMath::Vector3 angleVector;

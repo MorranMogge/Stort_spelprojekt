@@ -452,7 +452,9 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime)
 {
 	if (dedge || flipping) return;
-	if (this->gamePad != nullptr) return;
+
+	auto state = gamePad->GetState(0);
+	if (state.IsConnected()) return;
 
 	//Running
 	this->currentSpeed = this->speed;
@@ -464,7 +466,8 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Jumping
 	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
-		this->velocity = this->normalVector * 40.f;
+		onGround = false;
+		this->velocity = this->normalVector * 30.f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
 

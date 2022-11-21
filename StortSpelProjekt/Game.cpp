@@ -119,9 +119,9 @@ Game::~Game()
 	{
 		delete planetVector[i];
 	}
+	if (captureZone != nullptr) delete captureZone;
 	delete asteroids;
 	delete arrow;
-	delete captureZone;
 	delete planetGravityField;
 	delete gamePad;
 }
@@ -230,7 +230,7 @@ void Game::loadObjects()
 	}
 
 	//Initilize player
-	if (!currentPlayer && !IFONLINE) 
+	if (!currentPlayer && !IFONLINE)
 	{ 
 		currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), 1, client->getPlayerId(), client, 0, planetGravityField); 
 		players.emplace_back(currentPlayer);
@@ -238,7 +238,10 @@ void Game::loadObjects()
 		currentPlayer->setGamePad(gamePad);
 	}
 	
-	if (!IFONLINE) captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(-40, 0, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, XM_PIDIV2), nullptr, DirectX::SimpleMath::Vector3(10.f, 10.f, 10.f));
+	if (!IFONLINE)
+	{
+		captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), planetGravityField, DirectX::SimpleMath::Vector3(10.f, 10.f, 10.f));
+	}
 }
 
 void Game::drawShadows()
@@ -264,7 +267,8 @@ void Game::drawObjects(bool drawDebug)
 		if (gameObjects[i] == currentPlayer) continue;
 		else gameObjects[i]->draw();
 	}
-	captureZone->draw();
+
+	if (captureZone != nullptr) captureZone->draw();
 
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
@@ -420,7 +424,7 @@ void Game::handleKeybinds()
 GAMESTATE Game::updateComponentGame()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone);
 
 	//Get newest delta time
 	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
@@ -658,7 +662,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 GAMESTATE Game::Update()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone);
 	
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();

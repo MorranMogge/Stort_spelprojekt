@@ -180,3 +180,13 @@ struct SpawnPlanets
 	float zPos;
 	float size;
 };
+
+//enum 24
+struct CreateZone
+{
+	int packetId;
+	float xPos;
+	float yPos;
+	float zPos;
+	float scale;
+};

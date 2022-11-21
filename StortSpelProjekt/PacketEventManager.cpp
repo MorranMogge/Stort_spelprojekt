@@ -12,7 +12,7 @@ PacketEventManager::~PacketEventManager()
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips
-	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector)
+	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector, CaptureZone*& captureZone)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -32,7 +32,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	SpawnPlanets* planetData = nullptr;
 	ConfirmComponentPickedUp* confirmCmpPickedUp = nullptr;
 	ComponentPosition* cmpPosition = nullptr;
-	
+	CreateZone* zonePos = nullptr;
 
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{
@@ -44,7 +44,6 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			break;
 
 		case PacketType::POSITION:
-
 			tst = circularBuffer->readData<testPosition>();
 			for (int i = 0; i < NROFPLAYERS; i++)
 			{
@@ -56,18 +55,14 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					}
 				}
 			}
-			
 			break;
 
 		case PacketType::PACKETID:
-
 			protocol = circularBuffer->readData<idProtocol>();
 			std::cout << "PacketHandleEvents, received player id: " << std::to_string(protocol->assignedPlayerId) << std::endl;
-			
 			break;
 
 		case PacketType::COMPONENTPOSITION:
-
 			compData = circularBuffer->readData<ComponentData>();
 			for (int i = 0; i < componentVector.size(); i++)
 			{
@@ -77,7 +72,6 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					//onlineItems[i]->getPhysComp()->setRotation(compData->quat);
 				}
 			}
-			
 			//std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
 			break;
 
@@ -115,7 +109,6 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					players[i]->getPhysComp()->setRotation(DirectX::XMQuaternionRotationMatrix(DirectX::XMLoadFloat4x4(&prMatrixData->matrix)));
 				}
 			}
-			
 			break;
 
 		case PacketType::ITEMSPAWN:
@@ -126,7 +119,6 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			onlineItems.push_back(baseballbat);
 			gameObjects.push_back(baseballbat);
 			std::cout << "item spawned: " << std::to_string(itemSpawn->itemId) << std::endl;
-		
 			break;
 
 		case PacketType::ITEMPOSITION:
@@ -140,14 +132,14 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					componentVector[i]->setPos(DirectX::XMFLOAT3(itemPosData->x, itemPosData->y, itemPosData->z));
 					break;
 				}
-
 			}
-			
 			break;
+
 		case PacketType::PLAYERHIT:
 			playerHit = circularBuffer->readData<PlayerHit>();
 			if (playerHit->playerId == playerId) players[playerId]->hitByBat(reactphysics3d::Vector3(playerHit->xForce, playerHit->yForce, playerHit->zForce));
 			break;
+
 		case PacketType::SPACESHIPPOSITION:
 			spaceShipPos = circularBuffer->readData<SpaceShipPosition>();
 			//Create correct spaceship depending on team
@@ -159,8 +151,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			newSpaceShip->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 			newSpaceShip->getPhysComp()->setRotation(DirectX::XMQuaternionRotationMatrix(newSpaceShip->getRot()));
 			newSpaceShip->getPhysComp()->setPosition(reactphysics3d::Vector3(newSpaceShip->getPosV3().x, newSpaceShip->getPosV3().y, newSpaceShip->getPosV3().z));
-		
 			break;
+
 		case PacketType::COMPONENTADDED:
 			compAdded = circularBuffer->readData<ComponentAdded>();
 			std::cout << "Team: " << compAdded->spaceShipTeam << " gained progress!\n";
@@ -196,8 +188,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 				}
 			}
-		
 			break;
+
 		case PacketType::SPAWNPLANETS:
 			planetData = circularBuffer->readData<SpawnPlanets>();
 			std::cout << "Received planet\n";
@@ -243,10 +235,13 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					//componentVector[i]->getPhysComp()->setRotation(cmpPosition->quat);
 				}
 			}
-			
 			//std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
 			break;
 
+		case PacketType::CREATEZONE:
+			zonePos = circularBuffer->readData<CreateZone>();
+			captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(zonePos->xPos, zonePos->yPos, zonePos->zPos), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), field, DirectX::SimpleMath::Vector3(zonePos->scale, zonePos->scale, zonePos->scale));
+			break;
 		}
 	}
 }

@@ -386,22 +386,6 @@ void Game::randomizeObjectPos(GameObject* object)
 	object->setPos(randomPos);
 }
 
-void Game::updateBuffers()
-{
-	//Update GameObjects
-
-	/*for (int i = 0; i < gameObjects.size(); i++)
-	{
-		gameObjects[i]->updateBuffer();
-	}
-	arrow->update();
-
-	for (int i = 0; i < onlineItems.size(); i++)
-	{
-		onlineItems[i]->updateBuffer();
-	}*/
-}
-
 void Game::handleKeybinds()
 {
 	if (GetAsyncKeyState('C')) physWorld.addBoxToWorld();
@@ -621,9 +605,6 @@ GAMESTATE Game::Update()
 		//Here yo type the function below but replace testObject with your space ship
 		//camera.landingMinigameScene(planetVector[0], actualTestObjectForLandingVisuals->getPosV3(), actualTestObjectForLandingVisuals->getRot());
 	}
-
-	//Update Line rendering buffer
-	this->updateBuffers();
 
 	//Play pickup animation
 	for (int i = 0; i < spaceShips.size(); i++)

@@ -105,17 +105,25 @@ private:
 
 	float totalTime;
 
-	void uppdateMatrices(int animationIndex, float animationTime, const nodes& node, DirectX::XMFLOAT4X4& parentTrasform);
-	void returnMatrices(int animationIndex, float animationTime, const nodes& node, DirectX::XMFLOAT4X4& parentTrasform);
+
+	//inerpolate
+	double t1;
+	double t2;
+	DirectX::XMVECTOR start = {};
+	DirectX::XMVECTOR end = {};
+	double factor;
+
+	void uppdateMatrices(int animationIndex, const float animationTime, const nodes& node, DirectX::XMFLOAT4X4& parentTrasform);
+	void returnMatrices(int animationIndex, const float animationTime, const nodes& node, DirectX::XMFLOAT4X4& parentTrasform);
 
 	void findlowRotationNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm);
-	void InterpolateRotation(DirectX::XMFLOAT4& res, float animationTime, const channels& animationNode, const channels& target);
+	void InterpolateRotation(DirectX::XMFLOAT4& res, const float animationTime, const channels& animationNode, const channels& target);
 
 	void findlowScaleNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm);
-	void InterpolateScaling(DirectX::XMFLOAT3& res, float animationTime, const channels& animationNode, const channels& target);
+	void InterpolateScaling(DirectX::XMFLOAT3& res, const float animationTime, const channels& animationNode, const channels& target);
 
 	void findlowPosNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm);
-	void InterpolatePos(DirectX::XMFLOAT3& res, float animationTime, const channels& animationNode, const channels& target);
+	void InterpolatePos(DirectX::XMFLOAT3& res, const float animationTime, const channels& animationNode, const channels& target);
 
 	//const aiNodeAnim* findNodeAnim(const std::string& nodeName, const aiAnimation* pAnimation);
 	bool findNodeAnim(const std::string& nodeName, const animationNode& pAnimation, channels& res);
@@ -128,7 +136,7 @@ private:
 	int oldAnimId;
 	int state;
 public:
-	AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field = nullptr);
+	AnimatedMesh(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int id, GravityField* field = nullptr);
 	//AnimatedMesh(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
 	//AnimatedMesh(ID3D11Buffer* vertexBuff, ID3D11Buffer* indexBuff, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertices);
 	//AnimatedMesh();

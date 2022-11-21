@@ -212,37 +212,6 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	}
 }
 
-//Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, Client* client, const int& team, GravityField* field)
-//	:AnimatedMesh(objectPath, pos, rot, id, field), holdingItem(nullptr), team(team), onlineID(0), speed(25.f)
-//{
-//	this->client = client;
-//	this->rotationMX = XMMatrixIdentity();
-//	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-//	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
-//
-//	HudUI::player = this;
-//
-//	//Particles
-//	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);
-//
-//	//Item Icon
-//	float constant = 7.0f;
-//	DirectX::XMFLOAT3 upDir = this->getUpDirection();
-//	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-//	std::vector<std::string> playernames{ "Team1_r.png", "Team2_b.png", "player3.png", "player4.png" };
-//	this->playerIcon = new BilboardObject(playernames, iconPos);
-//	this->playerIcon->setOffset(constant);
-//
-//	//Team switch
-//	switch (team)
-//	{
-//	case 0:
-//		mesh->matKey[0] = "pintoRed.png"; break;
-//	case 1:
-//		mesh->matKey[0] = "pintoBlue.png"; break;
-//	}
-//}
-
 bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime)
 {
 	//Calculations
@@ -1069,23 +1038,6 @@ float Player::getSpeed()const
 {
 	return this->currentSpeed;
 }
-//void Player::draw()
-//{
-//	//Team switch
-//	switch (team)
-//	{
-//	case 0:
-//		mesh->matKey[0] = "pintoRed.png"; break;
-//		break;
-//
-//	case 1:
-//		mesh->matKey[0] = "pintoBlue.png"; break;
-//		break;
-//
-//	}
-//	this->mesh->UpdateCB(position, rotation, scale);
-//	this->mesh->DrawWithMat();
-//}
 
 void Player::drawIcon()
 {

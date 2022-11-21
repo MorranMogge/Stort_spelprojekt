@@ -101,7 +101,6 @@ private:
 	void drawIcons();
 	void drawObjects(bool drawDebug);
 	void drawParticles();
-	void updateBuffers();
 	void handleKeybinds();
 	void randomizeObjectPos(GameObject* item);
 

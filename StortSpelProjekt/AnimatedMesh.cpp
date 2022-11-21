@@ -94,13 +94,13 @@ void AnimatedMesh::findlowRotationNode(int& out, const float& AnimationTimeTicks
 	return;
 }
 
-void AnimatedMesh::InterpolateRotation(DirectX::XMFLOAT4& res, float animationTime, const channels& animationNode, const channels& target)
+void AnimatedMesh::InterpolateRotation(DirectX::XMFLOAT4& res, const float animationTime, const channels& animationNode, const channels& target)
 {
-	double t1;
-	double t2;
-	DirectX::XMVECTOR start = {};
-	DirectX::XMVECTOR end = {};
-	double factor;
+	t1 = 0;
+	t2 = 0;
+	start = {};
+	end = {};
+	factor = 0;
 	if (animationNode.rotKeyFrame.size() == 1)
 	{
 		res = animationNode.rotKeyFrame[0].Value;
@@ -143,13 +143,13 @@ void AnimatedMesh::findlowScaleNode(int& out, const float& AnimationTimeTicks, c
 	return;
 }
 
-void AnimatedMesh::InterpolateScaling(DirectX::XMFLOAT3& res, float animationTime, const channels& animationNode, const channels& target)
+void AnimatedMesh::InterpolateScaling(DirectX::XMFLOAT3& res, const float animationTime, const channels& animationNode, const channels& target)
 {
-	double t1;
-	double t2;
-	DirectX::XMVECTOR start = {};
-	DirectX::XMVECTOR end = {};
-	double factor;
+	t1 = 0;
+	t2 = 0;
+	start = {};
+	end = {};
+	factor = 0;
 	if (animationNode.scalKeyFrames.size() == 1)
 	{
 		res = animationNode.scalKeyFrames[0].Value;
@@ -190,13 +190,13 @@ void AnimatedMesh::findlowPosNode(int& out, const float& AnimationTimeTicks, con
 	return;
 }
 
-void AnimatedMesh::InterpolatePos(DirectX::XMFLOAT3& res, float animationTime, const channels& animationNode, const channels& target)
+void AnimatedMesh::InterpolatePos(DirectX::XMFLOAT3& res, const float animationTime, const channels& animationNode, const channels& target)
 {
-	double t1;
-	double t2;
-	DirectX::XMVECTOR start = {};
-	DirectX::XMVECTOR end = {};
-	double factor;
+	t1 = 0;
+	t2 = 0;
+	start = {};
+	end = {};
+	factor = 0;
 	if (animationNode.posKeyFrames.size() == 1)
 	{
 		res = animationNode.posKeyFrames[0].Value;
@@ -258,7 +258,7 @@ void AnimatedMesh::getTimeInTicks(const float& dt, const unsigned& animationInde
 	this->uppdateMatrices(animationIndex, (float)timeInTicks, MySimp.rootNode, startMatrix);
 }
 
-AnimatedMesh::AnimatedMesh(Mesh* useMesh, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, int id, GravityField* field)
+AnimatedMesh::AnimatedMesh(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int id, GravityField* field)
 	:GameObject(useMesh, pos, rot, id, field)
 {
 	this->totalTime = 0;

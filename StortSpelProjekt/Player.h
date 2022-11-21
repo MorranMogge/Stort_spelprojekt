@@ -126,8 +126,6 @@ public:
 	void releaseItem();
 	bool isHoldingComp();
 
-	void releasePickup();
-	//virtual void draw() override;
 	//Collision and checks
 	void hitByBat(const reactphysics3d::Vector3& force);
 	bool checkForStaticCollision(const std::vector<Planet*>& gameObjects, const std::vector<SpaceShip*>& spaceShips);
@@ -141,7 +139,6 @@ public:
 	//virtual void draw() override;
 	void update();
 	void requestingPickUpItem(const std::vector<Item*>& items);
-
 	
 	void itemRecvFromServer(Item* item);
 };

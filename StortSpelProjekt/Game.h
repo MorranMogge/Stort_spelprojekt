@@ -95,7 +95,6 @@ private:
 	//HUD
 	HudUI ui;
 
-
 	void loadObjects();
 	void drawShadows();
 	void drawFresnel();
@@ -114,4 +113,3 @@ public:
 	virtual GAMESTATE Update() override;
 	virtual void Render() override;
 };
-

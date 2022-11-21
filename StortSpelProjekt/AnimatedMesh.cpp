@@ -319,6 +319,7 @@ bool AnimatedMesh::addAnimations(std::string& filePath)
 			}
 		}
 	}
+	return true;
 }
 
 void AnimatedMesh::addData(const AnimationData& data)

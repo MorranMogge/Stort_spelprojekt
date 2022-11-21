@@ -438,7 +438,7 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 
 	D3D11_BUFFER_DESC bufferDesc = {};
 	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	bufferDesc.ByteWidth = sizeof(vertex) * dataForMesh.vertexTriangle.size();
+	bufferDesc.ByteWidth = sizeof(vertex) * (UINT)dataForMesh.vertexTriangle.size();
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.CPUAccessFlags = 0;
 	bufferDesc.MiscFlags = 0;
@@ -455,7 +455,7 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 
 	D3D11_BUFFER_DESC indexBufferDesc = {};
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * dataForMesh.indexTriangle.size();
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * (UINT)dataForMesh.indexTriangle.size();
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
@@ -518,7 +518,7 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 	this->aniData = {};
 
 	processNodes(pScene->mRootNode, pScene, filePath, true);
-	for (int i = 0, end = this->aniData.boneDataVec.size(); i < end; i++)
+	for (int i = 0,end = (int)this->aniData.boneDataVec.size(); i < end; i++)
 	{
 		this->normalizeWeights(this->aniData.boneDataVec[i].Weights);
 	}
@@ -529,7 +529,7 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 	vertexAVec.reserve(this->dataForMesh.vertexTriangle.size());
 	AnimatedVertex tempVertex;
 
-	for (int i = 0, end = this->dataForMesh.vertexTriangle.size(); i < end; i++)
+	for (int i = 0, end = (int)this->dataForMesh.vertexTriangle.size(); i < end; i++)
 	{
 		tempVertex.pos = this->dataForMesh.vertexTriangle[i].pos;
 		tempVertex.uv = this->dataForMesh.vertexTriangle[i].uv;
@@ -547,7 +547,7 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 
 	D3D11_BUFFER_DESC bufferDesc = {};
 	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	bufferDesc.ByteWidth = sizeof(AnimatedVertex) * vertexAVec.size();
+	bufferDesc.ByteWidth = sizeof(AnimatedVertex) * (UINT)vertexAVec.size();
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.CPUAccessFlags = 0;
 	bufferDesc.MiscFlags = 0;
@@ -569,7 +569,7 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 
 	D3D11_BUFFER_DESC indexBufferDesc = {};
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * dataForMesh.indexTriangle.size();
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * (UINT)dataForMesh.indexTriangle.size();
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;

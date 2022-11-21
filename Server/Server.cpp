@@ -29,7 +29,7 @@
 
 #include <psapi.h>
 
-const short MAXNUMBEROFPLAYERS = 1;
+const short MAXNUMBEROFPLAYERS = 2;
 std::mutex mutex;
 
 struct userData
@@ -645,7 +645,7 @@ int main()
 		
 
 	}
-
+	getchar();
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
 		delete onlineItems[i];

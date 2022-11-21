@@ -2,6 +2,7 @@
 #include "SpawnComponent.h"
 #include "DirectXMathHelper.h"
 #include "RandomizeSpawn.h"
+#include "ObjectId.h"
 #include <iostream>
 
 
@@ -44,6 +45,7 @@ SpawnComponent SpawnOneComponent(std::vector<Component>& components, std::vector
 	randomPos *= 100;
 
 	components.push_back(temp);
+	temp.setOnlineType(ObjID::COMPONENT);
 
 	dataValue.packetId = 13;
 	dataValue.ComponentId = components.size() - 1;

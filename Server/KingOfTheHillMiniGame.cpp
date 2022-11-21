@@ -1,18 +1,18 @@
 #include "KingOfTheHillMiniGame.h"
 
-KingOfTheHillMiniGame::KingOfTheHillMiniGame()
-	:kingOfTheHillOrigo(5,5,5), radius(10)
+KingOfTheHillMiniGame::KingOfTheHillMiniGame(serverData& data)
+	:kingOfTheHillOrigo(-40,0,0), radius(30)
 {
-
+	sendKingOfTheHillZone(data);
 }
 
-void KingOfTheHillMiniGame::sendKingOfTheHillZone()
+void KingOfTheHillMiniGame::sendKingOfTheHillZone(serverData& data)
 {
-	KingOfTheHillZone zone;
+	CreateZone zone;
 	zone.xPos = kingOfTheHillOrigo.x;
 	zone.yPos = kingOfTheHillOrigo.y;
 	zone.zPos = kingOfTheHillOrigo.z;
-	zone.radius = radius;
-	zone.packetId = PacketType::KINGOFTHEHILLZONE;
-	//sendBinaryDataAllPlayers<KingOfTheHillZone>(zone, data);
+	zone.scale = radius;
+	zone.packetId = PacketType::CREATEZONE;
+	sendBinaryDataAllPlayers<CreateZone>(zone, data);
 }

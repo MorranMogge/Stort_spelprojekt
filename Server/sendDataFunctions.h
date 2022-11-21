@@ -1,16 +1,7 @@
 #include <SFML/Network.hpp>
 #include "player.h"
 
-struct serverData
-{
-	bool endServer = false;
-	sf::UdpSocket socket;
-	sf::UdpSocket sendSocket;
-	sf::TcpListener tcpListener;
-	sf::TcpSocket tcpSocket;
-	userData users[1];
-	unsigned short port = 2001;
-};
+const short MAXNUMBEROFPLAYERS = 1;
 
 struct userData
 {
@@ -20,6 +11,17 @@ struct userData
 	int playerId = -1;
 
 	player playa;
+};
+
+struct serverData
+{
+	bool endServer = false;
+	sf::UdpSocket socket;
+	sf::UdpSocket sendSocket;
+	sf::TcpListener tcpListener;
+	sf::TcpSocket tcpSocket;
+	userData users[MAXNUMBEROFPLAYERS];
+	unsigned short port = 2001;
 };
 
 template <typename T>

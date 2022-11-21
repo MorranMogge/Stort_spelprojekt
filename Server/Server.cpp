@@ -10,15 +10,15 @@
 #include <thread>
 #include <vector>
 #include "player.h"
-#include "PacketsDataTypes.h"
 #include "Packethandler.h"
 #include "CircularBuffer.h"
-#include "PacketEnum.h"
 #include "Component.h"
 #include "SpawnComponent.h"
 #include "RandomizeSpawn.h"
 #include "DirectXMathHelper.h"
 #include "TimeStruct.h"
+
+#include "KingOfTheHillMiniGame.h"
 
 #include <d3d11_4.h>
 #include <dxgi1_6.h>
@@ -26,18 +26,7 @@
 
 #include <psapi.h>
 
-const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
-
-struct userData
-{
-	sf::IpAddress ipAdress;
-	std::string userName;
-	sf::TcpSocket tcpSocket;
-	int playerId = -1;
-
-	player playa;
-};
 
 struct threadInfo
 {
@@ -45,17 +34,6 @@ struct threadInfo
 	float pos[3];
 	bool ifUserRecv;
 	CircularBuffer* circBuffer;
-};
-
-struct serverData
-{
-	bool endServer = false;
-	sf::UdpSocket socket;
-	sf::UdpSocket sendSocket;
-	sf::TcpListener tcpListener;
-	sf::TcpSocket tcpSocket;
-	userData users[MAXNUMBEROFPLAYERS];
-	unsigned short port = 2001;
 };
 
 bool receiveDataUdp(sf::Packet& receivedPacket, serverData &data, unsigned short& packetIdentifier)
@@ -119,24 +97,6 @@ void sendDataAllPlayers(testPosition &posData, serverData& serverData)
 		}
 	}
 };
-
-template <typename T>
-void sendBinaryDataAllPlayers(const T& data, serverData& serverData)
-{
-	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-	{
-		std::size_t recvSize;
-		if (serverData.users[i].tcpSocket.send(&data, sizeof(T), recvSize) != sf::Socket::Done)
-		{
-			//error
-			std::cout << "Couldnt send data to currentPlayer from array slot: " << std::to_string(i) << std::endl;
-		}
-		else
-		{
-			//std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
-		}
-	}
-}
 
 int extractBinaryPacketId(char* pointerToData[])
 {
@@ -319,13 +279,7 @@ int main()
 		std::cout << "Yes\n";
 	}
 
-	CreateZone zonePosData;
-	zonePosData.packetId = PacketType::CREATEZONE;
-	zonePosData.xPos = -40.f;
-	zonePosData.yPos = 0.f;
-	zonePosData.zPos = 0.f;
-	zonePosData.scale = 10.f;
-	sendBinaryDataAllPlayers<CreateZone>(zonePosData, data);
+	KingOfTheHillMiniGame miniGameKTH(data);
 	std::cout << "Sent capture zone\n";
 
 	CircularBuffer* circBuffer = new CircularBuffer();

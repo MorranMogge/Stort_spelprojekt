@@ -4,7 +4,7 @@
 #include <d3d11.h>
 #include "PacketEnum.h"
 #include "PacketsDataTypes.h"
-#include "../StortSpelProjekt/stdafx.h"
+#include "sendDataFunctions.h"
 
 class KingOfTheHillMiniGame
 {
@@ -13,10 +13,11 @@ private:
 	//3D punkt
 	DirectX::XMFLOAT3 kingOfTheHillOrigo;
 	float radius;
+
 public:
-	KingOfTheHillMiniGame();
+	KingOfTheHillMiniGame(serverData& data);
 	//Bestäm position på zonen
-	void sendKingOfTheHillZone();
+	void sendKingOfTheHillZone(serverData& data);
 	//Check if players are inside the zone
 	//SpawnBats
 	//Check who won

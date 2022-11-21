@@ -268,7 +268,7 @@ void Game::drawObjects(bool drawDebug)
 		else gameObjects[i]->draw();
 	}
 
-	if (captureZone != nullptr) captureZone->draw();
+	
 
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
@@ -347,6 +347,7 @@ void Game::drawFresnel()
 	{
 		spaceShips[i]->drawFresnel();
 	}
+	if (captureZone != nullptr) captureZone->drawFresnel();
 	for (int i = 0; i < items.size(); i++)
 	{
 		if (items[i]->getId() == ObjID::GRENADE)

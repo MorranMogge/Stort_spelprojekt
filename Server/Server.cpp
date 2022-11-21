@@ -279,7 +279,7 @@ int main()
 		std::cout << "Yes\n";
 	}
 
-	KingOfTheHillMiniGame miniGameKTH(data);
+	KingOfTheHillMiniGame miniGameKTH(data, MAXNUMBEROFPLAYERS);
 	std::cout << "Sent capture zone\n";
 
 	CircularBuffer* circBuffer = new CircularBuffer();
@@ -496,7 +496,7 @@ int main()
 		//	}
 		//}
 
-
+		miniGameKTH.update(data);
 		
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
 		{

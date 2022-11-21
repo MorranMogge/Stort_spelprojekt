@@ -83,7 +83,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::SPAWNCOMPONENT:
 			spawnComp = circularBuffer->readData<SpawnComponent>();
 			std::cout << "Comp ID: " << spawnComp->ComponentId << "\n";
-			newComponent = new Component(meshes[5], DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+			newComponent = new Component(meshes[6], DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 				COMPONENT, spawnComp->ComponentId, field);
 			physWorld.addPhysComponent(newComponent);
 			onlineItems.push_back(newComponent);
@@ -152,7 +152,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			spaceShipPos = circularBuffer->readData<SpaceShipPosition>();
 			//Create correct spaceship depending on team
 			std::cout << "Spawned spaceship\n";
-			newSpaceShip = new SpaceShip(meshes[3], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, DirectX::SimpleMath::Vector3(2, 2, 2), 4);
+			newSpaceShip = new SpaceShip(meshes[4], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2), 4);
 			spaceShips.push_back(newSpaceShip);
 			gameObjects.push_back(newSpaceShip);
 			physWorld.addPhysComponent(newSpaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3 * 0.75f, 0.75f));

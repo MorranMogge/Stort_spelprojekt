@@ -119,6 +119,7 @@ Game::~Game()
 	}
 	delete asteroids;
 	delete arrow;
+	delete captureZone;
 }
 
 void Game::loadObjects()
@@ -150,6 +151,7 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/component"));
 	meshes.push_back(new Mesh("../Meshes/grenade"));
 	meshes.push_back(new Mesh("../Meshes/arrow"));
+	meshes.push_back(new Mesh("../Meshes/zone"));
 
 	//Planet::Planet( useMesh,scale, pos, gravityFactor, Mesh * atmoMesh, const DirectX::SimpleMath::Vector3 & atmoColor, const float& atmoDensity)
 
@@ -199,8 +201,8 @@ void Game::loadObjects()
 	//SPACE SHIPS
 	if (!IFONLINE)
 	{
-		spaceShipRed = new SpaceShip(meshes[4], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
-		spaceShipBlue = new SpaceShip(meshes[4], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
+		spaceShipRed = new SpaceShip(meshes[4], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, planetGravityField, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2));
+		spaceShipBlue = new SpaceShip(meshes[4], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, planetGravityField, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2));
 
 		spaceShips.emplace_back(spaceShipRed);
 		spaceShips.emplace_back(spaceShipBlue);
@@ -220,10 +222,11 @@ void Game::loadObjects()
 	//Initilize player
 	if (!currentPlayer && !IFONLINE) 
 	{ 
-		currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client->getPlayerId(), client, 0, planetGravityField); 
+		currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), 1, client->getPlayerId(), client, 0, planetGravityField); 
 		players.emplace_back(currentPlayer);
 	}
 	
+	if (!IFONLINE) captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(-40, 0, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, XM_PIDIV2), nullptr, DirectX::SimpleMath::Vector3(10.f, 10.f, 10.f));
 }
 
 void Game::drawShadows()
@@ -249,6 +252,7 @@ void Game::drawObjects(bool drawDebug)
 		if (gameObjects[i] == currentPlayer) continue;
 		else gameObjects[i]->draw();
 	}
+	captureZone->draw();
 
 	for (int i = 0; i < onlineItems.size(); i++)
 	{

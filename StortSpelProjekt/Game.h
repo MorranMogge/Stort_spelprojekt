@@ -91,6 +91,7 @@ private:
 	ImGuiHelper* imguiHelper;
 	PlayerVectors playerVecRenderer;
 	std::vector<ParticleEmitter> ptEmitters;
+	CaptureZone* captureZone;
 
 	//HUD
 	HudUI ui;

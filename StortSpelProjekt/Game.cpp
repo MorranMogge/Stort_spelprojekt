@@ -619,13 +619,18 @@ GAMESTATE Game::updateLandingGame()
 	camera.landingMinigameScene(planetVector[0], spaceShips[currentPlayer->getTeam()]->getPosV3(), spaceShips[currentPlayer->getTeam()]->getRot());
 	DirectX::SimpleMath::Vector3 moveDir = getScalarMultiplicationXMFLOAT3(1, (planetVector[0]->getGravityField()->calcGravFactor(spaceShips[currentPlayer->getTeam()]->getPos())));
 
-	spaceShips[currentPlayer->getTeam()]->move(moveDir, dt);
 	moveDir.Normalize();
+	moveDir *= 0.5f;
+	spaceShips[currentPlayer->getTeam()]->move(moveDir, dt);
 	if (getLength(spaceShips[currentPlayer->getTeam()]->getPosV3()) <= planetVector[0]->getSize())
 	{
+		moveDir.Normalize();
 		spaceShips[currentPlayer->getTeam()]->setPos(moveDir * planetVector[0]->getSize());
 		currentMinigame = MiniGames::COMPONENTCOLLECTION;
+		std::cout << "Total points " << landingMiniGamePoints << std::endl;
+		//Send data to server
 	}
+	if (landingUi.handleInputs(dt)) landingMiniGamePoints += 100*dt;
 
 	return NOCHANGE;
 }
@@ -712,5 +717,17 @@ void Game::Render()
 
 	//Render UI (needs to render last)
 	ui.Draw();
+	switch (currentMinigame)
+	{
+	case COMPONENTCOLLECTION:
+		break;
+	case LANDINGSPACESHIP:
+		landingUi.draw();
+		break;
+	case KINGOFTHEHILL:
+		break;
+	default:
+		break;
+	}
 }
 

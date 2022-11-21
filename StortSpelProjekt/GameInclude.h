@@ -36,6 +36,7 @@
 
 //ui
 #include "HudUI.h"
+#include "LandingHud.h"
 
 //Other
 #include "ShaderLoader.h"

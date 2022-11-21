@@ -14,8 +14,8 @@ struct wirefameInfo
 	float padding;
 };
 
-const int NROFPLAYERS = 1;
-static bool IFONLINE = false;
+const int NROFPLAYERS = 2;
+static bool IFONLINE = true;
 
 class Game : public State
 {
@@ -94,6 +94,9 @@ private:
 
 	//HUD
 	HudUI ui;
+	LandingHud landingUi;
+
+	float landingMiniGamePoints = 0;
 
 
 	void loadObjects();

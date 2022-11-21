@@ -225,6 +225,11 @@ DirectX::XMVECTOR Camera::getPosition() const
 	return this->cameraPos;
 }
 
+DirectX::XMVECTOR Camera::getRealPosition() const
+{
+	return this->cameraPos;
+}
+
 void Camera::setPosition(const DirectX::XMFLOAT3& position)
 {
 	this->cameraPos = DirectX::XMVectorSet(position.x, position.y, position.z, 1.f);
@@ -237,6 +242,13 @@ void Camera::setCameraLookAt(const DirectX::XMFLOAT3& position)
 	if (DirectX::XMVector3Equal(this->cameraPos, DirectX::XMVectorSet(position.x, position.y, position.z, 1.f))) return;
 	this->lookAtPos = DirectX::XMVectorSet(position.x, position.y, position.z, 1.f);
 	this->updateCamera();
+}
+
+void Camera::setRotToStart()
+{
+	rightVector = DEFAULT_RIGHT;
+	forwardVector = DEFAULT_FORWARD;
+	upVector = DEFAULT_UP;
 }
 
 void Camera::VSbindPositionBuffer(const int& slot)

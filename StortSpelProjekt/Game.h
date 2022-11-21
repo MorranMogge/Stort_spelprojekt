@@ -5,7 +5,8 @@ enum MiniGames
 {
 	COMPONENTCOLLECTION,
 	LANDINGSPACESHIP,
-	KINGOFTHEHILL
+	KINGOFTHEHILL,
+	INTERMISSION
 };
 
 struct wirefameInfo
@@ -90,6 +91,15 @@ private:
 	//HUD
 	HudUI ui;
 
+	//InterMissionVariables
+	int Stage = 0;
+	float totalTime;
+	float timer;
+	DirectX::XMFLOAT3 centerPos;
+	DirectX::XMFLOAT2 offset;
+	UINT HEIGHT;
+	UINT WIDTH;
+
 	void loadObjects();
 	void drawShadows();
 	void drawFresnel();
@@ -101,10 +111,11 @@ private:
 	GAMESTATE updateComponentGame();
 	GAMESTATE updateLandingGame();
 	GAMESTATE updateKingOfTheHillGame();
+	GAMESTATE updateIntermission();
 	void randomizeObjectPos(GameObject* item);
 
 public:
-	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window);
+	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT);
 	virtual ~Game() override;
 
 	// Inherited via State

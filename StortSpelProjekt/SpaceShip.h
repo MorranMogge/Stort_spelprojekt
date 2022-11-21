@@ -23,11 +23,10 @@ private:
 	Sound engineTakeOff;
 
 	CaptureZone *zone;
-	Mesh* tempMesh;
 public:
 
-	SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1),const int & nrofComp = 4);
-	SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1), const int & nrofComp = 4);
+	SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, Mesh* zoneMesh, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1),const int & nrofComp = 4);
+	SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, Mesh* zoneMesh, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(1, 1, 1), const int & nrofComp = 4);
 	~SpaceShip();
 	int getTeam() const;
 	int getNrOfComponents() const;//

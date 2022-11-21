@@ -1,6 +1,13 @@
 #pragma once
 #include "GameInclude.h"
 
+enum MiniGames
+{
+	COMPONENTCOLLECTION,
+	LANDINGSPACESHIP,
+	KINGOFTHEHILL
+};
+
 struct wirefameInfo
 {
 	DirectX::XMFLOAT3 wireframeClr;
@@ -8,13 +15,16 @@ struct wirefameInfo
 };
 
 const int NROFPLAYERS = 1;
-static bool IFONLINE = false;
+static bool IFONLINE = true;
 
 class Game : public State
 {
 private:
 	ID3D11DeviceContext* immediateContext;
 	HWND* window;
+
+	MiniGames currentMinigame;
+	GAMESTATE currentGameState;
 
 	Sound gameMusic;
 
@@ -34,7 +44,7 @@ private:
 	float dt;
 	std::chrono::time_point<std::chrono::system_clock> currentTime;
 	std::chrono::time_point<std::chrono::system_clock> lastUpdate;
-	
+
 	//Server related variables
 	std::chrono::time_point<std::chrono::system_clock> serverStart;
 	float serverTimerLength =  1.f / 30.0f;
@@ -81,6 +91,7 @@ private:
 	ImGuiHelper* imguiHelper;
 	PlayerVectors playerVecRenderer;
 	std::vector<ParticleEmitter> ptEmitters;
+	CaptureZone* captureZone;
 
 	//HUD
 	HudUI ui;
@@ -94,6 +105,9 @@ private:
 	void drawParticles();
 	void updateBuffers();
 	void handleKeybinds();
+	GAMESTATE updateComponentGame();
+	GAMESTATE updateLandingGame();
+	GAMESTATE updateKingOfTheHillGame();
 	void randomizeObjectPos(GameObject* item);
 
 public:

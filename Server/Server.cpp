@@ -319,6 +319,15 @@ int main()
 		std::cout << "Yes\n";
 	}
 
+	CreateZone zonePosData;
+	zonePosData.packetId = PacketType::CREATEZONE;
+	zonePosData.xPos = -40.f;
+	zonePosData.yPos = 0.f;
+	zonePosData.zPos = 0.f;
+	zonePosData.scale = 10.f;
+	sendBinaryDataAllPlayers<CreateZone>(zonePosData, data);
+	std::cout << "Sent capture zone\n";
+
 	CircularBuffer* circBuffer = new CircularBuffer();
 	std::thread* recvThread[MAXNUMBEROFPLAYERS];
 	threadInfo threadData[MAXNUMBEROFPLAYERS];

@@ -6,7 +6,7 @@
 #include "SoundCollection.h"
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), currentMinigame(MiniGames::COMPONENTCOLLECTION)
 {
 	this->packetEventManager = new PacketEventManager();
 	gameMusic.load(L"../Sounds/Gold Rush Final.wav");
@@ -119,6 +119,7 @@ Game::~Game()
 	{
 		delete planetVector[i];
 	}
+	if (captureZone != nullptr) delete captureZone;
 	delete asteroids;
 	delete arrow;
 	delete planetGravityField;
@@ -154,6 +155,7 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/component"));
 	meshes.push_back(new Mesh("../Meshes/grenade"));
 	meshes.push_back(new Mesh("../Meshes/arrow"));
+	meshes.push_back(new Mesh("../Meshes/zone"));
 
 	//Planet::Planet( useMesh,scale, pos, gravityFactor, Mesh * atmoMesh, const DirectX::SimpleMath::Vector3 & atmoColor, const float& atmoDensity)
 
@@ -209,8 +211,8 @@ void Game::loadObjects()
 	//SPACE SHIPS
 	if (!IFONLINE)
 	{
-		spaceShipRed = new SpaceShip(meshes[4], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
-		spaceShipBlue = new SpaceShip(meshes[4], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
+		spaceShipRed = new SpaceShip(meshes[4], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, planetGravityField, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2));
+		spaceShipBlue = new SpaceShip(meshes[4], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, planetGravityField, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2));
 
 		spaceShips.emplace_back(spaceShipRed);
 		spaceShips.emplace_back(spaceShipBlue);
@@ -229,11 +231,16 @@ void Game::loadObjects()
 
 	//Initilize player
 	if (!currentPlayer && !IFONLINE)
-	{
-		currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client->getPlayerId(), client, 0, planetGravityField);
+	{ 
+		currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), 1, client->getPlayerId(), client, 0, planetGravityField); 
 		players.emplace_back(currentPlayer);
 		gamePad = new GamePad();
 		currentPlayer->setGamePad(gamePad);
+	}
+	
+	if (!IFONLINE)
+	{
+		captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), planetGravityField, DirectX::SimpleMath::Vector3(10.f, 10.f, 10.f));
 	}
 }
 
@@ -260,6 +267,8 @@ void Game::drawObjects(bool drawDebug)
 		if (gameObjects[i] == currentPlayer) continue;
 		else gameObjects[i]->draw();
 	}
+
+	if (captureZone != nullptr) captureZone->draw();
 
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
@@ -412,16 +421,12 @@ void Game::handleKeybinds()
 	}
 }
 
-GAMESTATE Game::Update()
+GAMESTATE Game::updateComponentGame()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone);
 
 	//Get newest delta time
-	lastUpdate = currentTime;
-	currentTime = std::chrono::system_clock::now();
-	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
-
 	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
 	asteroids->updateAsteroids(dt, planetVector, gameObjects);
 
@@ -627,6 +632,67 @@ GAMESTATE Game::Update()
 	{
 		this->components[i]->checkDistance((GameObject*)(currentPlayer));
 	}
+
+	return NOCHANGE;
+}
+
+GAMESTATE Game::updateLandingGame()
+{
+	//Here yo type the function below but replace testObject with your space ship
+	camera.landingMinigameScene(planetVector[0], spaceShips[currentPlayer->getTeam()]->getPosV3(), spaceShips[currentPlayer->getTeam()]->getRot());
+	DirectX::SimpleMath::Vector3 moveDir = getScalarMultiplicationXMFLOAT3(1, (planetVector[0]->getGravityField()->calcGravFactor(spaceShips[currentPlayer->getTeam()]->getPos())));
+
+	spaceShips[currentPlayer->getTeam()]->move(moveDir, dt);
+	moveDir.Normalize();
+	if (getLength(spaceShips[currentPlayer->getTeam()]->getPosV3()) <= planetVector[0]->getSize())
+	{
+		spaceShips[currentPlayer->getTeam()]->setPos(moveDir * planetVector[0]->getSize());
+		currentMinigame = MiniGames::COMPONENTCOLLECTION;
+	}
+
+	return NOCHANGE;
+}
+
+GAMESTATE Game::updateKingOfTheHillGame()
+{
+	return NOCHANGE;
+
+}
+
+GAMESTATE Game::Update()
+{
+	//read the packets received from the server
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone);
+	
+	lastUpdate = currentTime;
+	currentTime = std::chrono::system_clock::now();
+	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
+
+	if (Input::KeyPress(KeyCode::P)) 
+	{ 
+		currentMinigame = MiniGames::LANDINGSPACESHIP;
+		DirectX::XMFLOAT3 newRot = spaceShips[currentPlayer->getTeam()]->getUpDirection();
+		spaceShips[currentPlayer->getTeam()]->setPos(newRot * DirectX::SimpleMath::Vector3(150, 150, 150));
+	}
+
+	//Simulate the current minigame on client side
+	switch (currentMinigame)
+	{
+	case COMPONENTCOLLECTION:
+		currentGameState = this->updateComponentGame();
+		break;
+	case LANDINGSPACESHIP:
+		currentGameState = this->updateLandingGame();
+		break;
+	case KINGOFTHEHILL:
+		currentGameState = this->updateKingOfTheHillGame();
+		break;
+	default:
+		break;
+	}
+
+	//Update Line rendering buffer
+	this->updateBuffers();
 
 	//Debug keybinds
 	this->handleKeybinds();

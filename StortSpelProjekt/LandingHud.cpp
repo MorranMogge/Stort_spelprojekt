@@ -32,7 +32,8 @@ bool LandingHud::handleInputs(const float& dt)
 
 
 	//Move "safezone" sprite
-	landing1.SetPosition(DirectX::SimpleMath::Vector2(MaxVec.x, 90 + sinCurve * 460));
+	landing1.SetScale(DirectX::SimpleMath::Vector2(0.2f, abs(sin(timer.getDt()))*0.15f + 0.1f));
+	landing1.SetPosition(DirectX::SimpleMath::Vector2(MaxVec.x, MaxVec.y + sinCurve * (MinVec.y - MaxVec.y)));
 
 	//Move player sprite
 	if (Input::KeyDown(KeyCode::W) || Input::KeyDown(KeyCode::ARROW_Up))

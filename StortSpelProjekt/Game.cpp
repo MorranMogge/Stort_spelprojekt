@@ -398,7 +398,6 @@ GAMESTATE Game::updateComponentGame()
 
 	grav = planetVector[0]->getClosestFieldFactor(planetVector, currentPlayer->getPosV3());
 	currentPlayer->updateVelocity(getScalarMultiplicationXMFLOAT3(dt, grav));
-	//additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
 
 	//Raycasting
 	static DirectX::XMFLOAT3 hitPos;
@@ -433,8 +432,6 @@ GAMESTATE Game::updateComponentGame()
 		if (currentPlayer->pickupItem(items[i])) break;
 	}
 
-	//grenade->updateExplosionCheck();
-	//if (potion->isTimeToRun())
 	//Update item checks
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -479,7 +476,7 @@ GAMESTATE Game::updateComponentGame()
 		players[i]->updateMatrixOnline();
 		players[i]->update();
 	}
-	//currentPlayer->updateBuffer();
+	
 
 	//Updates gameObject physics components
 	for (int i = 0; i < gameObjects.size(); i++)
@@ -544,6 +541,7 @@ GAMESTATE Game::updateComponentGame()
 	}
 	else
 	{
+
 		for (int i = 0; i < spaceShips.size(); i++)
 		{
 			for (int j = 0; j < components.size(); j++)
@@ -603,7 +601,7 @@ GAMESTATE Game::updateLandingGame()
 	DirectX::SimpleMath::Vector3 moveDir = getScalarMultiplicationXMFLOAT3(1, (planetVector[0]->getGravityField()->calcGravFactor(spaceShips[currentPlayer->getTeam()]->getPos())));
 
 	moveDir.Normalize();
-	moveDir *= 0.5f;
+	moveDir *= 1.f/sqrt(landingMiniGamePoints*0.025f + 1);
 	spaceShips[currentPlayer->getTeam()]->move(moveDir, dt);
 	if (landingUi.handleInputs(dt)) landingMiniGamePoints += 100*dt;
 	if (getLength(spaceShips[currentPlayer->getTeam()]->getPosV3()) <= planetVector[0]->getSize())
@@ -614,7 +612,7 @@ GAMESTATE Game::updateLandingGame()
 		std::cout << "Total points " << landingMiniGamePoints << std::endl;
 
 		//Send data to server
-		LandingMiniGameOver totalPoints;
+		LandingMiniGameOver totalPoints = {};
 		totalPoints.packetId = PacketType::LANDINGMINIGAMEOVER;
 		totalPoints.points = landingMiniGamePoints;
 
@@ -644,6 +642,7 @@ GAMESTATE Game::Update()
 		currentMinigame = MiniGames::LANDINGSPACESHIP;
 		DirectX::XMFLOAT3 newRot = spaceShips[currentPlayer->getTeam()]->getUpDirection();
 		spaceShips[currentPlayer->getTeam()]->setPos(newRot * DirectX::SimpleMath::Vector3(150, 150, 150));
+		landingMiniGamePoints = 0.f;
 	}
 
 	//Simulate the current minigame on client side

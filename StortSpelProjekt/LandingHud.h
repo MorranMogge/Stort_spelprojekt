@@ -5,8 +5,8 @@
 #include "GUISprite.h"
 #include "GUIText.h"
 
-#define MaxVec DirectX::SimpleMath::Vector2(125, 90)
-#define MinVec DirectX::SimpleMath::Vector2(125, 550)
+#define MaxVec DirectX::SimpleMath::Vector2(125, 100)
+#define MinVec DirectX::SimpleMath::Vector2(125, 540)
 
 class LandingHud
 {

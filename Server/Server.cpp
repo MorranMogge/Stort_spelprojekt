@@ -581,6 +581,9 @@ int main()
 			{
 				for (int j = 0; j < spaceShipPos.size(); j++)
 				{
+
+					//kopiera det här för king of the hill
+
 					//if (!components[i].getActiveState()) continue;
 					static DirectX::XMFLOAT3 vecToComp;
 					static DirectX::XMFLOAT3 objPos;

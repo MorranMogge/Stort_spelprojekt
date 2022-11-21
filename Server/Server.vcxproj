@@ -146,6 +146,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="KingOfTheHillMiniGame.cpp" />
     <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="player.cpp" />
@@ -166,6 +167,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Item.h" />
+    <ClInclude Include="KingOfTheHillMiniGame.h" />
     <ClInclude Include="ObjectId.h" />
     <ClInclude Include="PacketEnum.h" />
     <ClInclude Include="Packethandler.h" />
@@ -174,6 +176,7 @@
     <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="RandomizeSpawn.h" />
+    <ClInclude Include="sendDataFunctions.h" />
     <ClInclude Include="ServerGravField.h" />
     <ClInclude Include="ServerPlanet.h" />
     <ClInclude Include="SpawnComponent.h" />

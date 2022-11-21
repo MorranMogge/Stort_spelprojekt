@@ -180,3 +180,13 @@ struct SpawnPlanets
 	float zPos;
 	float size;
 };
+
+//enum = 24
+struct KingOfTheHillZone
+{
+	int packetId;
+	float xPos;
+	float yPos;
+	float zPos;
+	float radius;
+};

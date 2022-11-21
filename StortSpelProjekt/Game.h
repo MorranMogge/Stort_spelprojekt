@@ -40,6 +40,16 @@ private:
 	float serverTimerLength =  1.f / 30.0f;
 	Client* client;
 
+	ModelManager manager;
+	ID3D11Buffer* vBuff;
+	ID3D11Buffer* iBuff;
+	Mesh* tmpMesh;
+	std::vector<int> subMeshRanges;
+	std::vector<int> verticies;
+	ID3D11ShaderResourceView* tempSRV;
+	AnimationData animData;
+	AnimatedMesh* sexyMan;
+
 	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT3 grav;
@@ -85,14 +95,12 @@ private:
 	//HUD
 	HudUI ui;
 
-
 	void loadObjects();
 	void drawShadows();
 	void drawFresnel();
 	void drawIcons();
 	void drawObjects(bool drawDebug);
 	void drawParticles();
-	void updateBuffers();
 	void handleKeybinds();
 	void randomizeObjectPos(GameObject* item);
 
@@ -104,4 +112,3 @@ public:
 	virtual GAMESTATE Update() override;
 	virtual void Render() override;
 };
-

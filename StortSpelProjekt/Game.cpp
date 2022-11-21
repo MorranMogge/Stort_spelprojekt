@@ -68,7 +68,8 @@ void Game::loadObjects()
 	otherPlayer->setSrv(manager.getSrv("playerTexture.png"));*/
 
 	ConstantBuffer* cbuff;
-	this->manager.getMaterialData("default", cbuff);
+	//cbuff = this->manager.getMaterialData("phong1SG");
+	cbuff = this->manager.getMaterialData("default");
 
 	using namespace DirectX;
 	using namespace DirectX::SimpleMath;
@@ -82,7 +83,7 @@ void Game::loadObjects()
 	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	planet = new GameObject(tmpMesh, Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET,nullptr, XMFLOAT3(planetSize, planetSize, planetSize));
 	planet->setSrv(manager.getSrv("planetTexture.png"));
-	//planet->setMaterial(cbuff);
+	planet->setMaterial(cbuff);
 	
 	
 

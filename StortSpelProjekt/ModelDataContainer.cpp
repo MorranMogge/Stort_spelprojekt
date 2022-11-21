@@ -18,6 +18,12 @@ ModelDataContainer::~ModelDataContainer()
 		std::get<0>(delTupel)->Release();
 		std::get<1>(delTupel)->Release();
 	}
+	//std::unordered_map<std::string, ConstantBuffer*>::iterator constantBuffIt;
+	//for (constantBuffIt = this->constantBuffMap.begin(); constantBuffIt != this->constantBuffMap.end(); constantBuffIt)
+	//{
+	//	delete constantBuffIt->second;
+	//
+	//}
 }
 
 bool ModelDataContainer::hasItem(std::string key)
@@ -61,16 +67,14 @@ bool ModelDataContainer::getIndexMeshBuffers(const std::string key, ID3D11Buffer
 	return true;
 }
 
-ConstantBuffer* ModelDataContainer::getMaterial(const std::string& key, ConstantBuffer*& constantBuff)
+ConstantBuffer* ModelDataContainer::getMaterial(const std::string& key)
 {
 	std::unordered_map<std::string, ConstantBuffer*>::iterator constantBuffIt;
 	constantBuffIt = constantBuffMap.find(key);
 	
 	if (constantBuffIt != this->constantBuffMap.end())
 	{
-		constantBuff = constantBuffMap[key];
 		return constantBuffIt->second;
-		return constantBuffMap[key];
 	}
 
 	return nullptr;

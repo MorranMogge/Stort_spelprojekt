@@ -24,7 +24,7 @@ public:
 	bool hasMaterial(const std::string& key);
 	void addSrv(std::string key, ID3D11ShaderResourceView* srv);
 	void addMeshBuffers(std::string key, ID3D11Buffer* vertexBuf, ID3D11Buffer* indexBuf, std::vector<int>& subMeshRanges, std::vector<int>& amountOfVertces);
-	ConstantBuffer* getMaterial(const std::string& key, ConstantBuffer*& constantBuff);
+	ConstantBuffer* getMaterial(const std::string& key);
 private:
 
 	struct MaterialS

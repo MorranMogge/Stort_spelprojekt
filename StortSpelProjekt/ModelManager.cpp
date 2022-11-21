@@ -88,32 +88,40 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		std::cout << name.C_Str() << "\n";
 		if (bank.hasMaterial(name.C_Str()) == false)
 		{
-			//ändra till dynamiskt eller 
+			//ändra till dynamiskt
 			MaterialS materialToAdd;
-			
+
 			material->Get(AI_MATKEY_COLOR_AMBIENT, color);
-			materialToAdd.ambient = DirectX::SimpleMath::Vector4{ color.r,color.g,color.b, 0};
+			materialToAdd.ambient = DirectX::SimpleMath::Vector4{ color.r,color.g,color.b, 0 };
 
 			material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 			materialToAdd.diffuse = DirectX::SimpleMath::Vector4{ color.r, color.g, color.b, 0 };
+			
+			std::cout << "Name of mat: " << name.C_Str() << "\n";
+			std::cout << "AMBIENT:\n" << color.r << "\n";
+			std::cout << color.g << "\n";
+			std::cout << color.b << "\n";
+			
 
 			material->Get(AI_MATKEY_COLOR_SPECULAR, color);
+			
 			materialToAdd.specular = DirectX::SimpleMath::Vector3{ color.r, color.g, color.b };
-
-			material->Get(AI_MATKEY_SHININESS, color);
+			//shininess != specular exponent
+			//AI_MATKEY_SHININESS_STRENGTH
+			//material->Get(AI_MATKEY_SHININESS, color);
+			
+			float shinyExponent;
+			material->Get(AI_MATKEY_SHININESS, shinyExponent);
 			//materialToAdd.specularPower = (float)(color.r + color.g + color.b);
-			materialToAdd.specularPower = (float)color.r;
-			ConstantBuffer cbuffer(&materialToAdd, sizeof(MaterialS));
-			
+			materialToAdd.specularPower = shinyExponent;
+			//ConstantBuffer cbuffer(&materialToAdd, sizeof(MaterialS));
+			cbuffer = ConstantBuffer(&materialToAdd, sizeof(MaterialS));
+			materialToAdd.ambient;
+			materialToAdd.diffuse;
+			materialToAdd.specular;
+			materialToAdd.specularPower;
+
 			bank.addMaterial(name.C_Str(), &cbuffer);
-
-
-			//testar
-			//ConstantBuffer* tmp = bank.getMaterial("default", nullptr);
-			//tmp->Get();
-			//tmp->GetAddressOf();
-			//tmp->BindToPS(0u);
-			
 
 		}
 		
@@ -122,9 +130,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		
 		material->Get(AI_MATKEY_COLOR_AMBIENT, color);
 
-		/*std::cout << "AMBIENT:\n" << color.r << "\n";
-		std::cout << color.g << "\n";
-		std::cout << color.b << "\n";*/
+		
 
 		//få mat_key namn
 
@@ -434,11 +440,11 @@ bool ModelManager::getMeshData(const std::string& filePath, ID3D11Buffer*& verte
 	return bank.getIndexMeshBuffers(filePath, indexBuffer, vertexBuffer, submeshRanges, amountOfVertces);
 }
 
-ConstantBuffer* ModelManager::getMaterialData(const std::string& filePath, ConstantBuffer*& constantBuff)
+ConstantBuffer* ModelManager::getMaterialData(const std::string& filePath)
 {
-	if (bank.hasItem(filePath))
+	if (bank.hasMaterial(filePath))
 	{
-		return bank.getMaterial(filePath, constantBuff);
+		return bank.getMaterial(filePath);
 	}
 
 	return nullptr;

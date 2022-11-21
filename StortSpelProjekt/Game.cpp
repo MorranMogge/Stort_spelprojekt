@@ -671,7 +671,7 @@ GAMESTATE Game::updateIntermission()
 	else if (Stage == 3)
 	{
 		camSpeed *= 2;
-		if (this->centerPos.z + 100 <= camPos.z)
+		if (this->centerPos.z + 80 <= camPos.z)
 		{
 			this->spaceShips[0]->setRot(spaceShips[0]->getRotOrientedToGrav());
 			this->spaceShips[1]->setRot(spaceShips[1]->getRotOrientedToGrav());

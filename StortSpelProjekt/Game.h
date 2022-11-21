@@ -99,6 +99,7 @@ private:
 	//InterMissionVariables
 	int Stage = 0;
 	float totalTime;
+	float timer;
 	DirectX::XMFLOAT3 centerPos;
 	DirectX::XMFLOAT2 offset;
 	UINT HEIGHT;

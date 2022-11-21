@@ -635,44 +635,65 @@ GAMESTATE Game::updateKingOfTheHillGame()
 
 GAMESTATE Game::updateIntermission()
 {
-	//float camSpeed = 10 * dt;
-	//totalTime += dt;
-	//DirectX::XMFLOAT3 camPos;
-	//DirectX::XMStoreFloat3(&camPos, camera.getRealPosition());
-	//camPos.x += camSpeed;
-	////DirectX::XMFLOAT3 midPos = camPos;
-	////midPos.z += -20;
+	float camSpeed = 10 * dt;
+	totalTime += dt;
+	DirectX::XMFLOAT3 camPos;
+	DirectX::XMStoreFloat3(&camPos, camera.getRealPosition());
+	camPos.z -= camSpeed;
+	//DirectX::XMFLOAT3 midPos = camPos;
+	//midPos.z += -20;
+	this->camera.setPosition(camPos);
+	camPos.x += 50;
+	this->camera.setCameraLookAt(camPos);
 
-	//if (this->Stage == 0) 
-	//{
-	//	if (this->centerPos.x + camSpeed >= camPos.x)
-	//	{
-	//		this->Stage = 1;
-	//	}
-	//	else
-	//	{
-	//		camSpeed *= 2;
-	//	}
-	//}
-	//else if (this->Stage == 1)
-	//{
-	//	//timer
-	//}
 
-	//this->centerPos.x += camSpeed;
-	//DirectX::XMFLOAT3 spacePos = centerPos;
-	//spacePos.x += offset.x;
-	//spacePos.y += offset.y;
-	//spacePos.y += sin(totalTime + offset.x);
-	//this->spaceShips[0]->setPos(spacePos);
 
-	//spacePos = centerPos;
-	//spacePos.x -= offset.x;
-	//spacePos.y -= offset.y;
-	//spacePos.y += sin(totalTime);
-	//this->spaceShips[1]->setPos(spacePos);
+	if (this->Stage == 0) 
+	{
+		if (this->centerPos.z - camSpeed <= camPos.z)
+		{
+			this->Stage = 1;
+			this->timer = 0;
+		}
+		else
+		{
+			camSpeed *= 2;
+		}
+	}
+	else if (this->Stage == 1)
+	{
+		this->timer += dt;
+		if (timer >= 5.0f)
+		{
+			this->Stage = 3;
+		}
+	}
+	else if (Stage == 3)
+	{
+		camSpeed *= 2;
+		if (this->centerPos.z + 100 <= camPos.z)
+		{
+			this->spaceShips[0]->setRot(spaceShips[0]->getRotOrientedToGrav());
+			this->spaceShips[1]->setRot(spaceShips[1]->getRotOrientedToGrav());
 
-	//this->camera.setPosition(camPos);
+			currentMinigame = LANDINGSPACESHIP;
+			return GAMESTATE::NOCHANGE;
+		}
+	}
+
+	this->centerPos.z -= camSpeed;
+	DirectX::XMFLOAT3 spacePos = centerPos;
+	spacePos.z += offset.x;
+	spacePos.y += offset.y;
+	spacePos.y += sin(totalTime + offset.x);
+	this->spaceShips[0]->setPos(spacePos);
+
+	spacePos = centerPos;
+	spacePos.z -= offset.x;
+	spacePos.y -= offset.y;
+	spacePos.y += sin(totalTime);
+	this->spaceShips[1]->setPos(spacePos);
+
 
 	return NOCHANGE;
 }
@@ -703,10 +724,10 @@ GAMESTATE Game::Update()
 		this->spaceShips[0]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
 		this->spaceShips[1]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
 
-		this->centerPos = DirectX::XMFLOAT3(150, 0, 20);
+		this->centerPos = DirectX::XMFLOAT3(150, 0, 400);
 		this->offset = DirectX::XMFLOAT2(15, 7);
-		this->spaceShips[0]->setPos(DirectX::XMFLOAT3(150, 7, 95));
-		this->spaceShips[1]->setPos(DirectX::XMFLOAT3(150, -7, 300));
+		//this->spaceShips[0]->setPos(DirectX::XMFLOAT3(150, 7, 95));
+		//this->spaceShips[1]->setPos(DirectX::XMFLOAT3(150, -7, 290));
 		this->Stage = 0;
 	}
 

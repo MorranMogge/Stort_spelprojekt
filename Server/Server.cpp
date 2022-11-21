@@ -1,4 +1,5 @@
 #include "PhysicsWorld.h"
+#include "ServerPlanet.h"
 
 #include <iostream>
 #include <string>
@@ -272,14 +273,38 @@ int main()
 	float itemSpawnTimerLength = 20.0f;
 
 	setupTcp(data);
-
 	acceptPlayers(data);
-
 	sendIdToAllPlayers(data);
 
 	//Wait 3 seconds since we can lose some data if we directly send information about space ships
 	physicsTimer.resetStartTime();
 	while (!physicsTimer.getTimePassed(7.0f)) continue;
+
+	//Spawning planets
+	srand(time(0));
+	std::vector<Planet*> planetVector;
+	float planetSize = 40.f;
+	int nrPlanets = (rand() % 3) + 1;
+	for (int i = 0; i < nrPlanets; i++)
+	{
+		if (i == 0) planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
+		else if (i == 1) planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
+		else planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f)));
+		planetVector.back()->setPlanetShape(&physWorld);
+	}
+	physWorld.setPlanets(planetVector);
+
+	for (int i = 0; i < planetVector.size(); i++)
+	{
+		SpawnPlanets planetData;
+		planetData.packetId = PacketType::SPAWNPLANETS;
+		planetData.xPos = planetVector[i]->getPlanetPosition().x;
+		planetData.yPos = planetVector[i]->getPlanetPosition().y;
+		planetData.zPos = planetVector[i]->getPlanetPosition().z;
+		planetData.size = planetVector[i]->getSize();
+		sendBinaryDataAllPlayers<SpawnPlanets>(planetData, data);
+		std::cout << "Sent a planet\n";
+	}
 
 	//Sends information about the space ships to the clients
 	for (int i = 0; i < spaceShipPos.size(); i++)
@@ -310,8 +335,8 @@ int main()
 		threadData[i].circBuffer = circBuffer;
 		recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
 	}
-	
 
+	//Starting timer
 	start = std::chrono::system_clock::now();
 	startComponentTimer = std::chrono::system_clock::now();
 	itemSpawnTimer = std::chrono::system_clock::now();
@@ -548,8 +573,7 @@ int main()
 		{
 			for (int i = 0; i < 10; i++)
 			{
-				physWorld.update(timerLength/10.f);
-
+				physWorld.update(timerLength / 10.f);
 			}
 
 			//Check if any components are near after the physics update
@@ -644,12 +668,13 @@ int main()
 				//sendBinaryDataAllPlayers<itemPosition>(itemsPosData, data);
 			}
 
-			start = std::chrono::system_clock::now();
-
-			
+			start = std::chrono::system_clock::now();	
 		}
-		
+	}
 
+	for (int i = 0; i < planetVector.size(); i++)
+	{
+		delete planetVector[i];
 	}
     return 0;
 

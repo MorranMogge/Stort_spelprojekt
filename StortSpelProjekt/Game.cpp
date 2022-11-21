@@ -655,8 +655,8 @@ GAMESTATE Game::updateLandingGame()
 
 GAMESTATE Game::updateKingOfTheHillGame()
 {
+	std::cout << "HEJEHEJEHEJEHJ";
 	return NOCHANGE;
-
 }
 
 GAMESTATE Game::Update()
@@ -673,6 +673,12 @@ GAMESTATE Game::Update()
 		currentMinigame = MiniGames::LANDINGSPACESHIP;
 		DirectX::XMFLOAT3 newRot = spaceShips[currentPlayer->getTeam()]->getUpDirection();
 		spaceShips[currentPlayer->getTeam()]->setPos(newRot * DirectX::SimpleMath::Vector3(150, 150, 150));
+	}
+
+	if (Input::KeyPress(KeyCode::K))
+	{
+		currentMinigame = MiniGames::KINGOFTHEHILL;
+		std::cout << "HO\n";
 	}
 
 	//Simulate the current minigame on client side

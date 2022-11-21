@@ -15,20 +15,18 @@ struct wirefameInfo
 };
 
 const int NROFPLAYERS = 1;
-static bool IFONLINE = true;
+static bool IFONLINE = false;
 
 class Game : public State
 {
 private:
 	ID3D11DeviceContext* immediateContext;
 	HWND* window;
-
 	MiniGames currentMinigame;
 	GAMESTATE currentGameState;
-
 	Sound gameMusic;
-
 	ImGuiHelper imGui;
+
 	bool wireframe = false;
 	bool objectDraw = true;
 	bool drawDebug = false;
@@ -53,20 +51,17 @@ private:
 	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT3 grav;
-
 	BasicRenderer basicRenderer;
 	GravityField* planetGravityField;
 	PhysicsWorld physWorld;
 	std::vector<Planet*> planetVector;
 	AsteroidHandler* asteroids;
-
 	PacketEventManager* packetEventManager;
 	std::vector<Player*> players;
 	std::vector<Item*> onlineItems;
 
 	//variables to handle packets
 	CircularBufferClient* circularBuffer;
-
 	Camera camera;
 	bool velocityCamera = false;
 
@@ -86,7 +81,6 @@ private:
 	std::vector<SpaceShip*> spaceShips;
 	std::vector<Item*> items;
 	std::vector< Mesh*> meshes;
-	
 	LightHandler ltHandler;
 	ImGuiHelper* imguiHelper;
 	PlayerVectors playerVecRenderer;
@@ -95,7 +89,6 @@ private:
 
 	//HUD
 	HudUI ui;
-
 
 	void loadObjects();
 	void drawShadows();

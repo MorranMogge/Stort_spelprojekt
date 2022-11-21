@@ -131,7 +131,7 @@ void Game::loadObjects()
 	//Meshes vector contents
 	meshes.push_back(new Mesh("../Meshes/Sphere"));
 	meshes.push_back(new Mesh("../Meshes/reverseSphere"));
-	meshes.push_back(new Mesh("../Meshes/pinto"));
+	meshes.push_back(new Mesh("../Meshes/astronaut"));
 	meshes.push_back(new Mesh("../Meshes/potion"));
 	meshes.push_back(new Mesh("../Meshes/rocket"));
 	meshes.push_back(new Mesh("../Meshes/bat"));

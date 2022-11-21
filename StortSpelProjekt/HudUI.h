@@ -7,6 +7,9 @@ class SpaceShip;
 
 class HudUI final
 {
+	GUISprite fade;
+
+
 	GUISprite landing0;
 	GUISprite landing1;
 	GUISprite landing2;

@@ -123,7 +123,7 @@ bool SpaceShip::detectedComponent(GameObject* objectToCheck)
 	else
 	{
 		float rad = zone->getRadius();
-		if (this->scale.y != 2.f) this->setScale(DirectX::XMFLOAT3(2, 2, 2));
+		if (this->scale.y != 2.5f) this->setScale(DirectX::XMFLOAT3(2.5, 2.5, 2.5));
 		if (zone->getScale().y != rad) zone->setScale(DirectX::XMFLOAT3(rad, rad, rad));
 	}
 	return didDetect;
@@ -140,7 +140,7 @@ bool SpaceShip::detectedComponent(Component* componentToCheck)
 	else
 	{
 		float rad = zone->getRadius();
-		if (this->scale.y != 2.f) this->setScale(DirectX::XMFLOAT3(2, 2, 2));
+		if (this->scale.y != 2.5f) this->setScale(DirectX::XMFLOAT3(2.5, 2.5, 2.5));
 		if (zone->getScale().y != rad) zone->setScale(DirectX::XMFLOAT3(rad, rad, rad));
 	}
 	return didDetect;

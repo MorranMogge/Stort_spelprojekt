@@ -63,11 +63,6 @@ private:
 	Player* currentPlayer;
 	Mesh* planetMeshes;
 
-	//Items
-	Potion* potion;
-	BaseballBat* baseballBat;
-	Grenade* grenade;
-
 	//Objects
 	std::vector<Component*> components;
 	std::vector<GameObject*> gameObjects;
@@ -90,7 +85,6 @@ private:
 	void drawIcons();
 	void drawObjects(bool drawDebug);
 	void drawParticles();
-	void updateBuffers();
 	void handleKeybinds();
 	void randomizeObjectPos(GameObject* item);
 

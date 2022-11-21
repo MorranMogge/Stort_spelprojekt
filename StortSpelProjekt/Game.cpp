@@ -115,6 +115,9 @@ void Game::loadObjects()
 	SpaceShip* spaceShipRed;
 	SpaceShip* spaceShipBlue;
 	Component* component;
+	Potion* potion;
+	BaseballBat* baseballBat;
+	Grenade* grenade;
 
 
 	//Load extra textures
@@ -137,11 +140,7 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/arrow"));
 	meshes.push_back(new Mesh("../Meshes/saturn1"));
 	meshes.push_back(new Mesh("../Meshes/N1"));
-	meshes.push_back(new Mesh("../Meshes/k2"));
-
-
-
-	//Planet::Planet( useMesh,scale, pos, gravityFactor, Mesh * atmoMesh, const DirectX::SimpleMath::Vector3 & atmoColor, const float& atmoDensity)
+	//meshes.push_back(new Mesh("../Meshes/untitled"));
 
 	//SOLAR SYSTEM SETUP
 	float planetSize = 40.f;
@@ -160,24 +159,15 @@ void Game::loadObjects()
 	baseballBat = new BaseballBat(meshes[5], Vector3(0, 0, 42), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
 	grenade = new Grenade(meshes[7], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
 	arrow = new Arrow(meshes[8], DirectX::SimpleMath::Vector3(0, 42, 0));
-	
-	//currentPlayer = new Player(meshes[1], Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, client, 0, &planetGravityField);
-
 
 	//EMPLACE ITEMS
 	items.emplace_back(potion);
 	items.emplace_back(baseballBat);
 	items.emplace_back(grenade);
-
 	for (int i = 0; i < items.size(); i++)
 	{
 		gameObjects.emplace_back(items[i]);
 	}
-	for (int i = 0; i < players.size(); i++)
-	{
-		if (players[i] != currentPlayer) gameObjects.emplace_back(players[i]);
-	}
-
 	
 	//Add phys components
 	for (int i = 0; i < gameObjects.size(); i++)
@@ -189,12 +179,13 @@ void Game::loadObjects()
 	//SPACE SHIPS
 	if (!IFONLINE)
 	{
-		spaceShipRed = new SpaceShip(meshes[10], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
-		spaceShipBlue = new SpaceShip(meshes[9], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, planetGravityField, DirectX::SimpleMath::Vector3(2, 2, 2));
+		spaceShipRed = new SpaceShip(meshes[10], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, planetGravityField, DirectX::SimpleMath::Vector3(2.5, 2.5, 2.5));
+		spaceShipBlue = new SpaceShip(meshes[9], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, planetGravityField, DirectX::SimpleMath::Vector3(2.5, 2.5, 2.5));
 
 		spaceShips.emplace_back(spaceShipRed);
 		spaceShips.emplace_back(spaceShipBlue);
 
+		//Offline comonent
 		component = new Component(meshes[6], DirectX::SimpleMath::Vector3(0, -42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT, 0, planetGravityField);
 		components.emplace_back(component);
 		gameObjects.emplace_back(component);
@@ -208,7 +199,14 @@ void Game::loadObjects()
 	}
 
 	//Initilize player
-	if (!currentPlayer && !IFONLINE) { currentPlayer = new Player(meshes[11], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client->getPlayerId(), client, 0, planetGravityField); players.emplace_back(currentPlayer); }
+	if (!currentPlayer && !IFONLINE) 
+	{ 
+		currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client->getPlayerId(), client, 0, planetGravityField);
+		players.emplace_back(currentPlayer); 
+		currentPlayer->setScale(DirectX::XMFLOAT3(0.8f, 0.8f, 0.8f));
+	}
+
+	//???
 	field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
 	oldField = field;
 
@@ -225,13 +223,20 @@ void Game::loadObjects()
 
 void Game::drawShadows()
 {
+	//Draw object shadow
 	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
 	{
-		ltHandler.drawShadows(i, gameObjects);
+		ltHandler.drawShadows(i, gameObjects, currentPlayer);
 	}
-	
+	//Draw planet shadow
+	for (int i = 0; i < planetVector.size(); i++)
+	{
+		ltHandler.drawShadows(i, planetVector);
+	}
+
+	//Draw depth stencil
 	basicRenderer.depthPrePass();
-	ltHandler.drawShadows(0, gameObjects, &camera);
+	ltHandler.drawShadows(0, gameObjects, currentPlayer, &camera);
 	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
 }
 
@@ -243,16 +248,25 @@ void Game::drawObjects(bool drawDebug)
 	//Draw Game objects
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		if (gameObjects[i] == currentPlayer) continue;
-		else gameObjects[i]->draw();
+		//dumb draw for player
+		if (gameObjects[i] == currentPlayer)
+		{
+			currentPlayer->updateBuffer();
+			gameObjects[i]->draw();
+		}
+		else
+		{
+			gameObjects[i]->draw();
+		}
 	}
 
+	//Nödvändig??????????
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
 		onlineItems[i]->draw();
 	}
-	currentPlayer->updateBuffer();
-	currentPlayer->draw();
+
+	//Draw planets
 	for (int i = 0; i < planetVector.size(); i++)
 	{
 		planetVector[i]->drawPlanet();
@@ -358,23 +372,6 @@ void Game::randomizeObjectPos(GameObject* object)
 	object->setPos(randomPos);
 }
 
-void Game::updateBuffers()
-{
-	//Update GameObjects
-	
-	/*for (int i = 0; i < gameObjects.size(); i++)
-	{
-		gameObjects[i]->updateBuffer();
-	}
-	arrow->update();
-	
-	for (int i = 0; i < onlineItems.size(); i++)
-	{
-		onlineItems[i]->updateBuffer();
-	}*/
-	
-}
-
 void Game::handleKeybinds()
 {
 	if (GetAsyncKeyState('C')) physWolrd.addBoxToWorld();
@@ -445,7 +442,6 @@ GAMESTATE Game::Update()
 		}
 	}
 	//Check component pickup
-
 	currentPlayer->requestingPickUpItem(onlineItems);
 	
 	//Check item pickup
@@ -454,8 +450,6 @@ GAMESTATE Game::Update()
 		if (currentPlayer->pickupItem(items[i])) break;
 	}
 
-	grenade->updateExplosionCheck();
-	if (potion->isTimeToRun())
 	//Update item checks
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -500,7 +494,6 @@ GAMESTATE Game::Update()
 		players[i]->updateMatrixOnline();
 		players[i]->update();
 	}
-	//currentPlayer->updateBuffer();
 
 	//Updates gameObject physics components
 	for (int i = 0; i < gameObjects.size(); i++)
@@ -598,10 +591,6 @@ GAMESTATE Game::Update()
 		//camera.landingMinigameScene(planetVector[0], actualTestObjectForLandingVisuals->getPosV3(), actualTestObjectForLandingVisuals->getRot());
 	}
 
-
-	//Update Line rendering buffer
-	this->updateBuffers();
-
 	//Play pickup animation
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
@@ -637,7 +626,6 @@ void Game::Render()
 	//Render fresnel objects
 	basicRenderer.fresnelPrePass(this->camera);
 	this->drawFresnel();
-
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();

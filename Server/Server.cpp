@@ -414,6 +414,7 @@ int main()
 						components[i].setInUseBy(-1);
 						std::cout << std::to_string(components[i].getPosXMFLOAT3().x) << ", y: " << std::to_string(components[i].getPosXMFLOAT3().y) <<
 							", z" << std::to_string(components[i].getPosXMFLOAT3().z) << std::endl;
+						sendBinaryDataAllPlayers<ComponentDropped>(cmpDropped.)
 					}
 				}
 				break;
@@ -502,14 +503,18 @@ int main()
 			}
 		}
 
+		for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+		{
+			std::cout << "PLayer: " << std::to_string(i) << ", x: " << std::to_string(data.users[i].playa.getposition('x'));
 
+ 		}
 		
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
 		{
-			SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
+			SpawnComponent cData = SpawnOneComponent(components, spaceShipPos);
 			physWorld.addPhysComponent(components[components.size() - 1]);
-			onlineItems[onlineItems.size() - 1]->setPosition(cData.x, cData.y, cData.z);
-			onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+			components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
+			components[components.size() - 1].setOnlineId(componentIdCounter++);
 			sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
 			startComponentTimer = std::chrono::system_clock::now();
 		}

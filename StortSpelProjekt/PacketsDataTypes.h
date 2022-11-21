@@ -60,6 +60,7 @@ struct ComponentDropped
 {
 	int packetId;
 	int componentId;
+	int playerId;
 };
 
 //enum = 9

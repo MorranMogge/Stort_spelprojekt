@@ -20,6 +20,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->packetEventManager = new PacketEventManager();
 	//m�ste raderas******************
 	client = new Client("192.168.43.251");
+	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
 	circularBuffer = client->getCircularBuffer();
 
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);

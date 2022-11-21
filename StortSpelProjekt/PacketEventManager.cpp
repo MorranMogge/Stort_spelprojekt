@@ -31,6 +31,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	BaseballBat* baseballbat = nullptr;
 	ConfirmComponentPickedUp* confirmCmpPickedUp = nullptr;
 	ComponentPosition* cmpPosition = nullptr;
+	ComponentDropped* cmpDropped = nullptr;
 	
 
 	while (circularBuffer->getIfPacketsLeftToRead())
@@ -238,6 +239,12 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			}
 			
 			//std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
+			break;
+
+		case PacketType::COMPONENTDROPPED:
+			cmpDropped = circularBuffer->readData<ComponentDropped>();
+
+
 			break;
 
 		}

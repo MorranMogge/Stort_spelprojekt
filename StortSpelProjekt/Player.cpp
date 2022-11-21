@@ -17,6 +17,7 @@ void Player::throwItem()
 	std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
 	c.componentId = this->holdingItem->getOnlineId();
 	c.packetId = PacketType::COMPONENTDROPPED;
+	c.playerId = this->onlineID;
 	//sending data to server
 	if (client != nullptr)
 	{
@@ -40,6 +41,7 @@ void Player::throwItem()
 	this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
 
 	//You no longer "own" the item
+
 	holdingItem->setPickedUp(false);
 	holdingItem = nullptr;
 }
@@ -85,6 +87,7 @@ void Player::handleItems()
 		std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
 		c.componentId = this->holdingItem->getOnlineId();
 		c.packetId = PacketType::COMPONENTDROPPED;
+		c.playerId = this->onlineID;
 		//sending data to server
 		if (this->client != nullptr)
 		{
@@ -948,7 +951,8 @@ void Player::draw()
 		break;
 
 	}
-	//this->mesh->UpdateCB(position, rotation, scale);
+
+	this->mesh->UpdateCB(position, rotation, scale);
 	this->mesh->DrawWithMat();
 }
 

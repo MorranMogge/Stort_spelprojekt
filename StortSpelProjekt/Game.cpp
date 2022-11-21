@@ -6,7 +6,7 @@
 #include "SoundCollection.h"
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0))
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), manager(ModelManager(device))
 {
 	this->packetEventManager = new PacketEventManager();
 	gameMusic.load(L"../Sounds/Gold Rush Final.wav");
@@ -24,8 +24,15 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ltHandler.addLight(DirectX::XMFLOAT3(16 + 7, 42 + 17, 12 + 7), DirectX::XMFLOAT3(0, 0.3f, 1.0f), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 	ltHandler.addLight(DirectX::XMFLOAT3(-10 - 5, -45 - 17, -10 - 7), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 
+	manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
+	this->manager.getAnimData("../Meshes/pinto_Run.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
+	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/pintoBlue.png");
+	ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/pintoRed.png");
+	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+
 	//Load game objects
 	this->loadObjects();
+
 
 	//Setup players
 	if (IFONLINE)
@@ -49,7 +56,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 			if (playerId != i)
 			{
-				tmpPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, i, client, (int)(dude < i + 1), planetGravityField);
+				tmpPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 
+					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+				tmpPlayer->addData(animData);
 				tmpPlayer->setOnlineID(i);
 				physWorld.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
@@ -57,7 +66,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			else
 			{
 				std::cout << "Player online id: " << std::to_string(i) << " \n";
-				currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, playerId, client, (int)(dude < i + 1), planetGravityField);
+				currentPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+					1, playerId, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+				currentPlayer->addData(animData);
 				currentPlayer->setOnlineID(i);
 				players.push_back(currentPlayer);
 				delete tmpPlayer;
@@ -119,6 +130,7 @@ Game::~Game()
 	{
 		delete planetVector[i];
 	}
+	delete tmpMesh;
 	delete asteroids;
 	delete arrow;
 	delete planetGravityField;
@@ -230,7 +242,12 @@ void Game::loadObjects()
 	//Initilize player
 	if (!currentPlayer && !IFONLINE)
 	{
-		currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, client->getPlayerId(), client, 0, planetGravityField);
+		ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/pintoBlue.png");
+		ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/pintoRed.png");
+
+		currentPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+			1, client->getPlayerId(), client, 0, redTeamColour, blueTeamColour, planetGravityField);
+		currentPlayer->addData(animData);
 		players.emplace_back(currentPlayer);
 		gamePad = new GamePad();
 		currentPlayer->setGamePad(gamePad);
@@ -282,9 +299,6 @@ void Game::drawObjects(bool drawDebug)
 	{
 		ltHandler.drawDebugMesh();
 	}
-
-	//Unbind light
-	ltHandler.unbindSrv();
 }
 
 void Game::drawIcons()
@@ -386,7 +400,6 @@ void Game::updateBuffers()
 	{
 		onlineItems[i]->updateBuffer();
 	}*/
-
 }
 
 void Game::handleKeybinds()
@@ -631,6 +644,9 @@ GAMESTATE Game::Update()
 	//Debug keybinds
 	this->handleKeybinds();
 
+	//animations
+	this->currentPlayer->updateAnim(dt, 0, 1);
+
 	return NOCHANGE;
 }
 
@@ -644,10 +660,15 @@ void Game::Render()
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
 
+	basicRenderer.changeToAnimation();
+	currentPlayer->draw();
+
+	//Unbind light
+	ltHandler.unbindSrv();
+
 	//Render fresnel objects
 	basicRenderer.fresnelPrePass(this->camera);
 	this->drawFresnel();
-
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();
@@ -670,4 +691,3 @@ void Game::Render()
 	//Render UI (needs to render last)
 	ui.Draw();
 }
-

@@ -170,3 +170,10 @@ struct PlayerId
 	int playerId;
 	int teamId;
 };
+
+//enum = 24
+struct LandingMiniGameOver
+{
+	int packetId;
+	float points;
+};

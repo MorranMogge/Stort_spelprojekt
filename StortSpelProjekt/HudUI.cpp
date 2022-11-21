@@ -84,9 +84,9 @@ HudUI::HudUI()
 	#define Min Vector2(125, 550)
 	timer.startTime;
 
-	fade = GUISprite(Vector2(125, 320)); //fadeout
-	fade.Load(GPU::device, L"../Sprites/skybox.png");
-	fade.SetScale(1.f, 1.f);
+	//fade = GUISprite(Vector2(125, 320)); //fadeout
+	//fade.Load(GPU::device, L"../Sprites/skybox.png");
+	//fade.SetScale(1.f, 1.f);
 	
 	landing0 = GUISprite(Vector2(125, 320)); //bar
 	landing0.Load(GPU::device, L"../Sprites/Bar.png");

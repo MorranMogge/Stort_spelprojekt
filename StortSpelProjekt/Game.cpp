@@ -658,7 +658,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 GAMESTATE Game::Update()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWolrd, gameObjects, planetGravityField, spaceShips, onlineItems, meshes);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector);
 	
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();

@@ -45,7 +45,6 @@ private:
 	ID3D11ShaderResourceView* tempSRV;
 	AnimationData animData;
 	AnimatedMesh* sexyMan;
-	std::vector<AnimatedMesh*> sexyMen;
 
 	std::vector< Mesh*> meshes;
 

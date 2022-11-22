@@ -616,7 +616,6 @@ GAMESTATE Game::updateLandingGame()
 		//Send data to server
 		LandingMiniGameOver totalPoints = {};
 		totalPoints.packetId = PacketType::LANDINGMINIGAMEOVER;
-		totalPoints.points = landingMiniGamePoints;
 
 		client->sendStuff<LandingMiniGameOver>(totalPoints);
 	}

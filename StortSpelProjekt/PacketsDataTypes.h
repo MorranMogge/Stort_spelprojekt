@@ -176,7 +176,7 @@ struct LandingMiniGameScore
 {
 	int packetId;
 	float pointsRedTeam;
-	float pointsRedTeam;
+	float pointsBlueTeam;
 };
 
 //enum = 25

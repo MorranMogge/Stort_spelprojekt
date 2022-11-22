@@ -442,7 +442,7 @@ GAMESTATE Game::updateComponentGame()
 	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
-	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
+	currentPlayer->checkForStaticCollision(planetVector, spaceShips); //SET ON SERVER!
 	currentPlayer->velocityMove(dt);
 
 	//Check component pickup
@@ -475,7 +475,7 @@ GAMESTATE Game::updateComponentGame()
 	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
-	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
+	currentPlayer->checkForStaticCollision(planetVector, spaceShips); //SET ON SERVER!
 	currentPlayer->velocityMove(dt);
 
 	//Check pickups
@@ -514,7 +514,7 @@ GAMESTATE Game::updateComponentGame()
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
 	//Check Components online
-	for (int i = 0; i < spaceShips.size(); i++)
+	for (int i = 0; i < spaceShips.size(); i++) //SET ON SERVER!
 	{
 		if (spaceShips[i]->getCompletion())
 		{
@@ -531,7 +531,7 @@ GAMESTATE Game::updateComponentGame()
 		//Arrow pointing to spaceship
 		if (currentPlayer->isHoldingComp())
 		{
-			for (int i = 0; i < spaceShips.size(); i++)
+			for (int i = 0; i < spaceShips.size(); i++) //SET ON SERVER!
 			{
 				if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
 			}
@@ -565,7 +565,7 @@ GAMESTATE Game::updateComponentGame()
 	}
 	else
 	{
-		for (int i = 0; i < spaceShips.size(); i++)
+		for (int i = 0; i < spaceShips.size(); i++) //SET ON SERVER!
 		{
 			for (int j = 0; j < components.size(); j++)
 			{
@@ -577,7 +577,7 @@ GAMESTATE Game::updateComponentGame()
 	if (endTimer > 6)
 	{
 		this->currentPlayer->setVibration(0.f, 0.f);
-		for (int i = 0; i < spaceShips.size(); i++)
+		for (int i = 0; i < spaceShips.size(); i++) //SET ON SERVER!
 		{
 			if (spaceShips[i]->isFinished())
 			{
@@ -602,7 +602,7 @@ GAMESTATE Game::updateComponentGame()
 	}
 
 	//Play pickup animation
-	for (int i = 0; i < spaceShips.size(); i++)
+	for (int i = 0; i < spaceShips.size(); i++) //SET ON SERVER!
 	{
 		spaceShips[i]->animateOnPickup();
 	}
@@ -839,4 +839,3 @@ void Game::Render()
 		break;
 	}
 }
-

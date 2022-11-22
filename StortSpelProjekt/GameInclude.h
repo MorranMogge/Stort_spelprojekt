@@ -28,6 +28,7 @@
 #include "SpaceShip.h"
 #include "Grenade.h"
 #include "Arrow.h"
+#include "CaptureZone.h"
 
 //User
 #include "Input.h"

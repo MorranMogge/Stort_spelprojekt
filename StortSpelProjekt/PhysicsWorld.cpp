@@ -285,4 +285,3 @@ PhysicsComponent* PhysicsWorld::returnAddedPhysComponent(reactphysics3d::Collisi
 	this->recreateVertexBuffer();
 	return newComp;
 }
-

@@ -1,4 +1,5 @@
 #include "PhysicsWorld.h"
+#include "ServerPlanet.h"
 
 #include <iostream>
 #include <string>
@@ -9,15 +10,15 @@
 #include <thread>
 #include <vector>
 #include "player.h"
-#include "PacketsDataTypes.h"
 #include "Packethandler.h"
 #include "CircularBuffer.h"
-#include "PacketEnum.h"
 #include "Component.h"
 #include "SpawnComponent.h"
 #include "RandomizeSpawn.h"
 #include "DirectXMathHelper.h"
 #include "TimeStruct.h"
+
+#include "KingOfTheHillMiniGame.h"
 
 #include <d3d11_4.h>
 #include <dxgi1_6.h>
@@ -25,18 +26,7 @@
 
 #include <psapi.h>
 
-const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
-
-struct userData
-{
-	sf::IpAddress ipAdress;
-	std::string userName;
-	sf::TcpSocket tcpSocket;
-	int playerId = -1;
-
-	player playa;
-};
 
 struct threadInfo
 {
@@ -44,17 +34,6 @@ struct threadInfo
 	float pos[3];
 	bool ifUserRecv;
 	CircularBuffer* circBuffer;
-};
-
-struct serverData
-{
-	bool endServer = false;
-	sf::UdpSocket socket;
-	sf::UdpSocket sendSocket;
-	sf::TcpListener tcpListener;
-	sf::TcpSocket tcpSocket;
-	userData users[MAXNUMBEROFPLAYERS];
-	unsigned short port = 2001;
 };
 
 bool receiveDataUdp(sf::Packet& receivedPacket, serverData &data, unsigned short& packetIdentifier)
@@ -118,24 +97,6 @@ void sendDataAllPlayers(testPosition &posData, serverData& serverData)
 		}
 	}
 };
-
-template <typename T>
-void sendBinaryDataAllPlayers(const T& data, serverData& serverData)
-{
-	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-	{
-		std::size_t recvSize;
-		if (serverData.users[i].tcpSocket.send(&data, sizeof(T), recvSize) != sf::Socket::Done)
-		{
-			//error
-			std::cout << "Couldnt send data to currentPlayer from array slot: " << std::to_string(i) << std::endl;
-		}
-		else
-		{
-			//std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
-		}
-	}
-}
 
 int extractBinaryPacketId(char* pointerToData[])
 {
@@ -212,6 +173,9 @@ void sendBinaryDataOnePlayer(const T& data, userData& user)
 
 int main()
 {
+	float flyTime = 0.f;
+	bool timeToFly = false;
+	int progress[2] = { 0, 0 };
 	int itemid = 0;
 	int componentIdCounter = 0;
 	bool once = false;
@@ -268,18 +232,42 @@ int main()
 	start = std::chrono::system_clock::now();
 
 	float timerLength = 1.f / 30.0f;
-	float timerComponentLength = 20.0f;
+	float timerComponentLength = 10.0f;
 	float itemSpawnTimerLength = 20.0f;
 
 	setupTcp(data);
-
 	acceptPlayers(data);
-
 	sendIdToAllPlayers(data);
 
 	//Wait 3 seconds since we can lose some data if we directly send information about space ships
 	physicsTimer.resetStartTime();
 	while (!physicsTimer.getTimePassed(7.0f)) continue;
+
+	//Spawning planets
+	srand(time(0));
+	std::vector<Planet*> planetVector;
+	float planetSize = 40.f;
+	int nrPlanets = (rand() % 3) + 1;
+	for (int i = 0; i < nrPlanets; i++)
+	{
+		if (i == 0) planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
+		else if (i == 1) planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
+		else planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f)));
+		planetVector.back()->setPlanetShape(&physWorld);
+	}
+	physWorld.setPlanets(planetVector);
+
+	for (int i = 0; i < planetVector.size(); i++)
+	{
+		SpawnPlanets planetData;
+		planetData.packetId = PacketType::SPAWNPLANETS;
+		planetData.xPos = planetVector[i]->getPlanetPosition().x;
+		planetData.yPos = planetVector[i]->getPlanetPosition().y;
+		planetData.zPos = planetVector[i]->getPlanetPosition().z;
+		planetData.size = planetVector[i]->getSize();
+		sendBinaryDataAllPlayers<SpawnPlanets>(planetData, data);
+		std::cout << "Sent a planet\n";
+	}
 
 	//Sends information about the space ships to the clients
 	for (int i = 0; i < spaceShipPos.size(); i++)
@@ -293,6 +281,9 @@ int main()
 		sendBinaryDataAllPlayers<SpaceShipPosition>(spaceShipData, data);
 		std::cout << "Yes\n";
 	}
+
+	KingOfTheHillMiniGame miniGameKTH(data);
+	std::cout << "Sent capture zone\n";
 
 	CircularBuffer* circBuffer = new CircularBuffer();
 	std::thread* recvThread[MAXNUMBEROFPLAYERS];
@@ -310,8 +301,8 @@ int main()
 		threadData[i].circBuffer = circBuffer;
 		recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
 	}
-	
 
+	//Starting timer
 	start = std::chrono::system_clock::now();
 	startComponentTimer = std::chrono::system_clock::now();
 	itemSpawnTimer = std::chrono::system_clock::now();
@@ -469,17 +460,11 @@ int main()
 				//				items[i].setPosition(compData->x, compData->y, compData->z);
 				//				items[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
 				//			}
-
 				//		}
 				//	}
-
 				//}
-
 				break;
-
 			}
-
-			
 		}
 
 		//checks all components player position
@@ -548,8 +533,7 @@ int main()
 		{
 			for (int i = 0; i < 10; i++)
 			{
-				physWorld.update(timerLength/10.f);
-
+				physWorld.update(timerLength / 10.f);
 			}
 
 			//Check if any components are near after the physics update
@@ -557,6 +541,7 @@ int main()
 			{
 				for (int j = 0; j < spaceShipPos.size(); j++)
 				{
+					//kopiera det här för king of the hill
 					//if (!components[i].getActiveState()) continue;
 					static DirectX::XMFLOAT3 vecToComp;
 					static DirectX::XMFLOAT3 objPos;
@@ -571,17 +556,51 @@ int main()
 						components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 						components[i].setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
 						components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
+						components[i].setInUseBy(-1);
+						//KOM IHÅG SKICKA DATA TILL ALLA SPELARE FÖR ATT DEN ÄR  DROPPAD
+
+						//Sending to client
 						ComponentAdded compAdded;
 						compAdded.packetId = PacketType::COMPONENTADDED;
 						compAdded.spaceShipTeam = j;
 						sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
+
+						progress[j]++;
+						if (progress[j] > 3) timeToFly = true;
 					}
 				}
 			}
-			
+
+			//Waits for the ships to fly away before starting minigames
+			if (timeToFly)
+			{
+				flyTime += timerLength;
+
+				if (flyTime > 6.f)
+				{
+					std::cout << "SENT START MINIGAMES\n";
+					MinigameStart startMinigame;
+					startMinigame.packetId = PacketType::STARTMINIGAMES;
+					startMinigame.minigame = MiniGames::STARTOFINTERMISSION;
+
+					if (progress[0] > 3)
+					{
+						startMinigame.pointsBlue = 100.f;
+						startMinigame.pointsRed = 0.f;
+					}
+					else
+					{
+						startMinigame.pointsRed = 100.f;
+						startMinigame.pointsBlue = 0.f;
+					}
+					sendBinaryDataAllPlayers<MinigameStart>(startMinigame, data);
+					timeToFly = false;
+					progress[0] = 0;
+					progress[1] = 0;
+				}
+			}
 			
 			//physWorld.update(timerLength);
-
 			//f�r varje spelare s� skicka deras position till alla klienter
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{
@@ -644,12 +663,13 @@ int main()
 				//sendBinaryDataAllPlayers<itemPosition>(itemsPosData, data);
 			}
 
-			start = std::chrono::system_clock::now();
-
-			
+			start = std::chrono::system_clock::now();	
 		}
-		
+	}
 
+	for (int i = 0; i < planetVector.size(); i++)
+	{
+		delete planetVector[i];
 	}
     return 0;
 

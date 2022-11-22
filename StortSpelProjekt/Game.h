@@ -1,14 +1,6 @@
 #pragma once
 #include "GameInclude.h"
 
-enum MiniGames
-{
-	COMPONENTCOLLECTION,
-	LANDINGSPACESHIP,
-	KINGOFTHEHILL,
-	INTERMISSION
-};
-
 struct wirefameInfo
 {
 	DirectX::XMFLOAT3 wireframeClr;
@@ -16,26 +8,24 @@ struct wirefameInfo
 };
 
 const int NROFPLAYERS = 1;
-static bool IFONLINE = false;
+static bool IFONLINE = true;
 
 class Game : public State
 {
 private:
 	ID3D11DeviceContext* immediateContext;
 	HWND* window;
-
 	MiniGames currentMinigame;
 	GAMESTATE currentGameState;
-
 	Sound gameMusic;
-
 	ImGuiHelper imGui;
+
 	bool wireframe = false;
 	bool objectDraw = true;
 	bool drawDebug = false;
 	bool landingMinigame = false;
 
-	std::unique_ptr<DirectX::GamePad> gamePad;
+	DirectX::GamePad* gamePad;
 	GravityField* field;
 	GravityField* oldField;
 	bool changedPlanet = false;
@@ -54,20 +44,17 @@ private:
 	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT3 grav;
-
 	BasicRenderer basicRenderer;
 	GravityField* planetGravityField;
-	PhysicsWorld physWolrd;
+	PhysicsWorld physWorld;
 	std::vector<Planet*> planetVector;
 	AsteroidHandler* asteroids;
-
 	PacketEventManager* packetEventManager;
 	std::vector<Player*> players;
 	std::vector<Item*> onlineItems;
 
 	//variables to handle packets
 	CircularBufferClient* circularBuffer;
-
 	Camera camera;
 	bool velocityCamera = false;
 
@@ -87,11 +74,11 @@ private:
 	std::vector<SpaceShip*> spaceShips;
 	std::vector<Item*> items;
 	std::vector< Mesh*> meshes;
-	
 	LightHandler ltHandler;
 	ImGuiHelper* imguiHelper;
 	PlayerVectors playerVecRenderer;
 	std::vector<ParticleEmitter> ptEmitters;
+	CaptureZone* captureZone;
 
 	//HUD
 	HudUI ui;
@@ -108,8 +95,6 @@ private:
 	UINT HEIGHT;
 	UINT WIDTH;
 
-
-
 	void loadObjects();
 	void drawShadows();
 	void drawFresnel();
@@ -118,8 +103,11 @@ private:
 	void drawParticles();
 	void handleKeybinds();
 	GAMESTATE updateComponentGame();
+	GAMESTATE startLanding();
 	GAMESTATE updateLandingGame();
+	GAMESTATE startKotH();
 	GAMESTATE updateKingOfTheHillGame();
+	GAMESTATE startIntermission();
 	GAMESTATE updateIntermission();
 	void randomizeObjectPos(GameObject* item);
 
@@ -131,4 +119,3 @@ public:
 	virtual GAMESTATE Update() override;
 	virtual void Render() override;
 };
-

@@ -81,55 +81,55 @@ MenuUI::MenuUI()
 #define scale 0.3f,0.3f
 
 	start = GUISprite(centerX, 300);
-	start.Load(GPU::device, L"../Sprites/Menu/start.png");
+	start.Load(L"../Sprites/Menu/start.png");
 	start.SetScale(scale);
 
 	control = GUISprite(centerX, 300 + 75 * 1);
-	control.Load(GPU::device, L"../Sprites/Menu/control.png");
+	control.Load(L"../Sprites/Menu/control.png");
 	control.SetScale(scale);
 
 	settings = GUISprite(centerX, 300 + 75 * 2);
-	settings.Load(GPU::device, L"../Sprites/Menu/settings.png");
+	settings.Load(L"../Sprites/Menu/settings.png");
 	settings.SetScale(scale);
 
 	credits = GUISprite(centerX, 300 + 75 * 3);
-	credits.Load(GPU::device, L"../Sprites/Menu/credits.png");
+	credits.Load(L"../Sprites/Menu/credits.png");
 	credits.SetScale(scale);
 
 	exit = GUISprite(centerX, 300 + 75 * 4);
-	exit.Load(GPU::device, L"../Sprites/Menu/exit.png");
+	exit.Load(L"../Sprites/Menu/exit.png");
 	exit.SetScale(scale);
 
 	start2 = GUISprite(centerX, 300);
-	start2.Load(GPU::device, L"../Sprites/Menu/start2_r.png");
+	start2.Load(L"../Sprites/Menu/start2_r.png");
 	start2.SetScale(scale);
 
 	control2 = GUISprite(centerX, 300 + 75 * 1);
-	control2.Load(GPU::device, L"../Sprites/Menu/control2_r.png");
+	control2.Load(L"../Sprites/Menu/control2_r.png");
 	control2.SetScale(scale);
 
 	settings2 = GUISprite(centerX, 300 + 75 * 2);
-	settings2.Load(GPU::device, L"../Sprites/Menu/settings2_r.png");
+	settings2.Load(L"../Sprites/Menu/settings2_r.png");
 	settings2.SetScale(scale);
 
 	credits2 = GUISprite(centerX, 300 + 75 * 3);
-	credits2.Load(GPU::device, L"../Sprites/Menu/credits2_r.png");
+	credits2.Load(L"../Sprites/Menu/credits2_r.png");
 	credits2.SetScale(scale);
 
 	exit2 = GUISprite(centerX, 300 + 75 * 4);
-	exit2.Load(GPU::device, L"../Sprites/Menu/exit2_r.png");
+	exit2.Load(L"../Sprites/Menu/exit2_r.png");
 	exit2.SetScale(scale);
 
 	Loading = GUISprite(centerX, centerY);
-	Loading.Load(GPU::device, L"../Sprites/Loading.bmp");
+	Loading.Load(L"../Sprites/Loading.bmp");
 	Loading.SetScale(1, 1);
 
 	objective = GUISprite(310 - left, 675 - upp);
-	objective.Load(GPU::device, L"../Sprites/Objective.png");
+	objective.Load(L"../Sprites/Objective.png");
 	objective.SetScale(0.75f, 0.75f);
 
 	title = GUISprite(centerX, 340-200);
-	title.Load(GPU::device, L"../Sprites/title.png");
+	title.Load(L"../Sprites/title.png");
 	title.SetScale(0.6f, 0.6f);
 
 }

@@ -33,10 +33,10 @@ GAMESTATE WinUI::GetGameState()
 WinUI::WinUI()
 {
 	winText = GUISprite(1264.0f / 2.0f, 300);
-	winText.Load(GPU::device, L"../Sprites/winText.png");
+	winText.Load(L"../Sprites/winText.png");
 
 	backText = GUISprite(75 + 70, 600);
-	backText.Load(GPU::device, L"../Sprites/backText.png");
+	backText.Load(L"../Sprites/backText.png");
 
 	gameState = NOCHANGE;
 }

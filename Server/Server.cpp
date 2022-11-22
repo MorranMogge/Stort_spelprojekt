@@ -224,10 +224,6 @@ int main()
 	physWorld.addPhysComponent(planetComp, reactphysics3d::CollisionShapeName::SPHERE, DirectX::XMFLOAT3(40, 40, 40));
 	planetComp.getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 
-
-	
-
-
 	std::string identifier;
 	std::string s = "empty";
 	// Group the variables to send into a packet
@@ -414,7 +410,7 @@ int main()
 						components[i].setInUseBy(-1);
 						std::cout << std::to_string(components[i].getPosXMFLOAT3().x) << ", y: " << std::to_string(components[i].getPosXMFLOAT3().y) <<
 							", z" << std::to_string(components[i].getPosXMFLOAT3().z) << std::endl;
-						sendBinaryDataAllPlayers<ComponentDropped>(cmpDropped.)
+						//sendBinaryDataAllPlayers<ComponentDropped>(cmpDropped);
 					}
 				}
 				break;
@@ -650,7 +646,7 @@ int main()
 		
 
 	}
-	getchar();
+	(void*)getchar();
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
 		delete onlineItems[i];

@@ -1,7 +1,5 @@
 #include "PhysicsWorld.h"
-
 #include <time.h>
-#include "PhysicsComponent.h"
 #include "DirectXMathHelper.h"
 
 void PhysicsWorld::setUpBaseScenario()
@@ -12,7 +10,6 @@ void PhysicsWorld::setUpBaseScenario()
 
 	world->setIsDebugRenderingEnabled(true);
 }
-
 
 PhysicsWorld::PhysicsWorld(std::string worldName)
 {

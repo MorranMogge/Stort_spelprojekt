@@ -1,8 +1,5 @@
 #pragma once
 #include <SimpleMath.h>
-#include"PhysicsComponent.h"
-
-
 
 class PhysicsComponent;
 
@@ -11,8 +8,6 @@ class GameObject
 private:
 
 	int objectID;
-	reactphysics3d::Quaternion reactQuaternion;
-	DirectX::SimpleMath::Quaternion dx11Quaternion;
 
 protected:
 	PhysicsComponent* physComp;

@@ -33,7 +33,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	ConfirmComponentPickedUp* confirmCmpPickedUp = nullptr;
 	ComponentPosition* cmpPosition = nullptr;
 	CreateZone* zonePos = nullptr;
-	IntermissionStart* startIntermission = nullptr;
+	MinigameStart* startMinigame = nullptr;
 
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{
@@ -243,10 +243,10 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(zonePos->xPos, zonePos->yPos, zonePos->zPos), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), field, DirectX::SimpleMath::Vector3(zonePos->scale, zonePos->scale, zonePos->scale));
 			break;
 
-		case PacketType::STARTINTERMISSION:
-			startIntermission = circularBuffer->readData<IntermissionStart>();
-			currentMinigame = STARTOFINTERMISSION;
-			std::cout << "RECEIVED START INTERMISSION\n";
+		case PacketType::STARTMINIGAMES:
+			startMinigame = circularBuffer->readData<MinigameStart>();
+			currentMinigame = startMinigame->minigame;
+			std::cout << "RECEIVED START OF MINIGAME\n";
 			break;
 		}
 	}
@@ -295,8 +295,6 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer)
 			std::cout << "Received SpawnComponent id: " << std::to_string(spawnComp->ComponentId) << std::endl;
 			break;
 		}
-
 	}
-
 	return -1;
 }

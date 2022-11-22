@@ -2,6 +2,17 @@
 #include <DirectXMath.h>
 #include <reactphysics3d/reactphysics3d.h>
 
+enum MiniGames
+{
+	COMPONENTCOLLECTION,
+	LANDINGSPACESHIP,
+	KINGOFTHEHILL,
+	INTERMISSION,
+	STARTOFINTERMISSION,
+	STARTLANDING,
+	STARTKTH
+};
+
 //enum = 3
 struct PositionRotation
 {
@@ -192,14 +203,10 @@ struct CreateZone
 };
 
 //enum = 25
-struct IntermissionStart
+struct MinigameStart
 {
 	int packetId;
+	MiniGames minigame;
+	float pointsBlue;
+	float pointsRed;
 };
-
-//enum = 25
-//struct LandingMiniGameOver
-//{
-//	int packetId;
-//	float points;
-//};

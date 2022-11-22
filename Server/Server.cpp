@@ -571,19 +571,34 @@ int main()
 				}
 			}
 
+			//Waits for the ships to fly away before starting minigames
 			if (timeToFly)
 			{
 				flyTime += timerLength;
-				if (flyTime > 4.f)
+
+				if (flyTime > 6.f)
 				{
-					std::cout << "SENT START INTERMISSION\n";
-					IntermissionStart startIntermission;
-					startIntermission.packetId = PacketType::STARTINTERMISSION;
-					sendBinaryDataAllPlayers<IntermissionStart>(startIntermission, data);
+					std::cout << "SENT START MINIGAMES\n";
+					MinigameStart startMinigame;
+					startMinigame.packetId = PacketType::STARTMINIGAMES;
+					startMinigame.minigame = MiniGames::STARTOFINTERMISSION;
+
+					if (progress[0] > 3)
+					{
+						startMinigame.pointsBlue = 100.f;
+						startMinigame.pointsRed = 0.f;
+					}
+					else
+					{
+						startMinigame.pointsRed = 100.f;
+						startMinigame.pointsBlue = 0.f;
+					}
+					sendBinaryDataAllPlayers<MinigameStart>(startMinigame, data);
 					timeToFly = false;
+					progress[0] = 0;
+					progress[1] = 0;
 				}
 			}
-			
 			
 			//physWorld.update(timerLength);
 			//f�r varje spelare s� skicka deras position till alla klienter

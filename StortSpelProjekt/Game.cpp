@@ -509,7 +509,7 @@ GAMESTATE Game::updateComponentGame()
 		if (spaceShips[i]->getCompletion())
 		{
 			if (currentPlayer->getTeam() == i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot()); currentPlayer->setVibration(0.1f, 0.1f);
-			this->spaceShips[i]->flyAway(dt); // IS TOO CLOSE TO OTHER PLANET
+			this->spaceShips[i]->flyAway(dt);
 			endTimer += dt;
 			arrow->removeArrow(); //Remove these completely by not drawing the meshes anymore
 			if (currentPlayer->getTeam() == i) this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969)); //Remove these completely by not drawing the meshes anymore
@@ -628,8 +628,8 @@ GAMESTATE Game::updateLandingGame()
 	{
 		moveDir.Normalize();
 		spaceShips[currentPlayer->getTeam()]->setPos(moveDir * planetVector[0]->getSize());
-		currentMinigame = MiniGames::KINGOFTHEHILL;
 		std::cout << "Total points " << landingMiniGamePoints << std::endl;
+		currentMinigame = MiniGames::KINGOFTHEHILL;
 	}
 	return NOCHANGE;
 }

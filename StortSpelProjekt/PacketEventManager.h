@@ -7,17 +7,6 @@
 #include "CircularBufferClient.h"
 #include "SpaceShip.h"
 
-enum MiniGames
-{
-	COMPONENTCOLLECTION,
-	LANDINGSPACESHIP,
-	KINGOFTHEHILL,
-	INTERMISSION,
-	STARTOFINTERMISSION,
-	STARTLANDING,
-	STARTKTH
-};
-
 class PacketEventManager
 {
 private:

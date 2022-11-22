@@ -409,7 +409,7 @@ void Game::handleKeybinds()
 GAMESTATE Game::updateComponentGame()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, temp);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame);
 
 	//Get newest delta time
 	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
@@ -520,7 +520,7 @@ GAMESTATE Game::updateComponentGame()
 	}
 
 	//Arrow pointing to spaceship
-	if (currentPlayer->isHoldingComp())
+	if (currentPlayer->isHoldingComp()) //THIS NEEDS TO BE FIXED TOO!
 	{
 		for (int i = 0; i < spaceShips.size(); i++)
 		{
@@ -743,7 +743,7 @@ GAMESTATE Game::updateIntermission()
 GAMESTATE Game::Update()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, temp);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame);
 
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();

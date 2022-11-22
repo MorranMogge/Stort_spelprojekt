@@ -566,6 +566,8 @@ int main()
 						progress[j]++;
 						if (progress[j] > 3)
 						{
+							progress[j] = 0;
+							std::cout << "SENT START INTERMISSION\n";
 							IntermissionStart startIntermission;
 							startIntermission.packetId = PacketType::STARTINTERMISSION;
 							sendBinaryDataAllPlayers<IntermissionStart>(startIntermission, data);

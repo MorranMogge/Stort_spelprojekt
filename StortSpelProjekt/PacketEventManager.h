@@ -7,6 +7,17 @@
 #include "CircularBufferClient.h"
 #include "SpaceShip.h"
 
+enum MiniGames
+{
+	COMPONENTCOLLECTION,
+	LANDINGSPACESHIP,
+	KINGOFTHEHILL,
+	INTERMISSION,
+	STARTOFINTERMISSION,
+	STARTLANDING,
+	STARTKTH
+};
+
 class PacketEventManager
 {
 private:
@@ -17,6 +28,6 @@ public:
 
 	void PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 		std::vector<Component*>& compnentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects,
-		GravityField* field, std::vector<SpaceShip*>& spaceShips, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector, CaptureZone*& captureZone, int& currentMinigame);
+		GravityField* field, std::vector<SpaceShip*>& spaceShips, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame);
 	int handleId(CircularBufferClient*& circularBuffer);
 };

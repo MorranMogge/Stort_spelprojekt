@@ -12,7 +12,7 @@ PacketEventManager::~PacketEventManager()
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips
-	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector, CaptureZone*& captureZone, int& currentMinigame)
+	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -33,6 +33,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	ConfirmComponentPickedUp* confirmCmpPickedUp = nullptr;
 	ComponentPosition* cmpPosition = nullptr;
 	CreateZone* zonePos = nullptr;
+	IntermissionStart* startIntermission = nullptr;
 
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{
@@ -162,7 +163,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				{
 					//Update hud or whatever
 					spaceShips[i]->addComponent();
-					spaceShips[i]->setAnimate(true);
+					spaceShips[i]->setAnimate(false); //CHANGE BACK WHEN DONE!
 				}
 			}
 			for (int i = 0; i < players.size(); i++)
@@ -225,11 +226,11 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 			for (int i = 0; i < onlineItems.size(); i++)
 			{
-				std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", i = " << std::to_string(i) << std::endl;
+				//std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", i = " << std::to_string(i) << std::endl;
 				if (onlineItems[i]->getOnlineId() == cmpPosition->ComponentId)
 				{
-					std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", pos x: " << std::to_string(cmpPosition->x)
-						<< ", y: " << std::to_string(cmpPosition->y) << std::endl;
+					//std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", pos x: " << std::to_string(cmpPosition->x)
+					//	<< ", y: " << std::to_string(cmpPosition->y) << std::endl;
 					onlineItems[i]->setPos(DirectX::XMFLOAT3(cmpPosition->x, cmpPosition->y, cmpPosition->z));
 					//componentVector[i]->getPhysComp()->setRotation(cmpPosition->quat);
 				}
@@ -243,9 +244,9 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			break;
 
 		case PacketType::STARTINTERMISSION:
+			startIntermission = circularBuffer->readData<IntermissionStart>();
+			//currentMinigame = STARTOFINTERMISSION;
 			std::cout << "RECEIVED START INTERMISSION\n";
-
-			currentMinigame = STARTINTERMISSION;
 			break;
 		}
 	}

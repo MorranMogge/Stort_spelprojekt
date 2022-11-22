@@ -1,17 +1,6 @@
 #pragma once
 #include "GameInclude.h"
 
-enum MiniGames
-{
-	COMPONENTCOLLECTION,
-	LANDINGSPACESHIP,
-	KINGOFTHEHILL,
-	INTERMISSION,
-	STARTOFINTERMISSION,
-	STARTLANDING,
-	STARTKTH
-};
-
 struct wirefameInfo
 {
 	DirectX::XMFLOAT3 wireframeClr;
@@ -24,9 +13,6 @@ static bool IFONLINE = true;
 class Game : public State
 {
 private:
-	int temp = 0;
-
-
 	ID3D11DeviceContext* immediateContext;
 	HWND* window;
 	MiniGames currentMinigame;

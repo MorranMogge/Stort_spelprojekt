@@ -173,7 +173,9 @@ void sendBinaryDataOnePlayer(const T& data, userData& user)
 
 int main()
 {
-	int progress[2] = {0, 0};
+	float flyTime = 0.f;
+	bool timeToFly = false;
+	int progress[2] = { 0, 0 };
 	int itemid = 0;
 	int componentIdCounter = 0;
 	bool once = false;
@@ -564,17 +566,24 @@ int main()
 						sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
 
 						progress[j]++;
-						if (progress[j] > 3)
-						{
-							progress[j] = 0;
-							std::cout << "SENT START INTERMISSION\n";
-							IntermissionStart startIntermission;
-							startIntermission.packetId = PacketType::STARTINTERMISSION;
-							sendBinaryDataAllPlayers<IntermissionStart>(startIntermission, data);
-						}
+						if (progress[j] > 3) timeToFly = true;
 					}
 				}
 			}
+
+			if (timeToFly)
+			{
+				flyTime += timerLength;
+				if (flyTime > 6.f)
+				{
+					std::cout << "SENT START INTERMISSION\n";
+					IntermissionStart startIntermission;
+					startIntermission.packetId = PacketType::STARTINTERMISSION;
+					sendBinaryDataAllPlayers<IntermissionStart>(startIntermission, data);
+					timeToFly = false;
+				}
+			}
+			
 			
 			//physWorld.update(timerLength);
 			//f�r varje spelare s� skicka deras position till alla klienter

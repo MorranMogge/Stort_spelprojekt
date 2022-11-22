@@ -568,18 +568,16 @@ GAMESTATE Game::updateComponentGame()
 	if (endTimer > 6)
 	{
 		this->currentPlayer->setVibration(0.f, 0.f);
-		for (int i = 0; i < spaceShips.size(); i++) //SET ON SERVER!
+		for (int i = 0; i < spaceShips.size(); i++)
 		{
 			if (spaceShips[i]->isFinished())
 			{
-				this->currentMinigame = MiniGames::STARTOFINTERMISSION;
-
 				//Send data to server
 				/*IntermissionStart startOfIntermission;
 				startOfIntermission.packetId = PacketType::STARTINTERMISSION;
 				client->sendStuff<IntermissionStart>(startOfIntermission);*/
 
-				int team = spaceShips[i]->getTeam();
+				/*int team = spaceShips[i]->getTeam();
 				if (currentPlayer->getTeam() == team)
 				{
 					return WIN;
@@ -587,7 +585,7 @@ GAMESTATE Game::updateComponentGame()
 				else
 				{
 					return LOSE;
-				}
+				}*/
 			}
 		}
 	}
@@ -635,12 +633,6 @@ GAMESTATE Game::updateLandingGame()
 		spaceShips[currentPlayer->getTeam()]->setPos(moveDir * planetVector[0]->getSize());
 		currentMinigame = MiniGames::KINGOFTHEHILL;
 		std::cout << "Total points " << landingMiniGamePoints << std::endl;
-
-		//Send data to server
-		/*LandingMiniGameOver totalPoints;
-		totalPoints.packetId = PacketType::LANDINGMINIGAMEOVER;
-		totalPoints.points = landingMiniGamePoints;
-		client->sendStuff<LandingMiniGameOver>(totalPoints);*/
 	}
 	return NOCHANGE;
 }
@@ -719,6 +711,12 @@ GAMESTATE Game::updateIntermission()
 			this->spaceShips[0]->setRot(spaceShips[0]->getRotOrientedToGrav());
 			this->spaceShips[1]->setRot(spaceShips[1]->getRotOrientedToGrav());
 
+			//Send data to server
+			/*StartLanding startLandingGame;
+			startLandingGame.packetId = PacketType::STARTLANDING;
+			client->sendStuff<StartLanding>(startLandingGame);
+			std::cout << "SENT START LANDING\n";*/
+
 			currentMinigame = STARTLANDING;
 			return GAMESTATE::NOCHANGE;
 		}
@@ -766,14 +764,14 @@ GAMESTATE Game::Update()
 		break;
 	case STARTOFINTERMISSION:
 		currentGameState = this->startIntermission();
-			break;
+		break;
 	case STARTLANDING:
 		currentGameState = this->startLanding();
 		break;
 	case STARTKTH:
 		currentGameState = this->startKotH();
 	default:
-			break;
+		break;
 	}
 
 	//Debug keybinds

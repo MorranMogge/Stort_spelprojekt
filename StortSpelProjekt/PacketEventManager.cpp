@@ -245,7 +245,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 		case PacketType::STARTINTERMISSION:
 			startIntermission = circularBuffer->readData<IntermissionStart>();
-			//currentMinigame = STARTOFINTERMISSION;
+			currentMinigame = STARTOFINTERMISSION;
 			std::cout << "RECEIVED START INTERMISSION\n";
 			break;
 		}

@@ -244,6 +244,13 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::COMPONENTDROPPED:
 			cmpDropped = circularBuffer->readData<ComponentDropped>();
 
+			for (int i = 0; i < players.size(); i++)
+			{
+				if (players[i]->getOnlineID() == cmpDropped->playerId)
+				{
+					players[i]->releaseItem();
+				}
+			}
 
 			break;
 

@@ -29,7 +29,7 @@
 
 #include <psapi.h>
 
-const short MAXNUMBEROFPLAYERS = 2;
+const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
 
 struct userData
@@ -138,14 +138,6 @@ void sendBinaryDataAllPlayers(const T& data, serverData& serverData)
 			//std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
 		}
 	}
-}
-
-int extractBinaryPacketId(char* pointerToData[])
-{
-	int idPacket;
-	memcpy(&idPacket, pointerToData, sizeof(int));
-	
-	return idPacket;
 }
 
 void recvData(void* param, userData* user)//thread to recv data
@@ -410,7 +402,16 @@ int main()
 						components[i].setInUseBy(-1);
 						std::cout << std::to_string(components[i].getPosXMFLOAT3().x) << ", y: " << std::to_string(components[i].getPosXMFLOAT3().y) <<
 							", z" << std::to_string(components[i].getPosXMFLOAT3().z) << std::endl;
-						//sendBinaryDataAllPlayers<ComponentDropped>(cmpDropped);
+						
+							for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+							{
+								//skicka att en spelare har droppat en component till alla spelare förutom spelaren som droppat componenten eftersom den redan är droppad
+								if (cmpDropped->playerId != data.users[i].playerId)
+								{
+									sendBinaryDataOnePlayer(cmpDropped, data.users[i]);
+								}
+							}
+						break;
 					}
 				}
 				break;

@@ -118,7 +118,6 @@
     <ClCompile Include="SpaceShip.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="MouseClass.cpp" />
     <ClCompile Include="BaseballBat.cpp">
       <Filter>GameObjects</Filter>
@@ -157,6 +156,22 @@
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="Credits.cpp">
       <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Profiler.cpp" />
+    <ClCompile Include="PacketEventManager.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="SendingDataEvent.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientHandler.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="CircularBufferClient.cpp">
+      <Filter>Online</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -445,6 +460,12 @@
     <ClInclude Include="PacketEnum.h">
       <Filter>Online</Filter>
     </ClInclude>
+    <ClInclude Include="Asteroid.h" />
+    <ClInclude Include="AsteroidHandler.h" />
+    <ClInclude Include="Arrow.h" />
+    <ClInclude Include="Credits.h" />
+    <ClInclude Include="Planet.h" />
+    <ClInclude Include="PlanetGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

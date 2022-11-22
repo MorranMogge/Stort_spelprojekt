@@ -17,6 +17,12 @@ private:
 
 	TimeStruct timer;
 
+	float targetTime;
+	float currentTime;
+	float factor;
+
+	DirectX::SimpleMath::Vector2 changePos;
+	DirectX::SimpleMath::Vector2 changeScale;
 
 public:
 	LandingHud();

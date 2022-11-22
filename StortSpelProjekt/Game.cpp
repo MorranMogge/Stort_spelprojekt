@@ -671,7 +671,10 @@ GAMESTATE Game::updateIntermission()
 		if (this->centerPos.z + 80 <= camPos.z)
 		{
 			this->spaceShips[0]->setRot(spaceShips[0]->getRotOrientedToGrav());
+			this->spaceShips[0]->getPhysComp()->setRotation(reactphysics3d::Quaternion(spaceShips[0]->getRotXM().x, spaceShips[0]->getRotXM().y, spaceShips[0]->getRotXM().z, 1.0));
 			this->spaceShips[1]->setRot(spaceShips[1]->getRotOrientedToGrav());
+			this->spaceShips[1]->getPhysComp()->setRotation(reactphysics3d::Quaternion(spaceShips[1]->getRotXM().x, spaceShips[1]->getRotXM().y, spaceShips[1]->getRotXM().z, 1.0));
+
 
 			currentMinigame = LANDINGSPACESHIP;
 			return GAMESTATE::NOCHANGE;

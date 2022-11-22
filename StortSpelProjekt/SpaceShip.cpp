@@ -220,8 +220,19 @@ bool SpaceShip::isFinished()
 void SpaceShip::draw()
 {
 	//Team switch
-	this->mesh->UpdateCB(position, rotation, scale);
-	this->mesh->DrawWithMat();
+	this->mesh->UpdateCB(this->position, this->rotation, this->scale);
+	this->mesh->DrawWithMat(currentComponents + 1);
+	////Team switch
+	//switch (team)
+	//{
+	//case 0:
+	//	this->mesh->DrawWithMat(currentComponents + 1);
+	//	break;
+
+	//case 1:
+	//	this->mesh->DrawWithMat(currentComponents + 1, true);
+	//	break;
+	//}
 }
 
 

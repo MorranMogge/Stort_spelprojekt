@@ -213,6 +213,89 @@ public:
 
 	}
 
+	void DrawWithMat(int submeshCount,  bool reverse = false) const
+	{
+		vertexBuffer.Bind();
+		indexBuffer.Bind();
+
+		worldCB.BindToVS(0u);
+
+
+		unsigned int currentVer = 0;
+
+		static std::string diffuseKey;
+		static std::string ambientKey;
+		static std::string specularKey;
+
+
+		if (reverse)
+		{
+			UINT nrOfVert = 0;
+			for (int i = 0; i < submeshVerCounts.size(); i++)
+			{
+				nrOfVert += submeshVerCounts[i];
+			}
+
+			for (int i = submeshCount; i; i--)
+			{
+				diffuseKey = MaterialLibrary::info[matKey[i]].diffuseKey;
+				ambientKey = MaterialLibrary::info[matKey[i]].ambientKey;
+				specularKey = MaterialLibrary::info[matKey[i]].specularKey;
+
+				if (!diffuseKey.empty())
+					MaterialLibrary::textures[diffuseKey].BindToPS(0u);
+				else
+					MaterialLibrary::textures["default_Diffuse.png"].BindToPS(0u);// default Diffuse
+
+				if (!ambientKey.empty())
+					MaterialLibrary::textures[ambientKey].BindToPS(1u);
+				else
+					MaterialLibrary::textures["default_Ambient.png"].BindToPS(1u);// default Ambient
+
+				if (!specularKey.empty())
+					MaterialLibrary::textures[specularKey].BindToPS(2u);
+				else
+					MaterialLibrary::textures["default_Specular.png"].BindToPS(2u);// default Specular
+
+				MaterialLibrary::materials[matKey[i]].BindToPS(0u);
+
+				//currentVer -= nrOfVert;
+				nrOfVert -= submeshVerCounts[i];
+				GPU::immediateContext->DrawIndexed(submeshVerCounts[i], nrOfVert, 0);
+
+			}
+		}
+		else
+		{
+			for (int i = 0; i < submeshCount; i++)
+			{
+				diffuseKey = MaterialLibrary::info[matKey[i]].diffuseKey;
+				ambientKey = MaterialLibrary::info[matKey[i]].ambientKey;
+				specularKey = MaterialLibrary::info[matKey[i]].specularKey;
+
+				if (!diffuseKey.empty())
+					MaterialLibrary::textures[diffuseKey].BindToPS(0u);
+				else
+					MaterialLibrary::textures["default_Diffuse.png"].BindToPS(0u);// default Diffuse
+
+				if (!ambientKey.empty())
+					MaterialLibrary::textures[ambientKey].BindToPS(1u);
+				else
+					MaterialLibrary::textures["default_Ambient.png"].BindToPS(1u);// default Ambient
+
+				if (!specularKey.empty())
+					MaterialLibrary::textures[specularKey].BindToPS(2u);
+				else
+					MaterialLibrary::textures["default_Specular.png"].BindToPS(2u);// default Specular
+
+				MaterialLibrary::materials[matKey[i]].BindToPS(0u);
+
+				GPU::immediateContext->DrawIndexed(submeshVerCounts[i], currentVer, 0);
+				currentVer += submeshVerCounts[i];
+			}
+		}
+	}
+
 	unsigned int NumberOfVertices()
 	{
 		unsigned int total = 0;

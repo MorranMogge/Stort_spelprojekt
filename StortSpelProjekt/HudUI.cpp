@@ -60,6 +60,7 @@ void HudUI::SpritePass()
 
 	if (Input::KeyDown(KeyCode::TAB))
 	{
+		
 		blackBackground.Draw();
 		control.Draw();
 		objective.Draw();
@@ -68,6 +69,17 @@ void HudUI::SpritePass()
 		pickText.Draw();
 	}
 
+	if (Input::KeyDown(KeyCode::G))
+	{
+		this->fadeIn();
+	}
+	if (Input::KeyDown(KeyCode::H))
+	{
+		this->fadeOut();
+	}
+	
+
+	fade.Draw();
 	controls.Draw();
 
 }
@@ -84,9 +96,12 @@ HudUI::HudUI()
 	#define Min Vector2(125, 550)
 	timer.startTime;
 
-	//fade = GUISprite(Vector2(125, 320)); //fadeout
-	//fade.Load(GPU::device, L"../Sprites/skybox.png");
-	//fade.SetScale(1.f, 1.f);
+	fade = GUISprite(Vector2(125, 320)); //fadeout
+	fade.Load(GPU::device, L"../Sprites/skybox.jpg");
+	fade.SetScale(1.f, 1.f);
+	this->setOpacity(true);
+
+
 	
 	landing0 = GUISprite(Vector2(125, 320)); //bar
 	landing0.Load(GPU::device, L"../Sprites/Bar.png");
@@ -243,6 +258,34 @@ void HudUI::handleInputs()
 	{
 		std::cout << "intersects" << std::endl;
 	}
+}
+
+void HudUI::fadeIn()
+{	
+	DirectX::SimpleMath::Color gg = fade.GetTint();
+	gg.w -= Time::DeltaTimeInSeconds();
+	fade.SetTint(gg);
+}
+
+void HudUI::fadeOut()
+{
+	DirectX::SimpleMath::Color gg = fade.GetTint();
+	gg.w += Time::DeltaTimeInSeconds();
+	fade.SetTint(gg);
+}
+
+void HudUI::setOpacity(bool onOff)
+{
+	DirectX::SimpleMath::Color opacity = fade.GetTint();
+	if (onOff)
+	{
+		opacity.w = 0.0f;
+	}
+	else
+	{
+		opacity.w = 1.0f;
+	}
+	fade.SetTint(opacity);
 }
 
 void HudUI::Draw()

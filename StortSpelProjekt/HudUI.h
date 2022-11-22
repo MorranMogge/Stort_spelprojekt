@@ -7,7 +7,7 @@ class SpaceShip;
 
 class HudUI final
 {
-	//GUISprite fade;
+	GUISprite fade;
 
 
 	GUISprite landing0;
@@ -52,5 +52,8 @@ public:
 	HudUI();
 	~HudUI();
 	void handleInputs();
+	void fadeIn();
+	void fadeOut();
+	void setOpacity(bool onOff);
 	void Draw();
 };

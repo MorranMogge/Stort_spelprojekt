@@ -131,16 +131,17 @@ void Game::loadObjects()
 	//Meshes vector contents
 	meshes.push_back(new Mesh("../Meshes/Sphere"));
 	meshes.push_back(new Mesh("../Meshes/reverseSphere"));
-	meshes.push_back(new Mesh("../Meshes/astronaut"));
+	meshes.push_back(new Mesh("../Meshes/kosmonaut"));
 	meshes.push_back(new Mesh("../Meshes/potion"));
 	meshes.push_back(new Mesh("../Meshes/rocket"));
 	meshes.push_back(new Mesh("../Meshes/bat"));
-	meshes.push_back(new Mesh("../Meshes/component"));
+	meshes.push_back(new Mesh("../Meshes/astronaut"));
 	meshes.push_back(new Mesh("../Meshes/grenade"));
 	meshes.push_back(new Mesh("../Meshes/arrow"));
-	meshes.push_back(new Mesh("../Meshes/saturn1"));
+	meshes.push_back(new Mesh("../Meshes/saturn"));
 	meshes.push_back(new Mesh("../Meshes/N1"));
-	//meshes.push_back(new Mesh("../Meshes/untitled"));
+	//meshes.push_back(new Mesh("../Meshes/kosmonaut"));
+	//meshes.push_back(new Mesh("../Meshes/astronaut"));
 
 	//SOLAR SYSTEM SETUP
 	float planetSize = 40.f;
@@ -567,8 +568,13 @@ GAMESTATE Game::Update()
 		}
 	}
 	//Check winstate
+	if (endTimer > 4.7f)
+	{
+		ui.fadeOut();
+	}
 	if (endTimer > 6)
 	{
+		
 		for (int i = 0; i < spaceShips.size(); i++)
 		{
 			if (spaceShips[i]->isFinished())

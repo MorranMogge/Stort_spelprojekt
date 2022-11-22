@@ -466,6 +466,9 @@
     </ClInclude>
     <ClInclude Include="ControlMenu.h" />
     <ClInclude Include="ControlUI.h" />
+    <ClInclude Include="Time.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

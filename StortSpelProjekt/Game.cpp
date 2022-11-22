@@ -25,7 +25,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ltHandler.addLight(DirectX::XMFLOAT3(-10 - 5, -45 - 17, -10 - 7), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 
 	manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
-	this->manager.getAnimData("../Meshes/pinto_Run.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
+	manager.loadMeshAndBoneData("../Meshes/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/character1_run.fbx", "../Meshes/character1_idle.fbx");
+	this->manager.getAnimData("../Meshes/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
 	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/pintoBlue.png");
 	ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/pintoRed.png");
 	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
@@ -56,9 +58,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 			if (playerId != i)
 			{
-				tmpPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 
+				tmpPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
-				tmpPlayer->addData(animData);
+				//tmpPlayer->addData(animData);
 				tmpPlayer->setOnlineID(i);
 				physWorld.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
@@ -66,9 +68,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			else
 			{
 				std::cout << "Player online id: " << std::to_string(i) << " \n";
-				currentPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+				currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 					1, playerId, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
-				currentPlayer->addData(animData);
+				//currentPlayer->addData(animData);
 				currentPlayer->setOnlineID(i);
 				players.push_back(currentPlayer);
 				delete tmpPlayer;
@@ -82,7 +84,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
-	gameObjects.emplace_back(currentPlayer);
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->setGravityField(planetGravityField);
@@ -129,6 +130,10 @@ Game::~Game()
 	for (int i = 0; i < planetVector.size(); i++)
 	{
 		delete planetVector[i];
+	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		delete players[i];
 	}
 	delete tmpMesh;
 	delete asteroids;
@@ -209,7 +214,7 @@ void Game::loadObjects()
 	}
 	for (int i = 0; i < players.size(); i++)
 	{
-		if (players[i] != currentPlayer) gameObjects.emplace_back(players[i]);
+		//if (players[i] != currentPlayer) //gameObjects.emplace_back(players[i]);
 	}
 
 	//Add phys components
@@ -245,9 +250,9 @@ void Game::loadObjects()
 		ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/pintoBlue.png");
 		ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/pintoRed.png");
 
-		currentPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+		currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 			1, client->getPlayerId(), client, 0, redTeamColour, blueTeamColour, planetGravityField);
-		currentPlayer->addData(animData);
+		//currentPlayer->addData(animData);
 		players.emplace_back(currentPlayer);
 		gamePad = new GamePad();
 		currentPlayer->setGamePad(gamePad);
@@ -626,7 +631,15 @@ GAMESTATE Game::Update()
 	this->handleKeybinds();
 
 	//animations
+	if (GetAsyncKeyState('W'))
+	{
+		this->currentPlayer->updateAnim(dt, 1);
+	}
+	else
+	{
 	this->currentPlayer->updateAnim(dt, 0, 1);
+
+	}
 
 	return NOCHANGE;
 }

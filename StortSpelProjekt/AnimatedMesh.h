@@ -135,16 +135,15 @@ private:
 	float oldTime;
 	int oldAnimId;
 	int state;
+	int dbgint;
 public:
-	AnimatedMesh(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int id, GravityField* field = nullptr);
+	AnimatedMesh(Mesh* useMesh, const AnimationData& data ,const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int id, GravityField* field = nullptr);
 	//AnimatedMesh(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
 	//AnimatedMesh(ID3D11Buffer* vertexBuff, ID3D11Buffer* indexBuff, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertices);
 	//AnimatedMesh();
 	~AnimatedMesh();
 
-	bool addAnimations(std::string& filePath);
-
 	void addData(const AnimationData& data);
-	void updateAnim(const float& dt, const unsigned& animIndex, float animationSpeed = 1.0f);
+	void updateAnim(const float& dt, unsigned animIndex, float animationSpeed = 1.0f);
 	void draw();
 };

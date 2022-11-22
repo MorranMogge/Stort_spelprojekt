@@ -86,7 +86,7 @@ private:
 	bool movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 	bool moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 public:
-	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team,
+	Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team,
 		ID3D11ShaderResourceView* redTeamColor, ID3D11ShaderResourceView* blueTeamColor, GravityField* field = nullptr);
 	~Player();
 

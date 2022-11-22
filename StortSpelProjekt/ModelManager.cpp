@@ -397,6 +397,32 @@ void ModelManager::parseAnimation(const aiScene* scene)
 	}
 }
 
+bool ModelManager::AdditionalAnimation(const std::string& newAnimationFile, const std::string& destination)
+{
+	if (!bank.hasItem(destination))
+	{
+		return false;
+	}
+
+	Assimp::Importer importer;
+	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
+	const aiScene* pScene = importer.ReadFile(newAnimationFile, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
+
+	if (pScene == nullptr)
+	{
+		ErrorLog::Log("Cant read FBX-File!");
+		return false;
+	}
+	this->VertexOffset = 0;
+	this->aniData = {};
+
+	this->parseAnimation(pScene);
+
+	this->bank.extendAnimations(destination, aniData);
+
+	return true;
+}
+
 
 ModelManager::ModelManager(ID3D11Device* device)
 {

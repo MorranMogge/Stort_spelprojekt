@@ -80,6 +80,7 @@ private:
 	void parseNode(const aiScene* scene);
 	void parseAnimation(const aiScene* scene);
 
+
 public:
 	ModelManager();
 	ModelManager(ID3D11Device* device);
@@ -90,6 +91,7 @@ public:
 	std::vector<ID3D11ShaderResourceView*> getTextureMaps() const;
 
 	bool loadMeshAndBoneData(const std::string& filePath);
+	bool AdditionalAnimation(const std::string& newAnimationFile, const std::string& destination);
 	//fills the params with meshdata
 	bool getMeshData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces);
 	bool getAnimData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces, AnimationData& AnimData);

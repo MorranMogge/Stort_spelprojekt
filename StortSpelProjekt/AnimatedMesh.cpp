@@ -28,15 +28,34 @@ void AnimatedMesh::uppdateMatrices(int animationIndex, float animationTime, cons
 	if (MySimp.boneNameToIndex.find(node.nodeName) != MySimp.boneNameToIndex.end())
 	{
 		animationNode& an = this->MySimp.animation[animationIndex];
-		animationNode& basic = this->MySimp.animation[0];
+		animationNode& basic = this->MySimp.animation[oldAnimId];
 
 		DirectX::XMMATRIX currentNodeTrans = DirectX::XMLoadFloat4x4(&node.trasformation);
 		channels amnNode;
 		channels originalPose;
 
+		if (node.nodeName == "hand3:hand3:LeftHandThumb1")
+		{
+			int bp = 2;
+		}
+
 		if (this->findNodeAnim(node.nodeName, an, amnNode))
 		{
-			this->findNodeAnim(node.nodeName, basic, originalPose);
+			if (!this->findNodeAnim(node.nodeName, basic, originalPose))
+			{
+				DirectX::XMVECTOR pos;
+				DirectX::XMVECTOR rot;
+				DirectX::XMVECTOR scale;
+				DirectX::XMMATRIX temp = DirectX::XMLoadFloat4x4(&node.trasformation);
+				DirectX::XMMatrixDecompose(&pos, &rot, &scale, temp);
+
+				originalPose.posKeyFrames.emplace_back();
+				DirectX::XMStoreFloat3(&originalPose.posKeyFrames[0].Value, pos);
+				originalPose.rotKeyFrame.emplace_back();
+				DirectX::XMStoreFloat4(&originalPose.rotKeyFrame[0].Value, rot);
+				originalPose.scalKeyFrames.emplace_back();
+				DirectX::XMStoreFloat3(&originalPose.scalKeyFrames[0].Value, scale);
+			}
 
 			DirectX::XMFLOAT3 Scaling;
 			this->InterpolateScaling(Scaling, animationTime, amnNode, originalPose);
@@ -120,7 +139,8 @@ void AnimatedMesh::InterpolateRotation(DirectX::XMFLOAT4& res, const float anima
 	}
 	else
 	{
-		end = DirectX::XMLoadFloat4(&target.rotKeyFrame[0].Value);
+		end = start;
+		start = DirectX::XMLoadFloat4(&target.rotKeyFrame[0].Value);
 		factor = this->oldTime;
 	}
 
@@ -168,7 +188,8 @@ void AnimatedMesh::InterpolateScaling(DirectX::XMFLOAT3& res, const float animat
 	}
 	else
 	{
-		end = DirectX::XMLoadFloat3(&animationNode.scalKeyFrames[0].Value);
+		end = start;
+		start = DirectX::XMLoadFloat3(&target.scalKeyFrames[0].Value);
 		factor = this->oldTime;
 	}
 
@@ -215,7 +236,8 @@ void AnimatedMesh::InterpolatePos(DirectX::XMFLOAT3& res, const float animationT
 	}
 	else
 	{
-		end = DirectX::XMLoadFloat3(&animationNode.posKeyFrames[0].Value);
+		end = start;
+		start = DirectX::XMLoadFloat3(&target.posKeyFrames[0].Value);
 		factor = this->oldTime;
 	}
 
@@ -240,15 +262,15 @@ bool AnimatedMesh::findNodeAnim(const std::string& nodeName, const animationNode
 
 void AnimatedMesh::getTimeInTicks(const float& dt, const unsigned& animationIndex)
 {
-	double tps = MySimp.animation[0].ticksPerSecond;
+	double tps = MySimp.animation[animationIndex].ticksPerSecond;
 	if (tps == 0)
 	{
 		tps = 25.f;
 	}
 	double timeInTicks = totalTime * tps;
-	if (timeInTicks >= MySimp.animation[0].duration)
+	if (timeInTicks >= MySimp.animation[animationIndex].duration)
 	{
-		timeInTicks -= MySimp.animation[0].duration;
+		timeInTicks -= MySimp.animation[animationIndex].duration;
 		totalTime = 0;
 	}
 
@@ -258,68 +280,33 @@ void AnimatedMesh::getTimeInTicks(const float& dt, const unsigned& animationInde
 	this->uppdateMatrices(animationIndex, (float)timeInTicks, MySimp.rootNode, startMatrix);
 }
 
-AnimatedMesh::AnimatedMesh(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int id, GravityField* field)
+AnimatedMesh::AnimatedMesh(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int id, GravityField* field)
 	:GameObject(useMesh, pos, rot, id, field)
 {
 	this->totalTime = 0;
 	oldAnimId = 0;
-	oldTime = 0;
+	dbgint = 1;
+	oldTime = 2;
 	returning = false;
+	state = 2;
 	//this->setScale(DirectX::XMFLOAT3(0.02, 0.02, 0.02));
 	//this->updateBuffer();
+
+	this->MySimp = data;
+	std::vector<DirectX::XMFLOAT4X4> tempfloatvec;
+	tempfloatvec.reserve(data.boneVector.size());
+
+	DirectX::XMFLOAT4X4 identityFloat;
+	DirectX::XMStoreFloat4x4(&identityFloat, DirectX::XMMatrixIdentity());
+	for (size_t i = 0; i < data.boneVector.size(); i++)
+	{
+		tempfloatvec.push_back(identityFloat);
+	}
+	strucBuff.Initialize(GPU::device, GPU::immediateContext, tempfloatvec);
 }
 
 AnimatedMesh::~AnimatedMesh()
 {
-}
-
-bool AnimatedMesh::addAnimations(std::string& filePath)
-{
-	Assimp::Importer importer;
-	const aiScene* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
-	if (pScene == nullptr)
-	{
-		return false;
-	}
-
-	for (int i = 0, end = pScene->mNumAnimations; i < end; i++)
-	{
-		this->MySimp.animation.emplace_back();
-		this->MySimp.animation[this->MySimp.animation.size() - 1].mName = pScene->mAnimations[i]->mName.C_Str();
-		this->MySimp.animation[this->MySimp.animation.size() - 1].duration = pScene->mAnimations[i]->mDuration;
-		this->MySimp.animation[this->MySimp.animation.size() - 1].ticksPerSecond = pScene->mAnimations[i]->mTicksPerSecond;
-
-		this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels.reserve(pScene->mAnimations[i]->mNumChannels);
-		for (int j = 0, length = pScene->mAnimations[i]->mNumChannels; j < length; j++)
-		{
-			this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels.emplace_back();
-			this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].mNodeName = pScene->mAnimations[i]->mChannels[j]->mNodeName.C_Str();
-
-			this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].posKeyFrames.reserve(pScene->mAnimations[i]->mChannels[j]->mNumPositionKeys);
-			this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].rotKeyFrame.reserve(pScene->mAnimations[i]->mChannels[j]->mNumRotationKeys);
-			this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].scalKeyFrames.reserve(pScene->mAnimations[i]->mChannels[j]->mNumScalingKeys);
-
-			for (int k = 0, length = pScene->mAnimations[i]->mChannels[j]->mNumPositionKeys; k < length; k++)
-			{
-				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].posKeyFrames.emplace_back();
-				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].posKeyFrames[k].Time = pScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mTime;
-				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].posKeyFrames[k].addAiVector3D(pScene->mAnimations[i]->mChannels[j]->mPositionKeys[k].mValue);
-			}
-			for (int k = 0, length = pScene->mAnimations[i]->mChannels[j]->mNumRotationKeys; k < length; k++)
-			{
-				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].rotKeyFrame.emplace_back();
-				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].rotKeyFrame[k].Time = pScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mTime;
-				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].rotKeyFrame[k].addAiQuaternion(pScene->mAnimations[i]->mChannels[j]->mRotationKeys[k].mValue);
-			}
-			for (int k = 0, length = pScene->mAnimations[i]->mChannels[j]->mNumScalingKeys; k < length; k++)
-			{
-				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].scalKeyFrames.emplace_back();
-				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].scalKeyFrames[k].Time = pScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mTime;
-				this->MySimp.animation[this->MySimp.animation.size() - 1].mChannels[j].scalKeyFrames[k].addAiVector3D(pScene->mAnimations[i]->mChannels[j]->mScalingKeys[k].mValue);
-			}
-		}
-	}
-	return true;
 }
 
 void AnimatedMesh::addData(const AnimationData& data)
@@ -337,20 +324,22 @@ void AnimatedMesh::addData(const AnimationData& data)
 	strucBuff.Initialize(GPU::device, GPU::immediateContext, tempfloatvec);
 }
 
-void AnimatedMesh::updateAnim(const float& dt, const unsigned& animIndex, float animationSpeed)
+void AnimatedMesh::updateAnim(const float& dt, unsigned animIndex, float animationSpeed)
 {
+	//animIndex = dbgint;
 	if (this->MySimp.animation.size() <= animIndex)
 	{
 		ErrorLog::Log("Invalid Animation Id!");
 		return;
 	}
-	if (GetAsyncKeyState('W') || GetAsyncKeyState('A') || GetAsyncKeyState('S') || GetAsyncKeyState('D') || GetAsyncKeyState(' '))
+
+	if (animIndex == oldAnimId)
 	{
 		state = 1;
 		this->totalTime += dt;
 		returning = false;
 		float AnimTime = dt * animationSpeed;
-		this->getTimeInTicks(AnimTime, animIndex);
+		this->getTimeInTicks(totalTime, animIndex);
 	}
 	else
 	{
@@ -359,23 +348,30 @@ void AnimatedMesh::updateAnim(const float& dt, const unsigned& animIndex, float 
 		{
 			returning = true;
 			state = 2;
-			this->oldTime = 0.0f;
+			this->oldTime = 0.f;
 		}
-		else if ((oldTime >= 1) && state == 2)
+		if (state == 2)
+		{
+			std::cout << "going from: " << oldAnimId << " to: " << animIndex << std::endl;
+			float timeOffset = dt;
+			oldTime += timeOffset * 10;
+
+		}
+		if ((oldTime >= 1) && state == 2) // done interpolating, set new state as old so it can play
 		{
 			returning = false;
-			state = 0;
+			state = 2;
 			this->oldTime = 0;
+			this->totalTime = 0;
+			int temp = oldAnimId;
+			this->oldAnimId = animIndex;
+			dbgint = temp;
+			std::cout << "Done with inter \n";
 		}
-		else if (state == 2)
-		{
-			float timeOffset = dt * 6;
-			oldTime += timeOffset;
-		}
-		if (oldTime >= 1)
-		{
-			oldTime = 1;
-		}
+		//if (oldTime >= 1) //dont over interpolate
+		//{
+		//	oldTime = 1;
+		//}
 		if (state != 0)
 		{
 			this->getTimeInTicks(totalTime, animIndex);

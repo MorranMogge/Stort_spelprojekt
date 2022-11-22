@@ -2,6 +2,7 @@
 #include "GUISprite.h"
 #include "GUIText.h"
 #include "State.h"
+#include <GamePad.h>
 
 class MenuUI final
 {
@@ -23,14 +24,16 @@ class MenuUI final
 
 	GUISprite title;
 
-	GUISprite objective;
-
 	bool isLoading = false;
 	GUISprite Loading;
 
 	GAMESTATE gameState = NOCHANGE;
 
 	GUIText testText;
+
+	int selectIndex = 0;
+
+	std::unique_ptr<DirectX::GamePad> gamePad;
 
 	void HandleInputs();
 	void SpritePass();

@@ -49,9 +49,19 @@ void ControlUI::HandleInputs()
 	Input::Update();
 	backText.IntersectMouse() ? backText.SetTint(DirectX::Colors::Green.v) : backText.SetTint(DirectX::Colors::White.v);
 
+	auto state = gamePad->GetState(0);
+
 	if (Input::KeyPress(KeyCode::MOUSE_L))
 	{
 		if (backText.GetTint() == DirectX::Colors::Green.v)
+		{
+			gameState = MENU;
+		}
+	}
+
+	if (auto state = gamePad->GetState(0); state.IsConnected())
+	{
+		if (state.IsBPressed())
 		{
 			gameState = MENU;
 		}
@@ -61,36 +71,35 @@ void ControlUI::HandleInputs()
 
 void ControlUI::SpritePass()
 {
-	//auto state = gamePad->GetState(0);
+	
+	// if any gamepad connected
+	if (auto state = gamePad->GetState(0); state.IsConnected())
+	{
+		a.Draw();
+		b.Draw();
+		x.Draw();
+		y.Draw();
+		arrow.Draw();
 
-	a.Draw();
-	b.Draw();
-	x.Draw();
-	y.Draw();
-	arrow.Draw();
+		usePickText.Draw();
+		throwText2.Draw();
+		moveText2.Draw();
 
-	usePickText.Draw();
-	throwText2.Draw();
-	moveText2.Draw();
+		L_wheel.Draw();
+		R_wheel.Draw();
 
-	L_wheel.Draw();
-	R_wheel.Draw();
+		start.Draw();
+	}
 
-	start.Draw();
-
-
-	//if (!state.IsConnected())
-	//{
-
-	//}
-	//else
-	//{
-	//	useText.Draw();
-	//	throwText.Draw();
-	//	pickText.Draw();
-	//	control.Draw();
-	//}
-
+	//else show keyboard
+	else
+	{
+		useText.Draw();
+		throwText.Draw();
+		pickText.Draw();
+		control.Draw();
+	}
+	objective.Draw();
 	backText.Draw();
 
 }
@@ -102,6 +111,8 @@ GAMESTATE ControlUI::GetGameState()
 
 ControlUI::ControlUI()
 {
+	gamePad = std::make_unique<DirectX::GamePad>();
+
 #define upp 60
 #define left 80
 	control = GUISprite(310 - left, 225 - upp);
@@ -168,9 +179,13 @@ ControlUI::ControlUI()
 	R_wheel.Load(L"../Sprites/control/R_wheel.png");
 	R_wheel.SetScale(0.5f, 0.5f);
 
-	start = GUISprite(322 + left + 400, 450 + upp - offset2);
+	start = GUISprite(322 + left + 400, 625 + upp - offset2);
 	start.Load(L"../Sprites/control/start.png");
 	start.SetScale(0.5f, 0.5f);
+
+	objective = GUISprite(310 - left, 675 - upp);
+	objective.Load(L"../Sprites/Objective.png");
+	objective.SetScale(0.75f, 0.75f);
 
 }
 

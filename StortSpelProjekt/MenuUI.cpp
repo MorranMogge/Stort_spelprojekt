@@ -21,7 +21,6 @@ void MenuUI::SpritePass()
 	hit_exit ? exit2.Draw() : exit.Draw();
 	hit_control ? control2.Draw() : control.Draw();
 
-	objective.Draw();
 	title.Draw();
 
 }
@@ -29,14 +28,107 @@ void MenuUI::SpritePass()
 void MenuUI::HandleInputs()
 {
 	Input::Update();
+	auto state = gamePad->GetState(0);
 
-	hit_start = start.IntersectMouse();
-	hit_setting = settings.IntersectMouse();
-	hit_credits = credits.IntersectMouse();
-	hit_exit = exit.IntersectMouse();
-	hit_control = control.IntersectMouse();
+	// any gamepad connected
+	if (state.IsConnected())
+	{
+		// reset all to false
+		hit_start = hit_setting = hit_credits = hit_exit = hit_control = false;
 
-	if (Input::KeyPress(KeyCode::MOUSE_L))
+		static bool downTrigged = false;
+		static bool upTrigged = false;
+
+		// xbox r or l wheel down
+		if (state.IsDPadDownPressed() || state.IsLeftThumbStickDown())
+		{
+			if (!downTrigged)
+			{
+				switch (selectIndex)
+				{
+				case 0:
+					selectIndex = 1;
+					break;
+				case 1:
+					selectIndex = 2;
+					break;
+				case 2:
+					selectIndex = 3;
+					break;
+				case 3:
+					selectIndex = 4;
+					break;
+				}
+				downTrigged = true;
+			}
+
+		}
+		else
+		{
+			downTrigged = false;
+		}
+
+		if (state.IsDPadUpPressed() || state.IsLeftThumbStickUp())
+		{
+			if (!upTrigged)
+			{
+				switch (selectIndex)
+				{
+				case 1:
+					selectIndex = 0;
+					break;
+				case 2:
+					selectIndex = 1;
+					break;
+				case 3:
+					selectIndex = 2;
+					break;
+				case 4:
+					selectIndex = 3;
+					break;
+				}
+				upTrigged = true;
+			}
+
+		}
+		else
+		{
+			upTrigged = false;
+		}
+
+		switch (selectIndex)
+		{
+		case 0:
+			hit_start = true;
+			break;
+		case 1:
+			hit_control = true;
+			break;
+		case 2:
+			hit_setting = true;
+			break;
+		case 3:
+			hit_credits = true;
+			break;
+		case 4:
+			hit_exit = true;
+			break;
+		}
+	}
+
+	//else mouse
+	else
+	{
+		hit_start = start.IntersectMouse();
+		hit_setting = settings.IntersectMouse();
+		hit_credits = credits.IntersectMouse();
+		hit_exit = exit.IntersectMouse();
+		hit_control = control.IntersectMouse();
+	}
+
+
+
+	if (Input::KeyPress(KeyCode::MOUSE_L) || state.IsAPressed())
 	{
 		if (hit_start)
 		{
@@ -80,6 +172,7 @@ MenuUI::MenuUI()
 #define centerY 340
 #define scale 0.3f,0.3f
 
+	gamePad = std::make_unique<DirectX::GamePad>();
 	start = GUISprite(centerX, 300);
 	start.Load(L"../Sprites/Menu/start.png");
 	start.SetScale(scale);
@@ -123,10 +216,6 @@ MenuUI::MenuUI()
 	Loading = GUISprite(centerX, centerY);
 	Loading.Load(L"../Sprites/Loading.bmp");
 	Loading.SetScale(1, 1);
-
-	objective = GUISprite(310 - left, 675 - upp);
-	objective.Load(L"../Sprites/Objective.png");
-	objective.SetScale(0.75f, 0.75f);
 
 	title = GUISprite(centerX, 340-200);
 	title.Load(L"../Sprites/title.png");

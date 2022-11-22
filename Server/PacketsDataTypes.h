@@ -192,14 +192,14 @@ struct CreateZone
 };
 
 //enum = 25
-//struct IntermissionStart
-//{
-//	int packetId;
-//};
-
-//enum = 25
-struct LandingMiniGameOver
+struct IntermissionStart
 {
 	int packetId;
-	float points;
 };
+
+//enum = 25
+//struct LandingMiniGameOver
+//{
+//	int packetId;
+//	float points;
+//};

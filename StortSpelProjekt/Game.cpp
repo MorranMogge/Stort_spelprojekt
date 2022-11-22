@@ -409,7 +409,7 @@ void Game::handleKeybinds()
 GAMESTATE Game::updateComponentGame()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, temp);
 
 	//Get newest delta time
 	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
@@ -442,7 +442,7 @@ GAMESTATE Game::updateComponentGame()
 	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
-	currentPlayer->checkForStaticCollision(planetVector, spaceShips); //SET ON SERVER!
+	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
 
 	//Check component pickup
@@ -470,13 +470,6 @@ GAMESTATE Game::updateComponentGame()
 		}
 		break;
 	}
-
-	//Player functions
-	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
-	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
-	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
-	currentPlayer->checkForStaticCollision(planetVector, spaceShips); //SET ON SERVER!
-	currentPlayer->velocityMove(dt);
 
 	//Check pickups
 	currentPlayer->pickupItem(items, components);
@@ -514,7 +507,7 @@ GAMESTATE Game::updateComponentGame()
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
 	//Check Components online
-	for (int i = 0; i < spaceShips.size(); i++) //SET ON SERVER!
+	for (int i = 0; i < spaceShips.size(); i++)
 	{
 		if (spaceShips[i]->getCompletion())
 		{
@@ -526,20 +519,40 @@ GAMESTATE Game::updateComponentGame()
 		}
 	}
 
-	if (components.size() > 0)
+	if (!IFONLINE)
 	{
-		//Arrow pointing to spaceship
-		if (currentPlayer->isHoldingComp())
+		if (components.size() > 0)
 		{
-			for (int i = 0; i < spaceShips.size(); i++) //SET ON SERVER!
+			//Arrow pointing to spaceship
+			if (currentPlayer->isHoldingComp())
 			{
-				if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
+				for (int i = 0; i < spaceShips.size(); i++)
+				{
+					if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
+				}
 			}
+			//Arrow pointing to component
+			else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
 		}
-		//Arrow pointing to component
-		else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
-		currentPlayer->colliedWIthComponent(components);
 	}
+	else
+	{
+		if (onlineItems.size() > 0)
+		{
+			//Arrow pointing to spaceship
+			if (currentPlayer->isHoldingComp())
+			{
+				for (int i = 0; i < spaceShips.size(); i++)
+				{
+					if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
+				}
+			}
+			//Arrow pointing to component
+			else this->arrow->showDirection(onlineItems[0]->getPosV3(), currentPlayer->getPosV3(), grav);
+		}
+	}
+
+	currentPlayer->colliedWIthComponent(components);
 
 	if (!IFONLINE) //Check Components offline
 	{
@@ -565,7 +578,7 @@ GAMESTATE Game::updateComponentGame()
 	}
 	else
 	{
-		for (int i = 0; i < spaceShips.size(); i++) //SET ON SERVER!
+		for (int i = 0; i < spaceShips.size(); i++)
 		{
 			for (int j = 0; j < components.size(); j++)
 			{
@@ -581,7 +594,7 @@ GAMESTATE Game::updateComponentGame()
 		{
 			if (spaceShips[i]->isFinished())
 			{
-				this->currentMinigame = MiniGames::STARTINTERMISSION;
+				this->currentMinigame = MiniGames::STARTOFINTERMISSION;
 
 				//Send data to server
 				/*IntermissionStart startOfIntermission;
@@ -602,7 +615,7 @@ GAMESTATE Game::updateComponentGame()
 	}
 
 	//Play pickup animation
-	for (int i = 0; i < spaceShips.size(); i++) //SET ON SERVER!
+	for (int i = 0; i < spaceShips.size(); i++)
 	{
 		spaceShips[i]->animateOnPickup();
 	}
@@ -646,10 +659,10 @@ GAMESTATE Game::updateLandingGame()
 		std::cout << "Total points " << landingMiniGamePoints << std::endl;
 
 		//Send data to server
-		LandingMiniGameOver totalPoints;
+		/*LandingMiniGameOver totalPoints;
 		totalPoints.packetId = PacketType::LANDINGMINIGAMEOVER;
 		totalPoints.points = landingMiniGamePoints;
-		client->sendStuff<LandingMiniGameOver>(totalPoints);
+		client->sendStuff<LandingMiniGameOver>(totalPoints);*/
 	}
 	return NOCHANGE;
 }
@@ -752,7 +765,7 @@ GAMESTATE Game::updateIntermission()
 GAMESTATE Game::Update()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, temp);
 
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();
@@ -773,7 +786,7 @@ GAMESTATE Game::Update()
 	case INTERMISSION:
 		currentGameState = this->updateIntermission();
 		break;
-	case STARTINTERMISSION:
+	case STARTOFINTERMISSION:
 		currentGameState = this->startIntermission();
 			break;
 	case STARTLANDING:

@@ -153,7 +153,7 @@
     <ClCompile Include="RandomizeSpawn.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="GameObject.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="ServerGravField.cpp" />
     <ClCompile Include="ServerPlanet.cpp" />
@@ -164,7 +164,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="DirectXMathHelper.h" />
     <ClInclude Include="GameObject.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Item.h" />
     <ClInclude Include="KingOfTheHillMiniGame.h" />

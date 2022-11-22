@@ -12,7 +12,7 @@ PacketEventManager::~PacketEventManager()
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips
-	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector, CaptureZone*& captureZone)
+	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector, CaptureZone*& captureZone, int& currentMinigame)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -77,7 +77,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 		case PacketType::SPAWNCOMPONENT:
 			spawnComp = circularBuffer->readData<SpawnComponent>();
-			std::cout << "Comp ID: " << spawnComp->ComponentId << "\n";
+			//std::cout << "Comp ID: " << spawnComp->ComponentId << "\n";
 			newComponent = new Component(meshes[6], DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 				COMPONENT, spawnComp->ComponentId, field);
 			physWorld.addPhysComponent(newComponent);
@@ -185,7 +185,6 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 					item->setPos(randomPos);
 					players[i]->releaseItem();
-
 				}
 			}
 			break;
@@ -241,6 +240,12 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::CREATEZONE:
 			zonePos = circularBuffer->readData<CreateZone>();
 			captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(zonePos->xPos, zonePos->yPos, zonePos->zPos), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), field, DirectX::SimpleMath::Vector3(zonePos->scale, zonePos->scale, zonePos->scale));
+			break;
+
+		case PacketType::STARTINTERMISSION:
+			std::cout << "RECEIVED START INTERMISSION\n";
+
+			currentMinigame = STARTINTERMISSION;
 			break;
 		}
 	}

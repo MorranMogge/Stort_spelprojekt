@@ -7,7 +7,7 @@ enum MiniGames
 	LANDINGSPACESHIP,
 	KINGOFTHEHILL,
 	INTERMISSION,
-	STARTINTERMISSION,
+	STARTOFINTERMISSION,
 	STARTLANDING,
 	STARTKTH
 };
@@ -19,11 +19,14 @@ struct wirefameInfo
 };
 
 const int NROFPLAYERS = 1;
-static bool IFONLINE = false;
+static bool IFONLINE = true;
 
 class Game : public State
 {
 private:
+	int temp = 0;
+
+
 	ID3D11DeviceContext* immediateContext;
 	HWND* window;
 	MiniGames currentMinigame;

@@ -173,6 +173,7 @@ void sendBinaryDataOnePlayer(const T& data, userData& user)
 
 int main()
 {
+	int progress[2] = {0, 0};
 	int itemid = 0;
 	int componentIdCounter = 0;
 	bool once = false;
@@ -229,7 +230,7 @@ int main()
 	start = std::chrono::system_clock::now();
 
 	float timerLength = 1.f / 30.0f;
-	float timerComponentLength = 20.0f;
+	float timerComponentLength = 10.0f;
 	float itemSpawnTimerLength = 20.0f;
 
 	setupTcp(data);
@@ -538,9 +539,7 @@ int main()
 			{
 				for (int j = 0; j < spaceShipPos.size(); j++)
 				{
-
 					//kopiera det här för king of the hill
-
 					//if (!components[i].getActiveState()) continue;
 					static DirectX::XMFLOAT3 vecToComp;
 					static DirectX::XMFLOAT3 objPos;
@@ -555,17 +554,27 @@ int main()
 						components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 						components[i].setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
 						components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
+						components[i].setInUseBy(-1);
+						//KOM IHÅG SKICKA DATA TILL ALLA SPELARE FÖR ATT DEN ÄR  DROPPAD
+
+						//Sending to client
 						ComponentAdded compAdded;
 						compAdded.packetId = PacketType::COMPONENTADDED;
 						compAdded.spaceShipTeam = j;
 						sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
+
+						progress[j]++;
+						if (progress[j] > 3)
+						{
+							IntermissionStart startIntermission;
+							startIntermission.packetId = PacketType::STARTINTERMISSION;
+							sendBinaryDataAllPlayers<IntermissionStart>(startIntermission, data);
+						}
 					}
 				}
 			}
 			
-			
 			//physWorld.update(timerLength);
-
 			//f�r varje spelare s� skicka deras position till alla klienter
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{

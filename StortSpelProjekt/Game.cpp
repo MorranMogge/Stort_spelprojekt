@@ -519,39 +519,17 @@ GAMESTATE Game::updateComponentGame()
 		}
 	}
 
-	if (!IFONLINE)
+	//Arrow pointing to spaceship
+	if (currentPlayer->isHoldingComp())
 	{
-		if (components.size() > 0)
+		for (int i = 0; i < spaceShips.size(); i++)
 		{
-			//Arrow pointing to spaceship
-			if (currentPlayer->isHoldingComp())
-			{
-				for (int i = 0; i < spaceShips.size(); i++)
-				{
-					if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
-				}
-			}
-			//Arrow pointing to component
-			else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
+			if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
 		}
 	}
-	else
-	{
-		if (onlineItems.size() > 0)
-		{
-			//Arrow pointing to spaceship
-			if (currentPlayer->isHoldingComp())
-			{
-				for (int i = 0; i < spaceShips.size(); i++)
-				{
-					if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
-				}
-			}
-			//Arrow pointing to component
-			else this->arrow->showDirection(onlineItems[0]->getPosV3(), currentPlayer->getPosV3(), grav);
-		}
-	}
-
+	//Arrow pointing to component
+	else if (onlineItems.size() > 0)  this->arrow->showDirection(onlineItems[0]->getPosV3(), currentPlayer->getPosV3(), grav);
+	else if (components.size() > 0) this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
 	currentPlayer->colliedWIthComponent(components);
 
 	if (!IFONLINE) //Check Components offline

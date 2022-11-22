@@ -1258,6 +1258,7 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 				rqstCmpPickUp.componentId = items[i]->getOnlineId();
 				rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;
 				rqstCmpPickUp.playerId = this->getOnlineID();
+				if (items[i]->getId() == ObjID::COMPONENT) this->holdingComp = true;
 				std::cout << "requesting pickup componentId: " << std::to_string(rqstCmpPickUp.componentId) << std::endl;
 				//skickar en f�rfr�gan att plocka upp item
 				keyPressTimer.resetStartTime();

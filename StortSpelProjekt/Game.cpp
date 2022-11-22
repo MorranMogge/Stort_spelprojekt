@@ -471,9 +471,6 @@ GAMESTATE Game::updateComponentGame()
 		break;
 	}
 
-	//Check pickups
-	currentPlayer->pickupItem(items, components);
-
 	/*if (Input::KeyPress(KeyCode::K))
 	{
 		randomizeObjectPos(this->testBat);
@@ -512,7 +509,7 @@ GAMESTATE Game::updateComponentGame()
 		if (spaceShips[i]->getCompletion())
 		{
 			if (currentPlayer->getTeam() == i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot()); currentPlayer->setVibration(0.1f, 0.1f);
-			this->spaceShips[i]->move(this->spaceShips[i]->getUpDirection(), -dt);
+			this->spaceShips[i]->move(this->spaceShips[i]->getUpDirection(), -dt); // IS TOO CLOSE TO OTHER PLANET
 			endTimer += dt;
 			arrow->removeArrow(); //Remove these completely by not drawing the meshes anymore
 			if (currentPlayer->getTeam() == i) this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969)); //Remove these completely by not drawing the meshes anymore
@@ -520,7 +517,7 @@ GAMESTATE Game::updateComponentGame()
 	}
 
 	//Arrow pointing to spaceship
-	if (currentPlayer->isHoldingComp()) //THIS NEEDS TO BE FIXED TOO!
+	if (currentPlayer->isHoldingComp())
 	{
 		for (int i = 0; i < spaceShips.size(); i++)
 		{

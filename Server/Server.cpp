@@ -574,7 +574,7 @@ int main()
 			if (timeToFly)
 			{
 				flyTime += timerLength;
-				if (flyTime > 6.f)
+				if (flyTime > 4.f)
 				{
 					std::cout << "SENT START INTERMISSION\n";
 					IntermissionStart startIntermission;

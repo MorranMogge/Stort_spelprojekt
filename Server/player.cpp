@@ -14,13 +14,13 @@ float player::getposition(char whichPos) const
 	switch (whichPos)
 	{
 	case('x'):
-		return this->physComp->getPosition().x;;//oiasfjaoiwfjoiawfjoiawfjoiawfjoiawfjoiawfjoiawfjaoiwfjoawifjafwoij
+		return this->physComp->getPosition().x;
 		break;
 	case('y'):
-		return this->physComp->getPosition().y;;
+		return this->physComp->getPosition().y;
 		break;
 	case('z'):
-		return this->physComp->getPosition().z;;
+		return this->physComp->getPosition().z;
 		break;
 	default:
 		return 69.0f;

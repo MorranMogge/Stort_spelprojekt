@@ -783,19 +783,6 @@ void Player::releaseItem()
 {
 	if (this->holdingItem != nullptr)
 	{
-		ComponentData newData;
-		newData.packetId = PacketType::COMPONENTPOSITION;
-		newData.ComponentId = this->getItemOnlineId();
-		newData.inUseBy = -1;
-		newData.x = this->holdingItem->getPosV3().x;
-		newData.y = this->holdingItem->getPosV3().y;
-		newData.z = this->holdingItem->getPosV3().z;
-		//sending data to server
-		if (this->client != nullptr)
-		{
-			client->sendStuff<ComponentData>(newData);
-		}
-
 		this->holdingItem->setPickedUp(false);
 		this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 		this->holdingItem = nullptr;

@@ -29,7 +29,7 @@
 
 #include <psapi.h>
 
-const short MAXNUMBEROFPLAYERS = 1;
+const short MAXNUMBEROFPLAYERS = 2;
 std::mutex mutex;
 
 struct userData
@@ -263,7 +263,7 @@ int main()
 	start = std::chrono::system_clock::now();
 
 	float timerLength = 1.f / 30.0f;
-	float timerComponentLength = 20.0f;
+	float timerComponentLength = 10.0f;
 	float itemSpawnTimerLength = 20.0f;
 
 	setupTcp(data);
@@ -403,13 +403,16 @@ int main()
 						std::cout << std::to_string(components[i].getPosXMFLOAT3().x) << ", y: " << std::to_string(components[i].getPosXMFLOAT3().y) <<
 							", z" << std::to_string(components[i].getPosXMFLOAT3().z) << std::endl;
 						
-							for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+							for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
 							{
 								//skicka att en spelare har droppat en component till alla spelare förutom spelaren som droppat componenten eftersom den redan är droppad
-								if (cmpDropped->playerId != data.users[i].playerId)
-								{
-									sendBinaryDataOnePlayer(cmpDropped, data.users[i]);
-								}
+								
+									ComponentDropped cmpDropData;
+									cmpDropData.componentId = cmpDropped->componentId;
+									cmpDropData.packetId = cmpDropped->packetId;
+									cmpDropData.playerId = cmpDropped->playerId;
+									sendBinaryDataOnePlayer(cmpDropData, data.users[j]);
+								
 							}
 						break;
 					}
@@ -489,22 +492,16 @@ int main()
 		//	//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
 		//}
 
-		for (int i = 0; i < onlineItems.size(); i++)
+		for (int i = 0; i < components.size(); i++)
 		{
 			for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
 			{
-				if(onlineItems[i]->getInUseById() == data.users[j].playerId)
+				if(components[i].getInUseById() == data.users[j].playerId)
 				{
-					onlineItems[i]->setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
+					components[i].setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
 				}
 			}
 		}
-
-		for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-		{
-			std::cout << "PLayer: " << std::to_string(i) << ", x: " << std::to_string(data.users[i].playa.getposition('x'));
-
- 		}
 		
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
 		{
@@ -647,7 +644,7 @@ int main()
 		
 
 	}
-	(void*)getchar();
+	(void)getchar();
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
 		delete onlineItems[i];

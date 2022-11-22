@@ -442,10 +442,10 @@ GAMESTATE Game::Update()
 	currentPlayer->requestingPickUpItem(onlineItems);
 	
 	//Check item pickup
-	for (int i = 0; i < items.size(); i++)
-	{
-		if (currentPlayer->pickupItem(items[i])) break;
-	}
+	//for (int i = 0; i < items.size(); i++)
+	//{
+	//	if (currentPlayer->pickupItem(items[i])) break;
+	//}
 
 	/*if (Input::KeyPress(KeyCode::K))
 	{

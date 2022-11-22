@@ -228,11 +228,11 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 			for (int i = 0; i < onlineItems.size(); i++)
 			{
-				std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", i = " << std::to_string(i) << std::endl;
+				//std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", i = " << std::to_string(i) << std::endl;
 				if (onlineItems[i]->getOnlineId() == cmpPosition->ComponentId)
 				{
-					std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", pos x: " << std::to_string(cmpPosition->x)
-						<< ", y: " << std::to_string(cmpPosition->y) << std::endl;
+					//std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", pos x: " << std::to_string(cmpPosition->x)
+						//<< ", y: " << std::to_string(cmpPosition->y) << std::endl;
 					onlineItems[i]->setPos(DirectX::XMFLOAT3(cmpPosition->x, cmpPosition->y, cmpPosition->z));
 					//componentVector[i]->getPhysComp()->setRotation(cmpPosition->quat);
 				}
@@ -243,11 +243,13 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 		case PacketType::COMPONENTDROPPED:
 			cmpDropped = circularBuffer->readData<ComponentDropped>();
-
+			
 			for (int i = 0; i < players.size(); i++)
 			{
 				if (players[i]->getOnlineID() == cmpDropped->playerId)
 				{
+					std::cout << "playerID UWU TEst:" << cmpDropped->playerId << std::endl;
+					std::cout << "x: " << onlineItems[cmpDropped->componentId]->getPos().x << "y: " << onlineItems[cmpDropped->componentId]->getPos().y << std::endl;
 					players[i]->releaseItem();
 				}
 			}

@@ -11,7 +11,10 @@
 class KingOfTheHillMiniGame
 {
 private:
-	
+	std::chrono::time_point<std::chrono::system_clock> timer;
+	std::chrono::time_point<std::chrono::system_clock> timerToSend;
+	float time;
+	float timerSend;
 	//3D punkt
 	DirectX::XMFLOAT3 kingOfTheHillOrigo;
 	float radius;
@@ -26,6 +29,10 @@ private:
 	{
 		return sqrt(argOne.x * argOne.x + argOne.y * argOne.y + argOne.z * argOne.z);
 	}
+	unsigned int pointsToAdd;
+	unsigned int team1Score;
+	unsigned int team2Score;
+	unsigned int goalScore;
 public:
 	KingOfTheHillMiniGame(serverData& data, const short &nrOfPlayers);
 	//Bestäm position på zonen

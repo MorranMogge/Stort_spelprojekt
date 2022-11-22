@@ -33,6 +33,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	ConfirmComponentPickedUp* confirmCmpPickedUp = nullptr;
 	ComponentPosition* cmpPosition = nullptr;
 	CreateZone* zonePos = nullptr;
+	winner* win = nullptr;
 
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{
@@ -60,6 +61,11 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::PACKETID:
 			protocol = circularBuffer->readData<idProtocol>();
 			std::cout << "PacketHandleEvents, received player id: " << std::to_string(protocol->assignedPlayerId) << std::endl;
+			break;
+		
+		case PacketType::WINNER:
+			win = circularBuffer->readData<winner>();
+			std::cout << "uwu i won wuw\n";
 			break;
 
 		case PacketType::COMPONENTPOSITION:
@@ -240,6 +246,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 		case PacketType::CREATEZONE:
 			zonePos = circularBuffer->readData<CreateZone>();
+			std::cout << "uwuw zone done\n";
 			captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(zonePos->xPos, zonePos->yPos, zonePos->zPos), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), field, DirectX::SimpleMath::Vector3(zonePos->scale, zonePos->scale, zonePos->scale),{0,1,0});
 			break;
 		}

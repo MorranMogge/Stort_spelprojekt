@@ -274,6 +274,14 @@ void SettingsUI::HandleInputs()
 		}
 	}
 
+	if (auto state = gamePad->GetState(0); state.IsConnected())
+	{
+		if (state.IsBPressed())
+		{
+			gameState = MENU;
+		}
+	}
+
 }
 
 void SettingsUI::SpritePass()
@@ -334,6 +342,8 @@ GAMESTATE SettingsUI::GetGameState()
 
 SettingsUI::SettingsUI()
 {
+	gamePad = std::make_unique<DirectX::GamePad>();
+
 	settingsText = GUISprite(75 + 120, 100);
 	settingsText.Load(L"../Sprites/settingText.png");
 
@@ -427,11 +437,6 @@ SettingsUI::SettingsUI()
 	}
 
 	gameState = NOCHANGE;
-}
-
-void SettingsUI::Init()
-{
-
 }
 
 SettingsUI::~SettingsUI()

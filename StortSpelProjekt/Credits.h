@@ -1,6 +1,7 @@
 #pragma once
 #include "GUISprite.h"
 #include "State.h"
+#include <GamePad.h>
 
 class Credits final
 {
@@ -10,6 +11,8 @@ class Credits final
 	GUISprite backText;
 
 	GAMESTATE gameState;
+
+	std::unique_ptr<DirectX::GamePad> gamePad;
 
 	void HandleInputs();
 

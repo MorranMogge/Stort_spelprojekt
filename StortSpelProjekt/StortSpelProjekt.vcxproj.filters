@@ -462,7 +462,6 @@
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="AsteroidHandler.h" />
     <ClInclude Include="Arrow.h" />
-    <ClInclude Include="Credits.h" />
     <ClInclude Include="Planet.h" />
     <ClInclude Include="PlanetGenerator.h" />
     <ClInclude Include="CaptureZone.h">
@@ -473,6 +472,9 @@
     </ClInclude>
     <ClInclude Include="ControlMenu.h">
       <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="Credits.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

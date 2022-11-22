@@ -509,7 +509,7 @@ GAMESTATE Game::updateComponentGame()
 		if (spaceShips[i]->getCompletion())
 		{
 			if (currentPlayer->getTeam() == i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot()); currentPlayer->setVibration(0.1f, 0.1f);
-			this->spaceShips[i]->move(this->spaceShips[i]->getUpDirection(), -dt); // IS TOO CLOSE TO OTHER PLANET
+			this->spaceShips[i]->flyAway(dt); // IS TOO CLOSE TO OTHER PLANET
 			endTimer += dt;
 			arrow->removeArrow(); //Remove these completely by not drawing the meshes anymore
 			if (currentPlayer->getTeam() == i) this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969)); //Remove these completely by not drawing the meshes anymore
@@ -622,7 +622,7 @@ GAMESTATE Game::updateLandingGame()
 
 	moveDir.Normalize();
 	moveDir *= 0.5f;
-	spaceShips[currentPlayer->getTeam()]->move(moveDir, dt);
+	spaceShips[currentPlayer->getTeam()]->fly(moveDir, dt);
 	if (landingUi.handleInputs(dt)) landingMiniGamePoints += 100 * dt;
 	if (getLength(spaceShips[currentPlayer->getTeam()]->getPosV3()) <= planetVector[0]->getSize())
 	{

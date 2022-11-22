@@ -273,8 +273,20 @@ void SpaceShip::animateOnPickup()
 		}
 	}
 }
-void SpaceShip::move(const DirectX::XMFLOAT3& grav, const float& deltaTime)
+
+void SpaceShip::flyAway(const float& deltaTime)
 {
-	upVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);
-	this->position += upVector * 18.f * deltaTime;
+	if (!setUp)
+	{
+		setUp = true;
+		upDirection = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 0.0f);
+	}
+	this->position += upDirection * this->moveCounter * deltaTime;
+	this->moveCounter += 0.01f;
+}
+
+void SpaceShip::fly(const DirectX::XMFLOAT3& grav, const float& deltaTime)
+{
+	upDirection = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);
+	this->position += upDirection * 18.f * deltaTime;
 }

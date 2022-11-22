@@ -21,7 +21,6 @@ void MenuUI::SpritePass()
 	hit_exit ? exit2.Draw() : exit.Draw();
 	hit_control ? control2.Draw() : control.Draw();
 
-	objective.Draw();
 	title.Draw();
 
 }
@@ -29,14 +28,107 @@ void MenuUI::SpritePass()
 void MenuUI::HandleInputs()
 {
 	Input::Update();
+	auto state = gamePad->GetState(0);
 
-	hit_start = start.IntersectMouse();
-	hit_setting = settings.IntersectMouse();
-	hit_credits = credits.IntersectMouse();
-	hit_exit = exit.IntersectMouse();
-	hit_control = control.IntersectMouse();
+	// any gamepad connected
+	if (state.IsConnected())
+	{
+		// reset all to false
+		hit_start = hit_setting = hit_credits = hit_exit = hit_control = false;
 
-	if (Input::KeyPress(KeyCode::MOUSE_L))
+		static bool downTrigged = false;
+		static bool upTrigged = false;
+
+		// xbox r or l wheel down
+		if (state.IsDPadDownPressed() || state.IsLeftThumbStickDown())
+		{
+			if (!downTrigged)
+			{
+				switch (selectIndex)
+				{
+				case 0:
+					selectIndex = 1;
+					break;
+				case 1:
+					selectIndex = 2;
+					break;
+				case 2:
+					selectIndex = 3;
+					break;
+				case 3:
+					selectIndex = 4;
+					break;
+				}
+				downTrigged = true;
+			}
+
+		}
+		else
+		{
+			downTrigged = false;
+		}
+
+		if (state.IsDPadUpPressed() || state.IsLeftThumbStickUp())
+		{
+			if (!upTrigged)
+			{
+				switch (selectIndex)
+				{
+				case 1:
+					selectIndex = 0;
+					break;
+				case 2:
+					selectIndex = 1;
+					break;
+				case 3:
+					selectIndex = 2;
+					break;
+				case 4:
+					selectIndex = 3;
+					break;
+				}
+				upTrigged = true;
+			}
+
+		}
+		else
+		{
+			upTrigged = false;
+		}
+
+		switch (selectIndex)
+		{
+		case 0:
+			hit_start = true;
+			break;
+		case 1:
+			hit_control = true;
+			break;
+		case 2:
+			hit_setting = true;
+			break;
+		case 3:
+			hit_credits = true;
+			break;
+		case 4:
+			hit_exit = true;
+			break;
+		}
+	}
+
+	//else mouse
+	else
+	{
+		hit_start = start.IntersectMouse();
+		hit_setting = settings.IntersectMouse();
+		hit_credits = credits.IntersectMouse();
+		hit_exit = exit.IntersectMouse();
+		hit_control = control.IntersectMouse();
+	}
+
+
+
+	if (Input::KeyPress(KeyCode::MOUSE_L) || state.IsAPressed())
 	{
 		if (hit_start)
 		{
@@ -80,56 +172,53 @@ MenuUI::MenuUI()
 #define centerY 340
 #define scale 0.3f,0.3f
 
+	gamePad = std::make_unique<DirectX::GamePad>();
 	start = GUISprite(centerX, 300);
-	start.Load(GPU::device, L"../Sprites/Menu/start.png");
+	start.Load(L"../Sprites/Menu/start.png");
 	start.SetScale(scale);
 
 	control = GUISprite(centerX, 300 + 75 * 1);
-	control.Load(GPU::device, L"../Sprites/Menu/control.png");
+	control.Load(L"../Sprites/Menu/control.png");
 	control.SetScale(scale);
 
 	settings = GUISprite(centerX, 300 + 75 * 2);
-	settings.Load(GPU::device, L"../Sprites/Menu/settings.png");
+	settings.Load(L"../Sprites/Menu/settings.png");
 	settings.SetScale(scale);
 
 	credits = GUISprite(centerX, 300 + 75 * 3);
-	credits.Load(GPU::device, L"../Sprites/Menu/credits.png");
+	credits.Load(L"../Sprites/Menu/credits.png");
 	credits.SetScale(scale);
 
 	exit = GUISprite(centerX, 300 + 75 * 4);
-	exit.Load(GPU::device, L"../Sprites/Menu/exit.png");
+	exit.Load(L"../Sprites/Menu/exit.png");
 	exit.SetScale(scale);
 
 	start2 = GUISprite(centerX, 300);
-	start2.Load(GPU::device, L"../Sprites/Menu/start2_r.png");
+	start2.Load(L"../Sprites/Menu/start2_r.png");
 	start2.SetScale(scale);
 
 	control2 = GUISprite(centerX, 300 + 75 * 1);
-	control2.Load(GPU::device, L"../Sprites/Menu/control2_r.png");
+	control2.Load(L"../Sprites/Menu/control2_r.png");
 	control2.SetScale(scale);
 
 	settings2 = GUISprite(centerX, 300 + 75 * 2);
-	settings2.Load(GPU::device, L"../Sprites/Menu/settings2_r.png");
+	settings2.Load(L"../Sprites/Menu/settings2_r.png");
 	settings2.SetScale(scale);
 
 	credits2 = GUISprite(centerX, 300 + 75 * 3);
-	credits2.Load(GPU::device, L"../Sprites/Menu/credits2_r.png");
+	credits2.Load(L"../Sprites/Menu/credits2_r.png");
 	credits2.SetScale(scale);
 
 	exit2 = GUISprite(centerX, 300 + 75 * 4);
-	exit2.Load(GPU::device, L"../Sprites/Menu/exit2_r.png");
+	exit2.Load(L"../Sprites/Menu/exit2_r.png");
 	exit2.SetScale(scale);
 
 	Loading = GUISprite(centerX, centerY);
-	Loading.Load(GPU::device, L"../Sprites/Loading.bmp");
+	Loading.Load(L"../Sprites/Loading.bmp");
 	Loading.SetScale(1, 1);
 
-	objective = GUISprite(310 - left, 675 - upp);
-	objective.Load(GPU::device, L"../Sprites/Objective.png");
-	objective.SetScale(0.75f, 0.75f);
-
 	title = GUISprite(centerX, 340-200);
-	title.Load(GPU::device, L"../Sprites/title.png");
+	title.Load(L"../Sprites/title.png");
 	title.SetScale(0.6f, 0.6f);
 
 }

@@ -54,6 +54,19 @@ void GUISprite::Load(ID3D11Device* device, const wchar_t* file)
 
 }
 
+void GUISprite::Load(const wchar_t* file)
+{
+    //Import texture
+    //DirectX::CreateDDSTextureFromFile(device, file, &m_pResource, &m_pTexture);
+    DirectX::CreateWICTextureFromFile(GPU::device, file, &m_pResource, &m_pTexture);
+    Utility::GetTextureDimentions(m_pResource.Get(), &m_Width, &m_Height);
+    m_Origin = DirectX::SimpleMath::Vector2(m_Width / 2.0f, m_Height / 2.0f); //origin = center of texture also important to rotate as rotates around centrepoint
+    m_SourceRect.left = 0;
+    m_SourceRect.top = 0;
+    m_SourceRect.right = m_Width;
+    m_SourceRect.bottom = m_Height;
+}
+
 const DirectX::SimpleMath::Vector2 GUISprite::GetPosition() const
 {
     auto pos = m_Position;

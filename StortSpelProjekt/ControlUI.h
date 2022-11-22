@@ -14,15 +14,19 @@ class ControlUI final
 	GUISprite a, b, y, x;
 	GUISprite arrow;
 
-	GUISprite LB, LT, L_Move;
+	GUISprite LB, LT, L_wheel;
 
-	GUISprite RB, RT, R_Move;
+	GUISprite RB, RT, R_wheel;
 
 	GUISprite start;
 
 	GUISprite backText;
 
+	GUISprite usePickText,throwText2,moveText2;
+
 	GAMESTATE gameState = NOCHANGE;
+
+	GUISprite objective;
 
 	std::unique_ptr<DirectX::GamePad> gamePad;
 

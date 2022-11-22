@@ -4,6 +4,7 @@
 #include "GUIText.h"
 #include "State.h"
 #include "ImGuiHelper.h"
+#include <GamePad.h>
 
 class SettingsUI final
 {
@@ -28,11 +29,12 @@ class SettingsUI final
 
 	ImGuiHelper imGui;
 
+	std::unique_ptr<DirectX::GamePad> gamePad;
+
 	GAMESTATE gameState;
 
 	void HandleInputs();
 	void SpritePass();
-	void Init();
 
 public:
 

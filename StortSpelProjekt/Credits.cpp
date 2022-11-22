@@ -15,6 +15,14 @@ void Credits::HandleInputs()
 		}
 	}
 
+	if (auto state = gamePad->GetState(0); state.IsConnected())
+	{
+		if (state.IsBPressed())
+		{
+			gameState = MENU;
+		}
+	}
+
 }
 
 void Credits::TextPass()
@@ -37,8 +45,7 @@ GAMESTATE Credits::GetGameState()
 
 Credits::Credits()
 {
-
-	GUI::Init();
+	gamePad = std::make_unique<DirectX::GamePad>();
 
 	creditsText = GUISprite(250 + 150, 150);
 	creditsText.Load(GPU::device, L"../Sprites/CreditsText.png");

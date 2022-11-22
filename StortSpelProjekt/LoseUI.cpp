@@ -33,10 +33,10 @@ GAMESTATE LoseUI::GetGameState()
 LoseUI::LoseUI()
 {
 	loseText = GUISprite(1264.0f / 2.0f, 300);
-	loseText.Load(GPU::device, L"../Sprites/loseText.png");
+	loseText.Load(L"../Sprites/loseText.png");
 
 	backText = GUISprite(75 + 70, 600);
-	backText.Load(GPU::device, L"../Sprites/backText.png");
+	backText.Load(L"../Sprites/backText.png");
 
 	gameState = NOCHANGE;
 }

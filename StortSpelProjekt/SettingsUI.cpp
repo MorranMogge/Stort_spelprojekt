@@ -45,6 +45,105 @@ void ReInitSwapChain()
 	dxgiFactory->CreateSwapChain(GPU::device, &sd, &GPU::swapChain);
 }
 
+void SettingsUI::DoFullScreen()
+{
+	if (fullscreen = !fullscreen; fullscreen)
+	{
+		if (is720p)
+		{
+			GPU::windowWidth = 1280;
+			GPU::windowHeight = 720;
+			ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+
+			SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+			SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW);
+			GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+			GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+			// get window client size
+			if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+			{
+				GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+				GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+			}
+
+			ReInitSwapChain();
+			gameState = SETTINGS;
+		}
+		else
+		{
+			GPU::windowWidth = 1920;
+			GPU::windowHeight = 1080;
+			ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+
+			SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+			SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW);
+			GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+			GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+			// get window client size
+			if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+			{
+				GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+				GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+			}
+
+			ReInitSwapChain();
+			gameState = SETTINGS;
+
+		}
+
+	}
+	else
+	{
+		if (is720p)
+		{
+			GPU::windowWidth = 1280;
+			GPU::windowHeight = 720;
+			ChangeResolution2(1920, 1080);
+
+			SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+			SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+
+			// get window client size
+			if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+			{
+				GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+				GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+			}
+
+			GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+			GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+			ReInitSwapChain();
+			gameState = SETTINGS;
+		}
+		else
+		{
+			GPU::windowWidth = 1920;
+			GPU::windowHeight = 1080;
+			ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+
+			SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+			SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+
+			// get window client size
+			if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+			{
+				GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+				GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+			}
+
+			GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+			GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+			ReInitSwapChain();
+			gameState = SETTINGS;
+		}
+
+	}
+}
+
 void SettingsUI::HandleInputs()
 {
 	backText.IntersectMouse() ? backText.SetTint(DirectX::Colors::Green.v) : backText.SetTint(DirectX::Colors::White.v);
@@ -52,32 +151,54 @@ void SettingsUI::HandleInputs()
 	if (auto state = gamePad->GetState(0); state.IsConnected())
 	{
 		//resets
+		//to do
 
-
-		static bool downTrigged = false;
-		static bool upTrigged = false;
-		static bool aTrigged = false;
+		// any drop down is active
+		if (dropdown1 || dropdown2)
+		{
+			any_DropDown_Active = true;
+		}
+		else // non drop down is active
+		{
+			any_DropDown_Active = false;
+		}
 
 		//down pressed
 		if (state.IsDPadDownPressed() || state.IsLeftThumbStickDown())
 		{
+			// down isnt trigged
 			if (!downTrigged)
 			{
-				switch (selected)
+				//do drop down selection
+				if (any_DropDown_Active)
 				{
-				case 0:
-					selected = 1;
-					break;
-				case 1:
-					selected = 2;
-					break;
-				case 2:
-					selected = 3;
-					break;
+					switch (selected_dropdown)
+					{
+					case 0:
+						selected_dropdown = 1;
+						break;
+					}
+				}
+				//else do normal selection
+				else
+				{
+					switch (selected)
+					{
+					case 0:
+						selected = 1;
+						break;
+					case 1:
+						selected = 2;
+						break;
+					case 2:
+						selected = 3;
+						break;
+					}
 				}
 				downTrigged = true;
 			}
 		}
+		//down release
 		else
 		{
 			downTrigged = false;
@@ -104,6 +225,7 @@ void SettingsUI::HandleInputs()
 			}
 
 		}
+		//up release
 		else
 		{
 			upTrigged = false;
@@ -112,21 +234,78 @@ void SettingsUI::HandleInputs()
 		// A pressed
 		if (state.IsAPressed())
 		{
-			if (!aTrigged)
+			if (!ATrigged)
 			{
-				aTrigged = true;
+				switch (selected)
+				{
+				case 0: // resolution
+					dropdown1 = !dropdown1;
+					if (dropdown1 || dropdown2)
+					{
+						any_DropDown_Active = true;
+					}
+					else // non drop down is active
+					{
+						any_DropDown_Active = false;
+					}
+					break;
+				case 1: // full screen
+					DoFullScreen();
+					break;
+				case 2: // graphic api
+					dropdown2 = !dropdown2;
+					if (dropdown1 || dropdown2)
+					{
+						any_DropDown_Active = true;
+					}
+					else // non drop down is active
+					{
+						any_DropDown_Active = false;
+					}
+					break;
+				case 3: // back
+					if (backText.GetTint() == DirectX::Colors::Orange.v)
+					{
+						gameState = MENU;
+					}
+					break;
+				}
+				ATrigged = true;
 			}
 		}
+		// A release
 		else
 		{
-			aTrigged = false;
+			ATrigged = false;
 		}
 
-
+		// B pressed
 		if (state.IsBPressed())
 		{
-			gameState = MENU;
+			if (!BTrigged)
+			{
+				if (any_DropDown_Active)
+				{
+					any_DropDown_Active = false;
+				}
+				else
+				{
+					gameState = MENU;
+					BTrigged = true;
+				}
+
+			}
 		}
+		// B release
+		else
+		{
+			BTrigged = false;
+		}
+
+		// reset color
+		resulotionText.SetTint(DirectX::Colors::White.v);
+		fullscreenText.SetTint(DirectX::Colors::White.v);
+		graphicAPItext.SetTint(DirectX::Colors::White.v);
 
 		switch (selected)
 		{
@@ -137,10 +316,10 @@ void SettingsUI::HandleInputs()
 			fullscreenText.SetTint(DirectX::Colors::Orange.v);
 			break;
 		case 2:
-
+			graphicAPItext.SetTint(DirectX::Colors::Orange.v);
 			break;
 		case 3:
-
+			backText.SetTint(DirectX::Colors::Orange.v);
 			break;
 		}
 
@@ -157,104 +336,7 @@ void SettingsUI::HandleInputs()
 			// click and intersects
 			if (checkbox_true.IntersectMouse() && !dropdown2 && !dropdown1 || checkbox_false.IntersectMouse() && !dropdown2 && !dropdown1)
 			{
-				fullscreen = !fullscreen;
-
-				if (fullscreen)
-				{
-					if (is720p)
-					{
-						GPU::windowWidth = 1280;
-						GPU::windowHeight = 720;
-						ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
-
-						SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-						SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW);
-						GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
-						GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
-
-						// get window client size
-						if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
-						{
-							GPU::windowWidth = info.rcClient.right - info.rcClient.left;
-							GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
-						}
-
-						ReInitSwapChain();
-						gameState = SETTINGS;
-					}
-					else
-					{
-						GPU::windowWidth = 1920;
-						GPU::windowHeight = 1080;
-						ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
-
-						SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-						SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW);
-						GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
-						GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
-
-						// get window client size
-						if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
-						{
-							GPU::windowWidth = info.rcClient.right - info.rcClient.left;
-							GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
-						}
-
-						ReInitSwapChain();
-						gameState = SETTINGS;
-
-					}
-
-				}
-				else
-				{
-					if (is720p)
-					{
-						GPU::windowWidth = 1280;
-						GPU::windowHeight = 720;
-						ChangeResolution2(1920, 1080);
-
-						SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
-						SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
-
-						// get window client size
-						if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
-						{
-							GPU::windowWidth = info.rcClient.right - info.rcClient.left;
-							GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
-						}
-
-						GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
-						GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
-
-						ReInitSwapChain();
-						gameState = SETTINGS;
-					}
-					else
-					{
-						GPU::windowWidth = 1920;
-						GPU::windowHeight = 1080;
-						ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
-
-						SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
-						SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
-
-						// get window client size
-						if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
-						{
-							GPU::windowWidth = info.rcClient.right - info.rcClient.left;
-							GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
-						}
-
-						GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
-						GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
-
-						ReInitSwapChain();
-						gameState = SETTINGS;
-					}
-
-				}
-
+				DoFullScreen();
 			}
 			else if (dropDown.IntersectMouse())
 			{

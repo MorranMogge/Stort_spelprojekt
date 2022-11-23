@@ -158,7 +158,7 @@ ControlUI::ControlUI()
 	arrow.SetScale(0.3f, 0.3f);
 
 
-	usePickText = GUISprite(322 + left + 200, 100 + upp - offset2);
+	usePickText = GUISprite(322 + left + 200, 325 + upp - offset2);
 	usePickText.Load(L"../Sprites/control/usepickText.png");
 	usePickText.SetScale(0.5f, 0.5f);
 
@@ -170,6 +170,9 @@ ControlUI::ControlUI()
 	moveText2.Load(L"../Sprites/control/moveText.png");
 	moveText2.SetScale(0.5f, 0.5f);
 
+	jumpText = GUISprite(322 + left + 200, 100 + upp - offset2);
+	jumpText.Load(L"../Sprites/control/moveText.png");
+	jumpText.SetScale(0.5f, 0.5f);
 
 	L_wheel = GUISprite(322 + left, 450 + upp - offset2);
 	L_wheel.Load(L"../Sprites/control/L_wheel.png");
@@ -183,7 +186,7 @@ ControlUI::ControlUI()
 	start.Load(L"../Sprites/control/start.png");
 	start.SetScale(0.5f, 0.5f);
 
-	objective = GUISprite(310 - left, 675 - upp);
+	objective = GUISprite(310 - left, upp);
 	objective.Load(L"../Sprites/Objective.png");
 	objective.SetScale(0.75f, 0.75f);
 

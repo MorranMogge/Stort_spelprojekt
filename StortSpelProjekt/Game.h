@@ -78,7 +78,7 @@ private:
 	//HUD
 	HudUI ui;
 
-
+	bool firstFrame = true;
 	void loadObjects();
 	void drawShadows();
 	void drawFresnel();

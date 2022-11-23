@@ -258,11 +258,18 @@ void HudUI::handleInputs()
 	}
 }
 
-void HudUI::fadeIn()
+bool HudUI::fadeIn()
 {	
+	bool done = false;
 	DirectX::SimpleMath::Color gg = fade.GetTint();
-	gg.w -= Time::DeltaTimeInSeconds();
+	count -= Time::DeltaTimeInSeconds() + 0.007f;
+	gg.w = count;
 	fade.SetTint(gg);
+	if (gg.w >= 1)
+	{
+		done = true;
+	}
+	return done;
 }
 
 void HudUI::fadeOut()

@@ -29,6 +29,9 @@ BaseballBat::BaseballBat(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const Dire
 {
 	force = FORCECONSTANT;
 
+	sfx.load(L"../Sounds/hitHurt.wav");
+
+
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
 
@@ -89,6 +92,8 @@ void BaseballBat::setGameObjects(const std::vector<GameObject*>& objects)
 
 void BaseballBat::useItem()
 {
+	sfx.stop();
+	sfx.play();
 	std::cout << "Used bat!\n";
 	batPos = this->player->getPos();
 	batPos += this->player->getForwardVector() * 10;

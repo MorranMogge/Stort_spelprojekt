@@ -7,7 +7,10 @@ using namespace DirectX;
 SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
 	:GameObject(useMesh, pos, DirectX::XMFLOAT3(0,0,0), id, field, scale), compToComplete(nrofComp), currentComponents(0), team(team), animate(false), counter(0.0f)
 {
-	using namespace DirectX;
+	compAddedSfx.load(L"../Sounds/random.wav");
+	engineTakeOff.load(L"../Sounds/shipTakeOff.wav");
+	engineTakeOff.setVolume(0.5f);
+
 	using namespace DirectX::SimpleMath;
 
 	//Set rotation to gravity field
@@ -149,6 +152,12 @@ bool SpaceShip::detectedComponent(Component* componentToCheck)
 void SpaceShip::addComponent()
 {
 	this->currentComponents++;
+	if (this->currentComponents >= 4) { engineTakeOff.stop(); engineTakeOff.play(); }
+	else
+	{
+		compAddedSfx.stop();
+		compAddedSfx.play();
+	}
 }
 
 void SpaceShip::update()

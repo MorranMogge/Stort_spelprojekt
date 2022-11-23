@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "SettingsUI.h"
 #include "Credits.h"
+#include "SoundLibrary.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -132,19 +133,29 @@ void MenuUI::HandleInputs()
 	{
 		if (hit_start)
 		{
+			SoundLibrary::menuMusic.stop();
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = GAME;
 			isLoading = true;
 		}
 		else if (hit_setting)
 		{
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = SETTINGS;
 		}
 		else if (hit_credits)
 		{
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = CREDITS;
 		}
 		else if (hit_exit)
 		{
+			SoundLibrary::menuMusic.stop();
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = EXIT;
 		}
 		else if (hit_control)

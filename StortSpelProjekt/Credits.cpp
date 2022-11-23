@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Credits.h"
 #include "Input.h"
+#include "SoundLibrary.h"
 
 void Credits::HandleInputs()
 {
@@ -11,6 +12,8 @@ void Credits::HandleInputs()
 	{
 		if (backText.GetTint() == DirectX::Colors::Green.v)
 		{
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = MENU;
 		}
 	}
@@ -46,6 +49,7 @@ GAMESTATE Credits::GetGameState()
 Credits::Credits()
 {
 	gamePad = std::make_unique<DirectX::GamePad>();
+	GUI::Init();//??
 
 	creditsText = GUISprite(250 + 150, 150);
 	creditsText.Load(GPU::device, L"../Sprites/CreditsText.png");

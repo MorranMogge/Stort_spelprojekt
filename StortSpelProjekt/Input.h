@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX
 #include "stdafx.h"
 #include "ImGui/imgui.h"
 #include "imGUI/imgui_impl_dx11.h"
@@ -103,7 +104,7 @@ public:
 	//return true ONCE key release
 	static bool KeyUp(const KeyCode key)
 	{
-		return ImGui::IsKeyReleased((ImGuiKey)key);
+		return ImGui::IsKeyReleased((ImGuiKey)key); 
 	}
 
 	//call this if imgui didnt exist in current game state

@@ -2,6 +2,7 @@
 #include "GUISprite.h"
 #include "State.h"
 #include <GamePad.h>
+#include "Sound.h"
 
 class Credits final
 {

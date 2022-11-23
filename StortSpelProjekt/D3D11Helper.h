@@ -1,5 +1,6 @@
 #pragma once
 
+#define NOMINMAX
 #include "stdafx.h"
 
 bool CreateInterfaces(const UINT& width, const UINT& height, HWND window, ID3D11Device*& device, ID3D11DeviceContext*& immediateContext, IDXGISwapChain*& swapChain);

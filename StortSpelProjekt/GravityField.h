@@ -15,4 +15,3 @@ public:
 	DirectX::XMFLOAT3 calcGravFactor(DirectX::XMFLOAT3 objectPosition);
 	DirectX::XMFLOAT3 calcGravFactor(const DirectX::SimpleMath::Vector3& objectPosition);
 };
-

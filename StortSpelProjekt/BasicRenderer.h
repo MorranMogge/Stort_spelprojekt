@@ -48,6 +48,12 @@ private:
 	ID3D11BlendState* blendState;				//Blendstate for PT_Pixel shader
 	ID3D11BlendState* fresnelBlendState;
 	ID3D11PixelShader* Fresnel_PS;
+
+	ID3D11InputLayout* animLayout;
+	ID3D11VertexShader* vShaderAnim;
+
+	bool setUpInputLayout(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout* iLayout);
+	bool setUpInputLayoutAnim(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout*& iLayout);
 	ID3D11PixelShader* InvFresnel_PS;
 
 	bool setUpInputLayout(ID3D11Device* device, const std::string &vShaderByteCode);
@@ -67,6 +73,7 @@ public:
 	bool initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT);
 	void setUpScene();
 	void setUpScene(Camera& stageCamera);
+	void changeToAnimation();
 	void geometryPass(Camera & stageCamera);
 	void playerParticlePass();
 	void depthPrePass();

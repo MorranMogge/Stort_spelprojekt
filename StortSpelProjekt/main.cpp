@@ -6,6 +6,7 @@
 #include "Console.h"
 #include "MemoryLeackChecker.h"
 #include "SoundCollection.h"
+#include "SoundLibrary.h"
 #include "Client.h"
 #include "Game.h"
 #include "Menu.h"
@@ -13,6 +14,11 @@
 #include "D3D11Helper.h"
 
 #include "ImGuiHelper.h"
+
+//Ta bort innan merge med main?
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
 #include "SettingsMenu.h"
 #include "CreditsMenu.h"
@@ -28,6 +34,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	srand((unsigned)time(0));
 
 	SoundCollection::Load();
+	SoundLibrary soundLibrary;
 
 	Console::Activate(); // activate console for cout and cin, to destroy console call "Console::Destroy();" 
 	std::cout << "test print \n"; //test print
@@ -60,6 +67,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX11_Init(device, immediateContext);
+
+
 
 	State* currentState = new Menu();
 	GAMESTATE stateInfo = NOCHANGE;

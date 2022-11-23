@@ -19,6 +19,9 @@ private:
 	float counter;
 	bool animate;
 	int team;
+	Sound compAddedSfx;
+	Sound engineTakeOff;
+
 	CaptureZone *zone;
 	Mesh* tempMesh;
 public:

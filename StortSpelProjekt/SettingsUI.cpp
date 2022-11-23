@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SettingsUI.h"
 #include "Input.h"
+#include "SoundLibrary.h"
 #include <filesystem>
 
 void ChangeResolution2(const unsigned int width, const unsigned int height)
@@ -152,6 +153,11 @@ void SettingsUI::HandleInputs()
 	{
 		//resets
 		//to do
+		/*
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
+		*/
+
 
 		// any drop down is active
 		if (dropdown1 || dropdown2)

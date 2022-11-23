@@ -168,6 +168,9 @@
     </ClCompile>
     <ClCompile Include="ControlMenu.cpp" />
     <ClCompile Include="ControlUI.cpp" />
+    <ClCompile Include="ModelDataContainer.cpp" />
+    <ClCompile Include="ModelManager.cpp" />
+    <ClCompile Include="AnimatedMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -464,11 +467,12 @@
     <ClInclude Include="CaptureZone.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
+    <ClInclude Include="SoundLibrary.h" />
     <ClInclude Include="ControlMenu.h" />
     <ClInclude Include="ControlUI.h" />
-    <ClInclude Include="Time.h">
-      <Filter>Structs</Filter>
-    </ClInclude>
+    <ClInclude Include="ModelDataContainer.h" />
+    <ClInclude Include="ModelManager.h" />
+    <ClInclude Include="AnimatedMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -580,7 +584,7 @@
     <FxCompile Include="InvFresnel_PS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="PT_UpdatePlayer.hlsl">
+    <FxCompile Include="vShaderSkinning.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

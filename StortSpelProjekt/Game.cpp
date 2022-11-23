@@ -97,13 +97,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	field = nullptr;
 	oldField = field;
 
-	//Set items baseball bat
-	baseballBat->setPlayer(currentPlayer);
-	baseballBat->setGameObjects(gameObjects);
-	baseballBat->setClient(client);
-
-	//Set items grenade
-	grenade->setGameObjects(gameObjects);
 
 	//Init delta time
 	currentTime = std::chrono::system_clock::now();
@@ -259,8 +252,18 @@ void Game::loadObjects()
 	}
 
 //???
-field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
-oldField = field;
+//field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
+//oldField = field;
+
+
+
+//Set items baseball bat
+baseballBat->setPlayer(currentPlayer);
+baseballBat->setGameObjects(gameObjects);
+baseballBat->setClient(client);
+
+//Set items grenade
+grenade->setGameObjects(gameObjects);
 }
 
 void Game::drawShadows()
@@ -268,7 +271,7 @@ void Game::drawShadows()
 	//Draw object shadow
 	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
 	{
-		ltHandler.drawShadows(i, gameObjects, currentPlayer);
+		ltHandler.drawShadows(i, gameObjects);
 	}
 	//Draw planet shadow
 	for (int i = 0; i < planetVector.size(); i++)
@@ -278,7 +281,7 @@ void Game::drawShadows()
 
 	//Draw depth stencil
 	basicRenderer.depthPrePass();
-	ltHandler.drawShadows(0, gameObjects, currentPlayer, &camera);
+	ltHandler.drawShadows(0, gameObjects, &camera);
 	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
 }
 
@@ -481,15 +484,15 @@ GAMESTATE Game::Update()
 	currentPlayer->velocityMove(dt);
 
 	//Check component pickup
-	if (!IFONLINE)
-	{
-		for (int i = 0; i < components.size(); i++)
-		{
-			if (currentPlayer->pickupItem(components[i])) break;
-		}
-	}
+	//if (!IFONLINE)
+	//{
+	//	for (int i = 0; i < components.size(); i++)
+	//	{
+	//		if (currentPlayer->pickupItem(components[i])) break;
+	//	}
+	//}
 	//Check component pickup
-	//if (!IFONLINE) currentPlayer->pickupItem(items, components);
+	if (!IFONLINE) currentPlayer->pickupItem(items, components);
 
 	currentPlayer->requestingPickUpItem(onlineItems);
 	//Update item checks

@@ -26,7 +26,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	//Setup fade in
 	ui.count = 1.0f;
 	ui.setOpacity(false);
-	firstFrame = false;
 	Time::Update();
 
 	//Setup players
@@ -637,10 +636,17 @@ GAMESTATE Game::Update()
 
 void Game::Render()
 {
-
-	if (!this->ui.fadeIn())
+	if (!fadedIn)
 	{
+		if (!this->ui.fadeIn())
+		{
+		}
+		else
+		{
+			fadedIn = true;
+		}
 	}
+
 
 	//Render shadow maps
 	basicRenderer.lightPrePass();

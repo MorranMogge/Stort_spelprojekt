@@ -264,10 +264,14 @@ bool HudUI::fadeIn()
 	DirectX::SimpleMath::Color gg = fade.GetTint();
 	count -= Time::DeltaTimeInSeconds() + 0.007f;
 	gg.w = count;
-	fade.SetTint(gg);
-	if (gg.w >= 1)
+	if (gg.w <=0)
 	{
+		std::cout << "what?" << std::endl;
 		done = true;
+	}
+	else
+	{
+		fade.SetTint(gg);
 	}
 	return done;
 }
@@ -275,7 +279,7 @@ bool HudUI::fadeIn()
 void HudUI::fadeOut()
 {
 	DirectX::SimpleMath::Color gg = fade.GetTint();
-	gg.w += Time::DeltaTimeInSeconds();
+	gg.w += Time::DeltaTimeInSeconds() + 0.005f;
 	fade.SetTint(gg);
 }
 

@@ -524,7 +524,7 @@ int main()
 			itemSpawnData.x = temp.x;
 			itemSpawnData.y = temp.y;
 			itemSpawnData.z = temp.z;
-			itemSpawnData.itemId = itemid++;
+			itemSpawnData.itemId = componentIdCounter;
 			std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
 			itemSpawnData.packetId = PacketType::ITEMSPAWN;
 
@@ -532,6 +532,7 @@ int main()
 			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
 			onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);;
 			onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
+			onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
 			sendBinaryDataAllPlayers(itemSpawnData, data);
 			itemSpawnTimer = std::chrono::system_clock::now();
 		}

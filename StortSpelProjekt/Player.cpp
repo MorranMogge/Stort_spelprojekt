@@ -93,7 +93,7 @@ void Player::handleItems()
 		}	
 		std::cout << "ERROR UwU 4\n";//krashar mellan 4 och 5
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
-		holdingItem->useItem(&*this);
+		holdingItem->useItem(this);
 		std::cout << "ERROR UwU 5\n";
 		itemPhysComp->setIsAllowedToSleep(true);
 		itemPhysComp->setIsSleeping(true);
@@ -910,7 +910,7 @@ bool Player::getHitByBat() const
 		else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
 		{
 			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
-			holdingItem->useItem(&*this);
+			holdingItem->useItem(this);
 			itemPhysComp->setIsAllowedToSleep(true);
 			itemPhysComp->setIsSleeping(true);
 			holdingItem->setPickedUp(false);
@@ -1059,7 +1059,7 @@ void Player::update()
 	if (this->particles != nullptr && moveKeyPressed)
 	{
 		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
-		this->particles->setPosition(this->position);
+		this->particles->setPosition(this->position );
 		this->particles->setRotation(this->getUpDirection());
 		this->particles->updateBuffer();
 	}

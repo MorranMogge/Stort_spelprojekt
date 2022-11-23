@@ -463,6 +463,7 @@ int main()
 			case PacketType::LANDINGMINIGAMESENDSCORETOSERVER:
 				scoreFromClient = circBuffer->readData<LandingMiniSendScoreToServer>();
 				landingPoints[scoreFromClient->playerId] = scoreFromClient->scoreToServer;
+				break;
 			}
 		}
 
@@ -548,7 +549,7 @@ int main()
 					playerTeam = (MAXNUMBEROFPLAYERS) / 2;
 					playerTeam = (int)(playerTeam < i + 1);
 					if (playerTeam == 0) lScore.pointsRedTeam += landingPoints[i];
-					else lScore.pointsRedTeam = landingPoints[i];
+					else lScore.pointsBlueTeam += landingPoints[i];
 				}
 
 				sendBinaryDataAllPlayers<LandingMiniGameScore>(lScore, data);

@@ -629,11 +629,15 @@ GAMESTATE Game::updateLandingGame()
 
 GAMESTATE Game::startKotH()
 {
-	//Set up planets
-	//Set up capture zone
-
 	currentMinigame = MiniGames::KINGOFTHEHILL;
-	return NOCHANGE;
+
+	//Send data to server
+	MinigameStart startKTH;
+	startKTH.packetId = PacketType::STARTMINIGAMES;
+	startKTH.minigame = MiniGames::KINGOFTHEHILL;
+	client->sendStuff<MinigameStart>(startKTH);
+	std::cout << "SENT START KTH\n";
+	currentPlayer->setPos(DirectX::XMFLOAT3(0.f, 65.f, 0.f));
 }
 
 GAMESTATE Game::updateKingOfTheHillGame()

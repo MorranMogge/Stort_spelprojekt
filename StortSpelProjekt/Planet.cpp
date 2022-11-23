@@ -232,3 +232,13 @@ void Planet::drawAtmosphere()
 		atmosphere->DrawWithMat();
 	}
 }
+
+void Planet::setPosition(const DirectX::SimpleMath::Vector3& position)
+{
+	this->position = position;
+}
+
+void Planet::setScale(const DirectX::SimpleMath::Vector3& scale)
+{
+	this->scale = scale;
+}

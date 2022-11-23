@@ -33,6 +33,17 @@ class SettingsUI final
 
 	GAMESTATE gameState;
 
+	int selected = 0;
+	bool any_DropDown_Active = false;
+	int selected_dropdown = 0;
+
+	bool ATrigged = false;
+	bool BTrigged = false;
+	bool upTrigged = false;
+	bool downTrigged = false;
+
+	void DoFullScreen();
+
 	void HandleInputs();
 	void SpritePass();
 

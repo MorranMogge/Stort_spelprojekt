@@ -22,7 +22,7 @@ class ControlUI final
 
 	GUISprite backText;
 
-	GUISprite usePickText,throwText2,moveText2;
+	GUISprite usePickText,throwText2,moveText2,jumpText;
 
 	GAMESTATE gameState = NOCHANGE;
 

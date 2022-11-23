@@ -618,10 +618,17 @@ GAMESTATE Game::updateLandingGame()
 	DirectX::SimpleMath::Vector3 moveDir = getScalarMultiplicationXMFLOAT3(1, (planetVector[0]->getGravityField()->calcGravFactor(spaceShips[currentPlayer->getTeam()]->getPos())));
 
 	moveDir.Normalize();
-	moveDir *= 1.f/sqrt(landingMiniGamePoints*0.025f + 1);
+	moveDir *= 1.f / sqrt(landingMiniGamePoints * 0.025f + 1);
 	spaceShips[currentPlayer->getTeam()]->fly(moveDir, dt);
+	spaceShips[!currentPlayer->getTeam()]->fly(moveDir * -1.f, dt);
+
+	if (rand() % 1000 == 0) 
+	{
+		std::cout << "Total points " << landingMiniGamePoints << "\n";
+		std::cout << "Team score: " << teamScoreLandingMiniGame << "\nEnemy Team score: " << enemyTeamScoreLandingMiniGame << "\n";
+	}
 	if (landingUi.handleInputs(dt)) landingMiniGamePoints += 100*dt;
-	if (rand() % 10 == 0)
+	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
 	{
 		//Send data to server
 		LandingMiniSendScoreToServer totalPoints = {};
@@ -629,18 +636,17 @@ GAMESTATE Game::updateLandingGame()
 		totalPoints.playerId = currentPlayer->getOnlineID();
 		totalPoints.scoreToServer = landingMiniGamePoints;
 		client->sendStuff<LandingMiniSendScoreToServer>(totalPoints);
+
+		serverStart = std::chrono::system_clock::now();
 	}
 
 	if (getLength(spaceShips[currentPlayer->getTeam()]->getPosV3()) <= planetVector[0]->getSize())
 	{
 		moveDir.Normalize();
 		spaceShips[currentPlayer->getTeam()]->setPos(moveDir * planetVector[0]->getSize());
-		std::cout << "Total points " << landingMiniGamePoints << std::endl;
-
-		
+		currentMinigame = MiniGames::COMPONENTCOLLECTION;
 	}
 
-	std::cout << "Team score: " << teamScoreLandingMiniGame << "\nEnemy Team score: " << enemyTeamScoreLandingMiniGame << "\n";
 
 	return NOCHANGE;
 }
@@ -758,11 +764,14 @@ GAMESTATE Game::Update()
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 
-	if (Input::KeyPress(KeyCode::P)) 
+	if (Input::KeyPress(KeyCode::P)) //THIS WILL BE REMOVED WHEN SWITCHING BETWEEN STATES IS DONE
 	{ 
 		currentMinigame = MiniGames::LANDINGSPACESHIP;
 		DirectX::XMFLOAT3 newRot = spaceShips[currentPlayer->getTeam()]->getUpDirection();
 		spaceShips[currentPlayer->getTeam()]->setPos(newRot * DirectX::SimpleMath::Vector3(150, 150, 150));
+		newRot = spaceShips[!currentPlayer->getTeam()]->getUpDirection();
+		spaceShips[!currentPlayer->getTeam()]->setPos(newRot * DirectX::SimpleMath::Vector3(150, 150, 150));
+
 		landingMiniGamePoints = 0.f;
 	}
 

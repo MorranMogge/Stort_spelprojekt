@@ -92,7 +92,6 @@ bool LandingHud::handleInputs(const float& dt)
 	if (landing1.IntersectSprite(landing2))
 	{
 		intersected = true;
-		std::cout << "intersects" << std::endl;
 	}
 
 	return intersected;

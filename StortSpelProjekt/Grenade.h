@@ -8,7 +8,6 @@ class Grenade : public Item
 private:
 	std::vector<GameObject*> gameObjects;
 	TimeStruct timer;
-	TimeStruct timer2;
 	bool destructionIsImminent;
 	bool exploded;
 	float timeToExplode;

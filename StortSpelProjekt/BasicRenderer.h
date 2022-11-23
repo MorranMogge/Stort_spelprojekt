@@ -35,6 +35,7 @@ private:
 	ID3D11PixelShader* pt_pShader;
 	ID3D11ComputeShader* pt_UpdateShader;
 	ID3D11GeometryShader* pt_gShader;
+	ID3D11ComputeShader* pt_UpdatePlayer;
 
 	ID3D11VertexShader* bill_vShader;
 	ID3D11PixelShader* bill_pShader;
@@ -67,6 +68,7 @@ public:
 	void setUpScene();
 	void setUpScene(Camera& stageCamera);
 	void geometryPass(Camera & stageCamera);
+	void playerParticlePass();
 	void depthPrePass();
 	void depthUnbind();
 	void skyboxPrePass();

@@ -20,6 +20,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ltHandler.addLight(DirectX::XMFLOAT3(16 + 7, 42 + 17, 12 + 7), DirectX::XMFLOAT3(0, 0.3f, 1.0f), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 	ltHandler.addLight(DirectX::XMFLOAT3(-10 - 5, -45 - 17, -10 - 7), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 	
+	ui.setOpacity(true);
+	ui.fadeIn();
+
 
 	//Load game objects
 	this->loadObjects();
@@ -318,10 +321,6 @@ void Game::drawParticles()
 	{
 		this->items[i]->drawParticles();
 	}
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->drawParticles();
-	}
 	for (int i = 0; i < components.size(); i++)
 	{
 		this->components[i]->drawParticles();
@@ -329,6 +328,12 @@ void Game::drawParticles()
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
 		spaceShips[i]->drawParticles();
+	}
+	//Bind special shade for player
+	basicRenderer.playerParticlePass();
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->drawParticles();
 	}
 }
 
@@ -347,6 +352,7 @@ void Game::drawFresnel()
 			tempNade->drawFresnel();
 		}
 	}
+	asteroids->drawExplosions();
 	//Inverse
 	basicRenderer.invFresnelPrePass();
 	for (int i = 0; i < planetVector.size(); i++)

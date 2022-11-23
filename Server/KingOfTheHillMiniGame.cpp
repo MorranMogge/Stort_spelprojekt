@@ -6,7 +6,7 @@ KingOfTheHillMiniGame::KingOfTheHillMiniGame(serverData& data, const short &nrOf
 	sendKingOfTheHillZone(data);
 	this->timer = std::chrono::system_clock::now();
 	this->timerToSend = std::chrono::system_clock::now();
-	timerSend =  30.0f;
+	timerSend =  4.0f;
 }
 
 void KingOfTheHillMiniGame::sendKingOfTheHillZone(serverData& data)
@@ -68,15 +68,22 @@ void KingOfTheHillMiniGame::update(serverData& data)
 				{
 					winner win;
 					win.packetId = PacketType::WINNER;
-					sendBinaryDataAllPlayers<winner>(win, data);
-					this->timerToSend = std::chrono::system_clock::now();
+					sendBinaryDataOnePlayer<winner>(win, data.users[i]);
+					//sendBinaryDataAllPlayers(win, data);
+					//this->timerToSend = std::chrono::system_clock::now();
 				}
 				else if (i == 2 || i == 3)
 				{
-
+					Loser lose;
+					lose.packetId = PacketType::LOSER;
+					sendBinaryDataOnePlayer<Loser>(lose, data.users[i]);
+					//this->timerToSend = std::chrono::system_clock::now();
 				}
 			}
+			this->timerToSend = std::chrono::system_clock::now();
 		}
 	}
+
+	//fixa för team 2
 
 }

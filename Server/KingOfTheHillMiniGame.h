@@ -13,8 +13,10 @@ class KingOfTheHillMiniGame
 private:
 	std::chrono::time_point<std::chrono::system_clock> timer;
 	std::chrono::time_point<std::chrono::system_clock> timerToSend;
+	std::chrono::time_point<std::chrono::system_clock> timerToSpawnItems;
 	float time;
 	float timerSend;
+	float timeToSpawnItems;
 	//3D punkt
 	DirectX::XMFLOAT3 kingOfTheHillOrigo;
 	float radius;

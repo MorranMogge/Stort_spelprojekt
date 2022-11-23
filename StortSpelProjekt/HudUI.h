@@ -44,7 +44,7 @@ class HudUI final
 	void SpritePass();
 
 public:
-
+	float count = 1.0f;
 	inline static SpaceShip* red = nullptr;
 	inline static SpaceShip* blue = nullptr;
 	inline static Player* player = nullptr;
@@ -52,7 +52,7 @@ public:
 	HudUI();
 	~HudUI();
 	void handleInputs();
-	void fadeIn();
+	bool fadeIn();
 	void fadeOut();
 	void setOpacity(bool onOff);
 	void Draw();

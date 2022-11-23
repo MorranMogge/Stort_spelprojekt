@@ -183,6 +183,7 @@ BasicRenderer::~BasicRenderer()
 	Fresnel_PS->Release();
 	fresnelBlendState->Release();
 	InvFresnel_PS->Release();
+	pt_UpdatePlayer->Release();
 }
 
 void BasicRenderer::lightPrePass()
@@ -231,6 +232,8 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadPixelShader(device, Fresnel_PS, "Fresnel_PS"))									return false;
 	if (!LoadPixelShader(device, InvFresnel_PS, "InvFresnel_PS"))							return false;
 	if (!setUpFresnelBlendState())															return false;
+	if (!LoadComputeShader(device, pt_UpdatePlayer, "PT_UpdatePlayer"))						return false;
+	
 	
 	
 	SetViewport(viewport, GPU::windowWidth, GPU::windowHeight);
@@ -294,6 +297,11 @@ void BasicRenderer::geometryPass(Camera& stageCamera)
 	stageCamera.CSbindUpBuffer(2);
 	stageCamera.GSbindUpBuffer(3);
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
+}
+
+void BasicRenderer::playerParticlePass()
+{
+	immediateContext->CSSetShader(pt_UpdatePlayer, nullptr, 0);							//Set ComputeShader
 }
 
 void BasicRenderer::depthPrePass()

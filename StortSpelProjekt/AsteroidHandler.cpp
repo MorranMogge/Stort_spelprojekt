@@ -80,3 +80,11 @@ void AsteroidHandler::drawAsteroids()
 		asteroids[i]->draw();
 	}
 }
+
+void AsteroidHandler::drawExplosions()
+{
+	for (int i = 0; i < this->activeAsteroids; i++)
+	{
+		asteroids[i]->drawFresnel();
+	}
+}

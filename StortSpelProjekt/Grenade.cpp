@@ -3,6 +3,7 @@
 #include "DirectXMathHelper.h"
 #include "Player.h"
 #include "PhysicsComponent.h"
+#include "Time.h"
 
 Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
 	:Item(useMesh, pos, rot, id, onlineId, GRENADE, field), destructionIsImminent(false), exploded(false), timeToExplode(5.f), currentTime(0.0f), explodePosition(0,0,0)
@@ -129,10 +130,7 @@ void Grenade::drawParticles()
 	if (destructionIsImminent)
 	{
 		this->particles->BindAndDraw(0);
-
-
-
-		currentTime += this->timer2.getDt();
+		currentTime += Time::DeltaTimeInSeconds();
 		static int frame = 0;
 		if (currentTime >= 1)
 		{
@@ -153,7 +151,6 @@ void Grenade::drawParticles()
 			this->mesh->matKey[0] = "Default";			
 
 		}
-		timer2.resetStartTime();
 	}
 	else
 	{
@@ -188,7 +185,6 @@ void Grenade::useItem()
 		
 		this->destructionIsImminent = true;
 		timer.resetStartTime();
-		timer2.resetStartTime();
 	}
 }
 

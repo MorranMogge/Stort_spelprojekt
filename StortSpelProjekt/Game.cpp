@@ -643,6 +643,164 @@ GAMESTATE Game::startKotH()
 
 GAMESTATE Game::updateKingOfTheHillGame()
 {
+	//read the packets received from the server
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone,
+		currentMinigame);
+
+	//Get newest delta time
+	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
+	asteroids->updateAsteroids(dt, planetVector, gameObjects);
+
+	//Calculate gravity factor
+	if (planetVector.size() > 0) field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
+	if (field != oldField) { changedPlanet = true; currentPlayer->setGravityField(this->field); }
+	else changedPlanet = false;
+	oldField = field;
+	if (planetVector.size() > 0) grav = field->calcGravFactor(currentPlayer->getPosV3());
+	currentPlayer->updateVelocity(getScalarMultiplicationXMFLOAT3(dt, grav));
+
+	if (planetVector.size() > 0)
+	{
+		for (int i = 0; i < gameObjects.size(); i++) gameObjects[i]->setGravityField(planetVector[0]->getClosestField(planetVector, gameObjects[i]->getPosV3()));
+	}
+
+	//Raycasting
+	static DirectX::XMFLOAT3 hitPos;
+	static DirectX::XMFLOAT3 hitNormal;
+	hitPos = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
+	hitNormal = DirectX::XMFLOAT3(grav.x, grav.y, grav.z);
+	bool testingVec = this->currentPlayer->raycast(gameObjects, planetVector, hitPos, hitNormal);
+	if (testingVec || currentPlayer->getHitByBat()) currentPlayer->resetVelocity();
+
+	//Player functions
+	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
+	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
+	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
+	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
+	currentPlayer->velocityMove(dt);
+
+	//Check component pickup
+	if (!IFONLINE) currentPlayer->pickupItem(items, components);
+	currentPlayer->requestingPickUpItem(onlineItems);
+
+	grenade->updateExplosionCheck();
+	//Update item checks
+	for (int i = 0; i < items.size(); i++)
+	{
+		int id = items[i]->getId();
+		switch (id)
+		{
+		case ObjID::GRENADE:
+		{
+			Grenade* tempNade = (Grenade*)items[i];
+			tempNade->updateExplosionCheck();
+		}	break;
+		case ObjID::POTION:
+		{
+			Potion* tempPotion = (Potion*)items[i];
+			if (tempPotion->timerGoing()) currentPlayer->setSpeed(50.f);
+			else currentPlayer->setSpeed(20.f);
+		}	break;
+		}
+		break;
+	}
+
+	//sending data to server
+	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
+	{
+		SendingDataEvent(client, currentPlayer, players);
+		serverStart = std::chrono::system_clock::now();
+	}
+
+	//Physics related functions
+	if (!IFONLINE) physWorld.update(dt);
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->updateMatrixOnline();
+		players[i]->update();
+	}
+
+	//Updates gameObject physics components
+	for (int i = 0; i < gameObjects.size(); i++) gameObjects[i]->update();
+
+	//Setting the camera at position
+	if (!velocityCamera) camera.moveVelocity(currentPlayer, dt);
+	else camera.moveCamera(currentPlayer, dt);
+	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
+
+	//Check Components online
+	for (int i = 0; i < spaceShips.size(); i++)
+	{
+		if (spaceShips[i]->getCompletion())
+		{
+			if (currentPlayer->getTeam() == i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot()); currentPlayer->setVibration(0.1f, 0.1f);
+			this->spaceShips[i]->flyAway(dt);
+			endTimer += dt;
+			arrow->removeArrow(); //Remove these completely by not drawing the meshes anymore
+			if (currentPlayer->getTeam() == i) this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969)); //Remove these completely by not drawing the meshes anymore
+		}
+	}
+
+	//Arrow pointing to spaceship		FIX!
+	if (currentPlayer->isHoldingComp())
+	{
+		for (int i = 0; i < spaceShips.size(); i++)
+		{
+			if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
+		}
+	}
+	//Arrow pointing to component		FIX!
+	else if (onlineItems.size() > 0)  this->arrow->showDirection(onlineItems[0]->getPosV3(), currentPlayer->getPosV3(), grav);
+	else if (components.size() > 0) this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
+	currentPlayer->colliedWIthComponent(components);
+
+	if (!IFONLINE) //Check Components offline
+	{
+		for (int i = 0; i < spaceShips.size(); i++)
+		{
+			for (int j = 0; j < components.size(); j++)
+			{
+				if (spaceShips[i]->detectedComponent(components[j]))
+				{
+					if (currentPlayer->getItem() != nullptr)
+					{
+						if (currentPlayer->getItem()->getId() == ObjID::COMPONENT)
+						{
+							currentPlayer->releaseItem();
+						}
+					}
+					randomizeObjectPos(components[j]);
+					spaceShips[i]->addComponent();
+					spaceShips[i]->setAnimate(true);
+				}
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < spaceShips.size(); i++)
+		{
+			for (int j = 0; j < components.size(); j++) spaceShips[i]->detectedComponent(components[j]);
+		}
+	}
+	//Check winstate		FIX!
+	if (endTimer > 6)
+	{
+		this->currentPlayer->setVibration(0.f, 0.f);
+		for (int i = 0; i < spaceShips.size(); i++)
+		{
+			if (spaceShips[i]->isFinished())
+			{
+			}
+		}
+	}
+
+	//Play pickup animation
+	for (int i = 0; i < spaceShips.size(); i++) spaceShips[i]->animateOnPickup();
+
+	//Check if item icon should change to pickup icon 
+	for (int i = 0; i < items.size(); i++) this->items[i]->checkDistance((GameObject*)(currentPlayer));
+	for (int i = 0; i < components.size(); i++) this->components[i]->checkDistance((GameObject*)(currentPlayer));
 	return NOCHANGE;
 }
 

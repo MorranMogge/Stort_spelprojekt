@@ -200,7 +200,6 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				planetCounter++;
 				planetVector[planetCounter]->setPosition(DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos));
 				planetVector[planetCounter]->setScale(DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size));
-				std::cout << "Rearanged planets\n";
 			}
 			else
 			{

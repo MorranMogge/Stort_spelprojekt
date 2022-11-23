@@ -114,7 +114,6 @@ private:
 	double factor;
 
 	void uppdateMatrices(int animationIndex, const float animationTime, const nodes& node, DirectX::XMFLOAT4X4& parentTrasform);
-	void returnMatrices(int animationIndex, const float animationTime, const nodes& node, DirectX::XMFLOAT4X4& parentTrasform);
 
 	void findlowRotationNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm);
 	void InterpolateRotation(DirectX::XMFLOAT4& res, const float animationTime, const channels& animationNode, const channels& target);
@@ -127,15 +126,13 @@ private:
 
 	//const aiNodeAnim* findNodeAnim(const std::string& nodeName, const aiAnimation* pAnimation);
 	bool findNodeAnim(const std::string& nodeName, const animationNode& pAnimation, channels& res);
-
 	void getTimeInTicks(const float& dt, const unsigned& animationIndex);
-	void returnToBind();
 
-	bool returning;
+	void findNodeIndex(const std::string& nodeName);
+
 	float oldTime;
 	int oldAnimId;
 	int state;
-	int dbgint;
 public:
 	AnimatedMesh(Mesh* useMesh, const AnimationData& data ,const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int id, GravityField* field = nullptr);
 	//AnimatedMesh(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
@@ -143,6 +140,7 @@ public:
 	//AnimatedMesh();
 	~AnimatedMesh();
 
+	void forwardKinematics(const std::string& nodeName, DirectX::XMFLOAT4X4& outMatrix);
 	void addData(const AnimationData& data);
 	void updateAnim(const float& dt, unsigned animIndex, float animationSpeed = 1.0f);
 	void draw();

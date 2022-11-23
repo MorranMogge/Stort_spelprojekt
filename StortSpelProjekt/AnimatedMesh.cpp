@@ -280,14 +280,37 @@ void AnimatedMesh::getTimeInTicks(const float& dt, const unsigned& animationInde
 	this->uppdateMatrices(animationIndex, (float)timeInTicks, MySimp.rootNode, startMatrix);
 }
 
+void AnimatedMesh::forwardKinematics(const std::string& nodeName, DirectX::XMFLOAT4X4& outMatrix)
+{
+	auto it = MySimp.boneNameToIndex.find(nodeName);
+	if (it != MySimp.boneNameToIndex.end())
+	{
+		int index = it->second;
+		outMatrix = this->strucBuff.getData(index);
+		DirectX::XMMATRIX m1 = DirectX::XMLoadFloat4x4(&outMatrix);
+		m1 = DirectX::XMMatrixTranspose(m1);
+
+		int id = MySimp.boneNameToIndex[nodeName];
+		DirectX::XMMATRIX boneOffset = DirectX::XMLoadFloat4x4(&MySimp.boneVector[id].offsetMatrix);
+		boneOffset = DirectX::XMMatrixInverse(nullptr, boneOffset);
+		m1 = boneOffset * m1;
+		const DirectX::XMFLOAT4X4 f1 = this->getMatrix();
+		DirectX::XMMATRIX m2 = DirectX::XMLoadFloat4x4(&f1);
+		m2 = DirectX::XMMatrixTranspose(m2);
+
+		DirectX::XMMATRIX m3 = DirectX::XMMatrixMultiply(m1, m2);
+		m3 = DirectX::XMMatrixTranspose(m3);
+		DirectX::XMStoreFloat4x4(&outMatrix, m3);
+		return;
+	}
+}
+
 AnimatedMesh::AnimatedMesh(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int id, GravityField* field)
 	:GameObject(useMesh, pos, rot, id, field)
 {
 	this->totalTime = 0;
 	oldAnimId = 0;
-	dbgint = 1;
 	oldTime = 2;
-	returning = false;
 	state = 2;
 	//this->setScale(DirectX::XMFLOAT3(0.02, 0.02, 0.02));
 	//this->updateBuffer();
@@ -326,7 +349,6 @@ void AnimatedMesh::addData(const AnimationData& data)
 
 void AnimatedMesh::updateAnim(const float& dt, unsigned animIndex, float animationSpeed)
 {
-	//animIndex = dbgint;
 	if (this->MySimp.animation.size() <= animIndex)
 	{
 		ErrorLog::Log("Invalid Animation Id!");
@@ -337,7 +359,6 @@ void AnimatedMesh::updateAnim(const float& dt, unsigned animIndex, float animati
 	{
 		state = 1;
 		this->totalTime += dt;
-		returning = false;
 		float AnimTime = dt * animationSpeed;
 		this->getTimeInTicks(totalTime, animIndex);
 	}
@@ -346,27 +367,22 @@ void AnimatedMesh::updateAnim(const float& dt, unsigned animIndex, float animati
 		// 1 = walking, 2 = returning, 0 standing still
 		if (state == 1)
 		{
-			returning = true;
 			state = 2;
 			this->oldTime = 0.f;
 		}
 		if (state == 2)
 		{
-			std::cout << "going from: " << oldAnimId << " to: " << animIndex << std::endl;
 			float timeOffset = dt;
 			oldTime += timeOffset * 10;
 
 		}
 		if ((oldTime >= 1) && state == 2) // done interpolating, set new state as old so it can play
 		{
-			returning = false;
 			state = 2;
 			this->oldTime = 0;
 			this->totalTime = 0;
 			int temp = oldAnimId;
 			this->oldAnimId = animIndex;
-			dbgint = temp;
-			std::cout << "Done with inter \n";
 		}
 		//if (oldTime >= 1) //dont over interpolate
 		//{

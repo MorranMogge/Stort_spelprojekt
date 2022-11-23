@@ -27,6 +27,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
 	manager.loadMeshAndBoneData("../Meshes/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/character1_run.fbx", "../Meshes/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/character1_run_fast.fbx", "../Meshes/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/character1_throw.fbx", "../Meshes/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/character1_attack.fbx", "../Meshes/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/character1_fly.fbx", "../Meshes/character1_idle.fbx");
 	this->manager.getAnimData("../Meshes/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
 	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/pintoBlue.png");
 	ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/pintoRed.png");
@@ -287,8 +291,8 @@ void Game::drawObjects(bool drawDebug)
 	{
 		onlineItems[i]->draw();
 	}
-	currentPlayer->updateBuffer();
-	currentPlayer->draw();
+	//currentPlayer->updateBuffer();
+	//currentPlayer->draw();
 	for (int i = 0; i < planetVector.size(); i++)
 	{
 		planetVector[i]->drawPlanet();
@@ -506,7 +510,7 @@ GAMESTATE Game::Update()
 	}
 
 	//Physics related functions
-	if (!IFONLINE) physWorld.update(dt);
+	//if (!IFONLINE) physWorld.update(dt);
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->updateMatrixOnline();
@@ -631,15 +635,29 @@ GAMESTATE Game::Update()
 	this->handleKeybinds();
 
 	//animations
-	if (GetAsyncKeyState('W'))
+	if (GetAsyncKeyState('W') || GetAsyncKeyState('D') || GetAsyncKeyState('S') || GetAsyncKeyState('A'))
 	{
-		this->currentPlayer->updateAnim(dt, 1);
+		if (GetAsyncKeyState(VK_LSHIFT))
+		{
+			this->currentPlayer->updateAnim(dt, 2);
+		}
+		else
+		{
+			this->currentPlayer->updateAnim(dt, 1);
+		}
+	}
+	else if (GetAsyncKeyState(' '))
+	{
+		this->currentPlayer->updateAnim(dt, 5);
 	}
 	else
 	{
 	this->currentPlayer->updateAnim(dt, 0, 1);
-
 	}
+
+	DirectX::XMFLOAT4X4 f1;
+	this->currentPlayer->forwardKinematics("hand3:hand3:LeftHand", f1);
+	this->baseballBat->setMatrix(f1);
 
 	return NOCHANGE;
 }

@@ -12,7 +12,8 @@ PacketEventManager::~PacketEventManager()
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips
-	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame)
+	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame,
+	float& redTeamPoints, float& blueTeamPoints)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -34,6 +35,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	ComponentPosition* cmpPosition = nullptr;
 	CreateZone* zonePos = nullptr;
 	MinigameStart* startMinigame = nullptr;
+	LandingMiniGameScore* landingMiniGameScore = nullptr;
 
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{
@@ -237,7 +239,20 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			}
 			//std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
 			break;
+		case PacketType::LANDINGMINIGAMESCORE:
+			landingMiniGameScore = circularBuffer->readData<LandingMiniGameScore>();
+			if (players[playerId]->getTeam() == 0)
+			{
+				blueTeamPoints = landingMiniGameScore->pointsBlueTeam;
+				redTeamPoints = landingMiniGameScore->pointsRedTeam;
+			}
+			else
+			{
+				blueTeamPoints = landingMiniGameScore->pointsRedTeam;
+				redTeamPoints = landingMiniGameScore->pointsBlueTeam;
+			}
 
+			break;
 		case PacketType::CREATEZONE:
 			zonePos = circularBuffer->readData<CreateZone>();
 			captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(zonePos->xPos, zonePos->yPos, zonePos->zPos), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), field, DirectX::SimpleMath::Vector3(zonePos->scale, zonePos->scale, zonePos->scale));

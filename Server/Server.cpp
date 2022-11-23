@@ -191,6 +191,11 @@ int main()
 	std::string s = "empty";
 	// Group the variables to send into a packet
 
+	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+	{
+		landingPoints[i] = 0.f;
+	}
+
 	std::vector<DirectX::XMFLOAT3> spaceShipPos;
 	spaceShipPos.emplace_back(DirectX::XMFLOAT3(-7.81178f, -37.8586f, -8.50119f));
 	spaceShipPos.emplace_back(DirectX::XMFLOAT3(13.5817f, 35.9383f, 9.91351f));
@@ -309,21 +314,9 @@ int main()
 	startComponentTimer = std::chrono::system_clock::now();
 	itemSpawnTimer = std::chrono::system_clock::now();
 
-	physicsTimer.resetStartTime();
-	
-
 	std::cout << "Starting while loop! \n";
-	physicsTimer.resetStartTime();
 	while (true)
 	{
-		/*static float tempDt;
-		tempDt = physicsTimer.getDt();
-		for (int i = 0; i < 10; i++)
-		{
-			physWorld.update(tempDt/10.f);
-		}*/
-
-		physicsTimer.resetStartTime();
 
 		while (circBuffer->getIfPacketsLeftToRead())
 		{
@@ -537,6 +530,34 @@ int main()
 		//sends data based on the server tickrate
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
 		{
+
+			//WHAT NEEDS TO BE DONE ON SERVER TO HANDLE LANDING MINIGAME
+			switch (currentMinigame)
+			{
+			case MiniGames::LANDINGSPACESHIP:
+				//WE NEED TO RECIEVE POINTS, ADD THEM AND SEND THEM TO THE PLAYERS
+
+				LandingMiniGameScore lScore;
+				lScore.packetId = PacketType::LANDINGMINIGAMESCORE;
+				int playerTeam;
+				lScore.pointsBlueTeam = 0.f;
+				lScore.pointsRedTeam = 0.f;
+
+				for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+				{
+					playerTeam = (MAXNUMBEROFPLAYERS) / 2;
+					playerTeam = (int)(playerTeam < i + 1);
+					if (playerTeam == 0) lScore.pointsRedTeam += landingPoints[i];
+					else lScore.pointsRedTeam = landingPoints[i];
+				}
+
+				sendBinaryDataAllPlayers<LandingMiniGameScore>(lScore, data);
+				break;
+			default:
+				break;
+			}
+			if (currentMinigame == MiniGames::LANDINGSPACESHIP) continue; //We do not need to send more data if we are in landingMiniGame
+
 			for (int i = 0; i < 10; i++)
 			{
 				physWorld.update(timerLength / 10.f);
@@ -627,28 +648,7 @@ int main()
 				sendBinaryDataAllPlayers(prMatrix, data);
 			}
 
-			//WHAT NEEDS TO BE DONE ON SERVER TO HANDLE LANDING MINIGAME
-			switch (currentMinigame)
-			{
-			case MiniGames::LANDINGSPACESHIP:
-				//WE NEED TO RECIEVE POINTS, ADD THEM AND SEND THEM TO THE PLAYERS
-
-				LandingMiniGameScore lScore;
-				lScore.packetId = PacketType::LANDINGMINIGAMESCORE;
-				int playerTeam;
-				
-				for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-				{
-					playerTeam = (MAXNUMBEROFPLAYERS) / 2;
-					playerTeam = (int)(playerTeam < i + 1);
-					if (playerTeam == 0) lScore.pointsRedTeam += landingPoints[i];
-					else lScore.pointsRedTeam = landingPoints[i];
-				}
-
-				sendBinaryDataAllPlayers<LandingMiniGameScore>(lScore, data);
-			default:
-				break;
-			}
+			
 			////send component data to all players
 			//for (int i = 0; i < components.size(); i++)
 			//{

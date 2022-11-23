@@ -85,6 +85,9 @@ private:
 	LandingHud landingUi;
 
 	float landingMiniGamePoints = 0;
+	float teamScoreLandingMiniGame = 0;
+	float enemyTeamScoreLandingMiniGame = 0;
+
 
 	//InterMissionVariables
 	int Stage = 0;

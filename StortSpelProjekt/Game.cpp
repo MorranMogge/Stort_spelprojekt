@@ -408,9 +408,7 @@ void Game::handleKeybinds()
 
 GAMESTATE Game::updateComponentGame()
 {
-	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame);
-
+	
 	//Get newest delta time
 	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
 	asteroids->updateAsteroids(dt, planetVector, gameObjects);
@@ -623,18 +621,27 @@ GAMESTATE Game::updateLandingGame()
 	moveDir *= 1.f/sqrt(landingMiniGamePoints*0.025f + 1);
 	spaceShips[currentPlayer->getTeam()]->fly(moveDir, dt);
 	if (landingUi.handleInputs(dt)) landingMiniGamePoints += 100*dt;
+	if (rand() % 10 == 0)
+	{
+		//Send data to server
+		LandingMiniSendScoreToServer totalPoints = {};
+		totalPoints.packetId = PacketType::LANDINGMINIGAMESENDSCORETOSERVER;
+		totalPoints.playerId = currentPlayer->getOnlineID();
+		totalPoints.scoreToServer = landingMiniGamePoints;
+		client->sendStuff<LandingMiniSendScoreToServer>(totalPoints);
+	}
+
 	if (getLength(spaceShips[currentPlayer->getTeam()]->getPosV3()) <= planetVector[0]->getSize())
 	{
 		moveDir.Normalize();
 		spaceShips[currentPlayer->getTeam()]->setPos(moveDir * planetVector[0]->getSize());
 		std::cout << "Total points " << landingMiniGamePoints << std::endl;
 
-		//Send data to server
-		LandingMiniGameOver totalPoints = {};
-		totalPoints.packetId = PacketType::LANDINGMINIGAMEOVER;
-
-		client->sendStuff<LandingMiniGameOver>(totalPoints);
+		
 	}
+
+	std::cout << "Team score: " << teamScoreLandingMiniGame << "\nEnemy Team score: " << enemyTeamScoreLandingMiniGame << "\n";
+
 	return NOCHANGE;
 }
 
@@ -745,7 +752,7 @@ GAMESTATE Game::updateIntermission()
 GAMESTATE Game::Update()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame, teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame);
 
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();

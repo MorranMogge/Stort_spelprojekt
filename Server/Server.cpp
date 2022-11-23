@@ -473,12 +473,13 @@ int main()
 					std::cout << "Sent capture zone\n";
 
 					//Sending the planets
-					planetVector[1]->setPosition(DirectX::XMFLOAT3(40.f, 40.f, 40.f));
-					planetVector[1]->setScale(DirectX::XMFLOAT3(20.f, 20.f, 20.f));
-					planetVector[2]->setPosition(DirectX::XMFLOAT3(-40.f, 40.f, 40.f));
-					planetVector[2]->setScale(DirectX::XMFLOAT3(20.f, 20.f, 20.f));
+					planetVector[0]->setScale(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
+					planetVector[2]->setPosition(DirectX::XMFLOAT3(65.f, 65.f, 65.f));
+					planetVector[2]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
+					planetVector[1]->setPosition(DirectX::XMFLOAT3(-65.f, 65.f, 65.f));
+					planetVector[1]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
 
-					for (int i = 1; i < planetVector.size(); i++)
+					for (int i = 0; i < planetVector.size(); i++)
 					{
 						SpawnPlanets planetData;
 						planetData.packetId = PacketType::SPAWNPLANETS;

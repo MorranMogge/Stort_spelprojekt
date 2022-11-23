@@ -196,10 +196,11 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 			if (planetVector.size() == 3)
 			{
-				planetCounter %= 2;
-				planetCounter++;
+				planetCounter %= 3;
 				planetVector[planetCounter]->setPosition(DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos));
 				planetVector[planetCounter]->setScale(DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size));
+				physWorld.setPlanets(planetVector);
+				planetCounter++;
 			}
 			else
 			{

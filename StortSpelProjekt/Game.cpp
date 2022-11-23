@@ -648,8 +648,8 @@ GAMESTATE Game::updateKingOfTheHillGame()
 		currentMinigame);
 
 	//Get newest delta time
-	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
-	asteroids->updateAsteroids(dt, planetVector, gameObjects);
+	//if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
+	//asteroids->updateAsteroids(dt, planetVector, gameObjects);
 
 	//Calculate gravity factor
 	if (planetVector.size() > 0) field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
@@ -750,8 +750,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 		}
 	}
 	//Arrow pointing to component		FIX!
-	else if (onlineItems.size() > 0)  this->arrow->showDirection(onlineItems[0]->getPosV3(), currentPlayer->getPosV3(), grav);
-	else if (components.size() > 0) this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
+	this->arrow->showDirection(captureZone->getPosition(), currentPlayer->getPosV3(), grav);
 	currentPlayer->colliedWIthComponent(components);
 
 	if (!IFONLINE) //Check Components offline
@@ -903,6 +902,8 @@ GAMESTATE Game::Update()
 		startKTH.minigame = MiniGames::KINGOFTHEHILL;
 		client->sendStuff<MinigameStart>(startKTH);
 		std::cout << "SENT START KTH\n";
+
+		currentPlayer->setPos(DirectX::XMFLOAT3(0.f, 65.f, 0.f));
 	}
 
 	//Simulate the current minigame on client side

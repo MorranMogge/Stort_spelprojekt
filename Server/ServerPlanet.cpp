@@ -163,9 +163,12 @@ GravityField* Planet::getGravityField() const
 void Planet::setPosition(const DirectX::SimpleMath::Vector3& position)
 {
 	this->position = position;
+	this->gravField->setCenterpoint(position);
+	if (this->planetCollisionBox) this->planetCollisionBox->setPosition(reactphysics3d::Vector3(position.x, position.y, position.z));
 }
 
 void Planet::setScale(const DirectX::SimpleMath::Vector3& scale)
 {
 	this->scale = scale;
+	if (this->planetCollisionBox) this->planetCollisionBox->setScale(scale);
 }

@@ -33,6 +33,8 @@ class SettingsUI final
 
 	GAMESTATE gameState;
 
+	int selected = 0;
+
 	void HandleInputs();
 	void SpritePass();
 

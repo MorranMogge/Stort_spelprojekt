@@ -49,236 +49,327 @@ void SettingsUI::HandleInputs()
 {
 	backText.IntersectMouse() ? backText.SetTint(DirectX::Colors::Green.v) : backText.SetTint(DirectX::Colors::White.v);
 
-	if (Input::KeyPress(KeyCode::MOUSE_L))
-	{
-		if (backText.GetTint() == DirectX::Colors::Green.v)
-		{
-			gameState = MENU;
-		}
-
-		// click and intersects
-		if (checkbox_true.IntersectMouse() && !dropdown2 && !dropdown1 || checkbox_false.IntersectMouse() && !dropdown2 && !dropdown1)
-		{
-			fullscreen = !fullscreen;
-
-			if (fullscreen)
-			{
-				if (is720p)
-				{
-					GPU::windowWidth = 1280;
-					GPU::windowHeight = 720;
-					ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
-
-					SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-					SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW);
-					GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
-					GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
-
-					// get window client size
-					if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
-					{
-						GPU::windowWidth = info.rcClient.right - info.rcClient.left;
-						GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
-					}
-
-					ReInitSwapChain();
-					gameState = SETTINGS;
-				}
-				else
-				{
-					GPU::windowWidth = 1920;
-					GPU::windowHeight = 1080;
-					ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
-
-					SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-					SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW);
-					GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
-					GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
-
-					// get window client size
-					if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
-					{
-						GPU::windowWidth = info.rcClient.right - info.rcClient.left;
-						GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
-					}
-
-					ReInitSwapChain();
-					gameState = SETTINGS;
-
-				}
-
-			}
-			else
-			{
-				if (is720p)
-				{
-					GPU::windowWidth = 1280;
-					GPU::windowHeight = 720;
-					ChangeResolution2(1920, 1080);
-
-					SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
-					SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
-
-					// get window client size
-					if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
-					{
-						GPU::windowWidth = info.rcClient.right - info.rcClient.left;
-						GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
-					}
-
-					GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
-					GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
-
-					ReInitSwapChain();
-					gameState = SETTINGS;
-				}
-				else
-				{
-					GPU::windowWidth = 1920;
-					GPU::windowHeight = 1080;
-					ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
-
-					SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
-					SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
-
-					// get window client size
-					if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
-					{
-						GPU::windowWidth = info.rcClient.right - info.rcClient.left;
-						GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
-					}
-
-					GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
-					GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
-
-					ReInitSwapChain();
-					gameState = SETTINGS;
-				}
-
-			}
-
-		}
-		else if (dropDown.IntersectMouse())
-		{
-			dropdown1 = !dropdown1;
-		}
-		else if (dropDown2.IntersectMouse())
-		{
-			dropdown2 = !dropdown2;
-		}
-
-		else if (text720p2.IntersectMouse() && dropdown1)
-		{
-			is720p = true;
-			dropdown1 = false;
-			dropdown2 = false;
-			GPU::windowWidth = 1280;
-			GPU::windowHeight = 720;
-			if (fullscreen)
-			{
-				ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
-				SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-			}
-			else
-			{
-				SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
-			}
-			SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
-			// get window client size
-			if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
-			{
-				GPU::windowWidth = info.rcClient.right - info.rcClient.left;
-				GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
-			}
-
-			GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
-			GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
-
-			ReInitSwapChain();
-			gameState = SETTINGS;
-
-		}
-		else if (text1080p2.IntersectMouse() && dropdown1)
-		{
-			is720p = false;
-			dropdown1 = false;
-			dropdown2 = false;
-
-			GPU::windowWidth = 1920;
-			GPU::windowHeight = 1080;
-
-			if (fullscreen)
-			{
-				ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
-				SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-			}
-			else
-			{
-				SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
-			}
-			SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
-
-			// get window client size
-			if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
-			{
-				GPU::windowWidth = info.rcClient.right - info.rcClient.left;
-				GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
-			}
-
-			GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
-			GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
-			
-			ReInitSwapChain();
-			gameState = SETTINGS;
-
-		}
-
-		else if (directxText2.IntersectMouse() && dropdown2)
-		{
-			isDirectx = true;
-			dropdown1 = false;
-			dropdown2 = false;
-
-			if (std::filesystem::exists("dxgi.dll"))
-				std::filesystem::rename("dxgi.dll", "dxgi.dllb");
-
-			if (std::filesystem::exists("d3d11.dll"))
-				std::filesystem::rename("d3d11.dll", "d3d11.dllb");
-
-			system("start StortSpelProjekt.exe");
-
-			gameState = EXIT;
-		}
-		else if (vulkanText2.IntersectMouse() && dropdown2)
-		{
-			isDirectx = false;
-			dropdown1 = false;
-			dropdown2 = false;
-
-			if(std::filesystem::exists("dxgi.dllb"))
-				std::filesystem::rename("dxgi.dllb", "dxgi.dll");
-
-			if (std::filesystem::exists("d3d11.dllb"))
-				std::filesystem::rename("d3d11.dllb", "d3d11.dll");
-
-			system("start StortSpelProjekt.exe");
-
-			gameState = EXIT;
-		}
-
-		// reset dropdown
-		else
-		{
-			dropdown1 = false;
-			dropdown2 = false;
-		}
-	}
-
 	if (auto state = gamePad->GetState(0); state.IsConnected())
 	{
+		//resets
+
+
+		static bool downTrigged = false;
+		static bool upTrigged = false;
+		static bool aTrigged = false;
+
+		//down pressed
+		if (state.IsDPadDownPressed() || state.IsLeftThumbStickDown())
+		{
+			if (!downTrigged)
+			{
+				switch (selected)
+				{
+				case 0:
+					selected = 1;
+					break;
+				case 1:
+					selected = 2;
+					break;
+				case 2:
+					selected = 3;
+					break;
+				}
+				downTrigged = true;
+			}
+		}
+		else
+		{
+			downTrigged = false;
+		}
+
+		//up pressed
+		if (state.IsDPadUpPressed() || state.IsLeftThumbStickUp())
+		{
+			if (!upTrigged)
+			{
+				switch (selected)
+				{
+				case 1:
+					selected = 0;
+					break;
+				case 2:
+					selected = 1;
+					break;
+				case 3:
+					selected = 2;
+					break;
+				}
+				upTrigged = true;
+			}
+
+		}
+		else
+		{
+			upTrigged = false;
+		}
+
+		// A pressed
+		if (state.IsAPressed())
+		{
+			if (!aTrigged)
+			{
+				aTrigged = true;
+			}
+		}
+		else
+		{
+			aTrigged = false;
+		}
+
+
 		if (state.IsBPressed())
 		{
 			gameState = MENU;
+		}
+
+		switch (selected)
+		{
+		case 0:
+			resulotionText.SetTint(DirectX::Colors::Orange.v);
+			break;
+		case 1:
+			fullscreenText.SetTint(DirectX::Colors::Orange.v);
+			break;
+		case 2:
+
+			break;
+		case 3:
+
+			break;
+		}
+
+	}
+	else
+	{
+		if (Input::KeyPress(KeyCode::MOUSE_L))
+		{
+			if (backText.GetTint() == DirectX::Colors::Green.v)
+			{
+				gameState = MENU;
+			}
+
+			// click and intersects
+			if (checkbox_true.IntersectMouse() && !dropdown2 && !dropdown1 || checkbox_false.IntersectMouse() && !dropdown2 && !dropdown1)
+			{
+				fullscreen = !fullscreen;
+
+				if (fullscreen)
+				{
+					if (is720p)
+					{
+						GPU::windowWidth = 1280;
+						GPU::windowHeight = 720;
+						ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+
+						SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+						SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW);
+						GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+						GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+						// get window client size
+						if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+						{
+							GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+							GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+						}
+
+						ReInitSwapChain();
+						gameState = SETTINGS;
+					}
+					else
+					{
+						GPU::windowWidth = 1920;
+						GPU::windowHeight = 1080;
+						ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+
+						SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+						SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW);
+						GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+						GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+						// get window client size
+						if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+						{
+							GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+							GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+						}
+
+						ReInitSwapChain();
+						gameState = SETTINGS;
+
+					}
+
+				}
+				else
+				{
+					if (is720p)
+					{
+						GPU::windowWidth = 1280;
+						GPU::windowHeight = 720;
+						ChangeResolution2(1920, 1080);
+
+						SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+						SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+
+						// get window client size
+						if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+						{
+							GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+							GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+						}
+
+						GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+						GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+						ReInitSwapChain();
+						gameState = SETTINGS;
+					}
+					else
+					{
+						GPU::windowWidth = 1920;
+						GPU::windowHeight = 1080;
+						ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+
+						SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+						SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+
+						// get window client size
+						if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+						{
+							GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+							GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+						}
+
+						GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+						GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+						ReInitSwapChain();
+						gameState = SETTINGS;
+					}
+
+				}
+
+			}
+			else if (dropDown.IntersectMouse())
+			{
+				dropdown1 = !dropdown1;
+			}
+			else if (dropDown2.IntersectMouse())
+			{
+				dropdown2 = !dropdown2;
+			}
+
+			else if (text720p2.IntersectMouse() && dropdown1)
+			{
+				is720p = true;
+				dropdown1 = false;
+				dropdown2 = false;
+				GPU::windowWidth = 1280;
+				GPU::windowHeight = 720;
+				if (fullscreen)
+				{
+					ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+					SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+				}
+				else
+				{
+					SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+				}
+				SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+				// get window client size
+				if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+				{
+					GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+					GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+				}
+
+				GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+				GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+				ReInitSwapChain();
+				gameState = SETTINGS;
+
+			}
+			else if (text1080p2.IntersectMouse() && dropdown1)
+			{
+				is720p = false;
+				dropdown1 = false;
+				dropdown2 = false;
+
+				GPU::windowWidth = 1920;
+				GPU::windowHeight = 1080;
+
+				if (fullscreen)
+				{
+					ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+					SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+				}
+				else
+				{
+					SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+				}
+				SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+
+				// get window client size
+				if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+				{
+					GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+					GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+				}
+
+				GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+				GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+				ReInitSwapChain();
+				gameState = SETTINGS;
+
+			}
+
+			else if (directxText2.IntersectMouse() && dropdown2)
+			{
+				isDirectx = true;
+				dropdown1 = false;
+				dropdown2 = false;
+
+				if (std::filesystem::exists("dxgi.dll"))
+					std::filesystem::rename("dxgi.dll", "dxgi.dllb");
+
+				if (std::filesystem::exists("d3d11.dll"))
+					std::filesystem::rename("d3d11.dll", "d3d11.dllb");
+
+				system("start StortSpelProjekt.exe");
+
+				gameState = EXIT;
+			}
+			else if (vulkanText2.IntersectMouse() && dropdown2)
+			{
+				isDirectx = false;
+				dropdown1 = false;
+				dropdown2 = false;
+
+				if (std::filesystem::exists("dxgi.dllb"))
+					std::filesystem::rename("dxgi.dllb", "dxgi.dll");
+
+				if (std::filesystem::exists("d3d11.dllb"))
+					std::filesystem::rename("d3d11.dllb", "d3d11.dll");
+
+				system("start StortSpelProjekt.exe");
+
+				gameState = EXIT;
+			}
+
+			// reset dropdown
+			else
+			{
+				dropdown1 = false;
+				dropdown2 = false;
+			}
 		}
 	}
 

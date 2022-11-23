@@ -586,7 +586,7 @@ int main()
 			default:
 				break;
 			}
-			if (currentMinigame == MiniGames::LANDINGSPACESHIP) continue; //We do not need to send more data if we are in landingMiniGame
+			//if (currentMinigame == MiniGames::LANDINGSPACESHIP) continue; //We do not need to send more data if we are in landingMiniGame
 
 			for (int i = 0; i < 10; i++)
 			{

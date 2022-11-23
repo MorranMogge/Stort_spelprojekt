@@ -268,6 +268,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::CREATEZONE:
 			zonePos = circularBuffer->readData<CreateZone>();
 			captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(zonePos->xPos, zonePos->yPos, zonePos->zPos), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), field, DirectX::SimpleMath::Vector3(zonePos->scale, zonePos->scale, zonePos->scale));
+			captureZone->setColor(DirectX::SimpleMath::Vector3(1.f, 1.f, 1.f));
 			break;
 
 		case PacketType::STARTMINIGAMES:

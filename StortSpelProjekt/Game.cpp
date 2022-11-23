@@ -268,7 +268,7 @@ void Game::drawObjects(bool drawDebug)
 		else gameObjects[i]->draw();
 	}
 
-	if (captureZone != nullptr) captureZone->draw();
+	
 
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
@@ -347,6 +347,7 @@ void Game::drawFresnel()
 	{
 		spaceShips[i]->drawFresnel();
 	}
+	if (captureZone != nullptr) captureZone->drawFresnel();
 	for (int i = 0; i < items.size(); i++)
 	{
 		if (items[i]->getId() == ObjID::GRENADE)
@@ -642,7 +643,16 @@ GAMESTATE Game::updateLandingGame()
 	{
 		moveDir.Normalize();
 		spaceShips[currentPlayer->getTeam()]->setPos(moveDir * planetVector[0]->getSize());
-		currentMinigame = MiniGames::COMPONENTCOLLECTION;
+		currentMinigame = MiniGames::KINGOFTHEHILL;
+
+		//Send data to server
+		MinigameStart startKTH;
+		startKTH.packetId = PacketType::STARTMINIGAMES;
+		startKTH.minigame = MiniGames::KINGOFTHEHILL;
+		client->sendStuff<MinigameStart>(startKTH);
+		std::cout << "SENT START KTH\n";
+
+		currentPlayer->setPos(DirectX::XMFLOAT3(0.f, 65.f, 0.f));
 	}
 
 
@@ -661,8 +671,9 @@ GAMESTATE Game::startKotH()
 GAMESTATE Game::updateKingOfTheHillGame()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone,
-		currentMinigame);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, 
+		gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame, 
+		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame);
 
 	//Get newest delta time
 	//if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
@@ -745,19 +756,6 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	else camera.moveCamera(currentPlayer, dt);
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
-	//Check Components online
-	for (int i = 0; i < spaceShips.size(); i++)
-	{
-		if (spaceShips[i]->getCompletion())
-		{
-			if (currentPlayer->getTeam() == i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot()); currentPlayer->setVibration(0.1f, 0.1f);
-			this->spaceShips[i]->flyAway(dt);
-			endTimer += dt;
-			arrow->removeArrow(); //Remove these completely by not drawing the meshes anymore
-			if (currentPlayer->getTeam() == i) this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969)); //Remove these completely by not drawing the meshes anymore
-		}
-	}
-
 	//Arrow pointing to spaceship		FIX!
 	if (currentPlayer->isHoldingComp())
 	{
@@ -766,51 +764,11 @@ GAMESTATE Game::updateKingOfTheHillGame()
 			if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
 		}
 	}
-	//Arrow pointing to component		FIX!
-	this->arrow->showDirection(captureZone->getPosition(), currentPlayer->getPosV3(), grav);
+	//Arrow pointing to component
+	if (captureZone) this->arrow->showDirection(captureZone->getPosition(), currentPlayer->getPosV3(), grav);
 	currentPlayer->colliedWIthComponent(components);
 
-	if (!IFONLINE) //Check Components offline
-	{
-		for (int i = 0; i < spaceShips.size(); i++)
-		{
-			for (int j = 0; j < components.size(); j++)
-			{
-				if (spaceShips[i]->detectedComponent(components[j]))
-				{
-					if (currentPlayer->getItem() != nullptr)
-					{
-						if (currentPlayer->getItem()->getId() == ObjID::COMPONENT)
-						{
-							currentPlayer->releaseItem();
-						}
-					}
-					randomizeObjectPos(components[j]);
-					spaceShips[i]->addComponent();
-					spaceShips[i]->setAnimate(true);
-				}
-			}
-		}
-	}
-	else
-	{
-		for (int i = 0; i < spaceShips.size(); i++)
-		{
-			for (int j = 0; j < components.size(); j++) spaceShips[i]->detectedComponent(components[j]);
-		}
-	}
-	//Check winstate		FIX!
-	if (endTimer > 6)
-	{
-		this->currentPlayer->setVibration(0.f, 0.f);
-		for (int i = 0; i < spaceShips.size(); i++)
-		{
-			if (spaceShips[i]->isFinished())
-			{
-			}
-		}
-	}
-
+	
 	//Play pickup animation
 	for (int i = 0; i < spaceShips.size(); i++) spaceShips[i]->animateOnPickup();
 

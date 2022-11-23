@@ -164,15 +164,13 @@ void Game::loadObjects()
 	//SOLAR SYSTEM SETUP
 	if (!IFONLINE)
 	{
-		float planetSize = 40.f;
-		int nrPlanets = 3; // (rand() % 3) + 1;
-		for (int i = 0; i < nrPlanets; i++)
-		{
-			if (i == 0) planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
-			else if (i == 1) planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
-			else planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f)));
-			planetVector.back()->setPlanetShape(&physWorld);
-		}
+		float planetSize = 40.f; // SET DIFFERENT GRAV-FACTORS FOR THE PLANETS
+		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
+		planetVector.back()->setPlanetShape(&physWorld);
+		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
+		planetVector.back()->setPlanetShape(&physWorld);
+		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f)));
+		planetVector.back()->setPlanetShape(&physWorld);
 		physWorld.setPlanets(planetVector);
 	}
 
@@ -421,7 +419,7 @@ GAMESTATE Game::updateComponentGame()
 	else changedPlanet = false;
 	oldField = field;
 
-	if (planetVector.size() > 0) grav = planetVector[0]->getClosestFieldFactor(planetVector, currentPlayer->getPosV3());
+	if (planetVector.size() > 0) grav = field->calcGravFactor(currentPlayer->getPosV3());
 	currentPlayer->updateVelocity(getScalarMultiplicationXMFLOAT3(dt, grav));
 	//additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
 
@@ -707,13 +705,6 @@ GAMESTATE Game::updateIntermission()
 		{
 			this->spaceShips[0]->setRot(spaceShips[0]->getRotOrientedToGrav());
 			this->spaceShips[1]->setRot(spaceShips[1]->getRotOrientedToGrav());
-
-			//Send data to server
-			/*StartLanding startLandingGame;
-			startLandingGame.packetId = PacketType::STARTLANDING;
-			client->sendStuff<StartLanding>(startLandingGame);
-			std::cout << "SENT START LANDING\n";*/
-
 			currentMinigame = STARTLANDING;
 			return GAMESTATE::NOCHANGE;
 		}
@@ -743,6 +734,18 @@ GAMESTATE Game::Update()
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
+
+	if (Input::KeyPress(KeyCode::K))
+	{
+		currentMinigame = MiniGames::KINGOFTHEHILL;
+
+		//Send data to server
+		MinigameStart startKTH;
+		startKTH.packetId = PacketType::STARTMINIGAMES;
+		startKTH.minigame = MiniGames::KINGOFTHEHILL;
+		client->sendStuff<MinigameStart>(startKTH);
+		std::cout << "SENT START KTH\n";
+	}
 
 	//Simulate the current minigame on client side
 	switch (currentMinigame)

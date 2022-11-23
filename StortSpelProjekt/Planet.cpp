@@ -105,15 +105,21 @@ void Planet::movePlanet(float offset)
 GravityField* Planet::getClosestField(std::vector<Planet*>& planets, const DirectX::SimpleMath::Vector3& position) const
 {
 	GravityField* closestField = this->gravField;
+	static float otherField;
+	otherField = 0.f;
+	static float thisField;
+	thisField = 0.f;
+
 	DirectX::SimpleMath::Vector3 fieldOne = position - this->position;
-	scalarMultiplicationXMFLOAT3(this->getFieldFactor(), fieldOne);
+	thisField = 1.f / getLength(fieldOne);
+	thisField *= this->getFieldFactor();
 	for (int i = 1; i < planets.size(); i++)
 	{
 		DirectX::SimpleMath::Vector3 fieldTwo = position - planets[i]->getPlanetPosition();
-		scalarMultiplicationXMFLOAT3(this->getFieldFactor(), fieldTwo);
-		if (getLength(fieldOne) > getLength(fieldTwo)) { closestField = planets[i]->getGravityField(); fieldOne = fieldTwo; }
+		otherField = 1.f / getLength(fieldTwo);
+		otherField *= planets[i]->getFieldFactor();
+		if (thisField < otherField) { closestField = planets[i]->getGravityField(); thisField = otherField; }
 	}
-	
 	return closestField;
 }
 

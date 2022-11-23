@@ -247,14 +247,13 @@ int main()
 	srand(time(0));
 	std::vector<Planet*> planetVector;
 	float planetSize = 40.f;
-	int nrPlanets = (rand() % 3) + 1;
-	for (int i = 0; i < nrPlanets; i++)
-	{
-		if (i == 0) planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
-		else if (i == 1) planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
-		else planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f)));
-		planetVector.back()->setPlanetShape(&physWorld);
-	}
+	int nrPlanets = 3;
+	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
+	planetVector.back()->setPlanetShape(&physWorld);
+	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
+	planetVector.back()->setPlanetShape(&physWorld);
+	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f)));
+	planetVector.back()->setPlanetShape(&physWorld);
 	physWorld.setPlanets(planetVector);
 
 	for (int i = 0; i < planetVector.size(); i++)
@@ -281,9 +280,6 @@ int main()
 		sendBinaryDataAllPlayers<SpaceShipPosition>(spaceShipData, data);
 		std::cout << "Yes\n";
 	}
-
-	KingOfTheHillMiniGame miniGameKTH(data);
-	std::cout << "Sent capture zone\n";
 
 	CircularBuffer* circBuffer = new CircularBuffer();
 	std::thread* recvThread[MAXNUMBEROFPLAYERS];
@@ -334,6 +330,7 @@ int main()
 			itemPosition* itemPos = nullptr;
 			ComponentDropped* cmpDropped = nullptr;
 			ComponentRequestingPickUp* requestingCmpPickedUp = nullptr;
+			MinigameStart* startMinigame = nullptr;
 
 			switch (packetId)
 			{
@@ -463,6 +460,37 @@ int main()
 				//		}
 				//	}
 				//}
+				break;
+
+			case PacketType::STARTMINIGAMES:
+				startMinigame = circBuffer->readData<MinigameStart>();
+				switch (startMinigame->minigame)
+				{
+				case MiniGames::KINGOFTHEHILL:
+
+					//Sending the capture zone
+					KingOfTheHillMiniGame miniGameKTH(data);
+					std::cout << "Sent capture zone\n";
+
+					//Sending the planets
+					planetVector[1]->setPosition(DirectX::XMFLOAT3(40.f, 40.f, 40.f));
+					planetVector[1]->setScale(DirectX::XMFLOAT3(20.f, 20.f, 20.f));
+					planetVector[2]->setPosition(DirectX::XMFLOAT3(-40.f, 40.f, 40.f));
+					planetVector[2]->setScale(DirectX::XMFLOAT3(20.f, 20.f, 20.f));
+
+					for (int i = 1; i < planetVector.size(); i++)
+					{
+						SpawnPlanets planetData;
+						planetData.packetId = PacketType::SPAWNPLANETS;
+						planetData.xPos = planetVector[i]->getPlanetPosition().x;
+						planetData.yPos = planetVector[i]->getPlanetPosition().y;
+						planetData.zPos = planetVector[i]->getPlanetPosition().z;
+						planetData.size = planetVector[i]->getSize();
+						sendBinaryDataAllPlayers<SpawnPlanets>(planetData, data);
+						std::cout << "Sent a planet\n";
+					}
+					break;
+				}
 				break;
 			}
 		}

@@ -174,6 +174,7 @@ void sendBinaryDataOnePlayer(const T& data, userData& user)
 int main()
 {
 	float flyTime = 0.f;
+	float landingPoints[MAXNUMBEROFPLAYERS]{ 0.f };
 	bool timeToFly = false;
 	int progress[2] = { 0, 0 };
 	int itemid = 0;
@@ -182,6 +183,7 @@ int main()
 	TimeStruct physicsTimer;
 	PhysicsWorld physWorld;
 	Component planetComp;
+	MiniGames currentMinigame = MiniGames::LANDINGSPACESHIP;
 	physWorld.addPhysComponent(planetComp, reactphysics3d::CollisionShapeName::SPHERE, DirectX::XMFLOAT3(40, 40, 40));
 	planetComp.getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 
@@ -334,6 +336,7 @@ int main()
 			itemPosition* itemPos = nullptr;
 			ComponentDropped* cmpDropped = nullptr;
 			ComponentRequestingPickUp* requestingCmpPickedUp = nullptr;
+			LandingMiniSendScoreToServer* scoreFromClient = nullptr;
 
 			switch (packetId)
 			{
@@ -464,6 +467,9 @@ int main()
 				//	}
 				//}
 				break;
+			case PacketType::LANDINGMINIGAMESENDSCORETOSERVER:
+				scoreFromClient = circBuffer->readData<LandingMiniSendScoreToServer>();
+				landingPoints[scoreFromClient->playerId] = scoreFromClient->scoreToServer;
 			}
 		}
 
@@ -621,6 +627,28 @@ int main()
 				sendBinaryDataAllPlayers(prMatrix, data);
 			}
 
+			//WHAT NEEDS TO BE DONE ON SERVER TO HANDLE LANDING MINIGAME
+			switch (currentMinigame)
+			{
+			case MiniGames::LANDINGSPACESHIP:
+				//WE NEED TO RECIEVE POINTS, ADD THEM AND SEND THEM TO THE PLAYERS
+
+				LandingMiniGameScore lScore;
+				lScore.packetId = PacketType::LANDINGMINIGAMESCORE;
+				int playerTeam;
+				
+				for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+				{
+					playerTeam = (MAXNUMBEROFPLAYERS) / 2;
+					playerTeam = (int)(playerTeam < i + 1);
+					if (playerTeam == 0) lScore.pointsRedTeam += landingPoints[i];
+					else lScore.pointsRedTeam = landingPoints[i];
+				}
+
+				sendBinaryDataAllPlayers<LandingMiniGameScore>(lScore, data);
+			default:
+				break;
+			}
 			////send component data to all players
 			//for (int i = 0; i < components.size(); i++)
 			//{

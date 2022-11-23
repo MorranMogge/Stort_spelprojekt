@@ -197,7 +197,7 @@ struct LandingMiniGameScore
 {
 	int packetId;
 	float pointsRedTeam;
-	float pointsRedTeam;
+	float pointsBlueTeam;
 };
 
 //enum = 25
@@ -206,9 +206,17 @@ struct LandingMiniGameOver
 	int packetId;
 	float totalPointsRedTeam;
 	float totalPointsBlueTeam;
-}
+};
 
-//enum 26
+//enum = 26
+struct LandingMiniSendScoreToServer
+{
+	int packetId;
+	int playerId;
+	float scoreToServer;
+};
+
+//enum 27
 struct CreateZone
 {
 	int packetId;
@@ -218,7 +226,7 @@ struct CreateZone
 	float scale;
 };
 
-//enum = 27
+//enum = 28
 struct MinigameStart
 {
 	int packetId;

@@ -84,6 +84,30 @@ void KingOfTheHillMiniGame::update(serverData& data)
 		}
 	}
 
+	if (team2Score >= goalScore)
+	{
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - this->timerToSend)).count() > timerSend)
+		{
+			for (int i = 0; i < this->nrOfPlayers; i++)
+			{
+				if (i == 0 || i == 1)
+				{
+					Loser lose;
+					lose.packetId = PacketType::LOSER;
+					sendBinaryDataOnePlayer<Loser>(lose, data.users[i]);
+					
+				}
+				else if (i == 2 || i == 3)
+				{
+					winner win;
+					win.packetId = PacketType::WINNER;
+					sendBinaryDataOnePlayer<winner>(win, data.users[i]);
+				}
+			}
+			this->timerToSend = std::chrono::system_clock::now();
+		}
+	}
+
 	//fixa för team 2
 
 }

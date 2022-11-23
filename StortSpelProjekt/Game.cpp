@@ -237,11 +237,6 @@ void Game::loadObjects()
 		gamePad = new GamePad();
 		currentPlayer->setGamePad(gamePad);
 	}
-
-	if (!IFONLINE)
-	{
-		captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), planetGravityField, DirectX::SimpleMath::Vector3(10.f, 10.f, 10.f));
-	}
 }
 
 void Game::drawShadows()
@@ -749,8 +744,8 @@ GAMESTATE Game::updateKingOfTheHillGame()
 			if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
 		}
 	}
-	//Arrow pointing to component		FIX!
-	this->arrow->showDirection(captureZone->getPosition(), currentPlayer->getPosV3(), grav);
+	//Arrow pointing to capture zone
+	if (captureZone != nullptr) arrow->showDirection(captureZone->getPosition(), currentPlayer->getPosV3(), grav);
 	currentPlayer->colliedWIthComponent(components);
 
 	if (!IFONLINE) //Check Components offline

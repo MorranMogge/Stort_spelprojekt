@@ -1,7 +1,7 @@
 #include "KingOfTheHillMiniGame.h"
 
 KingOfTheHillMiniGame::KingOfTheHillMiniGame(serverData& data)
-	:kingOfTheHillOrigo(0,60,-40), radius(30)
+	:kingOfTheHillOrigo(0,40,-40), radius(30)
 {
 	sendKingOfTheHillZone(data);
 }

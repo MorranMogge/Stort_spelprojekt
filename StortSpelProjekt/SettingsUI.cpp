@@ -161,6 +161,7 @@ void SettingsUI::HandleInputs()
 		else // non drop down is active
 		{
 			any_DropDown_Active = false;
+			selected_dropdown = 0;
 		}
 
 		//down pressed
@@ -209,17 +210,30 @@ void SettingsUI::HandleInputs()
 		{
 			if (!upTrigged)
 			{
-				switch (selected)
+				//do drop down selection
+				if (any_DropDown_Active)
 				{
-				case 1:
-					selected = 0;
-					break;
-				case 2:
-					selected = 1;
-					break;
-				case 3:
-					selected = 2;
-					break;
+					switch (selected_dropdown)
+					{
+					case 1:
+						selected_dropdown = 0;
+						break;
+					}
+				}
+				else
+				{
+					switch (selected)
+					{
+					case 1:
+						selected = 0;
+						break;
+					case 2:
+						selected = 1;
+						break;
+					case 3:
+						selected = 2;
+						break;
+					}
 				}
 				upTrigged = true;
 			}
@@ -236,39 +250,113 @@ void SettingsUI::HandleInputs()
 		{
 			if (!ATrigged)
 			{
-				switch (selected)
+				if (any_DropDown_Active)
 				{
-				case 0: // resolution
-					dropdown1 = !dropdown1;
-					if (dropdown1 || dropdown2)
+					switch (selected_dropdown)
 					{
-						any_DropDown_Active = true;
-					}
-					else // non drop down is active
+					case 0:// 720p
 					{
 						any_DropDown_Active = false;
-					}
-					break;
-				case 1: // full screen
-					DoFullScreen();
-					break;
-				case 2: // graphic api
-					dropdown2 = !dropdown2;
-					if (dropdown1 || dropdown2)
-					{
-						any_DropDown_Active = true;
-					}
-					else // non drop down is active
+
+						is720p = true;
+						dropdown1 = false;
+						dropdown2 = false;
+						GPU::windowWidth = 1280;
+						GPU::windowHeight = 720;
+						if (fullscreen)
+						{
+							ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+							SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+						}
+						else
+						{
+							SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+						}
+						SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+						// get window client size
+						if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+						{
+							GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+							GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+						}
+
+						GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+						GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+						ReInitSwapChain();
+						gameState = SETTINGS;
+
+					}break;
+
+					case 1:// 1080p
 					{
 						any_DropDown_Active = false;
+						is720p = false;
+						dropdown1 = false;
+						dropdown2 = false;
+
+						GPU::windowWidth = 1920;
+						GPU::windowHeight = 1080;
+
+						if (fullscreen)
+						{
+							ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+							SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+						}
+						else
+						{
+							SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+						}
+						SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+
+						// get window client size
+						if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+						{
+							GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+							GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+						}
+
+						GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+						GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+						ReInitSwapChain();
+						gameState = SETTINGS;
+					}break;
 					}
-					break;
-				case 3: // back
-					if (backText.GetTint() == DirectX::Colors::Orange.v)
+				}
+				else
+				{
+					switch (selected)
 					{
+					case 0: // resolution
+						dropdown1 = !dropdown1;
+						if (dropdown1 || dropdown2)
+						{
+							any_DropDown_Active = true;
+						}
+						else // non drop down is active
+						{
+							any_DropDown_Active = false;
+						}
+						break;
+					case 1: // full screen
+						DoFullScreen();
+						break;
+					case 2: // graphic api
+						dropdown2 = !dropdown2;
+						if (dropdown1 || dropdown2)
+						{
+							any_DropDown_Active = true;
+						}
+						else // non drop down is active
+						{
+							any_DropDown_Active = false;
+						}
+						break;
+					case 3: // back
 						gameState = MENU;
+						break;
 					}
-					break;
 				}
 				ATrigged = true;
 			}
@@ -287,13 +375,14 @@ void SettingsUI::HandleInputs()
 				if (any_DropDown_Active)
 				{
 					any_DropDown_Active = false;
+					dropdown1 = false;
+					dropdown2 = false;
 				}
 				else
 				{
 					gameState = MENU;
-					BTrigged = true;
 				}
-
+				BTrigged = true;
 			}
 		}
 		// B release
@@ -479,13 +568,28 @@ void SettingsUI::SpritePass()
 	//if any dropdown is expanded
 	if (dropdown1)
 	{
-		if (text1080p2.IntersectMouse())
+		if (auto state = gamePad->GetState(0); state.IsConnected())
 		{
-			dropDown_menu4.Draw();
+			switch (selected_dropdown)
+			{
+			case 0:
+				dropDown_menu3.Draw();
+				break;
+			case 1:
+				dropDown_menu4.Draw();
+				break;
+			}
 		}
 		else
 		{
-			dropDown_menu3.Draw();
+			if (text1080p2.IntersectMouse())
+			{
+				dropDown_menu4.Draw();
+			}
+			else
+			{
+				dropDown_menu3.Draw();
+			}
 		}
 
 		text720p2.Draw();
@@ -494,14 +598,30 @@ void SettingsUI::SpritePass()
 	}
 	if (dropdown2)
 	{
-		if (vulkanText2.IntersectMouse())
+		if (auto state = gamePad->GetState(0); state.IsConnected())
 		{
-			dropDown_menu2.Draw();
+			switch (selected_dropdown)
+			{
+			case 0:
+				dropDown_menu1.Draw();
+				break;
+			case 1:
+				dropDown_menu2.Draw();
+				break;
+			}
 		}
 		else
 		{
-			dropDown_menu1.Draw();
+			if (vulkanText2.IntersectMouse())
+			{
+				dropDown_menu2.Draw();
+			}
+			else
+			{
+				dropDown_menu1.Draw();
+			}
 		}
+
 		vulkanText2.Draw();
 		directxText2.Draw();
 	}

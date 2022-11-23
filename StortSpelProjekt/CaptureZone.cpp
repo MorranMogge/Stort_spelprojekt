@@ -10,6 +10,7 @@ CaptureZone::CaptureZone(Mesh* useMesh, const DirectX::SimpleMath::Vector3 & pos
 	this->colorBuffer.getData() = DirectX::XMFLOAT4(color.x, color.y, color.z, 0.1f);
 	this->colorBuffer.applyData();
 	this->setRot(getRotOrientedToGrav());
+	this->position = position;
 }
 
 void CaptureZone::setColor(const DirectX::SimpleMath::Vector3 & color)
@@ -34,4 +35,9 @@ void CaptureZone::drawFresnel()
 {
 	GPU::immediateContext->PSSetConstantBuffers(2, 1, this->colorBuffer.getReferenceOf());
 	this->draw();
+}
+
+DirectX::SimpleMath::Vector3 CaptureZone::getPosition()const
+{
+	return this->position;
 }

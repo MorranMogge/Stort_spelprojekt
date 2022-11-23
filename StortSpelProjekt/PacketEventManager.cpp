@@ -195,9 +195,21 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::SPAWNPLANETS:
 			planetData = circularBuffer->readData<SpawnPlanets>();
 			std::cout << "Received planet\n";
-			planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos)));
-			planetVector.back()->setPlanetShape(&physWorld);
-			physWorld.setPlanets(planetVector);
+
+			if (planetVector.size() == 3)
+			{
+				planetCounter %= 3;
+				planetVector[planetCounter]->setPosition(DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos));
+				planetVector[planetCounter]->setScale(DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size));
+				physWorld.setPlanets(planetVector);
+				planetCounter++;
+			}
+			else
+			{
+				planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos)));
+				planetVector.back()->setPlanetShape(&physWorld);
+				physWorld.setPlanets(planetVector);
+			}
 			break;
 
 		case PacketType::COMPONENTCONFIRMEDPICKUP:

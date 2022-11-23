@@ -105,15 +105,21 @@ void Planet::movePlanet(float offset)
 GravityField* Planet::getClosestField(std::vector<Planet*>& planets, const DirectX::SimpleMath::Vector3& position) const
 {
 	GravityField* closestField = this->gravField;
+	static float otherField;
+	otherField = 0.f;
+	static float thisField;
+	thisField = 0.f;
+
 	DirectX::SimpleMath::Vector3 fieldOne = position - this->position;
-	scalarMultiplicationXMFLOAT3(this->getFieldFactor(), fieldOne);
+	thisField = 1.f / getLength(fieldOne);
+	thisField *= this->getFieldFactor();
 	for (int i = 1; i < planets.size(); i++)
 	{
 		DirectX::SimpleMath::Vector3 fieldTwo = position - planets[i]->getPlanetPosition();
-		scalarMultiplicationXMFLOAT3(this->getFieldFactor(), fieldTwo);
-		if (getLength(fieldOne) > getLength(fieldTwo)) { closestField = planets[i]->getGravityField(); fieldOne = fieldTwo; }
+		otherField = 1.f / getLength(fieldTwo);
+		otherField *= planets[i]->getFieldFactor();
+		if (thisField < otherField) { closestField = planets[i]->getGravityField(); thisField = otherField; }
 	}
-	
 	return closestField;
 }
 
@@ -221,8 +227,20 @@ void Planet::drawAtmosphere()
 	if (atmosphere != nullptr)
 	{
 		this->atmosphere->UpdateCB(this->position, DirectX::XMMatrixIdentity(), this->scale + DirectX::XMFLOAT3(10, 10, 10));
-
 		GPU::immediateContext->PSSetConstantBuffers(2, 1, colorBuffer.getReferenceOf());
 		atmosphere->DrawWithMat();
 	}
+}
+
+void Planet::setPosition(const DirectX::SimpleMath::Vector3& position)
+{
+	this->position = position;
+	this->gravField->setCenterpoint(position);
+	if (this->planetCollisionBox) this->planetCollisionBox->setPosition(reactphysics3d::Vector3(position.x, position.y, position.z));
+}
+
+void Planet::setScale(const DirectX::SimpleMath::Vector3& scale)
+{
+	this->scale = scale;
+	if (this->planetCollisionBox) this->planetCollisionBox->setScale(scale);
 }

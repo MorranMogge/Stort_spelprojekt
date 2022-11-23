@@ -77,4 +77,7 @@ public:
 	void drawPlanet();
 	//Draws atmosphere using inverse fresnel stage
 	void drawAtmosphere();
+
+	void setPosition(const DirectX::SimpleMath::Vector3& position);
+	void setScale(const DirectX::SimpleMath::Vector3& position);
 };

@@ -10,6 +10,7 @@
 class PacketEventManager
 {
 private:
+	int planetCounter = 0;
 
 public:
 	PacketEventManager();

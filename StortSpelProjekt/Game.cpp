@@ -35,11 +35,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	//Load game objects
 	this->loadObjects();
 
-	//Setup fade in
-	ui.count = 1.0f;
-	ui.setOpacity(false);
-	Time::Update();
-
 	//Setup players
 	if (IFONLINE)
 	{
@@ -108,7 +103,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	serverStart = std::chrono::system_clock::now();
 	this->window = &window;
 
-
+	//Setup fade in and delta time
+	//ui.count = 1.0f;
+	//ui.setOpacity(false);
+	Time::Start();
 }
 
 Game::~Game()
@@ -674,12 +672,13 @@ GAMESTATE Game::Update()
 
 void Game::Render()
 {
-	if (!fadedIn)
+	if (!fadedIn)// fade in condition
 	{
-		if (!this->ui.fadeIn())
+		if (!this->ui.fadeIn()) // is fading
 		{
+
 		}
-		else
+		else // fade in complete
 		{
 			fadedIn = true;
 		}

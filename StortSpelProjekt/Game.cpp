@@ -253,7 +253,7 @@ void Game::drawObjects(bool drawDebug)
 	{
 		onlineItems[i]->draw();
 	}
-	currentPlayer->updateBuffer();
+	//currentPlayer->updateBuffer();
 	currentPlayer->draw();
 	for (int i = 0; i < planetVector.size(); i++)
 	{

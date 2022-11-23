@@ -49,7 +49,6 @@ struct ItemSpawn
 {
 	int packetId;
 	int itemId;
-	int inUseBy;
 	float x;
 	float y;
 	float z;

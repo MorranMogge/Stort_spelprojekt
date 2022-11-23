@@ -56,11 +56,9 @@ void Player::handleItems()
 {
 	DirectX::SimpleMath::Vector3 newPos = this->position;
 	newPos += 4 * forwardVector;
-
 	PhysicsComponent* itemPhysComp = holdingItem->getPhysComp();
 	holdingItem->setPos(newPos);
 	itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z }));
-
 	//Throw the Item
 	if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
 	{
@@ -93,12 +91,14 @@ void Player::handleItems()
 		{
 			client->sendStuff<ComponentDropped>(c);
 		}	
-
+		std::cout << "ERROR UwU 4\n";//krashar mellan 4 och 5
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
-		holdingItem->useItem();
+		holdingItem->useItem(&*this);
+		std::cout << "ERROR UwU 5\n";
 		itemPhysComp->setIsAllowedToSleep(true);
 		itemPhysComp->setIsSleeping(true);
 		holdingItem->setPickedUp(false);
+		std::cout << "ERROR UwU 6\n";
 		holdingItem = nullptr;
 	}
 }
@@ -883,7 +883,6 @@ bool Player::getHitByBat() const
 	{
 		DirectX::SimpleMath::Vector3 newPos = this->position;
 		newPos += 4 * forwardVector;
-
 		PhysicsComponent* itemPhysComp = holdingItem->getPhysComp();
 		holdingItem->setPos(newPos);
 		itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z }));
@@ -911,7 +910,7 @@ bool Player::getHitByBat() const
 		else if (Input::KeyDown(KeyCode::T) && Input::KeyDown(KeyCode::T))
 		{
 			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
-			holdingItem->useItem();
+			holdingItem->useItem(&*this);
 			itemPhysComp->setIsAllowedToSleep(true);
 			itemPhysComp->setIsSleeping(true);
 			holdingItem->setPickedUp(false);
@@ -1054,7 +1053,7 @@ void Player::update()
 		float constant = playerIcon->getOffset();
 		DirectX::XMFLOAT3 upDir = this->getUpDirection();
 		DirectX::XMFLOAT3 itemPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-		this->playerIcon->setPosition(this->position + itemPos);
+		this->playerIcon->setPosition(this->position);
 	}
 	//Update particle movement
 	if (this->particles != nullptr && moveKeyPressed)

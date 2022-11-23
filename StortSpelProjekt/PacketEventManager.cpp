@@ -121,12 +121,12 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::ITEMSPAWN:
 
 			itemSpawn = circularBuffer->readData<ItemSpawn>();
-			baseballbat = new BaseballBat("../Meshes/rocket", DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
-				DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), itemSpawn->itemId, itemSpawn->itemId, field);
+			baseballbat = new BaseballBat(meshes[2], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
+				DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 3, itemSpawn->itemId, field);
 			physWorld.addPhysComponent(baseballbat);
 			onlineItems.push_back(baseballbat);
-			gameObjects.push_back(baseballbat);
-			std::cout << "item spawned: " << std::to_string(itemSpawn->itemId) << std::endl;
+			//gameObjects.push_back(baseballbat);
+			std::cout << "item spawned UWU: " << std::to_string(itemSpawn->itemId) << std::endl;
 		
 			break;
 
@@ -165,6 +165,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::COMPONENTADDED:
 			compAdded = circularBuffer->readData<ComponentAdded>();
 			std::cout << "Team: " << compAdded->spaceShipTeam << " gained progress!\n";
+			
 			for (int i = 0; i < spaceShips.size(); i++)
 			{
 				if (spaceShips[i]->getTeam() == compAdded->spaceShipTeam)
@@ -204,6 +205,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			confirmCmpPickedUp = circularBuffer->readData<ConfirmComponentPickedUp>();
 			for (int i = 0; i < players.size(); i++)
 			{
+				
 				if (players[i]->getOnlineID() == confirmCmpPickedUp->playerPickUpId)
 				{
 					//en av spelarna plockade upp en component

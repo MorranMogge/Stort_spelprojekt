@@ -44,6 +44,7 @@ void Item::drawIcon()
 			this->itemIcon->bindAndDraw(0, 0);
 		}
 	}
+	else std::cout << "im nullptr uwu\n";
 }
 
 void Item::setPickedUp(bool pickedUp)

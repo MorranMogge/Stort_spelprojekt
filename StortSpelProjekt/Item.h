@@ -4,6 +4,8 @@
 #include "BilboardObject.h"
 #include "TimeStruct.h"
 
+class Player;
+
 class Item : public GameObject
 {
 private:
@@ -21,7 +23,7 @@ public:
 	Item(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, const int& onlineType, GravityField* field = nullptr);
 	Item(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, const int& onlineType, GravityField* field = nullptr);
 	virtual ~Item();
-	virtual void useItem() = 0;
+	virtual void useItem(const Player* playerHoldingItem) = 0;
 	virtual void drawIcon();
 	virtual void drawParticles();
 	void setPickedUp(bool pickedUp);

@@ -28,6 +28,6 @@ public:
 	void setGameObjects(const std::vector<GameObject *>& objects);
 	//void setGameObjects(const std::vector<Player*>& objects);
 	// Inherited via Item
-	virtual void useItem() override;
+	virtual void useItem(const Player* playerHoldingItem) override;
 
 };

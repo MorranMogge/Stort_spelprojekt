@@ -36,7 +36,7 @@ Potion::~Potion()
 {
 }
 
-void Potion::useItem()
+void Potion::useItem(const Player* playerHoldingItem)
 {
 	this->setPos({ -100, -100, -100 });
 	timeToRun = true;

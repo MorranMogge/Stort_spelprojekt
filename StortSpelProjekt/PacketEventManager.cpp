@@ -165,7 +165,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				{
 					//Update hud or whatever
 					spaceShips[i]->addComponent();
-					spaceShips[i]->setAnimate(false); //CHANGE BACK WHEN DONE!
+					spaceShips[i]->setAnimate(true); //CHANGE BACK WHEN DONE!
 				}
 			}
 			for (int i = 0; i < players.size(); i++)

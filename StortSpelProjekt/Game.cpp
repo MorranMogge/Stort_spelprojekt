@@ -551,9 +551,9 @@ GAMESTATE Game::updateComponentGame()
 
 		for (int i = 0; i < spaceShips.size(); i++)
 		{
-			for (int j = 0; j < components.size(); j++)
+			for (int j = 0; j < onlineItems.size(); j++)
 			{
-				spaceShips[i]->detectedComponent(components[j]);
+				spaceShips[i]->detectedComponent(onlineItems[j]);
 			}
 		}
 	}

@@ -449,34 +449,15 @@ int main()
 				landingPoints[scoreFromClient->playerId] = scoreFromClient->scoreToServer;
 				break;
 
+
+				//DELETE!
 			case PacketType::STARTMINIGAMES:
 				startMinigame = circBuffer->readData<MinigameStart>();
 				switch (startMinigame->minigame)
 				{
 				case MiniGames::KINGOFTHEHILL:
 
-					//Sending the capture zone
-					KingOfTheHillMiniGame miniGameKTH(data);
-					std::cout << "Sent capture zone\n";
-
-					//Sending the planets
-					planetVector[0]->setScale(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
-					planetVector[2]->setPosition(DirectX::XMFLOAT3(65.f, 65.f, 65.f));
-					planetVector[2]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
-					planetVector[1]->setPosition(DirectX::XMFLOAT3(-65.f, 65.f, 65.f));
-					planetVector[1]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
-
-					for (int i = 0; i < planetVector.size(); i++)
-					{
-						SpawnPlanets planetData;
-						planetData.packetId = PacketType::SPAWNPLANETS;
-						planetData.xPos = planetVector[i]->getPlanetPosition().x;
-						planetData.yPos = planetVector[i]->getPlanetPosition().y;
-						planetData.zPos = planetVector[i]->getPlanetPosition().z;
-						planetData.size = planetVector[i]->getSize();
-						sendBinaryDataAllPlayers<SpawnPlanets>(planetData, data);
-						std::cout << "Sent a planet\n";
-					}
+					
 					break;
 				}
 				break;
@@ -508,8 +489,6 @@ int main()
 		//		}
 		//	}
 		//}
-
-		miniGameKTH.update(data);
 		
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
 		{
@@ -569,6 +548,31 @@ int main()
 				}
 
 				sendBinaryDataAllPlayers<LandingMiniGameScore>(lScore, data);
+				break;
+			case MiniGames::KINGOFTHEHILL:
+				//Sending the capture zone
+				KingOfTheHillMiniGame miniGameKTH(data, MAXNUMBEROFPLAYERS);
+				std::cout << "Sent capture zone\n";
+
+				//Sending the planets
+				planetVector[0]->setScale(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
+				planetVector[2]->setPosition(DirectX::XMFLOAT3(65.f, 65.f, 65.f));
+				planetVector[2]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
+				planetVector[1]->setPosition(DirectX::XMFLOAT3(-65.f, 65.f, 65.f));
+				planetVector[1]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
+
+				for (int i = 0; i < planetVector.size(); i++)
+				{
+					SpawnPlanets planetData;
+					planetData.packetId = PacketType::SPAWNPLANETS;
+					planetData.xPos = planetVector[i]->getPlanetPosition().x;
+					planetData.yPos = planetVector[i]->getPlanetPosition().y;
+					planetData.zPos = planetVector[i]->getPlanetPosition().z;
+					planetData.size = planetVector[i]->getSize();
+					sendBinaryDataAllPlayers<SpawnPlanets>(planetData, data);
+					std::cout << "Sent a planet\n";
+				}
+				miniGameKTH.update(data);
 				break;
 			default:
 				break;

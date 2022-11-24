@@ -6,8 +6,6 @@
 #include "PacketsDataTypes.h"
 #include "sendDataFunctions.h"
 
-
-
 class KingOfTheHillMiniGame
 {
 private:

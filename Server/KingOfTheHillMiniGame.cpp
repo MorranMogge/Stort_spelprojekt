@@ -1,6 +1,6 @@
 #include "KingOfTheHillMiniGame.h"
 
-KingOfTheHillMiniGame::KingOfTheHillMiniGame(serverData& data)
+KingOfTheHillMiniGame::KingOfTheHillMiniGame(serverData& data, const short& nrOfPlayers)
 	:kingOfTheHillOrigo(0,40,-40), radius(30), nrOfPlayers(nrOfPlayers), team1Score(0), team2Score(0), pointsToAdd(10), time(5), goalScore(100)
 {
 	sendKingOfTheHillZone(data);

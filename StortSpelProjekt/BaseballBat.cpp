@@ -90,49 +90,45 @@ void BaseballBat::setGameObjects(const std::vector<GameObject*>& objects)
 
 void BaseballBat::useItem(const Player* playerHoldingItem)
 {
-	std::cout << "Used bat!\n";
-	if (&playerHoldingItem == nullptr) std::cout << " nullptr player\n";
-	else std::cout << "Player exists\n";
-	batPos = playerHoldingItem->getPos();
-	batPos += playerHoldingItem->getForwardVector() * 10;
-	savedPos = this->getPosV3(); //Used to reset the baseball bats position at the end of the function
+		std::cout << "Used bat!\n";
+		batPos = playerHoldingItem->getPos();
+		batPos += playerHoldingItem->getForwardVector() * 10;
+		savedPos = this->getPosV3(); //Used to reset the baseball bats position at the end of the function
 
-    PhysicsComponent* batComp = this->getPhysComp();
-    PhysicsComponent* physComp;
-	std::cout << "ERROR UwU 5\n";
-    batComp->setPosition(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
-    batComp->setScale(DirectX::XMFLOAT3(2 * 4.0f, 2 * 4.0f, 2 * 4.0f));
-	std::cout << "ERROR UwU 6\n";
-	bool collided = false;
-	for (int i = 0; i < objects.size(); i++)
-	{
-		if (this == objects[i] || objects[i] == playerHoldingItem) continue;
+		PhysicsComponent* batComp = this->getPhysComp();
+		PhysicsComponent* physComp;
+		batComp->setPosition(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+		batComp->setScale(DirectX::XMFLOAT3(2 * 4.0f, 2 * 4.0f, 2 * 4.0f));
+		bool collided = false;
+		for (int i = 0; i < objects.size(); i++)
+		{
+			if (this == objects[i] || objects[i] == playerHoldingItem) continue;
 
-        physComp = objects[i]->getPhysComp();
-        if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue;
+			physComp = objects[i]->getPhysComp();
+			if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue;
 
-        collided = batComp->testBodiesOverlap(physComp);
+			collided = batComp->testBodiesOverlap(physComp);
 
-        if (collided)
-        {
-            Player* otherPlayer = dynamic_cast<Player*>(physComp->getParent()); //If we add a function "isPlayer()" in GameObject we do not have to type cast
+			if (collided)
+			{
+				Player* otherPlayer = dynamic_cast<Player*>(physComp->getParent()); //If we add a function "isPlayer()" in GameObject we do not have to type cast
 
-			physComp->setType(reactphysics3d::BodyType::DYNAMIC);
-            //Calculate the force vector
-            float newForce = batComp->getMass() * force;
-            batPos = objects[i]->getPosV3() - playerHoldingItem->getPosV3();
-            batPos += playerHoldingItem->getUpVector();
-            newNormalizeXMFLOAT3(batPos);
-            scalarMultiplicationXMFLOAT3(newForce, batPos);
+				physComp->setType(reactphysics3d::BodyType::DYNAMIC);
+				//Calculate the force vector
+				float newForce = batComp->getMass() * force;
+				batPos = objects[i]->getPosV3() - playerHoldingItem->getPosV3();
+				batPos += playerHoldingItem->getUpVector();
+				newNormalizeXMFLOAT3(batPos);
+				scalarMultiplicationXMFLOAT3(newForce, batPos);
 
-			//Add force to object
-			if (otherPlayer != nullptr) this->sendForceToServer(batPos, otherPlayer->getOnlineID()); //otherPlayer->hitByBat(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
-			else physComp->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+				//Add force to object
+				if (otherPlayer != nullptr) this->sendForceToServer(batPos, otherPlayer->getOnlineID()); //otherPlayer->hitByBat(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+				else physComp->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+			}
 		}
-	}
 
-	batComp->setScale(DirectX::XMFLOAT3(4 * 0.35f, 4 * 0.35f, 4 * 0.35f));
-    this->setPos(savedPos);
-    batComp->setPosition(reactphysics3d::Vector3(savedPos.x, savedPos.y, savedPos.z));
-	std::cout << "ITS DONE WITH BASEBALLBAT 6\n";
+		batComp->setScale(DirectX::XMFLOAT3(4 * 0.35f, 4 * 0.35f, 4 * 0.35f));
+		this->setPos(savedPos);
+		batComp->setPosition(reactphysics3d::Vector3(savedPos.x, savedPos.y, savedPos.z));
+	
 }

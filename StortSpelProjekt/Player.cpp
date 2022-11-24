@@ -90,15 +90,14 @@ void Player::handleItems()
 		if (this->client != nullptr)
 		{
 			client->sendStuff<ComponentDropped>(c);
+			
 		}	
-		std::cout << "ERROR UwU 4\n";//krashar mellan 4 och 5
+
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 		holdingItem->useItem(this);
-		std::cout << "ERROR UwU 5\n";
 		itemPhysComp->setIsAllowedToSleep(true);
 		itemPhysComp->setIsSleeping(true);
 		holdingItem->setPickedUp(false);
-		std::cout << "ERROR UwU 6\n";
 		holdingItem = nullptr;
 	}
 }

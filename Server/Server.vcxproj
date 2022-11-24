@@ -141,13 +141,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BaseBallBat.cpp" />
     <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
-    <ClCompile Include="player.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="RandomizeSpawn.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="GameObject.cpp">
@@ -157,6 +158,7 @@
     <ClCompile Include="TestObj.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseBallBat.h" />
     <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="DirectXMathHelper.h" />
@@ -170,7 +172,7 @@
     <ClInclude Include="PacketsDataTypes.h" />
     <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="PhysicsWorld.h" />
-    <ClInclude Include="player.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="RandomizeSpawn.h" />
     <ClInclude Include="SpawnComponent.h" />
     <ClInclude Include="TestObj.h" />

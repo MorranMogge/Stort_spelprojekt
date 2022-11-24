@@ -10,7 +10,7 @@ Component::Component(int onlineId, int onlineType)
 
 }
 
-void Component::use()
+void Component::use(const Player* playerHoldingItem)
 {
 
 }

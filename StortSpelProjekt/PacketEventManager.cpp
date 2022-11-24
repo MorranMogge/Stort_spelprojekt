@@ -12,7 +12,7 @@ PacketEventManager::~PacketEventManager()
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips
-	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes)
+	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, Client*& client)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -121,8 +121,10 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::ITEMSPAWN:
 
 			itemSpawn = circularBuffer->readData<ItemSpawn>();
-			baseballbat = new BaseballBat(meshes[2], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
+			baseballbat = new BaseballBat(meshes[4], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
 				DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 3, itemSpawn->itemId, field);
+			baseballbat->setClient(client);
+			baseballbat->setGameObjects(gameObjects);
 			physWorld.addPhysComponent(baseballbat);
 			onlineItems.push_back(baseballbat);
 			//gameObjects.push_back(baseballbat);

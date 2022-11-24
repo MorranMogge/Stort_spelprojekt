@@ -180,3 +180,13 @@ struct baseballBatSpawn
 	int yPos;
 	int zPos;
 };
+
+//enum 24
+struct PotionSpawn
+{
+	int packetId;
+	int potionId;
+	int xPos;
+	int yPos;
+	int zPos;
+};

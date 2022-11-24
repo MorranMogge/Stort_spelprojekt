@@ -9,7 +9,7 @@
 #include <chrono>
 #include <thread>
 #include <vector>
-#include "player.h"
+#include "Player.h"
 #include "PacketsDataTypes.h"
 #include "Packethandler.h"
 #include "CircularBuffer.h"
@@ -20,6 +20,7 @@
 #include "DirectXMathHelper.h"
 #include "TimeStruct.h"
 #include "ObjectId.h"
+#include "BaseBallBat.h"
 
 
 #include "TestObj.h"
@@ -30,7 +31,7 @@
 
 #include <psapi.h>
 
-const short MAXNUMBEROFPLAYERS = 1;
+const short MAXNUMBEROFPLAYERS = 2;
 std::mutex mutex;
 
 struct userData
@@ -40,7 +41,7 @@ struct userData
 	sf::TcpSocket tcpSocket;
 	int playerId = -1;
 
-	player playa;
+	Player playa;
 };
 
 struct threadInfo
@@ -505,6 +506,7 @@ int main()
 			}
 		}
 		
+		//Spawns a component
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
 		{
 			SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
@@ -516,7 +518,7 @@ int main()
 		}
 
 
-		//skickar itemSpawn
+		//Spawns a baseBallBat
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
 		{
 			ItemSpawn itemSpawnData;
@@ -528,7 +530,7 @@ int main()
 			std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
 			itemSpawnData.packetId = PacketType::ITEMSPAWN;
 
-			onlineItems.push_back(new Component());//ändra
+			onlineItems.push_back(new BaseballBat(componentIdCounter));//ändra
 			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
 			onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);;
 			onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
@@ -536,6 +538,30 @@ int main()
 			sendBinaryDataAllPlayers(itemSpawnData, data);
 			itemSpawnTimer = std::chrono::system_clock::now();
 		}
+
+		////Spawns a potion
+		//if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
+		//{
+		//	PotionSpawn PotionSpawnData;
+		//	
+		//	DirectX::XMFLOAT3 temp = randomizeObjectPos();
+		//	PotionSpawnData.xPos = temp.x;
+		//	PotionSpawnData.yPos = temp.y;
+		//	PotionSpawnData.zPos = temp.z;
+		//	PotionSpawnData.potionId = componentIdCounter;
+		//	std::cout << "item spawn id: " << std::to_string(PotionSpawnData.potionId) << std::endl;
+		//	PotionSpawnData.packetId = PacketType::POTIONSPAWN;
+
+		//	onlineItems.push_back(new Component());//ändra
+		//	physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
+		//	onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);;
+		//	onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
+		//	onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+		//	sendBinaryDataAllPlayers(PotionSpawnData, data);
+		//	itemSpawnTimer = std::chrono::system_clock::now();
+		//}
+
+
 		
 		
 		//sends data based on the server tickrate

@@ -26,8 +26,6 @@ class ControlUI final
 
 	GAMESTATE gameState = NOCHANGE;
 
-	GUISprite objective;
-
 	std::unique_ptr<DirectX::GamePad> gamePad;
 
 	void HandleInputs();

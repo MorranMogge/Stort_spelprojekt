@@ -100,7 +100,6 @@ void ControlUI::SpritePass()
 		pickText.Draw();
 		control.Draw();
 	}
-	objective.Draw();
 	backText.Draw();
 
 }
@@ -187,9 +186,7 @@ ControlUI::ControlUI()
 	start.Load(L"../Sprites/control/start.png");
 	start.SetScale(0.5f, 0.5f);
 
-	objective = GUISprite(310 - left, upp);
-	objective.Load(L"../Sprites/Objective.png");
-	objective.SetScale(0.75f, 0.75f);
+
 
 }
 

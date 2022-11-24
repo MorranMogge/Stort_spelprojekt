@@ -23,6 +23,10 @@ class HudUI final
 	GUISprite objective;
 	GUISprite blackBackground;
 
+	GUISprite objective2;
+	GUISprite blackBackground2;
+	float objectiveDisplayTime = 5.0f;
+
 	GUISprite controls;
 	GUISprite useControls;
 	GUISprite useControls1;

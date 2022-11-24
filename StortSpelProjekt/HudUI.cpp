@@ -77,7 +77,14 @@ void HudUI::SpritePass()
 	{
 		this->fadeOut();
 	}
-	
+
+	if (objectiveDisplayTime > 0)
+	{
+		objectiveDisplayTime -= Time::DeltaTimeInSeconds();
+		blackBackground2.Draw();
+		objective2.Draw();
+	}
+
 
 	fade.Draw();
 	controls.Draw();
@@ -194,6 +201,14 @@ HudUI::HudUI()
 	useControls1 = GUISprite(290 + left, 570 + upp);
 	useControls1.Load(L"../Sprites/UseText2.png");
 	useControls1.SetScale(0.40f * scaleFactor, 0.40f * scaleFactor);
+
+	objective2 = GUISprite(632, 100 + upp);
+	objective2.Load(L"../Sprites/Objective.png");
+	objective2.SetScale(0.75f, 0.75f);
+
+	blackBackground2 = GUISprite(632, 100 + upp);
+	blackBackground2.Load(L"../Sprites/BackHudTransparent.png");
+	blackBackground2.SetScale(1.0f, 0.3f);
 }
 
 HudUI::~HudUI()

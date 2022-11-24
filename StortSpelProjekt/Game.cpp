@@ -649,6 +649,7 @@ GAMESTATE Game::updateLandingGame()
 		requestStart.playerID = currentPlayer->getOnlineID();
 		requestStart.formerGame = MiniGames::LANDINGSPACESHIP;
 		client->sendStuff<DoneWithGame>(requestStart);
+		currentMinigame = MiniGames::DEFAULT;
 	}
 	return NOCHANGE;
 }
@@ -751,7 +752,6 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	if (captureZone) this->arrow->showDirection(captureZone->getPosition(), currentPlayer->getPosV3(), grav);
 	currentPlayer->colliedWIthComponent(components);
 
-	
 	//Play pickup animation
 	for (int i = 0; i < spaceShips.size(); i++) spaceShips[i]->animateOnPickup();
 
@@ -829,9 +829,7 @@ GAMESTATE Game::updateIntermission()
 			requestStart.playerID = currentPlayer->getOnlineID();
 			requestStart.formerGame = MiniGames::INTERMISSION;
 			client->sendStuff<DoneWithGame>(requestStart);
-
-			std::cout << "SENT DONE WITH INTERMISSION\n";
-
+			currentMinigame = MiniGames::DEFAULT;
 			return GAMESTATE::NOCHANGE;
 		}
 	}

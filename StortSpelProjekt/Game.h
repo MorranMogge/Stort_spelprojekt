@@ -90,8 +90,6 @@ private:
 	//HUD
 	HudUI ui;
 
-
-
 	void loadObjects();
 	void drawShadows();
 	void drawFresnel();

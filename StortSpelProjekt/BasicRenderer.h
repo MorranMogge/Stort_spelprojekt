@@ -84,4 +84,5 @@ public:
 	void geometryUnbind();
 	void fresnelPrePass(Camera& stageCamera);
 	void invFresnelPrePass();
+	void bindAnimVs();
 };

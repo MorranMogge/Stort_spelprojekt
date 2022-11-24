@@ -26,7 +26,7 @@ Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMF
 	this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
 	this->colorBuffer.getData() = DirectX::XMFLOAT4(1 ,0.25 ,0 , 0.5);
 	this->colorBuffer.applyData();
-
+	this->mesh->matKey[0] = "olive.jpg";
 	explosionMesh = (new Mesh("../Meshes/Sphere"));
 }
 
@@ -48,7 +48,7 @@ Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, co
 	this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
 	this->colorBuffer.getData() = DirectX::XMFLOAT4(1, 0.25, 0, 0.5);
 	this->colorBuffer.applyData();
-
+	this->mesh->matKey[0] = "olive.jpg";
 	explosionMesh = (new Mesh("../Meshes/Sphere"));
 }
 
@@ -154,7 +154,7 @@ void Grenade::drawParticles()
 		}
 		else
 		{
-			this->mesh->matKey[0] = "Default";			
+			this->mesh->matKey[0] = "olive.jpg";			
 
 		}
 	}

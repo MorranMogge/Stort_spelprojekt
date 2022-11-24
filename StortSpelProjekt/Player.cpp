@@ -53,6 +53,7 @@ void Player::resetRotationMatrix()
 
 void Player::handleItems()
 {
+	if (this->gamePad == nullptr) return;
 	DirectX::SimpleMath::Vector3 newPos = this->position;
 	newPos += 4 * forwardVector;
 

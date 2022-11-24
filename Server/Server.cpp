@@ -226,8 +226,8 @@ int main()
 	start = std::chrono::system_clock::now();
 
 	float timerLength = 1.f / 30.0f;
-	float timerComponentLength = 10.0f;
-	float itemSpawnTimerLength = 20.0f;
+	float timerComponentLength = 5.0f;
+	float itemSpawnTimerLength = 5.0f;
 
 	setupTcp(data);
 	acceptPlayers(data);
@@ -484,7 +484,7 @@ int main()
 							planetVector[0]->setScale(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
 							planetVector[2]->setPosition(DirectX::XMFLOAT3(65.f, 65.f, 65.f));
 							planetVector[2]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
-							planetVector[1]->setPosition(DirectX::XMFLOAT3(-65.f, 65.f, 65.f));
+							planetVector[1]->setPosition(DirectX::XMFLOAT3(-65.f, -65.f, -65.f));
 							planetVector[1]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
 
 							for (int i = 0; i < planetVector.size(); i++)
@@ -665,8 +665,7 @@ int main()
 			if (timeToFly)
 			{
 				flyTime += timerLength;
-
-				if (flyTime > 6.f)
+				if (flyTime > 9.f)
 				{
 					std::cout << "SENT START MINIGAMES\n";
 					MinigameStart startMinigame;

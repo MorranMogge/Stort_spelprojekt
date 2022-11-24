@@ -49,7 +49,6 @@ void KingOfTheHillMiniGame::update(serverData& data)
 				}
 				timer = std::chrono::system_clock::now();
 			}
-
 		}
 		else
 		{
@@ -106,7 +105,5 @@ void KingOfTheHillMiniGame::update(serverData& data)
 			this->timerToSend = std::chrono::system_clock::now();
 		}
 	}
-
 	//fixa f�r team 2
-
 }

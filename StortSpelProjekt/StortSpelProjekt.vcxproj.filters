@@ -160,7 +160,6 @@
     </ClCompile>
     <ClCompile Include="CircularBufferClient.cpp" />
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="PacketEventManager.cpp" />
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="SendingDataEvent.cpp" />
     <ClCompile Include="CaptureZone.cpp">
@@ -169,6 +168,9 @@
     <ClCompile Include="ControlMenu.cpp" />
     <ClCompile Include="ControlUI.cpp" />
     <ClCompile Include="LandingHud.cpp" />
+    <ClCompile Include="PacketEventManager.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">

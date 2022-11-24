@@ -156,20 +156,7 @@ void sendIdToAllPlayers(serverData& data)
 	}
 };
 
-template <typename T>
-void sendBinaryDataOnePlayer(const T& data, userData& user)
-{
-	std::size_t recvSize;
-	if (user.tcpSocket.send(&data, sizeof(T), recvSize) != sf::Socket::Done)
-	{
-		//error
-		std::cout << "Couldnt send data to currentPlayer from array slot: " << std::to_string(user.playerId) << std::endl;
-	}
-	else
-	{
-		//std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
-	}
-}
+
 
 int main()
 {
@@ -522,7 +509,7 @@ int main()
 		//	}
 		//}
 
-
+		miniGameKTH.update(data);
 		
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
 		{

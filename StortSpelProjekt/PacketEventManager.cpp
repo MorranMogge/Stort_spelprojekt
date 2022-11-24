@@ -36,6 +36,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	CreateZone* zonePos = nullptr;
 	MinigameStart* startMinigame = nullptr;
 	LandingMiniGameScore* landingMiniGameScore = nullptr;
+	winner* win = nullptr;
+	Loser* lose = nullptr;
 
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{
@@ -63,6 +65,24 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::PACKETID:
 			protocol = circularBuffer->readData<idProtocol>();
 			std::cout << "PacketHandleEvents, received player id: " << std::to_string(protocol->assignedPlayerId) << std::endl;
+			break;
+		
+		case PacketType::WINNER:
+			win = circularBuffer->readData<winner>();
+
+			for (int i = 0; i < 100; i++)
+			{
+				std::cout << "uwu i won wuw\n";
+			}
+			break;
+
+		case PacketType::LOSER:
+			lose = circularBuffer->readData<Loser>();
+
+			for (int i = 0; i < 100; i++)
+			{
+				std::cout << "uwu i lost wuw\n";
+			}
 			break;
 
 		case PacketType::COMPONENTPOSITION:

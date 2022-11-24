@@ -282,7 +282,7 @@ void SpaceShip::flyAway(const float& deltaTime)
 		upDirection = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 0.0f);
 	}
 	this->position += upDirection * this->moveCounter * deltaTime;
-	this->moveCounter += 0.05f;
+	this->moveCounter += 0.02f;
 }
 
 void SpaceShip::fly(const DirectX::XMFLOAT3& grav, const float& deltaTime)

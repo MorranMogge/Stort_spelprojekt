@@ -838,14 +838,16 @@ GAMESTATE Game::updateIntermission()
 			this->spaceShips[1]->setRot(spaceShips[1]->getRotOrientedToGrav());
 			this->spaceShips[1]->getPhysComp()->setRotation(reactphysics3d::Quaternion(spaceShips[1]->getRotXM().x, spaceShips[1]->getRotXM().y, spaceShips[1]->getRotXM().z, 1.0));
 
+			if (Input::KeyDown(KeyCode::K))
+			{
+				//Send data to server
+				DoneWithGame requestStart;
+				requestStart.packetId = PacketType::DONEWITHGAME;
+				client->sendStuff<DoneWithGame>(requestStart);
+				std::cout << "SENT	 REQUEST DONE UwU\n";
+			}
 
-			//Send data to server
-			/*StartLanding startLandingGame;
-			startLandingGame.packetId = PacketType::STARTLANDING;
-			client->sendStuff<StartLanding>(startLandingGame);
-			std::cout << "SENT START LANDING\n";*/
-
-			currentMinigame = STARTLANDING;
+			//currentMinigame = STARTLANDING;
 			return GAMESTATE::NOCHANGE;
 		}
 	}
@@ -862,7 +864,6 @@ GAMESTATE Game::updateIntermission()
 	spacePos.y -= offset.y;
 	spacePos.y += sin(totalTime);
 	this->spaceShips[1]->setPos(spacePos);
-
 	return NOCHANGE;
 }
 
@@ -902,19 +903,19 @@ GAMESTATE Game::Update()
 		//this->spaceShips[1]->setPos(DirectX::XMFLOAT3(150, -7, 290));
 		this->Stage = 0;
 	}
-	if (Input::KeyPress(KeyCode::K))
-	{
-		currentMinigame = MiniGames::KINGOFTHEHILL;
+	//if (Input::KeyPress(KeyCode::K))
+	//{
+	//	currentMinigame = MiniGames::KINGOFTHEHILL;
 
-		//Send data to server
-		MinigameStart startKTH;
-		startKTH.packetId = PacketType::STARTMINIGAMES;
-		startKTH.minigame = MiniGames::KINGOFTHEHILL;
-		client->sendStuff<MinigameStart>(startKTH);
-		std::cout << "SENT START KTH\n";
+	//	//Send data to server
+	//	MinigameStart startKTH;
+	//	startKTH.packetId = PacketType::STARTMINIGAMES;
+	//	startKTH.minigame = MiniGames::KINGOFTHEHILL;
+	//	client->sendStuff<MinigameStart>(startKTH);
+	//	std::cout << "SENT START KTH\n";
 
-		currentPlayer->setPos(DirectX::XMFLOAT3(0.f, 65.f, 0.f));
-	}
+	//	currentPlayer->setPos(DirectX::XMFLOAT3(0.f, 65.f, 0.f));
+	//}
 
 	//Simulate the current minigame on client side
 	switch (currentMinigame)

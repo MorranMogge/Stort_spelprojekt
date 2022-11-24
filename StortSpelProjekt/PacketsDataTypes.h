@@ -234,3 +234,10 @@ struct MinigameStart
 	float pointsBlue;
 	float pointsRed;
 };
+
+//enum = 30
+struct DoneWithGame
+{
+	int packetId;
+	int playerID;
+};

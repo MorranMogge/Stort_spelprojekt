@@ -164,13 +164,15 @@ int main()
 	float landingPoints[MAXNUMBEROFPLAYERS]{ 0.f };
 	bool timeToFly = false;
 	int progress[2] = { 0, 0 };
+	std::vector<int> playersSent;
+	int requests = 0;
 	int itemid = 0;
 	int componentIdCounter = 0;
 	bool once = false;
 	TimeStruct physicsTimer;
 	PhysicsWorld physWorld;
 	Component planetComp;
-	MiniGames currentMinigame = MiniGames::LANDINGSPACESHIP;
+	MiniGames currentMinigame = MiniGames::COMPONENTCOLLECTION;
 	physWorld.addPhysComponent(planetComp, reactphysics3d::CollisionShapeName::SPHERE, DirectX::XMFLOAT3(40, 40, 40));
 	planetComp.getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 
@@ -314,6 +316,7 @@ int main()
 			ComponentRequestingPickUp* requestingCmpPickedUp = nullptr;
 			LandingMiniSendScoreToServer* scoreFromClient = nullptr;
 			MinigameStart* startMinigame = nullptr;
+			DoneWithGame* requestStart = nullptr;
 
 			switch (packetId)
 			{
@@ -449,18 +452,41 @@ int main()
 				landingPoints[scoreFromClient->playerId] = scoreFromClient->scoreToServer;
 				break;
 
+			case PacketType::DONEWITHGAME:
+				requestStart = circBuffer->readData<DoneWithGame>();
 
-				//DELETE!
-			case PacketType::STARTMINIGAMES:
-				startMinigame = circBuffer->readData<MinigameStart>();
-				switch (startMinigame->minigame)
+				//Checking if the same player have already sent a request
+				bool alreadySent = false;
+				for (int i = 0; i < playersSent.size(); i++)
 				{
-				case MiniGames::KINGOFTHEHILL:
-
-					
-					break;
+					if (requestStart->playerID == playersSent[i]) alreadySent = true;
 				}
-				break;
+
+				//It was not the same player
+				if (!alreadySent)
+				{
+					playersSent.emplace_back(requestStart->playerID);
+					requests++;
+					std::cout << "REQUESTS UwU " << requests << "\n";
+
+					//Starting new minigame if everyone is done
+					if (requests == 4)
+					{
+						MinigameStart startGame;
+						startGame.packetId = PacketType::STARTMINIGAMES;
+						if (currentMinigame == MiniGames::INTERMISSION)
+						{
+							currentMinigame = MiniGames::LANDINGSPACESHIP;
+							startGame.minigame = MiniGames::STARTLANDING;
+						}
+						sendBinaryDataAllPlayers<MinigameStart>(startGame, data);
+						std::cout << "SENDING NEXT MINIGAME UwU\n";
+
+						//Resetting
+						requests = 0;
+						playersSent.clear();
+					}
+				}
 			}
 		}
 
@@ -574,8 +600,9 @@ int main()
 				}
 				miniGameKTH.update(data);
 				break;
-			default:
-				break;
+
+			/*default:
+				break;*/
 			}
 			//if (currentMinigame == MiniGames::LANDINGSPACESHIP) continue; //We do not need to send more data if we are in landingMiniGame
 
@@ -613,8 +640,14 @@ int main()
 						compAdded.spaceShipTeam = j;
 						sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
 
+						//Checking if someone has won
 						progress[j]++;
-						if (progress[j] > 3) timeToFly = true;
+						if (progress[j] > 3)
+						{
+							progress[0] = 0;
+							progress[1] = 0;
+							timeToFly = true;
+						}
 					}
 				}
 			}
@@ -630,6 +663,7 @@ int main()
 					MinigameStart startMinigame;
 					startMinigame.packetId = PacketType::STARTMINIGAMES;
 					startMinigame.minigame = MiniGames::STARTOFINTERMISSION;
+					currentMinigame = MiniGames::INTERMISSION;
 
 					if (progress[0] > 3)
 					{
@@ -643,8 +677,6 @@ int main()
 					}
 					sendBinaryDataAllPlayers<MinigameStart>(startMinigame, data);
 					timeToFly = false;
-					progress[0] = 0;
-					progress[1] = 0;
 				}
 			}
 			

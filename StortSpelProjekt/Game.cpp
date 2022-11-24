@@ -604,28 +604,43 @@ GAMESTATE Game::updateComponentGame()
 
 GAMESTATE Game::startLanding()
 {
-	DirectX::XMFLOAT3 newRot = spaceShips[currentPlayer->getTeam()]->getUpDirection();
-	spaceShips[currentPlayer->getTeam()]->setPos(newRot * DirectX::SimpleMath::Vector3(150, 150, 150));
 	currentMinigame = LANDINGSPACESHIP;
+
+	int index = currentPlayer->getTeam() + 1;
+	int team = currentPlayer->getTeam();
+
+	for (int i = 0; i < spaceShips.size(); i++)
+	{
+		if (i == currentPlayer->getTeam()) { index = currentPlayer->getTeam() + 1; team = currentPlayer->getTeam(); }
+		else { index = (int)!currentPlayer->getTeam() + 1; team = (int)!currentPlayer->getTeam(); }
+		DirectX::SimpleMath::Vector3 planetOffset = planetVector[index]->getPlanetPosition();
+		planetOffset.Normalize();
+		planetOffset *= 150.f;
+		DirectX::SimpleMath::Vector3 newPos = planetVector[index]->getPlanetPosition() + planetOffset;
+		spaceShips[team]->setPos(newPos);
+		spaceShips[team]->setGravityField(planetVector[index]->getGravityField());
+		spaceShips[team]->setRot(spaceShips[team]->getRotOrientedToGrav());
+	}
+
+	landingMiniGamePoints = 0.f;
+
 	return GAMESTATE::NOCHANGE;
 }
 
 GAMESTATE Game::updateLandingGame()
 {
 	//Here yo type the function below but replace testObject with your space ship
-	//camera.landingMinigameScene(planetVector[currentPlayer->getTeam() + 1], spaceShips[currentPlayer->getTeam()]->getPosV3(), spaceShips[currentPlayer->getTeam()]->getRot());
+	camera.landingMinigameScene(planetVector[currentPlayer->getTeam() + 1], spaceShips[currentPlayer->getTeam()]->getPosV3(), spaceShips[currentPlayer->getTeam()]->getRot());
 	
+	//Moves the spaceShips
 	spaceShips[currentPlayer->getTeam()]->fly(spaceShips[currentPlayer->getTeam()]->getUpDirection(), dt);
 	spaceShips[!currentPlayer->getTeam()]->fly(spaceShips[!currentPlayer->getTeam()]->getUpDirection(), dt);
 
-	if (rand() % 1000 == 0) 
-	{
-		std::cout << "Total points " << landingMiniGamePoints << "\n";
-		std::cout << "Team score: " << teamScoreLandingMiniGame << "\nEnemy Team score: " << enemyTeamScoreLandingMiniGame << "\n";
-	}
 	if (landingUi.handleInputs(dt)) landingMiniGamePoints += 100*dt;
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
 	{
+		std::cout << "Team score: " << teamScoreLandingMiniGame << "\nEnemy Team score: " << enemyTeamScoreLandingMiniGame << "\n";
+
 		//Send data to server
 		LandingMiniSendScoreToServer totalPoints = {};
 		totalPoints.packetId = PacketType::LANDINGMINIGAMESENDSCORETOSERVER;
@@ -649,7 +664,8 @@ GAMESTATE Game::updateLandingGame()
 			spaceShips[i]->getPhysComp()->setPosition(reactphysics3d::Vector3(spaceShips[i]->getPosV3().x, spaceShips[i]->getPosV3().y, spaceShips[i]->getPosV3().z));
 			spaceShips[i]->getPhysComp()->setRotation(reactQuaternion);
 		}
-	
+		std::cout << "\nLANDING MINIGAME OVER!\nTOTAL SCORE:\nTeam score: " << teamScoreLandingMiniGame << "\nEnemy Team score: " << enemyTeamScoreLandingMiniGame << "\n";
+
 
 		//Send data to server
 		MinigameStart startKTH;
@@ -885,7 +901,7 @@ GAMESTATE Game::Update()
 	if (Input::KeyPress(KeyCode::P)) //THIS WILL BE REMOVED WHEN SWITCHING BETWEEN STATES IS DONE
 	{ 
 		currentMinigame = MiniGames::LANDINGSPACESHIP;
-		DirectX::XMFLOAT3 newRot = spaceShips[currentPlayer->getTeam()]->getUpDirection();
+		
 		int index = currentPlayer->getTeam() + 1;
 		int team = currentPlayer->getTeam();
 
@@ -901,12 +917,6 @@ GAMESTATE Game::Update()
 			spaceShips[team]->setGravityField(planetVector[index]->getGravityField());
 			spaceShips[team]->setRot(spaceShips[team]->getRotOrientedToGrav());
 		}
-
-		
-		//spaceShips[team]->orientToUpDirection();
-
-		newRot = spaceShips[!currentPlayer->getTeam()]->getUpDirection();
-		//spaceShips[!currentPlayer->getTeam()]->setPos(newRot * DirectX::SimpleMath::Vector3(150, 150, 150));
 
 		landingMiniGamePoints = 0.f;
 	}

@@ -83,7 +83,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
-	gameObjects.emplace_back(currentPlayer);
+	//gameObjects.emplace_back(currentPlayer);
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->setGravityField(planetGravityField);
@@ -129,6 +129,10 @@ Game::~Game()
 	{
 		delete planetVector[i];
 	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		delete players[i];
+	}
 	delete tmpMesh;
 	delete asteroids;
 	delete arrow;
@@ -157,6 +161,7 @@ void Game::loadObjects()
 	MaterialLibrary::LoadMaterial("pintoRed.png");
 	MaterialLibrary::LoadMaterial("pintoBlue.png");
 	MaterialLibrary::LoadMaterial("Red.png");
+	MaterialLibrary::LoadMaterial("olive.jpg");
 
 	//Meshes vector contents
 	meshes.push_back(new Mesh("../Meshes/Sphere"));
@@ -266,21 +271,28 @@ grenade->setGameObjects(gameObjects);
 
 void Game::drawShadows()
 {
+	int nrofLights = ltHandler.getNrOfLights();
 	//Draw object shadow
-	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
+	for (int i = 0; i < nrofLights; i++)
 	{
 		ltHandler.drawShadows(i, gameObjects);
 	}
 	//Draw planet shadow
-	for (int i = 0; i < planetVector.size(); i++)
+	for (int i = 0; i < nrofLights; i++)
 	{
 		ltHandler.drawShadows(i, planetVector);
 	}
+	//For animated meshes
+	basicRenderer.bindAnimVs();
+	for (int i = 0; i < nrofLights; i++)
+	{
+		ltHandler.drawShadows(i, players);
+	}
 
 	//Draw depth stencil
-	basicRenderer.depthPrePass();
-	ltHandler.drawShadows(0, gameObjects, &camera);
-	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
+	//basicRenderer.depthPrePass();
+	//ltHandler.drawShadows(0, gameObjects, &camera);
+	//GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
 }
 
 void Game::drawObjects(bool drawDebug)
@@ -291,16 +303,7 @@ void Game::drawObjects(bool drawDebug)
 	//Draw Game objects
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		//dumb draw for player
-		if (gameObjects[i] == currentPlayer)
-		{
-			currentPlayer->updateBuffer();
-			gameObjects[i]->draw();
-		}
-		else
-		{
-			gameObjects[i]->draw();
-		}
+		gameObjects[i]->draw();
 	}
 
 	//Nödvändig??????????
@@ -324,6 +327,13 @@ void Game::drawObjects(bool drawDebug)
 	if (drawDebug)
 	{
 		ltHandler.drawDebugMesh();
+	}
+
+	//Animated meshes
+	basicRenderer.changeToAnimation();
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->draw();
 	}
 }
 
@@ -503,16 +513,25 @@ GAMESTATE Game::Update()
 		{
 			Grenade* tempNade = (Grenade*)items[i];
 			tempNade->updateExplosionCheck();
+			if (tempNade->getExploded() == true)
+			{
+				randomizeObjectPos(tempNade);
+				tempNade->setExploded(false);
+			}
 		}	break;
 		case ObjID::POTION:
 		{
 			Potion* tempPotion = (Potion*)items[i];
-			if (tempPotion->timerGoing()) currentPlayer->setSpeed(50.f);
-			else currentPlayer->setSpeed(20.f);
+			if (tempPotion->isTimeToRun())
+			{
+				if (tempPotion->timerGoing()) currentPlayer->setSpeed(50.f);
+				else currentPlayer->setSpeed(25.f);
+			}
 		}	break;
 		}
-		break;
 	}
+
+
 
 	//Player functions
 	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
@@ -693,8 +712,6 @@ void Game::Render()
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
 
-	basicRenderer.changeToAnimation();
-	currentPlayer->draw();
 
 	//Unbind light
 	ltHandler.unbindSrv();

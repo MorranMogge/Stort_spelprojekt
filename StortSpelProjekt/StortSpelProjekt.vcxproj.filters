@@ -473,6 +473,7 @@
     <ClInclude Include="ModelDataContainer.h" />
     <ClInclude Include="ModelManager.h" />
     <ClInclude Include="AnimatedMesh.h" />
+    <ClInclude Include="Time.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -585,6 +586,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="vShaderSkinning.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PT_UpdatePlayer.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

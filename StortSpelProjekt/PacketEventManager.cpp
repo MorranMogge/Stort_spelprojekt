@@ -12,7 +12,7 @@ PacketEventManager::~PacketEventManager()
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips
-	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector, CaptureZone*& captureZone)
+	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector, CaptureZone*& captureZone, GAMESTATE& currentGameState)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -71,6 +71,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			{
 				std::cout << "uwu i won wuw\n";
 			}
+			currentGameState = WIN;
 			break;
 
 		case PacketType::LOSER:
@@ -80,6 +81,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			{
 				std::cout << "uwu i lost wuw\n";
 			}
+			currentGameState = LOSE;
 			break;
 
 		case PacketType::COMPONENTPOSITION:

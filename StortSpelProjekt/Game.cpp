@@ -424,8 +424,9 @@ void Game::handleKeybinds()
 
 GAMESTATE Game::updateComponentGame()
 {
+	
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentGameState);
 
 	//Get newest delta time
 	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
@@ -634,7 +635,7 @@ GAMESTATE Game::updateComponentGame()
 		this->components[i]->checkDistance((GameObject*)(currentPlayer));
 	}
 
-	return NOCHANGE;
+	return currentGameState;
 }
 
 GAMESTATE Game::updateLandingGame()
@@ -663,7 +664,8 @@ GAMESTATE Game::updateKingOfTheHillGame()
 GAMESTATE Game::Update()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone);
+	currentGameState = NOCHANGE;
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentGameState);
 	
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();
@@ -698,7 +700,7 @@ GAMESTATE Game::Update()
 	//Debug keybinds
 	this->handleKeybinds();
 
-	return NOCHANGE;
+	return currentGameState;
 }
 
 void Game::Render()

@@ -10,21 +10,11 @@ class HudUI final
 	GUISprite fade;
 
 
-	GUISprite landing0;
-	GUISprite landing1;
-	GUISprite landing2;
+	GUISprite landing0, landing1, landing2;
 
-	GUISprite redTeam0;
-	GUISprite redTeam1;
-	GUISprite redTeam2;
-	GUISprite redTeam3;
-	GUISprite redTeam4;
+	GUISprite redTeam0, redTeam1, redTeam2, redTeam3, redTeam4;
 
-	GUISprite blueTeam0;
-	GUISprite blueTeam1;
-	GUISprite blueTeam2;
-	GUISprite blueTeam3;
-	GUISprite blueTeam4;
+	GUISprite blueTeam0,blueTeam1,blueTeam2,blueTeam3,blueTeam4;
 
 	GUISprite control;
 	GUISprite useText;

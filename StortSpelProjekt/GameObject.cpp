@@ -128,6 +128,12 @@ void GameObject::setScale(const DirectX::XMFLOAT3& scale)
 	//this->physComp->setScale(scale);
 }
 
+void GameObject::setScale(const float& scale)
+{
+	this->mesh->scale = DirectX::XMFLOAT3(scale, scale, scale);
+	this->scale = DirectX::XMFLOAT3(scale, scale, scale);
+}
+
 DirectX::XMFLOAT3 GameObject::getPos() const
 {
 	return this->position;

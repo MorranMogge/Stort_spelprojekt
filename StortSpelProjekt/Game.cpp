@@ -231,6 +231,7 @@ void Game::loadObjects()
 
 		//Offline comonent
 		component = new Component(meshes[6], DirectX::SimpleMath::Vector3(0, -42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), COMPONENT, 0, planetGravityField);
+		component->setScale(2.0f);
 		components.emplace_back(component);
 		gameObjects.emplace_back(component);
 		physWorld.addPhysComponent(component, reactphysics3d::CollisionShapeName::BOX);
@@ -255,19 +256,13 @@ void Game::loadObjects()
 		currentPlayer->setGamePad(gamePad);
 	}
 
-//???
-//field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
-//oldField = field;
+	//Set items baseball bat
+	baseballBat->setPlayer(currentPlayer);
+	baseballBat->setGameObjects(gameObjects);
+	baseballBat->setClient(client);
 
-
-
-//Set items baseball bat
-baseballBat->setPlayer(currentPlayer);
-baseballBat->setGameObjects(gameObjects);
-baseballBat->setClient(client);
-
-//Set items grenade
-grenade->setGameObjects(gameObjects);
+	//Set items grenade
+	grenade->setGameObjects(gameObjects);
 }
 
 void Game::drawShadows()

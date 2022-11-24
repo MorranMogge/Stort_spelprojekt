@@ -86,9 +86,9 @@ void HudUI::SpritePass()
 	}
 
 
-	fade.Draw();
+	
 	controls.Draw();
-
+	fade.Draw();
 }
 
 HudUI::HudUI()

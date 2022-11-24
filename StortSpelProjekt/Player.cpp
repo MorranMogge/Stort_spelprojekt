@@ -1056,7 +1056,6 @@ bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) con
 void Player::colliedWIthComponent(const std::vector<Component*>& components)
 {
 	bool collided = false;
-
 	for (int i = 0; i < components.size(); i++) collided = this->physComp->testBodiesOverlap(components[i]->getPhysComp());
 	if (collided) this->setSpeed(20.f * 0.55f);
 	else this->setSpeed(20.f);

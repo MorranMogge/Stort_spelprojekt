@@ -605,6 +605,8 @@ GAMESTATE Game::startLanding()
 {
 	DirectX::XMFLOAT3 newRot = spaceShips[currentPlayer->getTeam()]->getUpDirection();
 	spaceShips[currentPlayer->getTeam()]->setPos(newRot * DirectX::SimpleMath::Vector3(150, 150, 150));
+
+	std::cout << "START LANDING GAME\n";
 	currentMinigame = LANDINGSPACESHIP;
 	return GAMESTATE::NOCHANGE;
 }
@@ -645,16 +647,12 @@ GAMESTATE Game::updateLandingGame()
 		currentMinigame = MiniGames::KINGOFTHEHILL;
 
 		//Send data to server
-		MinigameStart startKTH;
-		startKTH.packetId = PacketType::STARTMINIGAMES;
-		startKTH.minigame = MiniGames::KINGOFTHEHILL;
-		client->sendStuff<MinigameStart>(startKTH);
-		std::cout << "SENT START KTH\n";
-
-		currentPlayer->setPos(DirectX::XMFLOAT3(0.f, 65.f, 0.f));
+		DoneWithGame requestStart;
+		requestStart.packetId = PacketType::DONEWITHGAME;
+		requestStart.playerID = currentPlayer->getOnlineID();
+		requestStart.formerGame = MiniGames::LANDINGSPACESHIP;
+		client->sendStuff<DoneWithGame>(requestStart);
 	}
-
-
 	return NOCHANGE;
 }
 
@@ -837,17 +835,12 @@ GAMESTATE Game::updateIntermission()
 			this->spaceShips[1]->setRot(spaceShips[1]->getRotOrientedToGrav());
 			this->spaceShips[1]->getPhysComp()->setRotation(reactphysics3d::Quaternion(spaceShips[1]->getRotXM().x, spaceShips[1]->getRotXM().y, spaceShips[1]->getRotXM().z, 1.0));
 
-			if (Input::KeyDown(KeyCode::K))
-			{
-				//Send data to server
-				DoneWithGame requestStart;
-				requestStart.packetId = PacketType::DONEWITHGAME;
-				requestStart.playerID = currentPlayer->getOnlineID();
-				client->sendStuff<DoneWithGame>(requestStart);
-				std::cout << "SENT	 REQUEST DONE UwU\n";
-			}
-
-			//currentMinigame = STARTLANDING;
+			//Send data to server
+			DoneWithGame requestStart;
+			requestStart.packetId = PacketType::DONEWITHGAME;
+			requestStart.playerID = currentPlayer->getOnlineID();
+			requestStart.formerGame = MiniGames::INTERMISSION;
+			client->sendStuff<DoneWithGame>(requestStart);
 			return GAMESTATE::NOCHANGE;
 		}
 	}

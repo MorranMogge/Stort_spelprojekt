@@ -240,4 +240,5 @@ struct DoneWithGame
 {
 	int packetId;
 	int playerID;
+	MiniGames formerGame;
 };

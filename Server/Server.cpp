@@ -156,8 +156,6 @@ void sendIdToAllPlayers(serverData& data)
 	}
 };
 
-
-
 int main()
 {
 	float flyTime = 0.f;
@@ -447,46 +445,48 @@ int main()
 				//	}
 				//}
 				break;
+
 			case PacketType::LANDINGMINIGAMESENDSCORETOSERVER:
 				scoreFromClient = circBuffer->readData<LandingMiniSendScoreToServer>();
 				landingPoints[scoreFromClient->playerId] = scoreFromClient->scoreToServer;
 				break;
 
-			case PacketType::DONEWITHGAME:
-				requestStart = circBuffer->readData<DoneWithGame>();
+			//case PacketType::DONEWITHGAME:
+			//	requestStart = circBuffer->readData<DoneWithGame>();
 
-				//Checking if the same player have already sent a request
-				bool alreadySent = false;
-				for (int i = 0; i < playersSent.size(); i++)
-				{
-					if (requestStart->playerID == playersSent[i]) alreadySent = true;
-				}
+			//	//Checking if the same player have already sent a request
+			//	bool alreadySent = false;
+			//	for (int i = 0; i < playersSent.size(); i++)
+			//	{
+			//		if (requestStart->playerID == playersSent[i]) alreadySent = true;
+			//	}
 
-				//It was not the same player
-				if (!alreadySent)
-				{
-					playersSent.emplace_back(requestStart->playerID);
-					requests++;
-					std::cout << "REQUESTS UwU " << requests << "\n";
+			//	//It was not the same player
+			//	if (!alreadySent)
+			//	{
+			//		playersSent.emplace_back(requestStart->playerID);
+			//		requests++;
+			//		std::cout << "REQUESTS UwU " << requests << "\n";
 
-					//Starting new minigame if everyone is done
-					if (requests == 4)
-					{
-						MinigameStart startGame;
-						startGame.packetId = PacketType::STARTMINIGAMES;
-						if (currentMinigame == MiniGames::INTERMISSION)
-						{
-							currentMinigame = MiniGames::LANDINGSPACESHIP;
-							startGame.minigame = MiniGames::STARTLANDING;
-						}
-						sendBinaryDataAllPlayers<MinigameStart>(startGame, data);
-						std::cout << "SENDING NEXT MINIGAME UwU\n";
+			//		//Starting new minigame if everyone is done
+			//		if (requests == 2)
+			//		{
+			//			MinigameStart startGame;
+			//			startGame.packetId = PacketType::STARTMINIGAMES;
+			//			if (currentMinigame == MiniGames::INTERMISSION)
+			//			{
+			//				currentMinigame = MiniGames::LANDINGSPACESHIP;
+			//				startGame.minigame = MiniGames::STARTLANDING;
+			//			}
+			//			sendBinaryDataAllPlayers<MinigameStart>(startGame, data);
+			//			std::cout << "SENDING NEXT MINIGAME UwU\n";
 
-						//Resetting
-						requests = 0;
-						playersSent.clear();
-					}
-				}
+			//			//Resetting
+			//			requests = 0;
+			//			playersSent.clear();
+			//		}
+			//	}
+			//	break;
 			}
 		}
 
@@ -554,56 +554,56 @@ int main()
 		{
 
 			//WHAT NEEDS TO BE DONE ON SERVER TO HANDLE LANDING MINIGAME
-			switch (currentMinigame)
-			{
-			case MiniGames::LANDINGSPACESHIP:
-				//WE NEED TO RECIEVE POINTS, ADD THEM AND SEND THEM TO THE PLAYERS
+			//switch (currentMinigame)
+			//{
+			//case MiniGames::LANDINGSPACESHIP:
+			//	//WE NEED TO RECIEVE POINTS, ADD THEM AND SEND THEM TO THE PLAYERS
 
-				LandingMiniGameScore lScore;
-				lScore.packetId = PacketType::LANDINGMINIGAMESCORE;
-				int playerTeam;
-				lScore.pointsBlueTeam = 0.f;
-				lScore.pointsRedTeam = 0.f;
+			//	LandingMiniGameScore lScore;
+			//	lScore.packetId = PacketType::LANDINGMINIGAMESCORE;
+			//	int playerTeam;
+			//	lScore.pointsBlueTeam = 0.f;
+			//	lScore.pointsRedTeam = 0.f;
 
-				for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-				{
-					playerTeam = (MAXNUMBEROFPLAYERS) / 2;
-					playerTeam = (int)(playerTeam < i + 1);
-					if (playerTeam == 0) lScore.pointsRedTeam += landingPoints[i];
-					else lScore.pointsBlueTeam += landingPoints[i];
-				}
+			//	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+			//	{
+			//		playerTeam = (MAXNUMBEROFPLAYERS) / 2;
+			//		playerTeam = (int)(playerTeam < i + 1);
+			//		if (playerTeam == 0) lScore.pointsRedTeam += landingPoints[i];
+			//		else lScore.pointsBlueTeam += landingPoints[i];
+			//	}
 
-				sendBinaryDataAllPlayers<LandingMiniGameScore>(lScore, data);
-				break;
-			case MiniGames::KINGOFTHEHILL:
-				//Sending the capture zone
-				KingOfTheHillMiniGame miniGameKTH(data, MAXNUMBEROFPLAYERS);
-				std::cout << "Sent capture zone\n";
+			//	sendBinaryDataAllPlayers<LandingMiniGameScore>(lScore, data);
+			//	break;
+			//case MiniGames::KINGOFTHEHILL:
+			//	//Sending the capture zone
+			//	KingOfTheHillMiniGame miniGameKTH(data, MAXNUMBEROFPLAYERS);
+			//	std::cout << "Sent capture zone\n";
 
-				//Sending the planets
-				planetVector[0]->setScale(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
-				planetVector[2]->setPosition(DirectX::XMFLOAT3(65.f, 65.f, 65.f));
-				planetVector[2]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
-				planetVector[1]->setPosition(DirectX::XMFLOAT3(-65.f, 65.f, 65.f));
-				planetVector[1]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
+			//	//Sending the planets
+			//	planetVector[0]->setScale(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
+			//	planetVector[2]->setPosition(DirectX::XMFLOAT3(65.f, 65.f, 65.f));
+			//	planetVector[2]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
+			//	planetVector[1]->setPosition(DirectX::XMFLOAT3(-65.f, 65.f, 65.f));
+			//	planetVector[1]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
 
-				for (int i = 0; i < planetVector.size(); i++)
-				{
-					SpawnPlanets planetData;
-					planetData.packetId = PacketType::SPAWNPLANETS;
-					planetData.xPos = planetVector[i]->getPlanetPosition().x;
-					planetData.yPos = planetVector[i]->getPlanetPosition().y;
-					planetData.zPos = planetVector[i]->getPlanetPosition().z;
-					planetData.size = planetVector[i]->getSize();
-					sendBinaryDataAllPlayers<SpawnPlanets>(planetData, data);
-					std::cout << "Sent a planet\n";
-				}
-				miniGameKTH.update(data);
-				break;
+			//	for (int i = 0; i < planetVector.size(); i++)
+			//	{
+			//		SpawnPlanets planetData;
+			//		planetData.packetId = PacketType::SPAWNPLANETS;
+			//		planetData.xPos = planetVector[i]->getPlanetPosition().x;
+			//		planetData.yPos = planetVector[i]->getPlanetPosition().y;
+			//		planetData.zPos = planetVector[i]->getPlanetPosition().z;
+			//		planetData.size = planetVector[i]->getSize();
+			//		sendBinaryDataAllPlayers<SpawnPlanets>(planetData, data);
+			//		std::cout << "Sent a planet\n";
+			//	}
+			//	miniGameKTH.update(data);
+			//	break;
 
-			/*default:
-				break;*/
-			}
+			///*default:
+			//	break;*/
+			//}
 			//if (currentMinigame == MiniGames::LANDINGSPACESHIP) continue; //We do not need to send more data if we are in landingMiniGame
 
 			for (int i = 0; i < 10; i++)
@@ -641,19 +641,19 @@ int main()
 						sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
 
 						//Checking if someone has won
-						progress[j]++;
+						/*progress[j]++;
 						if (progress[j] > 3)
 						{
 							progress[0] = 0;
 							progress[1] = 0;
 							timeToFly = true;
-						}
+						}*/
 					}
 				}
 			}
 
 			//Waits for the ships to fly away before starting minigames
-			if (timeToFly)
+			/*if (timeToFly)
 			{
 				flyTime += timerLength;
 
@@ -678,7 +678,7 @@ int main()
 					sendBinaryDataAllPlayers<MinigameStart>(startMinigame, data);
 					timeToFly = false;
 				}
-			}
+			}*/
 			
 			//physWorld.update(timerLength);
 			//f�r varje spelare s� skicka deras position till alla klienter

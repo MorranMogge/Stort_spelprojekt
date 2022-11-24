@@ -407,7 +407,6 @@ void Game::handleKeybinds()
 
 GAMESTATE Game::updateComponentGame()
 {
-	
 	//Get newest delta time
 	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
 	asteroids->updateAsteroids(dt, planetVector, gameObjects);
@@ -843,6 +842,7 @@ GAMESTATE Game::updateIntermission()
 				//Send data to server
 				DoneWithGame requestStart;
 				requestStart.packetId = PacketType::DONEWITHGAME;
+				requestStart.playerID = currentPlayer->getOnlineID();
 				client->sendStuff<DoneWithGame>(requestStart);
 				std::cout << "SENT	 REQUEST DONE UwU\n";
 			}

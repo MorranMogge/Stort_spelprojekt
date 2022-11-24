@@ -108,7 +108,6 @@ private:
 	GAMESTATE updateComponentGame();
 	GAMESTATE startLanding();
 	GAMESTATE updateLandingGame();
-	GAMESTATE startKotH();
 	GAMESTATE updateKingOfTheHillGame();
 	GAMESTATE startIntermission();
 	GAMESTATE updateIntermission();

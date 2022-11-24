@@ -34,7 +34,7 @@ private:
 	unsigned int team2Score;
 	unsigned int goalScore;
 public:
-	KingOfTheHillMiniGame(serverData& data, const short &nrOfPlayers);
+	KingOfTheHillMiniGame(const short &nrOfPlayers);
 	//Bestäm position på zonen
 	void sendKingOfTheHillZone(serverData& data);
 	void spawnItems();

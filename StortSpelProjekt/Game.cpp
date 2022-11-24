@@ -605,9 +605,8 @@ GAMESTATE Game::startLanding()
 {
 	DirectX::XMFLOAT3 newRot = spaceShips[currentPlayer->getTeam()]->getUpDirection();
 	spaceShips[currentPlayer->getTeam()]->setPos(newRot * DirectX::SimpleMath::Vector3(150, 150, 150));
-
-	std::cout << "START LANDING GAME\n";
 	currentMinigame = LANDINGSPACESHIP;
+	currentPlayer->setPos(DirectX::SimpleMath::Vector3(0.f, 62.f, 0.f));
 	return GAMESTATE::NOCHANGE;
 }
 
@@ -636,7 +635,6 @@ GAMESTATE Game::updateLandingGame()
 		totalPoints.playerId = currentPlayer->getOnlineID();
 		totalPoints.scoreToServer = landingMiniGamePoints;
 		client->sendStuff<LandingMiniSendScoreToServer>(totalPoints);
-
 		serverStart = std::chrono::system_clock::now();
 	}
 
@@ -644,7 +642,6 @@ GAMESTATE Game::updateLandingGame()
 	{
 		moveDir.Normalize();
 		spaceShips[currentPlayer->getTeam()]->setPos(moveDir * planetVector[0]->getSize());
-		currentMinigame = MiniGames::KINGOFTHEHILL;
 
 		//Send data to server
 		DoneWithGame requestStart;
@@ -653,15 +650,6 @@ GAMESTATE Game::updateLandingGame()
 		requestStart.formerGame = MiniGames::LANDINGSPACESHIP;
 		client->sendStuff<DoneWithGame>(requestStart);
 	}
-	return NOCHANGE;
-}
-
-GAMESTATE Game::startKotH()
-{
-	//Set up planets
-	//Set up capture zone
-
-	currentMinigame = MiniGames::KINGOFTHEHILL;
 	return NOCHANGE;
 }
 
@@ -841,6 +829,9 @@ GAMESTATE Game::updateIntermission()
 			requestStart.playerID = currentPlayer->getOnlineID();
 			requestStart.formerGame = MiniGames::INTERMISSION;
 			client->sendStuff<DoneWithGame>(requestStart);
+
+			std::cout << "SENT DONE WITH INTERMISSION\n";
+
 			return GAMESTATE::NOCHANGE;
 		}
 	}
@@ -931,8 +922,6 @@ GAMESTATE Game::Update()
 	case STARTLANDING:
 		currentGameState = this->startLanding();
 		break;
-	case STARTKTH:
-		currentGameState = this->startKotH();
 	default:
 		break;
 	}

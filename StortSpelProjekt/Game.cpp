@@ -708,7 +708,6 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	currentPlayer->velocityMove(dt);
 
 	//Check component pickup
-	if (!IFONLINE) currentPlayer->pickupItem(items, components);
 	currentPlayer->requestingPickUpItem(onlineItems);
 
 	grenade->updateExplosionCheck();
@@ -741,7 +740,6 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	}
 
 	//Physics related functions
-	if (!IFONLINE) physWorld.update(dt);
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->updateMatrixOnline();

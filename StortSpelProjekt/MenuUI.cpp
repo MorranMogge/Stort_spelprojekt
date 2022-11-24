@@ -225,7 +225,7 @@ MenuUI::MenuUI()
 	exit2.SetScale(scale);
 
 	Loading = GUISprite(centerX, centerY);
-	Loading.Load(L"../Sprites/Loading.bmp");
+	Loading.Load(L"../Sprites/Loding.png");
 	Loading.SetScale(1, 1);
 
 	title = GUISprite(centerX, 340-200);

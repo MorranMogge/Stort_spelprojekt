@@ -258,77 +258,85 @@ void SettingsUI::HandleInputs()
 			{
 				if (any_DropDown_Active)
 				{
-					switch (selected_dropdown)
+					if (dropdown1)
 					{
-					case 0:// 720p
-					{
-						any_DropDown_Active = false;
-
-						is720p = true;
-						dropdown1 = false;
-						dropdown2 = false;
-						GPU::windowWidth = 1280;
-						GPU::windowHeight = 720;
-						if (fullscreen)
+						switch (selected_dropdown)
 						{
-							ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
-							SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-						}
-						else
+						case 0:// 720p
 						{
-							SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
-						}
-						SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
-						// get window client size
-						if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+							any_DropDown_Active = false;
+
+							is720p = true;
+							dropdown1 = false;
+							dropdown2 = false;
+							GPU::windowWidth = 1280;
+							GPU::windowHeight = 720;
+							if (fullscreen)
+							{
+								ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+								SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+							}
+							else
+							{
+								SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+							}
+							SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+							// get window client size
+							if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+							{
+								GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+								GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+							}
+
+							GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+							GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+							ReInitSwapChain();
+							gameState = SETTINGS;
+
+						}break;
+
+						case 1:// 1080p
 						{
-							GPU::windowWidth = info.rcClient.right - info.rcClient.left;
-							GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+							any_DropDown_Active = false;
+							is720p = false;
+							dropdown1 = false;
+							dropdown2 = false;
+
+							GPU::windowWidth = 1920;
+							GPU::windowHeight = 1080;
+
+							if (fullscreen)
+							{
+								ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+								SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+							}
+							else
+							{
+								SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
+							}
+							SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+
+							// get window client size
+							if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
+							{
+								GPU::windowWidth = info.rcClient.right - info.rcClient.left;
+								GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
+							}
+
+							GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
+							GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
+
+							ReInitSwapChain();
+							gameState = SETTINGS;
+						}break;
 						}
-
-						GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
-						GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
-
-						ReInitSwapChain();
-						gameState = SETTINGS;
-
-					}break;
-
-					case 1:// 1080p
-					{
-						any_DropDown_Active = false;
-						is720p = false;
-						dropdown1 = false;
-						dropdown2 = false;
-
-						GPU::windowWidth = 1920;
-						GPU::windowHeight = 1080;
-
-						if (fullscreen)
-						{
-							ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
-							SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-						}
-						else
-						{
-							SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
-						}
-						SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
-
-						// get window client size
-						if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
-						{
-							GPU::windowWidth = info.rcClient.right - info.rcClient.left;
-							GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
-						}
-
-						GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
-						GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
-
-						ReInitSwapChain();
-						gameState = SETTINGS;
-					}break;
 					}
+					else if(dropdown2)
+					{
+
+					}
+
 				}
 				else
 				{

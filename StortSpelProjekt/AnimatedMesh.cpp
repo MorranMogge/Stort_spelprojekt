@@ -287,19 +287,19 @@ void AnimatedMesh::forwardKinematics(const std::string& nodeName, DirectX::XMFLO
 	{
 		int index = it->second;
 		outMatrix = this->strucBuff.getData(index);
-		DirectX::XMMATRIX m1 = DirectX::XMLoadFloat4x4(&outMatrix);
-		m1 = DirectX::XMMatrixTranspose(m1);
+		DirectX::XMMATRIX JointMatrix = DirectX::XMLoadFloat4x4(&outMatrix);
+		JointMatrix = DirectX::XMMatrixTranspose(JointMatrix);
 
 		int id = MySimp.boneNameToIndex[nodeName];
 		DirectX::XMMATRIX boneOffset = DirectX::XMLoadFloat4x4(&MySimp.boneVector[id].offsetMatrix);
 		boneOffset = DirectX::XMMatrixInverse(nullptr, boneOffset);
-		m1 = boneOffset * m1;
+		JointMatrix = boneOffset * JointMatrix;
 		const DirectX::XMFLOAT4X4 f1 = this->getMatrix();
-		DirectX::XMMATRIX m2 = DirectX::XMLoadFloat4x4(&f1);
-		m2 = DirectX::XMMatrixTranspose(m2);
+		DirectX::XMMATRIX worldMatrix = DirectX::XMLoadFloat4x4(&f1);
+		worldMatrix = DirectX::XMMatrixTranspose(worldMatrix);
 
-		DirectX::XMMATRIX m3 = DirectX::XMMatrixMultiply(m1, m2);
-		m3 = DirectX::XMMatrixTranspose(m3);
+		DirectX::XMMATRIX m3 = DirectX::XMMatrixMultiply(JointMatrix, worldMatrix);
+		//m3 = DirectX::XMMatrixTranspose(m3);
 		DirectX::XMStoreFloat4x4(&outMatrix, m3);
 		return;
 	}
@@ -312,8 +312,8 @@ AnimatedMesh::AnimatedMesh(Mesh* useMesh, const AnimationData& data, const Direc
 	oldAnimId = 0;
 	oldTime = 2;
 	state = 2;
-	//this->setScale(DirectX::XMFLOAT3(0.02, 0.02, 0.02));
-	//this->updateBuffer();
+	this->setScale(DirectX::XMFLOAT3(1, 1, 1));
+	this->updateBuffer();
 
 	this->MySimp = data;
 	std::vector<DirectX::XMFLOAT4X4> tempfloatvec;
@@ -358,8 +358,8 @@ void AnimatedMesh::updateAnim(const float& dt, unsigned animIndex, float animati
 	if (animIndex == oldAnimId)
 	{
 		state = 1;
-		this->totalTime += dt;
 		float AnimTime = dt * animationSpeed;
+		this->totalTime += AnimTime;
 		this->getTimeInTicks(totalTime, animIndex);
 	}
 	else

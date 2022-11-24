@@ -156,8 +156,10 @@ DirectX::XMFLOAT3 GameObject::getScale() const
 DirectX::XMFLOAT4X4 GameObject::getMatrix() const
 {
 	DirectX::XMFLOAT4X4 temp;
-	DirectX::XMStoreFloat4x4(&temp, DirectX::XMMatrixTranspose({ (DirectX::XMMatrixScaling(scale.x, scale.y, scale.z)
-		* this->rotation * DirectX::XMMatrixTranslation(this->position.x, this->position.y, this->position.z)) }));
+	DirectX::XMMATRIX world = DirectX::XMMatrixMultiply(DirectX::XMMatrixScaling(scale.x, scale.y, scale.z), this->rotation);
+	world = DirectX::XMMatrixMultiply(world, DirectX::XMMatrixTranslation(this->position.x, this->position.y, this->position.z));
+	world = DirectX::XMMatrixTranspose(world);
+	DirectX::XMStoreFloat4x4(&temp, world);
 	return temp;
 }
 
@@ -167,6 +169,8 @@ void GameObject::setMatrix(DirectX::XMFLOAT4X4 matrix)
 	this->position.x = matrix._14;
 	this->position.y = matrix._24;
 	this->position.z = matrix._34;
+	this->rotation = DirectX::XMLoadFloat4x4(&matrix);
+	//this->rotation
 	this->physComp->setPosition(reactphysics3d::Vector3{ position.x,position.y, position.z });
 }
 

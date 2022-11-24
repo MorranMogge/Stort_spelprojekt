@@ -22,6 +22,7 @@ void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Play
 	pr.matrix = currentPlayer->getMatrix();
 	client->sendStuff<PositionRotation>(pr);
 
+
 	
 	//holds a component
 	//if (currentPlayer->getItemOnlineType() == 0)

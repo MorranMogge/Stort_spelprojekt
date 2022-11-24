@@ -650,14 +650,18 @@ GAMESTATE Game::Update()
 	{
 		this->currentPlayer->updateAnim(dt, 5);
 	}
+	else if (GetAsyncKeyState('E'))
+	{
+		this->currentPlayer->updateAnim(dt, 4, 2);
+	}
 	else
 	{
 	this->currentPlayer->updateAnim(dt, 0, 1);
 	}
 
 	DirectX::XMFLOAT4X4 f1;
-	this->currentPlayer->forwardKinematics("hand3:hand3:LeftHand", f1);
-	this->baseballBat->setMatrix(f1);
+	this->currentPlayer->forwardKinematics("hand3:hand3:RightHand", f1);
+	this->grenade->setMatrix(f1);
 
 	return NOCHANGE;
 }

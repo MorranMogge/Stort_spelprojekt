@@ -124,11 +124,8 @@ private:
 	void findlowPosNode(int& out, const float& AnimationTimeTicks, const channels& nodeAnm);
 	void InterpolatePos(DirectX::XMFLOAT3& res, const float animationTime, const channels& animationNode, const channels& target);
 
-	//const aiNodeAnim* findNodeAnim(const std::string& nodeName, const aiAnimation* pAnimation);
 	bool findNodeAnim(const std::string& nodeName, const animationNode& pAnimation, channels& res);
 	void getTimeInTicks(const float& dt, const unsigned& animationIndex);
-
-	void findNodeIndex(const std::string& nodeName);
 
 	float oldTime;
 	int oldAnimId;

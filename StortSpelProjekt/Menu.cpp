@@ -16,17 +16,20 @@ Menu::Menu()
 
 	for (int i = 0; i < 4; i++)
 	{
-		planets.push_back(new Planet(meshes.back(), DirectX::XMFLOAT3(i + 0.5f, i + 0.5f, i + 0.5f), DirectX::XMFLOAT3(0.f + i * 10.f, 0.f + i * 10.f, 0.f), (4.0f * 9.82f), meshes[1], 1));
+		planets.push_back(new Planet(meshes[0], DirectX::XMFLOAT3(i + 0.5f, i + 0.5f, i + 0.5f), DirectX::XMFLOAT3(0.f + i * 10.f, 0.f + i * 10.f, 0.f), (4.0f * 9.82f), meshes[1], 0));
 		planets[i]->setVelocity((4 - i*0.7f)*0.25f);
 		planets[i]->setRotation(DirectX::SimpleMath::Vector3(1.2f * i, 0.2f * i, 0.7f * i));
 		planets[i]->setRotationSpeed(DirectX::SimpleMath::Vector3(0.000f * i, 0.002f * (4-i), 0.000f * i));
 
 	}
+	planets.push_back(new Planet(meshes[0], DirectX::XMFLOAT3(50, 50, 50), DirectX::XMFLOAT3(-130, -30.f, 0.f), (4.0f * 9.82f), meshes[1]));
+
 	cam.setPosition(DirectX::XMFLOAT3(20, 0, -70));
 	cam.setCameraLookAt(DirectX::XMFLOAT3(-20, 0, 10));
 	DirectX::SimpleMath::Vector3 newTemp(-40, 0, -60);
 	newTemp.Normalize();
-	ltHandler.addLight(DirectX::XMFLOAT3(20, 0, -70), DirectX::XMFLOAT3(1, 1, 1), newTemp, DirectX::XMFLOAT3(0, 1, 0), 1);
+	ltHandler.addLight(DirectX::XMFLOAT3(15, 10, -0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(50, 50, 50), DirectX::XMFLOAT3(0, 1, 0), 1, 0.5f, 1000.5f);
+	//ltHandler.addLight(DirectX::XMFLOAT3(15, 10, -0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(50, 50, 50), DirectX::XMFLOAT3(0, 1, 0), 1, 0.5f, 1000.5f);
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 }
 
@@ -44,11 +47,11 @@ Menu::~Menu()
 
 GAMESTATE Menu::Update()
 {
-	for (int i = 1; i < planets.size(); i++)
-	{
-		planets[i]->rotateAroundPoint(DirectX::XMFLOAT3(0, 0, 0));
-		planets[i]->rotatePlanet();
-	}
+	//for (int i = 1; i < planets.size(); i++)
+	//{
+	//	planets[i]->rotateAroundPoint(DirectX::XMFLOAT3(0, 0, 0));
+	//	planets[i]->rotatePlanet();
+	//}
 	return ui.GetGameState();
 }
 
@@ -95,6 +98,13 @@ void Menu::drawObjects()
 	{
 		planets[i]->drawPlanet();
 	}
+
+	//Draw with Ambient only shader
+	basicRenderer.bindAmbientShader();
+
+	//Draw light debug meshes
+	ltHandler.drawDebugMesh();
+
 	//Draw depth stencil
 //basicRenderer.depthPrePass();
 //ltHandler.drawShadows(0, gameObjects, &camera);
@@ -104,8 +114,8 @@ void Menu::drawObjects()
 void Menu::Render()
 {
 	//Render shadow maps
-	basicRenderer.lightPrePass();
-	drawShadows();
+	//basicRenderer.lightPrePass();
+	//drawShadows();
 
 	//Render Scene
 	basicRenderer.setUpScene(this->cam);

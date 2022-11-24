@@ -112,6 +112,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)reactphysics3d\include;$(SolutionDir)SFML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,6 +155,8 @@
     <ClCompile Include="GameObject.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="ServerGravField.cpp" />
+    <ClCompile Include="ServerPlanet.cpp" />
     <ClCompile Include="SpawnComponent.cpp" />
     <ClCompile Include="TestObj.cpp" />
   </ItemGroup>
@@ -174,6 +177,8 @@
     <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RandomizeSpawn.h" />
+    <ClInclude Include="ServerGravField.h" />
+    <ClInclude Include="ServerPlanet.h" />
     <ClInclude Include="SpawnComponent.h" />
     <ClInclude Include="TestObj.h" />
     <ClInclude Include="TimeStruct.h" />

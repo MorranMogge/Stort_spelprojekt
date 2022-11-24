@@ -22,7 +22,7 @@ struct testPosition
 };
 
 //enum = 5
-struct ComponentData //ANVÄNDS INTE
+struct ComponentData //ANVï¿½NDS INTE
 {
 	int packetId;
 	int ComponentId;
@@ -179,4 +179,14 @@ struct baseballBatSpawn
 	int xPos;
 	int yPos;
 	int zPos;
+};
+
+//enum = 25
+struct SpawnPlanets
+{
+	int packetId;
+	float xPos;
+	float yPos;
+	float zPos;
+	float size;
 };

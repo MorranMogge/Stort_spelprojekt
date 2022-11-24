@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "BasicRenderer.h"
 
-bool BasicRenderer::setUpInputLayout(ID3D11Device* device, const std::string& vShaderByteCode)
+bool BasicRenderer::setUpInputLayout(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout* iLayout)
 {
-	D3D11_INPUT_ELEMENT_DESC inputDesc[3] =
+	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -12,6 +12,21 @@ bool BasicRenderer::setUpInputLayout(ID3D11Device* device, const std::string& vS
 
 	HRESULT hr = device->CreateInputLayout(inputDesc, (UINT)std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &inputLayout);
 
+	return !FAILED(hr);
+}
+
+bool BasicRenderer::setUpInputLayoutAnim(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout*& iLayout)
+{
+	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BONEINDEX", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"WEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	HRESULT hr = device->CreateInputLayout(inputDesc, (UINT)std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &this->animLayout);
 	return !FAILED(hr);
 }
 
@@ -173,6 +188,10 @@ BasicRenderer::~BasicRenderer()
 	pt_pShader->Release();
 	pt_UpdateShader->Release();
 	pt_gShader->Release();
+
+	animLayout->Release();
+	vShaderAnim->Release();
+
 	shadowSampler->Release();
 	shadowRastirizer->Release();
 	bill_vShader->Release();
@@ -182,6 +201,7 @@ BasicRenderer::~BasicRenderer()
 	blendState->Release();
 	Fresnel_PS->Release();
 	fresnelBlendState->Release();
+	InvFresnel_PS->Release();
 }
 
 void BasicRenderer::lightPrePass()
@@ -200,6 +220,7 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	int WidthAndHeight = 512;
 
 	std::string vShaderByteCode;
+	std::string vShaderByteCodeForAnim;
 	this->immediateContext = immediateContext;
 
 	if (this->immediateContext == nullptr)													return false;
@@ -208,7 +229,9 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!CreateDSState(dsState))															return false;
 	if (!CreateDepthStencilAndSrv(device, WIDTH, HEIGHT, dsTexture2, dsView2, depthSrv))	return false;
 	if (!LoadVertexShader(device, vShader, vShaderByteCode, "VertexShader"))				return false;
-	if (!setUpInputLayout(device, vShaderByteCode))											return false;
+	if (!LoadVertexShader(device, this->vShaderAnim, vShaderByteCodeForAnim, "vShaderSkinning"))	return false;
+	if (!setUpInputLayoutAnim(device, vShaderByteCodeForAnim, this->animLayout))			return false;
+	if (!setUpInputLayout(device, vShaderByteCode, this->inputLayout))						return false;
 	if (!LoadPixelShader(device, pShader, "PixelShader"))									return false;
 	if (!LoadPixelShader(device, ApShader, "AmbientPixelShader"))							return false;
 	if (!LoadVertexShader(device, pt_vShader, vShaderByteCode, "PT_VertexShader"))			return false;
@@ -228,10 +251,11 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!CreatePT_DSState(PT_dsState))														return false;
 	if (!setUpBlendState())																	return false;
 	if (!LoadPixelShader(device, Fresnel_PS, "Fresnel_PS"))									return false;
+	if (!LoadPixelShader(device, InvFresnel_PS, "InvFresnel_PS"))							return false;
 	if (!setUpFresnelBlendState())															return false;
 	
 	
-	SetViewport(viewport, WIDTH, HEIGHT);
+	SetViewport(viewport, GPU::windowWidth, GPU::windowHeight);
 	SetViewport(shadowViewport, WidthAndHeight, WidthAndHeight);
 	
 	return true;
@@ -259,6 +283,15 @@ void BasicRenderer::setUpScene()
 	immediateContext->PSSetShaderResources(4, 1, &nullRsv);
 }
 
+void BasicRenderer::changeToAnimation()
+{
+	immediateContext->RSSetState(shadowRastirizer);
+	immediateContext->PSSetSamplers(1, 1, &shadowSampler);
+	immediateContext->PSSetShader(pShader, nullptr, 0);
+	immediateContext->PSSetSamplers(0, 1, &sampler);
+	immediateContext->IASetInputLayout(this->animLayout);
+	immediateContext->VSSetShader(this->vShaderAnim, nullptr, 0);
+}
 void BasicRenderer::setUpScene(Camera& stageCamera)
 {				
 	immediateContext->ClearRenderTargetView(rtv, clearColour);
@@ -355,9 +388,16 @@ void BasicRenderer::geometryUnbind()
 }
 
 void BasicRenderer::fresnelPrePass(Camera& stageCamera)
-{
+{ 
+	immediateContext->IASetInputLayout(inputLayout);
+	immediateContext->VSSetShader(vShader, nullptr, 0);
 	immediateContext->OMSetBlendState(fresnelBlendState, nullptr, 0xffffffffu);
 	immediateContext->OMSetDepthStencilState(PT_dsState, 0);
 	immediateContext->PSSetShader(Fresnel_PS, nullptr, 0);
 	stageCamera.PSbindPositionBuffer(1);
+}
+
+void BasicRenderer::invFresnelPrePass()
+{
+	immediateContext->PSSetShader(InvFresnel_PS, nullptr, 0);
 }

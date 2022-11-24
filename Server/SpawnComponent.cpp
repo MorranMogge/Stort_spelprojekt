@@ -48,7 +48,7 @@ SpawnComponent SpawnOneComponent(std::vector<Component>& components, std::vector
 	temp.setOnlineType(ObjID::COMPONENT);
 
 	dataValue.packetId = 13;
-	dataValue.ComponentId = components.size() - 1;
+	dataValue.ComponentId = (int)components.size() - 1;
 	std::cout << "Comp ID: " << dataValue.ComponentId << "\n";
 	dataValue.x = randomPos.x;
 	dataValue.y = randomPos.y;

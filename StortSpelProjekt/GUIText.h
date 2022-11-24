@@ -16,7 +16,7 @@ public:
 	// Inherited via GUIObject
 	virtual void Load(ID3D11Device* device, const wchar_t* file) override;
 
-	virtual const DirectX::SimpleMath::Vector2& GetPosition() const override;
+	virtual const DirectX::SimpleMath::Vector2 GetPosition() const override;
 	virtual const DirectX::SimpleMath::Vector2& GetOrigin() const override;
 	virtual const DirectX::SimpleMath::Vector2& GetScale() const override;
 	virtual const DirectX::SimpleMath::Color& GetTint() const override;

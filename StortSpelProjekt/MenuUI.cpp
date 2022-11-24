@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "MenuUI.h"
 #include "GPU.h"
-#include"Input.h"
+#include "Input.h"
 #include "SettingsUI.h"
 #include "Credits.h"
+#include "SoundLibrary.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -15,52 +16,62 @@ void MenuUI::SpritePass()
 		return;
 	}
 
-	start.Draw();
-	settings.Draw();
-	credits.Draw();
-	exit.Draw();
-	control.Draw();
+	hit_start ? start2.Draw() : start.Draw();
+	hit_setting? settings2.Draw() :settings.Draw();
+	hit_credits ? credits2.Draw() : credits.Draw();
+	hit_exit ? exit2.Draw() : exit.Draw();
+	hit_control ? control2.Draw() : control.Draw();
+
 	objective.Draw();
-	useText.Draw();
-	throwText.Draw();
-	pickText.Draw();
+	title.Draw();
 
 }
 
 void MenuUI::HandleInputs()
 {
 	Input::Update();
-	start.IntersectMouse() ? start.SetTint(DirectX::Colors::Green.v) : start.SetTint(DirectX::Colors::White.v);
-	settings.IntersectMouse() ? settings.SetTint(DirectX::Colors::Green.v) : settings.SetTint(DirectX::Colors::White.v);
-	credits.IntersectMouse() ? credits.SetTint(DirectX::Colors::Green.v) : credits.SetTint(DirectX::Colors::White.v);
-	exit.IntersectMouse() ? exit.SetTint(DirectX::Colors::Green.v) : exit.SetTint(DirectX::Colors::White.v);
+
+	hit_start = start.IntersectMouse();
+	hit_setting = settings.IntersectMouse();
+	hit_credits = credits.IntersectMouse();
+	hit_exit = exit.IntersectMouse();
+	hit_control = control.IntersectMouse();
 
 	if (Input::KeyPress(KeyCode::MOUSE_L))
 	{
-		if (start.GetTint() == DirectX::Colors::Green.v)
+		if (hit_start)
 		{
+			SoundLibrary::menuMusic.stop();
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = GAME;
 			isLoading = true;
 		}
-		else if (settings.GetTint() == DirectX::Colors::Green.v)
+		else if (hit_setting)
 		{
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = SETTINGS;
 		}
-		else if (credits.GetTint() == DirectX::Colors::Green.v)
+		else if (hit_credits)
 		{
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = CREDITS;
 		}
-		else if (exit.GetTint() == DirectX::Colors::Green.v)
+		else if (hit_exit)
 		{
+			SoundLibrary::menuMusic.stop();
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = EXIT;
+		}
+		else if (hit_control)
+		{
+			gameState = CONTROL;
 		}
 
 	}
-
-}
-
-void MenuUI::TextPass()
-{
 
 }
 
@@ -76,42 +87,62 @@ MenuUI::MenuUI()
 #define upp 60
 #define left 80
 
-	start = GUISprite(1000, 200);
-	start.Load(GPU::device, L"../Sprites/start.png");
+#define centerX 632
+#define centerY 340
+#define scale 0.3f,0.3f
 
-	settings = GUISprite(1000, 300);
-	settings.Load(GPU::device, L"../Sprites/settings.png");
+	start = GUISprite(centerX, 300);
+	start.Load(GPU::device, L"../Sprites/Menu/start.png");
+	start.SetScale(scale);
 
-	credits = GUISprite(1000, 400);
-	credits.Load(GPU::device, L"../Sprites/credit.png");
+	control = GUISprite(centerX, 300 + 75 * 1);
+	control.Load(GPU::device, L"../Sprites/Menu/control.png");
+	control.SetScale(scale);
 
-	exit = GUISprite(1000, 500);
-	exit.Load(GPU::device, L"../Sprites/exit.png");
+	settings = GUISprite(centerX, 300 + 75 * 2);
+	settings.Load(GPU::device, L"../Sprites/Menu/settings.png");
+	settings.SetScale(scale);
 
-	Loading = GUISprite(1264.0f / 2.0f, 681.0f / 2.0f);
+	credits = GUISprite(centerX, 300 + 75 * 3);
+	credits.Load(GPU::device, L"../Sprites/Menu/credits.png");
+	credits.SetScale(scale);
+
+	exit = GUISprite(centerX, 300 + 75 * 4);
+	exit.Load(GPU::device, L"../Sprites/Menu/exit.png");
+	exit.SetScale(scale);
+
+	start2 = GUISprite(centerX, 300);
+	start2.Load(GPU::device, L"../Sprites/Menu/start2_r.png");
+	start2.SetScale(scale);
+
+	control2 = GUISprite(centerX, 300 + 75 * 1);
+	control2.Load(GPU::device, L"../Sprites/Menu/control2_r.png");
+	control2.SetScale(scale);
+
+	settings2 = GUISprite(centerX, 300 + 75 * 2);
+	settings2.Load(GPU::device, L"../Sprites/Menu/settings2_r.png");
+	settings2.SetScale(scale);
+
+	credits2 = GUISprite(centerX, 300 + 75 * 3);
+	credits2.Load(GPU::device, L"../Sprites/Menu/credits2_r.png");
+	credits2.SetScale(scale);
+
+	exit2 = GUISprite(centerX, 300 + 75 * 4);
+	exit2.Load(GPU::device, L"../Sprites/Menu/exit2_r.png");
+	exit2.SetScale(scale);
+
+	Loading = GUISprite(centerX, centerY);
 	Loading.Load(GPU::device, L"../Sprites/Loading.bmp");
-
-	control = GUISprite(310 - left, 225 - upp);
-	control.Load(GPU::device, L"../Sprites/control.png");
-	control.SetScale(0.75, 0.75);
-	
-	useText = GUISprite(320 - left, 420 - upp);
-	useText.Load(GPU::device, L"../Sprites/UseText.png");
-	useText.SetScale(0.40f, 0.40f);
-
-	throwText = GUISprite(340 - left, 500 - upp);
-	throwText.Load(GPU::device, L"../Sprites/ThrowText.png");
-	throwText.SetScale(0.40f, 0.40f);
-
-	pickText = GUISprite(322 - left, 580 - upp);
-	pickText.Load(GPU::device, L"../Sprites/PickText.png");
-	pickText.SetScale(0.40f, 0.40f);
+	Loading.SetScale(1, 1);
 
 	objective = GUISprite(310 - left, 675 - upp);
 	objective.Load(GPU::device, L"../Sprites/Objective.png");
-	objective.SetScale(0.75, 0.75);
+	objective.SetScale(0.75f, 0.75f);
 
-	gameState = NOCHANGE;
+	title = GUISprite(centerX, 340-200);
+	title.Load(GPU::device, L"../Sprites/title.png");
+	title.SetScale(0.6f, 0.6f);
+
 }
 
 void MenuUI::Draw()
@@ -119,6 +150,5 @@ void MenuUI::Draw()
 	HandleInputs();
 	GUI::Begin();
 	SpritePass();
-	TextPass();
 	GUI::End();
 }

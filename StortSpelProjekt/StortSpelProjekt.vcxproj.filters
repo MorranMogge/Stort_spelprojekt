@@ -173,6 +173,11 @@
     <ClCompile Include="CircularBufferClient.cpp">
       <Filter>Online</Filter>
     </ClCompile>
+    <ClCompile Include="ControlMenu.cpp" />
+    <ClCompile Include="ControlUI.cpp" />
+    <ClCompile Include="ModelDataContainer.cpp" />
+    <ClCompile Include="ModelManager.cpp" />
+    <ClCompile Include="AnimatedMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -572,6 +577,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Fresnel_PS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="InvFresnel_PS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="vShaderSkinning.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

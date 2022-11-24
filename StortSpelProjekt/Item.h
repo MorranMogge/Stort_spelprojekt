@@ -3,6 +3,7 @@
 #include "ParticleEmitter.h"
 #include "BilboardObject.h"
 #include "TimeStruct.h"
+#include "Sound.h"
 
 class Player;
 
@@ -16,6 +17,7 @@ protected:
 	TimeStruct tStruct;
 	BilboardObject* itemIcon;
 	ParticleEmitter* particles;
+	Sound sfx;
 	bool withinPlayerReach;
 	bool pickedUp;
 

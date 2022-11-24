@@ -83,7 +83,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
         float3 baseOffSet2 = float3(BaseOffSetX, BaseOffSetY, BaseOffSetZ);
         if (drawOnlyWhenMoving)
         {
-            if (baseOffSet2.x == offsetFromOrigin.x, baseOffSet2.y == offsetFromOrigin.y, baseOffSet2.z == offsetFromOrigin.z)
+            if (baseOffSet2.x == offsetFromOrigin.x && baseOffSet2.y == offsetFromOrigin.y && baseOffSet2.z == offsetFromOrigin.z)
             {
                 IsActive = 0.0f;
             }

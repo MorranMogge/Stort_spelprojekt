@@ -51,7 +51,7 @@ void GUIText::Load(ID3D11Device* device, const wchar_t* file)
 
 }
 
-const DirectX::SimpleMath::Vector2& GUIText::GetPosition() const
+const DirectX::SimpleMath::Vector2 GUIText::GetPosition() const
 {
     return m_Position;
 }

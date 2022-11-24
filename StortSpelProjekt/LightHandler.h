@@ -6,6 +6,7 @@
 #include "GPU.h"
 #include "GameObject.h"
 #include "Camera.h"
+#include "Player.h"
 
 
 class LightHandler
@@ -48,7 +49,9 @@ public:
 	void setFalloff(const float &falloff, const int& lightIndex);
 	ID3D11Buffer* getViewBuffer(const int& lightIndex) const;
 	int getNrOfLights() const;
+	void drawShadows(const int& lightIndex, const std::vector<Player*>& gameObjects, Camera* stageCamera = nullptr);
 	void drawShadows(const int &lightIndex, const std::vector<GameObject*> &gameObjects, Camera* stageCamera = nullptr);
+	void drawShadows(const int& lightIndex, const std::vector<Planet*>& planets, Camera* stageCamera = nullptr);
 	void bindLightBuffers();
 	void drawDebugMesh();
 	void unbindSrv();

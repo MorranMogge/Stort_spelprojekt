@@ -7,8 +7,8 @@ struct wirefameInfo
 	float padding;
 };
 
-const int NROFPLAYERS = 2;
-static bool IFONLINE = true;
+const int NROFPLAYERS = 1;
+static bool IFONLINE = false;
 
 class Game : public State
 {
@@ -16,13 +16,15 @@ private:
 	ID3D11DeviceContext* immediateContext;
 	HWND* window;
 
+	Sound gameMusic;
+
 	ImGuiHelper imGui;
 	bool wireframe = false;
 	bool objectDraw = true;
-	bool drawDebug = true;
+	bool drawDebug = false;
 	bool landingMinigame = false;
 
-	std::unique_ptr<DirectX::GamePad> gamePad;
+	DirectX::GamePad* gamePad;
 	GravityField* field;
 	GravityField* oldField;
 	bool changedPlanet = false;
@@ -38,13 +40,23 @@ private:
 	float serverTimerLength =  1.f / 30.0f;
 	Client* client;
 
+	ModelManager manager;
+	ID3D11Buffer* vBuff;
+	ID3D11Buffer* iBuff;
+	Mesh* tmpMesh;
+	std::vector<int> subMeshRanges;
+	std::vector<int> verticies;
+	ID3D11ShaderResourceView* tempSRV;
+	AnimationData animData;
+	AnimatedMesh* sexyMan;
+
 	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT3 grav;
 
 	BasicRenderer basicRenderer;
 	GravityField* planetGravityField;
-	PhysicsWorld physWolrd;
+	PhysicsWorld physWorld;
 	std::vector<Planet*> planetVector;
 	AsteroidHandler* asteroids;
 
@@ -62,7 +74,6 @@ private:
 	SkyboxObj skybox;
 	Player* currentPlayer;
 	Mesh* planetMeshes;
-	GameObject* atmosphere;
 
 	//Items
 	Potion* potion;
@@ -83,10 +94,6 @@ private:
 
 	//HUD
 	HudUI ui;
-	
-	//Temp buffer for atmosphere
-	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
-
 
 	void loadObjects();
 	void drawShadows();
@@ -94,7 +101,6 @@ private:
 	void drawIcons();
 	void drawObjects(bool drawDebug);
 	void drawParticles();
-	void updateBuffers();
 	void handleKeybinds();
 	void randomizeObjectPos(GameObject* item);
 
@@ -106,4 +112,3 @@ public:
 	virtual GAMESTATE Update() override;
 	virtual void Render() override;
 };
-

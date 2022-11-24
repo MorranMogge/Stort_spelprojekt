@@ -12,7 +12,7 @@ PacketEventManager::~PacketEventManager()
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips
-	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, Client*& client)
+	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector, Client*& client)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -29,6 +29,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	SpaceShip* newSpaceShip = nullptr;
 	Item* item = nullptr;
 	BaseballBat* baseballbat = nullptr;
+	SpawnPlanets* planetData = nullptr;
 	ConfirmComponentPickedUp* confirmCmpPickedUp = nullptr;
 	ComponentPosition* cmpPosition = nullptr;
 	ComponentDropped* cmpDropped = nullptr;
@@ -84,7 +85,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::SPAWNCOMPONENT:
 			spawnComp = circularBuffer->readData<SpawnComponent>();
 			std::cout << "Comp ID: " << spawnComp->ComponentId << "\n";
-			newComponent = new Component(meshes[5], DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+			newComponent = new Component(meshes[6], DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 				COMPONENT, spawnComp->ComponentId, field);
 			physWorld.addPhysComponent(newComponent);
 			onlineItems.push_back(newComponent);
@@ -92,14 +93,14 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			//componentVector.push_back(newComponent);
  			std::cout << "Sucessfully recieved component from server: " << std::to_string(spawnComp->ComponentId) << std::endl;
 			break;
-		
+
 		case PacketType::POSITIONROTATION:
 			prMatrixData = circularBuffer->readData<PositionRotation>();
 
 			for (int i = 0; i < players.size(); i++)
 			{
 				//std::cout << std::to_string(players[i]->getMatrix()._14) << std::endl;
-				
+
 				if (prMatrixData->playerId == i)
 				{
 					if (playerId != i)
@@ -119,7 +120,6 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			break;
 
 		case PacketType::ITEMSPAWN:
-
 			itemSpawn = circularBuffer->readData<ItemSpawn>();
 			baseballbat = new BaseballBat(meshes[4], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
 				DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 3, itemSpawn->itemId, field);
@@ -155,7 +155,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			spaceShipPos = circularBuffer->readData<SpaceShipPosition>();
 			//Create correct spaceship depending on team
 			std::cout << "Spawned spaceship\n";
-			newSpaceShip = new SpaceShip(meshes[3], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, DirectX::SimpleMath::Vector3(2, 2, 2), 4);
+			newSpaceShip = new SpaceShip(meshes[4], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, DirectX::SimpleMath::Vector3(2, 2, 2), 4);
 			spaceShips.push_back(newSpaceShip);
 			gameObjects.push_back(newSpaceShip);
 			physWorld.addPhysComponent(newSpaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3 * 0.75f, 0.75f));
@@ -201,6 +201,13 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				}
 			}
 		
+			break;
+		case PacketType::SPAWNPLANETS:
+			planetData = circularBuffer->readData<SpawnPlanets>();
+			std::cout << "Received planet\n";
+			planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos)));
+			planetVector.back()->setPlanetShape(&physWorld);
+			physWorld.setPlanets(planetVector);
 			break;
 
 		case PacketType::COMPONENTCONFIRMEDPICKUP:

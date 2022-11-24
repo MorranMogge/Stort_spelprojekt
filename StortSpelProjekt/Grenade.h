@@ -12,10 +12,14 @@ private:
 	TimeStruct timer;
 	TimeStruct timer2;
 	bool destructionIsImminent;
+	bool exploded;
 	float timeToExplode;
 	float currentTime;
+	float counter;
 	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
 	Mesh* explosionMesh;
+	Sound explosion;
+	DirectX::XMFLOAT3 explodePosition;
 
 public:
 	Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field = nullptr);
@@ -28,6 +32,8 @@ public:
 	void drawFresnel();
 	virtual void useItem(const Player* playerHoldingItem) override;
 
+	bool getExploded() const;
+	void setExploded(const bool &onOff);
 private:
 	void explode();
 

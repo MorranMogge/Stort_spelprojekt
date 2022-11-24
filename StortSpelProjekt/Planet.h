@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "GravityField.h"
 #include "PhysicsComponent.h"
+#include "ConstantBufferNew.h"
 
 #define PLANETGRAVSIZE 10.f
 
@@ -19,23 +20,31 @@ class Planet
 private:
 	Mesh* mesh;
 	GravityField* gravField;
+	Mesh* atmosphere;
+	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;	//buffer for atmosphere color
 
 	DirectX::SimpleMath::Vector3 position;	//Center point of the planet
 	DirectX::SimpleMath::Vector3 rotation;	//Rotating Planets
 	DirectX::SimpleMath::Vector3 scale;		//Since we may explore other shapes than spheres
 	float gravityFactor;
 
-	float rotSpeed;
+	float rotDegrees;	//O-359 degrees
+	DirectX::SimpleMath::Vector3 rotSpeed;
+	float velocity;
+	DirectX::SimpleMath::Vector3 originPoint;
 
 	PlanetShape planetShape;
 	PhysicsComponent* planetCollisionBox;
 
 public:
-	Planet(Mesh* useMesh, const DirectX::SimpleMath::Vector3& scale = DirectX::XMFLOAT3(1.f, 1.f, 1.f), const DirectX::XMFLOAT3& pos = DirectX::XMFLOAT3(0.f, 0.f, 0.f), const float& gravityFactor = 4.f*9.82f);
+	Planet(Mesh* useMesh, const DirectX::SimpleMath::Vector3& scale = DirectX::XMFLOAT3(1.f, 1.f, 1.f), const DirectX::XMFLOAT3& pos = DirectX::XMFLOAT3(0.f, 0.f, 0.f), const float& gravityFactor = 4.f*9.82f, Mesh * atmoMesh = nullptr, const DirectX::SimpleMath::Vector3 & atmoColor = DirectX::XMFLOAT3(0.0f, 0.55f, 0.75f), const float& atmoDensity = 3.8f);
 	~Planet();
 
 	//Sets the shape of the planet, can be used to create box shaped planets
 	void setPlanetShape(PhysicsWorld* physWorld, const PlanetShape& shape = PlanetShape::SPHERE);
+	void setVelocity(const float& speed);
+	void setRotationSpeed(const DirectX::SimpleMath::Vector3& rotSpeed);
+	void setRotation(const DirectX::SimpleMath::Vector3& rotation);
 
 	float getFieldFactor()const;
 	DirectX::SimpleMath::Vector3 getPlanetPosition()const;
@@ -56,6 +65,16 @@ public:
 	PhysicsComponent* getPlanetCollider()const;
 	float getSize(int index = 0)const;
 
+	//Rotats in sphere path around point
+	void rotateAroundPoint(const DirectX::XMFLOAT3& point);
+	
+	void rotatePlanet();
+	
+
+	//set color of atmosphere
+	void setColor(const DirectX::SimpleMath::Vector3& color);
 	//Draws the planet using regular pipeline stages
 	void drawPlanet();
+	//Draws atmosphere using inverse fresnel stage
+	void drawAtmosphere();
 };

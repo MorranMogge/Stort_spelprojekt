@@ -58,5 +58,10 @@ public:
 		effectInstanss->Resume();
 	}
 
+	//Returns true if is playing
+	DirectX::SoundState getState()
+	{
+		return effectInstanss->GetState();
+	}
 };
 

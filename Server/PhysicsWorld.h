@@ -6,6 +6,7 @@
 #include "Item.h"
 
 class GameObject;
+class Planet;
 
 class PhysicsWorld
 {
@@ -16,7 +17,7 @@ private:
 	reactphysics3d::Vector3 temp;
 
 	std::vector<PhysicsComponent *> physObjects;
-		
+	std::vector<Planet*> planets;
 	reactphysics3d::PhysicsCommon com;
 	reactphysics3d::PhysicsWorld* world;
 
@@ -30,6 +31,7 @@ private:
 public:
 	PhysicsWorld(std::string worldName = "Planet SIS");
 	~PhysicsWorld();
+	void setPlanets(std::vector<Planet*>& planets);
 	void update(const float& dt);
 	void renderReact3D();
 	PhysicsComponent* getPlayerBox()const;
@@ -37,4 +39,5 @@ public:
 	void addPhysComponent(Item& pos, reactphysics3d::CollisionShapeName shape = reactphysics3d::CollisionShapeName::BOX, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f));
 	void addPhysComponent(PhysicsComponent* newComp, const DirectX::XMFLOAT3& pos = DirectX::XMFLOAT3(0, 50, 0), reactphysics3d::CollisionShapeName shape = reactphysics3d::CollisionShapeName::BOX, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f));
 	void addPhysComponent(GameObject* gameObj, reactphysics3d::CollisionShapeName shape = reactphysics3d::CollisionShapeName::BOX, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f));
+	PhysicsComponent* returnAddedPhysComponent(reactphysics3d::CollisionShapeName shape = reactphysics3d::CollisionShapeName::BOX, const DirectX::XMFLOAT3& pos = DirectX::XMFLOAT3(0.f, 0.f, 0.f), const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f));
 };

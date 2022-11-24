@@ -83,7 +83,7 @@ void Player::handleItems()
 			{
 				client->sendStuff<ComponentDropped>(c);
 			}
-
+			std::cout << "UWU 1\n";
 			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 			if (holdingItem->getId() == GRENADE)
 			{
@@ -95,14 +95,18 @@ void Player::handleItems()
 					if (this->currentSpeed == this->speed) scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.095f, temp);
 					else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
 				}
-
+				std::cout << "UWU 2\n";
 
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 				//Apply the force
+				std::cout << "UWU 3\n";
 				this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
+				std::cout << "UWU 4\n";
 			}
+			std::cout << "UWU 5\n";
 			holdingItem->useItem(this);
+			std::cout << "UWU 6\n";
 			//itemPhysComp->setIsAllowedToSleep(true);
 			//itemPhysComp->setIsSleeping(true);
 			holdingItem->setPickedUp(false);
@@ -1026,24 +1030,24 @@ float Player::getSpeed()const
 {
 	return this->currentSpeed;
 }
-void Player::draw()
-{
-	//Team switch
-	switch (team)
-	{
-	case 0:
-		mesh->matKey[0] = "pintoRed.png"; break;
-		break;
-
-	case 1:
-		mesh->matKey[0] = "pintoBlue.png"; break;
-		break;
-
-	}
-
-	this->mesh->UpdateCB(position, rotation, scale);
-	this->mesh->DrawWithMat();
-}
+//void Player::draw()
+//{
+//	//Team switch
+//	switch (team)
+//	{
+//	case 0:
+//		mesh->matKey[0] = "pintoRed.png"; break;
+//		break;
+//
+//	case 1:
+//		mesh->matKey[0] = "pintoBlue.png"; break;
+//		break;
+//
+//	}
+//
+//	this->mesh->UpdateCB(position, rotation, scale);
+//	this->mesh->DrawWithMat();
+//}
 
 void Player::drawIcon()
 {
@@ -1226,7 +1230,7 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 void Player::itemRecvFromServer(Item* item)
 {
 	addItem(item);
-
+	
 	holdingItem->getPhysComp()->getRigidBody()->resetForce();
 	holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 	holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);

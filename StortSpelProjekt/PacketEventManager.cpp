@@ -105,12 +105,12 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				{
 					if (playerId != i)
 					{
-						std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
+						//std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
 						players[i]->setMatrix(prMatrixData->matrix);
 					}
 					else if (prMatrixData->ifDead)
 					{
-						std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
+						//std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
 						players[i]->setMatrix(prMatrixData->matrix);
 					}
 					players[i]->getPhysComp()->setRotation(DirectX::XMQuaternionRotationMatrix(DirectX::XMLoadFloat4x4(&prMatrixData->matrix)));

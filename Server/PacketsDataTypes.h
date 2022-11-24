@@ -189,7 +189,8 @@ struct PotionSpawn
 	int xPos;
 	int yPos;
 	int zPos;
-}
+};
+
 //enum = 25
 struct SpawnPlanets
 {

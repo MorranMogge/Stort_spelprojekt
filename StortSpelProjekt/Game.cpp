@@ -432,11 +432,11 @@ GAMESTATE Game::Update()
 	if (field != oldField) { changedPlanet = true; currentPlayer->setGravityField(this->field); }
 	else changedPlanet = false;
 	oldField = field;
-
+	std::cout << "TEST 1\n";
 	if (planetVector.size() > 0) grav = planetVector[0]->getClosestFieldFactor(planetVector, currentPlayer->getPosV3());
 	currentPlayer->updateVelocity(getScalarMultiplicationXMFLOAT3(dt, grav));
 	//additionXMFLOAT3(velocity, getScalarMultiplicationXMFLOAT3(dt, grav));
-
+	std::cout << "TEST 2\n";
 	if (planetVector.size() > 0)
 	{
 		for (int i = 0; i < gameObjects.size(); i++) gameObjects[i]->setGravityField(planetVector[0]->getClosestField(planetVector, gameObjects[i]->getPosV3()));
@@ -449,18 +449,18 @@ GAMESTATE Game::Update()
 	hitNormal = DirectX::XMFLOAT3(grav.x, grav.y, grav.z);
 	bool testingVec = this->currentPlayer->raycast(gameObjects, planetVector, hitPos, hitNormal);
 	if (testingVec || currentPlayer->getHitByBat()) currentPlayer->resetVelocity();
-
+	std::cout << "TEST 3\n";
 	//Player functions
 	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
-
+	std::cout << "TEST 4\n";
 	//Check component pickup
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);
 	currentPlayer->requestingPickUpItem(onlineItems);
-	
+	std::cout << "TEST 5\n";
 	//Check item pickup
 	//for (int i = 0; i < items.size(); i++)
 	//{
@@ -473,6 +473,7 @@ GAMESTATE Game::Update()
 	}*/
 
 	grenade->updateExplosionCheck();
+	std::cout << "TEST 6\n";
 	//Update item checks
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -493,6 +494,7 @@ GAMESTATE Game::Update()
 		}
 		break;
 	}
+	std::cout << "TEST 7\n";
 
 	//Player functions
 	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
@@ -500,10 +502,7 @@ GAMESTATE Game::Update()
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
-
-	//Check pickups
-	currentPlayer->pickupItem(items, components);
-
+	std::cout << "TEST 8\n";
 	/*if (Input::KeyPress(KeyCode::K))
 	{
 		randomizeObjectPos(this->testBat);
@@ -524,18 +523,18 @@ GAMESTATE Game::Update()
 		players[i]->update();
 	}
 	//currentPlayer->updateBuffer();
-
+	std::cout << "TEST 9\n";
 	//Updates gameObject physics components
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->update();
 	}
-
+	std::cout << "TEST 10\n";
 	//Setting the camera at position
 	if (!velocityCamera) camera.moveVelocity(currentPlayer, dt);
 	else camera.moveCamera(currentPlayer, dt);
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
-
+	std::cout << "TEST 11\n";
 	//Check Components online
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
@@ -548,7 +547,7 @@ GAMESTATE Game::Update()
 			if (currentPlayer->getTeam() == i) this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969)); //Remove these completely by not drawing the meshes anymore
 		}
 	}
-
+	std::cout << "TEST 12\n";
 	if (components.size() > 0)
 	{
 		//Arrow pointing to spaceship
@@ -563,6 +562,7 @@ GAMESTATE Game::Update()
 		else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
 		currentPlayer->colliedWIthComponent(components);
 	}
+	std::cout << "TEST 13\n";
 
 	if (!IFONLINE) //Check Components offline
 	{
@@ -596,6 +596,7 @@ GAMESTATE Game::Update()
 			}
 		}
 	}
+	std::cout << "TEST 14\n";
 	//Check winstate
 	if (endTimer > 6)
 	{
@@ -627,7 +628,7 @@ GAMESTATE Game::Update()
 	{
 		spaceShips[i]->animateOnPickup();
 	}
-
+	std::cout << "TEST 16\n";
 	//Check if item icon should change to pickup icon 
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -637,7 +638,7 @@ GAMESTATE Game::Update()
 	{
 		this->components[i]->checkDistance((GameObject*)(currentPlayer));
 	}
-
+	std::cout << "TEST 17\n";
 	//Debug keybinds
 	this->handleKeybinds();
 

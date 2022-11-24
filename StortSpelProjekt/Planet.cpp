@@ -4,8 +4,8 @@
 #include "PhysicsWorld.h"
 #include <complex>
 
-Planet::Planet(Mesh* useMesh, const DirectX::SimpleMath::Vector3& scale, const DirectX::XMFLOAT3& pos, const float& gravityFactor, Mesh* atmoMesh, const DirectX::SimpleMath::Vector3& atmoColor, const float & atmoDensity)
-	:mesh(useMesh), position(pos), rotation(DirectX::XMFLOAT3(0.f,0.f,0.f)), scale(scale), rotSpeed(DirectX::SimpleMath::Vector3(0,0,0)), gravityFactor(gravityFactor), planetCollisionBox(nullptr), rotDegrees(0)
+Planet::Planet(Mesh* useMesh, const DirectX::SimpleMath::Vector3& scale, const DirectX::XMFLOAT3& pos, const float& gravityFactor, Mesh* atmoMesh, const float& atmoScale, const DirectX::SimpleMath::Vector3& atmoColor, const float & atmoDensity)
+	:mesh(useMesh), position(pos), rotation(DirectX::XMFLOAT3(0.f,0.f,0.f)), scale(scale), rotSpeed(DirectX::SimpleMath::Vector3(0,0,0)), gravityFactor(gravityFactor), planetCollisionBox(nullptr), rotDegrees(0), atmoScale(atmoScale)
 {
 	this->planetShape = NONDISCLOSEDSHAPE;
 	this->gravField = new GravityField(gravityFactor, pos, scale.x);
@@ -21,9 +21,9 @@ Planet::Planet(Mesh* useMesh, const DirectX::SimpleMath::Vector3& scale, const D
 		this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
 		this->colorBuffer.getData() = DirectX::XMFLOAT4(atmoColor.x, atmoColor.y, atmoColor.z, atmoDensity);
 		this->colorBuffer.applyData();
-	
-		//Set atmosphere properties 
-		this->atmosphere->UpdateCB(pos, DirectX::XMMatrixIdentity(), this->scale + DirectX::XMFLOAT3(10, 10, 10));
+
+		//Set atmosphere properties
+		this->atmosphere->UpdateCB(pos, DirectX::XMMatrixIdentity(), scale + DirectX::XMFLOAT3(atmoScale, atmoScale, atmoScale));
 	}
 }
 
@@ -220,7 +220,7 @@ void Planet::drawAtmosphere()
 {
 	if (atmosphere != nullptr)
 	{
-		this->atmosphere->UpdateCB(this->position, DirectX::XMMatrixIdentity(), this->scale + DirectX::XMFLOAT3(10, 10, 10));
+		this->atmosphere->UpdateCB(this->position, DirectX::XMMatrixIdentity(), this->scale + DirectX::XMFLOAT3(atmoScale, atmoScale, atmoScale));
 
 		GPU::immediateContext->PSSetConstantBuffers(2, 1, colorBuffer.getReferenceOf());
 		atmosphere->DrawWithMat();

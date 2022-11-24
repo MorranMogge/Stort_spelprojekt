@@ -178,6 +178,7 @@ void Game::loadObjects()
 	//meshes.push_back(new Mesh("../Meshes/kosmonaut"));
 	//meshes.push_back(new Mesh("../Meshes/astronaut"));
 
+
 	//SOLAR SYSTEM SETUP
 	if (!IFONLINE)
 	{
@@ -185,9 +186,9 @@ void Game::loadObjects()
 		int nrPlanets = 3; // (rand() % 3) + 1;
 		for (int i = 0; i < nrPlanets; i++)
 		{
-			if (i == 0) planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
-			else if (i == 1) planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
-			else planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f)));
+			if (i == 0) planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f), (4.0f * 9.82f), meshes[1]));
+			else if (i == 1) planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f), (4.0f * 9.82f), meshes[1]));
+			else planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f), (4.0f * 9.82f), meshes[1]));
 			planetVector.back()->setPlanetShape(&physWorld);
 		}
 		physWorld.setPlanets(planetVector);
@@ -375,7 +376,7 @@ void Game::drawParticles()
 	{
 		spaceShips[i]->drawParticles();
 	}
-	//Bind special shade for player
+	//Bind special shader for player
 	basicRenderer.playerParticlePass();
 	for (int i = 0; i < players.size(); i++)
 	{

@@ -11,11 +11,12 @@ Menu::Menu()
 {
 	SoundLibrary::menuMusic.setVolume(0.5f);
 	SoundLibrary::menuMusic.play(true);
-
 	meshes.push_back(new Mesh("../Meshes/Sphere"));
+	meshes.push_back(new Mesh("../Meshes/reverseSphere"));
+
 	for (int i = 0; i < 4; i++)
 	{
-		planets.push_back(new Planet(meshes.back(), DirectX::XMFLOAT3(i + 0.5f, i + 0.5f, i + 0.5f), DirectX::XMFLOAT3(0.f + i * 10.f, 0.f + i * 10.f, 0.f)));
+		planets.push_back(new Planet(meshes.back(), DirectX::XMFLOAT3(i + 0.5f, i + 0.5f, i + 0.5f), DirectX::XMFLOAT3(0.f + i * 10.f, 0.f + i * 10.f, 0.f), (4.0f * 9.82f), meshes[1], 1));
 		planets[i]->setVelocity((4 - i*0.7f)*0.25f);
 		planets[i]->setRotation(DirectX::SimpleMath::Vector3(1.2f * i, 0.2f * i, 0.7f * i));
 		planets[i]->setRotationSpeed(DirectX::SimpleMath::Vector3(0.000f * i, 0.002f * (4-i), 0.000f * i));
@@ -26,7 +27,6 @@ Menu::Menu()
 	DirectX::SimpleMath::Vector3 newTemp(-40, 0, -60);
 	newTemp.Normalize();
 	ltHandler.addLight(DirectX::XMFLOAT3(20, 0, -70), DirectX::XMFLOAT3(1, 1, 1), newTemp, DirectX::XMFLOAT3(0, 1, 0), 1);
-
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 }
 
@@ -52,26 +52,82 @@ GAMESTATE Menu::Update()
 	return ui.GetGameState();
 }
 
-void Menu::Render()
+void Menu::drawShadows()
 {
-	basicRenderer.lightPrePass();
-	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
-	{
-		ltHandler.drawShadows(i, planets, &cam);
-	}
+	int nrofLights = ltHandler.getNrOfLights();
 
-	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
+	//Draw object shadow
+	//for (int i = 0; i < nrofLights; i++)
+	//{
+	//	ltHandler.drawShadows(i, gameObjects);
+	//}
+	
+	//Draw planet shadow
+	for (int i = 0; i < nrofLights; i++)
+	{
+		ltHandler.drawShadows(i, planets);
+	}
+}
+
+void Menu::drawFresnel()
+{
+	//Inverse
+	basicRenderer.invFresnelPrePass();
+	for (int i = 0; i < planets.size(); i++)
+	{
+		planets[i]->drawAtmosphere();
+	}
+}
+
+void Menu::drawObjects()
+{
 	//Bind light
 	ltHandler.bindLightBuffers();
 
-	basicRenderer.setUpScene();
+	//Draw Game objects
+	//for (int i = 0; i < gameObjects.size(); i++)
+	//{
+	//	gameObjects[i]->draw();
+	//}
+
+	//Draw planets
 	for (int i = 0; i < planets.size(); i++)
 	{
 		planets[i]->drawPlanet();
 	}
+	//Draw depth stencil
+//basicRenderer.depthPrePass();
+//ltHandler.drawShadows(0, gameObjects, &camera);
+	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
+}
+
+void Menu::Render()
+{
+	//Render shadow maps
+	basicRenderer.lightPrePass();
+	drawShadows();
+
+	//Render Scene
+	basicRenderer.setUpScene(this->cam);
+	drawObjects();
+
+	//Unbind light
+	ltHandler.unbindSrv();
+
+	//Render fresnel objects
+	basicRenderer.fresnelPrePass(this->cam);
+	this->drawFresnel();
+
 	//Render Skybox
 	basicRenderer.skyboxPrePass();
 	skybox.draw();
 	basicRenderer.depthUnbind();
+
+	////Render Particles
+	//basicRenderer.geometryPass(this->camera);
+	//drawParticles();
+	//basicRenderer.geometryUnbind();
+
+	//Ui
 	ui.Draw();
 }

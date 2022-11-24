@@ -396,9 +396,7 @@ void LightHandler::drawShadows(const int &lightIndex, const std::vector<GameObje
 	for (int i = 0; i < gameObjects.size(); i++)	
 	{
 			gameObjects.at(i)->draw();
-	}
-
-				
+	}			
 }
 
 void LightHandler::drawShadows(const int& lightIndex, const std::vector<Player*>& gameObjects, Camera* stageCamera)
@@ -416,9 +414,6 @@ void LightHandler::drawShadows(const int& lightIndex, const std::vector<Player*>
 	{
 		//Set view buffer
 		GPU::immediateContext->VSSetConstantBuffers(1, 1, this->viewBuffers.at(lightIndex).GetAddressOf());
-
-		//Clear Depth Stencil
-		GPU::immediateContext->ClearDepthStencilView(this->depthViews.at(lightIndex).Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 
 		//Set render targets
 		GPU::immediateContext->OMSetRenderTargets(1, &nullRtv, this->depthViews.at(lightIndex).Get());
@@ -450,9 +445,6 @@ void LightHandler::drawShadows(const int& lightIndex, const std::vector<Planet*>
 		//Set view buffer
 		GPU::immediateContext->VSSetConstantBuffers(1, 1, this->viewBuffers.at(lightIndex).GetAddressOf());
 
-		//Clear Depth Stencil
-		GPU::immediateContext->ClearDepthStencilView(this->depthViews.at(lightIndex).Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-
 		//Set render targets
 		GPU::immediateContext->OMSetRenderTargets(1, &nullRtv, this->depthViews.at(lightIndex).Get());
 	}
@@ -462,9 +454,6 @@ void LightHandler::drawShadows(const int& lightIndex, const std::vector<Planet*>
 	{
 		planets[i]->drawPlanet();
 	}
-
-	//Unbind render targets & Depth Stencil
-	GPU::immediateContext->OMSetRenderTargets(1, &nullRtv, nullDsView);
 }
 
 void LightHandler::bindLightBuffers()

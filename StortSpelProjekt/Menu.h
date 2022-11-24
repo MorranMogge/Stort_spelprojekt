@@ -26,6 +26,11 @@ public:
 
 	// Inherited via State
 	virtual GAMESTATE Update() override;
+	//void loadObjects();
+	void drawShadows();
+	void drawFresnel();
+	void drawObjects();
+	//void drawParticles();
 	virtual void Render() override;
 };
 

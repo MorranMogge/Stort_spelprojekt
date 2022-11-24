@@ -279,7 +279,7 @@ void BasicRenderer::setUpScene()
 	immediateContext->PSSetSamplers(1, 1 ,&shadowSampler);
 	immediateContext->PSSetShader(pShader, nullptr, 0);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
-
+	
 	//Unbind shadowmap & structuredBuffer srv
 	ID3D11ShaderResourceView* nullRsv{ nullptr };
 	immediateContext->PSSetShaderResources(3, 1, &nullRsv);
@@ -307,6 +307,7 @@ void BasicRenderer::setUpScene(Camera& stageCamera)
 	immediateContext->PSSetShader(pShader, nullptr, 0);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 	immediateContext->PSSetShaderResources(5, 1, &depthSrv);
+	immediateContext->PSSetSamplers(1, 1, &shadowSampler);
 	stageCamera.PSbindPositionBuffer(1);
 	stageCamera.VSbindViewBuffer(1);
 }

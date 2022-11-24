@@ -267,9 +267,10 @@ void Game::drawObjects(bool drawDebug)
 		if (gameObjects[i] == currentPlayer) continue;
 		else gameObjects[i]->draw();
 	}
-
-	
-
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->draw();
+	}
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
 		onlineItems[i]->draw();

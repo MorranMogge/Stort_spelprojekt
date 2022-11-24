@@ -334,7 +334,47 @@ void SettingsUI::HandleInputs()
 					}
 					else if(dropdown2)
 					{
+						switch (selected_dropdown)
+						{
+						case 0:// 720p
+						{
+							any_DropDown_Active = false;
 
+							isDirectx = true;
+							dropdown1 = false;
+							dropdown2 = false;
+
+							if (std::filesystem::exists("dxgi.dll"))
+								std::filesystem::rename("dxgi.dll", "dxgi.dllb");
+
+							if (std::filesystem::exists("d3d11.dll"))
+								std::filesystem::rename("d3d11.dll", "d3d11.dllb");
+
+							system("start StortSpelProjekt.exe");
+
+							gameState = EXIT;
+
+						}break;
+
+						case 1:
+						{
+							any_DropDown_Active = false;
+
+							isDirectx = false;
+							dropdown1 = false;
+							dropdown2 = false;
+
+							if (std::filesystem::exists("dxgi.dllb"))
+								std::filesystem::rename("dxgi.dllb", "dxgi.dll");
+
+							if (std::filesystem::exists("d3d11.dllb"))
+								std::filesystem::rename("d3d11.dllb", "d3d11.dll");
+
+							system("start StortSpelProjekt.exe");
+
+							gameState = EXIT;
+						}break;
+						}
 					}
 
 				}

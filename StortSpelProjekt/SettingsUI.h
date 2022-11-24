@@ -43,7 +43,6 @@ class SettingsUI final
 	bool downTrigged = false;
 
 	void DoFullScreen();
-
 	void HandleInputs();
 	void SpritePass();
 

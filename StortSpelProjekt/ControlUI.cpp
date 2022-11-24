@@ -59,7 +59,7 @@ void ControlUI::HandleInputs()
 		}
 	}
 
-	if (auto state = gamePad->GetState(0); state.IsConnected())
+	if (state.IsConnected())
 	{
 		if (state.IsBPressed())
 		{
@@ -89,6 +89,7 @@ void ControlUI::SpritePass()
 		R_wheel.Draw();
 
 		start.Draw();
+		jumpText.Draw();
 	}
 
 	//else show keyboard
@@ -171,7 +172,7 @@ ControlUI::ControlUI()
 	moveText2.SetScale(0.5f, 0.5f);
 
 	jumpText = GUISprite(322 + left + 200, 100 + upp - offset2);
-	jumpText.Load(L"../Sprites/control/moveText.png");
+	jumpText.Load(L"../Sprites/control/jumpText.png");
 	jumpText.SetScale(0.5f, 0.5f);
 
 	L_wheel = GUISprite(322 + left, 450 + upp - offset2);

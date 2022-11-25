@@ -228,7 +228,7 @@ void MenuUI::HandleInputs()
 
 			if (lastSelectIndex != selectIndex && selectIndex != 6)
 			{
-				std::cout << "changed Indx: " << std::endl;
+				//std::cout << "changed Indx: " << std::endl;
 				lastSelectIndex = selectIndex;
 			}
 

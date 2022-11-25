@@ -482,6 +482,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	{
 		onGround = false;
 		this->velocity = this->normalVector * 40.f;
+		this->position += this->normalVector * 1.5f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
 
@@ -985,7 +986,7 @@ bool Player::checkForStaticCollision(const std::vector<Planet*>& gameObjects, co
 		//if (gameObjects[i]->getPlanetCollider()->getType() != reactphysics3d::BodyType::STATIC || gameObjects[i] == this->holdingItem) continue; 
 		if (gameObjects[i]->getPlanetCollider()->testPointInside(point))
 		{
-			this->position -= 1.f * forwardVector;
+			//this->position -= 1.f * forwardVector;
 			return true;
 		}
 	}

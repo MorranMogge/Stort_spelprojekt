@@ -15,12 +15,12 @@ void MenuUI::SpritePass()
 		Loading.Draw();
 		return;
 	}
-
-	hit_start ? start2.Draw() : start.Draw();
-	hit_setting? settings2.Draw() :settings.Draw();
-	hit_credits ? credits2.Draw() : credits.Draw();
-	hit_exit ? exit2.Draw() : exit.Draw();
-	hit_control ? control2.Draw() : control.Draw();
+	
+	hit_start ? start2.Draw(), start2.SetScale(0.35f, 0.35f) : start.Draw();
+	hit_setting? settings2.Draw(), settings2.SetScale(0.35f, 0.35f) :settings.Draw();
+	hit_credits ? credits2.Draw(), credits2.SetScale(0.35f, 0.35f) : credits.Draw();
+	hit_exit ? exit2.Draw(), exit2.SetScale(0.35f, 0.35f) : exit.Draw();
+	hit_control ? control2.Draw(), control2.SetScale(0.35f, 0.35f) : control.Draw();
 
 	title.Draw();
 
@@ -116,20 +116,149 @@ void MenuUI::HandleInputs()
 			break;
 		}
 	}
-
 	//else mouse
 	else
 	{
-		hit_start = start.IntersectMouse();
-		hit_setting = settings.IntersectMouse();
-		hit_credits = credits.IntersectMouse();
-		hit_exit = exit.IntersectMouse();
-		hit_control = control.IntersectMouse();
+		// reset all to false
+		hit_start = hit_setting = hit_credits = hit_exit = hit_control = false;
+
+		static bool downTrigged = false;
+		static bool upTrigged = false;
+		bool mouseIntersection = true;
+		static int lastSelectIndex = 0;
+		selectIndex = 6;
+
+		if (start.IntersectMouse())
+		{
+			hit_start = true;
+			lastSelectIndex = 0;
+		}
+		else if (control.IntersectMouse())
+		{
+			hit_control = true;
+			lastSelectIndex = 1;
+		}
+		else if (settings.IntersectMouse())
+		{
+			hit_setting = true;
+			lastSelectIndex = 2;
+		}
+		else if (credits.IntersectMouse())
+		{
+			hit_credits = true;
+			lastSelectIndex = 3;
+		}
+		else if (exit.IntersectMouse())
+		{
+			hit_exit = true;
+			lastSelectIndex = 4;
+		}
+		else
+		{
+			mouseIntersection = false;
+		}
+
+
+		if (!mouseIntersection)
+		{
+			// W or UP
+			if (Input::KeyPress(KeyCode::S) || Input::KeyPress(KeyCode::ARROW_Down))
+			{
+				if (selectIndex == 6)
+				{
+					selectIndex = lastSelectIndex;
+				}
+				if (!downTrigged)
+				{
+					switch (selectIndex)
+					{
+					case 0:
+						selectIndex = 1;
+						break;
+					case 1:
+						selectIndex = 2;
+						break;
+					case 2:
+						selectIndex = 3;
+						break;
+					case 3:
+						selectIndex = 4;
+						break;
+					}
+					downTrigged = true;
+				}
+
+			}
+			else
+			{
+				downTrigged = false;
+			}
+
+			if (Input::KeyPress(KeyCode::W) || Input::KeyPress(KeyCode::ARROW_Up))
+			{
+				if (selectIndex == 6)
+				{
+					selectIndex = lastSelectIndex;
+				}
+				if (!upTrigged)
+				{
+					switch (selectIndex)
+					{
+					case 1:
+						selectIndex = 0;
+						break;
+					case 2:
+						selectIndex = 1;
+						break;
+					case 3:
+						selectIndex = 2;
+						break;
+					case 4:
+						selectIndex = 3;
+						break;
+					}
+					upTrigged = true;
+				}
+
+			}
+			else
+			{
+				upTrigged = false;
+			}
+
+			if (lastSelectIndex != selectIndex && selectIndex != 6)
+			{
+				std::cout << "changed Indx: " << std::endl;
+				lastSelectIndex = selectIndex;
+			}
+
+			//std::cout << "lastIndx: " << lastSelectIndex << std::endl;
+			switch (lastSelectIndex)
+			{
+			case 0:
+				hit_start = true;
+				break;
+			case 1:
+				hit_control = true;
+				break;
+			case 2:
+				hit_setting = true;
+				break;
+			case 3:
+				hit_credits = true;
+				break;
+			case 4:
+				hit_exit = true;
+				break;
+			}
+		}
+		
 	}
 
 
 
-	if (Input::KeyPress(KeyCode::MOUSE_L) || state.IsAPressed())
+
+	if (Input::KeyPress(KeyCode::MOUSE_L) || state.IsAPressed() || 	(Input::KeyPress(KeyCode::ENTER)))
 	{
 		if (hit_start)
 		{
@@ -160,6 +289,8 @@ void MenuUI::HandleInputs()
 		}
 		else if (hit_control)
 		{
+			SoundLibrary::clickSfx.stop();
+			SoundLibrary::clickSfx.play();
 			gameState = CONTROL;
 		}
 

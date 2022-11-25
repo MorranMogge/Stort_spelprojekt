@@ -51,6 +51,7 @@ void Planet::setPlanetShape(PhysicsWorld* physWorld, const PlanetShape& shape)
 	default:
 		break;
 	}
+	this->gravField->setShape(shape, this->scale);
 	this->planetCollisionBox = physWorld->returnAddedPhysComponent(shapeName, this->position, this->scale/sizeCorrector);
 	this->planetCollisionBox->setType(reactphysics3d::BodyType::STATIC);
 }

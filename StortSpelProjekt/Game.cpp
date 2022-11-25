@@ -15,7 +15,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	gameMusic.play(true);
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
-	client = new Client();
+	client = new Client("192.168.43.241");
 	circularBuffer = client->getCircularBuffer();
 
 	//Setup rendering
@@ -166,6 +166,7 @@ void Game::loadObjects()
 	{
 		float planetSize = 40.f; // SET DIFFERENT GRAV-FACTORS FOR THE PLANETS
 		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
+		if (planetVector.size() == 1) planetVector.back()->setPlanetShape(&physWorld, PlanetShape::BOX);
 		planetVector.back()->setPlanetShape(&physWorld);
 		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
 		planetVector.back()->setPlanetShape(&physWorld);

@@ -1025,6 +1025,10 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
 			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
 			onGround = true;
+			DirectX::SimpleMath::Vector3 vecToHitPos = this->position - hitPos;
+			float lengthToMove = 0.5f - getLength(vecToHitPos);
+			vecToHitPos.Normalize();
+			this->position += lengthToMove * vecToHitPos;
 			return true;
 		}
 	}
@@ -1037,6 +1041,10 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
 			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
 			onGround = true;
+			DirectX::SimpleMath::Vector3 vecToHitPos = this->position - hitPos;
+			float lengthToMove = 0.5f - getLength(vecToHitPos);
+			vecToHitPos.Normalize();
+			this->position += lengthToMove * vecToHitPos;
 			return true;
 		}
 	}

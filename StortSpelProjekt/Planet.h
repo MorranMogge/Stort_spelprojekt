@@ -8,12 +8,7 @@
 
 class PhysicsWorld;
 
-enum PlanetShape
-{
-	NONDISCLOSEDSHAPE,
-	SPHERE,
-	BOX
-};
+
 
 class Planet
 {

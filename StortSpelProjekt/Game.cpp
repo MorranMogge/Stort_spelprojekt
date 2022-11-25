@@ -158,6 +158,8 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/grenade"));
 	meshes.push_back(new Mesh("../Meshes/arrow"));
 	meshes.push_back(new Mesh("../Meshes/zone"));
+	meshes.push_back(new Mesh("../Meshes/cube"));
+
 
 	//Planet::Planet( useMesh,scale, pos, gravityFactor, Mesh * atmoMesh, const DirectX::SimpleMath::Vector3 & atmoColor, const float& atmoDensity)
 
@@ -165,9 +167,9 @@ void Game::loadObjects()
 	if (!IFONLINE)
 	{
 		float planetSize = 40.f; // SET DIFFERENT GRAV-FACTORS FOR THE PLANETS
-		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
+		planetVector.emplace_back(new Planet(meshes.back(), DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
 		if (planetVector.size() == 1) planetVector.back()->setPlanetShape(&physWorld, PlanetShape::BOX);
-		planetVector.back()->setPlanetShape(&physWorld);
+		//planetVector.back()->setPlanetShape(&physWorld);
 		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
 		planetVector.back()->setPlanetShape(&physWorld);
 		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f)));

@@ -56,6 +56,7 @@ DirectX::XMFLOAT3 GravityField::calcGravFactor(const DirectX::SimpleMath::Vector
     DirectX::SimpleMath::Vector3 newStuff;
     int closestLength;
     static DirectX::SimpleMath::Vector3 lengths[6];
+    static DirectX::SimpleMath::Vector3 calculatedLength[6];
 
     switch (shape)
     {
@@ -67,18 +68,21 @@ DirectX::XMFLOAT3 GravityField::calcGravFactor(const DirectX::SimpleMath::Vector
             lengths[i] = DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f);
         }
         newStuff = objectPosition - this->planetCenterPoint;
-        lengths[0] = newStuff - DirectX::SimpleMath::Vector3(cubeScale.x, 0.f, 0.f);
-        lengths[1] = newStuff - DirectX::SimpleMath::Vector3(-cubeScale.x, 0.f, 0.f);
-        lengths[2] = newStuff - DirectX::SimpleMath::Vector3(0.f, cubeScale.x, 0.f);
-        lengths[3] = newStuff - DirectX::SimpleMath::Vector3(0.f, -cubeScale.x, 0.f);
-        lengths[4] = newStuff - DirectX::SimpleMath::Vector3(0.f, 0.f, cubeScale.x);
-        lengths[5] = newStuff - DirectX::SimpleMath::Vector3(0.f, 0.f, -cubeScale.x);
+        lengths[0] = DirectX::SimpleMath::Vector3(cubeScale.x * 5.0f, 0.f, 0.f);
+        lengths[1] = DirectX::SimpleMath::Vector3(-cubeScale.x * 5.0f, 0.f, 0.f);
+        lengths[2] = DirectX::SimpleMath::Vector3(0.f, cubeScale.x * 5.0f, 0.f);
+        lengths[3] = DirectX::SimpleMath::Vector3(0.f, -cubeScale.x * 5.0f, 0.f);
+        lengths[4] = DirectX::SimpleMath::Vector3(0.f, 0.f, cubeScale.x * 5.0f);
+        lengths[5] = DirectX::SimpleMath::Vector3(0.f, 0.f, -cubeScale.x * 5.0f);
         closestLength = 0;
+        calculatedLength[0] = objectPosition - lengths[0];
         for (int i = 1; i < 6; i++)
         {
-            if (getLength(lengths[closestLength]) > getLength(lengths[i])) closestLength = i;
+            calculatedLength[i] = objectPosition - lengths[i];
+            if (getLength(calculatedLength[closestLength]) > getLength(calculatedLength[i])) closestLength = i;
         }
         gravFactor = lengths[closestLength];
+        newNormalizeXMFLOAT3(gravFactor);
         scalarMultiplicationXMFLOAT3(-gravityConstant, gravFactor);
         break;
     default:

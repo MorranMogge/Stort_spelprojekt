@@ -105,9 +105,9 @@ void Camera::moveVelocity(Player* player, const float& deltaTime)
 
 	//The showing camera
 	velocityVector = XMVectorSubtract(logicalPos, cameraPos);
-	cameraPos += velocityVector * deltaTime * 5.f;
+	cameraPos += velocityVector * deltaTime * 2.f;
 	velocityVector = XMVectorSubtract(logicalUp, upVector);
-	upVector += velocityVector * deltaTime * 5.f;
+	upVector += velocityVector * deltaTime * 2.f;
 
 	//Changing FOV if player moving faster
 	if (XMVector3NotEqual(cameraPos, oldCameraPos))

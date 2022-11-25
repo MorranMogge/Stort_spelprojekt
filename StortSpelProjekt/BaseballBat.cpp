@@ -77,7 +77,7 @@ void BaseballBat::setClient(Client* client)
 	this->client = client;
 }
 
-void BaseballBat::setGameObjects(const std::vector<GameObject*>& objects)
+void BaseballBat::setGameObjects(const std::vector<Player*>& objects)
 {
 	this->objects = objects;
 }
@@ -98,6 +98,7 @@ void BaseballBat::useItem(const Player* playerHoldingItem)
 		std::cout << "Used bat!\n";
 		batPos = playerHoldingItem->getPos();
 		batPos += playerHoldingItem->getForwardVector() * 10;
+		
 		savedPos = this->getPosV3(); //Used to reset the baseball bats position at the end of the function
 
 		PhysicsComponent* batComp = this->getPhysComp();
@@ -107,7 +108,7 @@ void BaseballBat::useItem(const Player* playerHoldingItem)
 		bool collided = false;
 		for (int i = 0; i < objects.size(); i++)
 		{
-			if (this == objects[i] || objects[i] == playerHoldingItem) continue;
+			if ((GameObject*)this == objects[i] || objects[i] == playerHoldingItem) continue;
 
 			physComp = objects[i]->getPhysComp();
 			if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue;

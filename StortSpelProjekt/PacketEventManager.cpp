@@ -121,10 +121,10 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 		case PacketType::ITEMSPAWN:
 			itemSpawn = circularBuffer->readData<ItemSpawn>();
-			baseballbat = new BaseballBat(meshes[4], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
+			baseballbat = new BaseballBat(meshes[5], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
 				DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 3, itemSpawn->itemId, field);
 			baseballbat->setClient(client);
-			baseballbat->setGameObjects(gameObjects);
+			baseballbat->setGameObjects(players);
 			physWorld.addPhysComponent(baseballbat);
 			onlineItems.push_back(baseballbat);
 			//gameObjects.push_back(baseballbat);

@@ -55,6 +55,8 @@ void Player::resetRotationMatrix()
 
 void Player::handleItems()
 {
+	
+	if (this->gamePad == nullptr) return;
 	DirectX::SimpleMath::Vector3 newPos = this->position;
 	newPos += 4 * forwardVector;
 	PhysicsComponent* itemPhysComp = holdingItem->getPhysComp();
@@ -83,7 +85,7 @@ void Player::handleItems()
 			{
 				client->sendStuff<ComponentDropped>(c);
 			}
-			std::cout << "UWU 1\n";
+			
 			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 			if (holdingItem->getId() == GRENADE)
 			{
@@ -95,18 +97,14 @@ void Player::handleItems()
 					if (this->currentSpeed == this->speed) scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.095f, temp);
 					else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
 				}
-				std::cout << "UWU 2\n";
 
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 				//Apply the force
-				std::cout << "UWU 3\n";
+				
 				this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
-				std::cout << "UWU 4\n";
 			}
-			std::cout << "UWU 5\n";
 			holdingItem->useItem(this);
-			std::cout << "UWU 6\n";
 			//itemPhysComp->setIsAllowedToSleep(true);
 			//itemPhysComp->setIsSleeping(true);
 			holdingItem->setPickedUp(false);
@@ -122,8 +120,10 @@ void Player::handleItems()
 			this->throwItem();
 		}
 		//Use the Item
-		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))
+		else if (Input::KeyPress(KeyCode::E))// MAJOR ERROR PLS FIX THIS UwU xddddddd
 		{
+
+			//std::cout << "Timer: " << keyPressTimer.
 			keyPressTimer.resetStartTime();
 			////sending data to server
 
@@ -138,10 +138,11 @@ void Player::handleItems()
 			{
 				client->sendStuff<ComponentDropped>(c);
 			}
-
+			std::cout << "TEST 1 nuzzle\n";
 			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 			if (holdingItem->getId() == GRENADE)
 			{
+				std::cout << "TEST 2 nuzzle\n";
 				DirectX::XMFLOAT3 temp;
 				DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5.f + this->normalVector * 0.5f));
 				newNormalizeXMFLOAT3(temp);
@@ -157,10 +158,13 @@ void Player::handleItems()
 				//Apply the force
 				this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
 			}
+			std::cout << "TEST 3 nuzzle\n";
 			holdingItem->useItem(this);
+			std::cout << "TEST 4 nuzzle\n";
 			//itemPhysComp->setIsAllowedToSleep(true);
 			//itemPhysComp->setIsSleeping(true);
 			holdingItem->setPickedUp(false);
+			std::cout << "TEST 5 nuzzle\n";
 			holdingItem = nullptr;
 		}
 	}
@@ -917,6 +921,8 @@ void Player::addItem(Item* itemToHold)
 	{
 		this->holdingItem = itemToHold;
 		this->holdingItem->setPickedUp(true);
+		if (holdingItem->getId() == ObjID::COMPONENT) this->holdingComp = true;
+		else this->holdingComp = false;
 	}
 	holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 }
@@ -1200,6 +1206,7 @@ void Player::setGamePad(DirectX::GamePad* gamePad)
 
 void Player::requestingPickUpItem(const std::vector<Item*>& items)
 {
+	if (holdingItem) return;// 
 	if (Input::KeyPress(KeyCode::E))
 	{
 		std::cout << "items.size = " << std::to_string(items.size()) << std::endl;
@@ -1212,7 +1219,6 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 				//holdingItem->getPhysComp()->getRigidBody()->resetForce();
 				//holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 				//holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-
 				ComponentRequestingPickUp rqstCmpPickUp;
 				rqstCmpPickUp.componentId = items[i]->getOnlineId();
 				rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;

@@ -25,4 +25,3 @@ enum PacketType
 	POTIONSPAWN = 24,
 	SPAWNPLANETS = 25
 };
-

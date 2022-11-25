@@ -532,16 +532,16 @@ int main()
 			}
 		}
 		
-		//Spawns a component
-		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
-		{
-			SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
-			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
-			onlineItems[onlineItems.size() - 1]->setPosition(cData.x, cData.y, cData.z);
-			onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
-			sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
-			startComponentTimer = std::chrono::system_clock::now();
-		}
+		////Spawns a component
+		//if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
+		//{
+		//	SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
+		//	physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
+		//	onlineItems[onlineItems.size() - 1]->setPosition(cData.x, cData.y, cData.z);
+		//	onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+		//	sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
+		//	startComponentTimer = std::chrono::system_clock::now();
+		//}
 
 
 		//Spawns a baseBallBat
@@ -683,17 +683,17 @@ int main()
 				sendBinaryDataAllPlayers<ComponentPosition>(compPosition, data);
 
 			}
-			for (int i = 0; i < items.size(); i++)
-			{
-				itemPosition itemsPosData;
-				itemsPosData.packetId = PacketType::ITEMPOSITION;
-				itemsPosData.itemId = i;
-				itemsPosData.inUseBy = items[i].getInUseById();
-				itemsPosData.x = items[i].getposition('x');
-				itemsPosData.y = items[i].getposition('y');
-				itemsPosData.z = items[i].getposition('z');
-				//sendBinaryDataAllPlayers<itemPosition>(itemsPosData, data);
-			}
+			//for (int i = 0; i < items.size(); i++)
+			//{
+			//	itemPosition itemsPosData;
+			//	itemsPosData.packetId = PacketType::ITEMPOSITION;
+			//	itemsPosData.itemId = i;
+			//	itemsPosData.inUseBy = items[i].getInUseById();
+			//	itemsPosData.x = items[i].getposition('x');
+			//	itemsPosData.y = items[i].getposition('y');
+			//	itemsPosData.z = items[i].getposition('z');
+			//	//sendBinaryDataAllPlayers<itemPosition>(itemsPosData, data);
+			//}
 
 			start = std::chrono::system_clock::now();	
 		}

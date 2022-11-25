@@ -130,6 +130,14 @@ private:
 	float oldTime;
 	int oldAnimId;
 	int state;
+
+	//for server
+	unsigned int currentAnimId;
+
+protected:
+
+	bool doneWithAnim;
+
 public:
 	AnimatedMesh(Mesh* useMesh, const AnimationData& data ,const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int id, GravityField* field = nullptr);
 	//AnimatedMesh(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id);
@@ -141,4 +149,5 @@ public:
 	void addData(const AnimationData& data);
 	void updateAnim(const float& dt, unsigned animIndex, float animationSpeed = 1.0f);
 	void draw();
+	int getAnimId();
 };

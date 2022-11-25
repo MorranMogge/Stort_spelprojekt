@@ -17,6 +17,7 @@ public:
 
 	void PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 		std::vector<Component*>& compnentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects,
-		GravityField* field, std::vector<SpaceShip*>& spaceShips, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector);
+		GravityField* field, std::vector<SpaceShip*>& spaceShips, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector,
+		const float dt);
 	int handleId(CircularBufferClient*& circularBuffer);
 };

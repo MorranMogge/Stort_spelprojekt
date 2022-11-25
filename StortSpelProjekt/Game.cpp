@@ -421,7 +421,7 @@ void Game::handleKeybinds()
 GAMESTATE Game::Update()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, dt);
 
 	//Get newest delta time
 	lastUpdate = currentTime;
@@ -635,33 +635,12 @@ GAMESTATE Game::Update()
 	this->handleKeybinds();
 
 	//animations
-	if (GetAsyncKeyState('W') || GetAsyncKeyState('D') || GetAsyncKeyState('S') || GetAsyncKeyState('A'))
-	{
-		if (GetAsyncKeyState(VK_LSHIFT))
-		{
-			this->currentPlayer->updateAnim(dt, 2);
-		}
-		else
-		{
-			this->currentPlayer->updateAnim(dt, 1);
-		}
-	}
-	else if (GetAsyncKeyState(' '))
-	{
-		this->currentPlayer->updateAnim(dt, 5);
-	}
-	else if (GetAsyncKeyState('E'))
-	{
-		this->currentPlayer->updateAnim(dt, 4, 2);
-	}
-	else
-	{
-	this->currentPlayer->updateAnim(dt, 0, 1);
-	}
+
+	currentPlayer->stateMachine(dt);
 
 	DirectX::XMFLOAT4X4 f1;
 	this->currentPlayer->forwardKinematics("hand3:hand3:RightHand", f1);
-	this->grenade->setMatrix(f1);
+	this->baseballBat->setMatrix(f1);
 
 	return NOCHANGE;
 }

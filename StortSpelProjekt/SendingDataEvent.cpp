@@ -20,6 +20,7 @@ void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Play
 	pr.packetId = PacketType::POSITIONROTATION;
 	pr.playerId = client->getPlayerId();
 	pr.matrix = currentPlayer->getMatrix();
+	pr.AnimId = currentPlayer->getAnimId();
 	client->sendStuff<PositionRotation>(pr);
 
 

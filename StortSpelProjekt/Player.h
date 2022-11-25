@@ -80,6 +80,9 @@ private:
 	DirectX::XMVECTOR southEastVector = SOUTH_EAST;
 	DirectX::XMVECTOR southWestVector = SOUTH_WEST;
 
+
+	unsigned int animIndex = 0;
+
 	void throwItem();
 	void resetRotationMatrix();
 	void handleItems();
@@ -132,6 +135,8 @@ public:
 	bool raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	void colliedWIthComponent(const std::vector<Component*>& components);
+
+	void stateMachine(const float dt);
 	
 	//Updating and rendering
 	void drawIcon();

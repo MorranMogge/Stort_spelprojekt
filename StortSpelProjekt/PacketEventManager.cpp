@@ -12,7 +12,7 @@ PacketEventManager::~PacketEventManager()
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips
-	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector)
+	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector, const float dt)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -104,6 +104,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				{
 					if (playerId != i)
 					{
+						players[i]->updateAnim(dt, prMatrixData->AnimId);
 						std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
 						players[i]->setMatrix(prMatrixData->matrix);
 					}

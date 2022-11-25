@@ -1029,6 +1029,45 @@ void Player::colliedWIthComponent(const std::vector<Component*>& components)
 	else this->setSpeed(20.f);
 }
 
+void Player::stateMachine(const float dt)
+{
+	if (!doneWithAnim)
+	{
+
+	}
+	else if (!this->onGround)
+	{
+		this->animIndex = 5;
+	}
+	else if (GetAsyncKeyState('E'))
+	{
+		this->animIndex = 4;
+		//speed x2;
+		this->doneWithAnim = false;
+	}
+	else if (GetAsyncKeyState('T'))
+	{
+		this->animIndex = 3;
+		this->doneWithAnim = false;
+	}
+	else if (GetAsyncKeyState('W') || GetAsyncKeyState('D') || GetAsyncKeyState('S') || GetAsyncKeyState('A'))
+	{
+		if (GetAsyncKeyState(VK_LSHIFT))
+		{
+			this->animIndex = 2;
+		}
+		else
+		{
+			this->animIndex = 1;
+		}
+	}
+	else
+	{
+		this->animIndex = 0;
+	}
+	this->updateAnim(dt, this->animIndex);
+}
+
 bool Player::getHitByBat() const
 {
 	return dedge;

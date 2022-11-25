@@ -272,6 +272,7 @@ void AnimatedMesh::getTimeInTicks(const float& dt, const unsigned& animationInde
 	{
 		timeInTicks -= MySimp.animation[animationIndex].duration;
 		totalTime = 0;
+		doneWithAnim = true;
 	}
 
 	DirectX::XMFLOAT4X4 startMatrix;
@@ -308,6 +309,7 @@ void AnimatedMesh::forwardKinematics(const std::string& nodeName, DirectX::XMFLO
 AnimatedMesh::AnimatedMesh(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int id, GravityField* field)
 	:GameObject(useMesh, pos, rot, id, field)
 {
+	doneWithAnim = true;
 	this->totalTime = 0;
 	oldAnimId = 0;
 	oldTime = 2;
@@ -354,6 +356,7 @@ void AnimatedMesh::updateAnim(const float& dt, unsigned animIndex, float animati
 		ErrorLog::Log("Invalid Animation Id!");
 		return;
 	}
+	this->currentAnimId = animIndex;
 
 	if (animIndex == oldAnimId)
 	{
@@ -374,7 +377,6 @@ void AnimatedMesh::updateAnim(const float& dt, unsigned animIndex, float animati
 		{
 			float timeOffset = dt;
 			oldTime += timeOffset * 10;
-
 		}
 		if ((oldTime >= 1) && state == 2) // done interpolating, set new state as old so it can play
 		{
@@ -400,4 +402,9 @@ void AnimatedMesh::draw()
 	strucBuff.applyData();
 	strucBuff.BindToVS(0);
 	this->tmpDraw(sizeof(AnimatedVertex));
+}
+
+int AnimatedMesh::getAnimId()
+{
+	return this->currentAnimId;
 }

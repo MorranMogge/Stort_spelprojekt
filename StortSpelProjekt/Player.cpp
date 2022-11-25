@@ -848,7 +848,7 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 		}
 	}
 	//Keyboard pickup
-	else if (Input::KeyPress(KeyCode::E))
+	else if (GetAsyncKeyState('E'))
 	{
 		//Checking items
 		for (int i = 0; i < items.size(); i++)
@@ -1039,13 +1039,13 @@ void Player::stateMachine(const float dt)
 	{
 		this->animIndex = 5;
 	}
-	else if (GetAsyncKeyState('E'))
+	else if (GetAsyncKeyState('E') && this->holdingItem != nullptr)
 	{
 		this->animIndex = 4;
 		//speed x2;
 		this->doneWithAnim = false;
 	}
-	else if (GetAsyncKeyState('T'))
+	else if (GetAsyncKeyState('R') && this->holdingItem != nullptr)
 	{
 		this->animIndex = 3;
 		this->doneWithAnim = false;
@@ -1066,6 +1066,17 @@ void Player::stateMachine(const float dt)
 		this->animIndex = 0;
 	}
 	this->updateAnim(dt, this->animIndex);
+}
+
+void Player::giveItemMatrix()
+{
+	if (this->holdingItem == nullptr)
+	{
+		return;
+	}
+	DirectX::XMFLOAT4X4 f1;
+	this->forwardKinematics("hand3:hand3:RightHand", f1);
+	this->holdingItem->setMatrix(f1);
 }
 
 bool Player::getHitByBat() const

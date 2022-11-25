@@ -428,6 +428,8 @@ GAMESTATE Game::Update()
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 
+	currentPlayer->stateMachine(dt);
+
 	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
 	asteroids->updateAsteroids(dt, planetVector, gameObjects);
 
@@ -636,11 +638,11 @@ GAMESTATE Game::Update()
 
 	//animations
 
-	currentPlayer->stateMachine(dt);
+	currentPlayer->giveItemMatrix();
 
-	DirectX::XMFLOAT4X4 f1;
-	this->currentPlayer->forwardKinematics("hand3:hand3:RightHand", f1);
-	this->baseballBat->setMatrix(f1);
+	//DirectX::XMFLOAT4X4 f1;
+	//this->currentPlayer->forwardKinematics("hand3:hand3:RightHand", f1);
+	//this->baseballBat->setMatrix(f1);
 
 	return NOCHANGE;
 }

@@ -137,6 +137,7 @@ public:
 	void colliedWIthComponent(const std::vector<Component*>& components);
 
 	void stateMachine(const float dt);
+	void giveItemMatrix();
 	
 	//Updating and rendering
 	void drawIcon();

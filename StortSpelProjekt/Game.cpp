@@ -425,12 +425,14 @@ GAMESTATE Game::updateComponentGame()
 		for (int i = 0; i < gameObjects.size(); i++) gameObjects[i]->setGravityField(planetVector[0]->getClosestField(planetVector, gameObjects[i]->getPosV3()));
 	}
 
+	currentPlayer->velocityMove(dt);
 	//Raycasting
 	static DirectX::XMFLOAT3 hitPos;
 	static DirectX::XMFLOAT3 hitNormal;
 	hitPos = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 	hitNormal = DirectX::XMFLOAT3(grav.x, grav.y, grav.z);
-	bool testingVec = this->currentPlayer->raycast(gameObjects, planetVector, hitPos, hitNormal);
+	bool testingVec;
+	testingVec = this->currentPlayer->raycast(gameObjects, planetVector, hitPos, hitNormal);
 	if (testingVec || currentPlayer->getHitByBat()) currentPlayer->resetVelocity();
 
 	//Player functions
@@ -438,7 +440,6 @@ GAMESTATE Game::updateComponentGame()
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
-	currentPlayer->velocityMove(dt);
 
 	//Check component pickup
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);

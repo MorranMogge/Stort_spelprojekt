@@ -482,6 +482,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	{
 		onGround = false;
 		this->velocity = this->normalVector * 40.f;
+		this->position += this->normalVector * 1.5f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
 
@@ -985,7 +986,7 @@ bool Player::checkForStaticCollision(const std::vector<Planet*>& gameObjects, co
 		//if (gameObjects[i]->getPlanetCollider()->getType() != reactphysics3d::BodyType::STATIC || gameObjects[i] == this->holdingItem) continue; 
 		if (gameObjects[i]->getPlanetCollider()->testPointInside(point))
 		{
-			this->position -= 1.f * forwardVector;
+			//this->position -= 1.f * forwardVector;
 			return true;
 		}
 	}
@@ -1025,6 +1026,10 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
 			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
 			onGround = true;
+			DirectX::SimpleMath::Vector3 vecToHitPos = this->position - hitPos;
+			float lengthToMove = 0.5f - getLength(vecToHitPos);
+			vecToHitPos.Normalize();
+			this->position += lengthToMove * vecToHitPos;
 			return true;
 		}
 	}
@@ -1037,6 +1042,10 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
 			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
 			onGround = true;
+			DirectX::SimpleMath::Vector3 vecToHitPos = this->position - hitPos;
+			float lengthToMove = 0.5f - getLength(vecToHitPos);
+			vecToHitPos.Normalize();
+			this->position += lengthToMove * vecToHitPos;
 			return true;
 		}
 	}

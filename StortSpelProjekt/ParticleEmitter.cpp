@@ -37,11 +37,11 @@ bool CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>&  PT_vertexBuffer, Micros
 	return !FAILED(hr);
 }
 
-bool CreatePosActiveBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& posBuffer, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, bool drawOnlyWhenMoving)
+bool CreatePosActiveBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& posBuffer, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, float speed)
 {
 	std::vector<DirectX::XMFLOAT4> data;
 	data.push_back(DirectX::XMFLOAT4(position.x, position.y, position.z, 1));
-	data.push_back(DirectX::XMFLOAT4(rotation.x, rotation.y, rotation.z, drawOnlyWhenMoving));
+	data.push_back(DirectX::XMFLOAT4(rotation.x, rotation.y, rotation.z, speed));
 
 	D3D11_BUFFER_DESC cBuffDesc = { 0 };
 	cBuffDesc.ByteWidth = (UINT)sizeof(DirectX::XMFLOAT4) * (UINT)data.size();						//size of buffer //Kolla senare funktion för att hitta närmaste multipel av 16 för int!
@@ -155,8 +155,8 @@ bool CreateShaderResource(const std::vector<std::string>& filenames, std::vector
 
 //----------------------------------------------- Constructor ------------------------------------------------//
 
-ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XMFLOAT3& Rot, const int& nrOfPT, const DirectX::XMFLOAT2& minMaxTime, int randRange, bool onlyDrawMoving)
-	:Position(Pos), Rotation(Rot), nrOfParticles(nrOfPT), active(true), renderPassComplete(true), minMaxLifetime(minMaxTime), drawOnlyWhenMoving(onlyDrawMoving)
+ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XMFLOAT3& Rot, const int& nrOfPT, const DirectX::XMFLOAT2& minMaxTime, int randRange, float speed)
+	:Position(Pos), Rotation(Rot), nrOfParticles(nrOfPT), active(true), renderPassComplete(true), minMaxLifetime(minMaxTime), speed(speed)
 {
 	//particle types
 	std::vector<std::string> textureNames{ "smoke.png", "icon_star.png" , "player3.png" , "player4.png" };
@@ -207,7 +207,7 @@ ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XM
 	}
 
 	//Create position buffer
-	if (!CreatePosActiveBuffer(this->emitterPosBuffer, Pos, Rot, drawOnlyWhenMoving))
+	if (!CreatePosActiveBuffer(this->emitterPosBuffer, Pos, Rot, speed))
 	{
 		std::cerr << "error creating Emitter Pos Buffer!" << std::endl;
 	}
@@ -296,7 +296,7 @@ void ParticleEmitter::updateBuffer()
 	//Update buffer
 	std::vector<DirectX::XMFLOAT4> data;
 	data.push_back(DirectX::XMFLOAT4(this->Position.x, this->Position.y, this->Position.z, this->active));
-	data.push_back(DirectX::XMFLOAT4(this->Rotation.x, this->Rotation.y, this->Rotation.z, this->drawOnlyWhenMoving));
+	data.push_back(DirectX::XMFLOAT4(this->Rotation.x, this->Rotation.y, this->Rotation.z, this->speed));
 
 	HRESULT hr = GPU::immediateContext->Map(this->emitterPosBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &map);
 	memcpy(map.pData, data.data(), sizeof(DirectX::XMFLOAT4) * data.size());
@@ -327,6 +327,17 @@ DirectX::XMFLOAT3 ParticleEmitter::getPosition() const
 DirectX::XMFLOAT3 ParticleEmitter::getRotation() const
 {
 	return this->Rotation;
+}
+
+float ParticleEmitter::getSpeed() const
+{
+	return this->speed;
+}
+
+void ParticleEmitter::setSpeed(const float& speed)
+{
+	this->speed = speed;
+	this->updateBuffer();
 }
 
 void ParticleEmitter::setPosition(const DirectX::XMFLOAT3 &Pos)

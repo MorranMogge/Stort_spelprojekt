@@ -33,8 +33,8 @@ class HudUI final
 
 	TimeStruct rocketTimer;
 	TimeStruct timer;
-	float landingCounter;
-
+	float scaleTimer;
+	bool changedSprite = false;
 	void SpritePass();
 
 public:

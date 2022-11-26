@@ -4,6 +4,24 @@
 #include "SpaceShip.h"
 #include "Time.h"
 
+void setScaleOverTime(bool& changed, GUISprite &sprite, float time = 0.3)
+{
+	//start timer & set scale, revert to normal scale after timer.
+	static float scaleTimer;
+
+	//if changed sprite start timer
+	if (scaleTimer < time && changed)		//runs every frame untill timer runs out
+	{
+		scaleTimer += Time::DeltaTimeInSeconds();
+		sprite.SetScale(0.5f, 0.5f);
+	}
+	else if (scaleTimer > time && changed)	//run once when timer runs out
+	{
+		scaleTimer = 0;
+		changed = false;
+		sprite.SetScale(0.4f, 0.4f);
+	}
+}
 
 void HudUI::SpritePass()
 {
@@ -14,6 +32,11 @@ void HudUI::SpritePass()
 		landing2.Draw();
 	}
 
+	static bool red1 = true;
+	static bool red2 = true;
+	static bool red3 = true;
+	static bool red4 = true;
+
 	if (red)
 	{
 		switch (red->getNrOfComponents())
@@ -21,15 +44,24 @@ void HudUI::SpritePass()
 		case 0:
 			redTeam0.Draw(); break;
 		case 1:
+			setScaleOverTime(red1, redTeam1);
 			redTeam1.Draw(); break;
 		case 2:
+			setScaleOverTime(red2, redTeam2);
 			redTeam2.Draw(); break;
 		case 3:
+			setScaleOverTime(red3, redTeam3);
 			redTeam3.Draw(); break;
 		case 4:
+			setScaleOverTime(red4, redTeam4);
 			redTeam4.Draw(); break;
 		}
 	}
+
+	static bool blue1 = true;
+	static bool blue2 = true;
+	static bool blue3 = true;
+	static bool blue4 = true;
 
 	if (blue)
 	{
@@ -38,12 +70,16 @@ void HudUI::SpritePass()
 		case 0:
 			blueTeam0.Draw(); break;
 		case 1:
+			setScaleOverTime(blue1, blueTeam1);
 			blueTeam1.Draw(); break;
 		case 2:
+			setScaleOverTime(blue2, blueTeam2);
 			blueTeam2.Draw(); break;
 		case 3:
+			setScaleOverTime(blue3, blueTeam3);
 			blueTeam3.Draw(); break;
 		case 4:
+			setScaleOverTime(blue4, blueTeam4);
 			blueTeam4.Draw(); break;
 		}
 	}
@@ -92,7 +128,6 @@ void HudUI::SpritePass()
 }
 
 HudUI::HudUI()
-	:landingCounter(0.0f)
 {
 	using namespace DirectX::SimpleMath;
 

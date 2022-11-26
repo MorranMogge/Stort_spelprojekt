@@ -13,7 +13,7 @@ Potion::Potion(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	float constant = 2.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-	std::vector<std::string> tempStr{ "icon_potion.png", "icon_potion2.png" };
+	std::vector<std::string> tempStr{ "icon_potion.png", "icon_potion2.png" , "Ekey.png"};
 	this->itemIcon = new BilboardObject(tempStr, iconPos);
 	this->itemIcon->setOffset(constant);
 }
@@ -28,7 +28,7 @@ Potion::Potion(const std::string& objectPath, const DirectX::XMFLOAT3& pos, cons
 	float constant = 2.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-	std::vector<std::string> tempStr{ "icon_potion.png", "icon_potion2.png"};
+	std::vector<std::string> tempStr{ "icon_potion.png", "icon_potion2.png", "Ekey.png" };
 	this->itemIcon = new BilboardObject(tempStr, iconPos);
 	this->itemIcon->setOffset(constant);
 }

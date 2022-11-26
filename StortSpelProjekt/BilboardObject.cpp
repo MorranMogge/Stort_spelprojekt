@@ -32,6 +32,8 @@ bool CreateShaderResources(const std::vector<std::string>& filenames, std::vecto
 	int wth = 0;
 	int hth = 0;
 	int channels = 0;
+	std::vector<int>height;
+	std::vector<int>width;
 
 	for (int i = 0; i < filenames.size(); i++)
 	{
@@ -42,6 +44,8 @@ bool CreateShaderResources(const std::vector<std::string>& filenames, std::vecto
 		}
 		else
 		{
+			width.push_back(wth);
+			height.push_back(hth);
 			images.push_back(img);
 		}
 	}
@@ -49,8 +53,8 @@ bool CreateShaderResources(const std::vector<std::string>& filenames, std::vecto
 	for (int i = 0; i < filenames.size(); i++)
 	{
 		D3D11_TEXTURE2D_DESC textureDesc = {};
-		textureDesc.Width = wth;
-		textureDesc.Height = hth;
+		textureDesc.Width = width[i];
+		textureDesc.Height = height[i];
 		textureDesc.MipLevels = 1u;
 		textureDesc.ArraySize = 1u;
 		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -63,7 +67,7 @@ bool CreateShaderResources(const std::vector<std::string>& filenames, std::vecto
 
 		D3D11_SUBRESOURCE_DATA data;
 		data.pSysMem = images[i];
-		data.SysMemPitch = wth * 4;
+		data.SysMemPitch = width[i] * 4;
 		data.SysMemSlicePitch = 0;
 
 

@@ -631,13 +631,18 @@ GAMESTATE Game::Update()
 		}
 	}
 	//Check winstate
+	if (endTimer > 0.4)
+	{
+		ui.moveSprite();
+		this->currentPlayer->setVibration(0.f, 0.f);
+	}
 	if (endTimer > 4.7f)
 	{
 		ui.fadeOut();
+		
 	}
 	if (endTimer > 6)
 	{
-		this->currentPlayer->setVibration(0.f, 0.f);
 		for (int i = 0; i < spaceShips.size(); i++)
 		{
 			if (spaceShips[i]->isFinished())

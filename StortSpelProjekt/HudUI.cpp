@@ -132,8 +132,8 @@ HudUI::HudUI()
 	using namespace DirectX::SimpleMath;
 
 	#define Scale 0.4f
-	#define PositionRed Vector2(50, 620)
-	#define PositionBlue Vector2(125, 620)
+	#define PositionRed Vector2(50, 70)
+	#define PositionBlue Vector2(125, 70)
 	#define Max Vector2(125, 90)
 	#define Min Vector2(125, 550)
 	timer.startTime;
@@ -156,44 +156,44 @@ HudUI::HudUI()
 	landing2.SetScale(0.2f, 0.2f);
 
 	redTeam0 = GUISprite(PositionRed);
-	redTeam0.Load(L"../Sprites/team_r_0.png");
+	redTeam0.Load(L"../Sprites/r_0.png");
 	redTeam0.SetScale(Scale, Scale);
 
 	redTeam1 = GUISprite(PositionRed);
-	redTeam1.Load(L"../Sprites/team_r_1.png");
+	redTeam1.Load(L"../Sprites/r_1.png");
 	redTeam1.SetScale(Scale, Scale);
 
 	redTeam2 = GUISprite(PositionRed);
-	redTeam2.Load(L"../Sprites/team_r_2.png");
+	redTeam2.Load(L"../Sprites/r_2.png");
 	redTeam2.SetScale(Scale, Scale);
 
 	redTeam3 = GUISprite(PositionRed);
-	redTeam3.Load(L"../Sprites/team_r_3.png");
+	redTeam3.Load(L"../Sprites/r_3.png");
 	redTeam3.SetScale(Scale, Scale);
 
 	redTeam4 = GUISprite(PositionRed);
-	redTeam4.Load(L"../Sprites/team_r_4.png");
+	redTeam4.Load(L"../Sprites/r_4.png");
 	redTeam4.SetScale(Scale, Scale);
 
 
 	blueTeam0 = GUISprite(PositionBlue);
-	blueTeam0.Load(L"../Sprites/team_b_0.png");
+	blueTeam0.Load(L"../Sprites/b_0.png");
 	blueTeam0.SetScale(Scale, Scale);
 
 	blueTeam1 = GUISprite(PositionBlue);
-	blueTeam1.Load(L"../Sprites/team_b_1.png");
+	blueTeam1.Load(L"../Sprites/b_1.png");
 	blueTeam1.SetScale(Scale, Scale);
 
 	blueTeam2 = GUISprite(PositionBlue);
-	blueTeam2.Load(L"../Sprites/team_b_2.png");
+	blueTeam2.Load(L"../Sprites/b_2.png");
 	blueTeam2.SetScale(Scale, Scale);
 
 	blueTeam3 = GUISprite(PositionBlue);
-	blueTeam3.Load(L"../Sprites/team_b_3.png");
+	blueTeam3.Load(L"../Sprites/b_3.png");
 	blueTeam3.SetScale(Scale, Scale);
 
 	blueTeam4 = GUISprite(PositionBlue);
-	blueTeam4.Load(L"../Sprites/team_b_4.png");
+	blueTeam4.Load(L"../Sprites/b_4.png");
 	blueTeam4.SetScale(Scale, Scale);
 
 	#define upp 50
@@ -331,6 +331,22 @@ void HudUI::fadeOut()
 	DirectX::SimpleMath::Color gg = fade.GetTint();
 	gg.w += Time::DeltaTimeInSeconds() + 0.005f;
 	fade.SetTint(gg);
+}
+
+void HudUI::moveSprite()
+{
+	using namespace DirectX::SimpleMath;
+	
+	if (blue->getCompletion())
+	{
+		Vector2 currentPos = blueTeam4.GetPosition();
+		blueTeam4.SetPosition(Vector2(currentPos.x, currentPos.y - 0.5f));
+	}
+	else if (red->getCompletion())
+	{
+		Vector2 currentPos = redTeam4.GetPosition();
+		redTeam4.SetPosition(Vector2(currentPos.x, currentPos.y - 0.5f));
+	}
 }
 
 void HudUI::setOpacity(bool onOff)

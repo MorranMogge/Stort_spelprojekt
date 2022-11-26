@@ -48,6 +48,7 @@ public:
 	void handleInputs();
 	bool fadeIn();
 	void fadeOut();
+	void moveSprite();
 	void setOpacity(bool onOff);
 	void Draw();
 };

@@ -37,7 +37,7 @@ void Item::drawIcon()
 	{
 		if (withinPlayerReach)
 		{
-			this->itemIcon->bindAndDraw(1, 0);
+			this->itemIcon->bindAndDraw(2, 0);
 		}
 		else
 		{

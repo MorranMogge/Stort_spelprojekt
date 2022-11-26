@@ -1154,7 +1154,7 @@ void Player::update()
 		this->playerIcon->setPosition(this->position + itemPos);
 	}
 	//Update particle movement
-	if (this->particles != nullptr && moveKeyPressed)
+	if (this->particles != nullptr)
 	{
 		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
 		this->particles->setPosition(this->position);

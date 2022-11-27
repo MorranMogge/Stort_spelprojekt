@@ -191,7 +191,7 @@ float Planet::getSize(int index) const
 void Planet::rotateAroundPoint(const DirectX::XMFLOAT3& point)
 {
 	float deg = rotDegrees * (DirectX::XM_PI / 180.f);
-	rotDegrees += this->velocity*0.1f;
+	rotDegrees += this->velocity * 0.1f;
 	DirectX::SimpleMath::Vector3 factor(sin(deg), cos(deg), 1.0f);
 	this->position = this->originPoint * factor;
 }
@@ -200,6 +200,20 @@ void Planet::rotatePlanet()
 {
 	this->rotation += rotSpeed;
 }
+
+void Planet::rotateMoon(const DirectX::XMFLOAT3& point, const float& speed)
+{
+	this->velocity = speed;
+
+	float deg = rotDegrees * (DirectX::XM_PI / 180.f);
+	rotDegrees += this->velocity * 0.1f;
+	DirectX::SimpleMath::Vector3 factor(sin(deg), cos(deg), 1.0f);
+	this->position = this->originPoint * factor;
+
+	this->planetCollisionBox->setPosition(reactphysics3d::Vector3(position.x, position.y, position.z));
+	this->gravField->setCenterpoint(this->position);
+}
+
 void Planet::setColor(const DirectX::SimpleMath::Vector3& color)
 {
 	//Set up color buffer

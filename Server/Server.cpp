@@ -238,7 +238,6 @@ int main()
 	while (!physicsTimer.getTimePassed(7.0f)) continue;
 
 	//Spawning planets
-	srand(time(0));
 	std::vector<Planet*> planetVector;
 	float planetSize = 40.f;
 	int nrPlanets = 3;

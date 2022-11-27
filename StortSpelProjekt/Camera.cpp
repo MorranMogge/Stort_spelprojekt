@@ -140,25 +140,37 @@ void Camera::collisionCamera(Player* player, const std::vector<Planet*>& planets
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotationMX);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotationMX);
 	lookAtPos = playerPosition;
-	logicalPos = playerPosition + logicalUp * 60.f - forwardVector * 50.f;
+	logicalPos = playerPosition + logicalUp * 70.f - forwardVector * 80.f;
+	bool collided = false;
 
 	//Checking collision with planets
 	for (int i = 0; i < planets.size(); i++)
 	{
 		planetVector = DirectX::XMVectorSet(planets[i]->getSize(), planets[i]->getSize(), planets[i]->getSize(), 0.0f);
-		cameraVector = XMVectorSubtract(planets[i]->getPlanetPosition(), logicalPos);
+		cameraVector = XMVectorSubtract(logicalPos, planets[i]->getPlanetPosition());
 		cameraVector = DirectX::XMVectorSet(abs(cameraVector.x), abs(cameraVector.y), abs(cameraVector.z), 0.f);
+
 		if  (XMVector3LessOrEqual(cameraVector, planetVector))
-		{ 
-			logicalPos -= rightVector * 60.f;
+		{
+			logicalPos -= logicalUp * 20.f;
+			collided = false;
 		}
+	}
+
+	if (collided)
+	{
+
+	}
+	else
+	{
+		
 	}
 
 	//The showing camera
 	velocityVector = XMVectorSubtract(logicalPos, cameraPos);
-	cameraPos += velocityVector * deltaTime * 5.f;
+	cameraPos += velocityVector * deltaTime * 3.f;
 	velocityVector = XMVectorSubtract(logicalUp, upVector);
-	upVector += velocityVector * deltaTime * 5.f;
+	upVector += velocityVector * deltaTime * 3.f;
 
 	//Changing FOV if player moving faster
 	if (XMVector3NotEqual(cameraPos, oldCameraPos))

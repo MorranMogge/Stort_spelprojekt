@@ -8,6 +8,8 @@
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), currentMinigame(MiniGames::COMPONENTCOLLECTION)
 {
+	srand(time(0));
+
 	this->HEIGHT = HEIGHT;
 	this->WIDTH = WIDTH;
 	this->packetEventManager = new PacketEventManager();
@@ -164,13 +166,16 @@ void Game::loadObjects()
 	//SOLAR SYSTEM SETUP
 	if (!IFONLINE)
 	{
-		float planetSize = 40.f; // SET DIFFERENT GRAV-FACTORS FOR THE PLANETS
+		float planetSize = 40.f; // SET DIFFERENT GRAV-FACTORS FOR THE PLANETS AND DIFFERENT TEXTURES!
 		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
 		planetVector.back()->setPlanetShape(&physWorld);
 		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
 		planetVector.back()->setPlanetShape(&physWorld);
-		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 1.2f, planetSize * 1.2f, planetSize * 1.2f), DirectX::XMFLOAT3(-65.f, -65.f, 65.f)));
+		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-115.f, -115.f, 115.f)));
 		planetVector.back()->setPlanetShape(&physWorld);
+
+		//planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(25.f, 25.f, 25.f), DirectX::XMFLOAT3(60.f, 60.f, 60.f)));
+		//planetVector.back()->setPlanetShape(&physWorld);
 		physWorld.setPlanets(planetVector);
 	}
 
@@ -409,8 +414,8 @@ void Game::handleKeybinds()
 GAMESTATE Game::updateComponentGame()
 {
 	//Get newest delta time
-	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
-	asteroids->updateAsteroids(dt, planetVector, gameObjects);
+	//if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
+	//asteroids->updateAsteroids(dt, planetVector, gameObjects);
 
 	//Calculate gravity factor
 	if (planetVector.size() > 0) field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
@@ -495,8 +500,8 @@ GAMESTATE Game::updateComponentGame()
 	}
 
 	//Setting the camera at position
-	if (!velocityCamera) camera.moveVelocity(currentPlayer, dt);
-	else camera.moveCamera(currentPlayer, dt);
+	if (!velocityCamera) camera.collisionCamera(currentPlayer, planetVector, dt);
+	else camera.moveVelocity(currentPlayer, dt);
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
 	//Check Components online
@@ -876,6 +881,9 @@ GAMESTATE Game::Update()
 {
 	//read the packets received from the server
 	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame, teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame);
+
+	//Set moon
+	planetVector[2]->rotateMoon(DirectX::XMFLOAT3(0, 0, 0), 0.8f);
 
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();

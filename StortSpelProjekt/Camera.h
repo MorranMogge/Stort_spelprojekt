@@ -41,9 +41,10 @@ private:
 	DirectX::XMVECTOR upVector = logicalUp;
 
 	DirectX::XMVECTOR velocityVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	DirectX::XMVECTOR parentPos = logicalPos;
 	DirectX::SimpleMath::Vector3 planetVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	DirectX::SimpleMath::Vector3 cameraVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	DirectX::SimpleMath::Vector3 parentVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 public:
 	Camera();

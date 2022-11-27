@@ -1065,10 +1065,10 @@ bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) con
 
 void Player::colliedWIthComponent(const std::vector<Component*>& components)
 {
+	if (holdingComp && holdingItem) return;
 	bool collided = false;
 	for (int i = 0; i < components.size(); i++) collided = this->physComp->testBodiesOverlap(components[i]->getPhysComp());
-	if (collided) this->setSpeed(20.f * 0.55f);
-	else this->setSpeed(20.f);
+	if (collided) this->setSpeed(this->speed * 0.5f);
 }
 
 bool Player::getHitByBat() const
@@ -1293,14 +1293,10 @@ bool Player::isHoldingComp()
 	{
 		if (this->holdingItem != nullptr)
 		{
-			this->setSpeed(20.f * 0.55f);
+			this->setSpeed(this->speed * 0.5f);
 			return true;
 		}
-		else
-		{
-			this->setSpeed(20.f);
-			return false;
-		}
+		else return false;
 	}
 
 	return false;

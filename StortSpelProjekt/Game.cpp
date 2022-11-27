@@ -169,9 +169,9 @@ void Game::loadObjects()
 		float planetSize = 40.f; // SET DIFFERENT GRAV-FACTORS FOR THE PLANETS AND DIFFERENT TEXTURES!
 		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
 		planetVector.back()->setPlanetShape(&physWorld);
-		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(55.f, 55.f, 55.f)));
+		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(60.f, 60.f, 60.f)));
 		planetVector.back()->setPlanetShape(&physWorld);
-		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-115.f, -115.f, 115.f)));
+		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-130.f, -130.f, 130.f)));
 		planetVector.back()->setPlanetShape(&physWorld);
 
 		//planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(25.f, 25.f, 25.f), DirectX::XMFLOAT3(60.f, 60.f, 60.f)));
@@ -284,6 +284,7 @@ void Game::drawObjects(bool drawDebug)
 	currentPlayer->draw();
 	for (int i = 0; i < planetVector.size(); i++)
 	{
+		if (i == camera.getCollidedWith()) continue;
 		planetVector[i]->drawPlanet();
 	}
 	asteroids->drawAsteroids();
@@ -446,6 +447,7 @@ GAMESTATE Game::updateComponentGame()
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
+	currentPlayer->setSpeed(20.f);
 
 	//Check component pickup
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);
@@ -465,8 +467,10 @@ GAMESTATE Game::updateComponentGame()
 		case ObjID::POTION:
 		{
 			Potion* tempPotion = (Potion*)items[i];
-			if (tempPotion->timerGoing()) currentPlayer->setSpeed(50.f);
-			else currentPlayer->setSpeed(20.f);
+			if (tempPotion->timerGoing())
+			{
+				currentPlayer->setSpeed(50.f);
+			}
 		}	break;
 		}
 		break;
@@ -740,7 +744,6 @@ GAMESTATE Game::updateKingOfTheHillGame()
 		{
 			Potion* tempPotion = (Potion*)items[i];
 			if (tempPotion->timerGoing()) currentPlayer->setSpeed(50.f);
-			else currentPlayer->setSpeed(20.f);
 		}	break;
 		}
 		break;
@@ -883,7 +886,7 @@ GAMESTATE Game::Update()
 	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame, teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame);
 
 	//Set moon
-	planetVector[2]->rotateMoon(DirectX::XMFLOAT3(0, 0, 0), 0.8f);
+	planetVector[2]->rotateMoon(DirectX::XMFLOAT3(0, 0, 0), 0.5f);
 
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();

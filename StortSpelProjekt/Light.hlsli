@@ -267,7 +267,7 @@ static const float2 poissonDisk64[64] =
 };
 
 
-float DoShadow(float4 lightWorldPosition, Texture2DArray shadowMap, SamplerComparisonState shadowMapSampler, int index, float3 normal, float3 lightDirection, int numSamples)
+float DoShadow(float4 lightWorldPosition, Texture2DArray shadowMap, SamplerComparisonState shadowMapSampler, int index, float3 normal, float3 lightDirection, float softness)
 {
     lightWorldPosition.xyz /= lightWorldPosition.w;
     const float2 smTex = float2(0.5f * lightWorldPosition.x + 0.5f, -0.5f * lightWorldPosition.y + 0.5f);
@@ -287,7 +287,7 @@ float DoShadow(float4 lightWorldPosition, Texture2DArray shadowMap, SamplerCompa
     [unroll]
     for (int i = 0; i < 32; ++i)
     {
-        percentLit += shadowMap.SampleCmpLevelZero(shadowMapSampler, float3(smTex + poissonDisk32[i] / 300.0f, index), depth).r;
+        percentLit += shadowMap.SampleCmpLevelZero(shadowMapSampler, float3(smTex + poissonDisk32[i] / softness, index), depth).r;
     }
 
     return percentLit / 32.0f;

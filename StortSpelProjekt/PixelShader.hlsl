@@ -84,7 +84,7 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
                 break;
         }
         
-        float shadowFactor = DoShadow(lightWorldPosition, shadowMaps, shadowSampler, i, normal, lightDir, 9);
+        float shadowFactor = DoShadow(lightWorldPosition, shadowMaps, shadowSampler, i, normal, lightDir, 300.0f);
         
         litResult.Diffuse += result.Diffuse/* * shadowFactor*/;
         litResult.Specular += result.Specular/* * shadowFactor*/;

@@ -126,7 +126,8 @@ void Player::handleItems()
 		//Throw item
 		if (Input::KeyDown(KeyCode::R) && Input::KeyDown(KeyCode::R))
 		{
-			this->throwItem();
+			this->dropTimer.resetStartTime();
+			this->throwingItem = true;
 		}
 		//Use the Item
 		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))
@@ -181,6 +182,11 @@ void Player::handleItems()
 				holdingItem = nullptr;
 			}
 		}
+	}
+	if (throwingItem && this->dropTimer.getTimePassed(0.25))
+	{
+		this->throwingItem = false;
+		this->throwItem();
 	}
 	if (this->usingBat && this->dropTimer.getTimePassed(0.25)&& !this->usedItem)
 	{

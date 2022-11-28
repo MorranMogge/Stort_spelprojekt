@@ -87,6 +87,7 @@ private:
 	bool usingBat = false;
 	TimeStruct dropTimer;
 	bool usedItem = true;
+	bool throwingItem = false;
 
 	void throwItem();
 	void resetRotationMatrix();

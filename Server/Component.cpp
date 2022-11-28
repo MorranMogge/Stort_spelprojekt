@@ -4,7 +4,13 @@ Component::Component()
 {
 }
 
-void Component::use()
+Component::Component(int onlineId, int onlineType)
+	:Item(onlineId, onlineType)
+{
+
+}
+
+void Component::use(const Player* playerHoldingItem)
 {
 
 }

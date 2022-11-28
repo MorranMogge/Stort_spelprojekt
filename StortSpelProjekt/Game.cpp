@@ -6,7 +6,7 @@
 #include "SoundCollection.h"
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), currentMinigame(MiniGames::COMPONENTCOLLECTION)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), , manager(ModelManager(device)), currentMinigame(MiniGames::COMPONENTCOLLECTION)
 {
 	srand(time(0));
 
@@ -18,6 +18,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
 	client = new Client();
+	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
 	circularBuffer = client->getCircularBuffer();
 
 	//Setup rendering
@@ -28,8 +29,15 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ltHandler.addLight(DirectX::XMFLOAT3(16 + 7, 42 + 17, 12 + 7), DirectX::XMFLOAT3(0, 0.3f, 1.0f), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 	ltHandler.addLight(DirectX::XMFLOAT3(-10 - 5, -45 - 17, -10 - 7), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 
+	manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
+	this->manager.getAnimData("../Meshes/pinto_Run.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
+	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/pintoBlue.png");
+	ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/pintoRed.png");
+	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+
 	//Load game objects
 	this->loadObjects();
+
 
 	//Setup players
 	if (IFONLINE)
@@ -53,7 +61,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 			if (playerId != i)
 			{
-				tmpPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 0, i, client, (int)(dude < i + 1), planetGravityField);
+				tmpPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 
+					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+				tmpPlayer->addData(animData);
 				tmpPlayer->setOnlineID(i);
 				physWorld.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
@@ -61,7 +71,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			else
 			{
 				std::cout << "Player online id: " << std::to_string(i) << " \n";
-				currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 1, playerId, client, (int)(dude < i + 1), planetGravityField);
+				currentPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+					1, playerId, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+				currentPlayer->addData(animData);
 				currentPlayer->setOnlineID(i);
 				players.push_back(currentPlayer);
 				delete tmpPlayer;
@@ -80,14 +92,15 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	{
 		players[i]->setGravityField(planetGravityField);
 	}
+	
 
 	field = nullptr;
 	oldField = field;
 
 	//Set items baseball bat
-	baseballBat->setPlayer(currentPlayer);
-	baseballBat->setGameObjects(gameObjects);
-	baseballBat->setClient(client);
+	//baseballBat->setPlayer(currentPlayer);
+	//baseballBat->setGameObjects(gameObjects);
+	//baseballBat->setClient(client);
 
 	//Set items grenade
 	grenade->setGameObjects(gameObjects);
@@ -124,6 +137,7 @@ Game::~Game()
 		delete planetVector[i];
 	}
 	if (captureZone != nullptr) delete captureZone;
+	delete tmpMesh;
 	delete asteroids;
 	delete arrow;
 	delete planetGravityField;
@@ -186,7 +200,7 @@ void Game::loadObjects()
 
 	//CREATE ITEMS 	//Sphere, reverseSphere, pinto, potion, rocket, bat, component, grenade, arrow
 	potion = new Potion(meshes[3], Vector3(0, 0, -42), Vector3(0.0f, 0.0f, 0.0f), POTION, 0, planetGravityField);
-	baseballBat = new BaseballBat(meshes[5], Vector3(0, 0, 42), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
+	//baseballBat = new BaseballBat(meshes[5], Vector3(0, 0, 42), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
 	grenade = new Grenade(meshes[7], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
 	arrow = new Arrow(meshes[8], DirectX::SimpleMath::Vector3(0, 42, 0));
 
@@ -195,7 +209,7 @@ void Game::loadObjects()
 
 	//EMPLACE ITEMS
 	items.emplace_back(potion);
-	items.emplace_back(baseballBat);
+	//items.emplace_back(baseballBat);
 	items.emplace_back(grenade);
 
 	for (int i = 0; i < items.size(); i++)
@@ -237,7 +251,12 @@ void Game::loadObjects()
 	//Initilize player
 	if (!currentPlayer && !IFONLINE)
 	{
-		currentPlayer = new Player(meshes[2], DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), 1, client->getPlayerId(), client, 0, planetGravityField);
+		ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/pintoBlue.png");
+		ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/pintoRed.png");
+
+		currentPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+			1, client->getPlayerId(), client, 0, redTeamColour, blueTeamColour, planetGravityField);
+		currentPlayer->addData(animData);
 		players.emplace_back(currentPlayer);
 		gamePad = new GamePad();
 		currentPlayer->setGamePad(gamePad);
@@ -280,7 +299,7 @@ void Game::drawObjects(bool drawDebug)
 	{
 		onlineItems[i]->draw();
 	}
-	currentPlayer->updateBuffer();
+	//currentPlayer->updateBuffer();
 	currentPlayer->draw();
 	for (int i = 0; i < planetVector.size(); i++)
 	{
@@ -298,9 +317,6 @@ void Game::drawObjects(bool drawDebug)
 	{
 		ltHandler.drawDebugMesh();
 	}
-
-	//Unbind light
-	ltHandler.unbindSrv();
 }
 
 void Game::drawIcons()
@@ -414,6 +430,9 @@ void Game::handleKeybinds()
 
 GAMESTATE Game::updateComponentGame()
 {
+	//read the packets received from the server
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, client);
+
 	//Get newest delta time
 	//if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
 	//asteroids->updateAsteroids(dt, planetVector, gameObjects);
@@ -453,6 +472,7 @@ GAMESTATE Game::updateComponentGame()
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);
 	currentPlayer->requestingPickUpItem(onlineItems);
 
+	grenade->updateExplosionCheck();
 	//Update item checks
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -475,6 +495,15 @@ GAMESTATE Game::updateComponentGame()
 		}
 		break;
 	}
+
+
+	//Player functions
+	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
+	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
+	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
+	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
+	currentPlayer->velocityMove(dt);
+	currentPlayer->setSpeed(20.f);
 
 	/*if (Input::KeyPress(KeyCode::K))
 	{
@@ -533,6 +562,7 @@ GAMESTATE Game::updateComponentGame()
 	else if (onlineItems.size() > 0)  this->arrow->showDirection(onlineItems[0]->getPosV3(), currentPlayer->getPosV3(), grav);
 	else if (components.size() > 0) this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
 	currentPlayer->colliedWIthComponent(components);
+
 
 	if (!IFONLINE) //Check Components offline
 	{
@@ -598,7 +628,6 @@ GAMESTATE Game::updateComponentGame()
 	{
 		spaceShips[i]->animateOnPickup();
 	}
-
 	//Check if item icon should change to pickup icon 
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -959,6 +988,10 @@ GAMESTATE Game::Update()
 
 	//Debug keybinds
 	this->handleKeybinds();
+
+	//animations
+	this->currentPlayer->updateAnim(dt, 0, 1);
+
 	return NOCHANGE;
 }
 
@@ -972,10 +1005,15 @@ void Game::Render()
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
 
+	basicRenderer.changeToAnimation();
+	currentPlayer->draw();
+
+	//Unbind light
+	ltHandler.unbindSrv();
+
 	//Render fresnel objects
 	basicRenderer.fresnelPrePass(this->camera);
 	this->drawFresnel();
-
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();

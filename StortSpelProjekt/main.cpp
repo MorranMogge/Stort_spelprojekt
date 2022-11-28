@@ -15,6 +15,11 @@
 
 #include "ImGuiHelper.h"
 
+//Ta bort innan merge med main?
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+
 #include "SettingsMenu.h"
 #include "CreditsMenu.h"
 #include "WinMenu.h"

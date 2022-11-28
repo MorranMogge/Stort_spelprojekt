@@ -7,8 +7,8 @@ struct wirefameInfo
 	float padding;
 };
 
-const int NROFPLAYERS = 1;
-static bool IFONLINE = false;
+const int NROFPLAYERS = 2;
+static bool IFONLINE = true;
 
 class Game : public State
 {
@@ -40,6 +40,16 @@ private:
 	std::chrono::time_point<std::chrono::system_clock> serverStart;
 	float serverTimerLength =  1.f / 30.0f;
 	Client* client;
+
+	ModelManager manager;
+	ID3D11Buffer* vBuff;
+	ID3D11Buffer* iBuff;
+	Mesh* tmpMesh;
+	std::vector<int> subMeshRanges;
+	std::vector<int> verticies;
+	ID3D11ShaderResourceView* tempSRV;
+	AnimationData animData;
+	AnimatedMesh* sexyMan;
 
 	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
 	DirectX::XMFLOAT3 velocity;
@@ -87,7 +97,6 @@ private:
 	float landingMiniGamePoints = 0;
 	float teamScoreLandingMiniGame = 0;
 	float enemyTeamScoreLandingMiniGame = 0;
-
 
 	//InterMissionVariables
 	int Stage = 0;

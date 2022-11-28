@@ -1,4 +1,5 @@
 #include "PhysicsWorld.h"
+#include "GameObject.h"
 #include "ServerPlanet.h"
 
 #include <iostream>
@@ -9,7 +10,8 @@
 #include <chrono>
 #include <thread>
 #include <vector>
-#include "player.h"
+#include "Player.h"
+#include "PacketsDataTypes.h"
 #include "Packethandler.h"
 #include "CircularBuffer.h"
 #include "Component.h"
@@ -17,6 +19,11 @@
 #include "RandomizeSpawn.h"
 #include "DirectXMathHelper.h"
 #include "TimeStruct.h"
+#include "ObjectId.h"
+#include "BaseBallBat.h"
+
+
+#include "TestObj.h"
 
 #include "KingOfTheHillMiniGame.h"
 
@@ -98,12 +105,22 @@ void sendDataAllPlayers(testPosition &posData, serverData& serverData)
 	}
 };
 
-int extractBinaryPacketId(char* pointerToData[])
+template <typename T>
+void sendBinaryDataAllPlayers(const T& data, serverData& serverData)
 {
-	int idPacket;
-	memcpy(&idPacket, pointerToData, sizeof(int));
-	
-	return idPacket;
+	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+	{
+		std::size_t recvSize;
+		if (serverData.users[i].tcpSocket.send(&data, sizeof(T), recvSize) != sf::Socket::Done)
+		{
+			//error
+			std::cout << "Couldnt send data to currentPlayer from array slot: " << std::to_string(i) << std::endl;
+		}
+		else
+		{
+			//std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
+		}
+	}
 }
 
 void recvData(void* param, userData* user)//thread to recv data
@@ -226,8 +243,8 @@ int main()
 	start = std::chrono::system_clock::now();
 
 	float timerLength = 1.f / 30.0f;
-	float timerComponentLength = 5.0f;
-	float itemSpawnTimerLength = 5.0f;
+	float timerComponentLength = 10.0f;
+	float itemSpawnTimerLength = 20.0f;
 
 	setupTcp(data);
 	acceptPlayers(data);
@@ -314,6 +331,7 @@ int main()
 			LandingMiniSendScoreToServer* scoreFromClient = nullptr;
 			MinigameStart* startMinigame = nullptr;
 			DoneWithGame* requestStart = nullptr;
+			baseballBatSpawn* baseBallBatData = nullptr;
 
 			switch (packetId)
 			{
@@ -355,9 +373,9 @@ int main()
 			case PacketType::COMPONENTPOSITION:
 				compData = circBuffer->readData<ComponentData>();
 				
-				for (int i = 0; i < components.size(); i++)
+				for (int i = 0; i < onlineItems.size(); i++)
 				{
-					if (components[i].getOnlineId() == compData->ComponentId)
+					if (onlineItems[i]->getOnlineId() == compData->ComponentId)
 					{
 						//kanske inte GÖRA NÅGOT EFTERSOM MAN KAN TA POSITION FRÅN DEN SOM ÄR IN USE NÄR MAN FÅR SPELAR POSITION
 					}
@@ -370,13 +388,26 @@ int main()
 				cmpDropped = circBuffer->readData<ComponentDropped>();
 				std::cout << "dropped package recv compId: " << std::to_string(cmpDropped->componentId) << std::endl;
 				//find the component that is dropped
-				for (int i = 0; i < components.size(); i++)
+				for (int i = 0; i < onlineItems.size(); i++)
 				{
-					if (components[i].getOnlineId() == cmpDropped->componentId)
+					if (onlineItems[i]->getOnlineId() == cmpDropped->componentId)
 					{
-						components[i].setInUseBy(-1);
-						std::cout << std::to_string(components[i].getPosXMFLOAT3().x) << ", y: " << std::to_string(components[i].getPosXMFLOAT3().y) <<
-							", z" << std::to_string(components[i].getPosXMFLOAT3().z) << std::endl;
+						onlineItems[i]->setInUseBy(-1);
+						std::cout << std::to_string(onlineItems[i]->getPosXMFLOAT3().x) << ", y: " << std::to_string(onlineItems[i]->getPosXMFLOAT3().y) <<
+							", z" << std::to_string(onlineItems[i]->getPosXMFLOAT3().z) << std::endl;
+						
+							for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
+							{
+								//skicka att en spelare har droppat en component till alla spelare förutom spelaren som droppat componenten eftersom den redan är droppad
+								
+									ComponentDropped cmpDropData;
+									cmpDropData.componentId = cmpDropped->componentId;
+									cmpDropData.packetId = cmpDropped->packetId;
+									cmpDropData.playerId = cmpDropped->playerId;
+									sendBinaryDataOnePlayer(cmpDropData, data.users[j]);
+								
+							}
+						break;
 					}
 				}
 				break;
@@ -384,14 +415,14 @@ int main()
 			case PacketType::COMPONENTREQUESTINGPICKUP:
 				requestingCmpPickedUp = circBuffer->readData<ComponentRequestingPickUp>();
 				//std::cout << "cmprequestpickup comp id: " << std::to_string(requestingCmpPickedUp->componentId) << std::endl;
-				std::cout << "components size: " << std::to_string(components.size()) << std::endl;
-				for (int i = 0; i < components.size(); i++)
+				std::cout << "onlineItems size: " << std::to_string(onlineItems.size()) << std::endl;
+				for (int i = 0; i < onlineItems.size(); i++)
 				{
 					//kollar efter rätt component
-					if (components[i].getOnlineId() == requestingCmpPickedUp->componentId)
+					if (onlineItems[i]->getOnlineId() == requestingCmpPickedUp->componentId)
 					{
 						//kollar om componenten inte används
-						if (components[i].getInUseById() == -1)
+						if (onlineItems[i]->getInUseById() == -1)
 						{
 							std::cout << "picked up componentId: " << std::to_string(requestingCmpPickedUp->componentId) 
 								<< ", by player: " << std::to_string(requestingCmpPickedUp->playerId) << std::endl;
@@ -401,7 +432,7 @@ int main()
 							sendConfirmComponentData.componentId = requestingCmpPickedUp->componentId;
 							sendConfirmComponentData.packetId = PacketType::COMPONENTCONFIRMEDPICKUP;
 							sendBinaryDataAllPlayers<ConfirmComponentPickedUp>(sendConfirmComponentData, data);
-							components[i].setInUseBy(requestingCmpPickedUp->playerId);
+							onlineItems[i]->setInUseBy(requestingCmpPickedUp->playerId);
 						}
 						else
 						{
@@ -419,30 +450,18 @@ int main()
 
 			case PacketType::ITEMPOSITION:
 				itemPos = circBuffer->readData<itemPosition>();
+				for (int i = 0; i < onlineItems.size(); i++)
+				{
+					if(onlineItems[i]->getOnlineId()==itemPos->itemId) //finding the correct item
+					{
+						//set the data
+					}
+				}
+				break;
 
-				//for (int i = 0; i < items.size(); i++)
-				//{
-				//	//First check which component
-				//	if (i == itemPos->itemId && items[i].getInUseById() != itemPos->inUseBy)
-				//	{
-				//		for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
-				//		{
-				//			if (itemPos->inUseBy == data.users[j].playerId && items[i].getInUseById() == -1)
-				//			{
-				//				items[i].setInUseBy(itemPos->inUseBy);
-				//				//components[i].setPosition(compData->x, compData->y, compData->z);
-				//				//components[i].setInUseBy(compData->inUseBy);
-				//			}
-				//			else if (itemPos->inUseBy == -1)
-				//			{
-				//				items[i].setInUseBy(-1);
-				//				items[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
-				//				items[i].setPosition(compData->x, compData->y, compData->z);
-				//				items[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
-				//			}
-				//		}
-				//	}
-				//}
+			case PacketType::BASEBALLBATSPAWN://ändras så att servern skickar och client tar emot
+				baseBallBatData = circBuffer->readData<baseballBatSpawn>();
+
 				break;
 
 			case PacketType::LANDINGMINIGAMESENDSCORETOSERVER:
@@ -521,62 +540,87 @@ int main()
 		}
 
 		//checks all components player position
-		for (int i = 0; i < components.size(); i++)
-		{
-			for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
-			{
-				if (components[i].getInUseById() == data.users[j].playerId)
-				{
-					components[i].setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
-				}
-			}
-			//std::cout << "component in useBy: " << std::to_string(components[i].getInUseById()) << std::endl;
-			
-			//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
-		}
-
-		//for (int i = 0; i < onlineItems.size(); i++)
+		//for (int i = 0; i < components.size(); i++)
 		//{
 		//	for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
 		//	{
-		//		if(onlineItems[i]->getInUseById() == data.users[j].playerId)
+		//		if (components[i].getInUseById() == data.users[j].playerId)
 		//		{
-		//			onlineItems[i]->setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
+		//			components[i].setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
 		//		}
 		//	}
+		//	//std::cout << "component in useBy: " << std::to_string(components[i].getInUseById()) << std::endl;
+		//	
+		//	//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
 		//}
-		
-		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
+
+		for (int i = 0; i < onlineItems.size(); i++)
 		{
-			SpawnComponent cData = SpawnOneComponent(components, spaceShipPos);
-			physWorld.addPhysComponent(components[components.size() - 1]);
-			components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
-			components[components.size() - 1].setOnlineId(componentIdCounter++);
-			sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
-			startComponentTimer = std::chrono::system_clock::now();
+			for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
+			{
+				if(onlineItems[i]->getInUseById() == data.users[j].playerId)
+				{
+					onlineItems[i]->setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
+				}
+			}
 		}
+		
+		////Spawns a component
+		//if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
+		//{
+		//	SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
+		//	physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
+		//	onlineItems[onlineItems.size() - 1]->setPosition(cData.x, cData.y, cData.z);
+		//	onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+		//	sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
+		//	startComponentTimer = std::chrono::system_clock::now();
+		//}
 
 
-		//skickar itemSpawn
+		//Spawns a baseBallBat
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
 		{
-			//ItemSpawn itemSpawnData;
-			//DirectX::XMFLOAT3 temp = randomizeObjectPos();
-			//itemSpawnData.x = temp.x;
-			//itemSpawnData.y = temp.y;
-			//itemSpawnData.z = temp.z;
-			//itemSpawnData.itemId = itemid++;
-			//std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
-			//itemSpawnData.packetId = PacketType::ITEMSPAWN;
-			//itemSpawnData.inUseBy = -1;
+			ItemSpawn itemSpawnData;
+			DirectX::XMFLOAT3 temp = randomizeObjectPos();
+			itemSpawnData.x = temp.x;
+			itemSpawnData.y = temp.y;
+			itemSpawnData.z = temp.z;
+			itemSpawnData.itemId = componentIdCounter;
+			std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
+			itemSpawnData.packetId = PacketType::ITEMSPAWN;
 
-			//items.push_back(Component());
-			//physWorld.addPhysComponent(items[items.size() - 1]);
-			//items[items.size() - 1].setPosition(temp.x, temp.y, temp.z);;
-			//items[items.size() - 1].setInUseBy(-1);
-			//sendBinaryDataAllPlayers(itemSpawnData, data);
-			//itemSpawnTimer = std::chrono::system_clock::now();
+			onlineItems.push_back(new BaseballBat(componentIdCounter));//ändra
+			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
+			onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);;
+			onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
+			onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+			sendBinaryDataAllPlayers(itemSpawnData, data);
+			itemSpawnTimer = std::chrono::system_clock::now();
 		}
+
+		////Spawns a potion
+		//if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
+		//{
+		//	PotionSpawn PotionSpawnData;
+		//	
+		//	DirectX::XMFLOAT3 temp = randomizeObjectPos();
+		//	PotionSpawnData.xPos = temp.x;
+		//	PotionSpawnData.yPos = temp.y;
+		//	PotionSpawnData.zPos = temp.z;
+		//	PotionSpawnData.potionId = componentIdCounter;
+		//	std::cout << "item spawn id: " << std::to_string(PotionSpawnData.potionId) << std::endl;
+		//	PotionSpawnData.packetId = PacketType::POTIONSPAWN;
+
+		//	onlineItems.push_back(new Component());//ändra
+		//	physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
+		//	onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);;
+		//	onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
+		//	onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+		//	sendBinaryDataAllPlayers(PotionSpawnData, data);
+		//	itemSpawnTimer = std::chrono::system_clock::now();
+		//}
+
+
 		
 		
 		//sends data based on the server tickrate
@@ -619,42 +663,42 @@ int main()
 				physWorld.update(timerLength / 10.f);
 			}
 
-			//Check if any components are near after the physics update
-			for (int i = 0; i < components.size(); i++)
+			//Check if any onlineItems are near after the physics update
+			for (int i = 0; i < onlineItems.size(); i++)
 			{
-				for (int j = 0; j < spaceShipPos.size(); j++)
+				
+				if (onlineItems[i]->getOnlineType() == ObjID::COMPONENT)
 				{
-					//kopiera det här för king of the hill
-					//if (!components[i].getActiveState()) continue;
-					static DirectX::XMFLOAT3 vecToComp;
-					static DirectX::XMFLOAT3 objPos;
-					vecToComp = spaceShipPos[j];
-					objPos = components[i].getPhysicsComponent()->getPosV3();
-					subtractionXMFLOAT3(vecToComp, objPos);
-					if (getLength(vecToComp) <= 10.f)
+
+					for (int j = 0; j < spaceShipPos.size(); j++)
 					{
-						//components[i].setInactive();
-						std::cout << "getLength() <= 10.f\n";
-						DirectX::XMFLOAT3 newCompPos = randomizeObjectPos();
-						components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
-						components[i].setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
-						components[i].getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
-						components[i].setInUseBy(-1);
-						//KOM IHÅG SKICKA DATA TILL ALLA SPELARE FÖR ATT DEN ÄR  DROPPAD
-
-						//Sending to client
-						ComponentAdded compAdded;
-						compAdded.packetId = PacketType::COMPONENTADDED;
-						compAdded.spaceShipTeam = j;
-						sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
-
-						//Checking if someone has won
-						progress[j]++;
-						if (progress[j] > 3)
+						//if (!onlineItems[i].getActiveState()) continue;
+						static DirectX::XMFLOAT3 vecToComp;
+						static DirectX::XMFLOAT3 objPos;
+						vecToComp = spaceShipPos[j];
+						objPos = onlineItems[i]->getPhysicsComponent()->getPosV3();
+						subtractionXMFLOAT3(vecToComp, objPos);
+						if (getLength(vecToComp) <= 10.f)
 						{
-							progress[0] = 0;
-							progress[1] = 0;
-							timeToFly = true;
+							//onlineItems[i].setInactive();
+							std::cout << "getLength() <= 10.f\n";
+							DirectX::XMFLOAT3 newCompPos = randomizeObjectPos();
+							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
+							onlineItems[i]->setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
+							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
+							ComponentAdded compAdded;
+							compAdded.packetId = PacketType::COMPONENTADDED;
+							compAdded.spaceShipTeam = j;
+							sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
+							
+							//Checking if someone has won
+							progress[j]++;
+							if (progress[j] > 3)
+							{
+								progress[0] = 0;
+								progress[1] = 0;
+								timeToFly = true;}
+							}
 						}
 					}
 				}
@@ -710,46 +754,46 @@ int main()
 
 			
 			////send component data to all players
-			//for (int i = 0; i < components.size(); i++)
+			//for (int i = 0; i < onlineItems.size(); i++)
 			//{
 			//	ComponentData compData;
 			//	
 			//	compData.packetId = PacketType::COMPONENTPOSITION;
 			//	compData.ComponentId = i;
-			//	compData.inUseBy = components[i].getInUseById();
-			//	compData.x = components[i].getposition('x');
-			//	compData.y = components[i].getposition('y');
-			//	compData.z = components[i].getposition('z');
-			//	compData.quat = components[i].getPhysicsComponent()->getRotation();
+			//	compData.inUseBy = onlineItems[i].getInUseById();
+			//	compData.x = onlineItems[i].getposition('x');
+			//	compData.y = onlineItems[i].getposition('y');
+			//	compData.z = onlineItems[i].getposition('z');
+			//	compData.quat = onlineItems[i].getPhysicsComponent()->getRotation();
 			//	//if its in use by a player it will get the players position
 
 			//	
 			//	sendBinaryDataAllPlayers<ComponentData>(compData, data);
 			//}
 
-			for (int i = 0; i < components.size(); i++)
+			for (int i = 0; i < onlineItems.size(); i++)
 			{
 				ComponentPosition compPosition;
-				compPosition.ComponentId = components[i].getOnlineId();
+				compPosition.ComponentId = onlineItems[i]->getOnlineId();
 				compPosition.packetId = PacketType::COMPONENTPOSITIONNEW;
-				compPosition.x = components[i].getposition('x');
-				compPosition.y = components[i].getposition('y');
-				compPosition.z = components[i].getposition('z');
-				//compPosition.quat = components[i].getPhysicsComponent()->getRotation();
+				compPosition.x = onlineItems[i]->getposition('x');
+				compPosition.y = onlineItems[i]->getposition('y');
+				compPosition.z = onlineItems[i]->getposition('z');
+				//compPosition.quat = onlineItems[i].getPhysicsComponent()->getRotation();
 				sendBinaryDataAllPlayers<ComponentPosition>(compPosition, data);
 
 			}
-			for (int i = 0; i < items.size(); i++)
-			{
-				itemPosition itemsPosData;
-				itemsPosData.packetId = PacketType::ITEMPOSITION;
-				itemsPosData.itemId = i;
-				itemsPosData.inUseBy = items[i].getInUseById();
-				itemsPosData.x = items[i].getposition('x');
-				itemsPosData.y = items[i].getposition('y');
-				itemsPosData.z = items[i].getposition('z');
-				//sendBinaryDataAllPlayers<itemPosition>(itemsPosData, data);
-			}
+			//for (int i = 0; i < items.size(); i++)
+			//{
+			//	itemPosition itemsPosData;
+			//	itemsPosData.packetId = PacketType::ITEMPOSITION;
+			//	itemsPosData.itemId = i;
+			//	itemsPosData.inUseBy = items[i].getInUseById();
+			//	itemsPosData.x = items[i].getposition('x');
+			//	itemsPosData.y = items[i].getposition('y');
+			//	itemsPosData.z = items[i].getposition('z');
+			//	//sendBinaryDataAllPlayers<itemPosition>(itemsPosData, data);
+			//}
 
 			start = std::chrono::system_clock::now();	
 		}
@@ -758,6 +802,11 @@ int main()
 	for (int i = 0; i < planetVector.size(); i++)
 	{
 		delete planetVector[i];
+	}
+	(void)getchar();
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		delete onlineItems[i];
 	}
     return 0;
 

@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX
 #include "stdafx.h"
 #include "ImGui/imgui.h"
 #include "imGUI/imgui_impl_dx11.h"

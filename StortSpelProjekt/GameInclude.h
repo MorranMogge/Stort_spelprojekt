@@ -27,6 +27,7 @@
 #include "BaseballBat.h"
 #include "SpaceShip.h"
 #include "Grenade.h"
+#include "AnimatedMesh.h"
 #include "Arrow.h"
 #include "CaptureZone.h"
 
@@ -44,6 +45,8 @@
 #include "ImGuiHelper.h"
 #include "StructuredBuffer.h"
 #include "BufferTypes.h"
+#include "ModelManager.h"
+#include "PacketEventManager.h"
 #include "PacketEventManager.h"
 #include "Profiler.h"
 

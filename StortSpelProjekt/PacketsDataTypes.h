@@ -60,7 +60,6 @@ struct ItemSpawn
 {
 	int packetId;
 	int itemId;
-	int inUseBy;
 	float x;
 	float y;
 	float z;
@@ -71,6 +70,7 @@ struct ComponentDropped
 {
 	int packetId;
 	int componentId;
+	int playerId;
 };
 
 //enum = 9
@@ -182,7 +182,27 @@ struct PlayerId
 	int teamId;
 };
 
-//enum = 23
+//enum 23
+struct baseballBatSpawn
+{
+	int packetId;
+	int baseBallBatId;
+	int xPos;
+	int yPos;
+	int zPos;
+};
+
+//enum 24
+struct PotionSpawn
+{
+	int packetId;
+	int potionId;
+	int xPos;
+	int yPos;
+	int zPos;
+};
+
+//enum = 25
 struct SpawnPlanets
 {
 	int packetId;

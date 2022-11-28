@@ -1,10 +1,12 @@
 #pragma once
+#define NOMINMAX
 #include "State.h"
 #include "MenuUI.h"
 #include "BasicRenderer.h"
 #include "Planet.h"
 #include "SkyboxObj.h"
 #include "LightHandler.h"
+
 
 class Menu : public State
 {

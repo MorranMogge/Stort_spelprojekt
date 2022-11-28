@@ -32,7 +32,7 @@
 
 #include <psapi.h>
 
-const short MAXNUMBEROFPLAYERS = 2;
+const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
 
 struct userData
@@ -282,7 +282,7 @@ int main()
 	srand(time(0));
 	std::vector<Planet*> planetVector;
 	float planetSize = 40.f;
-	int nrPlanets = (rand() % 3) + 1;
+	int nrPlanets = 3;//(rand() % 3) + 1;
 	for (int i = 0; i < nrPlanets; i++)
 	{
 		if (i == 0) planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));
@@ -332,6 +332,23 @@ int main()
 		threadData[i].pos[2] = -22.0f;
 		threadData[i].circBuffer = circBuffer;
 		recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
+	}
+
+	int temp = 0;
+	while (1)
+	{
+		if (circBuffer->getIfPacketsLeftToRead())
+		{
+			int packetId = circBuffer->peekPacketId();
+
+			if (packetId == PacketType::DONELOADING)
+			{
+				Loser* los = circBuffer->readData<Loser>();
+				std::cout << "DONE LOADING\n";
+				temp++;
+				if(temp == MAXNUMBEROFPLAYERS) break;
+			}
+		}
 	}
 
 	//Starting timer

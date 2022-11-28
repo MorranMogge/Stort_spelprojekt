@@ -271,8 +271,14 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	}
 }
 
-int PacketEventManager::handleId(CircularBufferClient*& circularBuffer)
+int PacketEventManager::handleId(CircularBufferClient*& circularBuffer, std::vector<Planet*>& planetVector, PhysicsWorld& physWorld, std::vector<Mesh*>& meshes,
+	std::vector<SpaceShip*>& spaceShips, std::vector<GameObject*>& gameObjects, GravityField* field, int& UwU)
 {
+
+	SpawnPlanets* planetData = nullptr;
+	SpaceShipPosition* spaceShipPos = nullptr;
+	SpaceShip* newSpaceShip = nullptr;
+
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{
 		int packetId = circularBuffer->peekPacketId();
@@ -283,6 +289,7 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer)
 		testPosition* tst = nullptr;
 		ComponentData* compData = nullptr;
 		SpawnComponent* spawnComp = nullptr;
+		PositionRotation* prMatrixData = nullptr;
 
 		switch (packetId)
 		{
@@ -293,6 +300,11 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer)
 			protocol = circularBuffer->readData<idProtocol>();
 			std::cout << "received player id: " << std::to_string(protocol->assignedPlayerId) << std::endl;
 			return protocol->assignedPlayerId;
+			break;
+
+		case PacketType::POSITIONROTATION:
+			prMatrixData = circularBuffer->readData<PositionRotation>();
+
 			break;
 
 		case PacketType::POSITION:
@@ -312,6 +324,30 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer)
 		case PacketType::SPAWNCOMPONENT:
 			spawnComp = circularBuffer->readData<SpawnComponent>();
 			std::cout << "Received SpawnComponent id: " << std::to_string(spawnComp->ComponentId) << std::endl;
+			break;
+
+
+		case PacketType::SPAWNPLANETS:
+			planetData = circularBuffer->readData<SpawnPlanets>();
+			std::cout << "Received planet\n";
+			planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos)));
+			planetVector.back()->setPlanetShape(&physWorld);
+			physWorld.setPlanets(planetVector);
+			UwU++;
+			break;
+
+		case PacketType::SPACESHIPPOSITION:
+			spaceShipPos = circularBuffer->readData<SpaceShipPosition>();
+			//Create correct spaceship depending on team
+			std::cout << "Spawned spaceship\n";
+			newSpaceShip = new SpaceShip(meshes[4], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, DirectX::SimpleMath::Vector3(2, 2, 2), 4);
+			spaceShips.push_back(newSpaceShip);
+			gameObjects.push_back(newSpaceShip);
+			physWorld.addPhysComponent(newSpaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3 * 0.75f, 0.75f));
+			newSpaceShip->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+			newSpaceShip->getPhysComp()->setRotation(DirectX::XMQuaternionRotationMatrix(newSpaceShip->getRot()));
+			newSpaceShip->getPhysComp()->setPosition(reactphysics3d::Vector3(newSpaceShip->getPosV3().x, newSpaceShip->getPosV3().y, newSpaceShip->getPosV3().z));
+			UwU++;
 			break;
 		}
 

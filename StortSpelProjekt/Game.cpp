@@ -10,7 +10,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 {
 	this->packetEventManager = new PacketEventManager();
 	gameMusic.load(L"../Sounds/Gold Rush Final.wav");
-	gameMusic.play(true);
+	//gameMusic.play(true);
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
 	client = new Client();
@@ -38,11 +38,12 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	//Setup players
 	if (IFONLINE)
 	{
+		int UwU = 0;
 		client->connectToServer();
 		int playerId = -1;
 		while (playerId <= -1 || playerId >= 9)
 		{
-			playerId = packetEventManager->handleId(client->getCircularBuffer());
+			playerId = packetEventManager->handleId(client->getCircularBuffer(), this->planetVector, physWorld, meshes, spaceShips, gameObjects,this->field, UwU);
 			//std::cout << "Game.cpp, playerId: " << std::to_string(playerId) << std::endl;
 		}
 		//int playerid = client->initTEMPPLAYERS();
@@ -59,6 +60,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			{
 				tmpPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 
 					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+				tmpPlayer->setGravityField(field);
 				tmpPlayer->addData(animData);
 				tmpPlayer->setOnlineID(i);
 				physWorld.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
@@ -69,6 +71,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 				std::cout << "Player online id: " << std::to_string(i) << " \n";
 				currentPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 					1, playerId, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+				currentPlayer->setGravityField(field);
 				currentPlayer->addData(animData);
 				currentPlayer->setOnlineID(i);
 				players.push_back(currentPlayer);
@@ -79,16 +82,22 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 		gamePad = new DirectX::GamePad();
 		currentPlayer->setGamePad(gamePad);
+		
+		while (UwU != 5)
+		{
+			std::cout << "UwU: " << UwU << std::endl;
+			packetEventManager->handleId(client->getCircularBuffer(), this->planetVector, physWorld, meshes, spaceShips, gameObjects, field, UwU);
+		}
+		Loser sendingConfirm;
+		sendingConfirm.packetId = PacketType::DONELOADING;
+		client->sendStuff<Loser>(sendingConfirm);
 	}
 
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
 	gameObjects.emplace_back(currentPlayer);
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->setGravityField(planetGravityField);
-	}
-	
+
+	//check the handle id for data ex(Planets, SpaceShips)
 
 	field = nullptr;
 	oldField = field;
@@ -99,7 +108,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	//baseballBat->setClient(client);
 
 	//Set items grenade
-	grenade->setGameObjects(gameObjects);
+	//grenade->setGameObjects(gameObjects);
 
 	//Init delta time
 	currentTime = std::chrono::system_clock::now();

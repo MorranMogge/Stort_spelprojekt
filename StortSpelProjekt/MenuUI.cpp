@@ -365,7 +365,6 @@ MenuUI::MenuUI()
 	title.Load(L"../Sprites/title.png");
 	title.SetScale(0.6f, 0.6f);
 
-
 }
 
 void MenuUI::Draw()

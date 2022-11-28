@@ -25,6 +25,7 @@ private:
 	ID3D11InputLayout* inputLayout;
 	ID3D11VertexShader* vShader;
 	ID3D11PixelShader* pShader;
+	ID3D11PixelShader* pShader_NoShadow;
 	ID3D11PixelShader* ApShader;
 	ID3D11VertexShader* vs_Skybox;
 	ID3D11PixelShader* ps_Skybox;
@@ -72,7 +73,7 @@ public:
 	void lightPrePass();
 	bool initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT);
 	void setUpScene();
-	void setUpScene(Camera& stageCamera);
+	void setUpScene(Camera& stageCamera, const bool& shadow = true);
 	void changeToAnimation();
 	void geometryPass(Camera & stageCamera);
 	void playerParticlePass();

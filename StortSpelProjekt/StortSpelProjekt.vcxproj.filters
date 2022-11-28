@@ -591,6 +591,9 @@
     <FxCompile Include="PT_UpdatePlayer.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="PixelShader_NoShadow.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico">

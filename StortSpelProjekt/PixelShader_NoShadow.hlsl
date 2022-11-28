@@ -1,4 +1,3 @@
-
 #include "Light.hlsli"
 
 struct Material
@@ -52,12 +51,12 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
     for (int i = 0; i < nrOfLights; ++i)
     {
         float4 lightWorldPosition = mul(worldPosition, lights[i].view);
-        #define POINT_LIGHT 0
-        #define DIRECTIONAL_LIGHT 1
-        #define SPOT_LIGHT 2
+#define POINT_LIGHT 0
+#define DIRECTIONAL_LIGHT 1
+#define SPOT_LIGHT 2
         
-        LightResult result = { { 0, 0, 0}, { 0, 0, 0 } };
-        float3 lightDir = float3(0,0,0);
+        LightResult result = { { 0, 0, 0 }, { 0, 0, 0 } };
+        float3 lightDir = float3(0, 0, 0);
         
         switch (lights[i].type)
         {
@@ -84,13 +83,11 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
                 break;
         }
         
-        float shadowFactor = DoShadow(lightWorldPosition, shadowMaps, shadowSampler, i, normal, lightDir, 300.0f);
-        
-        litResult.Diffuse += result.Diffuse * shadowFactor;
-        litResult.Specular += result.Specular * shadowFactor;
+        litResult.Diffuse += result.Diffuse;
+        litResult.Specular += result.Specular;
     }
     float3 frescolor = { 0 * fres, 0.35 * fres, 0.65 * fres };
-    return float4(((max(mat.ambient.xyz, 0.2f)/* + litResult.Specular*/) * diffuseColor + litResult.Diffuse) + frescolor, 1.0f);
+    return float4(((max(mat.ambient.xyz, 0.2f) /* + litResult.Specular*/) * diffuseColor + litResult.Diffuse) + frescolor, 1.0f);
 
 }
 

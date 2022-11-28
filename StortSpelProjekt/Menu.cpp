@@ -118,7 +118,7 @@ void Menu::Render()
 	//drawShadows();
 
 	//Render Scene
-	basicRenderer.setUpScene(this->cam);
+	basicRenderer.setUpScene(this->cam, false);
 	drawObjects();
 
 	//Unbind light

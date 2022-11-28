@@ -178,6 +178,7 @@ BasicRenderer::~BasicRenderer()
 	inputLayout->Release();
 	vShader->Release();
 	pShader->Release();
+	pShader_NoShadow->Release();
 	ApShader->Release();
 	vs_Skybox->Release();
 	ps_Skybox->Release();
@@ -234,6 +235,7 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!setUpInputLayoutAnim(device, vShaderByteCodeForAnim, this->animLayout))			return false;
 	if (!setUpInputLayout(device, vShaderByteCode, this->inputLayout))						return false;
 	if (!LoadPixelShader(device, pShader, "PixelShader"))									return false;
+	if (!LoadPixelShader(device, pShader_NoShadow, "PixelShader_NoShadow"))					return false;
 	if (!LoadPixelShader(device, ApShader, "AmbientPixelShader"))							return false;
 	if (!LoadVertexShader(device, pt_vShader, vShaderByteCode, "PT_VertexShader"))			return false;
 	if (!setUp_PT_InputLayout(device, vShaderByteCode))										return false;
@@ -295,7 +297,7 @@ void BasicRenderer::changeToAnimation()
 	immediateContext->IASetInputLayout(this->animLayout);
 	immediateContext->VSSetShader(this->vShaderAnim, nullptr, 0);
 }
-void BasicRenderer::setUpScene(Camera& stageCamera)
+void BasicRenderer::setUpScene(Camera& stageCamera, const bool& shadow)
 {				
 	immediateContext->ClearRenderTargetView(rtv, clearColour);
 	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
@@ -304,7 +306,7 @@ void BasicRenderer::setUpScene(Camera& stageCamera)
 	immediateContext->IASetInputLayout(inputLayout);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
 	immediateContext->RSSetViewports(1, &viewport);
-	immediateContext->PSSetShader(pShader, nullptr, 0);
+	shadow ? immediateContext->PSSetShader(pShader, nullptr, 0) : immediateContext->PSSetShader(pShader_NoShadow, nullptr, 0);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 	immediateContext->PSSetShaderResources(5, 1, &depthSrv);
 	immediateContext->PSSetSamplers(1, 1, &shadowSampler);

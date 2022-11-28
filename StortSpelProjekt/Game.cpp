@@ -10,8 +10,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 {
 	this->packetEventManager = new PacketEventManager();
 	gameMusic.load(L"../Sounds/Gold Rush Final.wav");
-	//gameMusic.play(true);
-	//gameMusic.setVolume(0.75f);
+	gameMusic.play(true);
+	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
 	client = new Client();
 	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;

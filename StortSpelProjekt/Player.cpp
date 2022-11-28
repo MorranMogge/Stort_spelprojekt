@@ -120,7 +120,7 @@ void Player::handleItems()
 			this->throwItem();
 		}
 		//Use the Item
-		else if (Input::KeyPress(KeyCode::E))// MAJOR ERROR PLS FIX THIS UwU xddddddd
+		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))// MAJOR ERROR PLS FIX THIS UwU xddddddd
 		{
 
 			//std::cout << "Timer: " << keyPressTimer.
@@ -1036,24 +1036,6 @@ float Player::getSpeed()const
 {
 	return this->currentSpeed;
 }
-//void Player::draw()
-//{
-//	//Team switch
-//	switch (team)
-//	{
-//	case 0:
-//		mesh->matKey[0] = "pintoRed.png"; break;
-//		break;
-//
-//	case 1:
-//		mesh->matKey[0] = "pintoBlue.png"; break;
-//		break;
-//
-//	}
-//
-//	this->mesh->UpdateCB(position, rotation, scale);
-//	this->mesh->DrawWithMat();
-//}
 
 void Player::drawIcon()
 {

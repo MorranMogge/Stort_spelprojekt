@@ -5,6 +5,7 @@
 #include "SettingsUI.h"
 #include "Credits.h"
 #include "SoundLibrary.h"
+#include "Time.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -16,13 +17,19 @@ void MenuUI::SpritePass()
 		return;
 	}
 	
-	hit_start ? start2.Draw(), start2.SetScale(0.35f, 0.35f) : start.Draw();
-	hit_setting? settings2.Draw(), settings2.SetScale(0.35f, 0.35f) :settings.Draw();
-	hit_credits ? credits2.Draw(), credits2.SetScale(0.35f, 0.35f) : credits.Draw();
-	hit_exit ? exit2.Draw(), exit2.SetScale(0.35f, 0.35f) : exit.Draw();
-	hit_control ? control2.Draw(), control2.SetScale(0.35f, 0.35f) : control.Draw();
+	hit_start ? start2.Draw() : start.Draw();
+	hit_setting? settings2.Draw() :settings.Draw();
+	hit_credits ? credits2.Draw() : credits.Draw();
+	hit_exit ? exit2.Draw() : exit.Draw();
+	hit_control ? control2.Draw() : control.Draw();
 
 	title.Draw();
+
+	
+	bar_b.Draw();
+	bar_p.SetScale((sin(Time::CurrentTime()) * 0.5 + 0.5) * 107, 0.6f);
+	bar_p.Draw();
+	bar_e.Draw();
 
 }
 
@@ -313,6 +320,7 @@ MenuUI::MenuUI()
 #define centerX 632
 #define centerY 340
 #define scale 0.3f,0.3f
+#define scale2 0.35f,0.35f
 
 	gamePad = std::make_unique<DirectX::GamePad>();
 	start = GUISprite(centerX, 300);
@@ -337,23 +345,23 @@ MenuUI::MenuUI()
 
 	start2 = GUISprite(centerX, 300);
 	start2.Load(L"../Sprites/Menu/start2_r.png");
-	start2.SetScale(scale);
+	start2.SetScale(scale2);
 
 	control2 = GUISprite(centerX, 300 + 75 * 1);
 	control2.Load(L"../Sprites/Menu/control2_r.png");
-	control2.SetScale(scale);
+	control2.SetScale(scale2);
 
 	settings2 = GUISprite(centerX, 300 + 75 * 2);
 	settings2.Load(L"../Sprites/Menu/settings2_r.png");
-	settings2.SetScale(scale);
+	settings2.SetScale(scale2);
 
 	credits2 = GUISprite(centerX, 300 + 75 * 3);
 	credits2.Load(L"../Sprites/Menu/credits2_r.png");
-	credits2.SetScale(scale);
+	credits2.SetScale(scale2);
 
 	exit2 = GUISprite(centerX, 300 + 75 * 4);
 	exit2.Load(L"../Sprites/Menu/exit2_r.png");
-	exit2.SetScale(scale);
+	exit2.SetScale(scale2);
 
 	Loading = GUISprite(centerX, centerY);
 	Loading.Load(L"../Sprites/Loding.png");
@@ -363,6 +371,19 @@ MenuUI::MenuUI()
 	title.Load(L"../Sprites/title.png");
 	title.SetScale(0.6f, 0.6f);
 
+	bar_b = GUISprite(centerX, 340 - 200);
+	bar_b.Load(L"../Sprites/bar/background.png");
+	bar_b.SetScale(0.6f, 0.6f);
+
+	bar_e = GUISprite(centerX, 340 - 200);
+	bar_e.Load(L"../Sprites/bar/edge.png");
+	bar_e.SetScale(0.6f, 0.6f);
+
+	bar_p = GUISprite(centerX - 210, 340 - 200-35);
+	bar_p.Load(L"../Sprites/bar/progress.png");
+	bar_p.SetScale(50, 0.6f);
+	bar_p.SetOrigin({ 0,0 });
+	bar_p.SetTint(DirectX::Colors::Blue.v);
 }
 
 void MenuUI::Draw()

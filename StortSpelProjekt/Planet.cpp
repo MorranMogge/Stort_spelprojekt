@@ -93,6 +93,16 @@ DirectX::SimpleMath::Vector3 Planet::getPlanetPosition() const
 	return this->position;
 }
 
+void Planet::setPlanetPosition(const DirectX::SimpleMath::Vector3& pos)
+{
+	position = pos;
+}
+
+void Planet::setPlanetScale(const DirectX::SimpleMath::Vector3& s)
+{
+	scale = s;
+}
+
 void Planet::movePlanet(float offset)
 {
 	this->position.x += offset;

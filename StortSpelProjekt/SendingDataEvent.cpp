@@ -23,8 +23,6 @@ void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Play
 	pr.AnimId = currentPlayer->getAnimId();
 	pr.animSpeed = currentPlayer->getAnimSpeed();
 	client->sendStuff<PositionRotation>(pr);
-
-
 	
 	//holds a component
 	//if (currentPlayer->getItemOnlineType() == 0)

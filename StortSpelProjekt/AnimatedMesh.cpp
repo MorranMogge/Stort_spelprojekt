@@ -321,6 +321,11 @@ AnimatedMesh::AnimatedMesh(Mesh* useMesh, const AnimationData& data, const Direc
 	this->hitStart = this->MySimp.animation[4].duration / 4;
 	this->hitStart /= this->MySimp.animation[4].ticksPerSecond;
 	this->MySimp.animation[4].duration /= 1.5;
+
+	throwStart = this->MySimp.animation[3].duration * 0.25;
+	this->throwStart /= this->MySimp.animation[3].ticksPerSecond;
+	this->MySimp.animation[3].duration *= 0.66;
+
 	std::vector<DirectX::XMFLOAT4X4> tempfloatvec;
 	tempfloatvec.reserve(data.boneVector.size());
 
@@ -391,6 +396,10 @@ void AnimatedMesh::updateAnim(const float& dt, unsigned animIndex, float animati
 			if (animIndex == 4)
 			{
 				this->totalTime = hitStart;
+			}
+			if (animIndex == 3)
+			{
+				this->totalTime = throwStart;
 			}
 		}
 		//if (oldTime >= 1) //dont over interpolate

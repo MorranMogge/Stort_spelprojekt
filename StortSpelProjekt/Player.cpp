@@ -1092,7 +1092,7 @@ void Player::stateMachine(const float dt)
 	}
 	else if (GetAsyncKeyState('R') && this->holdingItem != nullptr)
 	{
-		this->animSpeed = 1;
+		this->animSpeed = 2;
 		this->animIndex = 3;
 		this->doneWithAnim = false;
 	}

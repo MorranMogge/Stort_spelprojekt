@@ -131,6 +131,7 @@ private:
 	int oldAnimId;
 	int state;
 	float hitStart;
+	float throwStart;
 
 	//for server
 	unsigned int currentAnimId;

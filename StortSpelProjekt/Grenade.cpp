@@ -4,7 +4,7 @@
 #include "Player.h"
 #include "PhysicsComponent.h"
 
-Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
+Grenade::Grenade(Mesh* useMesh, Mesh* explodeMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
 	:Item(useMesh, pos, rot, id, onlineId, GRENADE, field), destructionIsImminent(false), exploded(false), timeToExplode(5.f), currentTime(0.0f), explodePosition(0,0,0)
 {
 	counter = 1.0f;
@@ -27,7 +27,7 @@ Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMF
 	this->colorBuffer.getData() = DirectX::XMFLOAT4(1 ,0.25 ,0 , 0.5);
 	this->colorBuffer.applyData();
 
-	explosionMesh = (new Mesh("../Meshes/Sphere"));
+	explosionMesh = explodeMesh;
 }
 
 Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
@@ -54,7 +54,6 @@ Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, co
 
 Grenade::~Grenade()
 {
-	delete explosionMesh;
 }
 
 void Grenade::explode()

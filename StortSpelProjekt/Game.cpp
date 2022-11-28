@@ -9,11 +9,11 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), manager(ModelManager(device))
 {
 	this->packetEventManager = new PacketEventManager();
-	//gameMusic.load(L"../Sounds/Gold Rush Final.wav");
+	gameMusic.load(L"../Sounds/Gold Rush Final.wav");
 	//gameMusic.load(L"../Sounds/zaowlrd.wav");
 
-	//gameMusic.play(true);
-	//gameMusic.setVolume(0.75f);
+	gameMusic.play(true);
+	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
 	client = new Client();
 	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
@@ -196,7 +196,7 @@ void Game::loadObjects()
 	//CREATE ITEMS 	//Sphere, reverseSphere, pinto, potion, rocket, bat, component, grenade, arrow
 	potion = new Potion(meshes[3], Vector3(0, 0, -42), Vector3(0.0f, 0.0f, 0.0f), POTION, 0, planetGravityField);
 	//baseballBat = new BaseballBat(meshes[5], Vector3(0, 0, 42), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
-	grenade = new Grenade(meshes[7], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
+	grenade = new Grenade(meshes[7], meshes[0], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
 	arrow = new Arrow(meshes[8], DirectX::SimpleMath::Vector3(0, 42, 0));
 
 	//currentPlayer = new Player(meshes[1], Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, client, 0, &planetGravityField);

@@ -22,7 +22,7 @@ private:
 	DirectX::XMFLOAT3 explodePosition;
 
 public:
-	Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field = nullptr);
+	Grenade(Mesh* useMesh, Mesh* explosion, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field = nullptr);
 	Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field = nullptr);
 	~Grenade();
 	void updateExplosionCheck();

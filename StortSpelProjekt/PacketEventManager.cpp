@@ -135,7 +135,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			}
 			else if (itemSpawn->itemType == ObjID::GRENADE)
 			{
-				grenade = new Grenade(meshes[7], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
+				grenade = new Grenade(meshes[7], meshes[0], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
 					DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), ObjID::GRENADE, itemSpawn->itemId, field);
 				//grenade->setClient(client);
 				grenade->setGameObjects(gameObjects);

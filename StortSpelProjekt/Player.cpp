@@ -53,11 +53,23 @@ void Player::resetRotationMatrix()
 
 void Player::handleItems()
 {
-	DirectX::SimpleMath::Vector3 newPos = this->position;
-	newPos += 4 * forwardVector;
+	//DirectX::SimpleMath::Vector3 newPos = this->position;
+	//newPos += 4 * forwardVector;
+
+	DirectX::XMFLOAT4X4 f1;
+	this->forwardKinematics("hand3:hand3:RightHand", f1);
+	DirectX::XMMATRIX mat = DirectX::XMLoadFloat4x4(&f1);
+	DirectX::XMVECTOR scale;
+	DirectX::XMVECTOR pos;
+	DirectX::XMVECTOR rot;
+	DirectX::XMMatrixDecompose(&scale, &rot, &pos, mat);
+	DirectX::SimpleMath::Vector3 newPos = pos;
+	//newPos += 4 * forwardVector;
 
 	PhysicsComponent* itemPhysComp = holdingItem->getPhysComp();
 	holdingItem->setPos(newPos);
+	holdingItem->setRot(rot);
+	itemPhysComp->setRotation(rot);
 	itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z }));
 
 	//Controller functions
@@ -848,7 +860,7 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 		}
 	}
 	//Keyboard pickup
-	else if (GetAsyncKeyState('E') && this->eKeyDown == false)
+	else if (GetAsyncKeyState('E') && this->eKeyDown == false && this->keyPressTimer.getTimePassed(0.1))
 	{
 		this->eKeyDown = true;
 	}

@@ -512,7 +512,7 @@ GAMESTATE Game::Update()
 	}
 
 	//Physics related functions
-	//if (!IFONLINE) physWorld.update(dt);
+	if (!IFONLINE) physWorld.update(dt);
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->updateMatrixOnline();
@@ -638,7 +638,7 @@ GAMESTATE Game::Update()
 
 	//animations
 
-	currentPlayer->giveItemMatrix();
+	//currentPlayer->giveItemMatrix();
 
 	//DirectX::XMFLOAT4X4 f1;
 	//this->currentPlayer->forwardKinematics("hand3:hand3:RightHand", f1);

@@ -74,6 +74,7 @@ private:
 	Mesh* planetMeshes;
 
 	//Items
+	int id;
 	Potion* potion;
 	BaseballBat* baseballBat;
 	Grenade* grenade;

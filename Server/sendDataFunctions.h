@@ -1,7 +1,7 @@
 #include <SFML/Network.hpp>
 #include "player.h"
 
-const short MAXNUMBEROFPLAYERS = 1;
+const short MAXNUMBEROFPLAYERS = 2;
 
 struct userData
 {
@@ -10,7 +10,7 @@ struct userData
 	sf::TcpSocket tcpSocket;
 	int playerId = -1;
 
-	player playa;
+	Player playa;
 };
 
 struct serverData

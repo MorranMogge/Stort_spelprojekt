@@ -181,27 +181,7 @@ struct PlayerId
 	int teamId;
 };
 
-//enum 23
-struct baseballBatSpawn
-{
-	int packetId;
-	int baseBallBatId;
-	int xPos;
-	int yPos;
-	int zPos;
-};
-
-//enum 24
-struct PotionSpawn
-{
-	int packetId;
-	int potionId;
-	int xPos;
-	int yPos;
-	int zPos;
-};
-
-//enum = 25
+//enum = 23
 struct SpawnPlanets
 {
 	int packetId;
@@ -260,4 +240,24 @@ struct DoneWithGame
 	int packetId;
 	int playerID;
 	MiniGames formerGame;
+};
+
+//enum 31
+struct baseballBatSpawn
+{
+	int packetId;
+	int baseBallBatId;
+	int xPos;
+	int yPos;
+	int zPos;
+};
+
+//enum 32
+struct PotionSpawn
+{
+	int packetId;
+	int potionId;
+	int xPos;
+	int yPos;
+	int zPos;
 };

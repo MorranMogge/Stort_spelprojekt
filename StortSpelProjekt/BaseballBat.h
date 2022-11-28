@@ -13,6 +13,9 @@ private:
 	Client* client;
 	std::vector<Player *> objects;
 
+	//For offline UwU
+	std::vector<GameObject*> GameObjects;
+
 	DirectX::SimpleMath::Vector3 batPos;
 	DirectX::SimpleMath::Vector3 savedPos;
 	float force;
@@ -26,8 +29,7 @@ public:
 	void setPlayer(Player* player);
 	void setClient(Client* client);
 	void setGameObjects(const std::vector<Player *>& objects);
-	//void setGameObjects(const std::vector<Player*>& objects);
+	void setGameObjects(const std::vector<GameObject*>& objects);
 	// Inherited via Item
 	virtual void useItem(const Player* playerHoldingItem) override;
-
 };

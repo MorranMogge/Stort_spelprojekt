@@ -11,9 +11,9 @@ PacketEventManager::~PacketEventManager()
 }
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
-	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips
-	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame,
-	float& redTeamPoints, float& blueTeamPoints, , Client*& client)
+	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects,
+	GravityField* field, std::vector<SpaceShip*>& spaceShips, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes,
+	std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame, float& redTeamPoints, float& blueTeamPoints, Client*& client)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -145,18 +145,18 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			onlineItems.push_back(baseballbat);
 			//gameObjects.push_back(baseballbat);
 			std::cout << "item spawned UWU: " << std::to_string(itemSpawn->itemId) << std::endl;
-		
+			std::cout << "SIZE ITEMS " << onlineItems.size() << "\n";
 			break;
 
 		case PacketType::ITEMPOSITION:
 			itemPosData = circularBuffer->readData<itemPosition>();
 			//std::cout << "item pos, item id: " << std::to_string(itemPosData->itemId) << std::endl;
-			for (int i = 0; i < componentVector.size(); i++)
+			for (int i = 0; i < onlineItems.size(); i++)
 			{
 				//std::cout << "vector item id: " << std::to_string(componentVector[i]->getOnlineId()) << ", recv Data itemid: " << std::to_string(itemPosData->itemId) << std::endl;
-				if (componentVector[i]->getOnlineId() == itemPosData->itemId)
+				if (onlineItems[i]->getOnlineId() == itemPosData->itemId)
 				{
-					componentVector[i]->setPos(DirectX::XMFLOAT3(itemPosData->x, itemPosData->y, itemPosData->z));
+					onlineItems[i]->setPos(DirectX::XMFLOAT3(itemPosData->x, itemPosData->y, itemPosData->z));
 					break;
 				}
 			}
@@ -302,6 +302,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			currentMinigame = startMinigame->minigame;
 			std::cout << "RECEIVED START OF MINIGAME\n";
 			break;
+
 		case PacketType::COMPONENTDROPPED:
 			cmpDropped = circularBuffer->readData<ComponentDropped>();
 			

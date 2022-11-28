@@ -6,7 +6,7 @@
 #include "SoundCollection.h"
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), , manager(ModelManager(device)), currentMinigame(MiniGames::COMPONENTCOLLECTION)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), manager(ModelManager(device)), currentMinigame(MiniGames::COMPONENTCOLLECTION)
 {
 	srand(time(0));
 
@@ -37,7 +37,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	//Load game objects
 	this->loadObjects();
-
 
 	//Setup players
 	if (IFONLINE)
@@ -92,18 +91,22 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	{
 		players[i]->setGravityField(planetGravityField);
 	}
-	
 
 	field = nullptr;
 	oldField = field;
 
 	//Set items baseball bat
-	//baseballBat->setPlayer(currentPlayer);
-	//baseballBat->setGameObjects(gameObjects);
+	if (!IFONLINE)
+	{
+		baseballBat->setPlayer(currentPlayer);
+		baseballBat->setGameObjects(gameObjects);
+
+		//Set items grenade
+		grenade->setGameObjects(gameObjects);
+	}
 	//baseballBat->setClient(client);
 
-	//Set items grenade
-	grenade->setGameObjects(gameObjects);
+	
 
 	//Init delta time
 	currentTime = std::chrono::system_clock::now();
@@ -187,9 +190,6 @@ void Game::loadObjects()
 		planetVector.back()->setPlanetShape(&physWorld);
 		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-130.f, -130.f, 130.f)));
 		planetVector.back()->setPlanetShape(&physWorld);
-
-		//planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(25.f, 25.f, 25.f), DirectX::XMFLOAT3(60.f, 60.f, 60.f)));
-		//planetVector.back()->setPlanetShape(&physWorld);
 		physWorld.setPlanets(planetVector);
 	}
 
@@ -199,18 +199,18 @@ void Game::loadObjects()
 	//Make sure the physics world has access to the planets
 
 	//CREATE ITEMS 	//Sphere, reverseSphere, pinto, potion, rocket, bat, component, grenade, arrow
-	potion = new Potion(meshes[3], Vector3(0, 0, -42), Vector3(0.0f, 0.0f, 0.0f), POTION, 0, planetGravityField);
-	//baseballBat = new BaseballBat(meshes[5], Vector3(0, 0, 42), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
-	grenade = new Grenade(meshes[7], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
+	if (!IFONLINE)
+	{
+		potion = new Potion(meshes[3], Vector3(0, 0, -42), Vector3(0.0f, 0.0f, 0.0f), POTION, 0, planetGravityField);
+		baseballBat = new BaseballBat(meshes[5], Vector3(0, 0, 42), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
+		grenade = new Grenade(meshes[7], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
+
+		//EMPLACE ITEMS
+		items.emplace_back(potion);
+		items.emplace_back(baseballBat);
+		items.emplace_back(grenade);
+	}
 	arrow = new Arrow(meshes[8], DirectX::SimpleMath::Vector3(0, 42, 0));
-
-	//currentPlayer = new Player(meshes[1], Vector3(0, 48, 0), Vector3(0.0f, 0.0f, 0.0f), PLAYER, client, 0, &planetGravityField);
-
-
-	//EMPLACE ITEMS
-	items.emplace_back(potion);
-	//items.emplace_back(baseballBat);
-	items.emplace_back(grenade);
 
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -262,10 +262,7 @@ void Game::loadObjects()
 		currentPlayer->setGamePad(gamePad);
 	}
 
-	if (!IFONLINE)
-	{
-		captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), planetGravityField, DirectX::SimpleMath::Vector3(10.f, 10.f, 10.f));
-	}
+	if (!IFONLINE) captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), planetGravityField, DirectX::SimpleMath::Vector3(10.f, 10.f, 10.f));
 }
 
 void Game::drawShadows()
@@ -430,13 +427,13 @@ void Game::handleKeybinds()
 
 GAMESTATE Game::updateComponentGame()
 {
-	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, client);
-
 	//Get newest delta time
 	//if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
 	//asteroids->updateAsteroids(dt, planetVector, gameObjects);
 
+	//Set moon
+	if (planetVector.size() > 2) planetVector[2]->rotateMoon(DirectX::XMFLOAT3(0, 0, 0), 0.5f);
+	
 	//Calculate gravity factor
 	if (planetVector.size() > 0) field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
 	if (field != oldField) { changedPlanet = true; currentPlayer->setGravityField(this->field); }
@@ -472,18 +469,24 @@ GAMESTATE Game::updateComponentGame()
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);
 	currentPlayer->requestingPickUpItem(onlineItems);
 
-	grenade->updateExplosionCheck();
 	//Update item checks
 	for (int i = 0; i < items.size(); i++)
 	{
-		int id = items[i]->getId();
+		id = items[i]->getId();
 		switch (id)
 		{
 		case ObjID::GRENADE:
 		{
 			Grenade* tempNade = (Grenade*)items[i];
 			tempNade->updateExplosionCheck();
-		}	break;
+
+			if (tempNade->getExploded() == true)
+			{
+				randomizeObjectPos(tempNade);
+				tempNade->setExploded(false);
+			}
+		} break;
+
 		case ObjID::POTION:
 		{
 			Potion* tempPotion = (Potion*)items[i];
@@ -493,17 +496,7 @@ GAMESTATE Game::updateComponentGame()
 			}
 		}	break;
 		}
-		break;
 	}
-
-
-	//Player functions
-	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
-	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
-	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
-	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
-	currentPlayer->velocityMove(dt);
-	currentPlayer->setSpeed(20.f);
 
 	/*if (Input::KeyPress(KeyCode::K))
 	{
@@ -524,7 +517,6 @@ GAMESTATE Game::updateComponentGame()
 		players[i]->updateMatrixOnline();
 		players[i]->update();
 	}
-	
 
 	//Updates gameObject physics components
 	for (int i = 0; i < gameObjects.size(); i++)
@@ -663,7 +655,6 @@ GAMESTATE Game::startLanding()
 	}
 
 	landingMiniGamePoints = 0.f;
-
 	return GAMESTATE::NOCHANGE;
 }
 
@@ -717,11 +708,6 @@ GAMESTATE Game::updateLandingGame()
 
 GAMESTATE Game::updateKingOfTheHillGame()
 {
-	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, 
-		gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame, 
-		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame);
-
 	//Get newest delta time
 	//if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
 	//asteroids->updateAsteroids(dt, planetVector, gameObjects);
@@ -753,11 +739,11 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
+	currentPlayer->setSpeed(20.f);
 
 	//Check component pickup
 	currentPlayer->requestingPickUpItem(onlineItems);
 
-	grenade->updateExplosionCheck();
 	//Update item checks
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -768,6 +754,11 @@ GAMESTATE Game::updateKingOfTheHillGame()
 		{
 			Grenade* tempNade = (Grenade*)items[i];
 			tempNade->updateExplosionCheck();
+			if (tempNade->getExploded() == true)
+			{
+				randomizeObjectPos(tempNade);
+				tempNade->setExploded(false);
+			}
 		}	break;
 		case ObjID::POTION:
 		{
@@ -912,10 +903,8 @@ GAMESTATE Game::updateIntermission()
 GAMESTATE Game::Update()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame, teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame);
-
-	//Set moon
-	planetVector[2]->rotateMoon(DirectX::XMFLOAT3(0, 0, 0), 0.5f);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
+		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client);
 
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();

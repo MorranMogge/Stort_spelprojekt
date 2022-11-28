@@ -119,9 +119,8 @@ void Player::handleItems()
 			this->throwItem();
 		}
 		//Use the Item
-		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))// MAJOR ERROR PLS FIX THIS UwU xddddddd
+		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))
 		{
-
 			//std::cout << "Timer: " << keyPressTimer.
 			keyPressTimer.resetStartTime();
 			////sending data to server
@@ -137,11 +136,9 @@ void Player::handleItems()
 			{
 				client->sendStuff<ComponentDropped>(c);
 			}
-			std::cout << "TEST 1 nuzzle\n";
 			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 			if (holdingItem->getId() == GRENADE)
 			{
-				std::cout << "TEST 2 nuzzle\n";
 				DirectX::XMFLOAT3 temp;
 				DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5.f + this->normalVector * 0.5f));
 				newNormalizeXMFLOAT3(temp);
@@ -151,19 +148,15 @@ void Player::handleItems()
 					else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
 				}
 
-
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 				//Apply the force
 				this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
 			}
-			std::cout << "TEST 3 nuzzle\n";
 			holdingItem->useItem(this);
-			std::cout << "TEST 4 nuzzle\n";
 			//itemPhysComp->setIsAllowedToSleep(true);
 			//itemPhysComp->setIsSleeping(true);
 			holdingItem->setPickedUp(false);
-			std::cout << "TEST 5 nuzzle\n";
 			holdingItem = nullptr;
 		}
 	}
@@ -188,7 +181,6 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	pickUpSfx.load(L"../Sounds/pickupCoin.wav");
 	playerHitSound.load(L"../Sounds/mixkit-sick-man-sneeze-2213.wav");
 	//walkingSound.setVolume(0.25f);
-
 
 	this->onlineID = onlineId;
 	this->rotationMX = XMMatrixIdentity();
@@ -455,7 +447,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
 		onGround = false;
-		this->velocity = this->normalVector * 40.f;
+		this->velocity = this->normalVector * 30.f;
 		this->position += this->normalVector * 1.8f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
@@ -1195,7 +1187,7 @@ void Player::setGamePad(DirectX::GamePad* gamePad)
 
 void Player::requestingPickUpItem(const std::vector<Item*>& items)
 {
-	if (holdingItem) return;// 
+	if (holdingItem) return;
 	if (Input::KeyPress(KeyCode::E))
 	{
 		std::cout << "items.size = " << std::to_string(items.size()) << std::endl;

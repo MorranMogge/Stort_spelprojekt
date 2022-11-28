@@ -22,7 +22,7 @@
 #include "TimeStruct.h"
 #include "ObjectId.h"
 #include "BaseBallBat.h"
-
+#include "Grenade.h"
 
 #include "TestObj.h"
 
@@ -32,7 +32,7 @@
 
 #include <psapi.h>
 
-const short MAXNUMBEROFPLAYERS = 2;
+const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
 
 struct userData
@@ -211,6 +211,7 @@ void sendBinaryDataOnePlayer(const T& data, userData& user)
 
 int main()
 {
+	srand((unsigned)(time(0)));
 	int itemid = 0;
 	int componentIdCounter = 0;
 	bool once = false;
@@ -549,6 +550,8 @@ int main()
 		{
 			ItemSpawn itemSpawnData;
 			DirectX::XMFLOAT3 temp = randomizeObjectPos();
+			itemSpawnData.itemType = 2 * (rand()%2) + 3;
+			std::cout << "ITEM TYPE: " << itemSpawnData.itemType << "\n";
 			itemSpawnData.x = temp.x;
 			itemSpawnData.y = temp.y;
 			itemSpawnData.z = temp.z;
@@ -556,9 +559,11 @@ int main()
 			std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
 			itemSpawnData.packetId = PacketType::ITEMSPAWN;
 
-			onlineItems.push_back(new BaseballBat(componentIdCounter));//ändra
+			
+			if (itemSpawnData.itemType == ObjID::BAT) onlineItems.push_back(new BaseballBat(componentIdCounter));//ändra
+			else if (itemSpawnData.itemType == ObjID::GRENADE) onlineItems.push_back(new Grenade(componentIdCounter));//ändra
 			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
-			onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);;
+			onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);
 			onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
 			onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
 			sendBinaryDataAllPlayers(itemSpawnData, data);

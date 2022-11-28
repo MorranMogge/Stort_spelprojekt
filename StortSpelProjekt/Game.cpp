@@ -9,7 +9,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), manager(ModelManager(device))
 {
 	this->packetEventManager = new PacketEventManager();
-	gameMusic.load(L"../Sounds/Gold Rush Final.wav");
+	//gameMusic.load(L"../Sounds/Gold Rush Final.wav");
+	//gameMusic.load(L"../Sounds/zaowlrd.wav");
+
 	//gameMusic.play(true);
 	//gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
@@ -462,17 +464,31 @@ GAMESTATE Game::Update()
 	currentPlayer->requestingPickUpItem(onlineItems);
 
 	//Check item pickup
-	//for (int i = 0; i < items.size(); i++)
-	//{
-	//	if (currentPlayer->pickupItem(items[i])) break;
-	//}
-
-	/*if (Input::KeyPress(KeyCode::K))
+	/*for (int i = 0; i < items.size(); i++)
 	{
-		randomizeObjectPos(this->testBat);
+		if (currentPlayer->pickupItem(items[i])) break;
 	}*/
 
-	grenade->updateExplosionCheck();
+	//Update item checks
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		int id = onlineItems[i]->getId();
+		switch (id)
+		{
+		case ObjID::GRENADE:
+		{
+			Grenade* tempNade = (Grenade*)onlineItems[i];
+			tempNade->updateExplosionCheck();
+		}	break;
+		case ObjID::POTION:
+		{
+			Potion* tempPotion = (Potion*)onlineItems[i];
+			if (tempPotion->timerGoing()) currentPlayer->setSpeed(50.f);
+			else currentPlayer->setSpeed(20.f);
+		}	break;
+		}
+		break;
+	}
 
 	//Update item checks
 	for (int i = 0; i < items.size(); i++)
@@ -502,11 +518,6 @@ GAMESTATE Game::Update()
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
-
-	/*if (Input::KeyPress(KeyCode::K))
-	{
-		randomizeObjectPos(this->testBat);
-	}*/
 
 	//sending data to server
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())

@@ -49,6 +49,7 @@ struct ItemSpawn
 {
 	int packetId;
 	int itemId;
+	int itemType;
 	float x;
 	float y;
 	float z;
@@ -199,4 +200,14 @@ struct SpawnPlanets
 	float yPos;
 	float zPos;
 	float size;
+};
+
+//enum = 69
+struct UseGrenade
+{
+	int packetId;
+	int itemId;
+	float xForce;
+	float yForce;
+	float zForce;
 };

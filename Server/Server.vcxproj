@@ -146,6 +146,7 @@
     <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
+    <ClCompile Include="Grenade.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="GameObject.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Grenade.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="ObjectId.h" />
     <ClInclude Include="PacketEnum.h" />

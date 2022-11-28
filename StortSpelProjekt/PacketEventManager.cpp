@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "PacketEventManager.h"
 #include "BaseballBat.h"
+#include "Grenade.h"
 
 PacketEventManager::PacketEventManager()
 {
@@ -29,6 +30,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	SpaceShip* newSpaceShip = nullptr;
 	Item* item = nullptr;
 	BaseballBat* baseballbat = nullptr;
+	Grenade* grenade = nullptr;
 	SpawnPlanets* planetData = nullptr;
 	ConfirmComponentPickedUp* confirmCmpPickedUp = nullptr;
 	ComponentPosition* cmpPosition = nullptr;
@@ -121,12 +123,25 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 		case PacketType::ITEMSPAWN:
 			itemSpawn = circularBuffer->readData<ItemSpawn>();
-			baseballbat = new BaseballBat(meshes[5], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
-				DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 3, itemSpawn->itemId, field);
-			baseballbat->setClient(client);
-			baseballbat->setGameObjects(players);
-			physWorld.addPhysComponent(baseballbat);
-			onlineItems.push_back(baseballbat);
+			std::cout << "OBJID: " << itemSpawn->itemType << "\n";
+			if (itemSpawn->itemType == ObjID::BAT)
+			{
+				baseballbat = new BaseballBat(meshes[5], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
+					DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), ObjID::BAT, itemSpawn->itemId, field);
+				baseballbat->setClient(client);
+				baseballbat->setGameObjects(players);
+				physWorld.addPhysComponent(baseballbat);
+				onlineItems.push_back(baseballbat);
+			}
+			else if (itemSpawn->itemType == ObjID::GRENADE)
+			{
+				grenade = new Grenade(meshes[7], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
+					DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), ObjID::GRENADE, itemSpawn->itemId, field);
+				//grenade->setClient(client);
+				grenade->setGameObjects(gameObjects);
+				physWorld.addPhysComponent(grenade);
+				onlineItems.push_back(grenade);
+			}
 			//gameObjects.push_back(baseballbat);
 			std::cout << "item spawned UWU: " << std::to_string(itemSpawn->itemId) << std::endl;
 		

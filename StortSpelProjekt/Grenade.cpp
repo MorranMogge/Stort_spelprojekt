@@ -8,8 +8,9 @@ Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMF
 	:Item(useMesh, pos, rot, id, onlineId, GRENADE, field), destructionIsImminent(false), exploded(false), timeToExplode(5.f), currentTime(0.0f), explodePosition(0,0,0)
 {
 	counter = 1.0f;
-	sfx.load(L"../Sounds/explosion.wav");
-	explosion.load(L"../Sounds/explodeGrenade.wav");
+	sfx.load(L"../Sounds/explosion.wav"); 
+	//explosion.load(L"../Sounds/explodeGrenade.wav");
+	explosion.load(L"../Sounds/zaowlrd.wav");
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
 

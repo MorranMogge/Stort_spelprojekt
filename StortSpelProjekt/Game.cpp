@@ -504,8 +504,8 @@ GAMESTATE Game::updateComponentGame()
 	}
 
 	//Setting the camera at position
-	if (!velocityCamera) camera.collisionCamera(currentPlayer, planetVector, dt);
-	else camera.moveVelocity(currentPlayer, dt);
+	if (!velocityCamera) camera.moveVelocity(currentPlayer, dt);
+	else camera.collisionCamera(currentPlayer, planetVector, dt);
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
 	//Check Components online
@@ -768,7 +768,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 
 	//Setting the camera at position
 	if (!velocityCamera) camera.moveVelocity(currentPlayer, dt);
-	else camera.moveCamera(currentPlayer, dt);
+	else camera.collisionCamera(currentPlayer, planetVector, dt);
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
 	//Arrow pointing to spaceship		FIX!

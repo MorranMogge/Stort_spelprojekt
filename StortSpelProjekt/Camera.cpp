@@ -101,13 +101,13 @@ void Camera::moveVelocity(Player* player, const float& deltaTime)
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotationMX);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotationMX);
 	lookAtPos = playerPosition;
-	logicalPos = playerPosition + logicalUp * 60.f - forwardVector * 50.f;
+	logicalPos = playerPosition + logicalUp * 50.f - forwardVector * 70.f;
 
 	//The showing camera
 	velocityVector = XMVectorSubtract(logicalPos, cameraPos);
-	cameraPos += velocityVector * deltaTime * 5.f;
+	cameraPos += velocityVector * deltaTime * 6.f;
 	velocityVector = XMVectorSubtract(logicalUp, upVector);
-	upVector += velocityVector * deltaTime * 5.f;
+	upVector += velocityVector * deltaTime * 6.f;
 
 	//Changing FOV if player moving faster
 	if (XMVector3NotEqual(cameraPos, oldCameraPos))
@@ -151,13 +151,14 @@ void Camera::collisionCamera(Player* player, const std::vector<Planet*>& planets
 		cameraVector = XMVectorSubtract(planets[i]->getPlanetPosition(), logicalPos);
 		cameraVector = XMVector3Length(cameraVector);
 
-		//It collided with planet
+		//It collided with planet, it goes away
 		cameraVector *= 0.6f;
 		if  (XMVector3LessOrEqual(cameraVector, planetVector))
 		{
 			index = i;
 		}
 
+		//It collided with planet, it ducks down
 		cameraVector *= 0.9f;
 		if (XMVector3LessOrEqual(cameraVector, planetVector))
 		{

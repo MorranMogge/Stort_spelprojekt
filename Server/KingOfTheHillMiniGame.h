@@ -13,7 +13,7 @@ class KingOfTheHillMiniGame
 private:
 	std::chrono::time_point<std::chrono::system_clock> timer;
 	std::chrono::time_point<std::chrono::system_clock> timerToSend;
-	std::chrono::time_point<std::chrono::system_clock> timerToSpawnItems;
+	std::chrono::time_point<std::chrono::system_clock> itemSpawnTimer;
 	float time;
 	float timerSend;
 	float timeToSpawnItems;

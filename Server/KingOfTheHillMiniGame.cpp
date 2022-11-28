@@ -1,11 +1,12 @@
 #include "KingOfTheHillMiniGame.h"
 
 KingOfTheHillMiniGame::KingOfTheHillMiniGame(serverData& data, const short &nrOfPlayers)
-	:kingOfTheHillOrigo(-50,0,0), radius(30), nrOfPlayers(nrOfPlayers), team1Score(0), team2Score(0), pointsToAdd(10), time(5), goalScore(100)
+	:kingOfTheHillOrigo(-50,0,0), radius(30), nrOfPlayers(nrOfPlayers), team1Score(0), team2Score(0), pointsToAdd(10), time(5), goalScore(100), timeToSpawnItems(5)
 {
 	sendKingOfTheHillZone(data);
 	this->timer = std::chrono::system_clock::now();
 	this->timerToSend = std::chrono::system_clock::now();
+	this->itemSpawnTimer = std::chrono::system_clock::now();
 	timerSend =  4.0f;
 }
 
@@ -106,6 +107,11 @@ void KingOfTheHillMiniGame::update(serverData& data)
 			}
 			this->timerToSend = std::chrono::system_clock::now();
 		}
+	}
+
+	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - this->itemSpawnTimer)).count() > timeToSpawnItems)
+	{
+
 	}
 
 	//fixa för team 2

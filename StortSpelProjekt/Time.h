@@ -35,13 +35,13 @@ public:
 	static void Start()
 	{
 		lap = std::chrono::steady_clock::now();
-		delta = std::chrono::duration<float, std::ratio<1, 1>>(std::chrono::steady_clock::now() - lap).count();
 
 		static const bool once = []()
 		{
 			start = lap;
 			return true;
 		} ();
+
 	}
 
 
@@ -49,6 +49,5 @@ private:
 
 	inline static std::chrono::steady_clock::time_point lap;
 	inline static std::chrono::steady_clock::time_point start;
-	inline static float delta = 0;
 
 };

@@ -14,7 +14,7 @@ Menu::Menu()
 	meshes.push_back(new Mesh("../Meshes/Sphere"));
 	meshes.push_back(new Mesh("../Meshes/reverseSphere"));
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		planets.push_back(new Planet(meshes[0], DirectX::XMFLOAT3(i + 0.5f, i + 0.5f, i + 0.5f), DirectX::XMFLOAT3(0.f + i * 10.f, 0.f + i * 10.f, 0.f), (4.0f * 9.82f), meshes[1], 0));
 		planets[i]->setVelocity((4 - i*0.7f)*0.25f);
@@ -23,6 +23,9 @@ Menu::Menu()
 
 	}
 	planets.push_back(new Planet(meshes[0], DirectX::XMFLOAT3(50, 50, 50), DirectX::XMFLOAT3(-130, -30.f, 0.f), (4.0f * 9.82f), meshes[1]));
+
+	planets[4]->setPlanetPosition({ 20 ,0,-40 });
+	planets[4]->setPlanetScale({ 1, 1, 1 });
 
 	cam.setPosition(DirectX::XMFLOAT3(20, 0, -70));
 	cam.setCameraLookAt(DirectX::XMFLOAT3(-20, 0, 10));

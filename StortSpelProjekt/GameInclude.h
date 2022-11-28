@@ -37,6 +37,7 @@
 
 //ui
 #include "HudUI.h"
+#include "MiniGameUI.h"
 
 //Other
 #include "ShaderLoader.h"

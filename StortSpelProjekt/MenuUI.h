@@ -29,8 +29,6 @@ class MenuUI final
 
 	GAMESTATE gameState = NOCHANGE;
 
-	GUIText testText;
-
 	int selectIndex = 0;
 
 	std::unique_ptr<DirectX::GamePad> gamePad;

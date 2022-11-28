@@ -21,11 +21,8 @@ void KingOfTheHillMiniGame::sendKingOfTheHillZone(serverData& data)
 	sendBinaryDataAllPlayers<CreateZone>(zone, data);
 }
 
-<<<<<<< HEAD
-void KingOfTheHillMiniGame::update(serverData& data)
-=======
+
 void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld)
->>>>>>> parent of 2ba2ae7 (added baseBallBat)
 {
 	static float xPos;
 	static float yPos;
@@ -115,9 +112,7 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - this->itemSpawnTimer)).count() > timeToSpawnItems)
 	{
-<<<<<<< HEAD
 
-=======
 		ItemSpawn itemSpawnData;
 		DirectX::XMFLOAT3 temp /*= randomizeObjectPos()*/;
 		itemSpawnData.x = temp.x;
@@ -134,7 +129,6 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 		//onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
 		sendBinaryDataAllPlayers(itemSpawnData, data);
 		itemSpawnTimer = std::chrono::system_clock::now();
->>>>>>> parent of 2ba2ae7 (added baseBallBat)
 	}
 
 	//fixa för team 2

@@ -5,12 +5,12 @@
 #include "PacketEnum.h"
 #include "PacketsDataTypes.h"
 #include "sendDataFunctions.h"
-<<<<<<< HEAD
 
-=======
+
+
 #include "Item.h"
 #include "PhysicsWorld.h"
->>>>>>> parent of 2ba2ae7 (added baseBallBat)
+
 
 
 class KingOfTheHillMiniGame
@@ -45,11 +45,8 @@ public:
 	//Bestäm position på zonen
 	void sendKingOfTheHillZone(serverData& data);
 	void spawnItems();
-<<<<<<< HEAD
-	void update(serverData& data);
-=======
 	void update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld);
->>>>>>> parent of 2ba2ae7 (added baseBallBat)
+
 	//Check if players are inside the zone
 	//SpawnBats
 	//Check who won

@@ -14,5 +14,5 @@ public:
 	bool returnStatus()const;
 
 	// Inherited via Item
-	virtual void useItem() override;
+	virtual void useItem(const Player* playerHoldingItem) override;
 };

@@ -46,7 +46,7 @@ bool Component::returnStatus() const
 	return this->pickedUp;
 }
 
-void Component::useItem()
+void Component::useItem(const Player* playerHoldingItem)
 {
 	std::cout << "You used the Component\n";
 }

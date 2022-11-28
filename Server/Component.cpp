@@ -4,7 +4,7 @@ Component::Component()
 {
 }
 
-void Component::use()
+void Component::use(const player* playerHoldingItem)
 {
 
 }

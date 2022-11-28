@@ -8,9 +8,9 @@
 
 
 
-#include "Item.h"
+#include "BaseballBat.h"
 #include "PhysicsWorld.h"
-
+#include "RandomizeSpawn.h"
 
 
 class KingOfTheHillMiniGame
@@ -45,7 +45,7 @@ public:
 	//Bestäm position på zonen
 	void sendKingOfTheHillZone(serverData& data);
 	void spawnItems();
-	void update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld);
+	void update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, int& componentIdCounter);
 
 	//Check if players are inside the zone
 	//SpawnBats

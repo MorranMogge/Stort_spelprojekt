@@ -11,5 +11,5 @@ private:
 public:
 	Component();
 
-	virtual void use() override;
+	virtual void use(const player* playerHoldingItem) override;
 };

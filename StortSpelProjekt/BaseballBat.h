@@ -11,7 +11,7 @@ class BaseballBat : public Item
 private:
 	Player* player;
 	Client* client;
-	std::vector<GameObject *> objects;
+	std::vector<Player*> objects;
 
 	DirectX::SimpleMath::Vector3 batPos;
 	DirectX::SimpleMath::Vector3 savedPos;
@@ -25,9 +25,9 @@ public:
 
 	void setPlayer(Player* player);
 	void setClient(Client* client);
-	void setGameObjects(const std::vector<GameObject *>& objects);
+	void setGameObjects(const std::vector<Player*>& objects);
 	//void setGameObjects(const std::vector<Player*>& objects);
 	// Inherited via Item
-	virtual void useItem() override;
+	virtual void useItem(const Player* playerHoldingItem) override;
 
 };

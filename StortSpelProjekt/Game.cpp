@@ -81,9 +81,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	oldField = field;
 
 	//Set items baseball bat
-	baseballBat->setPlayer(currentPlayer);
-	baseballBat->setGameObjects(gameObjects);
-	baseballBat->setClient(client);
+	//baseballBat->setPlayer(currentPlayer);
+	//baseballBat->setGameObjects(gameObjects);
+	//baseballBat->setClient(client);
 
 	//Set items grenade
 	grenade->setGameObjects(gameObjects);
@@ -426,7 +426,7 @@ GAMESTATE Game::updateComponentGame()
 {
 	
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentGameState);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentGameState, client);
 
 	//Get newest delta time
 	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
@@ -665,7 +665,7 @@ GAMESTATE Game::Update()
 {
 	//read the packets received from the server
 	currentGameState = NOCHANGE;
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentGameState);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentGameState, client);
 	
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();

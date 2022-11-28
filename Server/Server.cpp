@@ -483,7 +483,7 @@ int main()
 		//	}
 		//}
 
-		miniGameKTH.update(data);
+		miniGameKTH.update(data,onlineItems,physWorld, componentIdCounter);
 		
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
 		{
@@ -521,6 +521,8 @@ int main()
 		//sends data based on the server tickrate
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - start)).count() > timerLength)
 		{
+			start = std::chrono::system_clock::now();
+
 			for (int i = 0; i < 10; i++)
 			{
 				physWorld.update(timerLength / 10.f);
@@ -609,19 +611,20 @@ int main()
 				sendBinaryDataAllPlayers<ComponentPosition>(compPosition, data);
 
 			}
-			for (int i = 0; i < items.size(); i++)
+			for (int i = 0; i < onlineItems.size(); i++)
 			{
-				itemPosition itemsPosData;
-				itemsPosData.packetId = PacketType::ITEMPOSITION;
-				itemsPosData.itemId = i;
-				itemsPosData.inUseBy = items[i].getInUseById();
-				itemsPosData.x = items[i].getposition('x');
-				itemsPosData.y = items[i].getposition('y');
-				itemsPosData.z = items[i].getposition('z');
-				//sendBinaryDataAllPlayers<itemPosition>(itemsPosData, data);
+				ComponentPosition compPosition;
+				compPosition.ComponentId = onlineItems[i]->getOnlineId();
+				compPosition.packetId = PacketType::COMPONENTPOSITIONNEW;
+				compPosition.x = onlineItems[i]->getposition('x');
+				compPosition.y = onlineItems[i]->getposition('y');
+				compPosition.z = onlineItems[i]->getposition('z');
+				//compPosition.quat = onlineItems[i].getPhysicsComponent()->getRotation();
+				sendBinaryDataAllPlayers<ComponentPosition>(compPosition, data);
+
 			}
 
-			start = std::chrono::system_clock::now();	
+			
 		}
 	}
 

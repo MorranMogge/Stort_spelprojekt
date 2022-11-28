@@ -76,7 +76,7 @@ void BaseballBat::setClient(Client* client)
 	this->client = client;
 }
 
-void BaseballBat::setGameObjects(const std::vector<GameObject*>& objects)
+void BaseballBat::setGameObjects(const std::vector<Player*>& objects)
 {
 	this->objects = objects;
 }
@@ -90,7 +90,7 @@ void BaseballBat::setGameObjects(const std::vector<GameObject*>& objects)
 //	}
 //}
 
-void BaseballBat::useItem()
+void BaseballBat::useItem(const Player* playerHoldingItem)
 {
 	sfx.stop();
 	sfx.play();
@@ -108,7 +108,7 @@ void BaseballBat::useItem()
 	bool collided = false;
 	for (int i = 0; i < objects.size(); i++)
 	{
-		if (this == objects[i] || objects[i] == this->player) continue;
+		if ((GameObject*)this == objects[i] || objects[i] == playerHoldingItem) continue;
 
         physComp = objects[i]->getPhysComp();
         if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue;

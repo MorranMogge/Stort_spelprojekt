@@ -5,7 +5,7 @@
 #include "PacketEnum.h"
 #include "PacketsDataTypes.h"
 #include "sendDataFunctions.h"
-#include "Item.h"
+#include "BaseBallBat.h"
 #include "PhysicsWorld.h"
 
 
@@ -41,7 +41,7 @@ public:
 	//Bestäm position på zonen
 	void sendKingOfTheHillZone(serverData& data);
 	void spawnItems();
-	void update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld);
+	void update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, int& componentIdCounter);
 	//Check if players are inside the zone
 	//SpawnBats
 	//Check who won

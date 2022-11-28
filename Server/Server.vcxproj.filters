@@ -15,6 +15,7 @@
     <ClCompile Include="ServerPlanet.cpp" />
     <ClCompile Include="SpawnComponent.cpp" />
     <ClCompile Include="KingOfTheHillMiniGame.cpp" />
+    <ClCompile Include="BaseBallBat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CircularBuffer.h" />
@@ -36,5 +37,6 @@
     <ClInclude Include="TimeStruct.h" />
     <ClInclude Include="KingOfTheHillMiniGame.h" />
     <ClInclude Include="sendDataFunctions.h" />
+    <ClInclude Include="BaseBallBat.h" />
   </ItemGroup>
 </Project>

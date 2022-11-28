@@ -49,9 +49,8 @@ public:
 	float getFieldFactor()const;
 	DirectX::SimpleMath::Vector3 getPlanetPosition()const;
 	void setPlanetPosition(const DirectX::SimpleMath::Vector3& pos);
-
 	void setPlanetScale(const DirectX::SimpleMath::Vector3& s);
-
+	
 	void movePlanet(float offset);
 	//Returns the gravity field of the planet
 	GravityField* getGravityField()const;
@@ -67,7 +66,7 @@ public:
 	bool insideGravityField(const DirectX::SimpleMath::Vector3& position)const;
 	PhysicsComponent* getPlanetCollider()const;
 	float getSize(int index = 0)const;
-
+	DirectX::SimpleMath::Vector3 getRotation() const;
 	//Rotats in sphere path around point
 	void rotateAroundPoint(const DirectX::XMFLOAT3& point);
 	

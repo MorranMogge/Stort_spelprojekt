@@ -26,12 +26,11 @@ Menu::Menu()
 
 	planets[4]->setPlanetPosition({ 20 ,0,-40 });
 	planets[4]->setPlanetScale({ 1, 1, 1 });
-
 	cam.setPosition(DirectX::XMFLOAT3(20, 0, -70));
 	cam.setCameraLookAt(DirectX::XMFLOAT3(-20, 0, 10));
 	DirectX::SimpleMath::Vector3 newTemp(-40, 0, -60);
 	newTemp.Normalize();
-	ltHandler.addLight(DirectX::XMFLOAT3(15, 10, -0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(50, 50, 50), DirectX::XMFLOAT3(0, 1, 0), 1, 0.5f, 1000.5f);
+	ltHandler.addLight(DirectX::XMFLOAT3(15, 10, -0), DirectX::XMFLOAT3(1, 1, 1), planets[4]->getPlanetPosition(), DirectX::XMFLOAT3(0, 1, 0), 1, 0.5f, 1000.5f);
 	//ltHandler.addLight(DirectX::XMFLOAT3(15, 10, -0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(50, 50, 50), DirectX::XMFLOAT3(0, 1, 0), 1, 0.5f, 1000.5f);
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 }
@@ -55,6 +54,14 @@ GAMESTATE Menu::Update()
 	//	planets[i]->rotateAroundPoint(DirectX::XMFLOAT3(0, 0, 0));
 	//	planets[i]->rotatePlanet();
 	//}
+
+	//Rotate main planet
+	float constant = 0.000005f;
+	DirectX::SimpleMath::Vector3 currentRot = planets[5]->getRotation();
+	DirectX::SimpleMath::Vector3 targetRot(currentRot.x + constant, currentRot.y + constant, currentRot.z);
+	planets[5]->setRotation(targetRot);
+
+
 	return ui.GetGameState();
 }
 
@@ -119,6 +126,8 @@ void Menu::Render()
 	//Render shadow maps
 	//basicRenderer.lightPrePass();
 	//drawShadows();
+
+
 
 	//Render Scene
 	basicRenderer.setUpScene(this->cam, false);

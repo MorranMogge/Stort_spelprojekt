@@ -56,9 +56,17 @@ void Item::drawParticles()
 	if (this->particles != nullptr && pickedUp)
 	{
 		if (tStruct.getDt() < 1)
-		{
+		{	
+			this->particles->setColor(1, 1, 1);
+			this->particles->setSize(3.0f);
 			this->particles->BindAndDraw(0);
 		}
+	}
+	else if (!this->pickedUp)
+	{
+		this->particles->setColor(color);
+		this->particles->setSize(1.0f);
+		this->particles->BindAndDraw(4);
 	}
 }
 
@@ -113,16 +121,7 @@ void Item::update()
 	}
 }
 
-void Item::drawPickupParticles()
-{
-	if (!this->pickedUp)
-	{
-		this->particles->setSize(1.0f);
-		this->particles->BindAndDraw(4);
-	}
-}
-
-void Item::drawPickupFresnel()
+void Item::drawFresnel()
 {
 	if (!this->pickedUp)
 	{

@@ -345,6 +345,11 @@ DirectX::XMFLOAT3 ParticleEmitter::getRotation() const
 	return this->Rotation;
 }
 
+DirectX::XMFLOAT3 ParticleEmitter::getColor()
+{
+	return DirectX::XMFLOAT3{ colorBuffer.getData().x,colorBuffer.getData().y,colorBuffer.getData().z };		
+}
+
 float ParticleEmitter::getSpeed() const
 {
 	return this->speed;

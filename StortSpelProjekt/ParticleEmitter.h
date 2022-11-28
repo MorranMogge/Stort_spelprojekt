@@ -42,6 +42,7 @@ public:
 	int getNrOfParticles() const;
 	DirectX::XMFLOAT3 getPosition() const;
 	DirectX::XMFLOAT3 getRotation() const;
+	DirectX::XMFLOAT3 getColor();
 	float getSpeed() const;
 	void setSpeed(const float & speed);
 	void setPosition(const DirectX::XMFLOAT3 &Pos);

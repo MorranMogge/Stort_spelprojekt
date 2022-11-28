@@ -10,19 +10,22 @@
 Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
 	:Item(useMesh, pos, rot, id, onlineId, GRENADE, field), destructionIsImminent(false), exploded(false), timeToExplode(5.f), currentTime(0.0f), explodePosition(0,0,0)
 {
+	//Sfx
 	counter = 1.0f;
 	sfx.load(L"../Sounds/explosion.wav");
 	explosion.load(L"../Sounds/explodeGrenade.wav");
 
+	//Color
+	this->color = DirectX::Colors::Yellow.v;
+
 	//Set up Fresnel buffer
-	DirectX::SimpleMath::Vector3 ptCol = DirectX::Colors::Yellow.v;
 	fresnelBuffer.Initialize(GPU::device, GPU::immediateContext);
-	fresnelBuffer.getData() = DirectX::XMFLOAT4(ptCol.x, ptCol.y, ptCol.z, 1);
+	fresnelBuffer.getData() = DirectX::XMFLOAT4(color.x, color.y, color.z, 1);
 	fresnelBuffer.applyData();
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
-	this->particles->setColor(ptCol);
+	this->particles->setColor(color);
 
 	//Item Icon
 	float constant = 4.0f;
@@ -32,7 +35,7 @@ Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMF
 	this->itemIcon = new BilboardObject(tempStr, iconPos);
 	this->itemIcon->setOffset(constant);
 
-	//Set up color buffer
+	//Set up Explosion color buffer
 	this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
 	this->colorBuffer.getData() = DirectX::XMFLOAT4(1 ,0.25 ,0 , 0.5);
 	this->colorBuffer.applyData();
@@ -43,14 +46,22 @@ Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMF
 Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
 	:Item(objectPath, pos, rot, id, onlineId, GRENADE, field), destructionIsImminent(false), exploded(false), timeToExplode(5.f), currentTime(0.0f), explodePosition(0, 0, 0)
 {
-	//Particles
-	this->particles = new ParticleEmitter(pos, rot, 36, DirectX::XMFLOAT2(2, 5), 4);
-	this->particles->setColor(DirectX::Colors::Yellow.v);
+	//Sfx
+	counter = 1.0f;
+	sfx.load(L"../Sounds/explosion.wav");
+	explosion.load(L"../Sounds/explodeGrenade.wav");
+
+	//Color
+	this->color = DirectX::Colors::Yellow.v;
 
 	//Set up Fresnel buffer
 	fresnelBuffer.Initialize(GPU::device, GPU::immediateContext);
-	fresnelBuffer.getData() = DirectX::XMFLOAT4(1, 0.25, 0, 0.5);
+	fresnelBuffer.getData() = DirectX::XMFLOAT4(color.x, color.y, color.z, 1);
 	fresnelBuffer.applyData();
+
+	//Particles
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
+	this->particles->setColor(color);
 
 	//Item Icon
 	float constant = 4.0f;
@@ -60,7 +71,7 @@ Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, co
 	this->itemIcon = new BilboardObject(tempStr, iconPos);
 	this->itemIcon->setOffset(constant);
 
-	//Set up color buffer
+	//Set up Explosion color buffer
 	this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
 	this->colorBuffer.getData() = DirectX::XMFLOAT4(1, 0.25, 0, 0.5);
 	this->colorBuffer.applyData();
@@ -170,7 +181,7 @@ void Grenade::drawParticles()
 		}
 		else
 		{
-			this->mesh->matKey[0] = "olive.jpg";			
+			this->mesh->matKey[0] = "olive.jpg";		
 
 		}
 	}
@@ -182,11 +193,20 @@ void Grenade::drawParticles()
 		{
 			if (tStruct.getDt() < 1)
 			{
+				this->particles->setColor(1, 1, 1);
+				this->particles->setSize(3.0f);
 				this->particles->BindAndDraw(0);
 			}
 		}
+		else if (!this->pickedUp && !destructionIsImminent)
+		{
+			this->particles->setColor(color);
+			this->particles->setSize(1.0f);
+			this->particles->BindAndDraw(4);
+		}
 	}
 }
+
 
 void Grenade::drawFresnel()
 {	
@@ -197,6 +217,16 @@ void Grenade::drawFresnel()
 		this->explosionMesh->DrawWithMat();
 		this->explosionMesh->scale = DirectX::XMFLOAT3(this->explosionMesh->scale.x - (currentTime / 4) , this->explosionMesh->scale.y - (currentTime / 4), this->explosionMesh->scale.z - (currentTime / 4));
 		this->explosionMesh->UpdateCB(explodePosition, rotation, this->explosionMesh->scale);
+	}
+
+	if (!this->pickedUp && !destructionIsImminent)
+	{
+		float constant = 0.2f;
+		GPU::immediateContext->PSSetConstantBuffers(2, 1, this->fresnelBuffer.getReferenceOf());
+		DirectX::XMFLOAT3 test = this->scale;
+		this->scale = DirectX::XMFLOAT3(test.x + constant, test.y + constant, test.z + constant);
+		this->draw();
+		this->scale = test;
 	}
 }
 

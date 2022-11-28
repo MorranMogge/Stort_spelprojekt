@@ -192,6 +192,11 @@ float Planet::getSize(int index) const
 	
 }
 
+DirectX::SimpleMath::Vector3 Planet::getRotation() const
+{
+	return this->rotation;//DirectX::SimpleMath::Quaternion::CreateFromRotationMatrix(this->mesh->rotation).ToEuler();
+}
+
 void Planet::rotateAroundPoint(const DirectX::XMFLOAT3& point)
 {
 	float deg = rotDegrees * (DirectX::XM_PI / 180.f);

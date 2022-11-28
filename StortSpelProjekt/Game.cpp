@@ -362,7 +362,6 @@ void Game::drawParticles()
 	for (int i = 0; i < items.size(); i++)
 	{
 		this->items[i]->drawParticles();
-		this->items[i]->drawPickupParticles();
 	}
 	for (int i = 0; i < components.size(); i++)
 	{
@@ -389,16 +388,13 @@ void Game::drawFresnel()
 	}
 	for (int i = 0; i < items.size(); i++)
 	{
-		if (items[i]->getId() == ObjID::GRENADE)
-		{
-			Grenade* tempNade = (Grenade*)items[i];
-			tempNade->drawFresnel();
-		}
+		items[i]->drawFresnel();
 	}
-	for (int i = 0; i < items.size(); i++)
+	for (int i = 0; i < components.size(); i++)
 	{
-		items[i]->drawPickupFresnel();
+		components[i]->drawFresnel();
 	}
+	
 	asteroids->drawExplosions();
 	//Inverse
 	basicRenderer.invFresnelPrePass();

@@ -26,7 +26,7 @@ public:
 	void setGameObjects(const std::vector<GameObject *> &gameObjects);
 	virtual void drawIcon() override;
 	virtual void drawParticles() override;
-	void drawFresnel();
+	virtual void drawFresnel() override;
 	virtual void useItem() override;
 	bool getExploded() const;
 	void setExploded(const bool &onOff);

@@ -28,22 +28,24 @@ void BaseballBat::sendForceToServer(const DirectX::SimpleMath::Vector3& hitForce
 BaseballBat::BaseballBat(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
 	:Item(useMesh, pos, rot, id, onlineId, 2, field), player(nullptr), force(0.f)
 {
+	//Sfx
 	force = FORCECONSTANT;
-
 	sfx.load(L"../Sounds/hitHurt.wav");
 
+	//Color
+	this->color = DirectX::Colors::Yellow.v;
+
 	//Set up Fresnel buffer
-	DirectX::SimpleMath::Vector3 ptCol = DirectX::Colors::Yellow.v;
 	fresnelBuffer.Initialize(GPU::device, GPU::immediateContext);
-	fresnelBuffer.getData() = DirectX::XMFLOAT4(ptCol.x, ptCol.y, ptCol.z, 1);
+	fresnelBuffer.getData() = DirectX::XMFLOAT4(color.x, color.y, color.z, 1);
 	fresnelBuffer.applyData();
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
-	this->particles->setColor(ptCol);
+	this->particles->setColor(color);
 
 	//Item Icon
-	float constant = 2.0f;
+	float constant = 4.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x* constant, upDir.y* constant, upDir.z* constant);
 	std::vector<std::string> tempStr{ "icon_sword.png", "icon_sword2.png" , "Ekey.png" };
@@ -55,24 +57,27 @@ BaseballBat::BaseballBat(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const Dire
 BaseballBat::BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
 	:Item(objectPath, pos, rot, id, onlineId, 2, field), player(nullptr), force(0.f)
 {
+	//Sfx
 	force = FORCECONSTANT;
-
 	sfx.load(L"../Sounds/hitHurt.wav");
+
+	//Color
+	this->color = DirectX::Colors::Yellow.v;
 
 	//Set up Fresnel buffer
 	fresnelBuffer.Initialize(GPU::device, GPU::immediateContext);
-	fresnelBuffer.getData() = DirectX::XMFLOAT4(1, 0.25, 0,7);
+	fresnelBuffer.getData() = DirectX::XMFLOAT4(color.x, color.y, color.z, 1);
 	fresnelBuffer.applyData();
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
-	this->particles->setColor(DirectX::Colors::Yellow.v);
+	this->particles->setColor(color);
 
 	//Item Icon
-	float constant = 2.0f;
+	float constant = 4.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-    std::vector<std::string> tempStr{ "icon_sword.png", "icon_sword2.png" , "Ekey.png" };
+	std::vector<std::string> tempStr{ "icon_sword.png", "icon_sword2.png" , "Ekey.png" };
 	this->itemIcon = new BilboardObject(tempStr, iconPos);
 	this->itemIcon->setOffset(constant);
 }

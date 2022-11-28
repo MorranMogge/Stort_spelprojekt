@@ -89,6 +89,8 @@ private:
 
 	//HUD
 	HudUI ui;
+	MiniGameUI miniGameUI;
+	bool displayMinigameUI = false;
 
 	void loadObjects();
 	void drawShadows();

@@ -442,6 +442,21 @@ void Game::handleKeybinds()
 	{
 		drawDebug = false;
 	}
+
+	static bool whyNotJustWork = false;
+	if (GetAsyncKeyState('N'))
+	{
+		if (!whyNotJustWork)
+		{
+			displayMinigameUI = !displayMinigameUI;
+			whyNotJustWork = true;
+		}
+	}
+	else
+	{
+		whyNotJustWork = false;
+	}
+
 }
 
 GAMESTATE Game::Update()
@@ -741,4 +756,9 @@ void Game::Render()
 
 	//Render UI (needs to render last)
 	ui.Draw();
+	if (displayMinigameUI)
+	{
+		miniGameUI.Draw();
+	}
+
 }

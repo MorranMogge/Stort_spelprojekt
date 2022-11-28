@@ -204,6 +204,7 @@
     <ClInclude Include="LoseUI.h" />
     <ClInclude Include="MaterialLibrary.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MiniGameUI.h" />
     <ClInclude Include="ModelDataContainer.h" />
     <ClInclude Include="ModelManager.h" />
     <ClInclude Include="MouseClass.h">
@@ -342,6 +343,7 @@
     <ClCompile Include="LoseUI.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="MiniGameUI.cpp" />
     <ClCompile Include="ModelDataContainer.cpp" />
     <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="MouseClass.cpp">

@@ -24,8 +24,6 @@ class MenuUI final
 
 	GUISprite title;
 
-	GUISprite bar_b, bar_e, bar_p;
-
 	bool isLoading = false;
 	GUISprite Loading;
 

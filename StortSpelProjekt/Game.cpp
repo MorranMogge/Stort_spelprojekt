@@ -362,6 +362,7 @@ void Game::drawParticles()
 	for (int i = 0; i < items.size(); i++)
 	{
 		this->items[i]->drawParticles();
+		this->items[i]->drawPickupParticles();
 	}
 	for (int i = 0; i < components.size(); i++)
 	{
@@ -393,6 +394,10 @@ void Game::drawFresnel()
 			Grenade* tempNade = (Grenade*)items[i];
 			tempNade->drawFresnel();
 		}
+	}
+	for (int i = 0; i < items.size(); i++)
+	{
+		items[i]->drawPickupFresnel();
 	}
 	asteroids->drawExplosions();
 	//Inverse

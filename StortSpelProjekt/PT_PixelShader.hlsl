@@ -1,10 +1,17 @@
 Texture2D tex : register(t0);
 SamplerState samplerState : register(s0);
 
+cbuffer colorValue : register(b0)
+{
+    float4 ptColor;
+};
 
 float4 main(float4 position : SV_Position, float2 uv : UV, float faloff : FALOFF, float ison : ISON) : SV_Target0
 {
     float4 color = tex.Sample(samplerState, uv);
+
+    color.xyz *= ptColor.xyz;
+       
     if (ison)
     {
         color.a *= faloff;

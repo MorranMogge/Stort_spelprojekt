@@ -6,6 +6,7 @@
 #include "Client.h"
 #include "PacketsDataTypes.h"
 #include "PacketEnum.h"
+#include "GUISprite.h"
 
 using namespace DirectX;
 
@@ -31,9 +32,15 @@ BaseballBat::BaseballBat(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const Dire
 
 	sfx.load(L"../Sounds/hitHurt.wav");
 
+	//Set up Fresnel buffer
+	DirectX::SimpleMath::Vector3 ptCol = DirectX::Colors::Yellow.v;
+	fresnelBuffer.Initialize(GPU::device, GPU::immediateContext);
+	fresnelBuffer.getData() = DirectX::XMFLOAT4(ptCol.x, ptCol.y, ptCol.z, 1);
+	fresnelBuffer.applyData();
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
+	this->particles->setColor(ptCol);
 
 	//Item Icon
 	float constant = 2.0f;
@@ -50,8 +57,16 @@ BaseballBat::BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3&
 {
 	force = FORCECONSTANT;
 
+	sfx.load(L"../Sounds/hitHurt.wav");
+
+	//Set up Fresnel buffer
+	fresnelBuffer.Initialize(GPU::device, GPU::immediateContext);
+	fresnelBuffer.getData() = DirectX::XMFLOAT4(1, 0.25, 0,7);
+	fresnelBuffer.applyData();
+
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
+	this->particles->setColor(DirectX::Colors::Yellow.v);
 
 	//Item Icon
 	float constant = 2.0f;

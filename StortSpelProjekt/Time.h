@@ -20,7 +20,7 @@ public:
 	}
 	static float DeltaTimeInSeconds()
 	{
-		return delta;
+		return std::chrono::duration<float, std::ratio<1, 1>>(std::chrono::steady_clock::now() - lap).count();
 	}
 
 	static float CurrentTime()

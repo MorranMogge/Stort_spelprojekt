@@ -113,3 +113,25 @@ void Item::update()
 	}
 }
 
+void Item::drawPickupParticles()
+{
+	if (!this->pickedUp)
+	{
+		this->particles->setSize(1.0f);
+		this->particles->BindAndDraw(4);
+	}
+}
+
+void Item::drawPickupFresnel()
+{
+	if (!this->pickedUp)
+	{
+		float constant = 0.2f;
+		GPU::immediateContext->PSSetConstantBuffers(2, 1, this->fresnelBuffer.getReferenceOf());
+		DirectX::XMFLOAT3 test = this->scale;
+		this->scale = DirectX::XMFLOAT3(test.x + constant, test.y + constant, test.z + constant);
+		this->draw();
+		this->scale = test;
+	}
+}
+

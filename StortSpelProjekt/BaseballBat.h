@@ -12,7 +12,6 @@ private:
 	Player* player;
 	Client* client;
 	std::vector<GameObject *> objects;
-
 	DirectX::SimpleMath::Vector3 batPos;
 	DirectX::SimpleMath::Vector3 savedPos;
 	float force;

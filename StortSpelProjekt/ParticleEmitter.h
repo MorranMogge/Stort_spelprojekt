@@ -18,6 +18,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> PT_vertexBuffer;				//Vertex buffer
 	Microsoft::WRL::ComPtr<ID3D11Buffer> emitterPosBuffer;				//Position buffer
 	Microsoft::WRL::ComPtr<ID3D11Buffer> timeBuffer;					//Time buffer, contains delta time
+	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
+	ConstantBufferNew<DirectX::XMFLOAT4> sizeBuffer;
 
 	TimeStruct tStruct;
 	std::vector<particleStruct> PT_Data;								//Particle Data (pos, delta time, lifetime)//Add speed?
@@ -46,6 +48,9 @@ public:
 	void setRotation(const DirectX::XMFLOAT3 &Rot);
 	void setActive(const bool &onOrOff);
 	void setPassComplete(const bool &onOrOff);
+	void setColor(const DirectX::SimpleMath::Vector3& color);
+	void setColor(const float &x, const float &y, const float &z);
+	void setSize(const float& size);
 	bool isActive();
 	bool isPassComplete();
 

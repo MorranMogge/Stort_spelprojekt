@@ -4,6 +4,8 @@
 #include "Player.h"
 #include "PhysicsComponent.h"
 #include "Time.h"
+#include "GUISprite.h"
+
 
 Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
 	:Item(useMesh, pos, rot, id, onlineId, GRENADE, field), destructionIsImminent(false), exploded(false), timeToExplode(5.f), currentTime(0.0f), explodePosition(0,0,0)
@@ -11,8 +13,16 @@ Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMF
 	counter = 1.0f;
 	sfx.load(L"../Sounds/explosion.wav");
 	explosion.load(L"../Sounds/explodeGrenade.wav");
+
+	//Set up Fresnel buffer
+	DirectX::SimpleMath::Vector3 ptCol = DirectX::Colors::Yellow.v;
+	fresnelBuffer.Initialize(GPU::device, GPU::immediateContext);
+	fresnelBuffer.getData() = DirectX::XMFLOAT4(ptCol.x, ptCol.y, ptCol.z, 1);
+	fresnelBuffer.applyData();
+
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
+	this->particles->setColor(ptCol);
 
 	//Item Icon
 	float constant = 4.0f;
@@ -35,6 +45,12 @@ Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, co
 {
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 36, DirectX::XMFLOAT2(2, 5), 4);
+	this->particles->setColor(DirectX::Colors::Yellow.v);
+
+	//Set up Fresnel buffer
+	fresnelBuffer.Initialize(GPU::device, GPU::immediateContext);
+	fresnelBuffer.getData() = DirectX::XMFLOAT4(1, 0.25, 0, 0.5);
+	fresnelBuffer.applyData();
 
 	//Item Icon
 	float constant = 4.0f;

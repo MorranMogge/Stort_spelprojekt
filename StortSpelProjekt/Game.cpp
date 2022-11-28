@@ -931,19 +931,6 @@ GAMESTATE Game::Update()
 		//this->spaceShips[1]->setPos(DirectX::XMFLOAT3(150, -7, 290));
 		this->Stage = 0;
 	}
-	//if (Input::KeyPress(KeyCode::K))
-	//{
-	//	currentMinigame = MiniGames::KINGOFTHEHILL;
-
-	//	//Send data to server
-	//	MinigameStart startKTH;
-	//	startKTH.packetId = PacketType::STARTMINIGAMES;
-	//	startKTH.minigame = MiniGames::KINGOFTHEHILL;
-	//	client->sendStuff<MinigameStart>(startKTH);
-	//	std::cout << "SENT START KTH\n";
-
-	//	currentPlayer->setPos(DirectX::XMFLOAT3(0.f, 65.f, 0.f));
-	//}
 
 	//Simulate the current minigame on client side
 	switch (currentMinigame)
@@ -972,7 +959,6 @@ GAMESTATE Game::Update()
 
 	//Debug keybinds
 	this->handleKeybinds();
-
 	return NOCHANGE;
 }
 

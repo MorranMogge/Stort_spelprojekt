@@ -118,7 +118,6 @@
     <ClCompile Include="SpaceShip.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="MouseClass.cpp" />
     <ClCompile Include="BaseballBat.cpp">
       <Filter>GameObjects</Filter>
@@ -158,13 +157,21 @@
     <ClCompile Include="Credits.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="CircularBufferClient.cpp" />
-    <ClCompile Include="Client.cpp" />
-    <ClCompile Include="PacketEventManager.cpp" />
     <ClCompile Include="Profiler.cpp" />
-    <ClCompile Include="SendingDataEvent.cpp" />
-    <ClCompile Include="CaptureZone.cpp">
-      <Filter>GameObjects</Filter>
+    <ClCompile Include="PacketEventManager.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="SendingDataEvent.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientHandler.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="CircularBufferClient.cpp">
+      <Filter>Online</Filter>
     </ClCompile>
     <ClCompile Include="ControlMenu.cpp" />
     <ClCompile Include="ControlUI.cpp" />
@@ -464,15 +471,6 @@
     <ClInclude Include="Credits.h" />
     <ClInclude Include="Planet.h" />
     <ClInclude Include="PlanetGenerator.h" />
-    <ClInclude Include="CaptureZone.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundLibrary.h" />
-    <ClInclude Include="ControlMenu.h" />
-    <ClInclude Include="ControlUI.h" />
-    <ClInclude Include="ModelDataContainer.h" />
-    <ClInclude Include="ModelManager.h" />
-    <ClInclude Include="AnimatedMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

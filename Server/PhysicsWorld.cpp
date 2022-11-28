@@ -1,6 +1,5 @@
 #include "PhysicsWorld.h"
 #include <time.h>
-#include "PhysicsComponent.h"
 #include "DirectXMathHelper.h"
 #include "ServerGravField.h"
 #include "ServerPlanet.h"
@@ -14,7 +13,6 @@ void PhysicsWorld::setUpBaseScenario()
 
 	world->setIsDebugRenderingEnabled(true);
 }
-
 
 PhysicsWorld::PhysicsWorld(std::string worldName)
 {
@@ -110,6 +108,20 @@ void PhysicsWorld::addPhysComponent(PhysicsComponent* newComp, const DirectX::XM
 	newComp->setPosition({ pos.x, pos.y, pos.z });
 	newComp->setLinearDampning(0.3f);
 	physObjects.emplace_back(newComp);
+}
+
+void PhysicsWorld::addPhysComponent(GameObject* gameObj, reactphysics3d::CollisionShapeName shape, const DirectX::XMFLOAT3& scale)
+{
+	PhysicsComponent* newComp = new PhysicsComponent();
+	newComp->initiateComponent(&this->com, this->world, shape, scale);
+	newComp->setPosition({ gameObj->getPos().x, gameObj->getPos().y, gameObj->getPos().z });
+	//newComp->setRotation(DirectX::XMQuaternionRotationMatrix(gameObj->getRot()));
+	
+	newComp->setLinearDampning(0.3f);
+	gameObj->setPhysComp(newComp);
+	newComp->setParent(gameObj);
+	physObjects.emplace_back(newComp);
+
 }
 
 PhysicsComponent* PhysicsWorld::returnAddedPhysComponent(reactphysics3d::CollisionShapeName shape, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& scale)

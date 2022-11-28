@@ -12,7 +12,7 @@ PacketEventManager::~PacketEventManager()
 
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects, GravityField* field, std::vector<SpaceShip*>& spaceShips
-	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector)
+	, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, std::vector<Planet*>& planetVector, Client*& client)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -32,6 +32,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	SpawnPlanets* planetData = nullptr;
 	ConfirmComponentPickedUp* confirmCmpPickedUp = nullptr;
 	ComponentPosition* cmpPosition = nullptr;
+	ComponentDropped* cmpDropped = nullptr;
 	
 
 	while (circularBuffer->getIfPacketsLeftToRead())
@@ -104,12 +105,12 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				{
 					if (playerId != i)
 					{
-						std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
+						//std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
 						players[i]->setMatrix(prMatrixData->matrix);
 					}
 					else if (prMatrixData->ifDead)
 					{
-						std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
+						//std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
 						players[i]->setMatrix(prMatrixData->matrix);
 					}
 					players[i]->getPhysComp()->setRotation(DirectX::XMQuaternionRotationMatrix(DirectX::XMLoadFloat4x4(&prMatrixData->matrix)));
@@ -120,12 +121,14 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 		case PacketType::ITEMSPAWN:
 			itemSpawn = circularBuffer->readData<ItemSpawn>();
-			baseballbat = new BaseballBat("../Meshes/rocket", DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
-				DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), itemSpawn->itemId, itemSpawn->itemId, field);
+			baseballbat = new BaseballBat(meshes[5], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
+				DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 3, itemSpawn->itemId, field);
+			baseballbat->setClient(client);
+			baseballbat->setGameObjects(players);
 			physWorld.addPhysComponent(baseballbat);
 			onlineItems.push_back(baseballbat);
-			gameObjects.push_back(baseballbat);
-			std::cout << "item spawned: " << std::to_string(itemSpawn->itemId) << std::endl;
+			//gameObjects.push_back(baseballbat);
+			std::cout << "item spawned UWU: " << std::to_string(itemSpawn->itemId) << std::endl;
 		
 			break;
 
@@ -164,6 +167,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::COMPONENTADDED:
 			compAdded = circularBuffer->readData<ComponentAdded>();
 			std::cout << "Team: " << compAdded->spaceShipTeam << " gained progress!\n";
+			
 			for (int i = 0; i < spaceShips.size(); i++)
 			{
 				if (spaceShips[i]->getTeam() == compAdded->spaceShipTeam)
@@ -210,6 +214,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			confirmCmpPickedUp = circularBuffer->readData<ConfirmComponentPickedUp>();
 			for (int i = 0; i < players.size(); i++)
 			{
+				
 				if (players[i]->getOnlineID() == confirmCmpPickedUp->playerPickUpId)
 				{
 					//en av spelarna plockade upp en component
@@ -234,17 +239,32 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 			for (int i = 0; i < onlineItems.size(); i++)
 			{
-				std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", i = " << std::to_string(i) << std::endl;
+				//std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", i = " << std::to_string(i) << std::endl;
 				if (onlineItems[i]->getOnlineId() == cmpPosition->ComponentId)
 				{
-					std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", pos x: " << std::to_string(cmpPosition->x)
-						<< ", y: " << std::to_string(cmpPosition->y) << std::endl;
+					//std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", pos x: " << std::to_string(cmpPosition->x)
+						//<< ", y: " << std::to_string(cmpPosition->y) << std::endl;
 					onlineItems[i]->setPos(DirectX::XMFLOAT3(cmpPosition->x, cmpPosition->y, cmpPosition->z));
 					//componentVector[i]->getPhysComp()->setRotation(cmpPosition->quat);
 				}
 			}
 			
 			//std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
+			break;
+
+		case PacketType::COMPONENTDROPPED:
+			cmpDropped = circularBuffer->readData<ComponentDropped>();
+			
+			for (int i = 0; i < players.size(); i++)
+			{
+				if (players[i]->getOnlineID() == cmpDropped->playerId)
+				{
+					std::cout << "playerID UWU TEst:" << cmpDropped->playerId << std::endl;
+					std::cout << "x: " << onlineItems[cmpDropped->componentId]->getPos().x << "y: " << onlineItems[cmpDropped->componentId]->getPos().y << std::endl;
+					players[i]->releaseItem();
+				}
+			}
+
 			break;
 
 		}

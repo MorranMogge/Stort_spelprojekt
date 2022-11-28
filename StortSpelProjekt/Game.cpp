@@ -14,6 +14,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
 	client = new Client();
+	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
 	circularBuffer = client->getCircularBuffer();
 
 	//Setup rendering
@@ -87,14 +88,15 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	{
 		players[i]->setGravityField(planetGravityField);
 	}
+	
 
 	field = nullptr;
 	oldField = field;
 
 	//Set items baseball bat
-	baseballBat->setPlayer(currentPlayer);
-	baseballBat->setGameObjects(gameObjects);
-	baseballBat->setClient(client);
+	//baseballBat->setPlayer(currentPlayer);
+	//baseballBat->setGameObjects(gameObjects);
+	//baseballBat->setClient(client);
 
 	//Set items grenade
 	grenade->setGameObjects(gameObjects);
@@ -191,7 +193,7 @@ void Game::loadObjects()
 
 	//CREATE ITEMS 	//Sphere, reverseSphere, pinto, potion, rocket, bat, component, grenade, arrow
 	potion = new Potion(meshes[3], Vector3(0, 0, -42), Vector3(0.0f, 0.0f, 0.0f), POTION, 0, planetGravityField);
-	baseballBat = new BaseballBat(meshes[5], Vector3(0, 0, 42), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
+	//baseballBat = new BaseballBat(meshes[5], Vector3(0, 0, 42), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
 	grenade = new Grenade(meshes[7], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
 	arrow = new Arrow(meshes[8], DirectX::SimpleMath::Vector3(0, 42, 0));
 
@@ -200,7 +202,7 @@ void Game::loadObjects()
 
 	//EMPLACE ITEMS
 	items.emplace_back(potion);
-	items.emplace_back(baseballBat);
+	//items.emplace_back(baseballBat);
 	items.emplace_back(grenade);
 
 	for (int i = 0; i < items.size(); i++)
@@ -277,12 +279,15 @@ void Game::drawObjects(bool drawDebug)
 		if (gameObjects[i] == currentPlayer) continue;
 		else gameObjects[i]->draw();
 	}
-
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->draw();
+	}
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
 		onlineItems[i]->draw();
 	}
-	currentPlayer->updateBuffer();
+	//currentPlayer->updateBuffer();
 	currentPlayer->draw();
 	for (int i = 0; i < planetVector.size(); i++)
 	{
@@ -412,7 +417,7 @@ void Game::handleKeybinds()
 GAMESTATE Game::Update()
 {
 	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector);
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, client);
 
 	//Get newest delta time
 	lastUpdate = currentTime;
@@ -456,7 +461,19 @@ GAMESTATE Game::Update()
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);
 	currentPlayer->requestingPickUpItem(onlineItems);
 
+	//Check item pickup
+	//for (int i = 0; i < items.size(); i++)
+	//{
+	//	if (currentPlayer->pickupItem(items[i])) break;
+	//}
+
+	/*if (Input::KeyPress(KeyCode::K))
+	{
+		randomizeObjectPos(this->testBat);
+	}*/
+
 	grenade->updateExplosionCheck();
+
 	//Update item checks
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -478,15 +495,13 @@ GAMESTATE Game::Update()
 		break;
 	}
 
+
 	//Player functions
 	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
-
-	//Check pickups
-	currentPlayer->pickupItem(items, components);
 
 	/*if (Input::KeyPress(KeyCode::K))
 	{
@@ -547,6 +562,7 @@ GAMESTATE Game::Update()
 		else this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
 		currentPlayer->colliedWIthComponent(components);
 	}
+
 
 	if (!IFONLINE) //Check Components offline
 	{
@@ -611,7 +627,6 @@ GAMESTATE Game::Update()
 	{
 		spaceShips[i]->animateOnPickup();
 	}
-
 	//Check if item icon should change to pickup icon 
 	for (int i = 0; i < items.size(); i++)
 	{

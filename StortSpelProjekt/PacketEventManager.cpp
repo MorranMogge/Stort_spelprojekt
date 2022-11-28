@@ -144,8 +144,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			physWorld.addPhysComponent(baseballbat);
 			onlineItems.push_back(baseballbat);
 			//gameObjects.push_back(baseballbat);
-			std::cout << "item spawned UWU: " << std::to_string(itemSpawn->itemId) << std::endl;
-			std::cout << "SIZE ITEMS " << onlineItems.size() << "\n";
+			//std::cout << "item spawned UWU: " << std::to_string(itemSpawn->itemId) << std::endl;
+			//std::cout << "SIZE ITEMS " << onlineItems.size() << "\n";
 			break;
 
 		case PacketType::ITEMPOSITION:

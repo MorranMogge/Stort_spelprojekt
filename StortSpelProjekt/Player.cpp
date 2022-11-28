@@ -447,7 +447,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
 		onGround = false;
-		this->velocity = this->normalVector * 30.f;
+		this->velocity = this->normalVector * 40.f;
 		this->position += this->normalVector * 1.8f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
@@ -982,7 +982,7 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
 			onGround = true;
 			DirectX::SimpleMath::Vector3 vecToHitPos = this->position - hitPos;
-			float lengthToMove = 0.5f - getLength(vecToHitPos);
+			float lengthToMove = 1.f - getLength(vecToHitPos);
 			vecToHitPos.Normalize();
 			this->position += lengthToMove * vecToHitPos;
 			return true;
@@ -998,7 +998,7 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
 			onGround = true;
 			DirectX::SimpleMath::Vector3 vecToHitPos = this->position - hitPos;
-			float lengthToMove = 0.5f - getLength(vecToHitPos);
+			float lengthToMove = 1.f - getLength(vecToHitPos);
 			vecToHitPos.Normalize();
 			this->position += lengthToMove * vecToHitPos;
 			return true;

@@ -6,6 +6,7 @@
 #include "Client.h"
 #include "PacketsDataTypes.h"
 #include "PacketEnum.h"
+#include "SoundLibrary.h"
 
 using namespace DirectX;
 
@@ -29,9 +30,6 @@ BaseballBat::BaseballBat(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const Dire
 	:Item(useMesh, pos, rot, id, onlineId, 2, field), player(nullptr), force(0.f)
 {
 	force = FORCECONSTANT;
-
-	sfx.load(L"../Sounds/hitHurt.wav");
-
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
@@ -98,8 +96,9 @@ void BaseballBat::setGameObjects(const std::vector<GameObject*>& objects)
 
 void BaseballBat::useItem(const Player* playerHoldingItem)
 {
-	sfx.stop();
-	sfx.play();
+	SoundLibrary::baseballbatSfx.stop();
+	SoundLibrary::baseballbatSfx.play();
+
 	std::cout << "Used bat!\n";
 	batPos = playerHoldingItem->getPos();
 	batPos += playerHoldingItem->getForwardVector() * 10;

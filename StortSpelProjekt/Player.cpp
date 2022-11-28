@@ -848,9 +848,15 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 		}
 	}
 	//Keyboard pickup
-	else if (GetAsyncKeyState('E'))
+	else if (GetAsyncKeyState('E') && this->eKeyDown == false)
+	{
+		this->eKeyDown = true;
+	}
+	else if (GetAsyncKeyState('E') == 0 && this->eKeyDown == true)
 	{
 		//Checking items
+		this->eKeyDown = false;
+
 		for (int i = 0; i < items.size(); i++)
 		{
 			if (this->withinRadius(items[i], 5))

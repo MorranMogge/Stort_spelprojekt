@@ -82,6 +82,7 @@ private:
 
 
 	unsigned int animIndex = 0;
+	bool eKeyDown = false;
 
 	void throwItem();
 	void resetRotationMatrix();

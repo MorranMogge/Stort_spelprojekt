@@ -21,7 +21,7 @@ void KingOfTheHillMiniGame::sendKingOfTheHillZone(serverData& data)
 	sendBinaryDataAllPlayers<CreateZone>(zone, data);
 }
 
-void KingOfTheHillMiniGame::update(serverData& data)
+void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld)
 {
 	static float xPos;
 	static float yPos;
@@ -111,7 +111,22 @@ void KingOfTheHillMiniGame::update(serverData& data)
 
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - this->itemSpawnTimer)).count() > timeToSpawnItems)
 	{
+		ItemSpawn itemSpawnData;
+		DirectX::XMFLOAT3 temp /*= randomizeObjectPos()*/;
+		itemSpawnData.x = temp.x;
+		itemSpawnData.y = temp.y;
+		itemSpawnData.z = temp.z;
+		itemSpawnData.itemId/* = componentIdCounter*/;
+		std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
+		itemSpawnData.packetId = PacketType::ITEMSPAWN;
 
+		//onlineItems.push_back(new BaseballBat(componentIdCounter));//ändra
+		physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
+		onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);;
+		onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
+		//onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+		sendBinaryDataAllPlayers(itemSpawnData, data);
+		itemSpawnTimer = std::chrono::system_clock::now();
 	}
 
 	//fixa för team 2

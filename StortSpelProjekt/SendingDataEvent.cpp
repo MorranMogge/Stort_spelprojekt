@@ -21,6 +21,7 @@ void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Play
 	pr.playerId = client->getPlayerId();
 	pr.matrix = currentPlayer->getMatrix();
 	pr.AnimId = currentPlayer->getAnimId();
+	pr.animSpeed = currentPlayer->getAnimSpeed();
 	client->sendStuff<PositionRotation>(pr);
 
 

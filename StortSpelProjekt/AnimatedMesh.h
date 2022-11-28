@@ -130,6 +130,7 @@ private:
 	float oldTime;
 	int oldAnimId;
 	int state;
+	float hitStart;
 
 	//for server
 	unsigned int currentAnimId;

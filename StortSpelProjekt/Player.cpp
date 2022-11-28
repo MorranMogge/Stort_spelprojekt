@@ -132,6 +132,12 @@ void Player::handleItems()
 		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))
 		{
 			keyPressTimer.resetStartTime();
+			if (holdingItem->getId() == BAT)
+			{
+				this->usingBat = true;
+				this->usedItem = false;
+				this->dropTimer.resetStartTime();
+			}
 			////sending data to server
 
 			//allocates data to be sent
@@ -145,8 +151,10 @@ void Player::handleItems()
 			{
 				client->sendStuff<ComponentDropped>(c);
 			}
-
-			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+			if (holdingItem->getId() != BAT)
+			{
+				itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+			}
 			if (holdingItem->getId() == GRENADE)
 			{
 				DirectX::XMFLOAT3 temp;
@@ -164,12 +172,27 @@ void Player::handleItems()
 				//Apply the force
 				this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
 			}
-			holdingItem->useItem();
 			//itemPhysComp->setIsAllowedToSleep(true);
 			//itemPhysComp->setIsSleeping(true);
-			holdingItem->setPickedUp(false);
-			holdingItem = nullptr;
+			if (holdingItem->getId() != BAT)
+			{
+				holdingItem->useItem();
+				holdingItem->setPickedUp(false);
+				holdingItem = nullptr;
+			}
 		}
+	}
+	if (this->usingBat && this->dropTimer.getTimePassed(0.25)&& !this->usedItem)
+	{
+		holdingItem->useItem();
+		this->usedItem = true;
+	}
+	else if (this->usingBat && this->dropTimer.getTimePassed(0.5))
+	{
+		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+		usingBat = false;
+		holdingItem->setPickedUp(false);
+		holdingItem = nullptr;
 	}
 }
 
@@ -447,7 +470,10 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 
 	auto state = gamePad->GetState(0);
 	if (state.IsConnected()) return;
-
+	if (!this->doneWithAnim)
+	{
+		return;
+	}
 	//Running
 	this->currentSpeed = this->speed;
 	if (Input::KeyDown(KeyCode::SHIFT))
@@ -1056,15 +1082,17 @@ void Player::stateMachine(const float dt)
 	else if (!this->onGround)
 	{
 		this->animIndex = 5;
+		this->animSpeed = 1;
 	}
 	else if (GetAsyncKeyState('E') && this->holdingItem != nullptr)
 	{
 		this->animIndex = 4;
-		//speed x2;
+		this->animSpeed = 2.5;
 		this->doneWithAnim = false;
 	}
 	else if (GetAsyncKeyState('R') && this->holdingItem != nullptr)
 	{
+		this->animSpeed = 1;
 		this->animIndex = 3;
 		this->doneWithAnim = false;
 	}
@@ -1072,18 +1100,21 @@ void Player::stateMachine(const float dt)
 	{
 		if (GetAsyncKeyState(VK_LSHIFT))
 		{
+			this->animSpeed = 1;
 			this->animIndex = 2;
 		}
 		else
 		{
+			this->animSpeed = 1;
 			this->animIndex = 1;
 		}
 	}
 	else
 	{
+		this->animSpeed = 1;
 		this->animIndex = 0;
 	}
-	this->updateAnim(dt, this->animIndex);
+	this->updateAnim(dt, this->animIndex, this->animSpeed);
 }
 
 void Player::giveItemMatrix()
@@ -1105,6 +1136,11 @@ bool Player::getHitByBat() const
 float Player::getSpeed()const
 {
 	return this->currentSpeed;
+}
+
+float Player::getAnimSpeed()
+{
+	return this->animSpeed;
 }
 
 void Player::drawIcon()

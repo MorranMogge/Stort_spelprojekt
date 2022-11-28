@@ -104,7 +104,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				{
 					if (playerId != i)
 					{
-						players[i]->updateAnim(dt, prMatrixData->AnimId);
+						players[i]->updateAnim(dt, prMatrixData->AnimId, prMatrixData->animSpeed);
 						std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
 						players[i]->setMatrix(prMatrixData->matrix);
 					}

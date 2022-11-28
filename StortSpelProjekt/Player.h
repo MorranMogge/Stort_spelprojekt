@@ -83,6 +83,10 @@ private:
 
 	unsigned int animIndex = 0;
 	bool eKeyDown = false;
+	float animSpeed = 1;
+	bool usingBat = false;
+	TimeStruct dropTimer;
+	bool usedItem = true;
 
 	void throwItem();
 	void resetRotationMatrix();
@@ -119,6 +123,7 @@ public:
 	int getOnlineID()const;
 	bool getHitByBat()const;
 	float getSpeed()const;
+	float getAnimSpeed();
 
 	//Item related functions
 	bool pickupItem(const std::vector <Item *>& items, const std::vector <Component*>& components);

@@ -118,7 +118,6 @@
     <ClCompile Include="SpaceShip.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="MouseClass.cpp" />
     <ClCompile Include="BaseballBat.cpp">
       <Filter>GameObjects</Filter>
@@ -161,15 +160,30 @@
     <ClCompile Include="CircularBufferClient.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Profiler.cpp" />
-    <ClCompile Include="SendingDataEvent.cpp" />
-    <ClCompile Include="CaptureZone.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="ControlMenu.cpp" />
-    <ClCompile Include="ControlUI.cpp" />
     <ClCompile Include="PacketEventManager.cpp">
       <Filter>Online</Filter>
     </ClCompile>
+    <ClCompile Include="SendingDataEvent.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientHandler.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="CircularBufferClient.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlMenu.cpp" />
+    <ClCompile Include="ControlUI.cpp" />
+    <ClCompile Include="LandingHud.cpp" />
+    <ClCompile Include="PacketEventManager.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelDataContainer.cpp" />
+    <ClCompile Include="ModelManager.cpp" />
+    <ClCompile Include="AnimatedMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -469,6 +483,7 @@
     <ClInclude Include="SoundLibrary.h" />
     <ClInclude Include="ControlMenu.h" />
     <ClInclude Include="ControlUI.h" />
+    <ClInclude Include="LandingHud.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -578,6 +593,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="InvFresnel_PS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="vShaderSkinning.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

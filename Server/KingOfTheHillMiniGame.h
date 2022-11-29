@@ -41,8 +41,8 @@ private:
 	unsigned int team2Score;
 	unsigned int goalScore;
 public:
-	KingOfTheHillMiniGame(serverData& data, const short &nrOfPlayers);
-	//Bestäm position på zonen
+	KingOfTheHillMiniGame(const short &nrOfPlayers);
+	//Bestï¿½m position pï¿½ zonen
 	void sendKingOfTheHillZone(serverData& data);
 	void spawnItems();
 	void update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, int& componentIdCounter);

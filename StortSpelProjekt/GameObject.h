@@ -24,6 +24,7 @@ private:
 	int objectID;
 	reactphysics3d::Quaternion reactQuaternion;
 	DirectX::SimpleMath::Quaternion dx11Quaternion;
+	ID3D11ShaderResourceView* srv;
 	GravityField* activeField;
 
 protected:
@@ -70,4 +71,6 @@ public:
 	virtual void draw();
 	void updateRotation();
 	virtual void update(); //This updates the hitboxes
+	void tmpDraw(UINT stride = 32U);
+	void setSrv(ID3D11ShaderResourceView* srv);
 };

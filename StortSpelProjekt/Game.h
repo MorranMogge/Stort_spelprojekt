@@ -1,20 +1,13 @@
 #pragma once
 #include "GameInclude.h"
 
-enum MiniGames
-{
-	COMPONENTCOLLECTION,
-	LANDINGSPACESHIP,
-	KINGOFTHEHILL
-};
-
 struct wirefameInfo
 {
 	DirectX::XMFLOAT3 wireframeClr;
 	float padding;
 };
 
-const int NROFPLAYERS = 4;
+const int NROFPLAYERS = 1;
 static bool IFONLINE = true;
 
 class Game : public State
@@ -22,13 +15,11 @@ class Game : public State
 private:
 	ID3D11DeviceContext* immediateContext;
 	HWND* window;
-
 	MiniGames currentMinigame;
 	GAMESTATE currentGameState;
-
 	Sound gameMusic;
-
 	ImGuiHelper imGui;
+
 	bool wireframe = false;
 	bool objectDraw = true;
 	bool drawDebug = false;
@@ -50,23 +41,30 @@ private:
 	float serverTimerLength =  1.f / 30.0f;
 	Client* client;
 
+	ModelManager manager;
+	ID3D11Buffer* vBuff;
+	ID3D11Buffer* iBuff;
+	Mesh* tmpMesh;
+	std::vector<int> subMeshRanges;
+	std::vector<int> verticies;
+	ID3D11ShaderResourceView* tempSRV;
+	AnimationData animData;
+	AnimatedMesh* sexyMan;
+
 	//Gravity vector and velocity for the player (grav is "constant", velocity is "dynmic")
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT3 grav;
-
 	BasicRenderer basicRenderer;
 	GravityField* planetGravityField;
 	PhysicsWorld physWorld;
 	std::vector<Planet*> planetVector;
 	AsteroidHandler* asteroids;
-
 	PacketEventManager* packetEventManager;
 	std::vector<Player*> players;
 	std::vector<Item*> onlineItems;
 
 	//variables to handle packets
 	CircularBufferClient* circularBuffer;
-
 	Camera camera;
 	bool velocityCamera = false;
 
@@ -76,6 +74,7 @@ private:
 	Mesh* planetMeshes;
 
 	//Items
+	int id;
 	Potion* potion;
 	BaseballBat* baseballBat;
 	Grenade* grenade;
@@ -86,7 +85,6 @@ private:
 	std::vector<SpaceShip*> spaceShips;
 	std::vector<Item*> items;
 	std::vector< Mesh*> meshes;
-	
 	LightHandler ltHandler;
 	ImGuiHelper* imguiHelper;
 	PlayerVectors playerVecRenderer;
@@ -95,7 +93,20 @@ private:
 
 	//HUD
 	HudUI ui;
+	LandingHud landingUi;
 
+	float landingMiniGamePoints = 0;
+	float teamScoreLandingMiniGame = 0;
+	float enemyTeamScoreLandingMiniGame = 0;
+
+	//InterMissionVariables
+	int Stage = 0;
+	float totalTime;
+	float timer;
+	DirectX::XMFLOAT3 centerPos;
+	DirectX::XMFLOAT2 offset;
+	UINT HEIGHT;
+	UINT WIDTH;
 
 	void loadObjects();
 	void drawShadows();
@@ -103,19 +114,20 @@ private:
 	void drawIcons();
 	void drawObjects(bool drawDebug);
 	void drawParticles();
-	void updateBuffers();
 	void handleKeybinds();
 	GAMESTATE updateComponentGame();
+	GAMESTATE startLanding();
 	GAMESTATE updateLandingGame();
 	GAMESTATE updateKingOfTheHillGame();
+	GAMESTATE startIntermission();
+	GAMESTATE updateIntermission();
 	void randomizeObjectPos(GameObject* item);
 
 public:
-	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window);
+	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT);
 	virtual ~Game() override;
 
 	// Inherited via State
 	virtual GAMESTATE Update() override;
 	virtual void Render() override;
 };
-

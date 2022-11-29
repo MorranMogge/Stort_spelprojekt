@@ -7,6 +7,7 @@
 #include "Potion.h"
 #include "TimeStruct.h"
 #include "Client.h"
+#include "AnimatedMesh.h"
 #include "Planet.h"
 
 #include <GamePad.h>
@@ -17,13 +18,13 @@ class Item;
 class SpaceShip;
 class Component;
 
-class Player: public GameObject
+class Player: public AnimatedMesh
 {
 private:
 	//Movement variables
 	float angle = 0.f;
-	float speed = 0.5f;
-	float currentSpeed;
+	float speed = 20.f;
+	float currentSpeed = 0.f;
 	DirectX::SimpleMath::Vector3 resultVector;
 	DirectX::SimpleMath::Vector3 angleVector;
 	DirectX::SimpleMath::Vector3 velocity; //FINALLY ADDED THIS F*****G STUPID VARIABLE
@@ -85,8 +86,8 @@ private:
 	bool movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 	bool moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 public:
-	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int &team, GravityField* field = nullptr);
-	Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team, GravityField* field = nullptr);
+	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team,
+		ID3D11ShaderResourceView* redTeamColor, ID3D11ShaderResourceView* blueTeamColor, GravityField* field = nullptr);
 	~Player();
 
 	//Move Functions
@@ -135,10 +136,9 @@ public:
 	//Updating and rendering
 	void drawIcon();
 	void drawParticles();
-	virtual void draw() override;
+	//virtual void draw() override;
 	void update();
 	void requestingPickUpItem(const std::vector<Item*>& items);
-
 	
 	void itemRecvFromServer(Item* item);
 };

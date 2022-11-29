@@ -1,9 +1,8 @@
 #include "KingOfTheHillMiniGame.h"
 
-KingOfTheHillMiniGame::KingOfTheHillMiniGame(serverData& data, const short &nrOfPlayers)
-	:kingOfTheHillOrigo(-50,0,0), radius(30), nrOfPlayers(nrOfPlayers), team1Score(0), team2Score(0), pointsToAdd(10), time(5), goalScore(100), timeToSpawnItems(5)
+KingOfTheHillMiniGame::KingOfTheHillMiniGame(const short& nrOfPlayers)
+	:kingOfTheHillOrigo(0,40,-40), radius(30), nrOfPlayers(nrOfPlayers), team1Score(0), team2Score(0), pointsToAdd(10), time(5), goalScore(100), timeToSpawnItems(5)
 {
-	sendKingOfTheHillZone(data);
 	this->timer = std::chrono::system_clock::now();
 	this->timerToSend = std::chrono::system_clock::now();
 	this->itemSpawnTimer = std::chrono::system_clock::now();
@@ -37,7 +36,7 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 		subtractionXMFLOAT3(playerPos, kingOfTheHillOrigo);
 		if (getLength(playerPos) <= radius)
 		{
-			//std::cout << "Innanför zonen\n";
+			//std::cout << "Innanfï¿½r zonen\n";
 			if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - timer)).count() > time)
 			{
 				if (i == 0 || i == 1)
@@ -52,11 +51,10 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 				}
 				timer = std::chrono::system_clock::now();
 			}
-
 		}
 		else
 		{
-			//std::cout << "utanför zonen\n";
+			//std::cout << "utanfï¿½r zonen\n";
 		}
 	}
 
@@ -122,7 +120,7 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 		std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
 		itemSpawnData.packetId = PacketType::ITEMSPAWN;
 
-		onlineItems.push_back(new BaseballBat(componentIdCounter));//ändra
+		onlineItems.push_back(new BaseballBat(componentIdCounter));//ï¿½ndra
 		physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
 		onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);;
 		onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
@@ -131,6 +129,6 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 		itemSpawnTimer = std::chrono::system_clock::now();
 	}
 
-	//fixa för team 2
+	//fixa fï¿½r team 2
 
 }

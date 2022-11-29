@@ -191,7 +191,6 @@ void Grenade::useItem(const Player* playerHoldingItem)
 {
 	if (!this->destructionIsImminent)
 	{
-		
 		this->destructionIsImminent = true;
 		timer.resetStartTime();
 		timer2.resetStartTime();

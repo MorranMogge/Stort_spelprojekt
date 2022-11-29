@@ -3,6 +3,8 @@
 #include "TimeStruct.h"
 #include "ConstantBufferNew.h"
 
+class Player;
+
 class Grenade : public Item
 {
 private:

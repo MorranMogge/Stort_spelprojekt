@@ -2,6 +2,8 @@
 #include "Item.h"
 #include "TimeStruct.h"
 
+class Player;
+
 class Potion : public Item 
 {
 private:

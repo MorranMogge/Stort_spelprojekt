@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Component.h"
+#include "Player.h"
 
 Component::Component(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
 	:Item(useMesh, pos, rot, id, onlineId, 0, field), pickedUp(false)

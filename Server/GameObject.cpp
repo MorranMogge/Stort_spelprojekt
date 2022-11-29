@@ -7,6 +7,7 @@ void GameObject::updatePhysCompRotation()
 	DirectX::SimpleMath::Quaternion dx11Quaternion = DirectX::XMQuaternionRotationMatrix(this->rotation);
 	reactphysics3d::Quaternion reactQuaternion = reactphysics3d::Quaternion(dx11Quaternion.x, dx11Quaternion.y, dx11Quaternion.z, dx11Quaternion.w);
 	this->physComp->setRotation(reactQuaternion);
+	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
 }
 
 GameObject::GameObject( const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const DirectX::XMFLOAT3& scale)
@@ -23,11 +24,7 @@ GameObject::GameObject( const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& r
 GameObject::GameObject()
 {
 	this->rotation = DirectX::XMMatrixIdentity();
-
-	//Update constantbuffer
-	this->updateBuffer();
 }
-
 
 void GameObject::movePos(const DirectX::XMFLOAT3& offset)
 {
@@ -160,10 +157,9 @@ bool GameObject::withinRadious(GameObject* object, float radius) const
 }
 void GameObject::updateRotation()
 {
-	this->position = this->physComp->getPosV3();
+	/*this->position = this->physComp->getPosV3();
 	this->reactQuaternion = this->physComp->getRotation();
-	this->dx11Quaternion = DirectX::SimpleMath::Quaternion(DirectX::SimpleMath::Vector4(reactQuaternion.x, reactQuaternion.y, reactQuaternion.z, reactQuaternion.w));
-	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(dx11Quaternion.ToEuler());
+	this->dx11Quaternion = DirectX::SimpleMath::Quaternion(DirectX::SimpleMath::Vector4(reactQuaternion.x, reactQuaternion.y, reactQuaternion.z, reactQuaternion.w));*/
 }
 
 int GameObject::getId()
@@ -173,5 +169,5 @@ int GameObject::getId()
 
 void GameObject::update()
 {
-	this->updateRotation();
+	this->updatePhysCompRotation();
 }

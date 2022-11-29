@@ -18,6 +18,7 @@ void Player::throwItem()
 	std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
 	c.componentId = this->holdingItem->getOnlineId();
 	c.packetId = PacketType::COMPONENTDROPPED;
+	c.playerId = this->onlineID;
 	//sending data to server
 	if (client != nullptr)
 	{
@@ -41,6 +42,7 @@ void Player::throwItem()
 	this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
 
 	//You no longer "own" the item
+
 	holdingItem->setPickedUp(false);
 	holdingItem = nullptr;
 }
@@ -53,9 +55,9 @@ void Player::resetRotationMatrix()
 
 void Player::handleItems()
 {
+	if (this->gamePad == nullptr) return;
 	DirectX::SimpleMath::Vector3 newPos = this->position;
 	newPos += 4 * forwardVector;
-
 	PhysicsComponent* itemPhysComp = holdingItem->getPhysComp();
 	holdingItem->setPos(newPos);
 	itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z }));
@@ -82,7 +84,7 @@ void Player::handleItems()
 			{
 				client->sendStuff<ComponentDropped>(c);
 			}
-
+			
 			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 			if (holdingItem->getId() == GRENADE)
 			{
@@ -95,10 +97,10 @@ void Player::handleItems()
 					else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
 				}
 
-
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 				//Apply the force
+				
 				this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
 			}
 			holdingItem->useItem(this);
@@ -119,6 +121,7 @@ void Player::handleItems()
 		//Use the Item
 		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))
 		{
+			//std::cout << "Timer: " << keyPressTimer.
 			keyPressTimer.resetStartTime();
 			////sending data to server
 
@@ -133,7 +136,6 @@ void Player::handleItems()
 			{
 				client->sendStuff<ComponentDropped>(c);
 			}
-
 			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 			if (holdingItem->getId() == GRENADE)
 			{
@@ -145,7 +147,6 @@ void Player::handleItems()
 					if (this->currentSpeed == this->speed) scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.095f, temp);
 					else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
 				}
-
 
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -173,14 +174,14 @@ Player::~Player()
 	}
 }
 
-Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team, GravityField* field)
-    :GameObject(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team), currentSpeed(0)
+Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team,
+				ID3D11ShaderResourceView* redTeamColor,ID3D11ShaderResourceView* blueTeamColor, GravityField* field)
+    :AnimatedMesh(useMesh, pos, rot, id, field), holdingItem(nullptr), team(team), currentSpeed(0)
 {
 	pickUpSfx.load(L"../Sounds/pickupCoin.wav");
 	playerHitSound.load(L"../Sounds/mixkit-sick-man-sneeze-2213.wav");
 	//walkingSound.setVolume(0.25f);
 
-
 	this->onlineID = onlineId;
 	this->rotationMX = XMMatrixIdentity();
 	this->rotation = XMMatrixIdentity();
@@ -205,43 +206,9 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	switch (team)
 	{
 	case 0:
-		mesh->matKey[0] = "pintoRed.png"; break;
+		this->setSrv(redTeamColor); break;
 	case 1:
-		break;
-	}
-}
-
-Player::Player(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team, GravityField* field)
-	:GameObject(objectPath, pos, rot, id, field), holdingItem(nullptr), team(team), currentSpeed(0)
-{
-	this->onlineID = onlineId;
-	this->client = client;
-	this->rotationMX = XMMatrixIdentity();
-	this->rotation = XMMatrixIdentity();
-	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	angleVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
-
-	HudUI::player = this;
-
-	//Particles
-	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);
-
-	//Item Icon
-	float constant = 7.0f;
-	DirectX::XMFLOAT3 upDir = this->getUpDirection();
-	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-	std::vector<std::string> playernames{ "Team1_r.png", "Team2_b.png", "player3.png", "player4.png" };
-	this->playerIcon = new BilboardObject(playernames, iconPos);
-	this->playerIcon->setOffset(constant);
-
-	//Team switch
-	switch (team)
-	{
-	case 0:
-		mesh->matKey[0] = "pintoRed.png"; break;
-	case 1:
-		mesh->matKey[0] = "pintoBlue.png"; break;
+		this->setSrv(blueTeamColor); break;
 	}
 }
 
@@ -480,7 +447,8 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
 		onGround = false;
-		this->velocity = this->normalVector * 30.f;
+		this->velocity = this->normalVector * 40.f;
+		this->position += this->normalVector * 1.8f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
 
@@ -711,7 +679,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		//Jumping
 		if (onGround && state.IsAPressed())
 		{
-			this->velocity = this->normalVector * 30.f;
+			this->velocity = this->normalVector * 40.f;
 			if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 		}
 
@@ -945,6 +913,8 @@ void Player::addItem(Item* itemToHold)
 	{
 		this->holdingItem = itemToHold;
 		this->holdingItem->setPickedUp(true);
+		if (holdingItem->getId() == ObjID::COMPONENT) this->holdingComp = true;
+		else this->holdingComp = false;
 	}
 	holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 }
@@ -953,19 +923,6 @@ void Player::releaseItem()
 {
 	if (this->holdingItem != nullptr)
 	{
-		ComponentData newData;
-		newData.packetId = PacketType::COMPONENTPOSITION;
-		newData.ComponentId = this->getItemOnlineId();
-		newData.inUseBy = -1;
-		newData.x = this->holdingItem->getPosV3().x;
-		newData.y = this->holdingItem->getPosV3().y;
-		newData.z = this->holdingItem->getPosV3().z;
-		//sending data to server
-		if (this->client != nullptr)
-		{
-			client->sendStuff<ComponentData>(newData);
-		}
-
 		this->holdingItem->setPickedUp(false);
 		this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 		this->holdingItem = nullptr;
@@ -984,7 +941,7 @@ bool Player::checkForStaticCollision(const std::vector<Planet*>& gameObjects, co
 		//if (gameObjects[i]->getPlanetCollider()->getType() != reactphysics3d::BodyType::STATIC || gameObjects[i] == this->holdingItem) continue; 
 		if (gameObjects[i]->getPlanetCollider()->testPointInside(point))
 		{
-			this->position -= 1.f * forwardVector;
+			//this->position -= 1.f * forwardVector;
 			return true;
 		}
 	}
@@ -1024,6 +981,10 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
 			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
 			onGround = true;
+			DirectX::SimpleMath::Vector3 vecToHitPos = this->position - hitPos;
+			float lengthToMove = 1.f - getLength(vecToHitPos);
+			vecToHitPos.Normalize();
+			this->position += lengthToMove * vecToHitPos;
 			return true;
 		}
 	}
@@ -1036,6 +997,10 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
 			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
 			onGround = true;
+			DirectX::SimpleMath::Vector3 vecToHitPos = this->position - hitPos;
+			float lengthToMove = 1.f - getLength(vecToHitPos);
+			vecToHitPos.Normalize();
+			this->position += lengthToMove * vecToHitPos;
 			return true;
 		}
 	}
@@ -1055,11 +1020,10 @@ bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) con
 
 void Player::colliedWIthComponent(const std::vector<Component*>& components)
 {
+	if (holdingComp && holdingItem) return;
 	bool collided = false;
-
 	for (int i = 0; i < components.size(); i++) collided = this->physComp->testBodiesOverlap(components[i]->getPhysComp());
-	if (collided) this->setSpeed(20.f * 0.55f);
-	else this->setSpeed(20.f);
+	if (collided) this->setSpeed(this->speed * 0.5f);
 }
 
 bool Player::getHitByBat() const
@@ -1070,24 +1034,6 @@ bool Player::getHitByBat() const
 float Player::getSpeed()const
 {
 	return this->currentSpeed;
-}
-
-void Player::draw()
-{
-	//Team switch
-	switch (team)
-	{
-	case 0:
-		mesh->matKey[0] = "pintoRed.png"; break;
-		break;
-
-	case 1:
-		mesh->matKey[0] = "pintoBlue.png"; break;
-		break;
-
-	}
-	//this->mesh->UpdateCB(position, rotation, scale);
-	this->mesh->DrawWithMat();
 }
 
 void Player::drawIcon()
@@ -1202,13 +1148,13 @@ void Player::update()
 		float constant = playerIcon->getOffset();
 		DirectX::XMFLOAT3 upDir = this->getUpDirection();
 		DirectX::XMFLOAT3 itemPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-		this->playerIcon->setPosition(this->position + itemPos);
+		this->playerIcon->setPosition(this->position);
 	}
 	//Update particle movement
 	if (this->particles != nullptr && moveKeyPressed)
 	{
 		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
-		this->particles->setPosition(this->position);
+		this->particles->setPosition(this->position );
 		this->particles->setRotation(this->getUpDirection());
 		this->particles->updateBuffer();
 	}
@@ -1241,6 +1187,7 @@ void Player::setGamePad(DirectX::GamePad* gamePad)
 
 void Player::requestingPickUpItem(const std::vector<Item*>& items)
 {
+	if (holdingItem) return;
 	if (Input::KeyPress(KeyCode::E))
 	{
 		std::cout << "items.size = " << std::to_string(items.size()) << std::endl;
@@ -1253,11 +1200,11 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 				//holdingItem->getPhysComp()->getRigidBody()->resetForce();
 				//holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 				//holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-
 				ComponentRequestingPickUp rqstCmpPickUp;
 				rqstCmpPickUp.componentId = items[i]->getOnlineId();
 				rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;
 				rqstCmpPickUp.playerId = this->getOnlineID();
+				if (items[i]->getId() == ObjID::COMPONENT) this->holdingComp = true;
 				std::cout << "requesting pickup componentId: " << std::to_string(rqstCmpPickUp.componentId) << std::endl;
 				//skickar en f�rfr�gan att plocka upp item
 				keyPressTimer.resetStartTime();
@@ -1271,7 +1218,7 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 void Player::itemRecvFromServer(Item* item)
 {
 	addItem(item);
-
+	
 	holdingItem->getPhysComp()->getRigidBody()->resetForce();
 	holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 	holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
@@ -1283,14 +1230,10 @@ bool Player::isHoldingComp()
 	{
 		if (this->holdingItem != nullptr)
 		{
-			this->setSpeed(20.f * 0.55f);
+			this->setSpeed(this->speed * 0.5f);
 			return true;
 		}
-		else
-		{
-			this->setSpeed(20.f);
-			return false;
-		}
+		else return false;
 	}
 
 	return false;

@@ -52,3 +52,8 @@ struct particleStruct
 		this->isActive = 1.0f;
 	}
 };
+
+struct boneTransforms
+{
+	std::vector<DirectX::XMFLOAT4X4> finalTransforms;
+};

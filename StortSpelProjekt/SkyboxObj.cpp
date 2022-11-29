@@ -8,7 +8,7 @@
 bool CreateRenderTargets(Microsoft::WRL::ComPtr<ID3D11Texture2D>& Texture, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& renderedTextureView)
 {
 	//variables
-	std::vector<std::string> filenames{ "0.png", "1.png", "2.png", "3.png", "4.png", "5.png" };// "boxTest.jpg", "boxTest.jpg", "boxTest.jpg", "boxTest.jpg", "boxTest.jpg", "boxTest.jpg" 
+	std::vector<std::string> filenames{ "Skybox/1/0.png", "Skybox/1/1.png", "Skybox/1/2.png", "Skybox/1/3.png", "Skybox/1/4.png", "Skybox/1/5.png" };// "boxTest.jpg", "boxTest.jpg", "boxTest.jpg", "boxTest.jpg", "boxTest.jpg", "boxTest.jpg" 
 	std::vector<unsigned char*> images;
 	int wth = 0;
 	int hth = 0;

@@ -221,7 +221,7 @@ int main()
 		std::cout << "UDP Successfully bound socket\n";
 	}
 
-	std::chrono::time_point<std::chrono::system_clock> start, startComponentTimer, itemSpawnTimer;
+	std::chrono::time_point<std::chrono::system_clock> start, startComponentTimer, itemSpawnTimer, startFly;
 	start = std::chrono::system_clock::now();
 
 	float timerLength = 1.f / 30.0f;
@@ -557,6 +557,7 @@ int main()
 			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
 			onlineItems[onlineItems.size() - 1]->setPosition(cData.x, cData.y, cData.z);
 			onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+			onlineItems[onlineItems.size() - 1]->setOnlineType(ObjID::COMPONENT);
 			sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
 			startComponentTimer = std::chrono::system_clock::now();
 		}
@@ -577,6 +578,7 @@ int main()
 			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
 			onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);;
 			onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
+			onlineItems[onlineItems.size() - 1]->setOnlineType(ObjID::BAT);
 			onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
 			sendBinaryDataAllPlayers(itemSpawnData, data);
 			itemSpawnTimer = std::chrono::system_clock::now();
@@ -634,6 +636,7 @@ int main()
 
 				sendBinaryDataAllPlayers<LandingMiniGameScore>(lScore, data);
 				break;
+
 			case MiniGames::KINGOFTHEHILL:
 				miniGameKTH.update(data);
 				break;
@@ -669,6 +672,7 @@ int main()
 							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 							onlineItems[i]->setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
 							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
+							onlineItems[i]->setInUseBy(-1);
 							ComponentAdded compAdded;
 							compAdded.packetId = PacketType::COMPONENTADDED;
 							compAdded.spaceShipTeam = j;
@@ -681,6 +685,7 @@ int main()
 								progress[0] = 0;
 								progress[1] = 0;
 								timeToFly = true;
+								startFly = std::chrono::system_clock::now();
 							}
 						}
 					}
@@ -691,8 +696,7 @@ int main()
 		//Waits for the ships to fly away before starting minigames
 		if (timeToFly)
 		{
-			flyTime += timerLength;
-			if (flyTime > 9.f)
+			if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startFly)).count() > 10.f)
 			{
 				std::cout << "SENT START MINIGAMES\n";
 				MinigameStart startMinigame;

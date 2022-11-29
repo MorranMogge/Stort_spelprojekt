@@ -432,7 +432,7 @@ GAMESTATE Game::updateComponentGame()
 	//asteroids->updateAsteroids(dt, planetVector, gameObjects);
 
 	//Set moon
-	if (planetVector.size() > 2) planetVector[2]->rotateMoon(DirectX::XMFLOAT3(0, 0, 0), 0.5f);
+	//if (planetVector.size() > 2) planetVector[2]->rotateMoon(DirectX::XMFLOAT3(0, 0, 0), 0.5f);
 	
 	//Calculate gravity factor
 	if (planetVector.size() > 0) field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
@@ -555,8 +555,7 @@ GAMESTATE Game::updateComponentGame()
 	else if (components.size() > 0) this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
 	currentPlayer->colliedWIthComponent(components);
 
-
-	if (!IFONLINE) //Check Components offline
+	if (!IFONLINE)
 	{
 		for (int i = 0; i < spaceShips.size(); i++)
 		{

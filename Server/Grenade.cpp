@@ -25,5 +25,6 @@ void Grenade::resetExplosion()
 void Grenade::use(const Player* playerHoldingItem)
 {
 	std::cout << "Used grenade\n";
+	this->destructionIsImmenent = true;
 	timer.resetStartTime();
 }

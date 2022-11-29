@@ -367,6 +367,14 @@ void Game::drawFresnel()
 			tempNade->drawFresnel();
 		}
 	}
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		if (onlineItems[i]->getId() == ObjID::GRENADE)
+		{
+			Grenade* tempNade = (Grenade*)onlineItems[i];
+			tempNade->drawFresnel();
+		}
+	}
 	//Inverse
 	basicRenderer.invFresnelPrePass();
 	for (int i = 0; i < planetVector.size(); i++)
@@ -480,15 +488,16 @@ GAMESTATE Game::Update()
 		{
 			Grenade* tempNade = (Grenade*)onlineItems[i];
 			tempNade->updateExplosionCheck();
-		}	break;
+		}	
+		break;
 		case ObjID::POTION:
 		{
 			Potion* tempPotion = (Potion*)onlineItems[i];
 			if (tempPotion->timerGoing()) currentPlayer->setSpeed(50.f);
 			else currentPlayer->setSpeed(20.f);
-		}	break;
-		}
+		}	
 		break;
+		}
 	}
 
 	//Update item checks
@@ -643,6 +652,10 @@ GAMESTATE Game::Update()
 	for (int i = 0; i < items.size(); i++)
 	{
 		this->items[i]->checkDistance((GameObject*)(currentPlayer));
+	}
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		this->onlineItems[i]->checkDistance((GameObject*)(currentPlayer));
 	}
 	for (int i = 0; i < components.size(); i++)
 	{

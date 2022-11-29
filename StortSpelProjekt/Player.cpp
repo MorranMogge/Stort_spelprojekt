@@ -166,13 +166,10 @@ void Player::handleItems()
 				//Apply the force
 				this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
 			}
-			std::cout << "TEST 3 nuzzle\n";
 			holdingItem->useItem(this);
-			std::cout << "TEST 4 nuzzle\n";
 			//itemPhysComp->setIsAllowedToSleep(true);
 			//itemPhysComp->setIsSleeping(true);
 			holdingItem->setPickedUp(false);
-			std::cout << "TEST 5 nuzzle\n";
 			holdingItem = nullptr;
 		}
 	}

@@ -35,6 +35,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	ConfirmComponentPickedUp* confirmCmpPickedUp = nullptr;
 	ComponentPosition* cmpPosition = nullptr;
 	ComponentDropped* cmpDropped = nullptr;
+	HitByGrenade* hitByGrenade = nullptr;
 	
 
 	while (circularBuffer->getIfPacketsLeftToRead())
@@ -279,6 +280,12 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					players[i]->releaseItem();
 				}
 			}
+
+			break;
+
+		case PacketType::HITBYGRENADE:
+			hitByGrenade = circularBuffer->readData<HitByGrenade>();
+			players[playerId]->hitByBat(reactphysics3d::Vector3(hitByGrenade->xForce, hitByGrenade->yForce, hitByGrenade->zForce));
 
 			break;
 

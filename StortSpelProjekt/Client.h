@@ -83,7 +83,7 @@ inline void Client::sendStuff( T& dataToSend)
 	if (data.socket.send(&dataToSend, sizeof(dataToSend), sentSize) != sf::Socket::Done)
 	{
 		//error
-		//std::cout << "TCP Couldnt send packet\n";
+		std::cout << "TCP Couldnt send packet\n";
 	}
 	else 
 	{

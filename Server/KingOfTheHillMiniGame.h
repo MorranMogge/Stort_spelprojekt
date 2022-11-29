@@ -15,6 +15,8 @@ private:
 	float time;
 	float timerSend;
 	float timeToSpawnItems;
+	bool redInside, blueInside, oneInside;
+
 	//3D punkt
 	DirectX::XMFLOAT3 kingOfTheHillOrigo;
 	float radius;

@@ -235,11 +235,19 @@ struct MinigameStart
 	float pointsRed;
 };
 
+//enum 29
+struct KTHPoints
+{
+	int packetId;
+	float redPoints;
+	float bluePoints;
+	int teamColor;
+};
+
 //enum = 30
 struct DoneWithGame
 {
 	int packetId;
-	int playerID;
 	MiniGames formerGame;
 };
 
@@ -261,4 +269,10 @@ struct PotionSpawn
 	int xPos;
 	int yPos;
 	int zPos;
+};
+
+//enum 33
+struct ZoneColor
+{
+	int packetId;
 };

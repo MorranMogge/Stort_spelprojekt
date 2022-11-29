@@ -261,8 +261,6 @@ void Game::loadObjects()
 		gamePad = new GamePad();
 		currentPlayer->setGamePad(gamePad);
 	}
-
-	if (!IFONLINE) captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), planetGravityField, DirectX::SimpleMath::Vector3(10.f, 10.f, 10.f));
 }
 
 void Game::drawShadows()
@@ -589,28 +587,12 @@ GAMESTATE Game::updateComponentGame()
 		}
 	}
 	//Check winstate
-	if (endTimer > 6)
+	if (!IFONLINE)
 	{
-		this->currentPlayer->setVibration(0.f, 0.f);
-		for (int i = 0; i < spaceShips.size(); i++)
+		if (endTimer > 9)
 		{
-			if (spaceShips[i]->isFinished())
-			{
-				//Send data to server
-				/*IntermissionStart startOfIntermission;
-				startOfIntermission.packetId = PacketType::STARTINTERMISSION;
-				client->sendStuff<IntermissionStart>(startOfIntermission);*/
-
-				/*int team = spaceShips[i]->getTeam();
-				if (currentPlayer->getTeam() == team)
-				{
-					return WIN;
-				}
-				else
-				{
-					return LOSE;
-				}*/
-			}
+			this->currentPlayer->setVibration(0.f, 0.f);
+			this->currentMinigame = MiniGames::STARTOFINTERMISSION;
 		}
 	}
 
@@ -693,11 +675,9 @@ GAMESTATE Game::updateLandingGame()
 		}
 		std::cout << "\nLANDING MINIGAME OVER!\nTOTAL SCORE:\nTeam score: " << teamScoreLandingMiniGame << "\nEnemy Team score: " << enemyTeamScoreLandingMiniGame << "\n";
 
-
 		//Send data to server
 		DoneWithGame requestStart;
 		requestStart.packetId = PacketType::DONEWITHGAME;
-		requestStart.playerID = currentPlayer->getOnlineID();
 		requestStart.formerGame = MiniGames::LANDINGSPACESHIP;
 		client->sendStuff<DoneWithGame>(requestStart);
 		currentMinigame = MiniGames::DEFAULT;
@@ -790,16 +770,12 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	else camera.collisionCamera(currentPlayer, planetVector, dt);
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
-	//Arrow pointing to spaceship		FIX!
-	if (currentPlayer->isHoldingComp())
+	//Arrow pointing to capture zone or is removed
+	if (captureZone)
 	{
-		for (int i = 0; i < spaceShips.size(); i++)
-		{
-			if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
-		}
+		if (captureZone->detectedObject(currentPlayer)) this->arrow->removeArrow();
+		else this->arrow->showDirection(captureZone->getPosition(), currentPlayer->getPosV3(), grav);
 	}
-	//Arrow pointing to component
-	if (captureZone) this->arrow->showDirection(captureZone->getPosition(), currentPlayer->getPosV3(), grav);
 	currentPlayer->colliedWIthComponent(components);
 
 	//Play pickup animation
@@ -873,14 +849,20 @@ GAMESTATE Game::updateIntermission()
 			this->spaceShips[1]->setRot(spaceShips[1]->getRotOrientedToGrav());
 			this->spaceShips[1]->getPhysComp()->setRotation(reactphysics3d::Quaternion(spaceShips[1]->getRotXM().x, spaceShips[1]->getRotXM().y, spaceShips[1]->getRotXM().z, 1.0));
 
+			if (!IFONLINE)
+			{
+				this->currentMinigame = MiniGames::STARTLANDING;
+				return NOCHANGE;
+			}
+			
 			//Send data to server
 			DoneWithGame requestStart;
 			requestStart.packetId = PacketType::DONEWITHGAME;
-			requestStart.playerID = currentPlayer->getOnlineID();
 			requestStart.formerGame = MiniGames::INTERMISSION;
 			client->sendStuff<DoneWithGame>(requestStart);
+			std::cout << "SEND DONE WITH GAME\n";
+
 			currentMinigame = MiniGames::DEFAULT;
-			return GAMESTATE::NOCHANGE;
 		}
 	}
 

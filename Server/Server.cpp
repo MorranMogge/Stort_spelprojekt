@@ -228,10 +228,9 @@ int main()
 	while (!physicsTimer.getTimePassed(7.0f)) continue;
 
 	//Spawning planets
-	srand(time(0));
 	std::vector<Planet*> planetVector;
 	float planetSize = 40.f;
-	int nrPlanets = (rand() % 3) + 1;
+	int nrPlanets = 3;
 	for (int i = 0; i < nrPlanets; i++)
 	{
 		if (i == 0) planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f)));

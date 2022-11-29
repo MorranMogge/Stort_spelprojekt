@@ -31,6 +31,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	Item* item = nullptr;
 	BaseballBat* baseballbat = nullptr;
 	Grenade* grenade = nullptr;
+	Potion* potion = nullptr;
 	SpawnPlanets* planetData = nullptr;
 	ConfirmComponentPickedUp* confirmCmpPickedUp = nullptr;
 	ComponentPosition* cmpPosition = nullptr;
@@ -92,7 +93,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				COMPONENT, spawnComp->ComponentId, field);
 			physWorld.addPhysComponent(newComponent);
 			onlineItems.push_back(newComponent);
-			//gameObjects.push_back(newComponent);
+			gameObjects.push_back(newComponent);
 			//componentVector.push_back(newComponent);
  			std::cout << "Sucessfully recieved component from server: " << std::to_string(spawnComp->ComponentId) << std::endl;
 			break;
@@ -133,6 +134,17 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				baseballbat->setGameObjects(players);
 				physWorld.addPhysComponent(baseballbat);
 				onlineItems.push_back(baseballbat);
+				gameObjects.push_back(baseballbat);
+
+			}
+			else if (itemSpawn->itemType == ObjID::POTION)
+			{
+				potion = new Potion(meshes[3], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
+					DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), ObjID::POTION, itemSpawn->itemId, field);
+				//grenade->setClient(client);
+				physWorld.addPhysComponent(potion);
+				onlineItems.push_back(potion);
+				gameObjects.push_back(potion);
 			}
 			else if (itemSpawn->itemType == ObjID::GRENADE)
 			{
@@ -142,6 +154,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				grenade->setGameObjects(gameObjects);
 				physWorld.addPhysComponent(grenade);
 				onlineItems.push_back(grenade);
+				gameObjects.push_back(grenade);
 			}
 			//gameObjects.push_back(baseballbat);
 			std::cout << "item spawned UWU: " << std::to_string(itemSpawn->itemId) << std::endl;
@@ -212,7 +225,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					randomPos *= 100;
 
 					item->setPos(randomPos);
-					players[i]->releaseItem();
+					players[i]->releaseItem(); //REMOVE THIS
 
 				}
 			}

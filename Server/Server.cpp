@@ -553,6 +553,7 @@ int main()
 			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
 			onlineItems[onlineItems.size() - 1]->setPosition(cData.x, cData.y, cData.z);
 			onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+			std::cout << "ID Component: " << onlineItems.back()->getOnlineId() << "\n";
 			onlineItems[onlineItems.size() - 1]->setOnlineType(ObjID::COMPONENT);
 			sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
 			startComponentTimer = std::chrono::system_clock::now();
@@ -564,13 +565,13 @@ int main()
 		{
 			ItemSpawn itemSpawnData;
 			DirectX::XMFLOAT3 temp = randomizeObjectPos();
-			itemSpawnData.itemType = 2 * (rand()%2) + 3;
-			std::cout << "ITEM TYPE: " << itemSpawnData.itemType << "\n";
+			itemSpawnData.itemType = (rand()%3) + 3;
+			//std::cout << "ITEM TYPE: " << itemSpawnData.itemType << "\n";
 			itemSpawnData.x = temp.x;
 			itemSpawnData.y = temp.y;
 			itemSpawnData.z = temp.z;
 			itemSpawnData.itemId = componentIdCounter;
-			std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
+			//std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
 			itemSpawnData.packetId = PacketType::ITEMSPAWN;
 
 			
@@ -581,6 +582,7 @@ int main()
 			onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
 			onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
 			onlineItems[onlineItems.size() - 1]->setOnlineType(itemSpawnData.itemType);
+			std::cout << "ID Item: " << onlineItems.back()->getOnlineId() << "\n";
 
 			sendBinaryDataAllPlayers(itemSpawnData, data);
 			itemSpawnTimer = std::chrono::system_clock::now();

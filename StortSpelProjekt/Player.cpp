@@ -1029,7 +1029,6 @@ void Player::colliedWIthComponent(const std::vector<Component*>& components)
 
 	for (int i = 0; i < components.size(); i++) collided = this->physComp->testBodiesOverlap(components[i]->getPhysComp());
 	if (collided) this->setSpeed(20.f * 0.55f);
-	else this->setSpeed(20.f);
 }
 
 bool Player::getHitByBat() const
@@ -1258,7 +1257,6 @@ bool Player::isHoldingComp()
 		}
 		else
 		{
-			this->setSpeed(20.f);
 			return false;
 		}
 	}

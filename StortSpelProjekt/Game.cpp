@@ -467,6 +467,7 @@ GAMESTATE Game::Update()
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
+	currentPlayer->setSpeed(20.f);
 
 	//Check component pickup
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);
@@ -494,7 +495,6 @@ GAMESTATE Game::Update()
 		{
 			Potion* tempPotion = (Potion*)onlineItems[i];
 			if (tempPotion->timerGoing()) currentPlayer->setSpeed(50.f);
-			else currentPlayer->setSpeed(20.f);
 		}	
 		break;
 		}
@@ -636,11 +636,6 @@ GAMESTATE Game::Update()
 				}
 			}
 		}
-	}
-	if (landingMinigame)
-	{
-		//Here yo type the function below but replace testObject with your space ship
-		//camera.landingMinigameScene(planetVector[0], actualTestObjectForLandingVisuals->getPosV3(), actualTestObjectForLandingVisuals->getRot());
 	}
 
 	//Play pickup animation

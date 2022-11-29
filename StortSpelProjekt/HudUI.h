@@ -30,6 +30,7 @@ class HudUI final
 	GUISprite controls;
 	GUISprite useControls;
 	GUISprite useControls1;
+	GUISprite useControls2;
 
 	TimeStruct rocketTimer;
 	TimeStruct timer;

@@ -90,7 +90,8 @@ void HudUI::SpritePass()
 		{
 		case 1:
 			useControls.Draw();
-			useControls1.Draw(); break;
+			useControls1.Draw(); 
+			useControls2.Draw(); break;
 		}
 	}
 
@@ -229,13 +230,17 @@ HudUI::HudUI()
 	controls.SetScale(1.0f, 1.0f);
 
 
-	useControls = GUISprite(300 + left, 600 + upp);
+	useControls = GUISprite(390 + left, 600 + upp);
 	useControls.Load(L"../Sprites/ThrowText2.png");
 	useControls.SetScale(0.40f * scaleFactor, 0.40f * scaleFactor);
 
-	useControls1 = GUISprite(290 + left, 570 + upp);
-	useControls1.Load(L"../Sprites/UseText2.png");
-	useControls1.SetScale(0.40f * scaleFactor, 0.40f * scaleFactor);
+	useControls1 = GUISprite(280 + left, 600 + upp);
+	useControls1.Load(L"../Sprites/control/use.png");
+	useControls1.SetScale(0.50f * scaleFactor, 0.50f * scaleFactor);
+
+	useControls2 = GUISprite(240 + left, 600 + upp);
+	useControls2.Load(L"../Sprites/Ekey.png");
+	useControls2.SetScale(0.45f * scaleFactor, 0.45f * scaleFactor);
 
 	objective2 = GUISprite(632, 100 + upp);
 	objective2.Load(L"../Sprites/Objective.png");

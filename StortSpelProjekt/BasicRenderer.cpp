@@ -421,3 +421,13 @@ void BasicRenderer::bindAnimVs()
 	immediateContext->VSSetShader(this->vShaderAnim, nullptr, 0);
 }
 
+//
+void BasicRenderer::fresnelAnimPrePass(Camera& stageCamera)
+{
+	immediateContext->IASetInputLayout(this->animLayout);
+	immediateContext->VSSetShader(this->vShaderAnim, nullptr, 0);
+	immediateContext->OMSetBlendState(fresnelBlendState, nullptr, 0xffffffffu);
+	immediateContext->OMSetDepthStencilState(PT_dsState, 0);
+	immediateContext->PSSetShader(Fresnel_PS, nullptr, 0);
+	stageCamera.PSbindPositionBuffer(1);
+}

@@ -71,7 +71,7 @@ MiniGameUI::~MiniGameUI()
 
 void MiniGameUI::HandleInputs()
 {
-	bar_p.SetScale((sin(Time::CurrentTime()) * 0.5 + 0.5) * 107, 0.6f);
+	bar_p.SetScale((sin(Time::CurrentTime()) * 0.5f + 0.5f) * 107, 0.6f);
 
 }
 

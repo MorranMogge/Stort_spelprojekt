@@ -9,7 +9,7 @@
 #include "Client.h"
 #include "AnimatedMesh.h"
 #include "Planet.h"
-
+#include "Time.h"
 #include <GamePad.h>
 #include <iostream>
 #define FORCE 2500
@@ -62,7 +62,10 @@ private:
 	Item* holdingItem;
 
 	ParticleEmitter* particles;
+	ParticleEmitter* particles2;
 	BilboardObject* playerIcon;
+	ConstantBufferNew<DirectX::XMFLOAT4> fresnelBuffer;	//fresnel color buffer
+
 
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
@@ -80,11 +83,13 @@ private:
 	DirectX::XMVECTOR southEastVector = SOUTH_EAST;
 	DirectX::XMVECTOR southWestVector = SOUTH_WEST;
 
+private:
 	void throwItem();
 	void resetRotationMatrix();
 	void handleItems();
 	bool movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 	bool moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime);
+
 public:
 	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team,
 		ID3D11ShaderResourceView* redTeamColor, ID3D11ShaderResourceView* blueTeamColor, GravityField* field = nullptr);
@@ -136,6 +141,7 @@ public:
 	//Updating and rendering
 	void drawIcon();
 	void drawParticles();
+	void drawFresnel(float interval = 0.2);
 	//virtual void draw() override;
 	void update();
 	void requestingPickUpItem(const std::vector<Item*>& items);

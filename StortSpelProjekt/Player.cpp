@@ -1319,10 +1319,13 @@ void Player::update()
 	//Update icon movement
 	if (this->playerIcon != nullptr)
 	{
+		DirectX::XMFLOAT4X4 f1;
+		this->forwardKinematics("hand3:hand3:Head", f1);
+		DirectX::XMFLOAT3 headPos = DirectX::XMFLOAT3(f1._41, f1._42, f1._43);
 		float constant = playerIcon->getOffset();
 		DirectX::XMFLOAT3 upDir = this->getUpDirection();
 		DirectX::XMFLOAT3 itemPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-		this->playerIcon->setPosition(this->position + itemPos);
+		this->playerIcon->setPosition(DirectX::XMFLOAT3(headPos.x + itemPos.x, headPos.y + itemPos.y, headPos.z + itemPos.z));
 	}
 	//Update particle movement
 	if (this->particles != nullptr && moveKeyPressed)

@@ -491,6 +491,13 @@ GAMESTATE Game::Update()
 
 	//Player functions
 	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
+	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
+	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
+	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
+	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
+	currentPlayer->velocityMove(dt);
+	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
+	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);

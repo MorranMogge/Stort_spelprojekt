@@ -201,7 +201,7 @@ void Planet::setColor(const DirectX::SimpleMath::Vector3& color)
 	this->colorBuffer.applyData();
 }
 
-GravityField* Planet::getGravityField() const
+GravityField* Planet::getGravityField()
 {
 	return this->gravField;
 }

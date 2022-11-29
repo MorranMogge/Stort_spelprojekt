@@ -42,6 +42,7 @@ public:
 	void drawParticles();
 	void drawFresnel();
 	bool isFinished();
+	void setSpaceShipRotationRelativePlanet(GravityField* field);
 	virtual void draw() override;
 	void move(const DirectX::XMFLOAT3& grav, const float& deltaTime);
 };

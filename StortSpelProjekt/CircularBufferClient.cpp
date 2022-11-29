@@ -76,6 +76,13 @@ void* CircularBufferClient::getData()
 	return startOfData;
 }
 
+void CircularBufferClient::clearBuffer()
+{
+	memset(startOfBuffer, 0, SIZEOFBUFFER);
+	read = startOfBuffer;
+	write = startOfBuffer;
+}
+
 bool CircularBufferClient::getIfPacketsLeftToRead()
 {
 	if (looped)

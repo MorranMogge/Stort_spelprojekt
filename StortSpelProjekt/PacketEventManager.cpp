@@ -42,6 +42,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		switch (packetId)
 		{
 		default:
+			circularBuffer->clearBuffer();
+			std::cout << "RECEIVED A BAD PACKET, CLEARED THE CIRCLE BUFFER PacketEventManager.cpp\n";
 			break;
 
 		case PacketType::POSITION:

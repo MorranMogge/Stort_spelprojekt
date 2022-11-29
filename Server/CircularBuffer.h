@@ -33,6 +33,11 @@ public:
 	//returns a char* that points to the packet
 	void* getData();
 
+	//Clears the circleBuffer
+	//Only use this if the packet cant be handled
+	//Sets the read and write pointer to the start of the buffer
+	void clearBuffer();
+
 	//returns if there are packets left to read 
 	bool getIfPacketsLeftToRead();
 

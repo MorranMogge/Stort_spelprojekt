@@ -226,6 +226,13 @@ bool SpaceShip::isFinished()
 	return complete;
 }
 
+void SpaceShip::setSpaceShipRotationRelativePlanet(GravityField* field)
+{
+	this->setGravityField(field);
+	//Set rotation to gravity field
+	this->setRot(this->getRotOrientedToGrav());
+}
+
 void SpaceShip::draw()
 {
 	//Team switch

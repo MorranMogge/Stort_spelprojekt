@@ -60,7 +60,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			{
 				tmpPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 
 					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
-				tmpPlayer->setGravityField(field);
+				//tmpPlayer->setGravityField(field);
 				tmpPlayer->addData(animData);
 				tmpPlayer->setOnlineID(i);
 				physWorld.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
@@ -71,7 +71,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 				std::cout << "Player online id: " << std::to_string(i) << " \n";
 				currentPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 					1, playerId, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
-				currentPlayer->setGravityField(field);
 				currentPlayer->addData(animData);
 				currentPlayer->setOnlineID(i);
 				players.push_back(currentPlayer);
@@ -87,6 +86,15 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		{
 			std::cout << "UwU: " << UwU << std::endl;
 			packetEventManager->handleId(client->getCircularBuffer(), this->planetVector, physWorld, meshes, spaceShips, gameObjects, field, UwU);
+		}
+		for (int i = 0; i < spaceShips.size(); i++)
+		{
+			spaceShips[i]->setSpaceShipRotationRelativePlanet(planetVector[0]->getGravityField());
+			
+		}
+		for (int i = 0; i < players.size(); i++)
+		{
+			players[i]->setGravityField(planetVector[0]->getGravityField());
 		}
 		Loser sendingConfirm;
 		sendingConfirm.packetId = PacketType::DONELOADING;

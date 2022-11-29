@@ -51,7 +51,7 @@ public:
 
 	void movePlanet(float offset);
 	//Returns the gravity field of the planet
-	GravityField* getGravityField()const;
+	GravityField* getGravityField();
 	//Returns the closest gravity field out of two planets
 	GravityField* getClosestField(std::vector<Planet*>& planets, const DirectX::SimpleMath::Vector3& position)const;
 	//Returns the closest gravity field factor out of two planets

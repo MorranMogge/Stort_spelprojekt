@@ -32,7 +32,7 @@
 
 #include <psapi.h>
 
-const short MAXNUMBEROFPLAYERS = 1;
+const short MAXNUMBEROFPLAYERS = 2;
 std::mutex mutex;
 
 struct userData
@@ -388,6 +388,8 @@ int main()
 			switch (packetId)
 			{
 			default:
+				circBuffer->clearBuffer();
+				std::cout << "BAD PACKET RECEIVED, CLEARING THE CIRCLEBUFFER\n";
 				break;
 
 			case PacketType::POSITIONROTATION:
@@ -549,16 +551,17 @@ int main()
 			}
 		}
 		
-		////Spawns a component
-		//if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
-		//{
-		//	SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
-		//	physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
-		//	onlineItems[onlineItems.size() - 1]->setPosition(cData.x, cData.y, cData.z);
-		//	onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
-		//	sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
-		//	startComponentTimer = std::chrono::system_clock::now();
-		//}
+		//Spawns a component
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
+		{
+			SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
+			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
+			onlineItems[onlineItems.size() - 1]->setPosition(cData.x, cData.y, cData.z);
+			onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+			onlineItems[onlineItems.size() - 1]->setOnlineType(ObjID::COMPONENT);
+			sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
+			startComponentTimer = std::chrono::system_clock::now();
+		}
 
 
 		//Spawns a baseBallBat

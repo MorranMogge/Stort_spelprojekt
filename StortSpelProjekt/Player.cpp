@@ -127,6 +127,7 @@ void Player::handleItems()
 			keyPressTimer.resetStartTime();
 			////sending data to server
 
+			std::cout << "TEST 1 nuzzle\n";
 			//allocates data to be sent
 			ComponentDropped c;
 
@@ -138,7 +139,7 @@ void Player::handleItems()
 			{
 				client->sendStuff<ComponentDropped>(c);
 			}
-			std::cout << "TEST 1 nuzzle\n";
+
 			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 			if (holdingItem->getId() == GRENADE)
 			{

@@ -442,6 +442,7 @@ GAMESTATE Game::Update()
 	if (planetVector.size() > 0)
 	{
 		for (int i = 0; i < gameObjects.size(); i++) gameObjects[i]->setGravityField(planetVector[0]->getClosestField(planetVector, gameObjects[i]->getPosV3()));
+		for (int i = 0; i < onlineItems.size(); i++) onlineItems[i]->setGravityField(planetVector[0]->getClosestField(planetVector, onlineItems[i]->getPosV3()));
 	}
 
 	//Raycasting

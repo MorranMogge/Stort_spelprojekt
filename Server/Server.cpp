@@ -496,9 +496,15 @@ int main()
 
 				break;
 
-			case PacketType::BASEBALLBATSPAWN://ändras så att servern skickar och client tar emot
+			case PacketType::BASEBALLBATSPAWN://ändras sonlineItemså att servern skickar och client tar emot
 				baseBallBatData = circBuffer->readData<baseballBatSpawn>();
 
+				break;
+
+			case PacketType::USEGRENADE:
+				circBuffer->readData<baseballBatSpawn>();
+
+				std::cout << "Player used grenade OwO\n";
 				break;
 
 			}
@@ -533,16 +539,17 @@ int main()
 			}
 		}
 		
-		////Spawns a component
-		//if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
-		//{
-		//	SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
-		//	physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
-		//	onlineItems[onlineItems.size() - 1]->setPosition(cData.x, cData.y, cData.z);
-		//	onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
-		//	sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
-		//	startComponentTimer = std::chrono::system_clock::now();
-		//}
+		//Spawns a component
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
+		{
+			SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
+			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
+			onlineItems[onlineItems.size() - 1]->setPosition(cData.x, cData.y, cData.z);
+			onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+			onlineItems[onlineItems.size() - 1]->setOnlineType(ObjID::COMPONENT);
+			sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
+			startComponentTimer = std::chrono::system_clock::now();
+		}
 
 
 		//Spawns a baseBallBat

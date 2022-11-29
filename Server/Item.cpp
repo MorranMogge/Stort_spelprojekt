@@ -79,7 +79,7 @@ float Item::getposition(char whichPos)
 		return this->physComp->getPosV3().z;
 		break;
 	default:
-		return 69.0f;
+		return 6099.0f;
 		break;
 	}	
 }

@@ -112,4 +112,3 @@ void Item::update()
 		this->particles->updateBuffer();
 	}
 }
-

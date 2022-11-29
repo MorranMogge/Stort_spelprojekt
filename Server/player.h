@@ -5,7 +5,7 @@
 #include "TimeStruct.h"
 
 //temp klass eftersom det inte finns en player
-class player
+class Player
 {
 private:
 	float xPos;
@@ -17,7 +17,7 @@ private:
 	TimeStruct timer;
 
 public:
-	player();
+	Player();
 
 	//skicka in char 'x', 'y' eller 'z'
 	float getposition(char whichPos)const;

@@ -2,6 +2,8 @@
 #include "Item.h"
 #include "TimeStruct.h"
 
+class Player;
+
 class Potion : public Item 
 {
 private:
@@ -13,7 +15,7 @@ public:
 	Potion(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field = nullptr);
 	virtual ~Potion();
 
-	virtual void useItem() override;
+	virtual void useItem(const Player* playerHoldingItem) override;
 	bool isTimeToRun() const;
 	bool timerGoing();
 };

@@ -4,7 +4,7 @@
 
 using namespace DirectX;
 
-SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
+SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, Mesh* zoneMesh, const DirectX::XMFLOAT3& scale, const int& nrofComp)
 	:GameObject(useMesh, pos, DirectX::XMFLOAT3(0,0,0), id, field, scale), compToComplete(nrofComp), currentComponents(0), team(team), animate(false), counter(0.0f)
 {
 	compAddedSfx.load(L"../Sounds/random.wav");
@@ -28,13 +28,10 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 	this->particles = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 	this->particles2 = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 
-	tempMesh = new Mesh("../Meshes/zone");
-
-
 	//CapZone
 	float constant2 = 40.0f;
 	DirectX::XMFLOAT3 offset2(upDir.x * constant2, upDir.y * constant2, upDir.z * constant2);
-	zone = new CaptureZone(tempMesh, offset2, this->getRotXM(),field, DirectX::XMFLOAT3(8, 8, 8));
+	zone = new CaptureZone(zoneMesh, offset2, this->getRotXM(),field, DirectX::XMFLOAT3(8, 8, 8));
 
 	//Team switch
 	switch (team)
@@ -51,7 +48,7 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 	}
 }
 
-SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, const DirectX::XMFLOAT3& scale, const int& nrofComp)
+SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team, GravityField* field, Mesh* zoneMesh, const DirectX::XMFLOAT3& scale, const int& nrofComp)
 	:GameObject("../Meshes/rocket", pos, DirectX::XMFLOAT3(0, 0, 0), id, field, scale), compToComplete(nrofComp), currentComponents(0), team(team), animate(false), counter(0.0f)
 {
 	using namespace DirectX;
@@ -72,12 +69,10 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 	this->particles = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 	this->particles2 = new ParticleEmitter(pos, this->getRotOrientedToGrav(), 26, DirectX::XMFLOAT2(2, 5), 2);
 
-	tempMesh = new Mesh("../Meshes/zone");
-
 	//CapZone
 	float constant2 = 40.0f;
 	DirectX::XMFLOAT3 offset2(upDir.x * constant2, upDir.y * constant2, upDir.z * constant2);
-	zone = new CaptureZone(tempMesh, offset2, this->getRotXM(), field, DirectX::XMFLOAT3(8, 8, 8));
+	zone = new CaptureZone(zoneMesh, offset2, this->getRotXM(), field, DirectX::XMFLOAT3(8, 8, 8));
 
 	//Team switch
 	switch (team)
@@ -106,7 +101,6 @@ SpaceShip::~SpaceShip()
 	delete this->particles;
 	delete this->particles2;
 	delete this->rocketStatusQuad;
-	delete this->tempMesh;
 }
 
 int SpaceShip::getTeam() const
@@ -279,8 +273,20 @@ void SpaceShip::animateOnPickup()
 		}
 	}
 }
-void SpaceShip::move(const DirectX::XMFLOAT3& grav, const float& deltaTime)
+
+void SpaceShip::flyAway(const float& deltaTime)
 {
-	upVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);
-	this->position += upVector * 18.f * deltaTime;
+	if (!setUp)
+	{
+		setUp = true;
+		upDirection = DirectX::XMVectorSet(this->getUpDirection().x, this->getUpDirection().y, this->getUpDirection().z, 0.0f);
+	}
+	this->position += upDirection * this->moveCounter * deltaTime;
+	this->moveCounter += 0.02f;
+}
+
+void SpaceShip::fly(const DirectX::XMFLOAT3& grav, const float& deltaTime)
+{
+	upDirection = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 0.0f);
+	this->position += upDirection * 18.f * deltaTime;
 }

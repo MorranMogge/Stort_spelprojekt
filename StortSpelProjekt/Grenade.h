@@ -3,6 +3,8 @@
 #include "TimeStruct.h"
 #include "ConstantBufferNew.h"
 
+class Player;
+
 class Grenade : public Item
 {
 private:
@@ -28,7 +30,8 @@ public:
 	virtual void drawIcon() override;
 	virtual void drawParticles() override;
 	void drawFresnel();
-	virtual void useItem() override;
+	virtual void useItem(const Player* playerHoldingItem) override;
+
 	bool getExploded() const;
 	void setExploded(const bool &onOff);
 private:

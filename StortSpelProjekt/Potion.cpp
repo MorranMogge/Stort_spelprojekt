@@ -37,7 +37,7 @@ Potion::~Potion()
 {
 }
 
-void Potion::useItem()
+void Potion::useItem(const Player* playerHoldingItem)
 {
 	sfx.stop();
 	sfx.play();

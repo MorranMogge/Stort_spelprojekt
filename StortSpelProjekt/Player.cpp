@@ -131,7 +131,7 @@ void Player::handleItems()
 			}
 			if (holdingItem->getId() != BAT)
 			{
-				holdingItem->useItem();
+				holdingItem->useItem(this);
 				holdingItem->setPickedUp(false);
 				holdingItem = nullptr;
 			}
@@ -191,7 +191,7 @@ void Player::handleItems()
 			}
 			if (holdingItem->getId() != BAT)
 			{
-				holdingItem->useItem();
+				holdingItem->useItem(this);
 				holdingItem->setPickedUp(false);
 				holdingItem = nullptr;
 			}
@@ -204,7 +204,7 @@ void Player::handleItems()
 	}
 	if (this->usingBat && this->dropTimer.getTimePassed(0.25)&& !this->usedItem)
 	{
-		holdingItem->useItem();
+		holdingItem->useItem(this);
 		this->usedItem = true;
 	}
 	else if (this->usingBat && this->dropTimer.getTimePassed(0.5))
@@ -232,6 +232,8 @@ Player::Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3
 				ID3D11ShaderResourceView* redTeamColor,ID3D11ShaderResourceView* blueTeamColor, GravityField* field)
     :AnimatedMesh(useMesh, data, pos, rot, id, field), holdingItem(nullptr), team(team), currentSpeed(0)
 {
+	this->animIndex = 0;
+	this->animSpeed = 1;
 	pickUpSfx.load(L"../Sounds/pickupCoin.wav");
 	playerHitSound.load(L"../Sounds/mixkit-sick-man-sneeze-2213.wav");
 	//walkingSound.setVolume(0.25f);

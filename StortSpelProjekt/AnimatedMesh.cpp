@@ -309,6 +309,7 @@ void AnimatedMesh::forwardKinematics(const std::string& nodeName, DirectX::XMFLO
 AnimatedMesh::AnimatedMesh(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int id, GravityField* field)
 	:GameObject(useMesh, pos, rot, id, field)
 {
+	this->currentAnimId = 1;
 	doneWithAnim = true;
 	this->totalTime = 0;
 	oldAnimId = 0;
@@ -357,10 +358,11 @@ void AnimatedMesh::addData(const AnimationData& data)
 	strucBuff.Initialize(GPU::device, GPU::immediateContext, tempfloatvec);
 }
 
-void AnimatedMesh::updateAnim(const float& dt, unsigned animIndex, float animationSpeed)
+void AnimatedMesh::updateAnim(const float& dt, int animIndex, float animationSpeed)
 {
 	if (this->MySimp.animation.size() <= animIndex)
 	{
+		std::cout << "i got anim id: " << animIndex << " but i onlt have: " << this->MySimp.animation.size() << " number of anims\n";
 		ErrorLog::Log("Invalid Animation Id!");
 		return;
 	}

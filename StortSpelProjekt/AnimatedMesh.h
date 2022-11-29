@@ -134,7 +134,7 @@ private:
 	float throwStart;
 
 	//for server
-	unsigned int currentAnimId;
+	int currentAnimId = 0;
 
 protected:
 
@@ -149,7 +149,7 @@ public:
 
 	void forwardKinematics(const std::string& nodeName, DirectX::XMFLOAT4X4& outMatrix);
 	void addData(const AnimationData& data);
-	void updateAnim(const float& dt, unsigned animIndex, float animationSpeed = 1.0f);
+	void updateAnim(const float& dt, int animIndex, float animationSpeed = 1.0f);
 	void draw();
 	int getAnimId();
 };

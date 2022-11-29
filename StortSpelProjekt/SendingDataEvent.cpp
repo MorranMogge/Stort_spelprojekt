@@ -14,14 +14,15 @@ void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Play
 	t.x = currentPlayer->getPos().x;
 	t.y = currentPlayer->getPos().y;
 	t.z = currentPlayer->getPos().z;
-	client->sendStuff<testPosition>(t);
+	//client->sendStuff<testPosition>(t);
 
 	PositionRotation pr;
 	pr.packetId = PacketType::POSITIONROTATION;
 	pr.playerId = client->getPlayerId();
 	pr.matrix = currentPlayer->getMatrix();
-	pr.AnimId = currentPlayer->getAnimId();
-	pr.animSpeed = currentPlayer->getAnimSpeed();
+	//pr.AnimId = currentPlayer->getAnimId();
+	//std::cout << "sending animId: " << currentPlayer->getAnimId() << "\n";
+	//pr.animSpeed = currentPlayer->getAnimSpeed();
 	client->sendStuff<PositionRotation>(pr);
 	
 	//holds a component

@@ -331,12 +331,13 @@ int main()
 					//std::cout << "playerid prMatrixData" << std::to_string(prMatrixData->) << std::endl;
 					if (i == prMatrixData->playerId)
 					{
-
+						data.users[i].playa.setAnimData(prMatrixData->AnimId, prMatrixData->animSpeed);
 						if (!data.users[i].playa.getDeathState())data.users[i].playa.setMatrix(prMatrixData->matrix);
 						//std::cout <<"player Id: " << std::to_string(prMatrixData->playerId)<<"pos: " << std::to_string(data.users[i].playa.getMatrix()._14) << std::endl;
 						break;
 					}
 				}
+				//sendBinaryDataAllPlayers<PositionRotation>(*prMatrixData, data);
 				break;
 
 			case PacketType::POSITION:
@@ -736,6 +737,7 @@ int main()
 			prMatrix.matrix = data.users[i].playa.getMatrix();
 			prMatrix.packetId = PacketType::POSITIONROTATION;
 			prMatrix.playerId = i;
+			data.users[i].playa.getAnimData(prMatrix.AnimId, prMatrix.animSpeed);
 
 			sendBinaryDataAllPlayers(prMatrix, data);
 		}

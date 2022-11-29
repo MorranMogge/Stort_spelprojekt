@@ -81,7 +81,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 				//currentPlayer->addData(animData);
 				currentPlayer->setOnlineID(i);
 				players.push_back(currentPlayer);
-				delete tmpPlayer;
+				//delete tmpPlayer;
 			}
 			std::cout << "Dude: " << (int)(dude < i + 1) << "\n";
 		}
@@ -283,6 +283,8 @@ void Game::drawShadows()
 
 	basicRenderer.depthPrePass();
 	ltHandler.drawShadows(0, gameObjects, &camera);
+	//basicRenderer.changeToAnimation();
+	//ltHandler.drawShadows(0, players, &camera);
 	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
 }
 
@@ -297,19 +299,15 @@ void Game::drawObjects(bool drawDebug)
 		if (gameObjects[i] == currentPlayer) continue;
 		else gameObjects[i]->draw();
 	}
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->draw();
-	}
+	//for (int i = 0; i < players.size(); i++)
+	//{
+	//	players[i]->draw();
+	//}
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
 		onlineItems[i]->draw();
 	}
 	//currentPlayer->updateBuffer();
-
-	//one of the two
-	//currentPlayer->draw();
-	currentPlayer->draw();
 
 	for (int i = 0; i < planetVector.size(); i++)
 	{
@@ -921,7 +919,7 @@ GAMESTATE Game::Update()
 {
 	//read the packets received from the server
 	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
-		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client);
+		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt);
 
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();
@@ -1017,7 +1015,10 @@ void Game::Render()
 	if (objectDraw) drawObjects(drawDebug);
 
 	basicRenderer.changeToAnimation();
-	currentPlayer->draw();
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->draw();
+	}
 
 	//Unbind light
 	ltHandler.unbindSrv();

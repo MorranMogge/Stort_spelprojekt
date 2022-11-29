@@ -16,6 +16,9 @@ private:
 	bool dead;
 	TimeStruct timer;
 
+	int animID = 0;
+	float animSpeed = 1;
+
 public:
 	Player();
 
@@ -31,4 +34,7 @@ public:
 	void setPosition(float pos[3]);
 	void setPosition(float x, float y, float z);
 	void updatePosViaPhysComp();
+
+	void setAnimData(int animId, float animSpeed);
+	void getAnimData(int& animId, float& animSpeed);
 };

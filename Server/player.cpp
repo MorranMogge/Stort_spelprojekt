@@ -6,6 +6,8 @@ Player::Player()
 	xPos = 20.0f;
 	yPos = 30.0f;
 	zPos = 40.0f;
+	this->animID = 0;
+	this->animSpeed = 1;
 	this->dead = false;
 }
 
@@ -101,4 +103,16 @@ void Player::updatePosViaPhysComp()
 	this->matrix._14 = xPos;
 	this->matrix._24 = yPos;
 	this->matrix._34 = zPos;
+}
+
+void Player::setAnimData(int animId, float animSpeed)
+{
+	this->animID = animId;
+	this->animSpeed = animSpeed;
+}
+
+void Player::getAnimData(int& animId, float& animSpeed)
+{
+	animId = this->animID;
+	animSpeed = this->animSpeed;
 }

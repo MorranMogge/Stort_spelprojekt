@@ -122,7 +122,12 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				{
 					if (playerId != i)
 					{
-						players[i]->updateAnim(dt, prMatrixData->AnimId, prMatrixData->animSpeed);
+						//std::cout << "getting animId: " << prMatrixData->AnimId << "\n";
+						//std::cout << "sizeof prmatrix: " << sizeof(PositionRotation) << std::endl;
+						if (prMatrixData->AnimId <= 5)
+						{
+							players[i]->updateAnim(dt, prMatrixData->AnimId, prMatrixData->animSpeed);
+						}
 						//std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
 						//std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
 						players[i]->setMatrix(prMatrixData->matrix);

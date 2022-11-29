@@ -81,7 +81,7 @@ private:
 	DirectX::XMVECTOR southWestVector = SOUTH_WEST;
 
 
-	unsigned int animIndex = 0;
+	int animIndex = 0;
 	bool eKeyDown = false;
 	float animSpeed = 1;
 	bool usingBat = false;

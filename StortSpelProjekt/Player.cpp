@@ -79,11 +79,24 @@ void Player::handleItems()
 		tracker.Update(state);
 
 		//Throw item
-		if (tracker.b == ButtonState::PRESSED) this->throwItem();
-
+		if (tracker.b == ButtonState::PRESSED)
+		{
+			this->dropTimer.resetStartTime();
+			this->throwingItem = true;
+		}
 		//Use item
 		else if (this->holdingItem != nullptr && tracker.x == ButtonState::PRESSED)
 		{
+			keyPressTimer.resetStartTime();
+			if (holdingItem->getId() == BAT)
+			{
+				this->usingBat = true;
+				this->usedItem = false;
+				this->dropTimer.resetStartTime();
+			}
+			////sending data to server
+
+			//allocates data to be sent
 			ComponentDropped c;
 
 			std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
@@ -94,8 +107,10 @@ void Player::handleItems()
 			{
 				client->sendStuff<ComponentDropped>(c);
 			}
-
-			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+			if (holdingItem->getId() != BAT)
+			{
+				itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+			}
 			if (holdingItem->getId() == GRENADE)
 			{
 				DirectX::XMFLOAT3 temp;
@@ -107,17 +122,17 @@ void Player::handleItems()
 					else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
 				}
 
-
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 				//Apply the force
 				this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
 			}
-			holdingItem->useItem();
-			//itemPhysComp->setIsAllowedToSleep(true);
-			//itemPhysComp->setIsSleeping(true);
-			holdingItem->setPickedUp(false);
-			holdingItem = nullptr;
+			if (holdingItem->getId() != BAT)
+			{
+				holdingItem->useItem();
+				holdingItem->setPickedUp(false);
+				holdingItem = nullptr;
+			}
 		}
 	}
 	//Keyboard functions
@@ -167,14 +182,11 @@ void Player::handleItems()
 					else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
 				}
 
-
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 				//Apply the force
 				this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
 			}
-			//itemPhysComp->setIsAllowedToSleep(true);
-			//itemPhysComp->setIsSleeping(true);
 			if (holdingItem->getId() != BAT)
 			{
 				holdingItem->useItem();
@@ -1081,45 +1093,94 @@ void Player::colliedWIthComponent(const std::vector<Component*>& components)
 
 void Player::stateMachine(const float dt)
 {
-	if (!doneWithAnim)
+	auto state = this->gamePad->GetState(0);
+	if (state.IsConnected())
 	{
+		tracker.Update(state);
 
-	}
-	else if (!this->onGround)
-	{
-		this->animIndex = 5;
-		this->animSpeed = 1;
-	}
-	else if (GetAsyncKeyState('E') && this->holdingItem != nullptr)
-	{
-		this->animIndex = 4;
-		this->animSpeed = 2.5;
-		this->doneWithAnim = false;
-	}
-	else if (GetAsyncKeyState('R') && this->holdingItem != nullptr)
-	{
-		this->animSpeed = 2;
-		this->animIndex = 3;
-		this->doneWithAnim = false;
-	}
-	else if (GetAsyncKeyState('W') || GetAsyncKeyState('D') || GetAsyncKeyState('S') || GetAsyncKeyState('A'))
-	{
-		if (GetAsyncKeyState(VK_LSHIFT))
+		if (!doneWithAnim)
 		{
+
+		}
+		else if (!this->onGround)
+		{
+			this->animIndex = 5;
 			this->animSpeed = 1;
-			this->animIndex = 2;
+		}
+		else if (tracker.x == ButtonState::PRESSED && this->holdingItem != nullptr)
+		{
+			this->animIndex = 4;
+			this->animSpeed = 2.5;
+			this->doneWithAnim = false;
+		}
+		else if (tracker.a == ButtonState::PRESSED && this->holdingItem != nullptr)
+		{
+			this->animSpeed = 2;
+			this->animIndex = 3;
+			this->doneWithAnim = false;
+		}
+		else if (abs(state.thumbSticks.leftX) > 0 || abs(state.thumbSticks.leftY) > 0)
+		{
+			if (abs(state.thumbSticks.leftX) > 0.5 || abs(state.thumbSticks.leftY) > 0.5)
+			{
+				this->animSpeed = 1;
+				this->animIndex = 2;
+			}
+			else
+			{
+				this->animSpeed = 1;
+				this->animIndex = 1;
+			}
 		}
 		else
 		{
 			this->animSpeed = 1;
-			this->animIndex = 1;
+			this->animIndex = 0;
 		}
 	}
 	else
 	{
-		this->animSpeed = 1;
-		this->animIndex = 0;
+		if (!doneWithAnim)
+		{
+
+		}
+		else if (!this->onGround)
+		{
+			this->animIndex = 5;
+			this->animSpeed = 1;
+		}
+		else if (GetAsyncKeyState('E') && this->holdingItem != nullptr)
+		{
+			this->animIndex = 4;
+			this->animSpeed = 2.5;
+			this->doneWithAnim = false;
+		}
+		else if (GetAsyncKeyState('R') && this->holdingItem != nullptr)
+		{
+			this->animSpeed = 2;
+			this->animIndex = 3;
+			this->doneWithAnim = false;
+		}
+		else if (GetAsyncKeyState('W') || GetAsyncKeyState('D') || GetAsyncKeyState('S') || GetAsyncKeyState('A'))
+		{
+			if (GetAsyncKeyState(VK_LSHIFT))
+			{
+				this->animSpeed = 1;
+				this->animIndex = 2;
+			}
+			else
+			{
+				this->animSpeed = 1;
+				this->animIndex = 1;
+			}
+		}
+		else
+		{
+			this->animSpeed = 1;
+			this->animIndex = 0;
+		}
 	}
+
 	this->updateAnim(dt, this->animIndex, this->animSpeed);
 }
 

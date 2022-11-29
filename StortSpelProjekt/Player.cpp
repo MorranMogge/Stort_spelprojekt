@@ -11,6 +11,8 @@
 using namespace DirectX;
 using ButtonState = DirectX::GamePad::ButtonStateTracker::ButtonState;
 
+//----------------------------------------------- setUp Functions ------------------------------------------------//
+
 void Player::throwItem()
 {
 	//allocates data to be sent
@@ -33,7 +35,6 @@ void Player::throwItem()
 		if (this->currentSpeed == this->speed) scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.095f, temp);
 		else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
 	}
-
 
 	//Set dynamic so it can be affected by forces
 	this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -161,17 +162,7 @@ void Player::handleItems()
 	}
 }
 
-Player::~Player()
-{
-	if (this->playerIcon != nullptr)
-	{
-		delete playerIcon;
-	}
-	if (this->particles != nullptr)
-	{
-		delete particles;
-	}
-}
+//----------------------------------------------- Constructor ------------------------------------------------//
 
 Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team,
 				ID3D11ShaderResourceView* redTeamColor,ID3D11ShaderResourceView* blueTeamColor, GravityField* field)
@@ -180,7 +171,6 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	pickUpSfx.load(L"../Sounds/pickupCoin.wav");
 	playerHitSound.load(L"../Sounds/mixkit-sick-man-sneeze-2213.wav");
 	//walkingSound.setVolume(0.25f);
-
 
 	this->onlineID = onlineId;
 	this->rotationMX = XMMatrixIdentity();
@@ -193,6 +183,17 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1);
+	this->particles2 = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1);
+	particles2->setSize(1.0f);
+
+
+	//Color
+	DirectX::SimpleMath::Vector3 color = DirectX::Colors::White.v;
+
+	//Set up Fresnel buffer
+	fresnelBuffer.Initialize(GPU::device, GPU::immediateContext);
+	fresnelBuffer.getData() = DirectX::XMFLOAT4(color.x, color.y, color.z, 1);
+	fresnelBuffer.applyData();
 
 	//Item Icon
 	float constant = 7.0f;
@@ -211,6 +212,22 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 		this->setSrv(blueTeamColor); break;
 	}
 }
+
+Player::~Player()
+{
+	if (this->playerIcon != nullptr)
+	{
+		delete playerIcon;
+	}
+	if (this->particles != nullptr)
+	{
+		delete particles;
+		delete particles2;
+	}
+}
+
+//----------------------------------------------- Functions ------------------------------------------------//
+
 
 bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime)
 {
@@ -1053,6 +1070,11 @@ void Player::drawParticles()
 	{
 		this->particles->BindAndDraw(0);
 	}
+	if (this->currentSpeed > 30)
+	{
+		particles2->setColor(DirectX::SimpleMath::Vector3(this->fresnelBuffer.getData().x, this->fresnelBuffer.getData().y, this->fresnelBuffer.getData().z));
+		particles2->BindAndDraw(4);
+	}
 }
 
 int Player::getTeam() const
@@ -1156,10 +1178,13 @@ void Player::update()
 	//Update particle movement
 	if (this->particles != nullptr)
 	{
-		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
 		this->particles->setPosition(this->position);
 		this->particles->setRotation(this->getUpDirection());
 		this->particles->updateBuffer();
+
+		this->particles2->setPosition(this->position);
+		this->particles2->setRotation(this->getUpDirection());
+		this->particles2->updateBuffer();
 	}
 }
 
@@ -1258,4 +1283,82 @@ void Player::resetVelocity()
 void Player::velocityMove(const float& dt)
 {
 	this->position += velocity * dt;
+}
+
+void Player::drawFresnel(float interval)
+{
+	//If picked up "potion"
+	if (this->currentSpeed > 30)
+	{
+		//Variables
+		static  XMFLOAT3 pos1(0, 0, 0);
+		static float scl2 = 1;
+		static float time = 0;
+
+		static  XMFLOAT3 pos3(0, 0, 0);
+		static float scl3 = 1;
+
+		static  XMFLOAT3 pos4(0, 0, 0);
+		static float scl4 = 1;
+
+		float constant = 0.01f;
+		DirectX::XMFLOAT3 scl = this->scale;
+		DirectX::XMFLOAT3 pos = this->position;
+
+		//Time
+		time += Time::DeltaTimeInSeconds();
+		float percent = time / interval;
+
+		//Reset if reached interval
+		if (time > interval)
+		{
+			pos1 = this->position;
+			time = 0;
+			scl2 = 1;
+		}
+		else if (time > (interval/2))
+		{
+			pos3 = this->position;
+			scl3 = 1;
+		}
+		else if (time > (interval / 4))
+		{
+			pos4 = this->position;
+			scl4 = 1;
+		}
+
+		//Change color
+		DirectX::SimpleMath::Color currentColor = DirectX::SimpleMath::Color::Lerp(DirectX::Colors::Cyan.v, DirectX::Colors::Green.v, percent);
+		this->fresnelBuffer.getData() = DirectX::XMFLOAT4(currentColor.x, currentColor.y, currentColor.z, 1.f);
+		this->fresnelBuffer.applyData();
+		GPU::immediateContext->PSSetConstantBuffers(2, 1, fresnelBuffer.getReferenceOf());
+
+		//Set temp scale + pos
+		this->position = pos1;
+		scl2 = scl2 - constant;
+		this->scale = DirectX::XMFLOAT3(scl2, scl2, scl2);
+
+		//draw as fresnel
+		this->draw();
+
+		//Set temp scale + pos
+		this->position = pos3;
+		scl3 = scl3 - constant;
+		this->scale = DirectX::XMFLOAT3(scl3, scl3, scl3);
+
+		//draw as fresnel
+		this->draw();
+
+		//Set temp scale + pos
+		this->position = pos4;
+		scl4 = scl4 - constant;
+		this->scale = DirectX::XMFLOAT3(scl4, scl4, scl4);
+
+		//draw as fresnel
+		this->draw();
+
+		//Reset scale& pos
+		this->scale = scl;
+		this->position = pos;
+	}
 }

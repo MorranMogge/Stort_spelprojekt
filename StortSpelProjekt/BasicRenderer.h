@@ -86,4 +86,5 @@ public:
 	void fresnelPrePass(Camera& stageCamera);
 	void invFresnelPrePass();
 	void bindAnimVs();
+	void fresnelAnimPrePass(Camera& stageCamera);
 };

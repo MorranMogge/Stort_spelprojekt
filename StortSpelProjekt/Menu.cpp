@@ -56,7 +56,7 @@ GAMESTATE Menu::Update()
 	//}
 
 	//Rotate main planet
-	float constant = 0.000005f;
+	float constant = 0.00005f;
 	DirectX::SimpleMath::Vector3 currentRot = planets[5]->getRotation();
 	DirectX::SimpleMath::Vector3 targetRot(currentRot.x + constant, currentRot.y + constant, currentRot.z);
 	planets[5]->setRotation(targetRot);

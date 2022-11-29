@@ -228,11 +228,15 @@ bool AnimatedMesh::findNodeAnim(const std::string& nodeName, const animationNode
 {
 	for (int i = 0, end = (int)pAnimation.mChannels.size(); i < end; i++)
 	{
+		//memcmp(pAnimation.mChannels[i].mNodeName.c_str(), nodeName.c_str(), pAnimation.mChannels[i].mNodeName.size())==0
 		//can be optimized
-		if (pAnimation.mChannels[i].mNodeName == nodeName)
+		if (pAnimation.mChannels[i].mNodeName.size() == nodeName.size())
 		{
-			res = pAnimation.mChannels[i];
-			return true;
+			if (pAnimation.mChannels[i].mNodeName == nodeName)
+			{
+				res = pAnimation.mChannels[i];
+				return true;
+			}
 		}
 	}
 	return false;

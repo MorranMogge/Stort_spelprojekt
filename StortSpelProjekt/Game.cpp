@@ -703,6 +703,14 @@ GAMESTATE Game::Update()
 	//animations
 	this->currentPlayer->updateAnim(dt, 0, 1);
 
+	if (Input::KeyPress(KeyCode::L))
+	{
+		return WIN;
+	}
+	if (Input::KeyPress(KeyCode::P))
+	{
+		return LOSE;
+	}
 	return NOCHANGE;
 }
 

@@ -5,7 +5,6 @@
 
 void WinUI::HandleInputs()
 {
-	Input::Update();
 	backText.IntersectMouse() ? backText.SetTint(DirectX::Colors::Green.v) : backText.SetTint(DirectX::Colors::White.v);
 
 	if (Input::KeyPress(KeyCode::MOUSE_L))
@@ -33,7 +32,7 @@ GAMESTATE WinUI::GetGameState()
 WinUI::WinUI()
 {
 	winText = GUISprite(1264.0f / 2.0f, 300);
-	winText.Load(L"../Sprites/winText.png");
+	winText.Load(L"../Sprites/victoryText.png");
 
 	backText = GUISprite(75 + 70, 600);
 	backText.Load(L"../Sprites/backText.png");
@@ -48,6 +47,7 @@ WinUI::~WinUI()
 
 void WinUI::Draw()
 {
+	Input::Update();
 	GUI::Begin();
 	HandleInputs();
 	SpritePass();

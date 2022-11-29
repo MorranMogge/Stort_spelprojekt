@@ -5,7 +5,6 @@
 
 void LoseUI::HandleInputs()
 {
-	Input::Update();
 	backText.IntersectMouse() ? backText.SetTint(DirectX::Colors::Green.v) : backText.SetTint(DirectX::Colors::White.v);
 
 	if (Input::KeyPress(KeyCode::MOUSE_L))
@@ -33,7 +32,7 @@ GAMESTATE LoseUI::GetGameState()
 LoseUI::LoseUI()
 {
 	loseText = GUISprite(1264.0f / 2.0f, 300);
-	loseText.Load(L"../Sprites/loseText.png");
+	loseText.Load(L"../Sprites/loseText2.png");
 
 	backText = GUISprite(75 + 70, 600);
 	backText.Load(L"../Sprites/backText.png");
@@ -48,8 +47,9 @@ LoseUI::~LoseUI()
 
 void LoseUI::Draw()
 {
-	GUI::Begin();
+	Input::Update();
 	HandleInputs();
+	GUI::Begin();
 	SpritePass();
 	GUI::End();
 }

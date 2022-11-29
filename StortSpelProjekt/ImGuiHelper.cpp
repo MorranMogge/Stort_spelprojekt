@@ -89,7 +89,7 @@ void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, bool& landingMinig
 			}
 			
 			ImGui::Checkbox("Landing Minigame", &landingMinigame);
-			ImGui::Checkbox("Camera with velocity", &velocityCamera);
+			ImGui::Checkbox("Camera with collision", &velocityCamera);
 		}
 
 		ImGui::End();

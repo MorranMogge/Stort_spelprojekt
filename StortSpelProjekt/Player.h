@@ -23,8 +23,8 @@ class Player: public AnimatedMesh
 private:
 	//Movement variables
 	float angle = 0.f;
-	float speed = 0.5f;
-	float currentSpeed;
+	float speed = 20.f;
+	float currentSpeed = 0.f;
 	DirectX::SimpleMath::Vector3 resultVector;
 	DirectX::SimpleMath::Vector3 angleVector;
 	DirectX::SimpleMath::Vector3 velocity; //FINALLY ADDED THIS F*****G STUPID VARIABLE

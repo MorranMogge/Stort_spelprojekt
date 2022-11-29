@@ -56,17 +56,12 @@ void PhysicsWorld::update(const float& dt)
 
 void PhysicsWorld::addForceToObjects(const float& dt)
 {
-	float constant = 10.f;
+	float constant = 1.f; //10.f;
 	for (int i = 0; i < this->physObjects.size(); i++)
 	{
-		/*temp = this->physObjects[i]->getPosition();
-		grav = normalizeXMFLOAT3(DirectX::XMFLOAT3(-temp.x, -temp.y, -temp.z));43
-		this->physObjects[i]->applyForceToCenter(this->physObjects[i]->getMass() * reactphysics3d::Vector3(9820.f * grav.x * dt * constant, 9820.f * grav.y * dt * constant, 9820.f * grav.z * dt * constant));*/
-
 		GravityField* field = planets[0]->getClosestField(planets, this->physObjects[i]->getPosV3());
 		grav = field->calcGravFactor(this->physObjects[i]->getPosV3());
 		this->physObjects[i]->applyForceToCenter(this->physObjects[i]->getMass() * reactphysics3d::Vector3(98.2f * grav.x * dt * constant, 98.2f * grav.y * dt * constant, 98.2f * grav.z * dt * constant));
-		//if (this->physObjects[i]->getParent() != nullptr) this->physObjects[i]->getParent()->setGravityField(field);
 	}
 }
 

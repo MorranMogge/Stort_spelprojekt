@@ -157,6 +157,8 @@
     <ClCompile Include="Credits.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="CircularBufferClient.cpp" />
+    <ClCompile Include="Client.cpp" />
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="PacketEventManager.cpp">
       <Filter>Online</Filter>
@@ -175,6 +177,10 @@
     </ClCompile>
     <ClCompile Include="ControlMenu.cpp" />
     <ClCompile Include="ControlUI.cpp" />
+    <ClCompile Include="LandingHud.cpp" />
+    <ClCompile Include="PacketEventManager.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
     <ClCompile Include="ModelDataContainer.cpp" />
     <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="AnimatedMesh.cpp" />
@@ -471,6 +477,13 @@
     <ClInclude Include="Credits.h" />
     <ClInclude Include="Planet.h" />
     <ClInclude Include="PlanetGenerator.h" />
+    <ClInclude Include="CaptureZone.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundLibrary.h" />
+    <ClInclude Include="ControlMenu.h" />
+    <ClInclude Include="ControlUI.h" />
+    <ClInclude Include="LandingHud.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

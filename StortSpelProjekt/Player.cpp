@@ -55,7 +55,6 @@ void Player::resetRotationMatrix()
 
 void Player::handleItems()
 {
-	
 	if (this->gamePad == nullptr) return;
 	DirectX::SimpleMath::Vector3 newPos = this->position;
 	newPos += 4 * forwardVector;
@@ -120,9 +119,8 @@ void Player::handleItems()
 			this->throwItem();
 		}
 		//Use the Item
-		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))// MAJOR ERROR PLS FIX THIS UwU xddddddd
+		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))
 		{
-
 			//std::cout << "Timer: " << keyPressTimer.
 			keyPressTimer.resetStartTime();
 			////sending data to server
@@ -138,11 +136,9 @@ void Player::handleItems()
 			{
 				client->sendStuff<ComponentDropped>(c);
 			}
-			std::cout << "TEST 1 nuzzle\n";
 			itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 			if (holdingItem->getId() == GRENADE)
 			{
-				std::cout << "TEST 2 nuzzle\n";
 				DirectX::XMFLOAT3 temp;
 				DirectX::XMStoreFloat3(&temp, (this->forwardVector * 5.f + this->normalVector * 0.5f));
 				newNormalizeXMFLOAT3(temp);
@@ -152,19 +148,15 @@ void Player::handleItems()
 					else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
 				}
 
-
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 				//Apply the force
 				this->holdingItem->getPhysComp()->applyForceToCenter(reactphysics3d::Vector3(temp.x * FORCE, temp.y * FORCE, temp.z * FORCE));
 			}
-			std::cout << "TEST 3 nuzzle\n";
 			holdingItem->useItem(this);
-			std::cout << "TEST 4 nuzzle\n";
 			//itemPhysComp->setIsAllowedToSleep(true);
 			//itemPhysComp->setIsSleeping(true);
 			holdingItem->setPickedUp(false);
-			std::cout << "TEST 5 nuzzle\n";
 			holdingItem = nullptr;
 		}
 	}
@@ -189,7 +181,6 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	pickUpSfx.load(L"../Sounds/pickupCoin.wav");
 	playerHitSound.load(L"../Sounds/mixkit-sick-man-sneeze-2213.wav");
 	//walkingSound.setVolume(0.25f);
-
 
 	this->onlineID = onlineId;
 	this->rotationMX = XMMatrixIdentity();
@@ -456,7 +447,8 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
 		onGround = false;
-		this->velocity = this->normalVector * 30.f;
+		this->velocity = this->normalVector * 40.f;
+		this->position += this->normalVector * 1.8f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
 
@@ -687,7 +679,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		//Jumping
 		if (onGround && state.IsAPressed())
 		{
-			this->velocity = this->normalVector * 30.f;
+			this->velocity = this->normalVector * 40.f;
 			if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 		}
 
@@ -949,7 +941,7 @@ bool Player::checkForStaticCollision(const std::vector<Planet*>& gameObjects, co
 		//if (gameObjects[i]->getPlanetCollider()->getType() != reactphysics3d::BodyType::STATIC || gameObjects[i] == this->holdingItem) continue; 
 		if (gameObjects[i]->getPlanetCollider()->testPointInside(point))
 		{
-			this->position -= 1.f * forwardVector;
+			//this->position -= 1.f * forwardVector;
 			return true;
 		}
 	}
@@ -989,6 +981,10 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
 			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
 			onGround = true;
+			DirectX::SimpleMath::Vector3 vecToHitPos = this->position - hitPos;
+			float lengthToMove = 1.f - getLength(vecToHitPos);
+			vecToHitPos.Normalize();
+			this->position += lengthToMove * vecToHitPos;
 			return true;
 		}
 	}
@@ -1001,6 +997,10 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 			hitPos = DirectX::XMFLOAT3(rayInfo.worldPoint.x, rayInfo.worldPoint.y, rayInfo.worldPoint.z);
 			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
 			onGround = true;
+			DirectX::SimpleMath::Vector3 vecToHitPos = this->position - hitPos;
+			float lengthToMove = 1.f - getLength(vecToHitPos);
+			vecToHitPos.Normalize();
+			this->position += lengthToMove * vecToHitPos;
 			return true;
 		}
 	}
@@ -1020,11 +1020,10 @@ bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) con
 
 void Player::colliedWIthComponent(const std::vector<Component*>& components)
 {
+	if (holdingComp && holdingItem) return;
 	bool collided = false;
-
 	for (int i = 0; i < components.size(); i++) collided = this->physComp->testBodiesOverlap(components[i]->getPhysComp());
-	if (collided) this->setSpeed(20.f * 0.55f);
-	else this->setSpeed(20.f);
+	if (collided) this->setSpeed(this->speed * 0.5f);
 }
 
 bool Player::getHitByBat() const
@@ -1188,7 +1187,7 @@ void Player::setGamePad(DirectX::GamePad* gamePad)
 
 void Player::requestingPickUpItem(const std::vector<Item*>& items)
 {
-	if (holdingItem) return;// 
+	if (holdingItem) return;
 	if (Input::KeyPress(KeyCode::E))
 	{
 		std::cout << "items.size = " << std::to_string(items.size()) << std::endl;
@@ -1205,6 +1204,7 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 				rqstCmpPickUp.componentId = items[i]->getOnlineId();
 				rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;
 				rqstCmpPickUp.playerId = this->getOnlineID();
+				if (items[i]->getId() == ObjID::COMPONENT) this->holdingComp = true;
 				std::cout << "requesting pickup componentId: " << std::to_string(rqstCmpPickUp.componentId) << std::endl;
 				//skickar en f�rfr�gan att plocka upp item
 				keyPressTimer.resetStartTime();
@@ -1230,14 +1230,10 @@ bool Player::isHoldingComp()
 	{
 		if (this->holdingItem != nullptr)
 		{
-			this->setSpeed(20.f * 0.55f);
+			this->setSpeed(this->speed * 0.5f);
 			return true;
 		}
-		else
-		{
-			this->setSpeed(20.f);
-			return false;
-		}
+		else return false;
 	}
 
 	return false;

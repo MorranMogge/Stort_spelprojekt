@@ -50,6 +50,9 @@ private:
 	ID3D11BlendState* fresnelBlendState;
 	ID3D11PixelShader* Fresnel_PS;
 
+	ID3D11DomainShader* domainShader;
+	ID3D11HullShader* hullShader;
+
 	ID3D11InputLayout* animLayout;
 	ID3D11VertexShader* vShaderAnim;
 
@@ -87,4 +90,6 @@ public:
 	void invFresnelPrePass();
 	void bindAnimVs();
 	void fresnelAnimPrePass(Camera& stageCamera);
+	void tesselationPrePass();
+	void resetTopology(); //sets triangle list
 };

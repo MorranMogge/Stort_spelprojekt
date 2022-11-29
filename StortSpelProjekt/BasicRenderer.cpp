@@ -204,6 +204,8 @@ BasicRenderer::~BasicRenderer()
 	fresnelBlendState->Release();
 	InvFresnel_PS->Release();
 	pt_UpdatePlayer->Release();
+	//hullShader->Release();
+	//domainShader->Release();
 }
 
 void BasicRenderer::lightPrePass()
@@ -212,7 +214,6 @@ void BasicRenderer::lightPrePass()
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	immediateContext->IASetInputLayout(this->inputLayout);
 	immediateContext->RSSetViewports(1, &shadowViewport);
-	
 	immediateContext->VSSetShader(vShader, nullptr, 0);
 	immediateContext->PSSetShader(nullShader, nullptr, 0);
 }
@@ -257,8 +258,8 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadPixelShader(device, InvFresnel_PS, "InvFresnel_PS"))							return false;
 	if (!setUpFresnelBlendState())															return false;
 	if (!LoadComputeShader(device, pt_UpdatePlayer, "PT_UpdatePlayer"))						return false;
-	
-	
+	//if (!LoadHullShader(device, hullShader, "hullShader"))									return false;
+	//if (!LoadDomainShader(device, domainShader, "domainShader"))							return false;
 	
 	SetViewport(viewport, GPU::windowWidth, GPU::windowHeight);
 	SetViewport(shadowViewport, WidthAndHeight, WidthAndHeight);
@@ -430,4 +431,22 @@ void BasicRenderer::fresnelAnimPrePass(Camera& stageCamera)
 	immediateContext->OMSetDepthStencilState(PT_dsState, 0);
 	immediateContext->PSSetShader(Fresnel_PS, nullptr, 0);
 	stageCamera.PSbindPositionBuffer(1);
+}
+
+void BasicRenderer::tesselationPrePass()
+{
+	//Bind
+
+	immediateContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+	immediateContext->HSSetShader(hullShader, nullptr, 0);
+	immediateContext->DSSetShader(domainShader, nullptr, 0);
+
+
+	//immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//immediateContext->HSSetConstantBuffers(0, 1, this->cameraDistanceBuffer.GetAddressOf());
+}
+
+void BasicRenderer::resetTopology()
+{
+	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }

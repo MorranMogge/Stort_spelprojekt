@@ -309,10 +309,12 @@ void Game::drawObjects(bool drawDebug)
 	}
 
 	//Draw planets
+	//basicRenderer.tesselationPrePass();
 	for (int i = 0; i < planetVector.size(); i++)
 	{
-		planetVector[i]->drawPlanet();
+		planetVector[i]->drawPlanet(/*true*/);
 	}
+	basicRenderer.resetTopology();
 	asteroids->drawAsteroids();
 
 	//Draw with Ambient only shader
@@ -666,11 +668,11 @@ GAMESTATE Game::Update()
 				int team = spaceShips[i]->getTeam();
 				if (currentPlayer->getTeam() == team)
 				{
-					return WIN;
+					return GAMESTATE::WIN;
 				}
 				else
 				{
-					return LOSE;
+					return GAMESTATE::LOSE;
 				}
 			}
 		}

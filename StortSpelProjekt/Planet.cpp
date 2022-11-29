@@ -5,9 +5,9 @@
 #include <complex>
 
 Planet::Planet(Mesh* useMesh, const DirectX::SimpleMath::Vector3& scale, const DirectX::XMFLOAT3& pos, const float& gravityFactor, Mesh* atmoMesh, const float& atmoScale, const DirectX::SimpleMath::Vector3& atmoColor, const float & atmoDensity)
-	:mesh(useMesh), position(pos), rotation(DirectX::XMFLOAT3(0.f,0.f,0.f)), scale(scale), rotSpeed(DirectX::SimpleMath::Vector3(0,0,0)), gravityFactor(gravityFactor), planetCollisionBox(nullptr), rotDegrees(0), atmoScale(atmoScale)
+	:mesh(useMesh), position(pos), rotation(DirectX::XMFLOAT3(0.f,0.f,0.f)), scale(scale), rotSpeed(DirectX::SimpleMath::Vector3(0,0,0)), gravityFactor(gravityFactor), planetCollisionBox(nullptr), rotDegrees(0), atmoScale(atmoScale), velocity(0)
 {
-	this->planetShape = NONDISCLOSEDSHAPE;
+	this->planetShape = PlanetShape::NONDISCLOSEDSHAPE;
 	this->gravField = new GravityField(gravityFactor, pos, scale.x);
 	this->originPoint = pos;
 	
@@ -221,14 +221,14 @@ GravityField* Planet::getGravityField() const
 	return this->gravField;
 }
 
-void Planet::drawPlanet()
+void Planet::drawPlanet(bool tesselation)
 {
 	//this->mesh->position = this->position;
 	//this->mesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(rotation);
 	//this->mesh->scale = scale;
 
 	this->mesh->UpdateCB(this->position, DirectX::XMMatrixRotationRollPitchYawFromVector(rotation), scale);
-	this->mesh->DrawWithMat();
+	this->mesh->DrawWithMat(/*true*/);
 }
 
 void Planet::drawAtmosphere()

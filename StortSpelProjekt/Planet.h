@@ -76,7 +76,7 @@ public:
 	//set color of atmosphere
 	void setColor(const DirectX::SimpleMath::Vector3& color);
 	//Draws the planet using regular pipeline stages
-	void drawPlanet();
+	void drawPlanet(bool tesselation = false);
 	//Draws atmosphere using inverse fresnel stage
 	void drawAtmosphere();
 };

@@ -1,6 +1,6 @@
 #pragma once
 #define NOMINMAX
-
+#include <vector>
 #include <d3d11.h>
 #include "PacketEnum.h"
 #include "PacketsDataTypes.h"

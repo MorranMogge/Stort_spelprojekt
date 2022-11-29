@@ -334,9 +334,12 @@ void Game::drawIcons()
 	{
 		players[i]->drawIcon();
 	}
-	for (int i = 0; i < spaceShips.size(); i++)
+	if (currentMinigame == COMPONENTCOLLECTION)
 	{
-		spaceShips[i]->drawQuad();
+		for (int i = 0; i < spaceShips.size(); i++)
+		{
+			spaceShips[i]->drawQuad();
+		}
 	}
 }
 
@@ -707,6 +710,7 @@ GAMESTATE Game::updateLandingGame()
 
 GAMESTATE Game::updateKingOfTheHillGame()
 {
+
 	//Get newest delta time
 	//if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
 	//asteroids->updateAsteroids(dt, planetVector, gameObjects);
@@ -808,6 +812,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	//Check if item icon should change to pickup icon 
 	for (int i = 0; i < items.size(); i++) this->items[i]->checkDistance((GameObject*)(currentPlayer));
 	for (int i = 0; i < components.size(); i++) this->components[i]->checkDistance((GameObject*)(currentPlayer));
+	return currentGameState;
 	return NOCHANGE;
 }
 
@@ -901,9 +906,10 @@ GAMESTATE Game::updateIntermission()
 
 GAMESTATE Game::Update()
 {
+	currentGameState = NOCHANGE;
 	//read the packets received from the server
 	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
-		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client);
+		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, currentGameState);
 
 	lastUpdate = currentTime;
 	currentTime = std::chrono::system_clock::now();
@@ -974,12 +980,14 @@ GAMESTATE Game::Update()
 		break;
 	}
 
+
+
 	//Debug keybinds
 	this->handleKeybinds();
 
 	//animations
 	this->currentPlayer->updateAnim(dt, 0, 1);
-
+	return currentGameState;
 	return NOCHANGE;
 }
 

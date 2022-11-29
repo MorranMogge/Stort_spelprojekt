@@ -1,5 +1,6 @@
 #pragma once
 #include "Item.h"
+
 #define FORCECONSTANT 40000;
 
 
@@ -21,10 +22,10 @@ public:
 	//void setPlayer(Player* player);
 	//void setGameObjects(const std::vector<GameObject*>& objects);
 	//void setGameObjects(const std::vector<Player*>& objects);
-
+	
 
 	//Its not implemented yet************
 	// Inherited via Item
-	virtual void use(const player* playerHoldingItem) override;
+	virtual void use(const Player* playerHoldingItem) override;
 
 };

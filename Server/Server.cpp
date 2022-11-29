@@ -638,7 +638,7 @@ int main()
 				break;
 
 			case MiniGames::KINGOFTHEHILL:
-				miniGameKTH.update(data);
+				miniGameKTH.update(data, onlineItems, physWorld, componentIdCounter);
 				break;
 
 				/*default:

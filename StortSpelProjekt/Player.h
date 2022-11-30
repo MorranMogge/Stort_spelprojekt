@@ -28,6 +28,7 @@ private:
 	DirectX::SimpleMath::Vector3 resultVector;
 	DirectX::SimpleMath::Vector3 angleVector;
 	DirectX::SimpleMath::Vector3 velocity; //FINALLY ADDED THIS F*****G STUPID VARIABLE
+	DirectX::SimpleMath::Vector3 startPos;
 	
 	//Player rotation
 	DirectX::XMMATRIX rotationMX;
@@ -58,6 +59,7 @@ private:
 	//Other variables
 	Client* client;
 	TimeStruct timer;
+	TimeStruct orbitTimer;
 	TimeStruct keyPressTimer;
 	Item* holdingItem;
 
@@ -140,6 +142,7 @@ public:
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	void colliedWIthComponent(const std::vector<Component*>& components);
 	void checkSwimStatus(const std::vector<Planet*>& planets);
+	void orbiting();
 	
 	//Updating and rendering
 	void drawIcon();

@@ -182,6 +182,7 @@ Player::Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLO
 	playerHitSound.load(L"../Sounds/mixkit-sick-man-sneeze-2213.wav");
 	//walkingSound.setVolume(0.25f);
 
+	this->startPos = pos;
 	this->onlineID = onlineId;
 	this->rotationMX = XMMatrixIdentity();
 	this->rotation = XMMatrixIdentity();
@@ -447,8 +448,8 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
 		onGround = false;
-		this->velocity = this->normalVector * 40.f;
-		this->position += this->normalVector * 1.8f;
+		this->velocity = this->normalVector * 160.f; //40.f;
+		this->position += this->normalVector * 2.9f;//1.8f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
 
@@ -1038,10 +1039,30 @@ void Player::checkSwimStatus(const std::vector<Planet*>& planets)
 		//The player is swimming
 		if (XMVector3Less(playerVector, planetVector))
 		{
-			this->position += normalVector * 6.f;
-			std::cout << "SWIMMING\n";
+			this->position += normalVector * 3.f;
 		}
 	}
+}
+
+void Player::orbiting()
+{
+	if (!onGround)
+	{
+		if (orbitTimer.getTimePassed(10.f))
+		{
+			std::cout << "SETTING BACK TO PLANET\n";
+			this->position = startPos;
+			this->physComp->resetForce();
+			this->physComp->resetTorque();
+			this->physComp->setType(reactphysics3d::BodyType::STATIC);
+			this->resetRotationMatrix();
+			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
+			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
+			orbitTimer.resetStartTime();
+			onGround = true;
+		}
+	}
+	else orbitTimer.resetStartTime();
 }
 
 bool Player::getHitByBat() const

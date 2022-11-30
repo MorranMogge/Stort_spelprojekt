@@ -646,6 +646,7 @@ int main()
 						vecToComp = spaceShipPos[j];
 						objPos = onlineItems[i]->getPhysicsComponent()->getPosV3();
 						subtractionXMFLOAT3(vecToComp, objPos);
+
 						if (getLength(vecToComp) <= 10.f)
 						{
 							//onlineItems[i].setInactive();

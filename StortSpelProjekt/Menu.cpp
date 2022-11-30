@@ -30,7 +30,7 @@ Menu::Menu()
 	cam.setCameraLookAt(DirectX::XMFLOAT3(-20, 0, 10));
 	DirectX::SimpleMath::Vector3 newTemp(-40, 0, -60);
 	newTemp.Normalize();
-	ltHandler.addLight(DirectX::XMFLOAT3(15, 10, -0), DirectX::XMFLOAT3(1, 1, 1), planets[4]->getPlanetPosition(), DirectX::XMFLOAT3(0, 1, 0), 1, 0.5f, 1000.5f);
+	ltHandler.addLight(DirectX::XMFLOAT3(15, 10, 30), DirectX::XMFLOAT3(1, 1, 1), planets[4]->getPlanetPosition(), DirectX::XMFLOAT3(0, 1, 0), 1, 0.5f, 1000.5f);
 	//ltHandler.addLight(DirectX::XMFLOAT3(15, 10, -0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(50, 50, 50), DirectX::XMFLOAT3(0, 1, 0), 1, 0.5f, 1000.5f);
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 }

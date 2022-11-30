@@ -46,7 +46,7 @@ class HudUI final
 	bool Bgo = false;
 	bool Bdot1 = false;
 	bool Bdot2 = false;
-
+	bool handle = false;
 
 	inline static DirectX::GamePad* gamepad = nullptr;
 	inline static DirectX::GamePad::State state;

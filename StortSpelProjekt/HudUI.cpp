@@ -32,10 +32,13 @@ void HudUI::SpritePass()
 		landing2.Draw();
 	}
 
+	if (handle)
+	{
+		blackBackground.Draw();
+	}
 	if (Bready)
 	{
 		ready.Draw();
-
 	}
 	else if (Bset)
 	{
@@ -320,7 +323,6 @@ void HudUI::handleInputs()
 {
 	state = gamepad->GetState(0);
 	static float speed = 1.0f;
-
 	static float counterDown = 0;
 	if (counterDown<=0)
 	{
@@ -380,7 +382,7 @@ void HudUI::handleInputs()
 	//Check sprite intersection
 	if (landing1.IntersectSprite(landing2))
 	{
-		std::cout << "intersects" << std::endl;
+		//std::cout << "intersects" << std::endl;
 	}
 }
 
@@ -427,11 +429,13 @@ void HudUI::moveSprite()
 bool HudUI::redySetGo()
 {
 	using namespace DirectX::SimpleMath;
+	handle = true;
 
 	bool done = false;
 	static float timer = 0;
 	timer += Time::DeltaTimeInSeconds();
 
+	blackBackground.SetScale(4.0f, 4.0f);
 
 	if (timer >= 1)
 	{
@@ -477,6 +481,7 @@ bool HudUI::redySetGo()
 	{
 		this->Bgo = false;
 		done = true;
+		handle = false;
 	}
 
 	return done;

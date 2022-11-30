@@ -110,13 +110,19 @@ void HudUI::SpritePass()
 
 	if (Input::KeyDown(KeyCode::TAB) || state.IsStartPressed())
 	{
-		
 		blackBackground.Draw();
-		control.Draw();
+		if (state.IsConnected())
+		{
+			control2.Draw();
+		}
+		else
+		{
+			control.Draw();
+			useText.Draw();
+			throwText.Draw();
+			pickText.Draw();
+		}
 		objective.Draw();
-		useText.Draw();
-		throwText.Draw();
-		pickText.Draw();
 	}
 
 	if (objectiveDisplayTime > 0)
@@ -161,8 +167,8 @@ HudUI::HudUI()
 	go.SetScale(1.2f, 1.2f);
 
 
-	fade = GUISprite(Vector2(125, 320)); //fadeout
-	fade.Load(GPU::device, L"../Sprites/skybox.png");
+	fade = GUISprite(632, 340); //fadeout
+	fade.Load(L"../Sprites/skybox.png");
 	fade.SetScale(1.f, 1.f);
 	this->setOpacity(true);
 	
@@ -223,6 +229,10 @@ HudUI::HudUI()
 	control = GUISprite(310 + left, 225 + upp);
 	control.Load(L"../Sprites/control.png");
 	control.SetScale(0.75f * scaleFactor, 0.75f * scaleFactor);
+
+	control2 = GUISprite(310 + left, 250 + upp);
+	control2.Load(L"../Sprites/control2.png");
+	control2.SetScale(1.1f * scaleFactor, 1.1f * scaleFactor);
 
 	useText = GUISprite(317 + left, 320 + upp);
 	useText.Load(L"../Sprites/UseText.png");
@@ -296,7 +306,7 @@ void HudUI::handleInputs()
 	using namespace DirectX::SimpleMath;
 	Vector2 rocketPos = landing2.GetPosition();
 	Vector2 safePos = landing1.GetPosition();
-	float sinCurve = (sin(timer.getDt())*0.5f) + 0.5f;
+	float sinCurve = (sin(timer.getDt()) * 0.5f) + 0.5f;
 
 	// fade
 	if (Input::KeyDown(KeyCode::G))

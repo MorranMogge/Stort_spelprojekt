@@ -18,7 +18,7 @@ class HudUI final
 
 	GUISprite ready, set, go;
 
-	GUISprite control;
+	GUISprite control, control2;
 	GUISprite useText;
 	GUISprite throwText;
 	GUISprite pickText;

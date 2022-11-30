@@ -414,29 +414,6 @@ void Game::randomizeObjectPos(GameObject* object)
 	object->setPos(randomPos);
 }
 
-void Game::handleKeybinds()
-{
-	if (GetAsyncKeyState('C')) physWorld.addBoxToWorld();
-	if (Input::KeyPress(KeyCode::Y))
-	{
-		this->ptEmitters.at(0).setActive(false);
-		this->ptEmitters.at(0).updateBuffer();
-	}
-	if (Input::KeyPress(KeyCode::U))
-	{
-		this->ptEmitters.at(0).setActive(true);
-		this->ptEmitters.at(0).updateBuffer();
-	}
-	if (Input::KeyPress(KeyCode::I))
-	{
-		drawDebug = true;
-	}
-	if (Input::KeyPress(KeyCode::O))
-	{
-		drawDebug = false;
-	}
-}
-
 GAMESTATE Game::updateComponentGame()
 {
 	//Get newest delta time
@@ -946,6 +923,9 @@ GAMESTATE Game::updateIntermission()
 
 GAMESTATE Game::Update()
 {
+	//If someone for some reason want to add physics boxes to the world, SHALL BE REMOVED
+	if (GetAsyncKeyState('C')) physWorld.addBoxToWorld();
+
 	//read the packets received from the server
 	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
 		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client);
@@ -1018,9 +998,6 @@ GAMESTATE Game::Update()
 	default:
 		break;
 	}
-
-	//Debug keybinds
-	this->handleKeybinds();
 
 	//animations
 	this->currentPlayer->updateAnim(dt, 0, 1);

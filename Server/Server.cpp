@@ -319,6 +319,7 @@ int main()
 			DoneWithGame* requestStart = nullptr;
 			baseballBatSpawn* baseBallBatData = nullptr;
 			UseGrenade* grenadeData = nullptr;
+			UseBat* useBat = nullptr;
 
 			switch (packetId)
 			{
@@ -468,6 +469,32 @@ int main()
 				landingPoints[scoreFromClient->playerId] = scoreFromClient->scoreToServer;
 				break;
 
+			case PacketType::USEBAT:
+				useBat = circBuffer->readData<UseBat>();
+				for (int i = 0; i < onlineItems.size(); i++)
+				{
+					if (onlineItems[i]->getOnlineId() == useBat->itemId)
+					{
+						DirectX::SimpleMath::Vector3 pos;
+						for (int j = 0; j < onlineItems.size(); j++)
+						{
+							if (onlineItems[i] == onlineItems[j]) continue;
+							pos = (DirectX::SimpleMath::Vector3)onlineItems[j]->getPosXMFLOAT3() - onlineItems[i]->getPosXMFLOAT3();
+							if (getLength(pos) <= 20.f)
+							{
+								std::cout << "USER ID: " << useBat->playerThatUsedTheItem << "\n";
+								pos.x = -data.users[useBat->playerThatUsedTheItem].playa.getposition('x');
+								pos.y = -data.users[useBat->playerThatUsedTheItem].playa.getposition('y');
+								pos.z = -data.users[useBat->playerThatUsedTheItem].playa.getposition('z');
+								pos += onlineItems[j]->getPosXMFLOAT3();
+								pos.Normalize();
+								onlineItems[j]->getPhysicsComponent()->applyForceToCenter(
+									reactphysics3d::Vector3(pos.x * 30000, pos.y * 30000, pos.z * 30000));
+							}
+						}
+					}
+				}
+				break;
 			case PacketType::DONEWITHGAME:
 				requestStart = circBuffer->readData<DoneWithGame>();
 
@@ -535,7 +562,6 @@ int main()
 					}
 				}
 				break;
-			
 			}
 		}
 

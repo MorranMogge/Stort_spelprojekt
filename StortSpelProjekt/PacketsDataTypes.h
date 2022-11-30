@@ -285,3 +285,14 @@ struct HitByGrenade
 	float yForce;
 	float zForce;
 };
+
+//enum = 71
+struct UseBat
+{
+	int packetId;
+	int itemId;
+	int playerThatUsedTheItem;
+	float xPos;
+	float yPos;
+	float zPos;
+};

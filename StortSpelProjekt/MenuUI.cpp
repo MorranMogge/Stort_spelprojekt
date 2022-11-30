@@ -259,7 +259,7 @@ void MenuUI::HandleInputs()
 
 
 
-	if (Input::KeyPress(KeyCode::MOUSE_L) || state.IsAPressed() || 	(Input::KeyPress(KeyCode::ENTER)))
+	if (Input::KeyPress(KeyCode::MOUSE_L) || state.IsAPressed() || Input::KeyPress(KeyCode::ENTER)|| (Input::KeyPress(KeyCode::ENTER_KeyPad)))
 	{
 		if (hit_start)
 		{

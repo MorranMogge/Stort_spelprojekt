@@ -20,7 +20,7 @@ class HudUI final
 	GUISprite dot1, dot2, exclamation;
 
 
-	GUISprite control;
+	GUISprite control, control2;
 	GUISprite useText;
 	GUISprite throwText;
 	GUISprite pickText;
@@ -31,7 +31,7 @@ class HudUI final
 	GUISprite blackBackground2;
 	float objectiveDisplayTime = 5.0f;
 
-	GUISprite controls;
+	GUISprite controls, controls2;
 	GUISprite useControls;
 	GUISprite useControls1;
 	GUISprite useControls2;
@@ -48,6 +48,9 @@ class HudUI final
 	bool Bdot2 = false;
 
 
+	inline static DirectX::GamePad* gamepad = nullptr;
+	inline static DirectX::GamePad::State state;
+
 public:
 	float count = 1.0f;
 	inline static SpaceShip* red = nullptr;
@@ -62,5 +65,6 @@ public:
 	void moveSprite();
 	bool redySetGo();
 	void setOpacity(bool onOff);
+	static void SetGamePad(DirectX::GamePad* gamepad);
 	void Draw();
 };

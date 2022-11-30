@@ -228,7 +228,7 @@ void Planet::drawPlanet(bool tesselation)
 	//this->mesh->scale = scale;
 
 	this->mesh->UpdateCB(this->position, DirectX::XMMatrixRotationRollPitchYawFromVector(rotation), scale);
-	this->mesh->DrawWithMat(/*true*/);
+	this->mesh->DrawWithMat(tesselation);
 }
 
 void Planet::drawAtmosphere()

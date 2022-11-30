@@ -606,6 +606,9 @@
     <FxCompile Include="DomainShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="basic_VertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico">
@@ -617,7 +620,7 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Math.hlsli">
-      <Filter>Game-States</Filter>
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

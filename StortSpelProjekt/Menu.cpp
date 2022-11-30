@@ -104,10 +104,12 @@ void Menu::drawObjects()
 	//}
 
 	//Draw planets
+	basicRenderer.tesselationPrePass(cam);
 	for (int i = 0; i < planets.size(); i++)
 	{
-		planets[i]->drawPlanet();
+		planets[i]->drawPlanet(true);
 	}
+	basicRenderer.resetTopology();
 
 	//Draw with Ambient only shader
 	basicRenderer.bindAmbientShader();

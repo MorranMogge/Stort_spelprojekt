@@ -98,3 +98,19 @@ void ModelDataContainer::addAnimationData(std::string key, ID3D11Buffer* vertexB
 	this->addMeshBuffers(key, vertexBuffer, indexBuf, subMeshRanges, amountOfVertces);
 	this->coreAnimData.insert(std::pair<std::string, AnimationData>(key, animData));
 }
+
+void ModelDataContainer::extendAnimations(std::string key, AnimationData animData)
+{
+	this->coreAnimDataIt = this->coreAnimData.find(key);
+	if (this->coreAnimDataIt != this->coreAnimData.end())
+	{
+		AnimationData OldData = coreAnimDataIt->second;
+		for (int i = 0; i < animData.animation.size(); i++)
+		{
+			OldData.animation.push_back(animData.animation[i]);
+		}
+
+		coreAnimData.erase(key);
+		this->coreAnimData.insert(std::pair<std::string, AnimationData>(key, OldData));
+	}
+}

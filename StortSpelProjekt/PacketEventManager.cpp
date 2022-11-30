@@ -4,6 +4,10 @@
 
 PacketEventManager::PacketEventManager()
 {
+	for (int i = 0; i < 16; i++)
+	{
+		animated.push_back(false);
+	}
 }
 
 PacketEventManager::~PacketEventManager()
@@ -13,7 +17,7 @@ PacketEventManager::~PacketEventManager()
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects,
 	GravityField* field, std::vector<SpaceShip*>& spaceShips, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes,
-	std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame, float& redTeamPoints, float& blueTeamPoints, Client*& client)
+	std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame, float& redTeamPoints, float& blueTeamPoints, Client*& client, const float dt)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -39,6 +43,11 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	winner* win = nullptr;
 	Loser* lose = nullptr;
 	ComponentDropped* cmpDropped = nullptr;
+
+	for (int i = 0; i < players.size(); i++)
+	{
+		animated[i] = false;
+	}
 
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{
@@ -122,12 +131,15 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				{
 					if (playerId != i)
 					{
-						//std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
 						players[i]->setMatrix(prMatrixData->matrix);
+						if (!animated[i])
+						{
+							players[i]->updateAnim(dt, prMatrixData->AnimId, 1);
+							animated[i] = true;
+						}
 					}
 					else if (prMatrixData->ifDead)
 					{
-						//std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
 						players[i]->setMatrix(prMatrixData->matrix);
 					}
 					players[i]->getPhysComp()->setRotation(DirectX::XMQuaternionRotationMatrix(DirectX::XMLoadFloat4x4(&prMatrixData->matrix)));

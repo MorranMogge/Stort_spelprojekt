@@ -113,6 +113,7 @@ public:
 	void setTeam(const int& team);
 	void setVibration(float vibration1, float vibration2);
 	void setGamePad(DirectX::GamePad* gamePad);
+	void setStartPosition(const DirectX::SimpleMath::Vector3& startPos);
 	
 	//Get Functions
 	reactphysics3d::Vector3 getRayCastPos()const;

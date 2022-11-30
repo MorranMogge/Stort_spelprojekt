@@ -1224,6 +1224,11 @@ void Player::setGamePad(DirectX::GamePad* gamePad)
 	this->gamePad = gamePad;
 }
 
+void Player::setStartPosition(const DirectX::SimpleMath::Vector3& startPos)
+{
+	this->startPos = startPos;
+}
+
 void Player::requestingPickUpItem(const std::vector<Item*>& items)
 {
 	if (holdingItem) return;

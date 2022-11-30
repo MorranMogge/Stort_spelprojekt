@@ -484,6 +484,8 @@ GAMESTATE Game::updateComponentGame()
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
+	currentPlayer->checkSwimStatus(planetVector);
+	currentPlayer->velocityMove(dt);
 	currentPlayer->setSpeed(20.f);
 
 	//Check component pickup
@@ -762,6 +764,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
+	currentPlayer->checkSwimStatus(planetVector);
 	currentPlayer->setSpeed(20.f);
 
 	//Check component pickup
@@ -1053,11 +1056,9 @@ void Game::Render()
 
 	//Render UI (needs to render last)
 
-	//Ej helt fixad ritar inte ut UI saker för
-	if (currentMinigame == MiniGames::COMPONENTCOLLECTION)
-	{
-		ui.Draw();
-	}
+	
+	ui.Draw();
+	
 	switch (currentMinigame)
 	{
 	case COMPONENTCOLLECTION:

@@ -1022,6 +1022,23 @@ bool Player::checkForStaticCollision(const std::vector<Planet*>& gameObjects, co
 	return false;
 }
 
+void Player::checkSwimStatus(const std::vector<Planet*>& planets)
+{
+	//Checks if the player is inside planet
+	for (int i = 0; i < planets.size(); i++)
+	{
+		planetVector = DirectX::XMVectorSet(planets[i]->getSize(), planets[i]->getSize(), planets[i]->getSize(), 0.0f);
+		playerVector = XMVectorSubtract(planets[i]->getPlanetPosition(), this->position);
+		playerVector = XMVector3Length(playerVector);
+
+		//The player is swimming
+		if (XMVector3Less(playerVector, planetVector))
+		{
+			this->position += normalVector * 3.f;
+		}
+	}
+}
+
 bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
 {
 	if (!dedge)

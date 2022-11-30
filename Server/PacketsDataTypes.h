@@ -264,16 +264,6 @@ struct PotionSpawn
 	int zPos;
 };
 
-//enum = 25
-struct SpawnPlanets
-{
-	int packetId;
-	float xPos;
-	float yPos;
-	float zPos;
-	float size;
-};
-
 //enum = 69
 struct UseGrenade
 {

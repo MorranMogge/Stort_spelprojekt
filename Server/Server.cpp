@@ -463,7 +463,6 @@ int main()
 				std::cout << "Player used grenade OwO\n";
 				break;
 
-			}
 			case PacketType::LANDINGMINIGAMESENDSCORETOSERVER:
 				scoreFromClient = circBuffer->readData<LandingMiniSendScoreToServer>();
 				landingPoints[scoreFromClient->playerId] = scoreFromClient->scoreToServer;
@@ -536,6 +535,7 @@ int main()
 					}
 				}
 				break;
+			
 			}
 		}
 

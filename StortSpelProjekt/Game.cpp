@@ -203,7 +203,7 @@ void Game::loadObjects()
 	{
 		potion = new Potion(meshes[3], Vector3(0, 0, -42), Vector3(0.0f, 0.0f, 0.0f), POTION, 0, planetGravityField);
 		baseballBat = new BaseballBat(meshes[5], Vector3(0, 0, 42), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
-		grenade = new Grenade(meshes[7], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
+		grenade = new Grenade(meshes[7], meshes[0], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
 
 		//EMPLACE ITEMS
 		items.emplace_back(potion);
@@ -292,10 +292,10 @@ void Game::drawObjects(bool drawDebug)
 	{
 		players[i]->draw();
 	}
-	for (int i = 0; i < onlineItems.size(); i++)
+	/*for (int i = 0; i < onlineItems.size(); i++)
 	{
 		onlineItems[i]->draw();
-	}
+	}*/
 	//currentPlayer->updateBuffer();
 	currentPlayer->draw();
 	for (int i = 0; i < planetVector.size(); i++)
@@ -345,6 +345,10 @@ void Game::drawParticles()
 	for (int i = 0; i < items.size(); i++)
 	{
 		this->items[i]->drawParticles();
+	}
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		this->onlineItems[i]->drawParticles();
 	}
 	for (int i = 0; i < players.size(); i++)
 	{

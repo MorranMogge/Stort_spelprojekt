@@ -67,14 +67,16 @@ public:
 
 	//Rotats in sphere path around point
 	void rotateAroundPoint(const DirectX::XMFLOAT3& point);
-	
 	void rotatePlanet();
+	void rotateMoon(const DirectX::XMFLOAT3& point, const float& speed);
 	
-
 	//set color of atmosphere
 	void setColor(const DirectX::SimpleMath::Vector3& color);
 	//Draws the planet using regular pipeline stages
 	void drawPlanet();
 	//Draws atmosphere using inverse fresnel stage
 	void drawAtmosphere();
+
+	void setPosition(const DirectX::SimpleMath::Vector3& position);
+	void setScale(const DirectX::SimpleMath::Vector3& position);
 };

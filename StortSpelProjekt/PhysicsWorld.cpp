@@ -270,7 +270,6 @@ void PhysicsWorld::addPhysComponent(GameObject* gameObj, reactphysics3d::Collisi
 	gameObj->setPhysComp(newComp);
 	newComp->setParent(gameObj);
 	physObjects.emplace_back(newComp);
-
 	this->recreateVertexBuffer();
 }
 

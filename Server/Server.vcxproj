@@ -148,6 +148,7 @@
     <ClCompile Include="DirectXMathHelper.cpp" />
     <ClCompile Include="Grenade.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="KingOfTheHillMiniGame.cpp" />
     <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -172,6 +173,7 @@
     </ClInclude>
     <ClInclude Include="Grenade.h" />
     <ClInclude Include="Item.h" />
+    <ClInclude Include="KingOfTheHillMiniGame.h" />
     <ClInclude Include="ObjectId.h" />
     <ClInclude Include="PacketEnum.h" />
     <ClInclude Include="Packethandler.h" />
@@ -181,6 +183,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Potion.h" />
     <ClInclude Include="RandomizeSpawn.h" />
+    <ClInclude Include="sendDataFunctions.h" />
     <ClInclude Include="ServerGravField.h" />
     <ClInclude Include="ServerPlanet.h" />
     <ClInclude Include="SpawnComponent.h" />

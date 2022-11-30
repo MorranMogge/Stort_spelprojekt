@@ -54,4 +54,7 @@ public:
 	bool insideGravityField(const DirectX::SimpleMath::Vector3& position)const;
 	PhysicsComponent* getPlanetCollider()const;
 	float getSize(int index = 0)const;
+
+	void setPosition(const DirectX::SimpleMath::Vector3& position);
+	void setScale(const DirectX::SimpleMath::Vector3& scale);
 };

@@ -8,7 +8,7 @@ void Asteroid::explode(std::vector<Planet*>& planets, std::vector<GameObject*>& 
 	{
 		DirectX::XMFLOAT3 vecToObject = this->position;
 		subtractionXMFLOAT3(vecToObject, objects[j]->getPos());
-		if (objects[j]->getPhysComp()->getType() == reactphysics3d::BodyType::STATIC) return;
+		if (objects[j]->getPhysComp()->getType() == reactphysics3d::BodyType::STATIC) continue;
 		if (getLength(vecToObject) <= 25.f)
 		{
 			objects[j]->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);

@@ -97,7 +97,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			{
 			case GAME:
 				delete currentState;
-				currentState = new Game(immediateContext, device, GPU::swapChain, window);
+				currentState = new Game(immediateContext, device, GPU::swapChain, window, WIDTH, HEIGHT);
 				break;
 			case SETTINGS:
 				delete currentState;

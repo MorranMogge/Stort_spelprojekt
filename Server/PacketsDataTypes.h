@@ -2,6 +2,16 @@
 #include <DirectXMath.h>
 #include <reactphysics3d/reactphysics3d.h>
 
+enum MiniGames
+{
+	COMPONENTCOLLECTION,
+	LANDINGSPACESHIP,
+	KINGOFTHEHILL,
+	INTERMISSION,
+	STARTOFINTERMISSION,
+	STARTLANDING
+};
+
 //enum = 3
 struct PositionRotation
 {
@@ -173,7 +183,68 @@ struct PlayerId
 	int teamId;
 };
 
-//enum 23
+//enum = 23
+struct SpawnPlanets
+{
+	int packetId;
+	float xPos;
+	float yPos;
+	float zPos;
+	float size;
+};
+
+//enum = 24
+struct LandingMiniGameScore
+{
+	int packetId;
+	float pointsRedTeam;
+	float pointsBlueTeam;
+};
+
+//enum = 25
+struct LandingMiniGameOver
+{
+	int packetId;
+	float totalPointsRedTeam;
+	float totalPointsBlueTeam;
+};
+
+//enum = 26
+struct LandingMiniSendScoreToServer
+{
+	int packetId;
+	int playerId;
+	float scoreToServer;
+};
+
+//enum 27
+struct CreateZone
+{
+	int packetId;
+	float xPos;
+	float yPos;
+	float zPos;
+	float scale;
+};
+
+//enum = 28
+struct MinigameStart
+{
+	int packetId;
+	MiniGames minigame;
+	float pointsBlue;
+	float pointsRed;
+};
+
+//enum = 30
+struct DoneWithGame
+{
+	int packetId;
+	int playerID;
+	MiniGames formerGame;
+};
+
+//enum 31
 struct baseballBatSpawn
 {
 	int packetId;
@@ -183,7 +254,7 @@ struct baseballBatSpawn
 	int zPos;
 };
 
-//enum 24
+//enum 32
 struct PotionSpawn
 {
 	int packetId;

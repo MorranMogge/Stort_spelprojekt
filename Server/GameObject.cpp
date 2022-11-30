@@ -26,7 +26,6 @@ GameObject::GameObject()
 	this->rotation = DirectX::XMMatrixIdentity();
 }
 
-
 void GameObject::movePos(const DirectX::XMFLOAT3& offset)
 {
 	this->position.x += offset.x;

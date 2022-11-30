@@ -10,7 +10,7 @@ Menu::Menu()
 	:cam(Camera())
 {
 	SoundLibrary::menuMusic.setVolume(0.5f);
-	//SoundLibrary::menuMusic.play(true);
+	SoundLibrary::menuMusic.play(true);
 
 	meshes.push_back(new Mesh("../Meshes/Sphere"));
 	for (int i = 0; i < 4; i++)
@@ -19,7 +19,6 @@ Menu::Menu()
 		planets[i]->setVelocity((4 - i*0.7f)*0.25f);
 		planets[i]->setRotation(DirectX::SimpleMath::Vector3(1.2f * i, 0.2f * i, 0.7f * i));
 		planets[i]->setRotationSpeed(DirectX::SimpleMath::Vector3(0.000f * i, 0.002f * (4-i), 0.000f * i));
-
 	}
 	cam.setPosition(DirectX::XMFLOAT3(20, 0, -70));
 	cam.setCameraLookAt(DirectX::XMFLOAT3(-20, 0, 10));

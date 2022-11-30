@@ -51,10 +51,10 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 {
 	for (UINT i = 0; i < node->mNumMeshes; i++)
 	{
-		if (this->meshes.size() > this->diffuseMaps.size())
+		/*if (this->meshes.size() > this->diffuseMaps.size())
 		{
 			this->diffuseMaps.push_back(this->bank.getSrv("Missing.png"));
-		}
+		}*/
 
 		//printf("Number of bones: %d\n number vert: %d", scene->mMeshes()->)
 		aiMaterial* material = scene->mMaterials[scene->mMeshes[i]->mMaterialIndex];
@@ -80,8 +80,32 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		aiString diffuseName;
 		material->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0), diffuseName);
 		
-		std::cout << diffuseName.C_Str() << "\n";
 		aiString Path;
+		if (material->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+		{
+			if (this->bank.hasItem(Path.data))
+			{
+				this->diffuseMaps.emplace_back(this->bank.getSrv(Path.data));
+				continue;
+			};
+
+			std::cout << Path.C_Str() << "\n";
+			ID3D11ShaderResourceView* tempSRV = {};
+			std::string FullPath = "../Textures/";
+			FullPath.append(Path.data);
+			//make srv
+			if (!this->makeSRV(tempSRV, FullPath))
+			{
+				continue;
+			}
+			//give to bank
+			this->bank.addSrv(Path.data, tempSRV);
+			this->diffuseMaps.emplace_back(tempSRV);
+
+
+		}
+
+		std::cout << diffuseName.C_Str() << "\n";
 		//if(material->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		if(material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
@@ -130,11 +154,15 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 			vertex.nor.y = mesh->mNormals[i].y;
 			vertex.nor.z = mesh->mNormals[i].z;
 
+			vertex.tangent.y = mesh->mBitangents[i].y;
+			vertex.tangent.z = mesh->mBitangents[i].z;
+			vertex.tangent.z = mesh->mBitangents[i].z;
+
 			if (mesh->mTextureCoords[0])
 			{
 				vertex.uv.x = (float)mesh->mTextureCoords[0][i].x;
 				vertex.uv.y = (float)mesh->mTextureCoords[0][i].y;
-				vertex.uv.y = 1.0f - vertex.uv.y;
+				//vertex.uv.y = 1.0f - vertex.uv.y;
 			}
 
 			vertexTriangle.emplace_back(vertex);

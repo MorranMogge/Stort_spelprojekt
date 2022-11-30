@@ -184,6 +184,7 @@
     <ClCompile Include="ModelDataContainer.cpp" />
     <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="AnimatedMesh.cpp" />
+    <ClCompile Include="CaptureZone.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -484,6 +485,9 @@
     <ClInclude Include="ControlMenu.h" />
     <ClInclude Include="ControlUI.h" />
     <ClInclude Include="LandingHud.h" />
+    <ClInclude Include="AnimatedMesh.h" />
+    <ClInclude Include="ModelDataContainer.h" />
+    <ClInclude Include="ModelManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -596,6 +600,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="vShaderSkinning.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="NormalMap_VS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="NormalMap_PS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

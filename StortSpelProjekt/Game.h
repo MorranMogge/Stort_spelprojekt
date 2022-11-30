@@ -45,6 +45,8 @@ private:
 	ID3D11Buffer* vBuff;
 	ID3D11Buffer* iBuff;
 	Mesh* tmpMesh;
+
+	GameObject* testCube;
 	std::vector<int> subMeshRanges;
 	std::vector<int> verticies;
 	ID3D11ShaderResourceView* tempSRV;

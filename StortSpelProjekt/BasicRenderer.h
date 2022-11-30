@@ -51,6 +51,12 @@ private:
 	ID3D11InputLayout* animLayout;
 	ID3D11VertexShader* vShaderAnim;
 
+	//normal map
+	ID3D11VertexShader* vs_normalMap;
+	ID3D11PixelShader* ps_normalMap;
+	ID3D11InputLayout* inputLayout_NormalMap;
+
+	bool setUp_NormalMap_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode);
 	bool setUpInputLayout(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout* iLayout);
 	bool setUpInputLayoutAnim(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout*& iLayout);
 	ID3D11PixelShader* InvFresnel_PS;
@@ -82,4 +88,5 @@ public:
 	void geometryUnbind();
 	void fresnelPrePass(Camera& stageCamera);
 	void invFresnelPrePass();
+	void setUpSceneNormalMap(Camera& stageCamera);
 };

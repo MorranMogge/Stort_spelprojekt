@@ -29,12 +29,20 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ltHandler.addLight(DirectX::XMFLOAT3(16 + 7, 42 + 17, 12 + 7), DirectX::XMFLOAT3(0, 0.3f, 1.0f), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 	ltHandler.addLight(DirectX::XMFLOAT3(-10 - 5, -45 - 17, -10 - 7), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 
+	this->manager.loadMeshData("../Meshes/goblin2.fbx");
+	this->manager.getMeshData("../Meshes/goblin2.fbx", vBuff, iBuff, subMeshRanges, verticies);
+	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	testCube = new GameObject(tmpMesh, DirectX::XMFLOAT3(0, 69, 0), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), 5, nullptr, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+	testCube->setSrv(this->manager.getSrv("Goblin_BaseColor.png"));
+	testCube->setNormalMap(this->manager.getSrv("Goblin_Normal.png"));
+	physWorld.addPhysComponent(testCube);
+
 	manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
 	this->manager.getAnimData("../Meshes/pinto_Run.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
 	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/pintoBlue.png");
 	ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/pintoRed.png");
 	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-
+	
 	//Load game objects
 	this->loadObjects();
 
@@ -145,6 +153,7 @@ Game::~Game()
 	delete arrow;
 	delete planetGravityField;
 	delete gamePad;
+	delete testCube;
 }
 
 void Game::loadObjects()
@@ -261,6 +270,8 @@ void Game::loadObjects()
 		gamePad = new GamePad();
 		currentPlayer->setGamePad(gamePad);
 	}
+
+	//testCube->setPos(currentPlayer->getPos());
 
 	if (!IFONLINE) captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), planetGravityField, DirectX::SimpleMath::Vector3(10.f, 10.f, 10.f));
 }
@@ -992,6 +1003,10 @@ void Game::Render()
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
+
+	basicRenderer.setUpSceneNormalMap(this->camera);
+	ltHandler.bindLightBuffers();
+	testCube->drawObjectWithNormalMap();
 
 	basicRenderer.changeToAnimation();
 	currentPlayer->draw();

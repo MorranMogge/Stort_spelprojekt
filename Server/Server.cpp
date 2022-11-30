@@ -32,7 +32,7 @@
 
 #include <psapi.h>
 
-const short MAXNUMBEROFPLAYERS = 2;
+const short MAXNUMBEROFPLAYERS = 1;
 std::mutex mutex;
 
 struct userData
@@ -729,17 +729,6 @@ int main()
 		delete onlineItems[i];
 	}
     return 0;
-
-	//Hidden code
-	/*if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength && !once)
-	{
-		SpawnComponent cData = SpawnOneComponent(components);
-		physWorld.addPhysComponent(components[components.size() - 1]);
-		components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
-		sendBinaryDataAllPlayers(cData, data);
-		startComponentTimer = std::chrono::system_clock::now();
-		once = true;
-	}*/
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

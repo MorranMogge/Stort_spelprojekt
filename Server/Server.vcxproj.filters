@@ -17,6 +17,7 @@
     <ClCompile Include="SpawnComponent.cpp" />
     <ClCompile Include="TestObj.cpp" />
     <ClCompile Include="Grenade.cpp" />
+    <ClCompile Include="Potion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseBallBat.h" />
@@ -39,5 +40,6 @@
     <ClInclude Include="TestObj.h" />
     <ClInclude Include="TimeStruct.h" />
     <ClInclude Include="Grenade.h" />
+    <ClInclude Include="Potion.h" />
   </ItemGroup>
 </Project>

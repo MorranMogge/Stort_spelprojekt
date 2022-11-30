@@ -547,7 +547,7 @@ int main()
 		}
 		
 		//Spawns a component
-		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength && !once)
 		{
 			SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
 			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
@@ -557,6 +557,7 @@ int main()
 			onlineItems[onlineItems.size() - 1]->setOnlineType(ObjID::COMPONENT);
 			sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
 			startComponentTimer = std::chrono::system_clock::now();
+			once = true;
 		}
 
 
@@ -565,17 +566,16 @@ int main()
 		{
 			ItemSpawn itemSpawnData;
 			DirectX::XMFLOAT3 temp = randomizeObjectPos();
-			itemSpawnData.itemType = (rand()%3) + 3;
-			//std::cout << "ITEM TYPE: " << itemSpawnData.itemType << "\n";
+			itemSpawnData.itemType = (rand()%3) + 3;		//Spawns a random item (Baseball bat, potion or grenade)
 			itemSpawnData.x = temp.x;
 			itemSpawnData.y = temp.y;
 			itemSpawnData.z = temp.z;
 			itemSpawnData.itemId = componentIdCounter;
-			//std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
 			itemSpawnData.packetId = PacketType::ITEMSPAWN;
 
 			
 			if (itemSpawnData.itemType == ObjID::BAT) onlineItems.push_back(new BaseballBat(componentIdCounter));//ändra
+			else if (itemSpawnData.itemType == ObjID::POTION) onlineItems.push_back(new Grenade(componentIdCounter));//ändra
 			else if (itemSpawnData.itemType == ObjID::GRENADE) onlineItems.push_back(new Grenade(componentIdCounter));//ändra
 			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
 			onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);
@@ -647,6 +647,8 @@ int main()
 							ComponentAdded compAdded;
 							compAdded.packetId = PacketType::COMPONENTADDED;
 							compAdded.spaceShipTeam = j;
+							compAdded.componentID = i;
+							onlineItems[i]->setInUseBy(-1);
 							sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
 						}
 					}

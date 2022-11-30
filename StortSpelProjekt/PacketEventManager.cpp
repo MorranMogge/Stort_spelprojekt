@@ -209,24 +209,9 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			for (int i = 0; i < players.size(); i++)
 			{
 				item = players[i]->getItem();
-				if (item)
+				if (item && item->getOnlineId() == compAdded->componentID)
 				{
-					DirectX::SimpleMath::Vector3 randomPos = {};
-
-					int xPos = rand() % 201 - 100;
-					int yPos = rand() % 201 - 100;
-					int zPos = rand() % 201 - 100;
-
-					randomPos.x = (float)xPos;
-					randomPos.y = (float)yPos;
-					randomPos.z = (float)zPos;
-
-					randomPos.Normalize();
-					randomPos *= 100;
-
-					item->setPos(randomPos);
 					players[i]->releaseItem(); //REMOVE THIS
-
 				}
 			}
 		

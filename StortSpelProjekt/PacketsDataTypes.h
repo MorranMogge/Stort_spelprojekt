@@ -117,6 +117,7 @@ struct ComponentAdded
 {
 	int packetId;
 	int spaceShipTeam;
+	int componentID;
 };
 
 //requesting to pick up component

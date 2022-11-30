@@ -550,17 +550,21 @@ int main()
 			}
 		}
 
-		//Spawns a component
-		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
+		if (currentMinigame == MiniGames::COMPONENTCOLLECTION)
 		{
-			SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
-			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
-			onlineItems[onlineItems.size() - 1]->setPosition(cData.x, cData.y, cData.z);
-			onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
-			onlineItems[onlineItems.size() - 1]->setOnlineType(ObjID::COMPONENT);
-			sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
-			startComponentTimer = std::chrono::system_clock::now();
+			//Spawns a component
+			if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
+			{
+				SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
+				physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
+				onlineItems[onlineItems.size() - 1]->setPosition(cData.x, cData.y, cData.z);
+				onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+				onlineItems[onlineItems.size() - 1]->setOnlineType(ObjID::COMPONENT);
+				sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
+				startComponentTimer = std::chrono::system_clock::now();
+			}
 		}
+		
 
 		//Spawns a baseBallBat
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)

@@ -1030,7 +1030,12 @@ void Game::Render()
 	basicRenderer.geometryUnbind();
 
 	//Render UI (needs to render last)
-	ui.Draw();
+
+	//Ej helt fixad ritar inte ut UI saker för
+	if (currentMinigame == MiniGames::COMPONENTCOLLECTION)
+	{
+		ui.Draw();
+	}
 	switch (currentMinigame)
 	{
 	case COMPONENTCOLLECTION:

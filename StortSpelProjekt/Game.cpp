@@ -107,6 +107,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	//ui.count = 1.0f;
 	//ui.setOpacity(false);
 	Time::Start();
+	Time::Reset();
 }
 
 Game::~Game()

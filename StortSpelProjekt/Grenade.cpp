@@ -215,7 +215,7 @@ void Grenade::drawFresnel()
 	{
 		GPU::immediateContext->PSSetConstantBuffers(2, 1, this->colorBuffer.getReferenceOf());
 		this->explosionMesh->DrawWithMat();
-		this->explosionMesh->scale = DirectX::XMFLOAT3(this->explosionMesh->scale.x - (currentTime / 4) , this->explosionMesh->scale.y - (currentTime / 4), this->explosionMesh->scale.z - (currentTime / 4));
+		this->explosionMesh->scale = DirectX::XMFLOAT3(this->explosionMesh->scale.x - (currentTime * 50) , this->explosionMesh->scale.y - (currentTime * 50), this->explosionMesh->scale.z - (currentTime * 50));
 		this->explosionMesh->UpdateCB(explodePosition, rotation, this->explosionMesh->scale);
 	}
 

@@ -20,12 +20,17 @@ public:
 	}
 	static float DeltaTimeInSeconds()
 	{
-		return std::chrono::duration<float, std::ratio<1, 1>>(std::chrono::steady_clock::now() - lap).count();
+		return delta;
 	}
 
 	static float CurrentTime()
 	{
 		return std::chrono::duration<float, std::ratio<1, 1>>(std::chrono::steady_clock::now() - start).count();
+	}
+
+	static void Reset()
+	{
+		delta = 0;
 	}
 
 	static void Update()
@@ -34,6 +39,7 @@ public:
 	}
 	static void Start()
 	{
+		delta = std::chrono::duration<float, std::ratio<1, 1>>(std::chrono::steady_clock::now() - lap).count();
 		lap = std::chrono::steady_clock::now();
 
 		static const bool once = []()
@@ -49,5 +55,6 @@ private:
 
 	inline static std::chrono::steady_clock::time_point lap;
 	inline static std::chrono::steady_clock::time_point start;
+	inline static float delta = 0;
 
 };

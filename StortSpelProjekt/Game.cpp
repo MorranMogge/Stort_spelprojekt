@@ -462,7 +462,17 @@ void Game::handleKeybinds()
 	{
 		whyNotJustWork = false;
 	}
+	if (Input::KeyPress(KeyCode::Y))
+	{
+		this->ptEmitters.at(0).setActive(false);
+		this->ptEmitters.at(0).updateBuffer();
+	}
+	if (Input::KeyDown(KeyCode::K)/*GetAsyncKeyState('K')*/)
+	{
+		
+		ui.redySetGo();
 
+	}
 }
 
 GAMESTATE Game::Update()

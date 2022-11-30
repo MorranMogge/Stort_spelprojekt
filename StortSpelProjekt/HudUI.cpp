@@ -32,6 +32,19 @@ void HudUI::SpritePass()
 		landing2.Draw();
 	}
 
+	if (Bready)
+	{
+		ready.Draw();
+	}
+	else if (Bset)
+	{
+		set.Draw();
+	}
+	else if (Bgo)
+	{
+		go.Draw();
+	}
+
 	static bool red1 = true;
 	static bool red2 = true;
 	static bool red3 = true;
@@ -128,7 +141,25 @@ HudUI::HudUI()
 	#define PositionBlue Vector2(125, 70)
 	#define Max Vector2(125, 90)
 	#define Min Vector2(125, 550)
+	#define upp 50
+	#define left 350
+	#define scaleFactor 0.5f
 	timer.startTime;
+
+
+	//redy set go
+	ready = GUISprite(310 + left, 300 + upp);
+	ready.Load(L"../Sprites/ReadyText.png");
+	ready.SetScale(1.2f, 1.2f);
+
+	set = GUISprite(310 + left, 300 + upp);
+	set.Load(L"../Sprites/Set.png");
+	set.SetScale(1.2f, 1.2f);
+
+	go = GUISprite(310 + left, 300 + upp);
+	go.Load(L"../Sprites/GoText.png");
+	go.SetScale(1.2f, 1.2f);
+
 
 	fade = GUISprite(Vector2(125, 320)); //fadeout
 	fade.Load(GPU::device, L"../Sprites/skybox.png");
@@ -188,10 +219,7 @@ HudUI::HudUI()
 	blueTeam4.Load(L"../Sprites/b_4.png");
 	blueTeam4.SetScale(Scale, Scale);
 
-	#define upp 50
-	#define left 350
 
-	#define scaleFactor 0.5f
 	control = GUISprite(310 + left, 225 + upp);
 	control.Load(L"../Sprites/control.png");
 	control.SetScale(0.75f * scaleFactor, 0.75f * scaleFactor);
@@ -358,6 +386,37 @@ void HudUI::moveSprite()
 		Vector2 currentPos = redTeam4.GetPosition();
 		redTeam4.SetPosition(Vector2(currentPos.x, currentPos.y - 0.5f));
 	}
+}
+
+bool HudUI::redySetGo()
+{
+	bool done = false;
+	static float timer = 0;
+	timer += Time::DeltaTimeInSeconds();
+
+	std::cout << "timer: " << timer << std::endl;
+
+	//Reset if reached interval
+	if (timer >= 0.2)
+	{
+		this->Bready = true;
+	}
+	if (timer >= 0.4)
+	{
+		this->Bready = false;
+		this->Bset = true;
+	}
+	if (timer >= 0.6)
+	{
+		this->Bset = false;
+		this->Bgo = true;
+	}
+	if (timer >= 8)
+	{
+		done = true;
+	}
+
+	return done;
 }
 
 void HudUI::setOpacity(bool onOff)

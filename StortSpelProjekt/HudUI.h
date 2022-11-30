@@ -16,6 +16,8 @@ class HudUI final
 
 	GUISprite blueTeam0,blueTeam1,blueTeam2,blueTeam3,blueTeam4;
 
+	GUISprite ready, set, go;
+
 	GUISprite control;
 	GUISprite useText;
 	GUISprite throwText;
@@ -37,6 +39,10 @@ class HudUI final
 	float scaleTimer;
 	bool changedSprite = false;
 	void SpritePass();
+	bool Bready = false;
+	bool Bset = false;
+	bool Bgo = false;
+
 
 	inline static DirectX::GamePad* gamepad = nullptr;
 	inline static DirectX::GamePad::State state;
@@ -53,6 +59,7 @@ public:
 	bool fadeIn();
 	void fadeOut();
 	void moveSprite();
+	bool redySetGo();
 	void setOpacity(bool onOff);
 	static void SetGamePad(DirectX::GamePad* gamepad);
 	void Draw();

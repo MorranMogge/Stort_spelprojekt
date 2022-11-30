@@ -742,6 +742,8 @@ GAMESTATE Game::updateKingOfTheHillGame()
 		for (int i = 0; i < gameObjects.size(); i++) gameObjects[i]->setGravityField(planetVector[0]->getClosestField(planetVector, gameObjects[i]->getPosV3()));
 	}
 
+	currentPlayer->stateMachine(dt);
+
 	//Raycasting
 	static DirectX::XMFLOAT3 hitPos;
 	static DirectX::XMFLOAT3 hitNormal;

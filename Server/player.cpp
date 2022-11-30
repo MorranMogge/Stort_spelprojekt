@@ -68,6 +68,7 @@ void Player::setMatrix(DirectX::XMFLOAT4X4 matrix)
 	this->matrix = matrix;
 	DirectX::SimpleMath::Quaternion quat;
 	quat = DirectX::XMQuaternionRotationMatrix(DirectX::XMLoadFloat4x4(&matrix));
+	this->physComp->setPosition(reactphysics3d::Vector3(matrix._14, matrix._24, matrix._34));
 	this->physComp->setRotation(reactphysics3d::Quaternion(quat.x, quat.y, quat.z, quat.w));
 }
 

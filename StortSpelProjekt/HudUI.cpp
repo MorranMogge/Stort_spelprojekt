@@ -95,7 +95,7 @@ void HudUI::SpritePass()
 		}
 	}
 
-	if (Input::KeyDown(KeyCode::TAB))
+	if (Input::KeyDown(KeyCode::TAB) || state.IsStartPressed())
 	{
 		
 		blackBackground.Draw();
@@ -106,15 +106,6 @@ void HudUI::SpritePass()
 		pickText.Draw();
 	}
 
-	if (Input::KeyDown(KeyCode::G))
-	{
-		this->fadeIn();
-	}
-	if (Input::KeyDown(KeyCode::H))
-	{
-		this->fadeOut();
-	}
-
 	if (objectiveDisplayTime > 0)
 	{
 		objectiveDisplayTime -= Time::DeltaTimeInSeconds();
@@ -123,8 +114,8 @@ void HudUI::SpritePass()
 	}
 
 
-	
-	controls.Draw();
+	state.IsConnected() ? controls2.Draw() : controls.Draw();
+
 	fade.Draw();
 }
 
@@ -229,6 +220,10 @@ HudUI::HudUI()
 	controls.Load(L"../Sprites/DisplayControls.png");
 	controls.SetScale(1.0f, 1.0f);
 
+	controls2 = GUISprite(1150 - 50, 650);
+	controls2.Load(L"../Sprites/DisplayControls2.png");
+	controls2.SetScale(1.0f, 1.0f);
+
 
 	useControls = GUISprite(390 + left, 600 + upp);
 	useControls.Load(L"../Sprites/ThrowText2.png");
@@ -258,6 +253,7 @@ HudUI::~HudUI()
 
 void HudUI::handleInputs()
 {
+	state = gamepad->GetState(0);
 	static float speed = 1.0f;
 
 	static float counterDown = 0;
@@ -274,6 +270,16 @@ void HudUI::handleInputs()
 	Vector2 safePos = landing1.GetPosition();
 	float sinCurve = (sin(timer.getDt())*0.5f) + 0.5f;
 
+	// fade
+	if (Input::KeyDown(KeyCode::G))
+	{
+		this->fadeIn();
+	}
+	// fade
+	if (Input::KeyDown(KeyCode::H))
+	{
+		this->fadeOut();
+	}
 
 	//Move "safezone" sprite
 	landing1.SetPosition(Vector2(Max.x, 90 + sinCurve * 460));
@@ -368,11 +374,15 @@ void HudUI::setOpacity(bool onOff)
 	fade.SetTint(opacity);
 }
 
+void HudUI::SetGamePad(DirectX::GamePad* g)
+{
+	gamepad = g;
+}
+
 void HudUI::Draw()
 {
+	handleInputs();
 	GUI::Begin();
 	SpritePass();
-	if (Input::KeyDown(KeyCode::B)){ handleInputs(); }
-	//
 	GUI::End();
 }

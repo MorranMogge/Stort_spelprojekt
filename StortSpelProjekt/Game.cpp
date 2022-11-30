@@ -103,6 +103,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	serverStart = std::chrono::system_clock::now();
 	this->window = &window;
 
+	HudUI::SetGamePad(gamePad);
+
 	//Setup fade in and delta time
 	//ui.count = 1.0f;
 	//ui.setOpacity(false);

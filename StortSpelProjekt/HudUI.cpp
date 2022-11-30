@@ -35,6 +35,7 @@ void HudUI::SpritePass()
 	if (Bready)
 	{
 		ready.Draw();
+
 	}
 	else if (Bset)
 	{
@@ -43,6 +44,15 @@ void HudUI::SpritePass()
 	else if (Bgo)
 	{
 		go.Draw();
+		exclamation.Draw();
+	}
+	if (Bdot1)
+	{
+		dot1.Draw();
+	}
+	if (Bdot2)
+	{
+		dot2.Draw();
 	}
 
 	static bool red1 = true;
@@ -153,10 +163,15 @@ HudUI::HudUI()
 	#define upp 50
 	#define left 350
 	#define scaleFactor 0.5f
+	#define RDOT1 Vector2(310 + left +130, 300 + upp +15)
+    #define RDOT2 Vector2(310 + left +170, 300 + upp +15)
+	#define SDOT1 Vector2(310 + left + 90, 300 + upp +15)
+	#define SDOT2 Vector2(310 + left + 130 , 300 + upp + 15)
+
 	timer.startTime;
 
 
-	//redy set go
+	//ready set go
 	ready = GUISprite(310 + left, 300 + upp);
 	ready.Load(L"../Sprites/ReadyText.png");
 	ready.SetScale(1.2f, 1.2f);
@@ -169,8 +184,22 @@ HudUI::HudUI()
 	go.Load(L"../Sprites/GoText.png");
 	go.SetScale(1.2f, 1.2f);
 
+	//..!
 
-	fade = GUISprite(Vector2(125, 320)); //fadeout
+
+	dot1 = GUISprite(RDOT1);
+	dot1.Load(L"../Sprites/punkt.png");
+	dot1.SetScale(0.6f, 0.6f);
+
+	dot2 = GUISprite(RDOT2);
+	dot2.Load(L"../Sprites/punkt.png");
+	dot2.SetScale(0.6f, 0.6f);
+
+	exclamation = GUISprite(310 + left + 70, 300 + upp);
+	exclamation.Load(L"../Sprites/utrop.png");
+	exclamation.SetScale(1.2f, 1.2f);
+
+	fade = GUISprite(Vector2(632, 340)); //fadeout
 	fade.Load(GPU::device, L"../Sprites/skybox.png");
 	fade.SetScale(1.f, 1.f);
 	this->setOpacity(true);
@@ -349,7 +378,6 @@ bool HudUI::fadeIn()
 	gg.w = count;
 	if (gg.w <=0)
 	{
-		std::cout << "what?" << std::endl;
 		done = true;
 	}
 	else
@@ -384,29 +412,56 @@ void HudUI::moveSprite()
 
 bool HudUI::redySetGo()
 {
+	using namespace DirectX::SimpleMath;
+
 	bool done = false;
 	static float timer = 0;
 	timer += Time::DeltaTimeInSeconds();
 
-	std::cout << "timer: " << timer << std::endl;
 
-	//Reset if reached interval
-	if (timer >= 0.2)
+	if (timer >= 1)
 	{
 		this->Bready = true;
 	}
-	if (timer >= 0.4)
+	if (timer >= 1.7f && timer <= 2.5f)
 	{
+		//draw dot 1
+		Bdot1 = true;
+	}
+	if (timer >= 2.1f && timer <= 2.5f)
+	{
+		//draw dot 2
+		Bdot2 = true;
+	}
+	if (timer >= 2.5f)
+	{
+		Bdot1 = false;
+		Bdot2 = false;
 		this->Bready = false;
 		this->Bset = true;
+		this->dot1.SetPosition(Vector2(310 + left + 90, 300 + upp + 15));
+		this->dot2.SetPosition(Vector2(310 + left + 130, 300 + upp + 15));
 	}
-	if (timer >= 0.6)
+	if (timer >= 2.7f && timer <= 3.5f)
 	{
+		//draw dot 1
+		Bdot1 = true;
+	}
+	if (timer >= 3.1f && timer <= 3.5f)
+	{
+		//draw dot 2
+		Bdot2 = true;
+	}
+	if (timer >= 3.5f)
+	{
+		Bdot1 = false;
+		Bdot2 = false;
 		this->Bset = false;
 		this->Bgo = true;
 	}
-	if (timer >= 8)
+	if (timer >= 4.5f)
 	{
+		this->Bgo = false;
 		done = true;
 	}
 

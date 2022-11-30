@@ -465,12 +465,6 @@ void Game::handleKeybinds()
 		this->ptEmitters.at(0).setActive(false);
 		this->ptEmitters.at(0).updateBuffer();
 	}
-	if (Input::KeyDown(KeyCode::K)/*GetAsyncKeyState('K')*/)
-	{
-		
-		ui.redySetGo();
-
-	}
 }
 
 GAMESTATE Game::Update()
@@ -740,7 +734,7 @@ void Game::Render()
 			fadedIn = true;
 		}
 	}
-
+	ui.redySetGo();
 
 	//Render shadow maps
 	basicRenderer.lightPrePass();

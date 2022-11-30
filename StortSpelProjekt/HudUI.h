@@ -16,7 +16,9 @@ class HudUI final
 
 	GUISprite blueTeam0,blueTeam1,blueTeam2,blueTeam3,blueTeam4;
 
-	GUISprite ready, set, go;
+	GUISprite ready, set, go; 
+	GUISprite dot1, dot2, exclamation;
+
 
 	GUISprite control;
 	GUISprite useText;
@@ -42,6 +44,8 @@ class HudUI final
 	bool Bready = false;
 	bool Bset = false;
 	bool Bgo = false;
+	bool Bdot1 = false;
+	bool Bdot2 = false;
 
 
 public:

@@ -79,21 +79,11 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		
 		case PacketType::WINNER:
 			win = circularBuffer->readData<winner>();
-
-			for (int i = 0; i < 100; i++)
-			{
-				std::cout << "uwu i won wuw\n";
-			}
 			currentGameState = WIN;
 			break;
 
 		case PacketType::LOSER:
 			lose = circularBuffer->readData<Loser>();
-
-			for (int i = 0; i < 100; i++)
-			{
-				std::cout << "uwu i lost wuw\n";
-			}
 			currentGameState = LOSE;
 			break;
 

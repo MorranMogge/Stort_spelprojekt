@@ -702,8 +702,8 @@ int main()
 			//Check if any onlineItems are near after the physics update
 			for (int i = 0; i < onlineItems.size(); i++)
 			{
-				static DirectX::XMFLOAT3 vecToComp;
-				static DirectX::XMFLOAT3 objPos;
+				static DirectX::SimpleMath::Vector3 vecToComp;
+				static DirectX::SimpleMath::Vector3 objPos;
 				if (onlineItems[i]->getOnlineType() == ObjID::COMPONENT)
 				{
 					for (int j = 0; j < spaceShipPos.size(); j++)
@@ -756,8 +756,10 @@ int main()
 
 							if (getLength(vecToComp) <= 25.f)
 							{
+								float factor = 1.f / getLength(vecToComp);
+								vecToComp *= factor;
 								onlineItems[j]->getPhysicsComponent()->applyForceToCenter(reactphysics3d::Vector3(
-									10000 * vecToComp.x, 10000 * vecToComp.y, 10000 * vecToComp.z));
+									1000 * vecToComp.x, 1000 * vecToComp.y, 1000 * vecToComp.z));
 							}
 						}
 						for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
@@ -771,17 +773,18 @@ int main()
 							subtractionXMFLOAT3(vecToComp, objPos);
 							if (getLength(vecToComp) <= 25.f)
 							{
-								std::cout << "LIGMA OwO\n";
+								float factor = 1.f / getLength(vecToComp);
+								vecToComp *= factor;
 								//data.users[j].playa.getPhysComp()->applyForceToCenter();
 								data.users[j].playa.playerGotHit(reactphysics3d::Vector3(
-									10000 * vecToComp.x, 10000 * vecToComp.y, 10000 * vecToComp.z));
+									1000 * vecToComp.x, 1000 * vecToComp.y, 1000 * vecToComp.z));
 								HitByGrenade hitByGrenade;
 								hitByGrenade.packetId = HITBYGRENADE;
 								hitByGrenade.playerThatUsedTheItem = 0;
 								hitByGrenade.itemId = i;
-								hitByGrenade.xForce = 10000 * vecToComp.x;
-								hitByGrenade.yForce = 10000 * vecToComp.y;
-								hitByGrenade.zForce = 10000 * vecToComp.z;
+								hitByGrenade.xForce = 1000 * vecToComp.x;
+								hitByGrenade.yForce = 1000 * vecToComp.y;
+								hitByGrenade.zForce = 1000 * vecToComp.z;
 								sendBinaryDataOnePlayer<HitByGrenade>(hitByGrenade, data.users[j]);
 							}
 						}

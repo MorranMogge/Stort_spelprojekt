@@ -57,6 +57,7 @@ void Player::handleItems()
 {
 	//DirectX::SimpleMath::Vector3 newPos = this->position;
 	//newPos += 4 * forwardVector;
+	if (this->gamePad == nullptr) return;
 
 	DirectX::XMFLOAT4X4 f1;
 	this->forwardKinematics("hand3:hand3:RightHand", f1);
@@ -1205,9 +1206,9 @@ float Player::getSpeed()const
 	return this->currentSpeed;
 }
 
-float Player::getAnimSpeed()
+void Player::getAnimSpeed(float& speed)
 {
-	return this->animSpeed;
+	speed = this->animSpeed;
 }
 
 void Player::drawIcon()

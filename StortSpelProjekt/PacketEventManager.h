@@ -11,6 +11,7 @@ class PacketEventManager
 {
 private:
 	int planetCounter = 0;
+	std::vector<bool> animated;
 
 public:
 	PacketEventManager();

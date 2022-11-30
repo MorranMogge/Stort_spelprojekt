@@ -124,7 +124,7 @@ public:
 	int getOnlineID()const;
 	bool getHitByBat()const;
 	float getSpeed()const;
-	float getAnimSpeed();
+	void getAnimSpeed(float& speed);
 
 	//Item related functions
 	bool pickupItem(const std::vector <Item *>& items, const std::vector <Component*>& components);

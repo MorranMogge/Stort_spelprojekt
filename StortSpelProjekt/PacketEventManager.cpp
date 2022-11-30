@@ -4,6 +4,10 @@
 
 PacketEventManager::PacketEventManager()
 {
+	for (int i = 0; i < 16; i++)
+	{
+		animated.push_back(false);
+	}
 }
 
 PacketEventManager::~PacketEventManager()
@@ -39,6 +43,11 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	winner* win = nullptr;
 	Loser* lose = nullptr;
 	ComponentDropped* cmpDropped = nullptr;
+
+	for (int i = 0; i < players.size(); i++)
+	{
+		animated[i] = false;
+	}
 
 	while (circularBuffer->getIfPacketsLeftToRead())
 	{
@@ -122,19 +131,15 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				{
 					if (playerId != i)
 					{
-						//std::cout << "getting animId: " << prMatrixData->AnimId << "\n";
-						//std::cout << "sizeof prmatrix: " << sizeof(PositionRotation) << std::endl;
-						if (prMatrixData->AnimId <= 5)
-						{
-							players[i]->updateAnim(dt, prMatrixData->AnimId, prMatrixData->animSpeed);
-						}
-						//std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
-						//std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
 						players[i]->setMatrix(prMatrixData->matrix);
+						if (!animated[i])
+						{
+							players[i]->updateAnim(dt, prMatrixData->AnimId, 1);
+							animated[i] = true;
+						}
 					}
 					else if (prMatrixData->ifDead)
 					{
-						//std::cout << std::to_string(prMatrixData->matrix._14) << std::endl;
 						players[i]->setMatrix(prMatrixData->matrix);
 					}
 					players[i]->getPhysComp()->setRotation(DirectX::XMQuaternionRotationMatrix(DirectX::XMLoadFloat4x4(&prMatrixData->matrix)));

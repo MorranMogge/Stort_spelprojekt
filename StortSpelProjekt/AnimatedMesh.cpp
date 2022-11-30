@@ -422,7 +422,7 @@ void AnimatedMesh::draw()
 	this->tmpDraw(sizeof(AnimatedVertex));
 }
 
-int AnimatedMesh::getAnimId()
+void AnimatedMesh::getAnimId(int& id)
 {
-	return this->currentAnimId;
+	id = this->currentAnimId;
 }

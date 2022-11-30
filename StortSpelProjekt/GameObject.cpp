@@ -169,8 +169,6 @@ void GameObject::setMatrix(DirectX::XMFLOAT4X4 matrix)
 	this->position.x = matrix._14;
 	this->position.y = matrix._24;
 	this->position.z = matrix._34;
-	this->rotation = DirectX::XMLoadFloat4x4(&matrix);
-	//this->rotation
 	this->physComp->setPosition(reactphysics3d::Vector3{ position.x,position.y, position.z });
 }
 

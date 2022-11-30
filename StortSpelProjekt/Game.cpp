@@ -86,6 +86,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			std::cout << "Dude: " << (int)(dude < i + 1) << "\n";
 		}
 
+		std::cout << "num players" << this->players.size() << "\n";
+
 		gamePad = new DirectX::GamePad();
 		currentPlayer->setGamePad(gamePad);
 	}

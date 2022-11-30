@@ -151,5 +151,5 @@ public:
 	void addData(const AnimationData& data);
 	void updateAnim(const float& dt, int animIndex, float animationSpeed = 1.0f);
 	void draw();
-	int getAnimId();
+	void getAnimId(int& id);
 };

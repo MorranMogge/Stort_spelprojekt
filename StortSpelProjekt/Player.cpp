@@ -998,7 +998,7 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
 			onGround = true;
 			DirectX::SimpleMath::Vector3 vecToHitPos = this->position - hitPos;
-			float lengthToMove = 1.f - getLength(vecToHitPos);
+			float lengthToMove = 0.5f - getLength(vecToHitPos);
 			vecToHitPos.Normalize();
 			this->position += lengthToMove * vecToHitPos;
 			return true;
@@ -1024,6 +1024,24 @@ void Player::colliedWIthComponent(const std::vector<Component*>& components)
 	bool collided = false;
 	for (int i = 0; i < components.size(); i++) collided = this->physComp->testBodiesOverlap(components[i]->getPhysComp());
 	if (collided) this->setSpeed(this->speed * 0.5f);
+}
+
+void Player::checkSwimStatus(const std::vector<Planet*>& planets)
+{
+	//Checks if the player is inside planet
+	for (int i = 0; i < planets.size(); i++)
+	{
+		planetVector = DirectX::XMVectorSet(planets[i]->getSize(), planets[i]->getSize(), planets[i]->getSize(), 0.0f);
+		playerVector = XMVectorSubtract(planets[i]->getPlanetPosition(), this->position);
+		playerVector = XMVector3Length(playerVector);
+
+		//The player is swimming
+		if (XMVector3Less(playerVector, planetVector))
+		{
+			this->position += normalVector * 6.f;
+			std::cout << "SWIMMING\n";
+		}
+	}
 }
 
 bool Player::getHitByBat() const
@@ -1218,7 +1236,6 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 void Player::itemRecvFromServer(Item* item)
 {
 	addItem(item);
-	
 	holdingItem->getPhysComp()->getRigidBody()->resetForce();
 	holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 	holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);

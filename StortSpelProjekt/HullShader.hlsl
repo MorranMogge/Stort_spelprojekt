@@ -1,8 +1,8 @@
 struct Vertex
 {
-    float3 position : Position;
+    float3 position : POSITION;
+    float3 normal : NORMAL;
     float2 uv : UV;
-    float3 normal : Normal;
 };
 
 //constant output
@@ -28,7 +28,7 @@ HS_CONSTANT_DATA_OUTPUT ConstantHS(
 }
 
 [domain("tri")]
-[partitioning("integer")] //integer//fractional_odd//pow2//fractional_even
+[partitioning("fractional_odd")] //integer//fractional_odd//pow2//fractional_even
 [outputtopology("triangle_cw")]
 [outputcontrolpoints(3)] //how many times this fuction runs
 [patchconstantfunc("ConstantHS")]

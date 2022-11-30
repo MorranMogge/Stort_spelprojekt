@@ -309,10 +309,10 @@ void Game::drawObjects(bool drawDebug)
 	}
 
 	//Draw planets
-	//basicRenderer.tesselationPrePass();
+	basicRenderer.tesselationPrePass(camera);
 	for (int i = 0; i < planetVector.size(); i++)
 	{
-		planetVector[i]->drawPlanet(/*true*/);
+		planetVector[i]->drawPlanet(true);
 	}
 	basicRenderer.resetTopology();
 	asteroids->drawAsteroids();

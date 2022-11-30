@@ -1,16 +1,17 @@
 struct Vertex
 {
-    float3 position : Position;
+    float3 position : POSITION;
+    float3 normal : NORMAL;
     float2 uv : UV;
-    float3 normal : Normal;
 };
 
 struct PSInput
 {
     float4 position : SV_Position;
-    float2 uv : UV;
     float3 normal : Normal;
+    float2 uv : UV;
     float4 worldPosition : WorldPosition;
+    float3 localPosition : LocalPosition;
 };
 
 struct HS_CONSTANT_DATA_OUTPUT
@@ -51,10 +52,11 @@ PSInput main(
         phongTessPos += (uvw[i] * LerpPositionBasedOfNormalProject(position.xyz, tri[i].position, tri[i].normal));
     }
     output.position = float4(phongTessPos, 1);
+    output.localPosition = output.position;
     output.worldPosition = mul(output.position, worldMatrix);
     output.position = mul(output.worldPosition, camViewProj);
 
-    output.normal = mul(float4(uvw.x * tri[0].normal + uvw.y * tri[1].normal + uvw.z * tri[2].normal, 0.0f), worldMatrix).xyz;
+    output.normal = uvw.x * tri[0].normal + uvw.y * tri[1].normal + uvw.z * tri[2].normal;
     
     output.uv = uvw.x * tri[0].uv + uvw.y * tri[1].uv + uvw.z * tri[2].uv;
 

@@ -204,8 +204,9 @@ BasicRenderer::~BasicRenderer()
 	fresnelBlendState->Release();
 	InvFresnel_PS->Release();
 	pt_UpdatePlayer->Release();
-	//hullShader->Release();
-	//domainShader->Release();
+	hullShader->Release();
+	domainShader->Release();
+	basic_VertexShader->Release();
 }
 
 void BasicRenderer::lightPrePass()
@@ -232,6 +233,7 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!CreateDSState(dsState))															return false;
 	if (!CreateDepthStencilAndSrv(device, WIDTH, HEIGHT, dsTexture2, dsView2, depthSrv))	return false;
 	if (!LoadVertexShader(device, vShader, vShaderByteCode, "VertexShader"))				return false;
+	if (!LoadVertexShader(device, basic_VertexShader, vShaderByteCode, "basic_VertexShader"))		return false;
 	if (!LoadVertexShader(device, this->vShaderAnim, vShaderByteCodeForAnim, "vShaderSkinning"))	return false;
 	if (!setUpInputLayoutAnim(device, vShaderByteCodeForAnim, this->animLayout))			return false;
 	if (!setUpInputLayout(device, vShaderByteCode, this->inputLayout))						return false;
@@ -258,9 +260,11 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadPixelShader(device, InvFresnel_PS, "InvFresnel_PS"))							return false;
 	if (!setUpFresnelBlendState())															return false;
 	if (!LoadComputeShader(device, pt_UpdatePlayer, "PT_UpdatePlayer"))						return false;
-	//if (!LoadHullShader(device, hullShader, "hullShader"))									return false;
-	//if (!LoadDomainShader(device, domainShader, "domainShader"))							return false;
+	if (!LoadHullShader(device, hullShader, "HullShader"))									return false;
+	if (!LoadDomainShader(device, domainShader, "DomainShader"))							return false;
+
 	
+
 	SetViewport(viewport, GPU::windowWidth, GPU::windowHeight);
 	SetViewport(shadowViewport, WidthAndHeight, WidthAndHeight);
 	
@@ -422,7 +426,6 @@ void BasicRenderer::bindAnimVs()
 	immediateContext->VSSetShader(this->vShaderAnim, nullptr, 0);
 }
 
-//
 void BasicRenderer::fresnelAnimPrePass(Camera& stageCamera)
 {
 	immediateContext->IASetInputLayout(this->animLayout);
@@ -433,20 +436,22 @@ void BasicRenderer::fresnelAnimPrePass(Camera& stageCamera)
 	stageCamera.PSbindPositionBuffer(1);
 }
 
-void BasicRenderer::tesselationPrePass()
+void BasicRenderer::tesselationPrePass(Camera& stageCamera)
 {
-	//Bind
-
+	immediateContext->VSSetShader(basic_VertexShader, nullptr, 0);
 	immediateContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	immediateContext->HSSetShader(hullShader, nullptr, 0);
 	immediateContext->DSSetShader(domainShader, nullptr, 0);
-
-
-	//immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//immediateContext->HSSetConstantBuffers(0, 1, this->cameraDistanceBuffer.GetAddressOf());
+	stageCamera.DSbindViewBuffer(1);
 }
 
 void BasicRenderer::resetTopology()
 {
+	ID3D11HullShader* nullShader{ nullptr };
+	ID3D11DomainShader* nullShader1{ nullptr };
+
+	immediateContext->VSSetShader(vShader, nullptr, 0);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	immediateContext->HSSetShader(nullShader, nullptr, 0);
+	immediateContext->DSSetShader(nullShader1, nullptr, 0);
 }

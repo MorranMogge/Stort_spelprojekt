@@ -600,6 +600,12 @@
     <FxCompile Include="PixelShader_NoShadow.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="HullShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="DomainShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico">

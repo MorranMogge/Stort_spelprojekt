@@ -132,7 +132,7 @@ void Player::handleItems()
 				useGrenade.yForce = temp.y * FORCE;
 				useGrenade.zForce = temp.z * FORCE;
 
-				client->sendStuff<UseGrenade>(useGrenade);
+				//client->sendStuff<UseGrenade>(useGrenade);
 
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -201,7 +201,7 @@ void Player::handleItems()
 				useGrenade.yForce = temp.y * FORCE;
 				useGrenade.zForce = temp.z * FORCE;
 
-				client->sendStuff<UseGrenade>(useGrenade);
+				//client->sendStuff<UseGrenade>(useGrenade);
 
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);

@@ -525,6 +525,12 @@ int main()
 
 			case PacketType::USEBAT:
 				useBat = circBuffer->readData<UseBat>();
+
+				/*for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+				{
+					if(data.users[i].)
+				}*/
+
 				for (int i = 0; i < onlineItems.size(); i++)
 				{
 					if (onlineItems[i]->getOnlineId() == useBat->itemId)

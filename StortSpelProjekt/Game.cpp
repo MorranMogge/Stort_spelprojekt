@@ -36,6 +36,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	testCube->setSrv(this->manager.getSrv("Goblin_BaseColor.png"));
 	testCube->setNormalMap(this->manager.getSrv("Goblin_Normal.png"));
 	physWorld.addPhysComponent(testCube);
+	
 
 	manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
 	this->manager.getAnimData("../Meshes/pinto_Run.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);

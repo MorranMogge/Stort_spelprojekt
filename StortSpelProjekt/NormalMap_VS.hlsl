@@ -32,7 +32,7 @@ VSout main(VSin input)
     VSout output;
 
     output.uv = input.uv;
-    output.tangent = mul(float4(input.tangent, 0), worldM).xyz;
+    output.tangent = mul(float4(input.tangent, 1.0f), worldM).xyz;
     //Calculate position of vertex in world
     output.worldPosition = mul(float4(input.position, 1.0f), worldM);
     output.position = mul(output.worldPosition, camViewProjM);

@@ -319,7 +319,7 @@ void Game::drawObjects(bool drawDebug)
 		planetVector[i]->drawPlanet();
 	}
 	asteroids->drawAsteroids();
-	testCube->draw();
+	//testCube->draw();
 	//Draw with Ambient only shader
 	basicRenderer.bindAmbientShader();
 	arrow->draw();

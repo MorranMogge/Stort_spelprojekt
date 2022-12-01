@@ -92,9 +92,9 @@ void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, bool& landingMinig
 			
 			ImGui::Checkbox("Landing Minigame", &landingMinigame);
 			ImGui::Checkbox("Camera with collision", &velocityCamera);
-			ImGui::Text("xPos : ", currentPlayer->getPos().x);
-			ImGui::Text("yPos : ", currentPlayer->getPos().y);
-			ImGui::Text("zPos : ", currentPlayer->getPos().z);
+			ImGui::Text("xPos : ", std::to_string(currentPlayer->getPos().x).c_str());
+			ImGui::Text("yPos : ", std::to_string(currentPlayer->getPos().y).c_str());
+			ImGui::Text("zPos : ", std::to_string(currentPlayer->getPos().z).c_str());
 		}
 
 		ImGui::End();

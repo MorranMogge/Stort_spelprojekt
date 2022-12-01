@@ -151,7 +151,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 Game::~Game()
 {
-	delete client;
 	delete packetEventManager;
 
 	for (int i = 0; i < this->gameObjects.size(); i++)
@@ -175,6 +174,7 @@ Game::~Game()
 	}
 	if (captureZone != nullptr) delete captureZone;
 	if (gamePad != nullptr) delete gamePad;
+	if (client != nullptr) delete client;
 	delete tmpMesh;
 	delete asteroids;
 	delete arrow;

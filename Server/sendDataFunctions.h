@@ -1,7 +1,7 @@
 #include <SFML/Network.hpp>
 #include "player.h"
 
-const short MAXNUMBEROFPLAYERS = 2;
+const short MAXNUMBEROFPLAYERS = 3;
 
 struct userData
 {

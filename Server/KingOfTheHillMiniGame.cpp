@@ -1,10 +1,11 @@
 #include "KingOfTheHillMiniGame.h"
 
 KingOfTheHillMiniGame::KingOfTheHillMiniGame(const short& nrOfPlayers)
-	:kingOfTheHillOrigo(0,40,-40), radius(30), nrOfPlayers(nrOfPlayers), team1Score(0), team2Score(0), pointsToAdd(10), time(5), goalScore(100)
+	:kingOfTheHillOrigo(0,40,-40), radius(30), nrOfPlayers(nrOfPlayers), team1Score(0), team2Score(0), pointsToAdd(10), time(5), goalScore(100), timeToSpawnItems(5)
 {
 	this->timer = std::chrono::system_clock::now();
 	this->timerToSend = std::chrono::system_clock::now();
+	this->itemSpawnTimer = std::chrono::system_clock::now();
 	timerSend =  4.0f;
 }
 
@@ -19,7 +20,8 @@ void KingOfTheHillMiniGame::sendKingOfTheHillZone(serverData& data)
 	sendBinaryDataAllPlayers<CreateZone>(zone, data);
 }
 
-void KingOfTheHillMiniGame::update(serverData& data)
+
+void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, int& componentIdCounter)
 {
 	static float xPos;
 	static float yPos;
@@ -105,5 +107,28 @@ void KingOfTheHillMiniGame::update(serverData& data)
 			this->timerToSend = std::chrono::system_clock::now();
 		}
 	}
+
+	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - this->itemSpawnTimer)).count() > timeToSpawnItems)
+	{
+
+		ItemSpawn itemSpawnData;
+		DirectX::XMFLOAT3 temp = randomizeObjectPos();
+		itemSpawnData.x = temp.x;
+		itemSpawnData.y = temp.y;
+		itemSpawnData.z = temp.z;
+		itemSpawnData.itemId = componentIdCounter;
+		std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
+		itemSpawnData.packetId = PacketType::ITEMSPAWN;
+
+		onlineItems.push_back(new BaseballBat(componentIdCounter));//�ndra
+		physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
+		onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);;
+		onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
+		onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+		sendBinaryDataAllPlayers(itemSpawnData, data);
+		itemSpawnTimer = std::chrono::system_clock::now();
+	}
+
 	//fixa f�r team 2
+
 }

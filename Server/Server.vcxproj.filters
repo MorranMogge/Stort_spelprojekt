@@ -19,6 +19,7 @@
     <ClCompile Include="Grenade.cpp" />
     <ClCompile Include="Potion.cpp" />
     <ClCompile Include="KingOfTheHillMiniGame.cpp" />
+    <ClCompile Include="BaseballBat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseBallBat.h" />

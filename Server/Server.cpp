@@ -592,18 +592,22 @@ int main()
 			}
 		}
 
-		//Spawns a component
-		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength && !once)
+		if (currentMinigame == MiniGames::COMPONENTCOLLECTION)
 		{
-			SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
-			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
-			onlineItems[onlineItems.size() - 1]->setPosition(cData.x, cData.y, cData.z);
-			onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
-			onlineItems[onlineItems.size() - 1]->setOnlineType(ObjID::COMPONENT);
-			sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
-			startComponentTimer = std::chrono::system_clock::now();
-			once = true;
+			//Spawns a component
+			if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength && !once)
+			{
+				SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
+				physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
+				onlineItems[onlineItems.size() - 1]->setPosition(cData.x, cData.y, cData.z);
+				onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+				onlineItems[onlineItems.size() - 1]->setOnlineType(ObjID::COMPONENT);
+				sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
+				startComponentTimer = std::chrono::system_clock::now();
+				once = true;
+			}
 		}
+		
 
 		//Spawns a baseBallBat
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
@@ -687,7 +691,7 @@ int main()
 				break;
 
 			case MiniGames::KINGOFTHEHILL:
-				miniGameKTH.update(data);
+				miniGameKTH.update(data, onlineItems, physWorld, componentIdCounter);
 				break;
 
 				/*default:

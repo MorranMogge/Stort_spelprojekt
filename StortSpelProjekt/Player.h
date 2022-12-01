@@ -80,6 +80,8 @@ private:
 	DirectX::XMVECTOR southEastVector = SOUTH_EAST;
 	DirectX::XMVECTOR southWestVector = SOUTH_WEST;
 
+	DirectX::SimpleMath::Vector3 playerVector;
+	DirectX::SimpleMath::Vector3 planetVector;
 
 	int animIndex = 0;
 	bool eKeyDown = false;
@@ -139,6 +141,7 @@ public:
 	//Collision and checks
 	void hitByBat(const reactphysics3d::Vector3& force);
 	bool checkForStaticCollision(const std::vector<Planet*>& gameObjects, const std::vector<SpaceShip*>& spaceShips);
+	void checkSwimStatus(const std::vector<Planet*>& planets);
 	bool raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	void colliedWIthComponent(const std::vector<Component*>& components);

@@ -1,4 +1,3 @@
-
 enum PacketType
 {
 	ERROR1 = -1,
@@ -34,4 +33,8 @@ enum PacketType
 	USEGRENADE = 69,
 	HITBYGRENADE = 70,
 	USEBAT = 71
+	BASEBALLBATSPAWN = 33,
+	POTIONSPAWN = 34,
+	SPAWNPLANETS = 35,
+	DONELOADING = 36
 };

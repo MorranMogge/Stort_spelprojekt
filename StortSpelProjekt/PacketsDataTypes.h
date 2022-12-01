@@ -297,4 +297,11 @@ struct UseBat
 	float xPos;
 	float yPos;
 	float zPos;
+	float size;
+};
+
+//enum = 36
+struct DoneLoading
+{
+	int packetId;
 };

@@ -14,7 +14,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->WIDTH = WIDTH;
 	this->packetEventManager = new PacketEventManager();
 	gameMusic.load(L"../Sounds/Gold Rush Final.wav");
-	gameMusic.play(true);
+	//gameMusic.play(true);
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
 	client = new Client();
@@ -47,11 +47,12 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	//Setup players
 	if (IFONLINE)
 	{
+		int UwU = 0;
 		client->connectToServer();
 		int playerId = -1;
 		while (playerId <= -1 || playerId >= 9)
 		{
-			playerId = packetEventManager->handleId(client->getCircularBuffer());
+			playerId = packetEventManager->handleId(client->getCircularBuffer(), this->planetVector, physWorld, meshes, spaceShips, gameObjects,this->field, UwU);
 			//std::cout << "Game.cpp, playerId: " << std::to_string(playerId) << std::endl;
 		}
 		//int playerid = client->initTEMPPLAYERS();
@@ -90,17 +91,38 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 		gamePad = new DirectX::GamePad();
 		currentPlayer->setGamePad(gamePad);
+		
+		while (UwU != 5)
+		{
+			std::cout << "UwU: " << UwU << std::endl;
+			packetEventManager->handleId(client->getCircularBuffer(), this->planetVector, physWorld, meshes, spaceShips, gameObjects, field, UwU);
+		}
+		for (int i = 0; i < spaceShips.size(); i++)
+		{
+			spaceShips[i]->setSpaceShipRotationRelativePlanet(planetVector[0]->getGravityField());
+			
+		}
+		for (int i = 0; i < players.size(); i++)
+		{
+			players[i]->setGravityField(planetVector[0]->getGravityField());
+		}
+		DoneLoading sendingConfirm;
+		sendingConfirm.packetId = PacketType::DONELOADING;
+		client->sendStuff<DoneLoading>(sendingConfirm);
 	}
 
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->setGravityField(planetGravityField);
-	}
+	gameObjects.emplace_back(currentPlayer);
+
+	//check the handle id for data ex(Planets, SpaceShips)
 
 	field = nullptr;
 	oldField = field;
+
+	TimeStruct UwuYouSowarm;
+	UwuYouSowarm.resetStartTime();
+	while (UwuYouSowarm.getTimePassed(1.0f));
 
 	//Set items baseball bat
 	if (!IFONLINE)
@@ -113,7 +135,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	}
 	//baseballBat->setClient(client);
 
-	
+	//Set items grenade
+	//grenade->setGameObjects(gameObjects);
 
 	//Init delta time
 	currentTime = std::chrono::system_clock::now();

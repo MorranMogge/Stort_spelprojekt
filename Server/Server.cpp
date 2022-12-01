@@ -108,6 +108,7 @@ void sendDataAllPlayers(testPosition& posData, serverData& serverData)
 void recvData(void* param, userData* user)//thread to recv data
 {
 	threadInfo* data = (threadInfo*)param;
+	//int testStore = -2;
 
 	std::cout << "ip from socket in thread: " << user->tcpSocket.getRemoteAddress().toString() << std::endl;
 	while (1)
@@ -121,6 +122,10 @@ void recvData(void* param, userData* user)//thread to recv data
 		}
 		else
 		{
+			//USE TO CHECK IF THE PACKET ID IS CORRECT (MAYBE=
+			//memcpy(&testStore, datapointer, sizeof(float));
+			//std::cout << "testStore: " << testStore << std::endl;
+
 			mutex.lock();
 			data->circBuffer->addData(datapointer, recv);
 			mutex.unlock();
@@ -294,6 +299,52 @@ int main()
 		recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
 	}
 
+	int temp = 0;
+	while (1)
+	{
+		if (circBuffer->getIfPacketsLeftToRead())
+		{
+			int packetId = circBuffer->peekPacketId();
+
+			if (packetId == PacketType::DONELOADING)
+			{
+				Loser* los = circBuffer->readData<Loser>();
+				std::cout << "DONE LOADING\n";
+				temp++;
+				if(temp == MAXNUMBEROFPLAYERS) break;
+			}
+			else if (packetId == PacketType::POSITION)
+			{
+				circBuffer->readData<testPosition>();
+				std::cout << "position while Loading\n";
+			}
+			else if (packetId == PacketType::POSITIONROTATION)
+			{
+				circBuffer->readData<PositionRotation>();
+				std::cout << "prRotation while Loading\n";
+			}
+		}
+	}
+
+
+		ItemSpawn itemSpawnData;
+		DirectX::XMFLOAT3 temporaryPos = randomizeObjectPos();
+		itemSpawnData.x = temporaryPos.x;
+		itemSpawnData.y = temporaryPos.y;
+		itemSpawnData.z = temporaryPos.z;
+		itemSpawnData.itemId = componentIdCounter;
+		std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
+		itemSpawnData.packetId = PacketType::ITEMSPAWN;
+
+		onlineItems.push_back(new BaseballBat(componentIdCounter));//ändra
+		physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
+		onlineItems[onlineItems.size() - 1]->setPosition(temporaryPos.x, temporaryPos.y, temporaryPos.z);;
+		onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
+		onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+		sendBinaryDataAllPlayers(itemSpawnData, data);
+		itemSpawnTimer = std::chrono::system_clock::now();
+	
+
 	//Starting timer
 	start = std::chrono::system_clock::now();
 	startComponentTimer = std::chrono::system_clock::now();
@@ -324,6 +375,8 @@ int main()
 			switch (packetId)
 			{
 			default:
+				circBuffer->clearBuffer();
+				std::cout << "BAD PACKET RECEIVED, CLEARING THE CIRCLEBUFFER\n";
 				break;
 
 			case PacketType::POSITIONROTATION:

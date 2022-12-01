@@ -10,7 +10,7 @@ Menu::Menu()
 	:cam(Camera())
 {
 	SoundLibrary::menuMusic.setVolume(0.5f);
-	SoundLibrary::menuMusic.play(true);
+	//SoundLibrary::menuMusic.play(true);
 
 	meshes.push_back(new Mesh("../Meshes/Sphere"));
 	for (int i = 0; i < 4; i++)

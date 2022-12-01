@@ -1365,28 +1365,40 @@ void Player::setGamePad(DirectX::GamePad* gamePad)
 void Player::requestingPickUpItem(const std::vector<Item*>& items)
 {
 	if (holdingItem) return;
-	if (Input::KeyPress(KeyCode::E))
+	if (state.IsConnected())
 	{
-		std::cout << "items.size = " << std::to_string(items.size()) << std::endl;
-		for (int i = 0; i < items.size(); i++)
-		{
-			if (this->withinRadius(items[i], 5))
-			{
-				//addItem(items[i]);
 
-				//holdingItem->getPhysComp()->getRigidBody()->resetForce();
-				//holdingItem->getPhysComp()->getRigidBody()->resetTorque();
-				//holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-				ComponentRequestingPickUp rqstCmpPickUp;
-				rqstCmpPickUp.componentId = items[i]->getOnlineId();
-				rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;
-				rqstCmpPickUp.playerId = this->getOnlineID();
-				if (items[i]->getId() == ObjID::COMPONENT) this->holdingComp = true;
-				std::cout << "requesting pickup componentId: " << std::to_string(rqstCmpPickUp.componentId) << std::endl;
-				//skickar en f�rfr�gan att plocka upp item
-				keyPressTimer.resetStartTime();
-				client->sendStuff<ComponentRequestingPickUp>(rqstCmpPickUp);
-				break;
+	}
+	else
+	{
+		if (GetAsyncKeyState('E') && this->eKeyDown == false && this->keyPressTimer.getTimePassed(0.1))
+		{
+			this->eKeyDown = true;
+		}
+		else if (GetAsyncKeyState('E') == 0 && this->eKeyDown == true)
+		{
+			this->eKeyDown = false;
+			std::cout << "items.size = " << std::to_string(items.size()) << std::endl;
+			for (int i = 0; i < items.size(); i++)
+			{
+				if (this->withinRadius(items[i], 5))
+				{
+					//addItem(items[i]);
+
+					//holdingItem->getPhysComp()->getRigidBody()->resetForce();
+					//holdingItem->getPhysComp()->getRigidBody()->resetTorque();
+					//holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+					ComponentRequestingPickUp rqstCmpPickUp;
+					rqstCmpPickUp.componentId = items[i]->getOnlineId();
+					rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;
+					rqstCmpPickUp.playerId = this->getOnlineID();
+					if (items[i]->getId() == ObjID::COMPONENT) this->holdingComp = true;
+					std::cout << "requesting pickup componentId: " << std::to_string(rqstCmpPickUp.componentId) << std::endl;
+					//skickar en f�rfr�gan att plocka upp item
+					keyPressTimer.resetStartTime();
+					client->sendStuff<ComponentRequestingPickUp>(rqstCmpPickUp);
+					break;
+				}
 			}
 		}
 	}

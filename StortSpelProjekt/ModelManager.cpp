@@ -162,7 +162,7 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 			{
 				vertex.uv.x = (float)mesh->mTextureCoords[0][i].x;
 				vertex.uv.y = (float)mesh->mTextureCoords[0][i].y;
-				//vertex.uv.y = 1.0f - vertex.uv.y;
+				vertex.uv.y = 1.0f - vertex.uv.y;
 			}
 
 			vertexTriangle.emplace_back(vertex);

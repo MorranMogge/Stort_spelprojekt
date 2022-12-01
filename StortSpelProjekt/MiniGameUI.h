@@ -7,6 +7,7 @@
 struct MiniGameUI
 {
 	GUISprite bar_b, bar_e, bar_p;
+	GUISprite L_wheel, arrowUp, arrowDown;
 
 	GUISprite n0, n1, n2, n3, n4, n5, n6, n7, n8, n9;
 

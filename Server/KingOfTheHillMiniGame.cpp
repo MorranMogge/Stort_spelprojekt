@@ -1,4 +1,5 @@
 #include "KingOfTheHillMiniGame.h"
+#include "ObjectId.h"
 
 KingOfTheHillMiniGame::KingOfTheHillMiniGame(const short& nrOfPlayers)
 	:kingOfTheHillOrigo(0,40,-40), radius(30), nrOfPlayers(nrOfPlayers), team1Score(0), team2Score(0), pointsToAdd(10), time(5), goalScore(100), timeToSpawnItems(5)
@@ -119,6 +120,7 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 		itemSpawnData.itemId = componentIdCounter;
 		std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
 		itemSpawnData.packetId = PacketType::ITEMSPAWN;
+		itemSpawnData.itemType = ObjID::BAT;
 
 		onlineItems.push_back(new BaseballBat(componentIdCounter));//�ndra
 		physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);

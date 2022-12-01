@@ -761,7 +761,7 @@ int main()
 								float factor = 1.f / getLength(vecToComp);
 								vecToComp *= factor;
 								onlineItems[j]->getPhysicsComponent()->applyForceToCenter(reactphysics3d::Vector3(
-									1000 * vecToComp.x, 1000 * vecToComp.y, 1000 * vecToComp.z));
+									10000 * vecToComp.x, 10000 * vecToComp.y, 10000 * vecToComp.z));
 							}
 						}
 						for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
@@ -779,7 +779,7 @@ int main()
 								vecToComp *= factor;
 								//data.users[j].playa.getPhysComp()->applyForceToCenter();
 								data.users[j].playa.playerGotHit(reactphysics3d::Vector3(
-									1000 * vecToComp.x, 1000 * vecToComp.y, 1000 * vecToComp.z));
+									10000 * vecToComp.x, 10000 * vecToComp.y, 10000 * vecToComp.z));
 								HitByGrenade hitByGrenade;
 								hitByGrenade.packetId = HITBYGRENADE;
 								hitByGrenade.playerThatUsedTheItem = 0;

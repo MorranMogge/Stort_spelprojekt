@@ -194,6 +194,15 @@ void Player::handleItems()
 					else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
 				}
 
+				UseGrenade useGrenade;
+				useGrenade.packetId = USEGRENADE;
+				useGrenade.itemId = this->holdingItem->getOnlineId();
+				useGrenade.xForce = temp.x * FORCE;
+				useGrenade.yForce = temp.y * FORCE;
+				useGrenade.zForce = temp.z * FORCE;
+
+				client->sendStuff<UseGrenade>(useGrenade);
+
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
 				//Apply the force

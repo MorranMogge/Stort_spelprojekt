@@ -54,6 +54,7 @@ private:
 	float totalPos = 0.0f;
 	DirectX::GamePad* gamePad;
 	DirectX::GamePad::ButtonStateTracker tracker;
+	DirectX::GamePad::State state;
 
 	//Other variables
 	Client* client;
@@ -152,6 +153,7 @@ public:
 	//virtual void draw() override;
 	void update();
 	void requestingPickUpItem(const std::vector<Item*>& items);
+	void updateController();
 	
 	void itemRecvFromServer(Item* item);
 };

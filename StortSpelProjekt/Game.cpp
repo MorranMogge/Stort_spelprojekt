@@ -741,7 +741,6 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	{
 		for (int i = 0; i < gameObjects.size(); i++) gameObjects[i]->setGravityField(planetVector[0]->getClosestField(planetVector, gameObjects[i]->getPosV3()));
 	}
-
 	currentPlayer->stateMachine(dt);
 
 	//Raycasting
@@ -926,6 +925,7 @@ GAMESTATE Game::Update()
 		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt);
 
 	lastUpdate = currentTime;
+	this->currentPlayer->updateController();
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 

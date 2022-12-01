@@ -418,7 +418,7 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer, std::vec
 			spaceShipPos = circularBuffer->readData<SpaceShipPosition>();
 			//Create correct spaceship depending on team
 			std::cout << "Spawned spaceship\n";
-			newSpaceShip = new SpaceShip(meshes[4], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, DirectX::SimpleMath::Vector3(2, 2, 2), 4);
+			newSpaceShip = new SpaceShip(meshes[4], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2), 4);
 			spaceShips.push_back(newSpaceShip);
 			gameObjects.push_back(newSpaceShip);
 			physWorld.addPhysComponent(newSpaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3 * 0.75f, 0.75f));

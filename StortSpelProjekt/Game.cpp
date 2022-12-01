@@ -90,6 +90,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 		gamePad = new DirectX::GamePad();
 		currentPlayer->setGamePad(gamePad);
+		landingUi.makeGamePad(gamePad);
 	}
 
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());

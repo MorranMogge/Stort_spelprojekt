@@ -1,5 +1,6 @@
 #pragma once
 #include <SimpleMath.h>
+#include <GamePad.h>
 
 #include "TimeStruct.h"
 #include "GUISprite.h"
@@ -15,6 +16,10 @@ private:
 	GUISprite landing1;
 	GUISprite landing2;
 
+	DirectX::GamePad* gamePad;
+	DirectX::GamePad::ButtonStateTracker tracker;
+	DirectX::GamePad::State state;
+
 	TimeStruct timer;
 
 	float targetTime;
@@ -28,6 +33,7 @@ public:
 	LandingHud();
 	~LandingHud();
 
+	void makeGamePad(DirectX::GamePad* gamePad);
 	bool handleInputs(const float& dt);
 	void draw();
 };

@@ -1367,7 +1367,36 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 	if (holdingItem) return;
 	if (state.IsConnected())
 	{
+		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1))
+		{
+			this->eKeyDown = true;
+		}
+		if (tracker.x == GamePad::ButtonStateTracker::UP && this->eKeyDown)
+		{
+			this->eKeyDown = false;
+			std::cout << "items.size = " << std::to_string(items.size()) << std::endl;
+			for (int i = 0; i < items.size(); i++)
+			{
+				if (this->withinRadius(items[i], 5))
+				{
+					//addItem(items[i]);
 
+					//holdingItem->getPhysComp()->getRigidBody()->resetForce();
+					//holdingItem->getPhysComp()->getRigidBody()->resetTorque();
+					//holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+					ComponentRequestingPickUp rqstCmpPickUp;
+					rqstCmpPickUp.componentId = items[i]->getOnlineId();
+					rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;
+					rqstCmpPickUp.playerId = this->getOnlineID();
+					if (items[i]->getId() == ObjID::COMPONENT) this->holdingComp = true;
+					std::cout << "requesting pickup componentId: " << std::to_string(rqstCmpPickUp.componentId) << std::endl;
+					//skickar en f�rfr�gan att plocka upp item
+					keyPressTimer.resetStartTime();
+					client->sendStuff<ComponentRequestingPickUp>(rqstCmpPickUp);
+					break;
+				}
+			}
+		}
 	}
 	else
 	{

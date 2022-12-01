@@ -1199,7 +1199,6 @@ void Player::stateMachine(const float dt)
 			this->animIndex = 0;
 		}
 	}
-	std::cout << "current anim ID: " << this->animIndex << "\n";
 	this->updateAnim(dt, this->animIndex, this->animSpeed);
 }
 

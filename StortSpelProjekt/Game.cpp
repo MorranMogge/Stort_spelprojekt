@@ -348,9 +348,12 @@ void Game::drawIcons()
 	{
 		players[i]->drawIcon();
 	}
-	for (int i = 0; i < spaceShips.size(); i++)
+	if (currentMinigame == COMPONENTCOLLECTION)
 	{
-		spaceShips[i]->drawQuad();
+		for (int i = 0; i < spaceShips.size(); i++)
+		{
+			spaceShips[i]->drawQuad();
+		}
 	}
 }
 
@@ -482,6 +485,8 @@ GAMESTATE Game::updateComponentGame()
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
+	currentPlayer->checkSwimStatus(planetVector);
+	currentPlayer->velocityMove(dt);
 	currentPlayer->setSpeed(20.f);
 
 	//Check component pickup
@@ -648,7 +653,7 @@ GAMESTATE Game::updateComponentGame()
 		this->components[i]->checkDistance((GameObject*)(currentPlayer));
 	}
 
-	return NOCHANGE;
+	return currentGameState;
 }
 
 GAMESTATE Game::startLanding()
@@ -726,6 +731,7 @@ GAMESTATE Game::updateLandingGame()
 
 GAMESTATE Game::updateKingOfTheHillGame()
 {
+
 	//Get newest delta time
 	//if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
 	//asteroids->updateAsteroids(dt, planetVector, gameObjects);
@@ -758,6 +764,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
+	currentPlayer->checkSwimStatus(planetVector);
 	currentPlayer->setSpeed(20.f);
 
 	//Check component pickup
@@ -828,6 +835,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	//Check if item icon should change to pickup icon 
 	for (int i = 0; i < items.size(); i++) this->items[i]->checkDistance((GameObject*)(currentPlayer));
 	for (int i = 0; i < components.size(); i++) this->components[i]->checkDistance((GameObject*)(currentPlayer));
+	return currentGameState;
 	return NOCHANGE;
 }
 
@@ -921,9 +929,10 @@ GAMESTATE Game::updateIntermission()
 
 GAMESTATE Game::Update()
 {
+	currentGameState = NOCHANGE;
 	//read the packets received from the server
 	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
-		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt);
+		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState);
 
 	lastUpdate = currentTime;
 	this->currentPlayer->updateController();
@@ -995,18 +1004,14 @@ GAMESTATE Game::Update()
 		break;
 	}
 
+
+
 	//Debug keybinds
 	this->handleKeybinds();
 
 	//animations
-
-	//currentPlayer->giveItemMatrix();
-
-	//DirectX::XMFLOAT4X4 f1;
-	//this->currentPlayer->forwardKinematics("hand3:hand3:RightHand", f1);
-	//this->baseballBat->setMatrix(f1);
-
-	return NOCHANGE;
+	
+	return currentGameState;
 }
 
 void Game::Render()
@@ -1051,7 +1056,10 @@ void Game::Render()
 	basicRenderer.geometryUnbind();
 
 	//Render UI (needs to render last)
+
+	
 	ui.Draw();
+	
 	switch (currentMinigame)
 	{
 	case COMPONENTCOLLECTION:

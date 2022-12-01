@@ -80,13 +80,22 @@ private:
 	DirectX::XMVECTOR southEastVector = SOUTH_EAST;
 	DirectX::XMVECTOR southWestVector = SOUTH_WEST;
 
+
+	int animIndex = 0;
+	bool eKeyDown = false;
+	float animSpeed = 1;
+	bool usingBat = false;
+	TimeStruct dropTimer;
+	bool usedItem = true;
+	bool throwingItem = false;
+
 	void throwItem();
 	void resetRotationMatrix();
 	void handleItems();
 	bool movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 	bool moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 public:
-	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team,
+	Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team,
 		ID3D11ShaderResourceView* redTeamColor, ID3D11ShaderResourceView* blueTeamColor, GravityField* field = nullptr);
 	~Player();
 
@@ -115,6 +124,7 @@ public:
 	int getOnlineID()const;
 	bool getHitByBat()const;
 	float getSpeed()const;
+	void getAnimSpeed(float& speed);
 
 	//Item related functions
 	bool pickupItem(const std::vector <Item *>& items, const std::vector <Component*>& components);
@@ -132,6 +142,9 @@ public:
 	bool raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	void colliedWIthComponent(const std::vector<Component*>& components);
+
+	void stateMachine(const float dt);
+	void giveItemMatrix();
 	
 	//Updating and rendering
 	void drawIcon();

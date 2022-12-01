@@ -362,7 +362,7 @@ MenuUI::MenuUI()
 	Loading.SetScale(1, 1);
 
 	title = GUISprite(centerX, 340-200);
-	title.Load(L"../Sprites/title.png");
+	title.Load(L"../Sprites/title2.png");
 	title.SetScale(0.6f, 0.6f);
 
 }

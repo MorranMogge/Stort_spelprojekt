@@ -8,7 +8,7 @@
 bool CreateRenderTargets(Microsoft::WRL::ComPtr<ID3D11Texture2D>& Texture, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& renderedTextureView)
 {
 	//variables
-	int skyboxIndex = 5;
+	int skyboxIndex = std::rand() % 6;
 	std::string skybox = "Skybox/" + std::to_string(skyboxIndex) + "/";
 	std::vector<std::string> filenames{ skybox + "0.png", skybox + "1.png", skybox + "2.png", skybox + "3.png", skybox + "4.png", skybox + "5.png" };// "boxTest.jpg", "boxTest.jpg", "boxTest.jpg", "boxTest.jpg", "boxTest.jpg", "boxTest.jpg" 
 	std::vector<unsigned char*> images;

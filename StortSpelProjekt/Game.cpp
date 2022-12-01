@@ -155,6 +155,7 @@ void Game::loadObjects()
 	Potion* potion;
 	BaseballBat* baseballBat;
 	Grenade* grenade;
+	Grenade* grenade2;
 
 
 	//Load extra textures
@@ -178,6 +179,7 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/arrow"));
 	meshes.push_back(new Mesh("../Meshes/saturn"));
 	meshes.push_back(new Mesh("../Meshes/N1"));
+	meshes.push_back(new Mesh("../Meshes/grenade"));
 	//meshes.push_back(new Mesh("../Meshes/kosmonaut"));
 	//meshes.push_back(new Mesh("../Meshes/astronaut"));
 
@@ -205,13 +207,15 @@ void Game::loadObjects()
 	//CREATE ITEMS 	//Sphere, reverseSphere, pinto, potion, rocket, bat, component, grenade, arrow
 	potion = new Potion(meshes[3], Vector3(0, 0, -42), Vector3(0.0f, 0.0f, 0.0f), POTION, 0, planetGravityField);
 	baseballBat = new BaseballBat(meshes[5], Vector3(0, 0, 42), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
-	grenade = new Grenade(meshes[7], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
+	grenade = new Grenade(meshes[7], meshes[11], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
+	grenade2 = new Grenade(meshes[7], meshes[11], DirectX::SimpleMath::Vector3(45, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
 	arrow = new Arrow(meshes[8], DirectX::SimpleMath::Vector3(0, 42, 0));
 
 	//EMPLACE ITEMS
 	items.emplace_back(potion);
 	items.emplace_back(baseballBat);
 	items.emplace_back(grenade);
+	items.emplace_back(grenade2);
 	for (int i = 0; i < items.size(); i++)
 	{
 		gameObjects.emplace_back(items[i]);
@@ -780,6 +784,7 @@ void Game::Render()
 	basicRenderer.geometryPass(this->camera);
 	drawParticles();
 	basicRenderer.geometryUnbind();
+
 
 	//Render UI (needs to render last)
 	ui.Draw();

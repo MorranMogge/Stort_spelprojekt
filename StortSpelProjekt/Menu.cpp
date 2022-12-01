@@ -147,6 +147,9 @@ void Menu::Render()
 	skybox.draw();
 	basicRenderer.depthUnbind();
 
+
+	basicRenderer.postProcessPass();
+
 	////Render Particles
 	//basicRenderer.geometryPass(this->camera);
 	//drawParticles();

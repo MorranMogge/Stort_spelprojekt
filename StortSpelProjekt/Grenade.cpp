@@ -7,8 +7,8 @@
 #include "GUISprite.h"
 
 
-Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
-	:Item(useMesh, pos, rot, id, onlineId, GRENADE, field), destructionIsImminent(false), exploded(false), timeToExplode(5.f), currentTime(0.0f), explodePosition(0,0,0)
+Grenade::Grenade(Mesh* useMesh, Mesh* expMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
+	:Item(useMesh, pos, rot, id, onlineId, GRENADE, field), destructionIsImminent(false), exploded(false), timeToExplode(5.f), currentTime(0.0f), explodePosition(0,0,0), redMesh(expMesh)
 {
 	//Sfx
 	counter = 1.0f;
@@ -39,8 +39,10 @@ Grenade::Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMF
 	this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
 	this->colorBuffer.getData() = DirectX::XMFLOAT4(1 ,0.25 ,0 , 0.5);
 	this->colorBuffer.applyData();
+	this->redMesh->matKey[0] = "Red.png";
 	this->mesh->matKey[0] = "olive.jpg";
 	explosionMesh = (new Mesh("../Meshes/Sphere"));
+	explosionMesh->scale = DirectX::XMFLOAT3( 0.1f,0.1f,0.1f);
 }
 
 Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
@@ -91,6 +93,7 @@ void Grenade::explode()
 	std::cout << "THE GRENADE EXPLODED\n";
 	exploded = true;
 	explodePosition = this->position;
+	currentTime = 0;
 	int iterations = (int)gameObjects.size();
 	for (int i = 0; i < iterations; i++)
 	{
@@ -165,6 +168,8 @@ void Grenade::drawParticles()
 		this->particles->BindAndDraw(0);
 		currentTime += Time::DeltaTimeInSeconds();
 		static int frame = 0;
+
+
 		if (currentTime >= 1)
 		{
 			currentTime -= 1;
@@ -177,19 +182,28 @@ void Grenade::drawParticles()
 		if (frame != 0)
 		{
 			frame--;
+			this->redMesh->scale = this->scale;
 			this->mesh->matKey[0] = "Red.png";
+			drawRed = true;
 		}
 		else
 		{
-			this->mesh->matKey[0] = "olive.jpg";		
-
+			this->mesh->matKey[0] = "olive.jpg";
+			drawRed = false;
 		}
 	}
 	else
 	{
+		this->mesh->matKey[0] = "olive.jpg";
+		drawRed = false;
 		this->setScale(DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 
-		if (this->particles != nullptr && pickedUp)
+		if (this->explosionMesh->scale.x >= 1)
+		{
+			this->particles->BindAndDraw(2);
+			this->particles->setSize(3.0f);
+		}
+		else if (this->particles != nullptr && pickedUp)
 		{
 			if (tStruct.getDt() < 1)
 			{
@@ -204,18 +218,22 @@ void Grenade::drawParticles()
 			this->particles->setSize(1.0f);
 			this->particles->BindAndDraw(4);
 		}
+		/*else*/ 
+
 	}
+
 }
 
 
 void Grenade::drawFresnel()
 {	
 	DirectX::XMFLOAT3 test = this->explosionMesh->scale;
+	float delta = Time::DeltaTimeInSeconds();
 	if (test.x > 1)
 	{
 		GPU::immediateContext->PSSetConstantBuffers(2, 1, this->colorBuffer.getReferenceOf());
 		this->explosionMesh->DrawWithMat();
-		this->explosionMesh->scale = DirectX::XMFLOAT3(this->explosionMesh->scale.x - (currentTime * 50) , this->explosionMesh->scale.y - (currentTime * 50), this->explosionMesh->scale.z - (currentTime * 50));
+		this->explosionMesh->scale = DirectX::XMFLOAT3(this->explosionMesh->scale.x - (delta * 50), this->explosionMesh->scale.y - (delta * 50), this->explosionMesh->scale.z - (delta * 50));
 		this->explosionMesh->UpdateCB(explodePosition, rotation, this->explosionMesh->scale);
 	}
 
@@ -248,4 +266,18 @@ bool Grenade::getExploded() const
 void Grenade::setExploded(const bool& onOff)
 {
 	this->exploded = onOff;
+}
+
+void Grenade::draw()
+{
+	if (drawRed)
+	{
+		this->redMesh->UpdateCB(position, rotation, scale);
+		this->redMesh->DrawWithMat();
+	}
+	else
+	{
+		this->mesh->UpdateCB(position, rotation, scale);
+		this->mesh->DrawWithMat();
+	}
 }

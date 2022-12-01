@@ -11,7 +11,7 @@ private:
 	float clearColour[4];
 
 	ID3D11DeviceContext* immediateContext;
-
+	ID3D11UnorderedAccessView* backBufferUAV;
 	ID3D11RenderTargetView* rtv;
 	ID3D11DepthStencilView* dsView;
 	ID3D11DepthStencilView* dsView2;	//Used for binding as render target
@@ -56,11 +56,11 @@ private:
 
 	ID3D11InputLayout* animLayout;
 	ID3D11VertexShader* vShaderAnim;
+	ID3D11PixelShader* InvFresnel_PS;
+	ID3D11ComputeShader* postProcess;
 
 	bool setUpInputLayout(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout* iLayout);
 	bool setUpInputLayoutAnim(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout*& iLayout);
-	ID3D11PixelShader* InvFresnel_PS;
-
 	bool setUpInputLayout(ID3D11Device* device, const std::string &vShaderByteCode);
 	bool setUp_PT_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode);
 	bool setUp_Sky_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode);
@@ -93,4 +93,5 @@ public:
 	void fresnelAnimPrePass(Camera& stageCamera);
 	void tesselationPrePass(Camera& stageCamera);
 	void resetTopology(); //sets triangle list
+	void postProcessPass();
 };

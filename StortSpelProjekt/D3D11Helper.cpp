@@ -57,6 +57,20 @@ bool CreateRenderTargetView(ID3D11Device* device, IDXGISwapChain* swapChain, ID3
 	return !FAILED(hr);
 }
 
+bool CreateUnorderedView(ID3D11Device* device, IDXGISwapChain* swapChain, ID3D11UnorderedAccessView*& uav)
+{
+	ID3D11Texture2D* backBuffer = nullptr;
+	if (FAILED(swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer))))
+	{
+		std::cerr << "Failed to get back buffer!" << std::endl;
+		return false;
+	}
+
+	HRESULT hr = device->CreateUnorderedAccessView(backBuffer, nullptr, &uav);
+	backBuffer->Release();
+	return !FAILED(hr);
+}
+
 bool CreateDepthStencil(ID3D11Device* device, const UINT &width,const  UINT &height, ID3D11Texture2D*& dsTexture, ID3D11DepthStencilView*& dsView)
 {
 	D3D11_TEXTURE2D_DESC textureDesc;

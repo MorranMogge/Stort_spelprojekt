@@ -15,11 +15,12 @@ private:
 	float counter;
 	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
 	Mesh* explosionMesh;
+	Mesh* redMesh;
 	Sound explosion;
 	DirectX::XMFLOAT3 explodePosition;
-
+	bool drawRed = false;
 public:
-	Grenade(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field = nullptr);
+	Grenade(Mesh* useMesh, Mesh* expMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field = nullptr);
 	Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field = nullptr);
 	~Grenade();
 	void updateExplosionCheck();
@@ -30,6 +31,7 @@ public:
 	virtual void useItem() override;
 	bool getExploded() const;
 	void setExploded(const bool &onOff);
+	virtual void draw() override;
 private:
 	void explode();
 

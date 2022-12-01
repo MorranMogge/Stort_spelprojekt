@@ -207,6 +207,9 @@ BasicRenderer::~BasicRenderer()
 	hullShader->Release();
 	domainShader->Release();
 	basic_VertexShader->Release();
+	postProcess->Release();
+	backBufferUAV->Release();
+
 }
 
 void BasicRenderer::lightPrePass()
@@ -229,6 +232,7 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 
 	if (this->immediateContext == nullptr)													return false;
 	if (!CreateRenderTargetView(device, swapChain, rtv))									return false;
+	if (!CreateUnorderedView(device, swapChain, backBufferUAV))								return false;
 	if (!CreateDepthStencil(device, WIDTH, HEIGHT, dsTexture, dsView))						return false;
 	if (!CreateDSState(dsState))															return false;
 	if (!CreateDepthStencilAndSrv(device, WIDTH, HEIGHT, dsTexture2, dsView2, depthSrv))	return false;
@@ -262,8 +266,7 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadComputeShader(device, pt_UpdatePlayer, "PT_UpdatePlayer"))						return false;
 	if (!LoadHullShader(device, hullShader, "HullShader"))									return false;
 	if (!LoadDomainShader(device, domainShader, "DomainShader"))							return false;
-
-	
+	if (!LoadComputeShader(device, postProcess, "PostProcess"))								return false;
 
 	SetViewport(viewport, GPU::windowWidth, GPU::windowHeight);
 	SetViewport(shadowViewport, WidthAndHeight, WidthAndHeight);
@@ -454,4 +457,16 @@ void BasicRenderer::resetTopology()
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	immediateContext->HSSetShader(nullShader, nullptr, 0);
 	immediateContext->DSSetShader(nullShader1, nullptr, 0);
+}
+
+void BasicRenderer::postProcessPass()
+{
+	ID3D11RenderTargetView* nullRtv{ nullptr };
+	immediateContext->OMSetRenderTargets(1, &nullRtv, nullptr);
+
+
+	immediateContext->CSSetShader(postProcess, nullptr, 0);
+	immediateContext->CSSetUnorderedAccessViews(0, 1, &backBufferUAV, nullptr);
+	immediateContext->CSSetSamplers(0, 1, &sampler);
+	immediateContext->Dispatch(GPU::windowWidth,GPU::windowHeight,1);
 }

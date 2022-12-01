@@ -167,6 +167,11 @@ void GameObject::setMatrix(DirectX::XMFLOAT4X4 matrix)
 	this->position.x = matrix._14;
 	this->position.y = matrix._24;
 	this->position.z = matrix._34;
+	DirectX::XMVECTOR wow, wow1, rotations;
+	DirectX::XMMatrixDecompose(&wow, &rotations, &wow, DirectX::XMLoadFloat4x4(&matrix));
+	DirectX::SimpleMath::Quaternion mommy(rotations);
+	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(mommy.ToEuler());
+	this->setRot(rotations);
 	this->physComp->setPosition(reactphysics3d::Vector3{ position.x,position.y, position.z });
 }
 

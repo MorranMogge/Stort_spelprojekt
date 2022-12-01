@@ -96,9 +96,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		{
 			players[i]->setGravityField(planetVector[0]->getGravityField());
 		}
-		Loser sendingConfirm;
+		DoneLoading sendingConfirm;
 		sendingConfirm.packetId = PacketType::DONELOADING;
-		client->sendStuff<Loser>(sendingConfirm);
+		client->sendStuff<DoneLoading>(sendingConfirm);
 	}
 
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
@@ -109,6 +109,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	field = nullptr;
 	oldField = field;
+
+	TimeStruct UwuYouSowarm;
+	UwuYouSowarm.resetStartTime();
+	while (UwuYouSowarm.getTimePassed(1.0f));
 
 	//Set items baseball bat
 	//baseballBat->setPlayer(currentPlayer);

@@ -150,6 +150,7 @@
     <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="ProfilerServer.cpp" />
     <ClCompile Include="RandomizeSpawn.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="GameObject.cpp">
@@ -176,6 +177,7 @@
     <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="ProfilerServer.h" />
     <ClInclude Include="RandomizeSpawn.h" />
     <ClInclude Include="ServerGravField.h" />
     <ClInclude Include="ServerPlanet.h" />

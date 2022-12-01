@@ -76,4 +76,5 @@ public:
 	void setSrv(ID3D11ShaderResourceView* srv);
 	void setNormalMap(ID3D11ShaderResourceView* normalMap);
 	void drawObjectWithNormalMap();
+	void drawObjectWithDiffuse();
 };

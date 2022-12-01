@@ -29,13 +29,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ltHandler.addLight(DirectX::XMFLOAT3(16 + 7, 42 + 17, 12 + 7), DirectX::XMFLOAT3(0, 0.3f, 1.0f), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 	ltHandler.addLight(DirectX::XMFLOAT3(-10 - 5, -45 - 17, -10 - 7), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 
-	this->manager.loadMeshData("../Meshes/goblin2.fbx");
-	this->manager.getMeshData("../Meshes/goblin2.fbx", vBuff, iBuff, subMeshRanges, verticies);
-	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-	testCube = new GameObject(tmpMesh, DirectX::XMFLOAT3(0, 69, 0), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), 5, nullptr, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-	testCube->setSrv(this->manager.getSrv("Goblin_BaseColor.png"));
-	testCube->setNormalMap(this->manager.getSrv("Goblin_Normal.png"));
-	physWorld.addPhysComponent(testCube);
+	
 	
 
 	manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
@@ -47,6 +41,15 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	//Load game objects
 	this->loadObjects();
 
+
+	this->manager.loadMeshData("../Meshes/goblin2.fbx");
+	this->manager.getMeshData("../Meshes/goblin2.fbx", vBuff, iBuff, subMeshRanges, verticies);
+	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	testCube = new GameObject(tmpMesh, DirectX::XMFLOAT3(0, 69, 0), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), 5, nullptr, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+	testCube->setSrv(this->manager.getSrv("Goblin_BaseColor.png"));
+	testCube->setNormalMap(this->manager.getSrv("Goblin_Normal.png"));
+	physWorld.addPhysComponent(testCube);
+	gameObjects.push_back(testCube);
 	//Setup players
 	if (IFONLINE)
 	{
@@ -154,7 +157,7 @@ Game::~Game()
 	delete arrow;
 	delete planetGravityField;
 	delete gamePad;
-	delete testCube;
+	
 }
 
 void Game::loadObjects()
@@ -316,7 +319,7 @@ void Game::drawObjects(bool drawDebug)
 		planetVector[i]->drawPlanet();
 	}
 	asteroids->drawAsteroids();
-
+	testCube->draw();
 	//Draw with Ambient only shader
 	basicRenderer.bindAmbientShader();
 	arrow->draw();
@@ -1004,6 +1007,7 @@ void Game::Render()
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
+	
 
 	basicRenderer.setUpSceneNormalMap(this->camera);
 	ltHandler.bindLightBuffers();

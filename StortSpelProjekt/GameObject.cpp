@@ -412,3 +412,8 @@ void GameObject::drawObjectWithNormalMap()
 	}*/
 	this->mesh->drawWithNormalMap(this->srv, this->normalMap);
 }
+
+void GameObject::drawObjectWithDiffuse()
+{
+	this->mesh->draw(this->srv);
+}

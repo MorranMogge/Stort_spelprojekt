@@ -1084,7 +1084,7 @@ void Game::Render()
 	basicRenderer.depthUnbind();
 
 	//Render imgui & wireframe
-	imGui.react3D(wireframe, objectDraw, landingMinigame, dt, velocityCamera);
+	imGui.react3D(wireframe, objectDraw, landingMinigame, dt, velocityCamera, currentPlayer);
 	if (wireframe) { physWorld.renderReact3D(); playerVecRenderer.drawLines(); }
 
 	//render billboard objects

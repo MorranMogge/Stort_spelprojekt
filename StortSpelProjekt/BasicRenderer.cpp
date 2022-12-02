@@ -448,11 +448,11 @@ void BasicRenderer::bilboardPrePass(Camera& stageCamera)
 
 	if (halveraFps)
 	{
-		immediateContext->OMSetRenderTargets(1, &rtv2, dsView2);
+		immediateContext->OMSetRenderTargets(1, &rtv2, dsView);
 	}
 	else
 	{
-		immediateContext->OMSetRenderTargets(1, &rtv, dsView2);
+		immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 	}
 }
 

@@ -4,7 +4,7 @@
 #include "RandomizeSpawn.h"
 #include "ObjectId.h"
 #include <iostream>
-
+#include "PacketEnum.h"
 
 SpawnComponent SpawnOneComponent(std::vector<Component>& components, std::vector<DirectX::XMFLOAT3>& spaceShipPos)
 {
@@ -96,7 +96,7 @@ SpawnComponent SpawnOneComponent(std::vector<Item*>& itemObj, std::vector<Direct
 
 	itemObj.push_back(temp);
 
-	dataValue.packetId = 13;
+	dataValue.packetId = PacketType::SPAWNCOMPONENT;
 	dataValue.ComponentId = itemObj.size() - 1;
 	std::cout << "Comp ID: " << dataValue.ComponentId << "\n";
 	dataValue.x = randomPos.x;

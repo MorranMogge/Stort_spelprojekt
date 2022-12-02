@@ -1,6 +1,5 @@
-RWTexture2D<unorm float4> backBuffer;
-SamplerState samplerTest : register(s0);
-
+RWTexture2D<unorm float4> backBuffer : register(u0); //Backbuffer texture
+Texture2D backBuffer2 : register(t0);
 
 float FxaaLuma(float3 rgb)
 {
@@ -41,18 +40,22 @@ void main(uint3 DTid : SV_DispatchThreadID)
     float2 texCoord = DTid.xy;
     
     uint width, height, levels;
-    backBuffer.GetDimensions(width, height);
+    backBuffer2.GetDimensions(width, height);
     float2 resolution = float2(width, height);
 
-    float FXAA_SPAN_MAX = 8.0;
-    float FXAA_REDUCE_MUL = 1.0 / 8.0;
-    float FXAA_REDUCE_MIN = 1.0 / 128.0;
+    //float FXAA_SPAN_MAX = 8.0;
+    float FXAA_SPAN_MAX = 16.0;
+    //float FXAA_REDUCE_MUL = 1.0 / 8.0;
+    float FXAA_REDUCE_MUL = 1.0 / 16.0;
+    //float FXAA_REDUCE_MIN = 1.0 / 128.0;
+    float FXAA_REDUCE_MIN = 1.0 / 132.0;
     
-    float3 rgbNW = backBuffer.Load(     uint3(DTid.xy + uint2(-1, -1),0)    ); //backBuffersam(backBuffer, DTid.xy, DTid.xy + uint2(0, -1)).xyz;
-    float3 rgbNE = backBuffer.Load(uint3(DTid.xy + uint2(1, -1), 0)); //FxaaTextureOffset(backBuffer, DTid.xy, DTid.xy + uint2(-1, 0)).xyz;
-    float3 rgbSW = backBuffer.Load(uint3(DTid.xy + uint2(-1, 1), 0)); //FxaaTextureOffset(backBuffer, DTid.xy, FxaaInt2(0, 0)).xyz;
-    float3 rgbSE = backBuffer.Load(uint3(DTid.xy + uint2(1, 1), 0)); //FxaaTextureOffset(backBuffer, DTid.xy, FxaaInt2(1, 0)).xyz;
-    float3 rgbM = backBuffer.Load(uint3(DTid.xy + uint2(0, 0), 0)); //FxaaTextureOffset(backBuffer, DTid.xy, FxaaInt2(0, 1)).xyz;
+    float3 rgbNW = backBuffer2.Load(uint3(DTid.xy + uint2(-1, -1), 0));
+    float3 rgbNE = backBuffer2.Load(uint3(DTid.xy + uint2(1, -1), 0));
+    float3 rgbSW = backBuffer2.Load(uint3(DTid.xy + uint2(-1, 1), 0));
+    float3 rgbSE = backBuffer2.Load(uint3(DTid.xy + uint2(1, 1), 0));
+    float3 rgbM = backBuffer2.Load(DTid).rgb;
+   // FxaaTextureOffset(backBuffer2, DTid.xy, FxaaInt2(0, 1)).xyz;
     
     
     float3 luma = float3(0.299, 0.587, 0.114);
@@ -81,11 +84,11 @@ void main(uint3 DTid : SV_DispatchThreadID)
     
     float3 rgbA = (1.0 / 2.0) *
     (
-        backBuffer.Load(uint3((float2) texCoord + dir * (1.0f / 3.0f - 0.5f), 0)).rgb + backBuffer.Load(uint3((float2) texCoord + dir * (2.0f / 3.0f - 0.5f), 0)).rgb
+        backBuffer2.Load(uint3((float2) texCoord + dir * (1.0f / 3.0f - 0.5f), 0)).rgb + backBuffer2.Load(uint3((float2) texCoord + dir * (2.0f / 3.0f - 0.5f), 0)).rgb
     ); //backBuffer.Sample(samplerTest, texCoord + dir * (1.0 / 3.0 - 0.5), 0).rgb + backBuffer.Sample(samplerTest, texCoord + dir * (2.0 / 3.0 - 0.5), 0).rgb
 
     
-    float3 rgbB = rgbA * (1.0 / 2.0) + (1.0 / 4.0) * (backBuffer.Load(uint3(texCoord + dir * (0.0 / 3.0 - 0.5), 0)).rgb + backBuffer.Load(uint3(texCoord + dir * (3.0 / 3.0 - 0.5), 0)).rgb);
+    float3 rgbB = rgbA * (1.0 / 2.0) + (1.0 / 4.0) * (backBuffer2.Load(uint3(texCoord + dir * (0.0 / 3.0 - 0.5), 0)).rgb + backBuffer2.Load(uint3(texCoord + dir * (3.0 / 3.0 - 0.5), 0)).rgb);
     
     float lumaB = dot(rgbB, luma);
 
@@ -98,5 +101,8 @@ void main(uint3 DTid : SV_DispatchThreadID)
     {
         finalColor.xyz = rgbB;
     }
+    
+    //backBuffer[DTid.xy] = float4(finalColor.xyz, 1.0f);
     backBuffer[DTid.xy] = float4(finalColor.xyz, 1.0f);
+    //backBuffer[DTid.xy] = float4(255,0,0, 1.0f);
 }

@@ -63,13 +63,13 @@ MiniGameUI::MiniGameUI()
 	n9.Load(L"../Sprites/Numbers/9.png");
 	n9.SetScale(0.6f, 0.6f);
 
-	L_wheel = GUISprite(centerX, 340 - 200);
-	L_wheel.Load(L"../Sprites/constrol/L_wheel.png");
-	L_wheel.SetScale(0.6f, 0.6f);
+	//L_wheel = GUISprite(centerX, 340 - 200);
+	//L_wheel.Load(L"../Sprites/constrol/L_wheel.png");
+	//L_wheel.SetScale(0.6f, 0.6f);
 
-	arrowUp = GUISprite(centerX, 340 - 200);
-	arrowUp.Load(L"../Sprites/constrol/L_wheel.png");
-	arrowUp.SetScale(0.6f, 0.6f);
+	//arrowUp = GUISprite(centerX, 340 - 200);
+	//arrowUp.Load(L"../Sprites/constrol/L_wheel.png");
+	//arrowUp.SetScale(0.6f, 0.6f);
 
 }
 

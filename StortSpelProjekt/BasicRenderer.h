@@ -9,10 +9,12 @@ class BasicRenderer
 {
 private:
 	float clearColour[4];
-
 	ID3D11DeviceContext* immediateContext;
 	ID3D11UnorderedAccessView* backBufferUAV;
 	ID3D11RenderTargetView* rtv;
+	ID3D11RenderTargetView* rtv2;
+	ID3D11ShaderResourceView* srv2;
+
 	ID3D11DepthStencilView* dsView;
 	ID3D11DepthStencilView* dsView2;	//Used for binding as render target
 	ID3D11Texture2D* dsTexture2;		//	 ----------||------------
@@ -58,6 +60,7 @@ private:
 	ID3D11VertexShader* vShaderAnim;
 	ID3D11PixelShader* InvFresnel_PS;
 	ID3D11ComputeShader* postProcess;
+	ID3D11ShaderResourceView* srvTest;
 
 	bool setUpInputLayout(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout* iLayout);
 	bool setUpInputLayoutAnim(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout*& iLayout);
@@ -69,6 +72,9 @@ private:
 	bool setUpShadowRastirizer(ID3D11Device* device);
 	bool setUpBlendState();
 	bool setUpFresnelBlendState();
+
+public:
+	bool halveraFps;
 
 public:
 	BasicRenderer();

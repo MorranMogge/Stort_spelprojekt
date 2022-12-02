@@ -785,6 +785,7 @@ void Game::Render()
 	drawParticles();
 	basicRenderer.geometryUnbind();
 
+	basicRenderer.postProcessPass();
 
 	//Render UI (needs to render last)
 	ui.Draw();

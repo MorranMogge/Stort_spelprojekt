@@ -25,7 +25,7 @@ GameObject::GameObject()
 	this->rotation = DirectX::XMMatrixIdentity();
 
 	//Update constantbuffer
-	this->updateBuffer();
+	//this->updateBuffer();
 }
 
 

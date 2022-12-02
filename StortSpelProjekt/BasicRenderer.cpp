@@ -160,7 +160,7 @@ bool BasicRenderer::setUpShadowRastirizer(ID3D11Device* device)
 }
 
 BasicRenderer::BasicRenderer()
-	:clearColour{ 0.0f, 0.0f, 0.0f, 0.0f }
+	:clearColour{ 0.0f, 0.0f, 0.0f, 0.0f }, halveraFps(false)
 {
 }
 
@@ -209,7 +209,8 @@ BasicRenderer::~BasicRenderer()
 	basic_VertexShader->Release();
 	postProcess->Release();
 	backBufferUAV->Release();
-
+	rtv2->Release();
+	srv2->Release();
 }
 
 void BasicRenderer::lightPrePass()
@@ -232,7 +233,8 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 
 	if (this->immediateContext == nullptr)													return false;
 	if (!CreateRenderTargetView(device, swapChain, rtv))									return false;
-	if (!CreateUnorderedView(device, swapChain, backBufferUAV))								return false;
+	if (!CreateNewRenderTargetView(device, rtv2, srv2))										return false;
+	if (!CreateUnorderedView(device, swapChain, backBufferUAV, srvTest))					return false;
 	if (!CreateDepthStencil(device, WIDTH, HEIGHT, dsTexture, dsView))						return false;
 	if (!CreateDSState(dsState))															return false;
 	if (!CreateDepthStencilAndSrv(device, WIDTH, HEIGHT, dsTexture2, dsView2, depthSrv))	return false;
@@ -278,9 +280,17 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 void BasicRenderer::setUpScene()
 {
 
+	if (halveraFps)
+	{
+		immediateContext->ClearRenderTargetView(rtv2, clearColour);
+		immediateContext->OMSetRenderTargets(1, &rtv2, dsView);
+	}
+	else
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+	}
 	immediateContext->ClearRenderTargetView(rtv, clearColour);
 	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	immediateContext->IASetInputLayout(inputLayout);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
@@ -307,9 +317,17 @@ void BasicRenderer::changeToAnimation()
 }
 void BasicRenderer::setUpScene(Camera& stageCamera, const bool& shadow)
 {				
+	if (halveraFps)
+	{
+		immediateContext->ClearRenderTargetView(rtv2, clearColour);
+		immediateContext->OMSetRenderTargets(1, &rtv2, dsView);
+	}
+	else
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+	}
 	immediateContext->ClearRenderTargetView(rtv, clearColour);
 	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	immediateContext->IASetInputLayout(inputLayout);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
@@ -338,7 +356,14 @@ void BasicRenderer::geometryPass(Camera& stageCamera)
 	stageCamera.GSbindPositionBuffer(1);												//Set camera pos for 
 	stageCamera.CSbindUpBuffer(2);
 	stageCamera.GSbindUpBuffer(3);
-	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
+	if (halveraFps)
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv2, dsView);								//SetRtv
+	}
+	else
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
+	}
 }
 
 void BasicRenderer::playerParticlePass()
@@ -350,7 +375,14 @@ void BasicRenderer::depthPrePass()
 {
 	ID3D11RenderTargetView* nullRtv{ nullptr };
 	immediateContext->ClearDepthStencilView(dsView2, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-	immediateContext->OMSetRenderTargets(1, &rtv, dsView2);
+	if (halveraFps)
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv2, dsView2);
+	}
+	else
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv, dsView2);
+	}
 }
 
 void BasicRenderer::depthUnbind()
@@ -364,8 +396,17 @@ void BasicRenderer::depthUnbind()
 void BasicRenderer::skyboxPrePass()
 {
 	immediateContext->OMSetDepthStencilState(dsState, 0);
-	immediateContext->IASetInputLayout(inputLayout_Skybox);									
-	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+	immediateContext->IASetInputLayout(inputLayout_Skybox);		
+
+	if (halveraFps)
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv2, dsView);
+	}
+	else
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+	}
+
 	immediateContext->VSSetShader(vs_Skybox, nullptr, 0);								//SetVTXShader
 	immediateContext->PSSetShader(ps_Skybox, nullptr, 0);								//Set PSShader
 }
@@ -383,7 +424,15 @@ void BasicRenderer::bilboardPrePass(Camera& stageCamera)
 	stageCamera.GSbindViewBuffer(1);													//Set matrix [world],[view]
 	stageCamera.GSbindPositionBuffer(2);												//Set camera pos for 
 	stageCamera.GSbindUpBuffer(3);
-	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
+
+	if (halveraFps)
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv2, dsView2);
+	}
+	else
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv, dsView2);
+	}
 }
 
 void BasicRenderer::bindAmbientShader()
@@ -461,12 +510,27 @@ void BasicRenderer::resetTopology()
 
 void BasicRenderer::postProcessPass()
 {
-	ID3D11RenderTargetView* nullRtv{ nullptr };
-	immediateContext->OMSetRenderTargets(1, &nullRtv, nullptr);
+	if (halveraFps)
+	{
+		ID3D11RenderTargetView* nullRtv{ nullptr };
+		ID3D11UnorderedAccessView* nullUav{ nullptr };
+		ID3D11ShaderResourceView* nullSrv{ nullptr };
 
+		immediateContext->OMSetRenderTargets(1, &nullRtv, nullptr);
 
-	immediateContext->CSSetShader(postProcess, nullptr, 0);
-	immediateContext->CSSetUnorderedAccessViews(0, 1, &backBufferUAV, nullptr);
-	immediateContext->CSSetSamplers(0, 1, &sampler);
-	immediateContext->Dispatch(GPU::windowWidth,GPU::windowHeight,1);
+		immediateContext->CSSetShader(postProcess, nullptr, 0);
+
+		immediateContext->CSSetShaderResources(0, 1, &srv2);
+		immediateContext->CSSetUnorderedAccessViews(0, 1, &backBufferUAV, nullptr);
+		//immediateContext->CSSetSamplers(0, 1, &sampler);
+		immediateContext->Dispatch(GPU::windowWidth, GPU::windowHeight, 1);
+		immediateContext->CSSetUnorderedAccessViews(0, 1, &nullUav, nullptr);
+		immediateContext->CSSetShaderResources(0, 1, &nullSrv);
+		immediateContext->OMSetRenderTargets(1, &rtv, nullptr);
+	}
+	else
+	{
+		//std::cout << "Post process not run, FXAA turned off" << std::endl;
+	}
+
 }

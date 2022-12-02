@@ -990,6 +990,16 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);
 	timer.resetStartTime();
+
+	if (this->holdingItem)
+	{
+		ComponentDropped cDropped;
+		cDropped.packetId = COMPONENTDROPPED;
+		cDropped.playerId = this->onlineID;
+		cDropped.componentId = this->holdingItem->getOnlineId();
+
+		client->sendStuff<ComponentDropped>(cDropped);
+	}
 }
 
 void Player::addItem(Item* itemToHold)

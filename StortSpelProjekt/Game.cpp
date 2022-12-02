@@ -14,10 +14,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->WIDTH = WIDTH;
 	this->packetEventManager = new PacketEventManager();
 	gameMusic.load(L"../Sounds/Gold Rush Final.wav");
-	//gameMusic.play(true);
+	gameMusic.play(true);
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
-	client = new Client("192.168.43.251");
+	client = new Client("192.168.43.241");
 	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
 	circularBuffer = client->getCircularBuffer();
 

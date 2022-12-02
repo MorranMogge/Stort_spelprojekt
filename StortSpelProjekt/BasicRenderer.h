@@ -61,6 +61,7 @@ private:
 	ID3D11PixelShader* InvFresnel_PS;
 	ID3D11ComputeShader* postProcess;
 	ID3D11ShaderResourceView* srvTest;
+	ID3D11RasterizerState* Rastirizer;
 
 	bool setUpInputLayout(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout* iLayout);
 	bool setUpInputLayoutAnim(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout*& iLayout);
@@ -70,6 +71,7 @@ private:
 	bool setUpSampler(ID3D11Device* device);
 	bool setUpShadowSampler(ID3D11Device* device);
 	bool setUpShadowRastirizer(ID3D11Device* device);
+	bool setUpRastirizer(ID3D11Device* device);
 	bool setUpBlendState();
 	bool setUpFresnelBlendState();
 

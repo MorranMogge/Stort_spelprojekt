@@ -159,6 +159,26 @@ bool BasicRenderer::setUpShadowRastirizer(ID3D11Device* device)
 	return !FAILED(hr);
 }
 
+bool BasicRenderer::setUpRastirizer(ID3D11Device* device)
+{
+	//control over how polygons are rendered, do things like render in wireframe or draw both the front and back faces. 
+
+	D3D11_RASTERIZER_DESC desc = {};
+	desc.AntialiasedLineEnable = true;
+	desc.CullMode = D3D11_CULL_BACK;
+	desc.DepthBias = 0;
+	desc.DepthBiasClamp = 0.0f;
+	desc.DepthClipEnable = true;
+	desc.FillMode = D3D11_FILL_SOLID;
+	desc.FrontCounterClockwise = false;
+	desc.MultisampleEnable = true;
+	desc.ScissorEnable = false;
+	desc.SlopeScaledDepthBias = 0.0f;
+
+	HRESULT hr = GPU::device->CreateRasterizerState(&desc, &Rastirizer);
+	return !FAILED(hr);
+}
+
 BasicRenderer::BasicRenderer()
 	:clearColour{ 0.0f, 0.0f, 0.0f, 0.0f }, halveraFps(false)
 {
@@ -211,6 +231,7 @@ BasicRenderer::~BasicRenderer()
 	backBufferUAV->Release();
 	rtv2->Release();
 	srv2->Release();
+	//Rastirizer->Release();
 }
 
 void BasicRenderer::lightPrePass()

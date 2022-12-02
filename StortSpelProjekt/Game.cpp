@@ -90,6 +90,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 		gamePad = new DirectX::GamePad();
 		currentPlayer->setGamePad(gamePad);
+		landingUi.makeGamePad(gamePad);
 	}
 
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
@@ -747,7 +748,6 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	{
 		for (int i = 0; i < gameObjects.size(); i++) gameObjects[i]->setGravityField(planetVector[0]->getClosestField(planetVector, gameObjects[i]->getPosV3()));
 	}
-
 	currentPlayer->stateMachine(dt);
 
 	//Raycasting
@@ -935,6 +935,7 @@ GAMESTATE Game::Update()
 		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState);
 
 	lastUpdate = currentTime;
+	this->currentPlayer->updateController();
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 

@@ -76,11 +76,8 @@ void Player::handleItems()
 	itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z }));
 
 	//Controller functions
-	auto state = this->gamePad->GetState(0);
 	if (state.IsConnected())
 	{
-		tracker.Update(state);
-
 		//Throw item
 		if (tracker.b == ButtonState::PRESSED)
 		{
@@ -490,7 +487,6 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 {
 	if (dedge || flipping) return;
 
-	auto state = gamePad->GetState(0);
 	if (state.IsConnected()) return;
 	if (!this->doneWithAnim)
 	{
@@ -723,7 +719,6 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 {
 	if (dedge || flipping) return;
 
-	auto state = this->gamePad->GetState(0);
 	if (state.IsConnected())
 	{
 		posX = state.thumbSticks.leftX;
@@ -739,7 +734,9 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		//Jumping
 		if (onGround && state.IsAPressed())
 		{
+			onGround = false;
 			this->velocity = this->normalVector * 40.f;
+			this->position += this->normalVector * 1.8f;
 			if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 		}
 
@@ -865,13 +862,16 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 	if (this->isHoldingItem()) return false;
 	bool successfulPickup = false;
 	
-	auto state = this->gamePad->GetState(0);
 	//Controller pickup
 	if (state.IsConnected())
 	{
-		tracker.Update(state);
-		if (tracker.x == GamePad::ButtonStateTracker::PRESSED)
+		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1))
 		{
+			this->eKeyDown = true;
+		}
+		if (tracker.x == GamePad::ButtonStateTracker::UP && this->eKeyDown)
+		{
+			this->eKeyDown = false;
 			//Checking items
 			for (int i = 0; i < items.size(); i++)
 			{
@@ -966,7 +966,6 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 
 	this->physComp->setType(reactphysics3d::BodyType::DYNAMIC);
 	this->dedge = true;
-	auto state = this->gamePad->GetState(0);
 	if (state.IsConnected()) this->gamePad->SetVibration(0, 0.1f, 0.1f, 0.f, 0.f);
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);
@@ -1111,11 +1110,8 @@ void Player::colliedWIthComponent(const std::vector<Component*>& components)
 
 void Player::stateMachine(const float dt)
 {
-	auto state = this->gamePad->GetState(0);
 	if (state.IsConnected())
 	{
-		tracker.Update(state);
-
 		if (!doneWithAnim)
 		{
 
@@ -1131,7 +1127,7 @@ void Player::stateMachine(const float dt)
 			this->animSpeed = 2.5;
 			this->doneWithAnim = false;
 		}
-		else if (tracker.a == ButtonState::PRESSED && this->holdingItem != nullptr)
+		else if (tracker.b == ButtonState::PRESSED && this->holdingItem != nullptr)
 		{
 			this->animSpeed = 2;
 			this->animIndex = 3;
@@ -1139,10 +1135,15 @@ void Player::stateMachine(const float dt)
 		}
 		else if (abs(state.thumbSticks.leftX) > 0 || abs(state.thumbSticks.leftY) > 0)
 		{
-			if (abs(state.thumbSticks.leftX) > 0.5 || abs(state.thumbSticks.leftY) > 0.5)
+			if (tracker.y == ButtonState::HELD)
 			{
 				this->animSpeed = 1;
 				this->animIndex = 2;
+			}
+			else if (abs(state.thumbSticks.leftX) > 0.5 || abs(state.thumbSticks.leftY) > 0.5)
+			{
+				this->animSpeed = 1.5;
+				this->animIndex = 1;
 			}
 			else
 			{
@@ -1198,7 +1199,6 @@ void Player::stateMachine(const float dt)
 			this->animIndex = 0;
 		}
 	}
-
 	this->updateAnim(dt, this->animIndex, this->animSpeed);
 }
 
@@ -1324,7 +1324,6 @@ void Player::update()
 		if (timer.getTimePassed(5.f))
 		{
 			dedge = false;
-			auto state = this->gamePad->GetState(0);
 			if (state.IsConnected()) this->gamePad->SetVibration(0, 0.f, 0.f, 0.f, 0.f);
 			this->physComp->resetForce();
 			this->physComp->resetTorque();
@@ -1371,7 +1370,6 @@ void Player::setTeam(const int& team)
 
 void Player::setVibration(float vibration1, float vibration2)
 {
-	auto state = this->gamePad->GetState(0);
 	if (state.IsConnected()) this->gamePad->SetVibration(0, vibration1, vibration2, 0.f, 0.f);
 }
 
@@ -1383,31 +1381,78 @@ void Player::setGamePad(DirectX::GamePad* gamePad)
 void Player::requestingPickUpItem(const std::vector<Item*>& items)
 {
 	if (holdingItem) return;
-	if (Input::KeyPress(KeyCode::E))
+	if (state.IsConnected())
 	{
-		std::cout << "items.size = " << std::to_string(items.size()) << std::endl;
-		for (int i = 0; i < items.size(); i++)
+		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1))
 		{
-			if (this->withinRadius(items[i], 5))
+			this->eKeyDown = true;
+		}
+		if (tracker.x == GamePad::ButtonStateTracker::UP && this->eKeyDown)
+		{
+			this->eKeyDown = false;
+			std::cout << "items.size = " << std::to_string(items.size()) << std::endl;
+			for (int i = 0; i < items.size(); i++)
 			{
-				//addItem(items[i]);
+				if (this->withinRadius(items[i], 5))
+				{
+					//addItem(items[i]);
 
-				//holdingItem->getPhysComp()->getRigidBody()->resetForce();
-				//holdingItem->getPhysComp()->getRigidBody()->resetTorque();
-				//holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
-				ComponentRequestingPickUp rqstCmpPickUp;
-				rqstCmpPickUp.componentId = items[i]->getOnlineId();
-				rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;
-				rqstCmpPickUp.playerId = this->getOnlineID();
-				if (items[i]->getId() == ObjID::COMPONENT) this->holdingComp = true;
-				std::cout << "requesting pickup componentId: " << std::to_string(rqstCmpPickUp.componentId) << std::endl;
-				//skickar en f�rfr�gan att plocka upp item
-				keyPressTimer.resetStartTime();
-				client->sendStuff<ComponentRequestingPickUp>(rqstCmpPickUp);
-				break;
+					//holdingItem->getPhysComp()->getRigidBody()->resetForce();
+					//holdingItem->getPhysComp()->getRigidBody()->resetTorque();
+					//holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+					ComponentRequestingPickUp rqstCmpPickUp;
+					rqstCmpPickUp.componentId = items[i]->getOnlineId();
+					rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;
+					rqstCmpPickUp.playerId = this->getOnlineID();
+					if (items[i]->getId() == ObjID::COMPONENT) this->holdingComp = true;
+					std::cout << "requesting pickup componentId: " << std::to_string(rqstCmpPickUp.componentId) << std::endl;
+					//skickar en f�rfr�gan att plocka upp item
+					keyPressTimer.resetStartTime();
+					client->sendStuff<ComponentRequestingPickUp>(rqstCmpPickUp);
+					break;
+				}
 			}
 		}
 	}
+	else
+	{
+		if (GetAsyncKeyState('E') && this->eKeyDown == false && this->keyPressTimer.getTimePassed(0.1))
+		{
+			this->eKeyDown = true;
+		}
+		else if (GetAsyncKeyState('E') == 0 && this->eKeyDown == true)
+		{
+			this->eKeyDown = false;
+			std::cout << "items.size = " << std::to_string(items.size()) << std::endl;
+			for (int i = 0; i < items.size(); i++)
+			{
+				if (this->withinRadius(items[i], 5))
+				{
+					//addItem(items[i]);
+
+					//holdingItem->getPhysComp()->getRigidBody()->resetForce();
+					//holdingItem->getPhysComp()->getRigidBody()->resetTorque();
+					//holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
+					ComponentRequestingPickUp rqstCmpPickUp;
+					rqstCmpPickUp.componentId = items[i]->getOnlineId();
+					rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;
+					rqstCmpPickUp.playerId = this->getOnlineID();
+					if (items[i]->getId() == ObjID::COMPONENT) this->holdingComp = true;
+					std::cout << "requesting pickup componentId: " << std::to_string(rqstCmpPickUp.componentId) << std::endl;
+					//skickar en f�rfr�gan att plocka upp item
+					keyPressTimer.resetStartTime();
+					client->sendStuff<ComponentRequestingPickUp>(rqstCmpPickUp);
+					break;
+				}
+			}
+		}
+	}
+}
+
+void Player::updateController()
+{
+	this->state = gamePad->GetState(0);
+	tracker.Update(state);
 }
 
 void Player::itemRecvFromServer(Item* item)

@@ -19,6 +19,8 @@ struct PositionRotation
 	int playerId;
 	DirectX::XMFLOAT4X4 matrix;
 	int ifDead;
+	int AnimId;
+	float animSpeed;
 };
 
 //enum = 4

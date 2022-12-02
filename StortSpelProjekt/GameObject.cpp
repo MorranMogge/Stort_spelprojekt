@@ -156,8 +156,10 @@ DirectX::XMFLOAT3 GameObject::getScale() const
 DirectX::XMFLOAT4X4 GameObject::getMatrix() const
 {
 	DirectX::XMFLOAT4X4 temp;
-	DirectX::XMStoreFloat4x4(&temp, DirectX::XMMatrixTranspose({ (DirectX::XMMatrixScaling(scale.x, scale.y, scale.z)
-		* this->rotation * DirectX::XMMatrixTranslation(this->position.x, this->position.y, this->position.z)) }));
+	DirectX::XMMATRIX world = DirectX::XMMatrixMultiply(DirectX::XMMatrixScaling(scale.x, scale.y, scale.z), this->rotation);
+	world = DirectX::XMMatrixMultiply(world, DirectX::XMMatrixTranslation(this->position.x, this->position.y, this->position.z));
+	world = DirectX::XMMatrixTranspose(world);
+	DirectX::XMStoreFloat4x4(&temp, world);
 	return temp;
 }
 

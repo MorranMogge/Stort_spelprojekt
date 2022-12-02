@@ -33,7 +33,13 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	
 
 	manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
-	this->manager.getAnimData("../Meshes/pinto_Run.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
+	manager.loadMeshAndBoneData("../Meshes/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/character1_run.fbx", "../Meshes/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/character1_run_fast.fbx", "../Meshes/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/character1_throw.fbx", "../Meshes/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/character1_attack.fbx", "../Meshes/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/character1_fly.fbx", "../Meshes/character1_idle.fbx");
+	this->manager.getAnimData("../Meshes/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
 	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/pintoBlue.png");
 	ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/pintoRed.png");
 	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
@@ -72,9 +78,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 			if (playerId != i)
 			{
-				tmpPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 
+				tmpPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
-				tmpPlayer->addData(animData);
+				//tmpPlayer->addData(animData);
 				tmpPlayer->setOnlineID(i);
 				physWorld.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
@@ -82,23 +88,25 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			else
 			{
 				std::cout << "Player online id: " << std::to_string(i) << " \n";
-				currentPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+				currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 					1, playerId, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
-				currentPlayer->addData(animData);
+				//currentPlayer->addData(animData);
 				currentPlayer->setOnlineID(i);
 				players.push_back(currentPlayer);
-				delete tmpPlayer;
+				//delete tmpPlayer;
 			}
 			std::cout << "Dude: " << (int)(dude < i + 1) << "\n";
 		}
 
+		std::cout << "num players" << this->players.size() << "\n";
+
 		gamePad = new DirectX::GamePad();
 		currentPlayer->setGamePad(gamePad);
+		landingUi.makeGamePad(gamePad);
 	}
 
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
-	gameObjects.emplace_back(currentPlayer);
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->setGravityField(planetGravityField);
@@ -150,6 +158,10 @@ Game::~Game()
 	for (int i = 0; i < planetVector.size(); i++)
 	{
 		delete planetVector[i];
+	}
+	for (int i = 0; i < players.size(); i++)
+	{
+		delete players[i];
 	}
 	if (captureZone != nullptr) delete captureZone;
 	delete tmpMesh;
@@ -231,7 +243,7 @@ void Game::loadObjects()
 	}
 	for (int i = 0; i < players.size(); i++)
 	{
-		if (players[i] != currentPlayer) gameObjects.emplace_back(players[i]);
+		//if (players[i] != currentPlayer) //gameObjects.emplace_back(players[i]);
 	}
 
 	//Add phys components
@@ -267,9 +279,9 @@ void Game::loadObjects()
 		ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/pintoBlue.png");
 		ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/pintoRed.png");
 
-		currentPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+		currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 			1, client->getPlayerId(), client, 0, redTeamColour, blueTeamColour, planetGravityField);
-		currentPlayer->addData(animData);
+		//currentPlayer->addData(animData);
 		players.emplace_back(currentPlayer);
 		gamePad = new GamePad();
 		currentPlayer->setGamePad(gamePad);
@@ -289,6 +301,8 @@ void Game::drawShadows()
 
 	basicRenderer.depthPrePass();
 	ltHandler.drawShadows(0, gameObjects, &camera);
+	//basicRenderer.changeToAnimation();
+	//ltHandler.drawShadows(0, players, &camera);
 	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
 }
 
@@ -303,16 +317,16 @@ void Game::drawObjects(bool drawDebug)
 		if (gameObjects[i] == currentPlayer) continue;
 		else gameObjects[i]->draw();
 	}
-	for (int i = 0; i < players.size(); i++)
-	{
-		players[i]->draw();
-	}
+	//for (int i = 0; i < players.size(); i++)
+	//{
+	//	players[i]->draw();
+	//}
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
 		onlineItems[i]->draw();
 	}
 	//currentPlayer->updateBuffer();
-	currentPlayer->draw();
+
 	for (int i = 0; i < planetVector.size(); i++)
 	{
 		if (i == camera.getCollidedWith()) continue;
@@ -349,9 +363,12 @@ void Game::drawIcons()
 	{
 		players[i]->drawIcon();
 	}
-	for (int i = 0; i < spaceShips.size(); i++)
+	if (currentMinigame == COMPONENTCOLLECTION)
 	{
-		spaceShips[i]->drawQuad();
+		for (int i = 0; i < spaceShips.size(); i++)
+		{
+			spaceShips[i]->drawQuad();
+		}
 	}
 }
 
@@ -448,6 +465,11 @@ GAMESTATE Game::updateComponentGame()
 
 	//Set moon
 	//if (planetVector.size() > 2) planetVector[2]->rotateMoon(DirectX::XMFLOAT3(0, 0, 0), 0.5f);
+
+	currentPlayer->stateMachine(dt);
+
+	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
+	asteroids->updateAsteroids(dt, planetVector, gameObjects);
 	
 	//Calculate gravity factor
 	if (planetVector.size() > 0) field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
@@ -478,6 +500,8 @@ GAMESTATE Game::updateComponentGame()
 	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
+	currentPlayer->checkSwimStatus(planetVector);
+	currentPlayer->velocityMove(dt);
 	currentPlayer->setSpeed(20.f);
 
 	//Check component pickup
@@ -644,7 +668,7 @@ GAMESTATE Game::updateComponentGame()
 		this->components[i]->checkDistance((GameObject*)(currentPlayer));
 	}
 
-	return NOCHANGE;
+	return currentGameState;
 }
 
 GAMESTATE Game::startLanding()
@@ -722,6 +746,7 @@ GAMESTATE Game::updateLandingGame()
 
 GAMESTATE Game::updateKingOfTheHillGame()
 {
+
 	//Get newest delta time
 	//if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
 	//asteroids->updateAsteroids(dt, planetVector, gameObjects);
@@ -738,6 +763,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	{
 		for (int i = 0; i < gameObjects.size(); i++) gameObjects[i]->setGravityField(planetVector[0]->getClosestField(planetVector, gameObjects[i]->getPosV3()));
 	}
+	currentPlayer->stateMachine(dt);
 
 	//Raycasting
 	static DirectX::XMFLOAT3 hitPos;
@@ -753,6 +779,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
+	currentPlayer->checkSwimStatus(planetVector);
 	currentPlayer->setSpeed(20.f);
 
 	//Check component pickup
@@ -823,6 +850,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	//Check if item icon should change to pickup icon 
 	for (int i = 0; i < items.size(); i++) this->items[i]->checkDistance((GameObject*)(currentPlayer));
 	for (int i = 0; i < components.size(); i++) this->components[i]->checkDistance((GameObject*)(currentPlayer));
+	return currentGameState;
 	return NOCHANGE;
 }
 
@@ -916,11 +944,13 @@ GAMESTATE Game::updateIntermission()
 
 GAMESTATE Game::Update()
 {
+	currentGameState = NOCHANGE;
 	//read the packets received from the server
 	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
-		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client);
+		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState);
 
 	lastUpdate = currentTime;
+	this->currentPlayer->updateController();
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 
@@ -989,13 +1019,14 @@ GAMESTATE Game::Update()
 		break;
 	}
 
+
+
 	//Debug keybinds
 	this->handleKeybinds();
 
 	//animations
-	this->currentPlayer->updateAnim(dt, 0, 1);
-
-	return NOCHANGE;
+	
+	return currentGameState;
 }
 
 void Game::Render()
@@ -1014,7 +1045,10 @@ void Game::Render()
 	testCube->drawObjectWithNormalMap();
 
 	basicRenderer.changeToAnimation();
-	currentPlayer->draw();
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->draw();
+	}
 
 	//Unbind light
 	ltHandler.unbindSrv();
@@ -1042,7 +1076,10 @@ void Game::Render()
 	basicRenderer.geometryUnbind();
 
 	//Render UI (needs to render last)
+
+	
 	ui.Draw();
+	
 	switch (currentMinigame)
 	{
 	case COMPONENTCOLLECTION:

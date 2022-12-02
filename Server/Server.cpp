@@ -389,7 +389,11 @@ int main()
 					if (i == prMatrixData->playerId)
 					{
 						data.users[i].playa.setAnimData(prMatrixData->AnimId, prMatrixData->animSpeed);
-						if (!data.users[i].playa.getDeathState())data.users[i].playa.setMatrix(prMatrixData->matrix);
+						if (!data.users[i].playa.getDeathState())
+						{
+							data.users[i].playa.setMatrix(prMatrixData->matrix);
+							data.users[i].playa.getPhysComp()->setRotation(reactphysics3d::Quaternion(prMatrixData->xRot, prMatrixData->yRot, prMatrixData->zRot, prMatrixData->wRot));
+						}
 						//std::cout <<"player Id: " << std::to_string(prMatrixData->playerId)<<"pos: " << std::to_string(data.users[i].playa.getMatrix()._14) << std::endl;
 						break;
 					}
@@ -670,7 +674,7 @@ int main()
 		
 
 		//Spawns a baseBallBat
-		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength && onlineItems.size() <= itemLimit)
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
 		{
 			ItemSpawn itemSpawnData;
 			DirectX::XMFLOAT3 temp = randomizeObjectPos();
@@ -903,6 +907,10 @@ int main()
 			prMatrix.matrix = data.users[i].playa.getMatrix();
 			prMatrix.packetId = PacketType::POSITIONROTATION;
 			prMatrix.playerId = i;
+			prMatrix.xRot = data.users[i].playa.getPhysComp()->getRotation().x;
+			prMatrix.yRot = data.users[i].playa.getPhysComp()->getRotation().y;
+			prMatrix.zRot = data.users[i].playa.getPhysComp()->getRotation().z;
+			prMatrix.wRot = data.users[i].playa.getPhysComp()->getRotation().w;
 			data.users[i].playa.getAnimData(prMatrix.AnimId, prMatrix.animSpeed);
 
 			sendBinaryDataAllPlayers(prMatrix, data);
@@ -935,6 +943,10 @@ int main()
 			compPosition.x = onlineItems[i]->getposition('x');
 			compPosition.y = onlineItems[i]->getposition('y');
 			compPosition.z = onlineItems[i]->getposition('z');
+			compPosition.xRot = onlineItems[i]->getPhysicsComponent()->getRotation().x;
+			compPosition.yRot = onlineItems[i]->getPhysicsComponent()->getRotation().y;
+			compPosition.zRot = onlineItems[i]->getPhysicsComponent()->getRotation().z;
+			compPosition.wRot = onlineItems[i]->getPhysicsComponent()->getRotation().w;
 			//compPosition.quat = onlineItems[i].getPhysicsComponent()->getRotation();
 			sendBinaryDataAllPlayers<ComponentPosition>(compPosition, data);
 

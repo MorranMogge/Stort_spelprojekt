@@ -170,7 +170,7 @@ Game::~Game()
 	}
 	for (int i = 0; i < players.size(); i++)
 	{
-		delete players[i];
+		if (i != currentPlayer->getOnlineID()) delete players[i];
 	}
 	if (captureZone != nullptr) delete captureZone;
 	if (gamePad != nullptr) delete gamePad;

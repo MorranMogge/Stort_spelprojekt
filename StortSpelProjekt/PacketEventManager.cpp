@@ -131,6 +131,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					if (playerId != i)
 					{
 						players[i]->setMatrix(prMatrixData->matrix);
+						players[i]->setRot(DirectX::SimpleMath::Quaternion(prMatrixData->xRot, prMatrixData->yRot, prMatrixData->zRot, prMatrixData->wRot));
 						if (!animated[i])
 						{
 							players[i]->updateAnim(dt, prMatrixData->AnimId, 1);
@@ -140,6 +141,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					else if (prMatrixData->ifDead)
 					{
 						players[i]->setMatrix(prMatrixData->matrix);
+						players[i]->setRot(DirectX::SimpleMath::Quaternion(prMatrixData->xRot, prMatrixData->yRot, prMatrixData->zRot, prMatrixData->wRot));
+
 					}
 					players[i]->getPhysComp()->setRotation(DirectX::XMQuaternionRotationMatrix(DirectX::XMLoadFloat4x4(&prMatrixData->matrix)));
 				}
@@ -294,7 +297,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					//std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", pos x: " << std::to_string(cmpPosition->x)
 					//	<< ", y: " << std::to_string(cmpPosition->y) << std::endl;
 					onlineItems[i]->setPos(DirectX::XMFLOAT3(cmpPosition->x, cmpPosition->y, cmpPosition->z));
-					//componentVector[i]->getPhysComp()->setRotation(cmpPosition->quat);
+					onlineItems[i]->getPhysComp()->setRotation(DirectX::SimpleMath::Quaternion(cmpPosition->xRot, cmpPosition->yRot, cmpPosition->zRot, cmpPosition->wRot));
 				}
 			}
 			//std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;

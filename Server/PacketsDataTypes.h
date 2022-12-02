@@ -22,6 +22,10 @@ struct PositionRotation
 	int ifDead;
 	int AnimId;
 	float animSpeed;
+	float xRot;
+	float yRot;
+	float zRot;
+	float wRot;
 };
 
 //enum = 4
@@ -43,7 +47,6 @@ struct ComponentData //ANV�NDS INTE
 	float x;
 	float y;
 	float z;
-	reactphysics3d::Quaternion quat;
 };
 
 //enum = 6
@@ -165,6 +168,10 @@ struct ComponentPosition
 	float x;
 	float y;
 	float z;
+	float xRot;
+	float yRot;
+	float zRot;
+	float wRot;
 	//reactphysics3d::Quaternion quat;
 };
 

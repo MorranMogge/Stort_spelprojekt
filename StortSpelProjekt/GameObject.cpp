@@ -119,6 +119,12 @@ void GameObject::setRot(const DirectX::XMVECTOR& rot)
 	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(rot);
 }
 
+void GameObject::setRot(const DirectX::SimpleMath::Quaternion& rot)
+{
+	this->mesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(rot.ToEuler());
+	this->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(rot.ToEuler());
+}
+
 void GameObject::setScale(const DirectX::XMFLOAT3& scale)
 {
 	this->mesh->scale = scale;

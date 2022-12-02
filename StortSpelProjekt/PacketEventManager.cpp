@@ -335,8 +335,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			{
 				if (players[i]->getOnlineID() == cmpDropped->playerId)
 				{
-					std::cout << "playerID UWU TEst:" << cmpDropped->playerId << std::endl;
-					std::cout << "x: " << onlineItems[cmpDropped->componentId]->getPos().x << "y: " << onlineItems[cmpDropped->componentId]->getPos().y << std::endl;
+					//std::cout << "playerID UWU TEst:" << cmpDropped->playerId << std::endl;
+					//std::cout << "x: " << onlineItems[cmpDropped->componentId]->getPos().x << "y: " << onlineItems[cmpDropped->componentId]->getPos().y << std::endl;
 					players[i]->releaseItem();
 				}
 			}

@@ -328,22 +328,22 @@ int main()
 	}
 
 
-		ItemSpawn itemSpawnData;
-		DirectX::XMFLOAT3 temporaryPos = randomizeObjectPos();
-		itemSpawnData.x = temporaryPos.x;
-		itemSpawnData.y = temporaryPos.y;
-		itemSpawnData.z = temporaryPos.z;
-		itemSpawnData.itemId = componentIdCounter;
-		std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
-		itemSpawnData.packetId = PacketType::ITEMSPAWN;
+		//ItemSpawn itemSpawnData;
+		//DirectX::XMFLOAT3 temporaryPos = randomizeObjectPos();
+		//itemSpawnData.x = temporaryPos.x;
+		//itemSpawnData.y = temporaryPos.y;
+		//itemSpawnData.z = temporaryPos.z;
+		//itemSpawnData.itemId = componentIdCounter;
+		//std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
+		//itemSpawnData.packetId = PacketType::ITEMSPAWN;
 
-		onlineItems.push_back(new BaseballBat(componentIdCounter));//ändra
-		physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
-		onlineItems[onlineItems.size() - 1]->setPosition(temporaryPos.x, temporaryPos.y, temporaryPos.z);;
-		onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
-		onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
-		sendBinaryDataAllPlayers(itemSpawnData, data);
-		itemSpawnTimer = std::chrono::system_clock::now();
+		//onlineItems.push_back(new BaseballBat(componentIdCounter));//ändra
+		//physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
+		//onlineItems[onlineItems.size() - 1]->setPosition(temporaryPos.x, temporaryPos.y, temporaryPos.z);;
+		//onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
+		//onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+		//sendBinaryDataAllPlayers(itemSpawnData, data);
+		//itemSpawnTimer = std::chrono::system_clock::now();
 	
 
 	//Starting timer

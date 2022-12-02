@@ -171,7 +171,7 @@ void Game::loadObjects()
 	Component* component;
 
 
-	//Load extra textures
+	//Load extra textures	
 	MaterialLibrary::LoadDefault();
 	MaterialLibrary::LoadMaterial("spaceshipTexture1.jpg");
 	MaterialLibrary::LoadMaterial("spaceshipTexture2.jpg");

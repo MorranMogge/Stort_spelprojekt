@@ -172,6 +172,7 @@ int main()
 	int itemid = 0;
 	int componentIdCounter = 0;
 	bool once = false;
+	int itemLimit = 10;
 	TimeStruct physicsTimer;
 	PhysicsWorld physWorld;
 	Component planetComp;
@@ -669,7 +670,7 @@ int main()
 		
 
 		//Spawns a baseBallBat
-		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
+		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength && onlineItems.size() <= itemLimit)
 		{
 			ItemSpawn itemSpawnData;
 			DirectX::XMFLOAT3 temp = randomizeObjectPos();

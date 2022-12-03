@@ -90,6 +90,7 @@ Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, co
 
 Grenade::~Grenade()
 {
+	delete this->explosionMesh;
 }
 
 void Grenade::explode()

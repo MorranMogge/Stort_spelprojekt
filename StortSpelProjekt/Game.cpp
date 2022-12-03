@@ -192,8 +192,8 @@ void Game::loadObjects()
 	SpaceShip* spaceShipBlue;
 	Component* component;
 	Potion* potion;
-	BaseballBat* baseballBat;
-	Grenade* grenade;
+	//BaseballBat* baseballBat;
+	//Grenade* grenade;
 	Grenade* grenade2;
 
 
@@ -247,8 +247,8 @@ void Game::loadObjects()
 	{
 		potion = new Potion(meshes[3], Vector3(0, 0, -42), Vector3(0.0f, 0.0f, 0.0f), POTION, 0, planetGravityField);
 		baseballBat = new BaseballBat(meshes[5], Vector3(0, 0, 42), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
-		grenade = new Grenade(meshes[7], meshes[11], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
-		grenade2 = new Grenade(meshes[7], meshes[11], DirectX::SimpleMath::Vector3(45, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
+		grenade = new Grenade(meshes[7], meshes[12], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
+		grenade2 = new Grenade(meshes[7], meshes[12], DirectX::SimpleMath::Vector3(45, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
 
 
 		//EMPLACE ITEMS
@@ -273,8 +273,8 @@ void Game::loadObjects()
 	//SPACE SHIPS
 	if (!IFONLINE)
 	{
-		spaceShipRed = new SpaceShip(meshes[10], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, planetGravityField, DirectX::SimpleMath::Vector3(2.5, 2.5, 2.5));
-		spaceShipBlue = new SpaceShip(meshes[9], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, planetGravityField, DirectX::SimpleMath::Vector3(2.5, 2.5, 2.5));
+		spaceShipRed = new SpaceShip(meshes[11], Vector3(-7.81178f, -37.8586f, -8.50119f), ROCKET, 0, planetGravityField,meshes[9], DirectX::SimpleMath::Vector3(2.5, 2.5, 2.5));
+		spaceShipBlue = new SpaceShip(meshes[10], Vector3(13.5817f, 35.9383f, 9.91351f), ROCKET, 1, planetGravityField, meshes[9], DirectX::SimpleMath::Vector3(2.5, 2.5, 2.5));
 		spaceShips.emplace_back(spaceShipRed);
 		spaceShips.emplace_back(spaceShipBlue);
 
@@ -308,8 +308,8 @@ void Game::loadObjects()
 	//Set items baseball bat
 	if (!IFONLINE)
 	{
-		baseballBat->setPlayer(currentPlayer);
-		baseballBat->setGameObjects(gameObjects);
+		this->baseballBat->setPlayer(currentPlayer);
+		this->baseballBat->setGameObjects(gameObjects);
 
 		//Set items grenade
 		grenade->setGameObjects(gameObjects);
@@ -499,47 +499,47 @@ void Game::randomizeObjectPos(GameObject* object)
 	object->setPos(randomPos);
 }
 
-void Game::handleInputs()
-{
-	if (GetAsyncKeyState('C')) physWorld.addBoxToWorld();
-	if (Input::KeyPress(KeyCode::Y))
-	{
-		this->ptEmitters.at(0).setActive(false);
-		this->ptEmitters.at(0).updateBuffer();
-	}
-	if (Input::KeyPress(KeyCode::U))
-	{
-		this->ptEmitters.at(0).setActive(true);
-		this->ptEmitters.at(0).updateBuffer();
-	}
-	if (Input::KeyPress(KeyCode::I))
-	{
-		drawDebug = true;
-	}
-	if (Input::KeyPress(KeyCode::O))
-	{
-		drawDebug = false;
-	}
-
-	static bool whyNotJustWork = false;
-	if (GetAsyncKeyState('N'))
-	{
-		if (!whyNotJustWork)
-		{
-			displayMinigameUI = !displayMinigameUI;
-			whyNotJustWork = true;
-		}
-	}
-	else
-	{
-		whyNotJustWork = false;
-	}
-	if (Input::KeyPress(KeyCode::Y))
-	{
-		this->ptEmitters.at(0).setActive(false);
-		this->ptEmitters.at(0).updateBuffer();
-	}
-}
+//void Game::handleInputs()
+//{
+//	if (GetAsyncKeyState('C')) physWorld.addBoxToWorld();
+//	if (Input::KeyPress(KeyCode::Y))
+//	{
+//		this->ptEmitters.at(0).setActive(false);
+//		this->ptEmitters.at(0).updateBuffer();
+//	}
+//	if (Input::KeyPress(KeyCode::U))
+//	{
+//		this->ptEmitters.at(0).setActive(true);
+//		this->ptEmitters.at(0).updateBuffer();
+//	}
+//	if (Input::KeyPress(KeyCode::I))
+//	{
+//		drawDebug = true;
+//	}
+//	if (Input::KeyPress(KeyCode::O))
+//	{
+//		drawDebug = false;
+//	}
+//
+//	static bool whyNotJustWork = false;
+//	if (GetAsyncKeyState('N'))
+//	{
+//		if (!whyNotJustWork)
+//		{
+//			displayMinigameUI = !displayMinigameUI;
+//			whyNotJustWork = true;
+//		}
+//	}
+//	else
+//	{
+//		whyNotJustWork = false;
+//	}
+//	if (Input::KeyPress(KeyCode::Y))
+//	{
+//		this->ptEmitters.at(0).setActive(false);
+//		this->ptEmitters.at(0).updateBuffer();
+//	}
+//}
 
 
 GAMESTATE Game::updateComponentGame()
@@ -775,8 +775,7 @@ GAMESTATE Game::updateComponentGame()
 	}
 	if (endTimer > 4.7f)
 	{
-		ui.fadeOut();
-		
+		//ui.fadeOut();
 	}
 	if (endTimer > 6)
 	{

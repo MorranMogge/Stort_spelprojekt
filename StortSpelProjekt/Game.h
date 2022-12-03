@@ -8,7 +8,7 @@ struct wirefameInfo
 };
 
 const int NROFPLAYERS = 2;
-static bool IFONLINE = true;
+static bool IFONLINE = false;
 
 class Game : public State
 {
@@ -76,7 +76,8 @@ private:
 
 	//Items
 	int id;
-
+	BaseballBat* baseballBat;
+	Grenade* grenade;
 	//Objects
 	std::vector<Component*> components;
 	std::vector<GameObject*> gameObjects;

@@ -9,6 +9,7 @@
 class Camera
 {
 private:
+	int index = -1;
 	float playerSpeed = 0.f;
 	DirectX::XMMATRIX playerRotationMX;
 	DirectX::XMVECTOR playerPosition = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -41,7 +42,6 @@ private:
 	DirectX::XMVECTOR upVector = logicalUp;
 
 	DirectX::XMVECTOR velocityVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	DirectX::XMVECTOR parentPos = logicalPos;
 	DirectX::SimpleMath::Vector3 planetVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	DirectX::SimpleMath::Vector3 cameraVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -60,10 +60,13 @@ public:
 	DirectX::XMVECTOR getRightVector() const;
 	DirectX::XMVECTOR getUpVector() const;
 	DirectX::XMVECTOR getPosition() const;
+	DirectX::XMVECTOR getRealPosition() const;
+	int getCollidedWith() const;
 	ID3D11Buffer* getViewBuffer();
 	ID3D11Buffer* getPositionBuffer();
 	void setPosition(const DirectX::XMFLOAT3& position);
 	void setCameraLookAt(const DirectX::XMFLOAT3& position);
+	void setRotToStart();
 
 	void VSbindPositionBuffer(const int &slot);
 	void VSbindViewBuffer(const int& slot);

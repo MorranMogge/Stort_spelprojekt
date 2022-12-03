@@ -133,4 +133,3 @@ void Item::drawFresnel()
 		this->scale = test;
 	}
 }
-

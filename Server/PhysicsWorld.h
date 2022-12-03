@@ -1,5 +1,6 @@
 #pragma once
 #include "PhysicsComponent.h"
+#include "GameObject.h"
 #include <string>
 #include <vector>
 #include "Item.h"
@@ -37,5 +38,6 @@ public:
 	void addBoxToWorld(DirectX::XMFLOAT3 dimensions = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f), float mass = 1.0f,  DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(0, 10, 00));
 	void addPhysComponent(Item& pos, reactphysics3d::CollisionShapeName shape = reactphysics3d::CollisionShapeName::BOX, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f));
 	void addPhysComponent(PhysicsComponent* newComp, const DirectX::XMFLOAT3& pos = DirectX::XMFLOAT3(0, 50, 0), reactphysics3d::CollisionShapeName shape = reactphysics3d::CollisionShapeName::BOX, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f));
+	void addPhysComponent(GameObject* gameObj, reactphysics3d::CollisionShapeName shape = reactphysics3d::CollisionShapeName::BOX, const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f));
 	PhysicsComponent* returnAddedPhysComponent(reactphysics3d::CollisionShapeName shape = reactphysics3d::CollisionShapeName::BOX, const DirectX::XMFLOAT3& pos = DirectX::XMFLOAT3(0.f, 0.f, 0.f), const DirectX::XMFLOAT3& scale = DirectX::XMFLOAT3(0.5f, 0.5f, 0.5f));
 };

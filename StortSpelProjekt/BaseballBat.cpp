@@ -7,6 +7,7 @@
 #include "PacketsDataTypes.h"
 #include "PacketEnum.h"
 #include "GUISprite.h"
+#include "SoundLibrary.h"
 
 using namespace DirectX;
 
@@ -19,6 +20,7 @@ void BaseballBat::sendForceToServer(const DirectX::SimpleMath::Vector3& hitForce
 	hitInfo.yForce = batPos.y;
 	hitInfo.zForce = batPos.z;
 	std::cout << "Hit player!!!!\n";
+	
 	if (client != nullptr)
 	{
 		this->client->sendStuff<PlayerHit>(hitInfo);
@@ -96,9 +98,14 @@ void BaseballBat::setClient(Client* client)
 	this->client = client;
 }
 
-void BaseballBat::setGameObjects(const std::vector<GameObject*>& objects)
+void BaseballBat::setGameObjects(const std::vector<Player*>& objects)
 {
 	this->objects = objects;
+}
+
+void BaseballBat::setGameObjects(const std::vector<GameObject*>& objects)
+{
+	this->GameObjects = objects;
 }
 
 //void BaseballBat::setGameObjects(const std::vector<Player*>& objects)
@@ -110,51 +117,97 @@ void BaseballBat::setGameObjects(const std::vector<GameObject*>& objects)
 //	}
 //}
 
-void BaseballBat::useItem()
+void BaseballBat::useItem(const Player* playerHoldingItem)
 {
-	sfx.stop();
-	sfx.play();
+	SoundLibrary::baseballbatSfx.stop();
+	SoundLibrary::baseballbatSfx.play();
+
 	std::cout << "Used bat!\n";
-	batPos = this->player->getPos();
-	batPos += this->player->getForwardVector() * 10;
+	batPos = playerHoldingItem->getPos();
+	batPos += playerHoldingItem->getForwardVector() * 10;
+
+	UseBat useBat;
+	useBat.packetId = USEBAT;
+	//std::cout << "Player ID: " << playerHoldingItem->getItemOnlineId() << "\n";
+	useBat.playerThatUsedTheItem = playerHoldingItem->getOnlineID();
+	useBat.itemId = this->getOnlineId();
+	useBat.xPos = batPos.x;
+	useBat.yPos = batPos.y;
+	useBat.zPos = batPos.z;
+	//client->sendStuff<UseBat>(useBat);
+
+
 	savedPos = this->getPosV3(); //Used to reset the baseball bats position at the end of the function
 
-    PhysicsComponent* batComp = this->getPhysComp();
-    PhysicsComponent* physComp;
-
-    batComp->setPosition(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
-    batComp->setScale(DirectX::XMFLOAT3(2 * 4.0f, 2 * 4.0f, 2 * 4.0f));
-
+	PhysicsComponent* batComp = this->getPhysComp();
+	PhysicsComponent* physComp;
+	batComp->setPosition(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+	batComp->setScale(DirectX::XMFLOAT3(2 * 4.0f, 2 * 4.0f, 2 * 4.0f));
 	bool collided = false;
-	for (int i = 0; i < objects.size(); i++)
+
+	//Is offline
+	if (!client)
 	{
-		if (this == objects[i] || objects[i] == this->player) continue;
+		for (int i = 0; i < GameObjects.size(); i++)
+		{
+			if ((GameObject*)this == GameObjects[i] || GameObjects[i] == playerHoldingItem) continue;
 
-        physComp = objects[i]->getPhysComp();
-        if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue;
+			physComp = GameObjects[i]->getPhysComp();
+			if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue;
 
-        collided = batComp->testBodiesOverlap(physComp);
+			collided = batComp->testBodiesOverlap(physComp);
 
-        if (collided)
-        {
-            Player* otherPlayer = dynamic_cast<Player*>(physComp->getParent()); //If we add a function "isPlayer()" in GameObject we do not have to type cast
+			if (collided)
+			{
+				Player* otherPlayer = dynamic_cast<Player*>(physComp->getParent()); //If we add a function "isPlayer()" in GameObject we do not have to type cast
 
-			physComp->setType(reactphysics3d::BodyType::DYNAMIC);
-            //Calculate the force vector
-            float newForce = batComp->getMass() * force;
-            batPos = objects[i]->getPosV3() - this->player->getPosV3();
-            batPos += this->player->getUpVector();
-            newNormalizeXMFLOAT3(batPos);
-            scalarMultiplicationXMFLOAT3(newForce, batPos);
+				physComp->setType(reactphysics3d::BodyType::DYNAMIC);
+				//Calculate the force vector
+				float newForce = batComp->getMass() * force;
+				batPos = GameObjects[i]->getPosV3() - playerHoldingItem->getPosV3();
+				batPos += playerHoldingItem->getUpVector();
+				newNormalizeXMFLOAT3(batPos);
+				scalarMultiplicationXMFLOAT3(newForce, batPos);
 
-			//Add force to object
-			if (otherPlayer != nullptr) this->sendForceToServer(batPos, otherPlayer->getOnlineID()); //otherPlayer->hitByBat(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
-			else physComp->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+				//Add force to object
+				if (otherPlayer != nullptr) this->sendForceToServer(batPos, otherPlayer->getOnlineID()); //otherPlayer->hitByBat(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+				else physComp->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+			}
+		}
+	}
+
+	//Is online
+	else
+	{
+		for (int i = 0; i < objects.size(); i++)
+		{
+			if ((GameObject*)this == objects[i] || objects[i] == playerHoldingItem) continue;
+
+			physComp = objects[i]->getPhysComp();
+			if (physComp->getType() == reactphysics3d::BodyType::STATIC) continue;
+
+			collided = batComp->testBodiesOverlap(physComp);
+
+			if (collided)
+			{
+				Player* otherPlayer = dynamic_cast<Player*>(physComp->getParent()); //If we add a function "isPlayer()" in GameObject we do not have to type cast
+
+				physComp->setType(reactphysics3d::BodyType::DYNAMIC);
+				//Calculate the force vector
+				float newForce = batComp->getMass() * force;
+				batPos = objects[i]->getPosV3() - playerHoldingItem->getPosV3();
+				batPos += playerHoldingItem->getUpVector();
+				newNormalizeXMFLOAT3(batPos);
+				scalarMultiplicationXMFLOAT3(newForce, batPos);
+
+				//Add force to object
+				if (otherPlayer != nullptr) this->sendForceToServer(batPos, otherPlayer->getOnlineID()); //otherPlayer->hitByBat(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+				else physComp->applyForceToCenter(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
+			}
 		}
 	}
 
 	batComp->setScale(DirectX::XMFLOAT3(4 * 0.35f, 4 * 0.35f, 4 * 0.35f));
-    this->setPos(savedPos);
-    batComp->setPosition(reactphysics3d::Vector3(savedPos.x, savedPos.y, savedPos.z));
-
+	this->setPos(savedPos);
+	batComp->setPosition(reactphysics3d::Vector3(savedPos.x, savedPos.y, savedPos.z));
 }

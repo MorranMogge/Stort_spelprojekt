@@ -53,7 +53,7 @@ public:
 	
 	void movePlanet(float offset);
 	//Returns the gravity field of the planet
-	GravityField* getGravityField()const;
+	GravityField* getGravityField();
 	//Returns the closest gravity field out of two planets
 	GravityField* getClosestField(std::vector<Planet*>& planets, const DirectX::SimpleMath::Vector3& position)const;
 	//Returns the closest gravity field factor out of two planets
@@ -69,14 +69,16 @@ public:
 	DirectX::SimpleMath::Vector3 getRotation() const;
 	//Rotats in sphere path around point
 	void rotateAroundPoint(const DirectX::XMFLOAT3& point);
-	
 	void rotatePlanet();
+	void rotateMoon(const DirectX::XMFLOAT3& point, const float& speed);
 	
-
 	//set color of atmosphere
 	void setColor(const DirectX::SimpleMath::Vector3& color);
 	//Draws the planet using regular pipeline stages
 	void drawPlanet(bool tesselation = false);
 	//Draws atmosphere using inverse fresnel stage
 	void drawAtmosphere();
+
+	void setPosition(const DirectX::SimpleMath::Vector3& position);
+	void setScale(const DirectX::SimpleMath::Vector3& position);
 };

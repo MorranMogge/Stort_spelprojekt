@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "ImGuiHelper.h"
 #include "Profiler.h"
+#include "Player.h"
+
 
 ImGuiHelper::ImGuiHelper(Client*& client)
 	:client(client)
@@ -59,7 +61,7 @@ void ImGuiHelper::setupImGui(float bgColour[])
 	style->Colors[ImGuiCol_TitleBgActive] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
 }
 
-void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, bool& landingMinigame, const float& dt, bool& velocityCamera)
+void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, bool& landingMinigame, const float& dt, bool& velocityCamera, Player* currentPlayer)
 {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -87,9 +89,14 @@ void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, bool& landingMinig
 			{
 				std::cout << std::to_string(getVramUsage());
 			}
-			
+			std::string tmpStrX = "xPos: "+std::to_string(currentPlayer->getPos().x);
+			std::string tmpStrY = "yPos: " + std::to_string(currentPlayer->getPos().y);
+			std::string tmpStrZ = "zPos: " + std::to_string(currentPlayer->getPos().z);
 			ImGui::Checkbox("Landing Minigame", &landingMinigame);
-			ImGui::Checkbox("Camera with velocity", &velocityCamera);
+			ImGui::Checkbox("Camera with collision", &velocityCamera);
+			ImGui::Text(tmpStrX.c_str());
+			ImGui::Text(tmpStrY.c_str());
+			ImGui::Text(tmpStrZ.c_str());
 		}
 
 		ImGui::End();

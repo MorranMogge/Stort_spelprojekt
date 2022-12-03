@@ -13,6 +13,8 @@
 #include "imGUI\imstb_truetype.h"
 #include "imGUI\imgui_impl_win32.h"
 
+class Player;
+
 class ImGuiHelper
 {
 private:
@@ -25,9 +27,9 @@ public:
 
 	void drawInterface(std::string message);
 	void setupImGui(float bgColour[]);
-	void react3D(bool& wireframe, bool& drawObjects, DirectX::XMFLOAT3& wireframeClr, const float &dt);
+	void react3D(bool& wireframe, bool& drawObjects, DirectX::XMFLOAT3& wireframeClr, const float &dt, Player* currentPlayer);
 	void spriteBegin();
 	void spriteFloat(const std::string name, float& x, const float min, const float max);
 	void spriteEnd();
-	void react3D(bool& wireframe, bool& drawObjects, bool& landingMinigame, const float &dt, bool& velocityCamera);
+	void react3D(bool& wireframe, bool& drawObjects, bool& landingMinigame, const float &dt, bool& velocityCamera, Player* currentPlayer);
 };

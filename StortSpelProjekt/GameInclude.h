@@ -29,6 +29,7 @@
 #include "Grenade.h"
 #include "AnimatedMesh.h"
 #include "Arrow.h"
+#include "CaptureZone.h"
 
 //User
 #include "Input.h"
@@ -38,6 +39,7 @@
 //ui
 #include "HudUI.h"
 #include "MiniGameUI.h"
+#include "LandingHud.h"
 
 //Other
 #include "ShaderLoader.h"

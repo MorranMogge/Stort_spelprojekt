@@ -5,7 +5,7 @@
 #include "TimeStruct.h"
 
 //temp klass eftersom det inte finns en player
-class player
+class Player
 {
 private:
 	float xPos;
@@ -16,8 +16,11 @@ private:
 	bool dead;
 	TimeStruct timer;
 
+	int animID = 0;
+	float animSpeed = 1;
+
 public:
-	player();
+	Player();
 
 	//skicka in char 'x', 'y' eller 'z'
 	float getposition(char whichPos)const;
@@ -31,4 +34,7 @@ public:
 	void setPosition(float pos[3]);
 	void setPosition(float x, float y, float z);
 	void updatePosViaPhysComp();
+
+	void setAnimData(int animId, float animSpeed);
+	void getAnimData(int& animId, float& animSpeed);
 };

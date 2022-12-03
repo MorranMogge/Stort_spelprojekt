@@ -12,6 +12,7 @@ Grenade::Grenade(Mesh* useMesh, Mesh* expMesh, const DirectX::XMFLOAT3& pos, con
 {
 	//Sfx
 	counter = 1.0f;
+
 	sfx.load(L"../Sounds/explosion.wav");
 	explosion.load(L"../Sounds/explodeGrenade.wav");
 
@@ -39,10 +40,16 @@ Grenade::Grenade(Mesh* useMesh, Mesh* expMesh, const DirectX::XMFLOAT3& pos, con
 	this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
 	this->colorBuffer.getData() = DirectX::XMFLOAT4(1 ,0.25 ,0 , 0.5);
 	this->colorBuffer.applyData();
+
+	//Set meshes & materials
 	this->redMesh->matKey[0] = "Red.png";
 	this->mesh->matKey[0] = "olive.jpg";
 	explosionMesh = (new Mesh("../Meshes/Sphere"));
 	explosionMesh->scale = DirectX::XMFLOAT3( 0.1f,0.1f,0.1f);
+
+
+	//explosionMesh = explodeMesh; ändra tillbaka?
+
 }
 
 Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
@@ -83,7 +90,6 @@ Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, co
 
 Grenade::~Grenade()
 {
-	delete explosionMesh;
 }
 
 void Grenade::explode()
@@ -248,11 +254,10 @@ void Grenade::drawFresnel()
 	}
 }
 
-void Grenade::useItem()
+void Grenade::useItem(const Player* playerHoldingItem)
 {
 	if (!this->destructionIsImminent)
 	{
-		
 		this->destructionIsImminent = true;
 		timer.resetStartTime();
 	}

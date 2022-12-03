@@ -1,5 +1,6 @@
 #pragma once
 #include "PhysicsComponent.h"
+#include "Player.h"
 
 class Item
 {
@@ -44,5 +45,5 @@ public:
 
 	int getInUseById()const;
 
-	virtual void use() = 0;
+	virtual void use(const Player* playerHoldingItem) = 0;
 };

@@ -118,7 +118,6 @@
     <ClCompile Include="SpaceShip.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="ClientHandler.cpp" />
     <ClCompile Include="MouseClass.cpp" />
     <ClCompile Include="BaseballBat.cpp">
       <Filter>GameObjects</Filter>
@@ -160,20 +159,31 @@
     </ClCompile>
     <ClCompile Include="CircularBufferClient.cpp" />
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="PacketEventManager.cpp" />
     <ClCompile Include="Profiler.cpp" />
-    <ClCompile Include="SendingDataEvent.cpp" />
-    <ClCompile Include="CaptureZone.cpp">
-      <Filter>GameObjects</Filter>
+    <ClCompile Include="PacketEventManager.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="SendingDataEvent.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientHandler.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
+    <ClCompile Include="CircularBufferClient.cpp">
+      <Filter>Online</Filter>
     </ClCompile>
     <ClCompile Include="ControlMenu.cpp" />
     <ClCompile Include="ControlUI.cpp" />
+    <ClCompile Include="LandingHud.cpp" />
+    <ClCompile Include="PacketEventManager.cpp">
+      <Filter>Online</Filter>
+    </ClCompile>
     <ClCompile Include="ModelDataContainer.cpp" />
     <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="AnimatedMesh.cpp" />
-    <ClCompile Include="MiniGameUI.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -473,13 +483,7 @@
     <ClInclude Include="SoundLibrary.h" />
     <ClInclude Include="ControlMenu.h" />
     <ClInclude Include="ControlUI.h" />
-    <ClInclude Include="ModelDataContainer.h" />
-    <ClInclude Include="ModelManager.h" />
-    <ClInclude Include="AnimatedMesh.h" />
-    <ClInclude Include="Time.h" />
-    <ClInclude Include="MiniGameUI.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
+    <ClInclude Include="LandingHud.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -594,24 +598,6 @@
     <FxCompile Include="vShaderSkinning.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="PT_UpdatePlayer.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PixelShader_NoShadow.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="HullShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="DomainShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="basic_VertexShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PostProcess.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico">
@@ -623,7 +609,7 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Math.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Game-States</Filter>
     </None>
   </ItemGroup>
 </Project>

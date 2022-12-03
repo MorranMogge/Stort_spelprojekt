@@ -1,7 +1,7 @@
 #pragma once
 #include "Item.h"
 
-#define FORCECONSTANT 40000;
+#define FORCECONSTANT 4000;
 
 class Player;
 class Client;
@@ -11,7 +11,13 @@ class BaseballBat : public Item
 private:
 	Player* player;
 	Client* client;
-	std::vector<GameObject *> objects;
+
+	std::vector<Player *> objects;
+
+	//For offline UwU
+	std::vector<GameObject*> GameObjects;
+
+
 	DirectX::SimpleMath::Vector3 batPos;
 	DirectX::SimpleMath::Vector3 savedPos;
 	float force;
@@ -24,9 +30,8 @@ public:
 
 	void setPlayer(Player* player);
 	void setClient(Client* client);
-	void setGameObjects(const std::vector<GameObject *>& objects);
-	//void setGameObjects(const std::vector<Player*>& objects);
+	void setGameObjects(const std::vector<Player *>& objects);
+	void setGameObjects(const std::vector<GameObject*>& objects);
 	// Inherited via Item
-	virtual void useItem() override;
-
+	virtual void useItem(const Player* playerHoldingItem) override;
 };

@@ -9,6 +9,8 @@ CaptureZone::CaptureZone(Mesh* useMesh, const DirectX::SimpleMath::Vector3 & pos
 	this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
 	this->colorBuffer.getData() = DirectX::XMFLOAT4(color.x, color.y, color.z, 0.1f);
 	this->colorBuffer.applyData();
+	this->setRot(getRotOrientedToGrav());
+	this->position = position;
 }
 
 void CaptureZone::setColor(const DirectX::SimpleMath::Vector3 & color)
@@ -45,3 +47,9 @@ void CaptureZone::setRadius(const float& radius)
 	this->radius = radius;
 	this->setScale(DirectX::XMFLOAT3(radius, radius, radius));
 }
+
+DirectX::SimpleMath::Vector3 CaptureZone::getPosition()const
+{
+	return this->position;
+}
+

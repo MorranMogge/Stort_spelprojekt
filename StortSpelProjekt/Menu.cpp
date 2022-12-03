@@ -20,7 +20,6 @@ Menu::Menu()
 		planets[i]->setVelocity((4 - i*0.7f)*0.25f);
 		planets[i]->setRotation(DirectX::SimpleMath::Vector3(1.2f * i, 0.2f * i, 0.7f * i));
 		planets[i]->setRotationSpeed(DirectX::SimpleMath::Vector3(0.000f * i, 0.002f * (4-i), 0.000f * i));
-
 	}
 	planets.push_back(new Planet(meshes[0], DirectX::XMFLOAT3(50, 50, 50), DirectX::XMFLOAT3(-130, -30.f, 0.f), (4.0f * 9.82f), meshes[1]));
 

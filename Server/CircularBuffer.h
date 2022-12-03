@@ -31,11 +31,19 @@ public:
 	int peekPacketId();//peek
 
 	//returns a char* that points to the packet
+	//doesnt clear the data from the circbuffer
 	void* getData();
+
+	//Clears the circleBuffer
+	//Only use this if the packet cant be handled
+	//Sets the read and write pointer to the start of the buffer
+	void clearBuffer();
 
 	//returns if there are packets left to read 
 	bool getIfPacketsLeftToRead();
 
+	//moves the read pointer
+	//when the function is called the read pointer is moved and the data is removed from the circle buffer
 	template <typename T>
 	T* readData(int nr = 1);
 

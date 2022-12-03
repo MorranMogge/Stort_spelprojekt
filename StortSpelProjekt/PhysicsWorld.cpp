@@ -63,7 +63,7 @@ bool PhysicsWorld::recreateVertexBuffer()
 		triangles.emplace_back(newVertex[2]);
 	}
 
-	debuggerBuffer->Release();
+	if (debuggerBuffer != nullptr) debuggerBuffer->Release();
 
 	D3D11_BUFFER_DESC bufferDesc = {};
 	bufferDesc.ByteWidth = UINT(sizeof(Vertex) * reactphysics3d::uint64(this->triangles.size()));

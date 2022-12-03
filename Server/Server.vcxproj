@@ -146,11 +146,13 @@
     <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
+    <ClCompile Include="Grenade.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="KingOfTheHillMiniGame.cpp" />
     <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Potion.cpp" />
     <ClCompile Include="RandomizeSpawn.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="GameObject.cpp">
@@ -169,6 +171,7 @@
     <ClInclude Include="GameObject.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Grenade.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="KingOfTheHillMiniGame.h" />
     <ClInclude Include="ObjectId.h" />
@@ -178,6 +181,7 @@
     <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Potion.h" />
     <ClInclude Include="RandomizeSpawn.h" />
     <ClInclude Include="sendDataFunctions.h" />
     <ClInclude Include="ServerGravField.h" />

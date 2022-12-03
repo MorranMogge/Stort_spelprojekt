@@ -103,6 +103,17 @@ void BaseballBat::useItem(const Player* playerHoldingItem)
 	batPos = playerHoldingItem->getPos();
 	batPos += playerHoldingItem->getForwardVector() * 10;
 
+	UseBat useBat;
+	useBat.packetId = USEBAT;
+	//std::cout << "Player ID: " << playerHoldingItem->getItemOnlineId() << "\n";
+	useBat.playerThatUsedTheItem = playerHoldingItem->getOnlineID();
+	useBat.itemId = this->getOnlineId();
+	useBat.xPos = batPos.x;
+	useBat.yPos = batPos.y;
+	useBat.zPos = batPos.z;
+	//client->sendStuff<UseBat>(useBat);
+
+
 	savedPos = this->getPosV3(); //Used to reset the baseball bats position at the end of the function
 
 	PhysicsComponent* batComp = this->getPhysComp();

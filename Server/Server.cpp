@@ -21,7 +21,7 @@
 #include "TimeStruct.h"
 #include "ObjectId.h"
 #include "BaseBallBat.h"
-
+#include "Grenade.h"
 
 #include "TestObj.h"
 
@@ -108,6 +108,7 @@ void sendDataAllPlayers(testPosition& posData, serverData& serverData)
 void recvData(void* param, userData* user)//thread to recv data
 {
 	threadInfo* data = (threadInfo*)param;
+	//int testStore = -2;
 
 	std::cout << "ip from socket in thread: " << user->tcpSocket.getRemoteAddress().toString() << std::endl;
 	while (1)
@@ -121,6 +122,10 @@ void recvData(void* param, userData* user)//thread to recv data
 		}
 		else
 		{
+			//USE TO CHECK IF THE PACKET ID IS CORRECT (MAYBE=
+			//memcpy(&testStore, datapointer, sizeof(float));
+			//std::cout << "testStore: " << testStore << std::endl;
+
 			mutex.lock();
 			data->circBuffer->addData(datapointer, recv);
 			mutex.unlock();
@@ -157,6 +162,7 @@ void sendIdToAllPlayers(serverData& data)
 
 int main()
 {
+	srand((unsigned)(time(0)));
 	float flyTime = 0.f;
 	float landingPoints[MAXNUMBEROFPLAYERS]{ 0.f };
 	bool timeToFly = false;
@@ -166,6 +172,7 @@ int main()
 	int itemid = 0;
 	int componentIdCounter = 0;
 	bool once = false;
+	int itemLimit = 10;
 	TimeStruct physicsTimer;
 	PhysicsWorld physWorld;
 	Component planetComp;
@@ -293,6 +300,52 @@ int main()
 		recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
 	}
 
+	int temp = 0;
+	while (1)
+	{
+		if (circBuffer->getIfPacketsLeftToRead())
+		{
+			int packetId = circBuffer->peekPacketId();
+
+			if (packetId == PacketType::DONELOADING)
+			{
+				Loser* los = circBuffer->readData<Loser>();
+				std::cout << "DONE LOADING\n";
+				temp++;
+				if(temp == MAXNUMBEROFPLAYERS) break;
+			}
+			else if (packetId == PacketType::POSITION)
+			{
+				circBuffer->readData<testPosition>();
+				std::cout << "position while Loading\n";
+			}
+			else if (packetId == PacketType::POSITIONROTATION)
+			{
+				circBuffer->readData<PositionRotation>();
+				std::cout << "prRotation while Loading\n";
+			}
+		}
+	}
+
+
+		//ItemSpawn itemSpawnData;
+		//DirectX::XMFLOAT3 temporaryPos = randomizeObjectPos();
+		//itemSpawnData.x = temporaryPos.x;
+		//itemSpawnData.y = temporaryPos.y;
+		//itemSpawnData.z = temporaryPos.z;
+		//itemSpawnData.itemId = componentIdCounter;
+		//std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
+		//itemSpawnData.packetId = PacketType::ITEMSPAWN;
+
+		//onlineItems.push_back(new BaseballBat(componentIdCounter));//ändra
+		//physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
+		//onlineItems[onlineItems.size() - 1]->setPosition(temporaryPos.x, temporaryPos.y, temporaryPos.z);;
+		//onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
+		//onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+		//sendBinaryDataAllPlayers(itemSpawnData, data);
+		//itemSpawnTimer = std::chrono::system_clock::now();
+	
+
 	//Starting timer
 	start = std::chrono::system_clock::now();
 	startComponentTimer = std::chrono::system_clock::now();
@@ -317,10 +370,14 @@ int main()
 			MinigameStart* startMinigame = nullptr;
 			DoneWithGame* requestStart = nullptr;
 			baseballBatSpawn* baseBallBatData = nullptr;
+			UseGrenade* grenadeData = nullptr;
+			UseBat* useBat = nullptr;
 
 			switch (packetId)
 			{
 			default:
+				circBuffer->clearBuffer();
+				std::cout << "BAD PACKET RECEIVED, CLEARING THE CIRCLEBUFFER\n";
 				break;
 
 			case PacketType::POSITIONROTATION:
@@ -332,7 +389,11 @@ int main()
 					if (i == prMatrixData->playerId)
 					{
 						data.users[i].playa.setAnimData(prMatrixData->AnimId, prMatrixData->animSpeed);
-						if (!data.users[i].playa.getDeathState())data.users[i].playa.setMatrix(prMatrixData->matrix);
+						if (!data.users[i].playa.getDeathState())
+						{
+							data.users[i].playa.setMatrix(prMatrixData->matrix);
+							data.users[i].playa.getPhysComp()->setRotation(reactphysics3d::Quaternion(prMatrixData->xRot, prMatrixData->yRot, prMatrixData->zRot, prMatrixData->wRot));
+						}
 						//std::cout <<"player Id: " << std::to_string(prMatrixData->playerId)<<"pos: " << std::to_string(data.users[i].playa.getMatrix()._14) << std::endl;
 						break;
 					}
@@ -445,9 +506,21 @@ int main()
 				}
 				break;
 
-			case PacketType::BASEBALLBATSPAWN://ändras så att servern skickar och client tar emot
+			case PacketType::BASEBALLBATSPAWN://ändras sonlineItemså att servern skickar och client tar emot
 				baseBallBatData = circBuffer->readData<baseballBatSpawn>();
 
+				break;
+
+			case PacketType::USEGRENADE:
+				grenadeData = circBuffer->readData<UseGrenade>();
+				onlineItems[grenadeData->itemId]->use(nullptr);
+				onlineItems[grenadeData->itemId]->getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
+				onlineItems[grenadeData->itemId]->getPhysicsComponent()->setPosition(reactphysics3d::Vector3(
+					onlineItems[grenadeData->itemId]->getPhysicsComponent()->getPosV3().x + grenadeData->xForce * 0.0025f,
+					onlineItems[grenadeData->itemId]->getPhysicsComponent()->getPosV3().y + grenadeData->yForce * 0.0025f,
+					onlineItems[grenadeData->itemId]->getPhysicsComponent()->getPosV3().z + grenadeData->zForce * 0.0025f));
+				onlineItems[grenadeData->itemId]->getPhysicsComponent()->applyForceToCenter(reactphysics3d::Vector3(grenadeData->xForce, grenadeData->yForce, grenadeData->zForce));
+				std::cout << "Player used grenade OwO\n";
 				break;
 
 			case PacketType::LANDINGMINIGAMESENDSCORETOSERVER:
@@ -455,6 +528,38 @@ int main()
 				landingPoints[scoreFromClient->playerId] = scoreFromClient->scoreToServer;
 				break;
 
+			case PacketType::USEBAT:
+				useBat = circBuffer->readData<UseBat>();
+
+				/*for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+				{
+					if(data.users[i].)
+				}*/
+
+				for (int i = 0; i < onlineItems.size(); i++)
+				{
+					if (onlineItems[i]->getOnlineId() == useBat->itemId)
+					{
+						DirectX::SimpleMath::Vector3 pos;
+						for (int j = 0; j < onlineItems.size(); j++)
+						{
+							if (onlineItems[i] == onlineItems[j]) continue;
+							pos = (DirectX::SimpleMath::Vector3)onlineItems[j]->getPosXMFLOAT3() - onlineItems[i]->getPosXMFLOAT3();
+							if (getLength(pos) <= 20.f)
+							{
+								std::cout << "USER ID: " << useBat->playerThatUsedTheItem << "\n";
+								pos.x = -data.users[useBat->playerThatUsedTheItem].playa.getposition('x');
+								pos.y = -data.users[useBat->playerThatUsedTheItem].playa.getposition('y');
+								pos.z = -data.users[useBat->playerThatUsedTheItem].playa.getposition('z');
+								pos += onlineItems[j]->getPosXMFLOAT3();
+								pos.Normalize();
+								onlineItems[j]->getPhysicsComponent()->applyForceToCenter(
+									reactphysics3d::Vector3(pos.x * 30000, pos.y * 30000, pos.z * 30000));
+							}
+						}
+					}
+				}
+				break;
 			case PacketType::DONEWITHGAME:
 				requestStart = circBuffer->readData<DoneWithGame>();
 
@@ -554,7 +659,7 @@ int main()
 		if (currentMinigame == MiniGames::COMPONENTCOLLECTION)
 		{
 			//Spawns a component
-			if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength)
+			if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength && !once)
 			{
 				SpawnComponent cData = SpawnOneComponent(onlineItems, spaceShipPos);
 				physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
@@ -563,6 +668,7 @@ int main()
 				onlineItems[onlineItems.size() - 1]->setOnlineType(ObjID::COMPONENT);
 				sendBinaryDataAllPlayers<SpawnComponent>(cData, data);
 				startComponentTimer = std::chrono::system_clock::now();
+				once = true;
 			}
 		}
 		
@@ -572,19 +678,25 @@ int main()
 		{
 			ItemSpawn itemSpawnData;
 			DirectX::XMFLOAT3 temp = randomizeObjectPos();
+			itemSpawnData.itemType = 3;		//Spawns a random item (Baseball bat, potion or grenade)
 			itemSpawnData.x = temp.x;
 			itemSpawnData.y = temp.y;
 			itemSpawnData.z = temp.z;
 			itemSpawnData.itemId = componentIdCounter;
-			std::cout << "item spawn id: " << std::to_string(itemSpawnData.itemId) << std::endl;
 			itemSpawnData.packetId = PacketType::ITEMSPAWN;
 
-			onlineItems.push_back(new BaseballBat(componentIdCounter));//ändra
+			
+			if (itemSpawnData.itemType == ObjID::BAT) onlineItems.push_back(new BaseballBat(componentIdCounter));//ändra
+			else if (itemSpawnData.itemType == ObjID::POTION) onlineItems.push_back(new Grenade(componentIdCounter));//ändra
+			else if (itemSpawnData.itemType == ObjID::GRENADE) onlineItems.push_back(new Grenade(componentIdCounter));//ändra
 			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
-			onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);;
+			onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);
 			onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
 			onlineItems[onlineItems.size() - 1]->setOnlineType(ObjID::BAT);
 			onlineItems[onlineItems.size() - 1]->setOnlineId(componentIdCounter++);
+			onlineItems[onlineItems.size() - 1]->setOnlineType(itemSpawnData.itemType);
+			std::cout << "ID Item: " << onlineItems.back()->getOnlineId() << "\n";
+
 			sendBinaryDataAllPlayers(itemSpawnData, data);
 			itemSpawnTimer = std::chrono::system_clock::now();
 		}
@@ -659,13 +771,14 @@ int main()
 			//Check if any onlineItems are near after the physics update
 			for (int i = 0; i < onlineItems.size(); i++)
 			{
+				static DirectX::SimpleMath::Vector3 vecToComp;
+				static DirectX::SimpleMath::Vector3 objPos;
 				if (onlineItems[i]->getOnlineType() == ObjID::COMPONENT)
 				{
 					for (int j = 0; j < spaceShipPos.size(); j++)
 					{
 						//if (!onlineItems[i].getActiveState()) continue;
-						static DirectX::XMFLOAT3 vecToComp;
-						static DirectX::XMFLOAT3 objPos;
+						
 						vecToComp = spaceShipPos[j];
 						objPos = onlineItems[i]->getPhysicsComponent()->getPosV3();
 						subtractionXMFLOAT3(vecToComp, objPos);
@@ -682,6 +795,8 @@ int main()
 							ComponentAdded compAdded;
 							compAdded.packetId = PacketType::COMPONENTADDED;
 							compAdded.spaceShipTeam = j;
+							compAdded.componentID = i;
+							onlineItems[i]->setInUseBy(-1);
 							sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
 
 							//Checking if someone has won
@@ -694,6 +809,56 @@ int main()
 								startFly = std::chrono::system_clock::now();
 							}
 						}
+					}
+				}
+				else if (onlineItems[i]->getOnlineType() == ObjID::GRENADE)
+				{
+					Grenade* grenade = dynamic_cast<Grenade*>(onlineItems[i]);
+					if (grenade && grenade->explode())
+					{
+
+						for (int j = 0; j < onlineItems.size(); j++)
+						{
+							if (onlineItems[j] == onlineItems[i]) continue;
+							vecToComp = onlineItems[j]->getPhysicsComponent()->getPosV3();
+							objPos = onlineItems[i]->getPosXMFLOAT3();
+							subtractionXMFLOAT3(vecToComp, objPos);
+
+							if (getLength(vecToComp) <= 25.f)
+							{
+								float factor = 1.f / getLength(vecToComp);
+								vecToComp *= factor;
+								onlineItems[j]->getPhysicsComponent()->applyForceToCenter(reactphysics3d::Vector3(
+									10000 * vecToComp.x, 10000 * vecToComp.y, 10000 * vecToComp.z));
+							}
+						}
+						for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
+						{
+							vecToComp.x = data.users[j].playa.getposition('x');
+							vecToComp.y = data.users[j].playa.getposition('y');
+							vecToComp.z = data.users[j].playa.getposition('z');
+
+
+							objPos = onlineItems[i]->getPosXMFLOAT3();
+							subtractionXMFLOAT3(vecToComp, objPos);
+							if (getLength(vecToComp) <= 25.f)
+							{
+								float factor = 1.f / getLength(vecToComp);
+								vecToComp *= factor;
+								//data.users[j].playa.getPhysComp()->applyForceToCenter();
+								data.users[j].playa.playerGotHit(reactphysics3d::Vector3(
+									10000 * vecToComp.x, 10000 * vecToComp.y, 10000 * vecToComp.z));
+								HitByGrenade hitByGrenade;
+								hitByGrenade.packetId = HITBYGRENADE;
+								hitByGrenade.playerThatUsedTheItem = 0;
+								hitByGrenade.itemId = i;
+								hitByGrenade.xForce = 1000 * vecToComp.x;
+								hitByGrenade.yForce = 1000 * vecToComp.y;
+								hitByGrenade.zForce = 1000 * vecToComp.z;
+								sendBinaryDataOnePlayer<HitByGrenade>(hitByGrenade, data.users[j]);
+							}
+						}
+						grenade->resetExplosion();
 					}
 				}
 			}
@@ -742,6 +907,10 @@ int main()
 			prMatrix.matrix = data.users[i].playa.getMatrix();
 			prMatrix.packetId = PacketType::POSITIONROTATION;
 			prMatrix.playerId = i;
+			prMatrix.xRot = data.users[i].playa.getPhysComp()->getRotation().x;
+			prMatrix.yRot = data.users[i].playa.getPhysComp()->getRotation().y;
+			prMatrix.zRot = data.users[i].playa.getPhysComp()->getRotation().z;
+			prMatrix.wRot = data.users[i].playa.getPhysComp()->getRotation().w;
 			data.users[i].playa.getAnimData(prMatrix.AnimId, prMatrix.animSpeed);
 
 			sendBinaryDataAllPlayers(prMatrix, data);
@@ -774,6 +943,10 @@ int main()
 			compPosition.x = onlineItems[i]->getposition('x');
 			compPosition.y = onlineItems[i]->getposition('y');
 			compPosition.z = onlineItems[i]->getposition('z');
+			compPosition.xRot = onlineItems[i]->getPhysicsComponent()->getRotation().x;
+			compPosition.yRot = onlineItems[i]->getPhysicsComponent()->getRotation().y;
+			compPosition.zRot = onlineItems[i]->getPhysicsComponent()->getRotation().z;
+			compPosition.wRot = onlineItems[i]->getPhysicsComponent()->getRotation().w;
 			//compPosition.quat = onlineItems[i].getPhysicsComponent()->getRotation();
 			sendBinaryDataAllPlayers<ComponentPosition>(compPosition, data);
 

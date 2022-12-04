@@ -65,7 +65,7 @@ public:
 	}
 	Mesh(ID3D11Buffer* vertexBuff, ID3D11Buffer* indexBuff, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertices)
 	{
-		CalcBound();
+		//CalcBound();
 		this->amountOfVertices = amountOfVertices;
 		this->submeshRanges = submeshRanges;
 		this->vertexBuff = vertexBuff;
@@ -91,6 +91,7 @@ public:
 
 	void Load(OBJ& obj)
 	{
+
 #pragma region LoadObj
 
 		std::vector<Vertex> vertices;
@@ -101,19 +102,19 @@ public:
 			unsigned int vertexCount = 0;
 
 			if (!group.materialName.empty())
-				matKey.push_back(group.materialName);
+				matKey.emplace_back(group.materialName);
 			else
-				matKey.push_back("Default");
+				matKey.emplace_back("Default");
 
 			for (auto& face : group.faces)
 			{
 				for (auto& index : face.indices)
 				{
 					vertexCount++;
-					vertices.push_back(Vertex{ obj.vertex[index.x], obj.uv[index.y], obj.normal[index.z] });
+					vertices.emplace_back(obj.vertex[index.x], obj.uv[index.y], obj.normal[index.z]);
 				}
 			}
-			submeshVerCounts.push_back(vertexCount);//add submesh vertex count to list
+			submeshVerCounts.emplace_back(vertexCount);//add submesh vertex count to list
 		}
 
 #pragma endregion
@@ -128,51 +129,43 @@ public:
 		const bool is16bit = vertices.size() < 65535;
 
 		//foreach vertex in submesh
-		for (auto& vertex : vertices)
+		for (unsigned int i = 0; i < vertices.size(); i++)
 		{
 			bool exist = false;
-			//foreach reamin vertex left in submesh
-			for (auto& finalVertex : finalVertices)
+
+			//get index from final vertices by loop through it
+			for (unsigned int k = 0; k < finalVertices.size(); k++)
 			{
-				//compare vertex by use custom equal/not equal operator
-				if (vertex == finalVertex)
+				//found vertex at index by use custom equal/not equal operator
+				if (vertices[i] == finalVertices[k])
 				{
-					exist = true; // delete at index
+					is16bit ? indices16.emplace_back((unsigned short)k) : indices32.emplace_back(k); //add index to indices
+					exist = true;
 					break;
 				}
 			}
 
 			if (!exist)
 			{
-				finalVertices.push_back(vertex);
-			}
-
-			//get index from final vertices by loop through it
-			for (unsigned int i = 0; i < finalVertices.size(); i++)
-			{
-				//found vertex at index by use custom equal/not equal operator
-				if (vertex == finalVertices[i])
-				{
-					is16bit? indices16.push_back(i) : indices32.push_back(i); //add index to indices
-					break;
-				}
+				is16bit ? indices16.emplace_back((unsigned short)finalVertices.size()) : indices32.emplace_back((unsigned int)finalVertices.size());
+				finalVertices.emplace_back(vertices[i]);
 			}
 
 			// get bound min
-			if (vertex.position.x < bound.min.x)
-				bound.min.x = vertex.position.x;
-			if (vertex.position.y < bound.min.y)
-				bound.min.y = vertex.position.y;
-			if (vertex.position.z < bound.min.z)
-				bound.min.z = vertex.position.z;
+			if (vertices[i].position.x < bound.min.x)
+				bound.min.x = vertices[i].position.x;
+			if (vertices[i].position.y < bound.min.y)
+				bound.min.y = vertices[i].position.y;
+			if (vertices[i].position.z < bound.min.z)
+				bound.min.z = vertices[i].position.z;
 
-			// get bound min
-			if (vertex.position.x > bound.max.x)
-				bound.max.x = vertex.position.x;
-			if (vertex.position.y > bound.max.y)
-				bound.max.y = vertex.position.y;
-			if (vertex.position.z > bound.max.z)
-				bound.max.z = vertex.position.z;
+			// get bound max
+			if (vertices[i].position.x > bound.max.x)
+				bound.max.x = vertices[i].position.x;
+			if (vertices[i].position.y > bound.max.y)
+				bound.max.y = vertices[i].position.y;
+			if (vertices[i].position.z > bound.max.z)
+				bound.max.z = vertices[i].position.z;
 
 		}
 
@@ -384,14 +377,6 @@ public:
 		using namespace DirectX;
 
 		static MatrixS worldS;
-
-		//worldS.matrix = 
-		//	DirectX::XMFLOAT4X4{
-		//		1, 0, 0, position.x,
-		//		0, 1, 0, position.y,
-		//		0, 0, 1, position.z,
-		//		0, 0, 0, 1
-		//	};
 
 		XMStoreFloat4x4(&worldS.matrix, XMMatrixTranspose({ (XMMatrixScaling(scale.x, scale.y, scale.z) * rotation * XMMatrixTranslation(position.x, position.y, position.z))}));
 		worldCB.Update(&worldS, sizeof(MatrixS));

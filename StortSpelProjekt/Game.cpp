@@ -116,8 +116,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
-
-	//gameObjects.emplace_back(currentPlayer);///????
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->setGravityField(planetGravityField);
@@ -140,12 +138,11 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 	serverStart = std::chrono::system_clock::now();
 	this->window = &window;
-
 	HudUI::SetGamePad(gamePad);
 
 	//Setup fade in and delta time
-	//ui.count = 1.0f;
-	//ui.setOpacity(false);
+	ui.count = 1.0f;
+	ui.setOpacity(false);
 	Time::Start();
 	Time::Reset();
 }
@@ -477,6 +474,7 @@ void Game::drawFresnel()
 	basicRenderer.invFresnelPrePass();
 	for (int i = 0; i < planetVector.size(); i++)
 	{
+		if (i == camera.getCollidedWith()) continue;
 		planetVector[i]->drawAtmosphere();
 	}
 }
@@ -581,7 +579,7 @@ GAMESTATE Game::updateComponentGame()
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->checkSwimStatus(planetVector);
 	currentPlayer->velocityMove(dt);
-	currentPlayer->setSpeed(20.f);
+	currentPlayer->setSpeed(30.f);
 
 	//Check component pickup
 	//if (!IFONLINE)
@@ -1164,7 +1162,7 @@ GAMESTATE Game::Update()
 	}
 
 	//animations
-	this->currentPlayer->updateAnim(dt, 0, 1);
+	//this->currentPlayer->updateAnim(dt, 0, 1);
 
 	if (Input::KeyPress(KeyCode::L))
 	{

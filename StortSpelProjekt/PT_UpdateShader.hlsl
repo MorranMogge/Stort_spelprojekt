@@ -1,4 +1,3 @@
-
 RWBuffer<float> rawBuffer : register(u0);
 
 cbuffer timeValue : register(b0)

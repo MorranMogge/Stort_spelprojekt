@@ -544,18 +544,6 @@ void Game::randomizeObjectPos(GameObject* object)
 
 GAMESTATE Game::updateComponentGame()
 {
-//GAMESTATE Game::Update()
-//{
-//	//read the packets received from the server
-//	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector);
-
-	//Get newest delta time
-	//if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
-	//asteroids->updateAsteroids(dt, planetVector, gameObjects);
-
-	//Set moon
-	//if (planetVector.size() > 2) planetVector[2]->rotateMoon(DirectX::XMFLOAT3(0, 0, 0), 0.5f);
-
 	currentPlayer->stateMachine(dt);
 
 	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);

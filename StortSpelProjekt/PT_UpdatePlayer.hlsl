@@ -80,7 +80,30 @@ void main(uint3 DTid : SV_DispatchThreadID)
     else
     {
         float3 baseOffSet2 = float3(BaseOffSetX, BaseOffSetY, BaseOffSetZ);
+        
+        
+        float constant = 1.0f;
+        
+        float xUrange = offsetFromOrigin.x + constant;
+        float xLrange = offsetFromOrigin.x - constant;
+        
+        float yUrange = offsetFromOrigin.y + constant;
+        float yLrange = offsetFromOrigin.y - constant;
+        
+        float zUrange = offsetFromOrigin.z + constant;
+        float zLrange = offsetFromOrigin.z - constant;
+        
+        
+        /*
         if (baseOffSet2.x == offsetFromOrigin.x && baseOffSet2.y == offsetFromOrigin.y && baseOffSet2.z == offsetFromOrigin.z)
+        {
+                IsActive = 0.0f;
+        }
+        */
+        
+        
+        //if within range 
+        if (baseOffSet2.x >= xLrange && baseOffSet2.x <= xUrange && baseOffSet2.y >= yLrange && baseOffSet2.y <= yUrange && baseOffSet2.z >= zLrange && baseOffSet2.z <= zUrange)
         {
                 IsActive = 0.0f;
         }

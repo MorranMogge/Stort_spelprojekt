@@ -184,6 +184,8 @@
     <ClCompile Include="ModelDataContainer.cpp" />
     <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="AnimatedMesh.cpp" />
+    <ClCompile Include="CaptureZone.cpp" />
+    <ClCompile Include="MiniGameUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -484,6 +486,11 @@
     <ClInclude Include="ControlMenu.h" />
     <ClInclude Include="ControlUI.h" />
     <ClInclude Include="LandingHud.h" />
+    <ClInclude Include="AnimatedMesh.h" />
+    <ClInclude Include="MiniGameUI.h" />
+    <ClInclude Include="ModelDataContainer.h" />
+    <ClInclude Include="ModelManager.h" />
+    <ClInclude Include="Time.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -596,6 +603,24 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="vShaderSkinning.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="basic_VertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="DomainShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="HullShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShader_NoShadow.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PT_UpdatePlayer.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PostProcess.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

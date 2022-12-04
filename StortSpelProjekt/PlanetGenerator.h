@@ -39,6 +39,7 @@ private:
 	ID3D11Buffer* worldMatrixBuffer;
 	ID3D11Buffer* triangleBuffer;
 	ID3D11Buffer* lineBuffer;
+	ID3D11Buffer* indexBuffer;
 	ID3D11PixelShader* pShader;
 	ID3D11VertexShader* vShader;
 	DirectX::XMFLOAT4X4 worldMatrix;
@@ -49,6 +50,7 @@ private:
 	std::vector<Vertex*> vertices;
 	std::vector<Vertex> lines;
 	std::vector<Vertex*> newVertices;
+	std::vector<DWORD> indices;
 	PlanetType typeOfSphere;
 	int lastSubdivisions;
 	int horizontal;
@@ -69,6 +71,7 @@ private:
 
 	bool setVertexBuffers();
 	bool setWorldMatrix();
+	bool setIndexBuffer();
 	void recreateVertexBuffers();
 	void createInitialSphere();
 	void createQuadSphere();

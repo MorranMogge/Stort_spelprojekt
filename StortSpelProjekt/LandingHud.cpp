@@ -84,6 +84,7 @@ bool LandingHud::handleInputs(const float& dt)
 
 	if (state.IsConnected())
 	{
+		show_gamepad = true;
 		if (abs(state.thumbSticks.leftY) > 0)
 		{
 			DirectX::SimpleMath::Vector2 test(rocketPos.x, rocketPos.y - dt * speed * state.thumbSticks.leftY);
@@ -100,6 +101,7 @@ bool LandingHud::handleInputs(const float& dt)
 	}
 	else
 	{
+		show_gamepad = false;
 		//Move player sprite
 		if (Input::KeyDown(KeyCode::W) || Input::KeyDown(KeyCode::ARROW_Up))
 		{
@@ -147,9 +149,13 @@ void LandingHud::draw()
 	landing1.Draw();
 	landing2.Draw();
 
-	wheel_L.Draw();
-	arrow.Draw();
-	arrow2.Draw();
+	if (show_gamepad)
+	{
+		wheel_L.Draw();
+		arrow.Draw();
+		arrow2.Draw();
+	}
+
 
 	GUI::End();
 }

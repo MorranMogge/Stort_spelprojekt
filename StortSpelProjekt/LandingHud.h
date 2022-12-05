@@ -28,6 +28,8 @@ private:
 	float currentTime;
 	float factor;
 
+	bool show_gamepad = false;
+
 	DirectX::SimpleMath::Vector2 changePos;
 	DirectX::SimpleMath::Vector2 changeScale;
 

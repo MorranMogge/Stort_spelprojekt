@@ -177,7 +177,6 @@
     </ClCompile>
     <ClCompile Include="ControlMenu.cpp" />
     <ClCompile Include="ControlUI.cpp" />
-    <ClCompile Include="LandingHud.cpp" />
     <ClCompile Include="PacketEventManager.cpp">
       <Filter>Online</Filter>
     </ClCompile>
@@ -186,6 +185,9 @@
     <ClCompile Include="AnimatedMesh.cpp" />
     <ClCompile Include="CaptureZone.cpp" />
     <ClCompile Include="MiniGameUI.cpp" />
+    <ClCompile Include="LandingHud.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -485,12 +487,14 @@
     <ClInclude Include="SoundLibrary.h" />
     <ClInclude Include="ControlMenu.h" />
     <ClInclude Include="ControlUI.h" />
-    <ClInclude Include="LandingHud.h" />
     <ClInclude Include="AnimatedMesh.h" />
     <ClInclude Include="MiniGameUI.h" />
     <ClInclude Include="ModelDataContainer.h" />
     <ClInclude Include="ModelManager.h" />
     <ClInclude Include="Time.h" />
+    <ClInclude Include="LandingHud.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

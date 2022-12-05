@@ -1008,6 +1008,9 @@ GAMESTATE Game::startIntermission()
 	//this->spaceShips[1]->setPos(DirectX::XMFLOAT3(150, -7, 290));
 	this->Stage = 0;
 
+	miniGameUI.pointBlue = teamScoreLandingMiniGame;
+	miniGameUI.pointRed = enemyTeamScoreLandingMiniGame;
+
 	currentMinigame = INTERMISSION;
 	return NOCHANGE;
 }
@@ -1134,6 +1137,12 @@ GAMESTATE Game::Update()
 		//this->spaceShips[0]->setPos(DirectX::XMFLOAT3(150, 7, 95));
 		//this->spaceShips[1]->setPos(DirectX::XMFLOAT3(150, -7, 290));
 		this->Stage = 0;
+	}
+
+	if (Input::KeyPress(KeyCode::MOUSE_R))
+	{
+		currentMinigame = STARTOFINTERMISSION;
+		displayMinigameUI = true;
 	}
 
 	//Simulate the current minigame on client side

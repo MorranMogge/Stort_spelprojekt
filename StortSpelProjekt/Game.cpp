@@ -111,8 +111,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		DoneLoading sendingConfirm;
 		sendingConfirm.packetId = PacketType::DONELOADING;
 		client->sendStuff<DoneLoading>(sendingConfirm);
-		landingUi.makeGamePad(gamePad);
+
 	}
+	landingUi.makeGamePad(gamePad);
 
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
@@ -1143,6 +1144,11 @@ GAMESTATE Game::Update()
 	{
 		currentMinigame = STARTOFINTERMISSION;
 		displayMinigameUI = true;
+	}
+
+	if (Input::KeyPress(KeyCode::MOUSE_M))
+	{
+		currentMinigame = STARTLANDING;
 	}
 
 	//Simulate the current minigame on client side

@@ -567,6 +567,8 @@ int main()
 							}
 						}
 						onlineItems[useBat->itemId]->setInUseBy(-1);
+						DirectX::XMFLOAT3 newPos = randomizeObjectPos();
+						onlineItems[useBat->itemId]->setPosition(newPos.x, newPos.y, newPos.z);
 					}
 				}
 				//for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
@@ -587,7 +589,8 @@ int main()
 				//		sendBinaryDataOnePlayer<HitByGrenade>(hitByGrenade, data.users[j]);
 				//	}
 				//}
-		
+				
+
 				break;
 			case PacketType::DONEWITHGAME:
 				requestStart = circBuffer->readData<DoneWithGame>();

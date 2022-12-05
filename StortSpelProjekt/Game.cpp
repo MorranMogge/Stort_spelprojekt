@@ -8,7 +8,7 @@
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), manager(ModelManager(device)), currentMinigame(MiniGames::COMPONENTCOLLECTION)
 {
-	srand(time(0));
+	srand((UINT)time(0));
 
 	this->HEIGHT = HEIGHT;
 	this->WIDTH = WIDTH;
@@ -37,11 +37,29 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	manager.AdditionalAnimation("../Meshes/character1_throw.fbx", "../Meshes/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/character1_attack.fbx", "../Meshes/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/character1_fly.fbx", "../Meshes/character1_idle.fbx");
-	this->manager.getAnimData("../Meshes/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, animData);
-	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/pintoBlue.png");
-	ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/pintoRed.png");
-	this->tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 
+	manager.loadMeshAndBoneData("../Meshes/character2_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/character2_run.fbx", "../Meshes/character2_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/character2_run_fast.fbx", "../Meshes/character2_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/character2_throw.fbx", "../Meshes/character2_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/character2_attack.fbx", "../Meshes/character2_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/character2_fly.fbx", "../Meshes/character2_idle.fbx");
+
+	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
+	ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
+	AnimationData team1Anim;
+	this->manager.getAnimData("../Meshes/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team1Anim);
+	Mesh* team1Mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	AnimationData team2Anim;
+	this->manager.getAnimData("../Meshes/character2_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team2Anim);
+	Mesh* team2Mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	
+	
+	if (!IFONLINE)
+	{
+		tmpMesh = team1Mesh;
+		animData = team1Anim;
+	}
 
 	//Load game objects
 	this->loadObjects();
@@ -66,25 +84,29 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
 		{
 			Player* tmpPlayer = nullptr;
+			if (dude < i + 1)
+			{
+				tmpMesh = team1Mesh;
+				animData = team1Anim;
+			}
+			else
+			{
+				tmpMesh = team2Mesh;
+				animData = team2Anim;
+			}
+			tmpPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+				0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+			tmpPlayer->setOnlineID(i);
 
 			if (playerId != i)
 			{
-				tmpPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
-					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
-				//tmpPlayer->addData(animData);
-				tmpPlayer->setOnlineID(i);
 				physWorld.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
 				players.push_back(tmpPlayer);
 			}
 			else
 			{
-				std::cout << "Player online id: " << std::to_string(i) << " \n";
-				currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
-					1, playerId, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
-				//currentPlayer->addData(animData);
-				currentPlayer->setOnlineID(i);
+				this->currentPlayer = tmpPlayer;
 				players.push_back(currentPlayer);
-				//delete tmpPlayer;
 			}
 			std::cout << "Dude: " << (int)(dude < i + 1) << "\n";
 		}
@@ -116,6 +138,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
+	currentPlayer->setScale(0.7f);
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->setGravityField(planetGravityField);
@@ -266,7 +289,6 @@ void Game::loadObjects()
 	{
 		physWorld.addPhysComponent(gameObjects[i], reactphysics3d::CollisionShapeName::BOX);
 	}
-
 	//SPACE SHIPS
 	if (!IFONLINE)
 	{
@@ -292,8 +314,8 @@ void Game::loadObjects()
 	//Initilize player
 	if (!currentPlayer && !IFONLINE)
 	{
-		ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/pintoBlue.png");
-		ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/pintoRed.png");
+		ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K2SG_Diffuse.png");
+		ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
 		currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 			1, client->getPlayerId(), client, 0, redTeamColour, blueTeamColour, planetGravityField);
 		//currentPlayer->addData(animData);
@@ -305,8 +327,8 @@ void Game::loadObjects()
 	//Set items baseball bat
 	if (!IFONLINE)
 	{
-		this->baseballBat->setPlayer(currentPlayer);
-		this->baseballBat->setGameObjects(gameObjects);
+		baseballBat->setPlayer(currentPlayer);
+		baseballBat->setGameObjects(gameObjects);
 
 		//Set items grenade
 		grenade->setGameObjects(gameObjects);
@@ -562,6 +584,7 @@ GAMESTATE Game::updateComponentGame()
 		for (int i = 0; i < onlineItems.size(); i++) onlineItems[i]->setGravityField(planetVector[0]->getClosestField(planetVector, onlineItems[i]->getPosV3()));
 	}
 
+
 	currentPlayer->velocityMove(dt);
 	//Raycasting
 	static DirectX::XMFLOAT3 hitPos;
@@ -759,11 +782,11 @@ GAMESTATE Game::updateComponentGame()
 		ui.moveSprite();
 		this->currentPlayer->setVibration(0.f, 0.f);
 	}
-	if (endTimer > 4.7f)
+	if (endTimer > 6.7f)
 	{
-		//ui.fadeOut();
+		ui.fadeOut();
 	}
-	if (endTimer > 6)
+	if (endTimer > 8)
 	{
 		for (int i = 0; i < spaceShips.size(); i++)
 		{
@@ -774,16 +797,16 @@ GAMESTATE Game::updateComponentGame()
 				startOfIntermission.packetId = PacketType::STARTINTERMISSION;
 				client->sendStuff<IntermissionStart>(startOfIntermission);*/
 
-				/*int team = spaceShips[i]->getTeam();
-				if (currentPlayer->getTeam() == team)
+				if (!IFONLINE)
 				{
-					return GAMESTATE::WIN;
+					//Complete both ships
+					for (int j = 0; j < spaceShips.size(); j++)
+					{
+						spaceShips[j]->completeShip();
+					}
+					//Change mode
+					this->startIntermission();
 				}
-				else
-				{
-					return GAMESTATE::LOSE;
-				}
-				*/
 			}
 		}
 	}
@@ -879,6 +902,10 @@ GAMESTATE Game::updateLandingGame()
 		requestStart.formerGame = MiniGames::LANDINGSPACESHIP;
 		client->sendStuff<DoneWithGame>(requestStart);
 		currentMinigame = MiniGames::DEFAULT;
+		if (!IFONLINE)
+		{
+			currentGameState = this->updateKingOfTheHillGame();
+		}
 	}
 	return NOCHANGE;
 }
@@ -1007,6 +1034,8 @@ GAMESTATE Game::startIntermission()
 	//this->spaceShips[0]->setPos(DirectX::XMFLOAT3(150, 7, 95));
 	//this->spaceShips[1]->setPos(DirectX::XMFLOAT3(150, -7, 290));
 	this->Stage = 0;
+	ui.count = 1.0f;
+	ui.setOpacity(false);
 
 	currentMinigame = INTERMISSION;
 	return NOCHANGE;
@@ -1019,6 +1048,7 @@ GAMESTATE Game::updateIntermission()
 	DirectX::XMFLOAT3 camPos;
 	DirectX::XMStoreFloat3(&camPos, camera.getRealPosition());
 	camPos.z -= camSpeed;
+	ui.fadeIn();
 	//DirectX::XMFLOAT3 midPos = camPos;
 	//midPos.z += -20;
 	this->camera.setPosition(camPos);
@@ -1062,6 +1092,10 @@ GAMESTATE Game::updateIntermission()
 			requestStart.formerGame = MiniGames::INTERMISSION;
 			client->sendStuff<DoneWithGame>(requestStart);
 			currentMinigame = MiniGames::DEFAULT;
+			if (!IFONLINE)
+			{
+				this->startLanding();
+			}
 			return GAMESTATE::NOCHANGE;
 		}
 	}

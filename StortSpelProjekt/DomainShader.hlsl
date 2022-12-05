@@ -52,7 +52,7 @@ PSInput main(
         phongTessPos += (uvw[i] * LerpPositionBasedOfNormalProject(position.xyz, tri[i].position, tri[i].normal));
     }
     output.position = float4(phongTessPos, 1);
-    output.localPosition = output.position;
+    output.localPosition = output.position.xyz;
     output.worldPosition = mul(output.position, worldMatrix);
     output.position = mul(output.worldPosition, camViewProj);
 

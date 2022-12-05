@@ -902,7 +902,7 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 	//Controller pickup
 	if (state.IsConnected())
 	{
-		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1))
+		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1f))
 		{
 			this->eKeyDown = true;
 		}
@@ -946,7 +946,7 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 		}
 	}
 	//Keyboard pickup
-	else if (GetAsyncKeyState('E') && this->eKeyDown == false && this->keyPressTimer.getTimePassed(0.1))
+	else if (GetAsyncKeyState('E') && this->eKeyDown == false && this->keyPressTimer.getTimePassed(0.1f))
 	{
 		this->eKeyDown = true;
 	}
@@ -1414,13 +1414,13 @@ void Player::setTeam(const int& team)
 	this->team = team;
 
 	//Team switch
-	switch (team)
-	{
-	case 0:
-		mesh->matKey[0] = "pintoRed.png"; break;
-	case 1:
-		mesh->matKey[0] = "pintoBlue.png"; break;
-	}
+	//switch (team)
+	//{
+	//case 0:
+	//	mesh->matKey[0] = "pintoRed.png"; break;
+	//case 1:
+	//	mesh->matKey[0] = "pintoBlue.png"; break;
+	//}
 }
 
 void Player::setVibration(float vibration1, float vibration2)
@@ -1438,7 +1438,7 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 	if (holdingItem) return;
 	if (state.IsConnected())
 	{
-		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1))
+		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1f))
 		{
 			this->eKeyDown = true;
 		}
@@ -1471,7 +1471,7 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 	}
 	else
 	{
-		if (GetAsyncKeyState('E') && this->eKeyDown == false && this->keyPressTimer.getTimePassed(0.1))
+		if (GetAsyncKeyState('E') && this->eKeyDown == false && this->keyPressTimer.getTimePassed(0.1f))
 		{
 			this->eKeyDown = true;
 		}
@@ -1581,17 +1581,17 @@ void Player::drawFresnel(float interval)
 		{
 			pos1 = this->position;
 			time = 0;
-			scl2 = 1;
+			scl2 = scl.x;
 		}
 		else if (time > (interval/2))
 		{
 			pos3 = this->position;
-			scl3 = 1;
+			scl3 = scl.x;
 		}
 		else if (time > (interval / 4))
 		{
 			pos4 = this->position;
-			scl4 = 1;
+			scl4 = scl.x;
 		}
 
 		//Change color

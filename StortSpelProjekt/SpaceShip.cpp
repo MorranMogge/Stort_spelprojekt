@@ -177,17 +177,23 @@ void SpaceShip::drawParticles()
 	//Update particle movement
 	if (this->particles != nullptr)
 	{
-		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
 		this->particles->setPosition(this->position);
 		this->particles->setRotation(this->getUpDirection());
 		this->particles->updateBuffer();
 	}
 
-
+	if (this->getCompletion())
+	{
+		this->particles2->setPosition(this->position);
+		this->particles2->setRotation( DirectX::XMFLOAT3(this->particles->getRotation().x * -1, this->particles->getRotation().y * -1, this->particles->getRotation().z * -1));
+		this->particles2->BindAndDraw(2);
+		this->particles2->updateBuffer();
+	}
 	if (this->particles != nullptr)
 	{
 		this->particles->BindAndDraw(0);
 	}
+
 
 	if (animate)
 	{
@@ -218,6 +224,15 @@ bool SpaceShip::isFinished()
 		complete = true;
 	}
 	return complete;
+}
+
+void SpaceShip::completeShip()
+{
+	int diff = this->compToComplete - this->currentComponents;
+	for (int i = 0; i < diff; i++)
+	{
+		this->addComponent();
+	}
 }
 
 void SpaceShip::setSpaceShipRotationRelativePlanet(GravityField* field)

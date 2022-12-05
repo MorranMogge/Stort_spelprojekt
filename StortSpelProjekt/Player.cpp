@@ -96,23 +96,22 @@ void Player::handleItems()
 			}
 			////sending data to server
 
-			std::cout << "TEST 1 nuzzle\n";
 			//allocates data to be sent
-			ComponentDropped c;
 
-			std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
-			c.componentId = this->holdingItem->getOnlineId();
-			c.packetId = PacketType::COMPONENTDROPPED;
-			c.playerId = this->onlineID;
-
-			//sending data to server
-			if (this->client != nullptr)
-			{
-				client->sendStuff<ComponentDropped>(c);
-			}
 			if (holdingItem->getId() != BAT)
 			{
 				itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+				ComponentDropped c;
+
+				std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
+				c.componentId = this->holdingItem->getOnlineId();
+				c.packetId = PacketType::COMPONENTDROPPED;
+				c.playerId = this->onlineID;
+				//sending data to server
+				if (this->client != nullptr)
+				{
+					client->sendStuff<ComponentDropped>(c);
+				}
 			}
 			if (holdingItem->getId() == GRENADE)
 			{
@@ -168,20 +167,21 @@ void Player::handleItems()
 			////sending data to server
 
 			//allocates data to be sent
-			ComponentDropped c;
-
-			std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
-			c.componentId = this->holdingItem->getOnlineId();
-			c.packetId = PacketType::COMPONENTDROPPED;
-			c.playerId = this->onlineID;
-			//sending data to server
-			if (this->client != nullptr)
-			{
-				client->sendStuff<ComponentDropped>(c);
-			}
+			
 			if (holdingItem->getId() != BAT)
 			{
 				itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+				ComponentDropped c;
+
+				std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
+				c.componentId = this->holdingItem->getOnlineId();
+				c.packetId = PacketType::COMPONENTDROPPED;
+				c.playerId = this->onlineID;
+				//sending data to server
+				if (this->client != nullptr)
+				{
+					client->sendStuff<ComponentDropped>(c);
+				}
 			}
 			if (holdingItem->getId() == GRENADE)
 			{
@@ -221,10 +221,11 @@ void Player::handleItems()
 		this->throwingItem = false;
 		this->throwItem();
 	}
-	if (this->usingBat && this->dropTimer.getTimePassed(0.25)&& !this->usedItem)
+	if (this->usingBat && this->dropTimer.getTimePassed(0.25) && !this->usedItem)
 	{
 		holdingItem->useItem(this);
 		this->usedItem = true;
+		std::cout << "using bat\n";
 	}
 	else if (this->usingBat && this->dropTimer.getTimePassed(0.5))
 	{
@@ -232,6 +233,18 @@ void Player::handleItems()
 		usingBat = false;
 		holdingItem->setPickedUp(false);
 		holdingItem = nullptr;
+		std::cout << "dropping bat\n";
+		ComponentDropped c;
+
+		std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
+		c.componentId = this->holdingItem->getOnlineId();
+		c.packetId = PacketType::COMPONENTDROPPED;
+		c.playerId = this->onlineID;
+		//sending data to server
+		if (this->client != nullptr)
+		{
+			client->sendStuff<ComponentDropped>(c);
+		}
 	}
 }
 

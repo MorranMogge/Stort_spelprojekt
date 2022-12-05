@@ -45,6 +45,7 @@ private:
 	ID3D11Buffer* vBuff;
 	ID3D11Buffer* iBuff;
 	Mesh* tmpMesh;
+	Mesh* tmpMesh2;
 
 	GameObject* testCube;
 	std::vector<int> subMeshRanges;

@@ -154,9 +154,12 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 			vertex.nor.y = mesh->mNormals[i].y;
 			vertex.nor.z = mesh->mNormals[i].z;
 
-			vertex.tangent.y = mesh->mBitangents[i].y;
-			vertex.tangent.z = mesh->mBitangents[i].z;
-			vertex.tangent.z = mesh->mBitangents[i].z;
+			//vertex.tangent.y = mesh->mBitangents[i].y;
+			//vertex.tangent.y = mesh->mBitangents[i].y;
+			//vertex.tangent.z = mesh->mBitangents[i].z;
+			vertex.tangent.z = mesh->mTangents[i].z;
+			vertex.tangent.z = mesh->mTangents[i].z;
+			vertex.tangent.z = mesh->mTangents[i].z;
 
 			if (mesh->mTextureCoords[0])
 			{

@@ -317,7 +317,6 @@ public:
 		static MatrixS worldS;
 		DirectX::XMMATRIX xm = DirectX::XMLoadFloat4x4(&matrix);
 		DirectX::XMStoreFloat4x4(&worldS.matrix, xm);
-
 		worldCB.Update(&worldS, sizeof(MatrixS));
 	}
 	void UpdateCB(const DirectX::SimpleMath::Vector3& position, const DirectX::XMMATRIX& rotation, const DirectX::SimpleMath::Vector3& scale)

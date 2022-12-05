@@ -50,8 +50,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	this->manager.loadMeshData("../Meshes/goblin2.fbx");
 	this->manager.getMeshData("../Meshes/goblin2.fbx", vBuff, iBuff, subMeshRanges, verticies);
-	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-	testCube = new GameObject(tmpMesh, DirectX::XMFLOAT3(0, 69, 0), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), 5, nullptr, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
+	tmpMesh2 = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	testCube = new GameObject(tmpMesh2, DirectX::XMFLOAT3(0, 69, 0), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), 5, nullptr, DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
 	testCube->setSrv(this->manager.getSrv("Goblin_BaseColor.png"));
 	testCube->setNormalMap(this->manager.getSrv("Goblin_Normal.png"));
 	physWorld.addPhysComponent(testCube);
@@ -165,6 +165,7 @@ Game::~Game()
 	}
 	if (captureZone != nullptr) delete captureZone;
 	delete tmpMesh;
+	delete tmpMesh2;
 	delete asteroids;
 	delete arrow;
 	delete planetGravityField;

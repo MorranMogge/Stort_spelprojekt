@@ -103,6 +103,8 @@ void Player::handleItems()
 			std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
 			c.componentId = this->holdingItem->getOnlineId();
 			c.packetId = PacketType::COMPONENTDROPPED;
+			c.playerId = this->onlineID;
+
 			//sending data to server
 			if (this->client != nullptr)
 			{
@@ -171,6 +173,7 @@ void Player::handleItems()
 			std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
 			c.componentId = this->holdingItem->getOnlineId();
 			c.packetId = PacketType::COMPONENTDROPPED;
+			c.playerId = this->onlineID;
 			//sending data to server
 			if (this->client != nullptr)
 			{

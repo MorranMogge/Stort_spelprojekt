@@ -91,21 +91,28 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 			//ändra till dynamiskt
 			MaterialS materialToAdd;
 
+			std::cout << "Name of mat: " << name.C_Str() << "\n";
 			material->Get(AI_MATKEY_COLOR_AMBIENT, color);
 			materialToAdd.ambient = DirectX::SimpleMath::Vector4{ color.r,color.g,color.b, 0 };
+			std::cout << "AMBIENT:\n" << color.r << "\n";
+			std::cout << color.g << "\n";
+			std::cout << color.b << "\n";
 
 			material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 			materialToAdd.diffuse = DirectX::SimpleMath::Vector4{ color.r, color.g, color.b, 0 };
 			
-			std::cout << "Name of mat: " << name.C_Str() << "\n";
-			std::cout << "AMBIENT:\n" << color.r << "\n";
+			std::cout << "DIFFUSE:\n" << color.r << "\n";
 			std::cout << color.g << "\n";
 			std::cout << color.b << "\n";
 			
 
 			material->Get(AI_MATKEY_COLOR_SPECULAR, color);
+			std::cout << "SPECULAR:\n" << color.r << "\n";
+			std::cout << color.g << "\n";
+			std::cout << color.b << "\n";
 			
 			materialToAdd.specular = DirectX::SimpleMath::Vector3{ color.r, color.g, color.b };
+			
 			//shininess != specular exponent
 			//AI_MATKEY_SHININESS_STRENGTH
 			//material->Get(AI_MATKEY_SHININESS, color);
@@ -114,6 +121,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 			material->Get(AI_MATKEY_SHININESS, shinyExponent);
 			//materialToAdd.specularPower = (float)(color.r + color.g + color.b);
 			materialToAdd.specularPower = shinyExponent;
+			std::cout << "Specular exponent:\n" << shinyExponent << "\n";
 			//ConstantBuffer cbuffer(&materialToAdd, sizeof(MaterialS));
 			cbuffer = ConstantBuffer(&materialToAdd, sizeof(MaterialS));
 			materialToAdd.ambient;
@@ -121,7 +129,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 			materialToAdd.specular;
 			materialToAdd.specularPower;
 
-			bank.addMaterial(name.C_Str(), &cbuffer);
+			bank.addMaterial(name.C_Str(), cbuffer);
 
 		}
 		
@@ -440,12 +448,12 @@ bool ModelManager::getMeshData(const std::string& filePath, ID3D11Buffer*& verte
 	return bank.getIndexMeshBuffers(filePath, indexBuffer, vertexBuffer, submeshRanges, amountOfVertces);
 }
 
-ConstantBuffer* ModelManager::getMaterialData(const std::string& filePath)
+ConstantBuffer ModelManager::getMaterialData(const std::string& filePath)
 {
 	if (bank.hasMaterial(filePath))
 	{
 		return bank.getMaterial(filePath);
 	}
 
-	return nullptr;
+	//return nullptr;
 }

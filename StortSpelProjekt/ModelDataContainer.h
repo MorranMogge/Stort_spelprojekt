@@ -20,11 +20,11 @@ public:
 	bool hasItem(const std::string key);
 	ID3D11ShaderResourceView* getSrv(const std::string key);
 	bool getIndexMeshBuffers(const std::string key, ID3D11Buffer*& indexBuff, ID3D11Buffer*& vertexBuff, std::vector<int>& subMeshRanges, std::vector<int>& amountOfVertces);
-	void addMaterial(const std::string &key, ConstantBuffer* material);
+	void addMaterial(const std::string &key, ConstantBuffer& material);
 	bool hasMaterial(const std::string& key);
 	void addSrv(std::string key, ID3D11ShaderResourceView* srv);
 	void addMeshBuffers(std::string key, ID3D11Buffer* vertexBuf, ID3D11Buffer* indexBuf, std::vector<int>& subMeshRanges, std::vector<int>& amountOfVertces);
-	ConstantBuffer* getMaterial(const std::string& key);
+	ConstantBuffer getMaterial(const std::string& key);
 private:
 
 	struct MaterialS
@@ -50,6 +50,6 @@ private:
 
 	std::unordered_map<std::string, std::tuple <ID3D11Buffer*, ID3D11Buffer*, std::vector<int>, std::vector<int>>> meshMap;
 	std::unordered_map<std::string, std::tuple <ID3D11Buffer*, ID3D11Buffer*, std::vector<int>, std::vector<int>>>::iterator meshIt;
-	std::unordered_map<std::string, ConstantBuffer*> constantBuffMap;
+	std::unordered_map<std::string, ConstantBuffer> constantBuffMap;
 	
 };

@@ -84,6 +84,6 @@ public:
 	std::vector<ID3D11ShaderResourceView*> getTextureMaps() const;
 	//Fyller parametrarna med meshdata om nyckeln finns
 	bool getMeshData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces);
-	ConstantBuffer* getMaterialData(const std::string& filePath);
+	ConstantBuffer getMaterialData(const std::string& filePath);
 	void setDevice(ID3D11Device* device);
 };

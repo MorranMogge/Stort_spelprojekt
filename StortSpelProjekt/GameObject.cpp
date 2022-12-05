@@ -11,7 +11,7 @@ void GameObject::updatePhysCompRotation()
 }
 
 GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale)
-	:position(pos), mesh(useMesh), objectID(id), scale(scale), physComp(nullptr), activeField(field), materialBuffer(nullptr)
+	:position(pos), mesh(useMesh), objectID(id), scale(scale), physComp(nullptr), activeField(field)/*, materialBuffer(nullptr)*/
 {
 
 
@@ -32,7 +32,7 @@ GameObject::GameObject(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const Direct
 }
 
 GameObject::GameObject(const std::string& meshPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, GravityField* field, const DirectX::XMFLOAT3& scale)
-	:position(pos), objectID(id), scale(scale), physComp(nullptr), activeField(field), materialBuffer(nullptr)
+	:position(pos), objectID(id), scale(scale), physComp(nullptr), activeField(field)/*, materialBuffer(nullptr)*/
 {
 	// load obj file
 	OBJ testObj(meshPath);
@@ -337,10 +337,10 @@ bool GameObject::withinRadious(GameObject* object, float radius) const
 
 void GameObject::draw()
 {
-	if (this->materialBuffer != nullptr)
+	/*if (this->materialBuffer != nullptr)
 	{
 		this->materialBuffer->BindToPS(0u);
-	}
+	}*/
 	
 
 	this->mesh->DrawWithMat();
@@ -373,29 +373,27 @@ void GameObject::update()
 
 void GameObject::drawObjectWithTexture()
 {
-	if (this->materialBuffer != nullptr)
+	/*if (this->materialBuffer != nullptr)
 	{
 		this->materialBuffer->BindToPS(0u);
-	}
+	}*/
 
 	this->mesh->drawWithTexture(this->srv);
 }
 
 void GameObject::drawObjectWithNormalMap()
 {
-	if (this->materialBuffer != nullptr)
-	{
-		this->materialBuffer->BindToPS(0u);
-	}
+	
+	materialBuffer.BindToPS(0u);
+	
 	this->mesh->drawWithNormalMap(this->srv, this->normalMap);
 }
 
 void GameObject::drawObject()
 {
-	if (this->materialBuffer != nullptr)
-	{
-		this->materialBuffer->BindToPS(0u);
-	}
+	
+	//materialBuffer.BindToPS(0u);
+	
 	
 	this->mesh->draw();
 }
@@ -410,7 +408,7 @@ void GameObject::setNormalMap(ID3D11ShaderResourceView* srv)
 	this->normalMap = srv;
 }
 
-void GameObject::setMaterial(ConstantBuffer* cbuffer)
+void GameObject::setMaterial(ConstantBuffer cbuffer)
 {
 	this->materialBuffer = cbuffer;
 }

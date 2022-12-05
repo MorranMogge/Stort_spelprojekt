@@ -67,9 +67,9 @@ bool ModelDataContainer::getIndexMeshBuffers(const std::string key, ID3D11Buffer
 	return true;
 }
 
-ConstantBuffer* ModelDataContainer::getMaterial(const std::string& key)
+ConstantBuffer ModelDataContainer::getMaterial(const std::string& key)
 {
-	std::unordered_map<std::string, ConstantBuffer*>::iterator constantBuffIt;
+	std::unordered_map<std::string, ConstantBuffer>::iterator constantBuffIt;
 	constantBuffIt = constantBuffMap.find(key);
 	
 	if (constantBuffIt != this->constantBuffMap.end())
@@ -77,7 +77,6 @@ ConstantBuffer* ModelDataContainer::getMaterial(const std::string& key)
 		return constantBuffIt->second;
 	}
 
-	return nullptr;
 }
 
 void ModelDataContainer::addSrv(std::string key, ID3D11ShaderResourceView* srv)
@@ -85,14 +84,14 @@ void ModelDataContainer::addSrv(std::string key, ID3D11ShaderResourceView* srv)
 	this->srvMap.insert(std::pair<std::string, ID3D11ShaderResourceView*>(key, srv));
 }
 
-void ModelDataContainer::addMaterial(const std::string& key, ConstantBuffer* buffer)
+void ModelDataContainer::addMaterial(const std::string& key, ConstantBuffer& buffer)
 {
-	this->constantBuffMap.insert(std::pair<std::string, ConstantBuffer*>(key, buffer));
+	this->constantBuffMap.insert(std::pair<std::string, ConstantBuffer>(key, buffer));
 }
 
 bool ModelDataContainer::hasMaterial(const std::string& key)
 {
-	std::unordered_map<std::string, ConstantBuffer*>::iterator constantBuffIt;
+	std::unordered_map<std::string, ConstantBuffer>::iterator constantBuffIt;
 
 	constantBuffIt = this->constantBuffMap.find((const std::string)key);
 	if (constantBuffIt != this->constantBuffMap.end())

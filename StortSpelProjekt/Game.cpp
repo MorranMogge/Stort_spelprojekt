@@ -67,9 +67,10 @@ void Game::loadObjects()
 	otherPlayer = new Player(tmpMesh, DirectX::SimpleMath::Vector3(-22, 12, 22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), 6);
 	otherPlayer->setSrv(manager.getSrv("playerTexture.png"));*/
 
-	ConstantBuffer* cbuff;
+	ConstantBuffer cbuff;
 	//cbuff = this->manager.getMaterialData("phong1SG");
 	cbuff = this->manager.getMaterialData("default");
+	//cbuff = this->manager.getMaterialData("phong1SG");
 
 	using namespace DirectX;
 	using namespace DirectX::SimpleMath;
@@ -83,7 +84,7 @@ void Game::loadObjects()
 	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	planet = new GameObject(tmpMesh, Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), PLANET,nullptr, XMFLOAT3(planetSize, planetSize, planetSize));
 	planet->setSrv(manager.getSrv("planetTexture.png"));
-	planet->setMaterial(cbuff);
+	//planet->setMaterial(cbuff);
 	
 	
 
@@ -114,7 +115,7 @@ void Game::loadObjects()
 	testCube = new GameObject(tmpMesh, Vector3(0, 0, 0), Vector3(0.0f, 0.0f, 0.0f), 5, nullptr, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	testCube->setSrv(this->manager.getSrv("Goblin_BaseColor.png"));
 	testCube->setNormalMap(this->manager.getSrv("Goblin_Normal.png"));
-
+	testCube->setMaterial(cbuff);
 
 	//otherPlayer = new Player("../Meshes/Player", Vector3(-22, 12, 22), Vector3(0.0f, 0.0f, 0.0f), PLAYER, & planetGravityField);
 	

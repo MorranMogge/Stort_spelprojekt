@@ -25,7 +25,7 @@ private:
 	DirectX::SimpleMath::Quaternion dx11Quaternion;
 	ID3D11ShaderResourceView* srv;
 	ID3D11ShaderResourceView* normalMap;
-	ConstantBuffer* materialBuffer;
+	ConstantBuffer materialBuffer;
 	GravityField* activeField;
 
 protected:
@@ -74,5 +74,5 @@ public:
 	void drawObjectWithNormalMap();
 	void setSrv(ID3D11ShaderResourceView* srv);
 	void setNormalMap(ID3D11ShaderResourceView* normalMap);
-	void setMaterial(ConstantBuffer* cbuffer);
+	void setMaterial(ConstantBuffer cbuffer);
 };

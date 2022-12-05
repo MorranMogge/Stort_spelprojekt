@@ -16,6 +16,8 @@ private:
 	GUISprite landing1;
 	GUISprite landing2;
 
+	GUISprite wheel_L, arrow, arrow2;
+
 	DirectX::GamePad* gamePad;
 	DirectX::GamePad::ButtonStateTracker tracker;
 	DirectX::GamePad::State state;

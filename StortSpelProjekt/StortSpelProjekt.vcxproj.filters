@@ -184,8 +184,10 @@
     <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="AnimatedMesh.cpp" />
     <ClCompile Include="CaptureZone.cpp" />
-    <ClCompile Include="MiniGameUI.cpp" />
     <ClCompile Include="LandingHud.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniGameUI.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -488,11 +490,13 @@
     <ClInclude Include="ControlMenu.h" />
     <ClInclude Include="ControlUI.h" />
     <ClInclude Include="AnimatedMesh.h" />
-    <ClInclude Include="MiniGameUI.h" />
     <ClInclude Include="ModelDataContainer.h" />
     <ClInclude Include="ModelManager.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="LandingHud.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniGameUI.h">
       <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>

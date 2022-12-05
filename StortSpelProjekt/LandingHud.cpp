@@ -6,16 +6,31 @@ LandingHud::LandingHud()
 	:factor(1.0f)
 {
 	landing0 = GUISprite(DirectX::SimpleMath::Vector2(125, 320)); //bar
-	landing0.Load(GPU::device, L"../Sprites/Bar.png");
+	landing0.Load(L"../Sprites/Bar.png");
 	landing0.SetScale(0.51f, 0.51f);
 
 	landing1 = GUISprite(125, (MinVec.y - MaxVec.y) / 2); //safebox
-	landing1.Load(GPU::device, L"../Sprites/safeBox.png");
+	landing1.Load(L"../Sprites/safeBox.png");
 	landing1.SetScale(0.2f, 0.06f);
 
 	landing2 = GUISprite(125, (MinVec.y - MaxVec.y) / 2); //ship
-	landing2.Load(GPU::device, L"../Sprites/ship.png");
+	landing2.Load(L"../Sprites/ship.png");
 	landing2.SetScale(0.2f, 0.2f);
+
+	wheel_L = GUISprite(325, 320);
+	wheel_L.Load(L"../Sprites/control/L_wheel.png");
+	wheel_L.SetScale(0.4f, 0.4f);
+
+	arrow = GUISprite(325, 430);
+	arrow.Load(L"../Sprites/arrow_g.png");
+	arrow.SetScale(0.4f, 0.4f);
+	arrow.SetRotation(3.1415926f);
+
+	arrow2 = GUISprite(325, 210);
+	arrow2.Load(L"../Sprites/arrow_o.png");
+	arrow2.SetScale(0.4f, 0.4f);
+
+
 
 	this->targetTime = 0;
 	this->currentTime = 0;
@@ -131,6 +146,10 @@ void LandingHud::draw()
 	landing0.Draw();
 	landing1.Draw();
 	landing2.Draw();
+
+	wheel_L.Draw();
+	arrow.Draw();
+	arrow2.Draw();
 
 	GUI::End();
 }

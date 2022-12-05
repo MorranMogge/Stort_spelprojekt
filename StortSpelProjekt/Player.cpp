@@ -887,7 +887,7 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 	//Controller pickup
 	if (state.IsConnected())
 	{
-		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1))
+		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1) && this->holdingItem != nullptr)
 		{
 			this->eKeyDown = true;
 		}
@@ -931,7 +931,7 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 		}
 	}
 	//Keyboard pickup
-	else if (GetAsyncKeyState('E') && this->eKeyDown == false && this->keyPressTimer.getTimePassed(0.1))
+	else if (GetAsyncKeyState('E') && this->eKeyDown == false && this->keyPressTimer.getTimePassed(0.1) && this->holdingItem != nullptr)
 	{
 		this->eKeyDown = true;
 	}

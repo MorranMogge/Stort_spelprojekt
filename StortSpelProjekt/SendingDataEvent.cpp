@@ -20,6 +20,12 @@ void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Play
 	pr.packetId = PacketType::POSITIONROTATION;
 	pr.playerId = client->getPlayerId();
 	pr.matrix = currentPlayer->getMatrix();
+	DirectX::SimpleMath::Quaternion quat = DirectX::XMQuaternionRotationMatrix(currentPlayer->getRot());
+	pr.xRot = quat.x;
+	pr.yRot = quat.y;
+	pr.zRot = quat.z;
+	pr.wRot = quat.w;
+
 	currentPlayer->getAnimId(pr.AnimId);
 	currentPlayer->getAnimSpeed(pr.animSpeed);
 	client->sendStuff<PositionRotation>(pr);

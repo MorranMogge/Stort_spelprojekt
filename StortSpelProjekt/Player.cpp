@@ -96,6 +96,7 @@ void Player::handleItems()
 			}
 			////sending data to server
 
+			std::cout << "TEST 1 nuzzle\n";
 			//allocates data to be sent
 			ComponentDropped c;
 
@@ -121,6 +122,14 @@ void Player::handleItems()
 					if (this->currentSpeed == this->speed) scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.095f, temp);
 					else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
 				}
+				UseGrenade useGrenade;
+				useGrenade.packetId = USEGRENADE;
+				useGrenade.itemId = this->holdingItem->getOnlineId();
+				useGrenade.xForce = temp.x * FORCE;
+				useGrenade.yForce = temp.y * FORCE;
+				useGrenade.zForce = temp.z * FORCE;
+
+				//client->sendStuff<UseGrenade>(useGrenade);
 
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -181,6 +190,15 @@ void Player::handleItems()
 					if (this->currentSpeed == this->speed) scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.095f, temp);
 					else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
 				}
+
+				UseGrenade useGrenade;
+				useGrenade.packetId = USEGRENADE;
+				useGrenade.itemId = this->holdingItem->getOnlineId();
+				useGrenade.xForce = temp.x * FORCE;
+				useGrenade.yForce = temp.y * FORCE;
+				useGrenade.zForce = temp.z * FORCE;
+
+				//client->sendStuff<UseGrenade>(useGrenade);
 
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -244,6 +262,7 @@ Player::Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3
 	this->client = client;
 	DirectX::XMStoreFloat4x4(&rotationFloat, this->rotationMX);
 	HudUI::player = this;
+	this->dedge = false;
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);
@@ -970,6 +989,16 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);
 	timer.resetStartTime();
+
+	if (this->holdingItem)
+	{
+		ComponentDropped cDropped;
+		cDropped.packetId = COMPONENTDROPPED;
+		cDropped.playerId = this->onlineID;
+		cDropped.componentId = this->holdingItem->getOnlineId();
+
+		client->sendStuff<ComponentDropped>(cDropped);
+	}
 }
 
 void Player::addItem(Item* itemToHold)
@@ -1056,7 +1085,7 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 	int gameObjSize = (int)gameObjects.size();
 	for (int i = 0; i < gameObjSize; i++)
 	{
-		if (gameObjects[i]->getPhysComp()->getType() != reactphysics3d::BodyType::STATIC) continue;
+		if (gameObjects[i]->getPhysComp()->getType() != reactphysics3d::BodyType::STATIC && gameObjects[i] == this->holdingItem) continue;
 		if (gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
 		{
 			//Maybe somehow return the index of the triangle hit to calculate new Normal
@@ -1473,7 +1502,10 @@ bool Player::isHoldingComp()
 			this->setSpeed(this->speed * 0.5f);
 			return true;
 		}
-		else return false;
+		else
+		{
+			return false;
+		}
 	}
 
 	return false;

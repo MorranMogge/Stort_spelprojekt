@@ -22,6 +22,10 @@ struct PositionRotation
 	int ifDead;
 	int AnimId;
 	float animSpeed;
+	float xRot;
+	float yRot;
+	float zRot;
+	float wRot;
 };
 
 //enum = 4
@@ -43,7 +47,6 @@ struct ComponentData //ANV�NDS INTE
 	float x;
 	float y;
 	float z;
-	reactphysics3d::Quaternion quat;
 };
 
 //enum = 6
@@ -62,6 +65,7 @@ struct ItemSpawn
 {
 	int packetId;
 	int itemId;
+	int itemType;
 	float x;
 	float y;
 	float z;
@@ -129,6 +133,7 @@ struct ComponentAdded
 {
 	int packetId;
 	int spaceShipTeam;
+	int componentID;
 };
 
 //requesting to pick up component
@@ -163,6 +168,10 @@ struct ComponentPosition
 	float x;
 	float y;
 	float z;
+	float xRot;
+	float yRot;
+	float zRot;
+	float wRot;
 	//reactphysics3d::Quaternion quat;
 };
 
@@ -263,4 +272,43 @@ struct PotionSpawn
 	int xPos;
 	int yPos;
 	int zPos;
+};
+
+//enum = 69
+struct UseGrenade
+{
+	int packetId;
+	int itemId;
+	float xForce;
+	float yForce;
+	float zForce;
+};
+
+//enum = 70
+struct HitByGrenade
+{
+	int packetId;
+	int itemId;
+	int playerThatUsedTheItem;
+	float xForce;
+	float yForce;
+	float zForce;
+};
+
+//enum = 71
+struct UseBat
+{
+	int packetId;
+	int itemId;
+	int playerThatUsedTheItem;
+	float xPos;
+	float yPos;
+	float zPos;
+	float size;
+};
+
+//enum = 36
+struct DoneLoading
+{
+	int packetId;
 };

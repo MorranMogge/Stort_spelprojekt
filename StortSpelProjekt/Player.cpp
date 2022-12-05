@@ -878,7 +878,7 @@ int Player::getItemOnlineId() const
 
 bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Component*>& components)
 {
-	if (this->isHoldingItem()) return false;
+	if (this->isHoldingItem() || dedge) return false;
 	bool successfulPickup = false;
 	
 	//Controller pickup
@@ -1409,7 +1409,7 @@ void Player::setGamePad(DirectX::GamePad* gamePad)
 
 void Player::requestingPickUpItem(const std::vector<Item*>& items)
 {
-	if (holdingItem) return;
+	if (holdingItem || dedge) return;
 	if (state.IsConnected())
 	{
 		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1))

@@ -125,7 +125,7 @@ void recvData(void* param, userData* user)//thread to recv data
 			//USE TO CHECK IF THE PACKET ID IS CORRECT (MAYBE=
 			memcpy(&testStore, datapointer, sizeof(int));
 
-			if(user->playerId == 0)std::cout << "testStore: " << testStore << std::endl;
+			//if(user->playerId == 0)std::cout << "testStore: " << testStore << std::endl;
 
 			if (testStore > 0 && testStore < 80)
 			{

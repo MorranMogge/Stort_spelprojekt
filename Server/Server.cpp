@@ -441,7 +441,7 @@ int main()
 				//find the component that is dropped
 				for (int i = 0; i < onlineItems.size(); i++)
 				{
-					if (onlineItems[i]->getOnlineId() == cmpDropped->playerId)
+					if (onlineItems[i]->getOnlineId() == cmpDropped->componentId)
 					{
 						onlineItems[i]->setInUseBy(-1);
 						std::cout << std::to_string(onlineItems[i]->getPosXMFLOAT3().x) << ", y: " << std::to_string(onlineItems[i]->getPosXMFLOAT3().y) <<
@@ -535,7 +535,7 @@ int main()
 				useBat = circBuffer->readData<UseBat>();
 
 
-				DirectX::SimpleMath::Vector3 pos;
+				
 				//DirectX::SimpleMath::Vector3 posTwo;
 
 				/*for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
@@ -545,6 +545,7 @@ int main()
 
 				for (int i = 0; i < onlineItems.size(); i++)
 				{
+					
 					if (onlineItems[i]->getOnlineId() == useBat->itemId)
 					{
 						DirectX::SimpleMath::Vector3 pos;
@@ -562,8 +563,10 @@ int main()
 								pos.Normalize();
 								onlineItems[j]->getPhysicsComponent()->applyForceToCenter(
 									reactphysics3d::Vector3(pos.x * 10000, pos.y * 10000, pos.z * 10000));
+								
 							}
 						}
+						onlineItems[useBat->itemId]->setInUseBy(-1);
 					}
 				}
 				//for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)

@@ -441,7 +441,7 @@ int main()
 				//find the component that is dropped
 				for (int i = 0; i < onlineItems.size(); i++)
 				{
-					if (onlineItems[i]->getOnlineId() == cmpDropped->componentId)
+					if (onlineItems[i]->getOnlineId() == cmpDropped->playerId)
 					{
 						onlineItems[i]->setInUseBy(-1);
 						std::cout << std::to_string(onlineItems[i]->getPosXMFLOAT3().x) << ", y: " << std::to_string(onlineItems[i]->getPosXMFLOAT3().y) <<
@@ -458,7 +458,6 @@ int main()
 							sendBinaryDataOnePlayer(cmpDropData, data.users[j]);
 
 						}
-						break;
 					}
 				}
 				break;
@@ -535,6 +534,10 @@ int main()
 			case PacketType::USEBAT:
 				useBat = circBuffer->readData<UseBat>();
 
+
+				DirectX::SimpleMath::Vector3 pos;
+				//DirectX::SimpleMath::Vector3 posTwo;
+
 				/*for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 				{
 					if(data.users[i].)
@@ -558,11 +561,30 @@ int main()
 								pos += onlineItems[j]->getPosXMFLOAT3();
 								pos.Normalize();
 								onlineItems[j]->getPhysicsComponent()->applyForceToCenter(
-									reactphysics3d::Vector3(pos.x * 30000, pos.y * 30000, pos.z * 30000));
+									reactphysics3d::Vector3(pos.x * 10000, pos.y * 10000, pos.z * 10000));
 							}
 						}
 					}
 				}
+				//for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
+				//{
+				//	pos.x = data.users[j].playa.getposition('x');
+				//	pos.y = data.users[j].playa.getposition('y');
+				//	pos.z = data.users[j].playa.getposition('z');
+
+
+				//	objPos = onlineItems[i]->getPosXMFLOAT3();
+				//	subtractionXMFLOAT3(pos, objPos);
+				//	if (getLength(pos) <= 25.f)
+				//	{
+				//		pos.Normalize();
+				//		//data.users[j].playa.getPhysComp()->applyForceToCenter();
+				//		data.users[j].playa.playerGotHit(reactphysics3d::Vector3(
+				//			10000 * pos.x, 10000 * pos.y, 10000 * pos.z));
+				//		sendBinaryDataOnePlayer<HitByGrenade>(hitByGrenade, data.users[j]);
+				//	}
+				//}
+		
 				break;
 			case PacketType::DONEWITHGAME:
 				requestStart = circBuffer->readData<DoneWithGame>();

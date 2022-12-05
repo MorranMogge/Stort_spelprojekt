@@ -35,6 +35,12 @@ void MenuUI::HandleInputs()
 	// any gamepad connected
 	if (state.IsConnected())
 	{
+		//back to default value
+		if (selectIndex == 6)
+		{
+			selectIndex = 0;
+		}
+
 		// reset all to false
 		hit_start = hit_setting = hit_credits = hit_exit = hit_control = false;
 

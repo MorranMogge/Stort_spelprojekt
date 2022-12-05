@@ -133,8 +133,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		DoneLoading sendingConfirm;
 		sendingConfirm.packetId = PacketType::DONELOADING;
 		client->sendStuff<DoneLoading>(sendingConfirm);
-		landingUi.makeGamePad(gamePad);
+
 	}
+	landingUi.makeGamePad(gamePad);
 
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
@@ -1037,6 +1038,9 @@ GAMESTATE Game::startIntermission()
 	ui.count = 1.0f;
 	ui.setOpacity(false);
 
+	miniGameUI.pointBlue = teamScoreLandingMiniGame;
+	miniGameUI.pointRed = enemyTeamScoreLandingMiniGame;
+
 	currentMinigame = INTERMISSION;
 	return NOCHANGE;
 }
@@ -1168,6 +1172,17 @@ GAMESTATE Game::Update()
 		//this->spaceShips[0]->setPos(DirectX::XMFLOAT3(150, 7, 95));
 		//this->spaceShips[1]->setPos(DirectX::XMFLOAT3(150, -7, 290));
 		this->Stage = 0;
+	}
+
+	if (Input::KeyPress(KeyCode::MOUSE_R))
+	{
+		currentMinigame = STARTOFINTERMISSION;
+		displayMinigameUI = true;
+	}
+
+	if (Input::KeyPress(KeyCode::MOUSE_M))
+	{
+		currentMinigame = STARTLANDING;
 	}
 
 	//Simulate the current minigame on client side

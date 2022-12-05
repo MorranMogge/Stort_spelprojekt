@@ -25,12 +25,6 @@ void setScaleOverTime(bool& changed, GUISprite &sprite, float time = 0.3)
 
 void HudUI::SpritePass()
 {
-	if (Input::KeyDown(KeyCode::B))//landing
-	{
-		landing0.Draw();
-		landing1.Draw();
-		landing2.Draw();
-	}
 
 	if (handle)
 	{
@@ -168,8 +162,6 @@ HudUI::HudUI()
 	#define SDOT1 Vector2(310 + left + 90, 300 + upp +15)
 	#define SDOT2 Vector2(310 + left + 130 , 300 + upp + 15)
 
-	timer.startTime;
-
 
 	//ready set go
 	ready = GUISprite(310 + left, 300 + upp);
@@ -201,18 +193,6 @@ HudUI::HudUI()
 	fade.Load(GPU::device, L"../Sprites/skybox.png");
 	fade.SetScale(1.f, 1.f);
 	this->setOpacity(true);
-	
-	landing0 = GUISprite(Vector2(125, 320)); //bar
-	landing0.Load(L"../Sprites/Bar.png");
-	landing0.SetScale(0.51f, 0.51f);
-
-	landing1 = GUISprite(125, (Min.y - Max.y) / 2); //safebox
-	landing1.Load(L"../Sprites/safeBox.png");
-	landing1.SetScale(0.2f, 0.06f);
-
-	landing2 = GUISprite(125,(Min.y - Max.y)/2); //ship
-	landing2.Load(L"../Sprites/ship.png");
-	landing2.SetScale(0.2f, 0.2f);
 
 	redTeam0 = GUISprite(PositionRed);
 	redTeam0.Load(L"../Sprites/r_0.png");
@@ -332,10 +312,6 @@ void HudUI::handleInputs()
 	counterDown -= Time::DeltaTimeInSeconds();
 
 	//std::cout << counterDown<< std::endl;
-	using namespace DirectX::SimpleMath;
-	Vector2 rocketPos = landing2.GetPosition();
-	Vector2 safePos = landing1.GetPosition();
-	float sinCurve = (sin(timer.getDt()) * 0.5f) + 0.5f;
 
 	// fade
 	if (Input::KeyDown(KeyCode::G))
@@ -348,42 +324,7 @@ void HudUI::handleInputs()
 		this->fadeOut();
 	}
 
-	//Move "safezone" sprite
-	landing1.SetPosition(Vector2(Max.x, 90 + sinCurve * 460));
-	
-	//Move player sprite
-	if (Input::KeyDown(KeyCode::W) || Input::KeyDown(KeyCode::ARROW_Up))
-	{
-		Vector2 test(rocketPos.x , rocketPos.y - 3);
 
-		if (rocketPos.y < Max.y-25)
-		{
-			landing2.SetPosition(Vector2(Max.x, rocketPos.y));
-		}
-		else
-		{
-			landing2.SetPosition(test);
-		}
-	}
-	if (Input::KeyDown(KeyCode::S) || Input::KeyDown(KeyCode::ARROW_Down))
-	{
-		Vector2 test(rocketPos.x , rocketPos.y + 3);
-
-		if (rocketPos.y > Min.y + 25)
-		{
-			landing2.SetPosition(Vector2(Max.x, rocketPos.y));
-		}
-		else
-		{
-			landing2.SetPosition(test);
-		}
-	}
-	
-	//Check sprite intersection
-	if (landing1.IntersectSprite(landing2))
-	{
-		//std::cout << "intersects" << std::endl;
-	}
 }
 
 bool HudUI::fadeIn()

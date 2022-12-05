@@ -9,4 +9,8 @@
   <PropertyGroup>
     <ShowAllFiles>false</ShowAllFiles>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalDebuggerCommandArguments />
+    <RemoteDebuggerCommandArguments />
+  </PropertyGroup>
 </Project>

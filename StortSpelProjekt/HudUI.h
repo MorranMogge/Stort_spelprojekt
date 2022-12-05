@@ -9,9 +9,6 @@ class HudUI final
 {
 	GUISprite fade;
 
-
-	GUISprite landing0, landing1, landing2;
-
 	GUISprite redTeam0, redTeam1, redTeam2, redTeam3, redTeam4;
 
 	GUISprite blueTeam0,blueTeam1,blueTeam2,blueTeam3,blueTeam4;
@@ -37,7 +34,7 @@ class HudUI final
 	GUISprite useControls2;
 
 	TimeStruct rocketTimer;
-	TimeStruct timer;
+
 	float scaleTimer;
 	bool changedSprite = false;
 	void SpritePass();

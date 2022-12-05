@@ -22,14 +22,30 @@ void* extractData(const char data[], const std::size_t& recvSize)
 void clientFunction(void* param)
 {
 	ThreadInfo* data = (ThreadInfo*)param;
-
+	int testStore = -2;
 	while (!data->endThread)
 	{
 		char receivedData[256];
 		std::size_t recvSize;
-		data->socket.receive(receivedData, 256, recvSize); //Receives the packet
-		
-		data->circularBuffer->addData(receivedData, recvSize);
+		if (data->socket.receive(receivedData, 256, recvSize) != sf::Socket::Done) //Receives the packet
+		{
+			//error
+		}
+		else
+		{
+			memcpy(&testStore, receivedData, sizeof(int));
+
+			if (testStore > 0 && testStore < 80)
+			{
+
+				data->circularBuffer->addData(receivedData, recvSize);
+			}
+			else
+			{
+				std::cout << "testStore: " << testStore << std::endl;
+			}
+
+		}
 	}
 }
 

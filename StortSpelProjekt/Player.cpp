@@ -158,7 +158,7 @@ void Player::handleItems()
 		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))
 		{
 			keyPressTimer.resetStartTime();
-			if (holdingItem->getId() == BAT)
+			if (holdingItem->getId() == BAT && usedItem)
 			{
 				this->usingBat = true;
 				this->usedItem = false;
@@ -231,8 +231,6 @@ void Player::handleItems()
 	{
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 		usingBat = false;
-		holdingItem->setPickedUp(false);
-		holdingItem = nullptr;
 		std::cout << "dropping bat\n";
 		ComponentDropped c;
 
@@ -245,6 +243,8 @@ void Player::handleItems()
 		{
 			client->sendStuff<ComponentDropped>(c);
 		}
+		holdingItem->setPickedUp(false);
+		holdingItem = nullptr;
 	}
 }
 
@@ -1374,6 +1374,7 @@ void Player::update()
 			this->physComp->resetTorque();
 			this->physComp->setType(reactphysics3d::BodyType::STATIC);
 			this->resetRotationMatrix();
+			this->position = DirectX::SimpleMath::Vector3(0, 69, 0);
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
 		}

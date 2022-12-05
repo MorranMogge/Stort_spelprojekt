@@ -50,10 +50,10 @@ void main(uint3 DTid : SV_DispatchThreadID)
     //float FXAA_REDUCE_MIN = 1.0 / 128.0;
     float FXAA_REDUCE_MIN = 1.0 / 132.0;
     
-    float3 rgbNW = backBuffer2.Load(uint3(DTid.xy + uint2(-1, -1), 0));
-    float3 rgbNE = backBuffer2.Load(uint3(DTid.xy + uint2(1, -1), 0));
-    float3 rgbSW = backBuffer2.Load(uint3(DTid.xy + uint2(-1, 1), 0));
-    float3 rgbSE = backBuffer2.Load(uint3(DTid.xy + uint2(1, 1), 0));
+    float3 rgbNW = backBuffer2.Load(uint3(DTid.xy + uint2(-1, -1), 0)).xyz;
+    float3 rgbNE = backBuffer2.Load(uint3(DTid.xy + uint2(1, -1), 0)).xyz;
+    float3 rgbSW = backBuffer2.Load(uint3(DTid.xy + uint2(-1, 1), 0)).xyz;
+    float3 rgbSE = backBuffer2.Load(uint3(DTid.xy + uint2(1, 1), 0)).xyz;
     float3 rgbM = backBuffer2.Load(DTid).rgb;
    // FxaaTextureOffset(backBuffer2, DTid.xy, FxaaInt2(0, 1)).xyz;
     

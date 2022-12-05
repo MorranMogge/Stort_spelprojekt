@@ -855,12 +855,27 @@ GAMESTATE Game::startLanding()
 		spaceShips[team]->setRot(spaceShips[team]->getRotOrientedToGrav());
 	}
 
+	ui.count = 1.0f;
+	ui.setOpacity(false);
+	fadedIn = false;
+
 	landingMiniGamePoints = 0.f;
 	return GAMESTATE::NOCHANGE;
 }
 
 GAMESTATE Game::updateLandingGame()
 {
+	if (!fadedIn)// fade in condition
+	{
+		if (!this->ui.fadeIn()) // is fading
+		{
+		}
+		else // fade in complete
+		{
+			fadedIn = true;
+		}
+	}
+
 	//Here yo type the function below but replace testObject with your space ship
 	camera.landingMinigameScene(planetVector[currentPlayer->getTeam() + 1], spaceShips[currentPlayer->getTeam()]->getPosV3(), spaceShips[currentPlayer->getTeam()]->getRot());
 	
@@ -884,8 +899,14 @@ GAMESTATE Game::updateLandingGame()
 
 	DirectX::SimpleMath::Vector3 vecToPlanet = spaceShips[currentPlayer->getTeam()]->getPosV3() - planetVector[currentPlayer->getTeam() + 1]->getPlanetPosition();
 
+
+
+
 	if (getLength(vecToPlanet) <= planetVector[currentPlayer->getTeam() + 1]->getSize())
 	{
+		ui.count = 1.0f;
+		ui.setOpacity(false);
+		fadedIn = false;
 		for (int i = 0; i < spaceShips.size(); i++)
 		{
 			DirectX::SimpleMath::Quaternion dx11Quaternion = DirectX::XMQuaternionRotationMatrix(spaceShips[i]->getRot());
@@ -913,11 +934,7 @@ GAMESTATE Game::updateLandingGame()
 
 GAMESTATE Game::updateKingOfTheHillGame()
 {
-
-	//Get newest delta time
-	//if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
-	//asteroids->updateAsteroids(dt, planetVector, gameObjects);
-
+	ui.fadeIn();
 	//Calculate gravity factor
 	if (planetVector.size() > 0) field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
 	if (field != oldField) { changedPlanet = true; currentPlayer->setGravityField(this->field); }
@@ -1037,6 +1054,7 @@ GAMESTATE Game::startIntermission()
 	this->Stage = 0;
 	ui.count = 1.0f;
 	ui.setOpacity(false);
+	fadedIn = false;
 
 	miniGameUI.pointBlue = teamScoreLandingMiniGame;
 	miniGameUI.pointRed = enemyTeamScoreLandingMiniGame;
@@ -1052,7 +1070,18 @@ GAMESTATE Game::updateIntermission()
 	DirectX::XMFLOAT3 camPos;
 	DirectX::XMStoreFloat3(&camPos, camera.getRealPosition());
 	camPos.z -= camSpeed;
-	ui.fadeIn();
+
+	if (!fadedIn)// fade in condition
+	{
+		if (!this->ui.fadeIn()) // is fading
+		{
+		}
+		else // fade in complete
+		{
+			fadedIn = true;
+		}
+	}
+
 	//DirectX::XMFLOAT3 midPos = camPos;
 	//midPos.z += -20;
 	this->camera.setPosition(camPos);
@@ -1081,13 +1110,20 @@ GAMESTATE Game::updateIntermission()
 	}
 	else if (Stage == 3)
 	{
+		
 		camSpeed *= 2;
+		if (this->centerPos.z + 60 <= camPos.z)
+		{
+			ui.fadeOut();
+
+		}
 		if (this->centerPos.z + 80 <= camPos.z)
 		{
 			this->spaceShips[0]->setRot(spaceShips[0]->getRotOrientedToGrav());
 			this->spaceShips[0]->getPhysComp()->setRotation(reactphysics3d::Quaternion(spaceShips[0]->getRotXM().x, spaceShips[0]->getRotXM().y, spaceShips[0]->getRotXM().z, 1.0));
 			this->spaceShips[1]->setRot(spaceShips[1]->getRotOrientedToGrav());
 			this->spaceShips[1]->getPhysComp()->setRotation(reactphysics3d::Quaternion(spaceShips[1]->getRotXM().x, spaceShips[1]->getRotXM().y, spaceShips[1]->getRotXM().z, 1.0));
+
 
 			//Send data to server
 			DoneWithGame requestStart;

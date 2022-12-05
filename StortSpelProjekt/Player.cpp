@@ -998,6 +998,7 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 		cDropped.componentId = this->holdingItem->getOnlineId();
 
 		client->sendStuff<ComponentDropped>(cDropped);
+		this->releaseItem();
 	}
 }
 
@@ -1067,7 +1068,7 @@ void Player::checkSwimStatus(const std::vector<Planet*>& planets)
 	}
 }
 
-bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
+bool Player::raycast(const std::vector<SpaceShip*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
 {
 	if (!dedge)
 	{
@@ -1085,7 +1086,6 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 	int gameObjSize = (int)gameObjects.size();
 	for (int i = 0; i < gameObjSize; i++)
 	{
-		if (gameObjects[i]->getPhysComp()->getType() != reactphysics3d::BodyType::STATIC && gameObjects[i] == this->holdingItem) continue;
 		if (gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
 		{
 			//Maybe somehow return the index of the triangle hit to calculate new Normal

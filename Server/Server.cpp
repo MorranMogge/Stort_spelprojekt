@@ -108,7 +108,7 @@ void sendDataAllPlayers(testPosition& posData, serverData& serverData)
 void recvData(void* param, userData* user)//thread to recv data
 {
 	threadInfo* data = (threadInfo*)param;
-	//int testStore = -2;
+	int testStore = -2;
 
 	std::cout << "ip from socket in thread: " << user->tcpSocket.getRemoteAddress().toString() << std::endl;
 	while (1)
@@ -123,12 +123,15 @@ void recvData(void* param, userData* user)//thread to recv data
 		else
 		{
 			//USE TO CHECK IF THE PACKET ID IS CORRECT (MAYBE=
-			//memcpy(&testStore, datapointer, sizeof(float));
-			//std::cout << "testStore: " << testStore << std::endl;
+			memcpy(&testStore, datapointer, sizeof(float));
+			std::cout << "testStore: " << testStore << std::endl;
 
-			mutex.lock();
-			data->circBuffer->addData(datapointer, recv);
-			mutex.unlock();
+			if (testStore > 0 && testStore < 80)
+			{
+				mutex.lock();
+				data->circBuffer->addData(datapointer, recv);
+				mutex.unlock();
+			}
 
 		}
 

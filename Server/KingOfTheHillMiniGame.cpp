@@ -22,7 +22,7 @@ void KingOfTheHillMiniGame::sendKingOfTheHillZone(serverData& data)
 }
 
 
-void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, int& componentIdCounter)
+void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, int& componentIdCounter, float totalTeamScores [])
 {
 	static float xPos;
 	static float yPos;
@@ -37,6 +37,9 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 		subtractionXMFLOAT3(playerPos, kingOfTheHillOrigo);
 		if (getLength(playerPos) <= radius)
 		{
+			/*int playerTeam;
+			playerTeam = (MAXNUMBEROFPLAYERS) / 2;
+			playerTeam = (int)(playerTeam < i + 1);*/
 			//std::cout << "Innanf�r zonen\n";
 			if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - timer)).count() > time)
 			{
@@ -63,6 +66,10 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 	{
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - this->timerToSend)).count() > timerSend)
 		{
+			int catchUp = 0;
+			if (totalTeamScores[0] < (totalTeamScores[1] + 50)) catchUp = 25;
+			totalTeamScores[0] += 100 + catchUp;
+			totalTeamScores[1] += (int)(((float)team2Score / (float)team1Score) * 100.f);
 			for (int i = 0; i < this->nrOfPlayers; i++)
 			{
 				if (i == 0 || i == 1)
@@ -82,6 +89,7 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 				}
 			}
 			this->timerToSend = std::chrono::system_clock::now();
+			std::cout << "Red team score : " << (int)totalTeamScores[0] << "\nBlue team score: " << (int)totalTeamScores[1] << "\n";
 		}
 	}
 
@@ -89,6 +97,10 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 	{
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - this->timerToSend)).count() > timerSend)
 		{
+			int catchUp = 0;
+			if (totalTeamScores[1] < (totalTeamScores[0] + 50)) catchUp = 25;
+			totalTeamScores[1] += 100 + catchUp;
+			totalTeamScores[0] += (int)(((float)team1Score / (float)team2Score) * 100.f);
 			for (int i = 0; i < this->nrOfPlayers; i++)
 			{
 				if (i == 0 || i == 1)
@@ -106,6 +118,7 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 				}
 			}
 			this->timerToSend = std::chrono::system_clock::now();
+			std::cout << "Red team score : " << (int)totalTeamScores[0] << "\nBlue team score: " << (int)totalTeamScores[1] << "\n";
 		}
 	}
 

@@ -731,10 +731,10 @@ GAMESTATE Game::updateLandingGame()
 	camera.landingMinigameScene(planetVector[currentPlayer->getTeam() + 1], spaceShips[currentPlayer->getTeam()]->getPosV3(), spaceShips[currentPlayer->getTeam()]->getRot());
 	
 	//Moves the spaceShips
-	spaceShips[currentPlayer->getTeam()]->fly(spaceShips[currentPlayer->getTeam()]->getUpDirection(), dt);
-	spaceShips[!currentPlayer->getTeam()]->fly(spaceShips[!currentPlayer->getTeam()]->getUpDirection(), dt);
+	spaceShips[currentPlayer->getTeam()]->fly(spaceShips[currentPlayer->getTeam()]->getUpDirection(), 0.5f * dt);
+	spaceShips[!currentPlayer->getTeam()]->fly(spaceShips[!currentPlayer->getTeam()]->getUpDirection(), 0.5f * dt);
 
-	if (landingUi.handleInputs(dt)) landingMiniGamePoints += 100*dt;
+	if (landingUi.handleInputs(dt)) landingMiniGamePoints += 5.f*dt;
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
 	{
 		std::cout << "Team score: " << teamScoreLandingMiniGame << "\nEnemy Team score: " << enemyTeamScoreLandingMiniGame << "\n";

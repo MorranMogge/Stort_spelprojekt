@@ -169,6 +169,8 @@ int main()
 	srand((unsigned)(time(0)));
 	float flyTime = 0.f;
 	float landingPoints[MAXNUMBEROFPLAYERS]{ 0.f };
+	float totalTeamScores[2]{ 0.f };
+	int shipComponentCounter[2]{ 0 };
 	bool timeToFly = false;
 	int progress[2] = { 0, 0 };
 	std::vector<int> playersSent;
@@ -645,6 +647,22 @@ int main()
 						}
 						else if (requestStart->formerGame == MiniGames::LANDINGSPACESHIP)
 						{
+							int landPointToScore[2]{ 0 };
+							if (landingPoints[0] > landingPoints[1])
+							{
+								landPointToScore[0] = 100;
+								landPointToScore[1] = (int)((landingPoints[1] / landingPoints[0]) * 100.f);
+							}
+							else
+							{
+								landPointToScore[1] = 100;
+								landPointToScore[0] = (int)((landingPoints[0] / landingPoints[1]) * 100.f);
+							}
+							totalTeamScores[0] += landPointToScore[0];
+							totalTeamScores[1] += landPointToScore[1];
+
+							std::cout << "Red team score : " << (int)totalTeamScores[0] << "\nBlue team score: " << (int)totalTeamScores[1] << "\n";
+
 							//Sending the next minigame
 							currentMinigame = MiniGames::KINGOFTHEHILL;
 							startGame.minigame = MiniGames::KINGOFTHEHILL;
@@ -787,7 +805,7 @@ int main()
 				break;
 
 			case MiniGames::KINGOFTHEHILL:
-				miniGameKTH.update(data, onlineItems, physWorld, componentIdCounter);
+				miniGameKTH.update(data, onlineItems, physWorld, componentIdCounter, totalTeamScores);
 				break;
 
 				/*default:
@@ -818,7 +836,6 @@ int main()
 						if (getLength(vecToComp) <= 10.f)
 						{
 							//onlineItems[i].setInactive();
-							std::cout << "getLength() <= 10.f\n";
 							DirectX::XMFLOAT3 newCompPos = randomizeObjectPos();
 							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 							onlineItems[i]->setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
@@ -829,6 +846,11 @@ int main()
 							compAdded.spaceShipTeam = j;
 							compAdded.componentID = i;
 							onlineItems[i]->setInUseBy(-1);
+
+							totalTeamScores[j] += 25;
+							shipComponentCounter[j]++;
+							if (shipComponentCounter[j] == 4 && shipComponentCounter[!j] >= 4) totalTeamScores[!j] += 25;
+
 							sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
 							sizeOfPackets += sizeof(ComponentAdded);
 
@@ -841,6 +863,8 @@ int main()
 								timeToFly = true;
 								startFly = std::chrono::system_clock::now();
 							}
+
+							std::cout << "Red team score : " << (int)totalTeamScores[0] << "\nBlue team score: " << (int)totalTeamScores[1] << "\n";
 						}
 					}
 				}
@@ -978,7 +1002,6 @@ int main()
 		}
 
 	}
-
 
 	for (int i = 0; i < planetVector.size(); i++)
 	{

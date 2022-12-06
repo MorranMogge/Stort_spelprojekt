@@ -22,7 +22,7 @@ void KingOfTheHillMiniGame::sendKingOfTheHillZone(serverData& data)
 }
 
 
-void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, int& componentIdCounter)
+void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, std::vector<Planet*> planets, PhysicsWorld& physWorld, int& componentIdCounter)
 {
 	static float xPos;
 	static float yPos;
@@ -136,9 +136,8 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - this->itemSpawnTimer)).count() > timeToSpawnItems && onlineItems.size() <= 10)
 	{
-
 		ItemSpawn itemSpawnData;
-		DirectX::XMFLOAT3 temp = randomizeObjectPos();
+		DirectX::XMFLOAT3 temp = randomizeObjectPos(planets);
 		itemSpawnData.x = temp.x;
 		itemSpawnData.y = temp.y;
 		itemSpawnData.z = temp.z;

@@ -177,6 +177,10 @@ Game::~Game()
 {
 	delete packetEventManager;
 
+	for (int i = 0; i < players.size(); i++)
+	{
+		if (i != currentPlayer->getOnlineID()) delete players[i];
+	}
 	for (int i = 0; i < this->gameObjects.size(); i++)
 	{
 		if (this->gameObjects.at(i) != nullptr)
@@ -191,10 +195,6 @@ Game::~Game()
 	for (int i = 0; i < planetVector.size(); i++)
 	{
 		delete planetVector[i];
-	}
-	for (int i = 0; i < players.size(); i++)
-	{
-		if (i != currentPlayer->getOnlineID()) delete players[i];
 	}
 	if (captureZone != nullptr) delete captureZone;
 	if (gamePad != nullptr) delete gamePad;
@@ -246,7 +246,7 @@ void Game::loadObjects()
 		planetVector.back()->setPlanetShape(&physWorld);
 		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(60.f, 60.f, 60.f)));
 		planetVector.back()->setPlanetShape(&physWorld);
-		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-130.f, -130.f, 130.f)));
+		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(55.f, -55.f, -55.f)));
 		planetVector.back()->setPlanetShape(&physWorld);
 		physWorld.setPlanets(planetVector);
 	}

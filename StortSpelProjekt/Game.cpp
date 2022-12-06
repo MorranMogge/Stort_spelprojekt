@@ -768,8 +768,8 @@ GAMESTATE Game::updateLandingGame()
 
 			if (currentPlayer->getTeam() == i)
 			{
-				currentPlayer->setPos(DirectX::XMFLOAT3(spaceShips[i]->getPos().x - 10.f, 62.f, 0.f));
-				currentPlayer->setStartPosition(DirectX::XMFLOAT3(spaceShips[i]->getPos().x - 10.f, 62.f, 0.f));
+				currentPlayer->setPos(DirectX::XMFLOAT3(spaceShips[i]->getPos().x - 10.f, spaceShips[i]->getPos().y, spaceShips[i]->getPos().z));
+				currentPlayer->setStartPosition(DirectX::XMFLOAT3(spaceShips[i]->getPos().x - 10.f, spaceShips[i]->getPos().y, spaceShips[i]->getPos().z));
 			}
 		}
 		std::cout << "\nLANDING MINIGAME OVER!\nTOTAL SCORE:\nTeam score: " << teamScoreLandingMiniGame << "\nEnemy Team score: " << enemyTeamScoreLandingMiniGame << "\n";

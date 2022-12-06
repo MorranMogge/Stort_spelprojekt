@@ -17,7 +17,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	gameMusic.play(true);
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
-	client = new Client("192.168.43.241");
+	client = new Client("192.168.43.251");
 	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
 	circularBuffer = client->getCircularBuffer();
 
@@ -97,6 +97,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			std::cout << "UwU: " << UwU << std::endl;
 			packetEventManager->handleId(client->getCircularBuffer(), this->planetVector, physWorld, meshes, spaceShips, gameObjects, field, UwU);
 		}
+		std::cout << "Final UwU: " << UwU << std::endl;
 		for (int i = 0; i < spaceShips.size(); i++)
 		{
 			spaceShips[i]->setSpaceShipRotationRelativePlanet(planetVector[0]->getGravityField());

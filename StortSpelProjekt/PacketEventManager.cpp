@@ -134,7 +134,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 						players[i]->setRot(DirectX::SimpleMath::Quaternion(prMatrixData->xRot, prMatrixData->yRot, prMatrixData->zRot, prMatrixData->wRot));
 						if (!animated[i])
 						{
-							players[i]->updateAnim(dt, prMatrixData->AnimId, 1);
+							players[i]->updateAnim(0.034*0.5f, prMatrixData->AnimId, 1);
 							animated[i] = true;
 						}
 					}

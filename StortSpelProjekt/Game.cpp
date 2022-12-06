@@ -1145,12 +1145,16 @@ GAMESTATE Game::Update()
 	if (Input::KeyPress(KeyCode::MOUSE_R))
 	{
 		currentMinigame = STARTOFINTERMISSION;
-		displayMinigameUI = true;
 	}
 
 	if (Input::KeyPress(KeyCode::MOUSE_M))
 	{
 		currentMinigame = STARTLANDING;
+	}
+
+	if (Input::KeyPress(KeyCode::P))
+	{
+		return WIN;
 	}
 
 	//Simulate the current minigame on client side
@@ -1255,23 +1259,24 @@ void Game::Render()
 	basicRenderer.postProcessPass();
 
 	//Render UI (needs to render last)
-
-	
-	ui.Draw();
-	if (displayMinigameUI)
-	{
-		miniGameUI.Draw();
-	}
-	
 	switch (currentMinigame)
 	{
+
 	case COMPONENTCOLLECTION:
+		ui.Draw();
 		break;
+
 	case LANDINGSPACESHIP:
 		landingUi.draw();
 		break;
+
 	case KINGOFTHEHILL:
 		break;
+
+	case INTERMISSION:
+		miniGameUI.Draw();
+		break;
+
 	default:
 		break;
 	}

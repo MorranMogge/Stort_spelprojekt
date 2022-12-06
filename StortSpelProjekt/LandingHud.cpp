@@ -30,11 +30,11 @@ LandingHud::LandingHud()
 	arrow2.Load(L"../Sprites/arrow_o.png");
 	arrow2.SetScale(0.4f, 0.4f);
 
-	Skey = GUISprite(325, 350);
+	Skey = GUISprite(325, 360);
 	Skey.Load(L"../Sprites/Skey.png");
 	Skey.SetScale(0.4f, 0.4f);
 
-	Wkey = GUISprite(325, 290);
+	Wkey = GUISprite(325, 280);
 	Wkey.Load(L"../Sprites/Wkey.png");
 	Wkey.SetScale(0.4f, 0.4f);
 

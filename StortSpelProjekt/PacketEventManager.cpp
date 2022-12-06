@@ -423,6 +423,7 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer, std::vec
 
 		case PacketType::SPACESHIPPOSITION:
 			spaceShipPos = circularBuffer->readData<SpaceShipPosition>();
+			
 			//Create correct spaceship depending on team
 			std::cout << "Spawned spaceship\n";
 			newSpaceShip = new SpaceShip(meshes[4], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2), 4);

@@ -17,7 +17,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	gameMusic.play(true);
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
-	client = new Client("192.168.43.241");
+	client = new Client();
 	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
 	circularBuffer = client->getCircularBuffer();
 
@@ -39,19 +39,15 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	manager.AdditionalAnimation("../Meshes/anim/character1_fly.fbx", "../Meshes/anim/character1_idle.fbx");
 
 	manager.loadMeshAndBoneData("../Meshes/character2_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/character2_run.fbx", "../Meshes/character2_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/character2_run_fast.fbx", "../Meshes/character2_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/character2_throw.fbx", "../Meshes/character2_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/character2_attack.fbx", "../Meshes/character2_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/character2_fly.fbx", "../Meshes/character2_idle.fbx");
+
 
 	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
 	ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
 	AnimationData team1Anim;
-	this->manager.getAnimData("../Meshes/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team1Anim);
+	this->manager.getAnimData("../Meshes/anim/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team1Anim);
 	Mesh* team1Mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	AnimationData team2Anim;
-	this->manager.getAnimData("../Meshes/character2_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team2Anim);
+	this->manager.getAnimData("../Meshes/anim/character2_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team1Anim);
 	Mesh* team2Mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	
 	

@@ -28,9 +28,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ltHandler.addLight(DirectX::XMFLOAT3(-120, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 1);
 	ltHandler.addLight(DirectX::XMFLOAT3(16 + 7, 42 + 17, 12 + 7), DirectX::XMFLOAT3(0, 0.3f, 1.0f), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
 	ltHandler.addLight(DirectX::XMFLOAT3(-10 - 5, -45 - 17, -10 - 7), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
-
+	//ltHandler.addLight(DirectX::XMFLOAT3(100, 0, 290), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(150.f, 0, 300.f), DirectX::XMFLOAT3(0, 1, 0), 1);
+	
+	
 	//Temp? initiation of animated mesh
-	manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
 	manager.loadMeshAndBoneData("../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_run.fbx", "../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_run_fast.fbx", "../Meshes/anim/character1_idle.fbx");
@@ -170,7 +171,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 Game::~Game()
 {
 	delete packetEventManager;
-
+	for (int i = 0; i < players.size(); i++)
+	{
+		delete players[i];
+	}
 	for (int i = 0; i < this->gameObjects.size(); i++)
 	{
 		if (this->gameObjects.at(i) != nullptr)
@@ -186,10 +190,7 @@ Game::~Game()
 	{
 		delete planetVector[i];
 	}
-	for (int i = 0; i < players.size(); i++)
-	{
-		if (i != currentPlayer->getOnlineID()) delete players[i];
-	}
+
 	if (captureZone != nullptr) delete captureZone;
 	if (gamePad != nullptr) delete gamePad;
 	if (client != nullptr) delete client;
@@ -394,8 +395,8 @@ void Game::drawObjects(bool drawDebug)
 	//Draw light debug meshes
 	if (drawDebug)
 	{
-		ltHandler.drawDebugMesh();
 	}
+	ltHandler.drawDebugMesh();
 
 	//Animated meshes
 	basicRenderer.changeToAnimation();
@@ -516,48 +517,6 @@ void Game::randomizeObjectPos(GameObject* object)
 	object->setPos(randomPos);
 }
 
-//void Game::handleInputs()
-//{
-//	if (GetAsyncKeyState('C')) physWorld.addBoxToWorld();
-//	if (Input::KeyPress(KeyCode::Y))
-//	{
-//		this->ptEmitters.at(0).setActive(false);
-//		this->ptEmitters.at(0).updateBuffer();
-//	}
-//	if (Input::KeyPress(KeyCode::U))
-//	{
-//		this->ptEmitters.at(0).setActive(true);
-//		this->ptEmitters.at(0).updateBuffer();
-//	}
-//	if (Input::KeyPress(KeyCode::I))
-//	{
-//		drawDebug = true;
-//	}
-//	if (Input::KeyPress(KeyCode::O))
-//	{
-//		drawDebug = false;
-//	}
-//
-//	static bool whyNotJustWork = false;
-//	if (GetAsyncKeyState('N'))
-//	{
-//		if (!whyNotJustWork)
-//		{
-//			displayMinigameUI = !displayMinigameUI;
-//			whyNotJustWork = true;
-//		}
-//	}
-//	else
-//	{
-//		whyNotJustWork = false;
-//	}
-//	if (Input::KeyPress(KeyCode::Y))
-//	{
-//		this->ptEmitters.at(0).setActive(false);
-//		this->ptEmitters.at(0).updateBuffer();
-//	}
-//}
-
 
 GAMESTATE Game::updateComponentGame()
 {
@@ -601,24 +560,7 @@ GAMESTATE Game::updateComponentGame()
 	currentPlayer->velocityMove(dt);
 	currentPlayer->setSpeed(30.f);
 
-	//Check component pickup
-	//if (!IFONLINE)
-	//{
-	//	for (int i = 0; i < components.size(); i++)
-	//	{
-	//		if (currentPlayer->pickupItem(components[i])) break;
-	//	}
-	//}
-	//Check component pickup
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);
-
-	//currentPlayer->requestingPickUpItem(onlineItems);
-
-	//Check item pickup
-	/*for (int i = 0; i < items.size(); i++)
-	{
-		if (currentPlayer->pickupItem(items[i])) break;
-	}*/
 
 	//Update item checks
 	for (int i = 0; i < onlineItems.size(); i++)
@@ -671,22 +613,6 @@ GAMESTATE Game::updateComponentGame()
 		}	break;
 		}
 	}
-
-	//Player functions
-	//currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
-	//currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
-	//currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
-	//currentPlayer->checkForStaticCollision(planetVector, spaceShips);
-	//currentPlayer->velocityMove(dt);
-
-	////Check pickups
-	//currentPlayer->pickupItem(items, components);
-
-
-	/*if (Input::KeyPress(KeyCode::K))
-	{
-		randomizeObjectPos(this->testBat);
-	}*/
 
 	//sending data to server
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
@@ -764,7 +690,6 @@ GAMESTATE Game::updateComponentGame()
 	}
 	else
 	{
-
 		for (int i = 0; i < spaceShips.size(); i++)
 		{
 			for (int j = 0; j < onlineItems.size(); j++)
@@ -774,7 +699,7 @@ GAMESTATE Game::updateComponentGame()
 		}
 	}
 	//Check winstate
-	if (endTimer > 0.4)
+	if (endTimer > 0.4)///change
 	{
 		ui.moveSprite();
 		this->currentPlayer->setVibration(0.f, 0.f);
@@ -789,11 +714,6 @@ GAMESTATE Game::updateComponentGame()
 		{
 			if (spaceShips[i]->isFinished())
 			{
-				//Send data to server
-				/*IntermissionStart startOfIntermission;
-				startOfIntermission.packetId = PacketType::STARTINTERMISSION;
-				client->sendStuff<IntermissionStart>(startOfIntermission);*/
-
 				if (!IFONLINE)
 				{
 					//Complete both ships
@@ -850,6 +770,9 @@ GAMESTATE Game::startLanding()
 		spaceShips[team]->setGravityField(planetVector[index]->getGravityField());
 		spaceShips[team]->setRot(spaceShips[team]->getRotOrientedToGrav());
 	}
+
+	ltHandler.setPosition(DirectX::XMFLOAT3(120, 0, 0), 0);
+	ltHandler.updateBuffers();
 
 	ui.count = 1.0f;
 	ui.setOpacity(false);
@@ -930,7 +853,18 @@ GAMESTATE Game::updateLandingGame()
 
 GAMESTATE Game::updateKingOfTheHillGame()
 {
-	ui.fadeIn();
+	if (!fadedIn)// fade in condition
+	{
+		if (!this->ui.fadeIn()) // is fading
+		{
+		}
+		else // fade in complete
+		{
+			fadedIn = true;
+		}
+	}
+
+
 	//Calculate gravity factor
 	if (planetVector.size() > 0) field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
 	if (field != oldField) { changedPlanet = true; currentPlayer->setGravityField(this->field); }
@@ -1036,10 +970,16 @@ GAMESTATE Game::updateKingOfTheHillGame()
 
 GAMESTATE Game::startIntermission()
 {
+	//Cam
 	this->camera.setPosition(DirectX::XMFLOAT3(100.f, 0.f, 300.f));
 	this->camera.setRotToStart();
 	this->camera.setCameraLookAt(DirectX::XMFLOAT3(150.f, 0, 300.f));
 
+	//Light
+	ltHandler.setPosition(DirectX::XMFLOAT3(100, 0, 290), 0);
+	ltHandler.updateBuffers();
+
+	//Ship
 	this->spaceShips[0]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
 	this->spaceShips[1]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
 

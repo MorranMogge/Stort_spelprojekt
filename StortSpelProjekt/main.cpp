@@ -25,6 +25,7 @@
 #include "WinMenu.h"
 #include "LoseMenu.h"
 #include "ControlMenu.h"
+#include "Lobby.h"
 #include "Time.h"
 
 
@@ -122,6 +123,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			case MENU:
 				delete currentState;
 				currentState = new Menu();
+				break;
+			case LOBBY:
+				delete currentState;
+				currentState = new Lobby();
 				break;
 			default:
 				break;

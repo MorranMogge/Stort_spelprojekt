@@ -93,7 +93,6 @@ private:
 	//HUD
 	HudUI ui;
 	MiniGameUI miniGameUI;
-	bool displayMinigameUI = false;
 	LandingHud landingUi;
 
 	float landingMiniGamePoints = 0;

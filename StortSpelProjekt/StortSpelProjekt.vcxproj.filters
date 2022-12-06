@@ -190,6 +190,12 @@
     <ClCompile Include="MiniGameUI.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="Lobby.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -497,6 +503,12 @@
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="MiniGameUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Lobby.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyUI.h">
       <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>

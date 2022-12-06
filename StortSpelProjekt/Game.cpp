@@ -890,7 +890,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
 	currentPlayer->checkSwimStatus(planetVector);
-	currentPlayer->setSpeed(20.f);
+	currentPlayer->setSpeed(30.f);
 
 	//Check component pickup
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);

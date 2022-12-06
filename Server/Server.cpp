@@ -609,9 +609,9 @@ int main()
 
 						//Sending the planets
 						planetVector[0]->setScale(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
-						planetVector[2]->setPosition(DirectX::XMFLOAT3(55.f, 55.f, 55.f));
+						planetVector[2]->setPosition(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
 						planetVector[2]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
-						planetVector[1]->setPosition(DirectX::XMFLOAT3(-55.f, -55.f, -55.f));
+						planetVector[1]->setPosition(DirectX::XMFLOAT3(-60.f, -60.f, -60.f));
 						planetVector[1]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
 
 						for (int i = 0; i < planetVector.size(); i++)

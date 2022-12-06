@@ -51,6 +51,5 @@ DirectX::XMFLOAT3 GravityField::calcGravFactor(const DirectX::SimpleMath::Vector
     objectPosition.x *= -factor;
     objectPosition.y *= -factor;
     objectPosition.z *= -factor;*/
-
     return gravFactor;
 }

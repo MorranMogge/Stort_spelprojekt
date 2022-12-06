@@ -786,10 +786,9 @@ GAMESTATE Game::updateLandingGame()
 
 GAMESTATE Game::updateKingOfTheHillGame()
 {
-
 	//Get newest delta time
-	//if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
-	//asteroids->updateAsteroids(dt, planetVector, gameObjects);
+	if (asteroids->ifTimeToSpawnAsteroids()) asteroids->spawnAsteroids(planetVector[0]);
+	asteroids->updateAsteroids(dt, planetVector, gameObjects);
 
 	//Calculate gravity factor
 	if (planetVector.size() > 0) field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
@@ -964,7 +963,6 @@ GAMESTATE Game::updateIntermission()
 			requestStart.formerGame = MiniGames::INTERMISSION;
 			client->sendStuff<DoneWithGame>(requestStart);
 			std::cout << "SEND DONE WITH GAME\n";
-
 			currentMinigame = MiniGames::DEFAULT;
 		}
 	}

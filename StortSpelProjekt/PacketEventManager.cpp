@@ -361,12 +361,11 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			color = circularBuffer->readData<ZoneColor>();
 			captureZone->setColor(DirectX::SimpleMath::Vector3(1.f, 1.f, 1.f));
 			break;
+
 		case PacketType::HITBYGRENADE:
 			hitByGrenade = circularBuffer->readData<HitByGrenade>();
 			players[playerId]->hitByBat(reactphysics3d::Vector3(hitByGrenade->xForce, hitByGrenade->yForce, hitByGrenade->zForce));
-
 			break;
-
 		}
 	}
 }

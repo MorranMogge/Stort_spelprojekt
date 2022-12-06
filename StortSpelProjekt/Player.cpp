@@ -21,6 +21,10 @@ void Player::throwItem()
 	c.componentId = this->holdingItem->getOnlineId();
 	c.packetId = PacketType::COMPONENTDROPPED;
 	c.playerId = this->onlineID;
+	c.xPos = this->holdingItem->getPosV3().x;
+	c.yPos = this->holdingItem->getPosV3().y;
+	c.zPos = this->holdingItem->getPosV3().z;
+
 	//sending data to server
 	if (client != nullptr)
 	{
@@ -61,7 +65,7 @@ void Player::handleItems()
 	if (this->gamePad == nullptr) return;
 
 	DirectX::XMFLOAT4X4 f1;
-	this->forwardKinematics("hand3:hand3:RightHand", f1);
+	this->forwardKinematics("Character_RightHand", f1);
 	DirectX::XMMATRIX mat = DirectX::XMLoadFloat4x4(&f1);
 	DirectX::XMVECTOR scale;
 	DirectX::XMVECTOR pos;
@@ -97,21 +101,25 @@ void Player::handleItems()
 			}
 			////sending data to server
 
-			std::cout << "TEST 1 nuzzle\n";
 			//allocates data to be sent
-			ComponentDropped c;
 
-			std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
-			c.componentId = this->holdingItem->getOnlineId();
-			c.packetId = PacketType::COMPONENTDROPPED;
-			//sending data to server
-			if (this->client != nullptr)
-			{
-				client->sendStuff<ComponentDropped>(c);
-			}
 			if (holdingItem->getId() != BAT)
 			{
 				itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+				ComponentDropped c;
+
+				std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
+				c.componentId = this->holdingItem->getOnlineId();
+				c.packetId = PacketType::COMPONENTDROPPED;
+				c.playerId = this->onlineID;
+				c.xPos = this->holdingItem->getPosV3().x;
+				c.yPos = this->holdingItem->getPosV3().y;
+				c.zPos = this->holdingItem->getPosV3().z;
+				//sending data to server
+				if (this->client != nullptr)
+				{
+					client->sendStuff<ComponentDropped>(c);
+				}
 			}
 			if (holdingItem->getId() == GRENADE)
 			{
@@ -158,7 +166,7 @@ void Player::handleItems()
 		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))
 		{
 			keyPressTimer.resetStartTime();
-			if (holdingItem->getId() == BAT)
+			if (holdingItem->getId() == BAT && usedItem)
 			{
 				this->usingBat = true;
 				this->usedItem = false;
@@ -167,19 +175,24 @@ void Player::handleItems()
 			////sending data to server
 
 			//allocates data to be sent
-			ComponentDropped c;
-
-			std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
-			c.componentId = this->holdingItem->getOnlineId();
-			c.packetId = PacketType::COMPONENTDROPPED;
-			//sending data to server
-			if (this->client != nullptr)
-			{
-				client->sendStuff<ComponentDropped>(c);
-			}
+			
 			if (holdingItem->getId() != BAT)
 			{
 				itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+				ComponentDropped c;
+
+				std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
+				c.componentId = this->holdingItem->getOnlineId();
+				c.packetId = PacketType::COMPONENTDROPPED;
+				c.playerId = this->onlineID;
+				c.xPos = this->holdingItem->getPosV3().x;
+				c.yPos = this->holdingItem->getPosV3().y;
+				c.zPos = this->holdingItem->getPosV3().z;
+				//sending data to server
+				if (this->client != nullptr)
+				{
+					client->sendStuff<ComponentDropped>(c);
+				}
 			}
 			if (holdingItem->getId() == GRENADE)
 			{
@@ -219,15 +232,31 @@ void Player::handleItems()
 		this->throwingItem = false;
 		this->throwItem();
 	}
-	if (this->usingBat && this->dropTimer.getTimePassed(0.25)&& !this->usedItem)
+	if (this->usingBat && this->dropTimer.getTimePassed(0.25) && !this->usedItem)
 	{
 		holdingItem->useItem(this);
 		this->usedItem = true;
+		std::cout << "using bat\n";
 	}
 	else if (this->usingBat && this->dropTimer.getTimePassed(0.5))
 	{
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 		usingBat = false;
+		std::cout << "dropping bat\n";
+		ComponentDropped c;
+
+		std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
+		c.componentId = this->holdingItem->getOnlineId();
+		c.packetId = PacketType::COMPONENTDROPPED;
+		c.playerId = this->onlineID;
+		c.xPos = this->holdingItem->getPosV3().x;
+		c.yPos = this->holdingItem->getPosV3().y;
+		c.zPos = this->holdingItem->getPosV3().z;
+		//sending data to server
+		if (this->client != nullptr)
+		{
+			client->sendStuff<ComponentDropped>(c);
+		}
 		holdingItem->setPickedUp(false);
 		holdingItem = nullptr;
 	}
@@ -896,13 +925,14 @@ int Player::getItemOnlineId() const
 
 bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Component*>& components)
 {
-	if (this->isHoldingItem()) return false;
+	
+	if (this->isHoldingItem() || dedge) return false;
 	bool successfulPickup = false;
 	
 	//Controller pickup
 	if (state.IsConnected())
 	{
-		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1f))
+		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1f) && this->holdingItem != nullptr)
 		{
 			this->eKeyDown = true;
 		}
@@ -946,12 +976,10 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 		}
 	}
 	//Keyboard pickup
-	else if (GetAsyncKeyState('E') && this->eKeyDown == false && this->keyPressTimer.getTimePassed(0.1f))
+
+	else if (Input::KeyPress(KeyCode::E) /*&&*/ /*this->eKeyDown == true &&*/ /*this->holdingItem != nullptr*/)
 	{
-		this->eKeyDown = true;
-	}
-	else if (GetAsyncKeyState('E') == 0 && this->eKeyDown == true)
-	{
+		std::cout << "stuff2" << std::endl;
 		//Checking items
 		this->eKeyDown = false;
 
@@ -959,6 +987,7 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 		{
 			if (this->withinRadius(items[i], 5))
 			{
+
 				addItem(items[i]);
 				this->holdingComp = false;
 				holdingItem->getPhysComp()->getRigidBody()->resetForce();
@@ -988,6 +1017,13 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 			}
 		}
 	}
+
+	//else if (Input::KeyPress(KeyCode::E)/* && this->eKeyDown == false*/ &&  this->keyPressTimer.getTimePassed(0.1))
+	//{
+	//	std::cout << "stuff" << std::endl;
+	//	this->eKeyDown = true;
+
+	//}
 	return successfulPickup;
 }
 
@@ -1014,8 +1050,12 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 		cDropped.packetId = COMPONENTDROPPED;
 		cDropped.playerId = this->onlineID;
 		cDropped.componentId = this->holdingItem->getOnlineId();
+		cDropped.xPos = this->holdingItem->getPosV3().x;
+		cDropped.yPos = this->holdingItem->getPosV3().y;
+		cDropped.zPos = this->holdingItem->getPosV3().z;
 
 		client->sendStuff<ComponentDropped>(cDropped);
+		this->releaseItem();
 	}
 }
 
@@ -1085,7 +1125,7 @@ void Player::checkSwimStatus(const std::vector<Planet*>& planets)
 	}
 }
 
-bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
+bool Player::raycast(const std::vector<SpaceShip*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
 {
 	if (!dedge)
 	{
@@ -1103,7 +1143,6 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 	int gameObjSize = (int)gameObjects.size();
 	for (int i = 0; i < gameObjSize; i++)
 	{
-		if (gameObjects[i]->getPhysComp()->getType() != reactphysics3d::BodyType::STATIC && gameObjects[i] == this->holdingItem) continue;
 		if (gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
 		{
 			//Maybe somehow return the index of the triangle hit to calculate new Normal
@@ -1256,7 +1295,7 @@ void Player::giveItemMatrix()
 		return;
 	}
 	DirectX::XMFLOAT4X4 f1;
-	this->forwardKinematics("hand3:hand3:RightHand", f1);
+	this->forwardKinematics("Character_RightHand", f1);
 	this->holdingItem->setMatrix(f1);
 }
 
@@ -1381,6 +1420,7 @@ void Player::update()
 			this->physComp->resetTorque();
 			this->physComp->setType(reactphysics3d::BodyType::STATIC);
 			this->resetRotationMatrix();
+			this->position = DirectX::SimpleMath::Vector3(0, 69, 0);
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
 		}
@@ -1435,7 +1475,7 @@ void Player::setGamePad(DirectX::GamePad* gamePad)
 
 void Player::requestingPickUpItem(const std::vector<Item*>& items)
 {
-	if (holdingItem) return;
+	if (holdingItem || dedge) return;
 	if (state.IsConnected())
 	{
 		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1f))

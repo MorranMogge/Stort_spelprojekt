@@ -97,6 +97,18 @@ void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, bool& landingMinig
 			ImGui::Text(tmpStrX.c_str());
 			ImGui::Text(tmpStrY.c_str());
 			ImGui::Text(tmpStrZ.c_str());
+
+			std::string playerHoldingItem;
+			if (currentPlayer->getItem() == nullptr)
+			{
+				playerHoldingItem = "Player item == nullptr\n";
+			}
+			else
+			{
+				playerHoldingItem = "Player item != nullptr\n";
+			}
+
+			ImGui::Text(playerHoldingItem.c_str());
 		}
 
 		ImGui::End();

@@ -38,7 +38,7 @@ private:
 
 	//Server related variables
 	std::chrono::time_point<std::chrono::system_clock> serverStart;
-	float serverTimerLength =  1.f / 30.0f;
+	float serverTimerLength =  1.f / 60.0f;
 	Client* client;
 
 	ModelManager manager;
@@ -93,7 +93,6 @@ private:
 	//HUD
 	HudUI ui;
 	MiniGameUI miniGameUI;
-	bool displayMinigameUI = false;
 	LandingHud landingUi;
 
 	float landingMiniGamePoints = 0;

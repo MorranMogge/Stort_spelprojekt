@@ -104,7 +104,10 @@ void GameObject::movePos(const DirectX::XMFLOAT3& offset)
 void GameObject::setPos(const DirectX::XMFLOAT3& pos)
 {
 	this->position = pos;
-	this->physComp->setPosition(reactphysics3d::Vector3{ pos.x,pos.y,pos.z });
+	if (physComp != nullptr)
+	{
+		this->physComp->setPosition(reactphysics3d::Vector3{ pos.x,pos.y,pos.z });
+	}
 }
 
 void GameObject::setRot(const DirectX::XMFLOAT3& rot)

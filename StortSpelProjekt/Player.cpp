@@ -137,7 +137,7 @@ void Player::handleItems()
 				useGrenade.yForce = temp.y * FORCE;
 				useGrenade.zForce = temp.z * FORCE;
 
-				//client->sendStuff<UseGrenade>(useGrenade);
+				client->sendStuff<UseGrenade>(useGrenade);
 
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -211,7 +211,7 @@ void Player::handleItems()
 				useGrenade.yForce = temp.y * FORCE;
 				useGrenade.zForce = temp.z * FORCE;
 
-				//client->sendStuff<UseGrenade>(useGrenade);
+				client->sendStuff<UseGrenade>(useGrenade);
 
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -1014,7 +1014,7 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 
 	this->physComp->setType(reactphysics3d::BodyType::DYNAMIC);
 	this->dedge = true;
-	if (state.IsConnected()) this->gamePad->SetVibration(0, 0.1f, 0.1f, 0.f, 0.f);
+	if (state.IsConnected()) this->gamePad->SetVibration(0, 0.5f, 0.5f, 0.f, 0.f);
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);
 	timer.resetStartTime();

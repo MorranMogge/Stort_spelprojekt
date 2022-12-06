@@ -177,6 +177,7 @@ int main()
 	int componentIdCounter = 0;
 	bool once = false;
 	int itemLimit = 10;
+	int grenadeCount = 0;
 	TimeStruct physicsTimer;
 	PhysicsWorld physWorld;
 	Component planetComp;
@@ -519,6 +520,7 @@ int main()
 					onlineItems[grenadeData->itemId]->getPhysicsComponent()->getPosV3().y + grenadeData->yForce * 0.0025f,
 					onlineItems[grenadeData->itemId]->getPhysicsComponent()->getPosV3().z + grenadeData->zForce * 0.0025f));
 				onlineItems[grenadeData->itemId]->getPhysicsComponent()->applyForceToCenter(reactphysics3d::Vector3(grenadeData->xForce, grenadeData->yForce, grenadeData->zForce));
+				sendBinaryDataAllPlayers<UseGrenade>(*grenadeData, data);
 				std::cout << "Player used grenade OwO\n";
 				break;
 
@@ -706,7 +708,8 @@ int main()
 		{
 			ItemSpawn itemSpawnData;
 			DirectX::XMFLOAT3 temp = randomizeObjectPos();
-			itemSpawnData.itemType = 3;		//Spawns a random item (Baseball bat, potion or grenade)
+			if (!grenadeCount) itemSpawnData.itemType = (rand() % 3) + 3;		//Spawns a random item (Baseball bat, potion or grenade)
+			else itemSpawnData.itemType = (rand() % 2) + 3;
 			itemSpawnData.x = temp.x;
 			itemSpawnData.y = temp.y;
 			itemSpawnData.z = temp.z;
@@ -716,7 +719,7 @@ int main()
 			
 			if (itemSpawnData.itemType == ObjID::BAT) onlineItems.push_back(new BaseballBat(componentIdCounter));//ändra
 			else if (itemSpawnData.itemType == ObjID::POTION) onlineItems.push_back(new Grenade(componentIdCounter));//ändra
-			else if (itemSpawnData.itemType == ObjID::GRENADE) onlineItems.push_back(new Grenade(componentIdCounter));//ändra
+			else if (itemSpawnData.itemType == ObjID::GRENADE) { onlineItems.push_back(new Grenade(componentIdCounter)); grenadeCount++; }
 			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
 			onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);
 			onlineItems[onlineItems.size() - 1]->setInUseBy(-1);

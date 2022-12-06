@@ -47,6 +47,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	Loser* lose = nullptr;
 	ComponentDropped* cmpDropped = nullptr;
 	HitByGrenade* hitByGrenade = nullptr;
+	UseGrenade* grenadeData = nullptr;
 	
 
 	for (int i = 0; i < players.size(); i++)
@@ -350,6 +351,16 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			hitByGrenade = circularBuffer->readData<HitByGrenade>();
 			players[playerId]->hitByBat(reactphysics3d::Vector3(hitByGrenade->xForce, hitByGrenade->yForce, hitByGrenade->zForce));
 
+			break;
+		case PacketType::USEGRENADE:
+			grenadeData = circularBuffer->readData<UseGrenade>();
+			for (int i = 0; i < onlineItems.size(); i++)
+			{
+				if (onlineItems[i]->getOnlineId() == grenadeData->itemId)
+				{
+					onlineItems[i]->useItem(players[playerId]);
+				}
+			}
 			break;
 
 		}

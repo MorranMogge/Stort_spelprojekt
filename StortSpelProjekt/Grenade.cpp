@@ -27,7 +27,9 @@ Grenade::Grenade(Mesh* useMesh, Mesh* explodeMesh, const DirectX::XMFLOAT3& pos,
 	this->colorBuffer.getData() = DirectX::XMFLOAT4(1 ,0.25 ,0 , 0.5);
 	this->colorBuffer.applyData();
 
-	explosionMesh = explodeMesh;
+	//explosionMesh = explodeMesh;
+	explosionMesh = (new Mesh("../Meshes/Sphere"));
+
 }
 
 Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)

@@ -11,7 +11,7 @@
 #include "GameObject.h"
 #include "StructuredBuffer.h"
 #include "GPU.h"
-
+#include <d3d11.h>
 
 struct boneInfo
 {
@@ -151,5 +151,6 @@ public:
 	void addData(const AnimationData& data);
 	void updateAnim(const float& dt, int animIndex, float animationSpeed = 1.0f);
 	void draw();
+	void draw(std::vector<ID3D11ShaderResourceView*>& allTextures);
 	void getAnimId(int& id);
 };

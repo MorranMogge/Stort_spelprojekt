@@ -1629,3 +1629,13 @@ void Player::drawFresnel(float interval)
 		this->position = pos;
 	}
 }
+
+void Player::setTextures(std::vector<ID3D11ShaderResourceView*>& textures)
+{
+	this->playerTextures = textures;
+}
+
+void Player::drawSubMeshesWithTexture()
+{
+	this->draw(this->playerTextures);
+}

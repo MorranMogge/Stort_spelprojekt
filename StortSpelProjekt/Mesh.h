@@ -202,6 +202,27 @@ public:
 			startVertex += this->amountOfVertices[i];
 		}
 	}
+	void draw(std::vector<ID3D11ShaderResourceView*>& allTextures, UINT stride = sizeof(vertex))
+	{
+		worldCB.BindToVS(0u);
+		//UINT stride = stride;
+		UINT offset = 0;
+
+		int startIndex = 0;
+		int startVertex = 0;
+		GPU::immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuff, &stride, &offset);
+		GPU::immediateContext->IASetIndexBuffer(this->indexBuff, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+		for (int i = 0; i < submeshRanges.size(); i++)
+		{
+			
+			GPU::immediateContext->PSSetShaderResources(0, 1, &allTextures[i]);
+			
+
+			GPU::immediateContext->DrawIndexed(submeshRanges[i], startIndex, startVertex);
+			startIndex += submeshRanges[i];
+			startVertex += this->amountOfVertices[i];
+		}
+	}
 
 	// without material
 	void Draw(bool tesselation = false)

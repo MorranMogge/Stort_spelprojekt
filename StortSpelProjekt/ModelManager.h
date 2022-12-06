@@ -60,7 +60,7 @@ private:
 	void readNodes(aiMesh* mesh, const aiScene* scene);
 	std::vector<Mesh2*> meshes;
 	std::vector<ID3D11ShaderResourceView*> diffuseMaps;
-
+	std::vector<std::string> allTextureNamesForMesh;
 
 	ModelDataContainer bank;
 	ID3D11Device* device;
@@ -88,7 +88,7 @@ public:
 	bool loadMeshData(const std::string& filePath);
 	ID3D11ShaderResourceView* getSrv(const std::string key);
 	//std::vector<Mesh2*> getMeshes() const;
-	std::vector<ID3D11ShaderResourceView*> getTextureMaps() const;
+	void getTextureMaps(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec);
 
 	bool loadMeshAndBoneData(const std::string& filePath);
 	bool AdditionalAnimation(const std::string& newAnimationFile, const std::string& destination);
@@ -97,4 +97,5 @@ public:
 	bool getAnimData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces, AnimationData& AnimData);
 	std::vector<ID3D11Buffer*> getBuff() const;
 	void setDevice(ID3D11Device* device);
+	
 };

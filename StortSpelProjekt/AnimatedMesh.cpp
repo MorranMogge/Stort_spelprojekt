@@ -426,6 +426,13 @@ void AnimatedMesh::draw()
 	this->tmpDraw(sizeof(AnimatedVertex));
 }
 
+void AnimatedMesh::draw(std::vector<ID3D11ShaderResourceView*>& allTextures)
+{
+	strucBuff.applyData();
+	strucBuff.BindToVS(0);
+	this->tmpDraw(allTextures, sizeof(AnimatedVertex));
+}
+
 void AnimatedMesh::getAnimId(int& id)
 {
 	id = this->currentAnimId;

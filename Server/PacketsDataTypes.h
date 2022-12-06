@@ -315,3 +315,11 @@ struct DoneLoading
 {
 	int packetId;
 };
+
+//enum
+struct PlayerData
+{
+	int packetId;
+	int playerId;
+	int playerReady;
+};

@@ -22,6 +22,7 @@
 #include "ObjectId.h"
 #include "BaseBallBat.h"
 #include "Grenade.h"
+#include "GetPlayerData.h"
 
 #include "TestObj.h"
 
@@ -337,18 +338,18 @@ int main()
 			}
 		}
 	}
+
+
+	int sizeOfPackets = 0;
+	TimeStruct DebugSizePackets;
 	
+	std::cout << "Starting while loop! \n";
 
 	//Starting timer
 	start = std::chrono::system_clock::now();
 	startComponentTimer = std::chrono::system_clock::now();
 	itemSpawnTimer = std::chrono::system_clock::now();
 
-
-	int sizeOfPackets = 0;
-	TimeStruct DebugSizePackets;
-
-	std::cout << "Starting while loop! \n";
 
 	//clearing data before the game loop
 	circBuffer->clearBuffer();
@@ -501,6 +502,7 @@ int main()
 					if (onlineItems[i]->getOnlineId() == itemPos->itemId) //finding the correct item
 					{
 						//set the data
+						break;
 					}
 				}
 				break;

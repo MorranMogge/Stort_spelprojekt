@@ -63,5 +63,6 @@ public:
 	bool redySetGo();
 	void setOpacity(bool onOff);
 	static void SetGamePad(DirectX::GamePad* gamepad);
+	void DrawFade();
 	void Draw();
 };

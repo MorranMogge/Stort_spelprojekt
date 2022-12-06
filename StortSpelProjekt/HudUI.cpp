@@ -142,8 +142,9 @@ void HudUI::SpritePass()
 
 	state.IsConnected() ? controls2.Draw() : controls.Draw();
 
-	fade.Draw();
 }
+
+
 
 HudUI::HudUI()
 {
@@ -447,10 +448,20 @@ void HudUI::SetGamePad(DirectX::GamePad* g)
 	gamepad = g;
 }
 
+void HudUI::DrawFade()
+{
+	GUI::Begin();
+	fade.Draw();
+	GUI::End();
+
+}
+
 void HudUI::Draw()
 {
 	handleInputs();
 	GUI::Begin();
 	SpritePass();
 	GUI::End();
+
+	DrawFade();
 }

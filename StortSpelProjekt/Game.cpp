@@ -1283,6 +1283,7 @@ void Game::Render()
 
 	case LANDINGSPACESHIP:
 		landingUi.draw();
+		ui.DrawFade();
 		break;
 
 	case KINGOFTHEHILL:
@@ -1290,6 +1291,7 @@ void Game::Render()
 
 	case INTERMISSION:
 		miniGameUI.Draw();
+		ui.DrawFade();
 		break;
 
 	default:

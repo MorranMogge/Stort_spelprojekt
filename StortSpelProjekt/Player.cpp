@@ -61,7 +61,7 @@ void Player::handleItems()
 	if (this->gamePad == nullptr) return;
 
 	DirectX::XMFLOAT4X4 f1;
-	this->forwardKinematics("hand3:hand3:RightHand", f1);
+	this->forwardKinematics("Character_RightHand", f1);
 	DirectX::XMMATRIX mat = DirectX::XMLoadFloat4x4(&f1);
 	DirectX::XMVECTOR scale;
 	DirectX::XMVECTOR pos;
@@ -1256,7 +1256,7 @@ void Player::giveItemMatrix()
 		return;
 	}
 	DirectX::XMFLOAT4X4 f1;
-	this->forwardKinematics("hand3:hand3:RightHand", f1);
+	this->forwardKinematics("Character_RightHand", f1);
 	this->holdingItem->setMatrix(f1);
 }
 

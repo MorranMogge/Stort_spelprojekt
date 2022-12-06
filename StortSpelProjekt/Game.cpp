@@ -639,6 +639,7 @@ GAMESTATE Game::updateComponentGame()
 	//Arrow pointing to component
 	else if (onlineItems.size() > 0)  this->arrow->showDirection(onlineItems[0]->getPosV3(), currentPlayer->getPosV3(), grav);
 	else if (components.size() > 0) this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
+	else arrow->removeArrow();
 	currentPlayer->colliedWIthComponent(components);
 
 	if (!IFONLINE)

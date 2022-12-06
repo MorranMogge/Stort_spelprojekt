@@ -137,7 +137,7 @@ void Player::handleItems()
 				useGrenade.yForce = temp.y * FORCE;
 				useGrenade.zForce = temp.z * FORCE;
 
-				//client->sendStuff<UseGrenade>(useGrenade);
+				client->sendStuff<UseGrenade>(useGrenade);
 
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -211,7 +211,7 @@ void Player::handleItems()
 				useGrenade.yForce = temp.y * FORCE;
 				useGrenade.zForce = temp.z * FORCE;
 
-				//client->sendStuff<UseGrenade>(useGrenade);
+				client->sendStuff<UseGrenade>(useGrenade);
 
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -422,7 +422,7 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 	else if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 	else normalVector = DirectX::XMVectorSet(grav.x, grav.y, grav.z, 1.0f);
 
-	//Player jumping to another planet
+	//Player landing on another planet
 	if (changedPlanet) flipping = true;
 	else if (onGround) flipping = false;
 
@@ -535,12 +535,9 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime)
 {
 	if (dedge || flipping) return;
-
 	if (state.IsConnected()) return;
-	if (!this->doneWithAnim)
-	{
-		return;
-	}
+	if (!this->doneWithAnim) return;
+
 	//Running
 	this->currentSpeed = this->speed;
 	if (Input::KeyDown(KeyCode::SHIFT))
@@ -552,8 +549,8 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
 		onGround = false;
-		this->velocity = this->normalVector * 40.f;
-		this->position += this->normalVector * 1.8f;
+		this->velocity = this->normalVector * 30.f;
+		this->position += this->normalVector * 1.5f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
 
@@ -1412,7 +1409,7 @@ void Player::update()
 			this->physComp->resetTorque();
 			this->physComp->setType(reactphysics3d::BodyType::STATIC);
 			this->resetRotationMatrix();
-			//this->position = DirectX::SimpleMath::Vector3(0, 69, 0);
+			this->position = this->startPos;
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
 		}

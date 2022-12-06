@@ -55,6 +55,7 @@ private:
 	float totalPos = 0.0f;
 	DirectX::GamePad* gamePad;
 	DirectX::GamePad::ButtonStateTracker tracker;
+	DirectX::GamePad::State state;
 
 	//Other variables
 	Client* client;
@@ -88,6 +89,14 @@ private:
 	DirectX::SimpleMath::Vector3 planetVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	DirectX::SimpleMath::Vector3 playerVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
+	int animIndex = 0;
+	bool eKeyDown = false;
+	float animSpeed = 1;
+	bool usingBat = false;
+	TimeStruct dropTimer;
+	bool usedItem = true;
+	bool throwingItem = false;
+
 	void throwItem();
 	void resetRotationMatrix();
 	void handleItems();
@@ -95,7 +104,7 @@ private:
 	bool moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 
 public:
-	Player(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team,
+	Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team,
 		ID3D11ShaderResourceView* redTeamColor, ID3D11ShaderResourceView* blueTeamColor, GravityField* field = nullptr);
 	~Player();
 
@@ -125,6 +134,7 @@ public:
 	int getOnlineID()const;
 	bool getHitByBat()const;
 	float getSpeed()const;
+	void getAnimSpeed(float& speed);
 
 	//Item related functions
 	bool pickupItem(const std::vector <Item *>& items, const std::vector <Component*>& components);
@@ -139,11 +149,14 @@ public:
 	//Collision and checks
 	void hitByBat(const reactphysics3d::Vector3& force);
 	bool checkForStaticCollision(const std::vector<Planet*>& gameObjects, const std::vector<SpaceShip*>& spaceShips);
-	bool raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
+	void checkSwimStatus(const std::vector<Planet*>& planets);
+	bool raycast(const std::vector<SpaceShip*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	void colliedWIthComponent(const std::vector<Component*>& components);
 	void checkSwimStatus(const std::vector<Planet*>& planets);
 	void orbiting();
+	void stateMachine(const float dt);
+	void giveItemMatrix();
 	
 	//Updating and rendering
 	void drawIcon();
@@ -151,5 +164,6 @@ public:
 	//virtual void draw() override;
 	void update();
 	void requestingPickUpItem(const std::vector<Item*>& items);
+	void updateController();
 	void itemRecvFromServer(Item* item);
 };

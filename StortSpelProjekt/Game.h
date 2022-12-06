@@ -114,7 +114,6 @@ private:
 	void drawIcons();
 	void drawObjects(bool drawDebug);
 	void drawParticles();
-	void handleKeybinds();
 	GAMESTATE updateComponentGame();
 	GAMESTATE startLanding();
 	GAMESTATE updateLandingGame();

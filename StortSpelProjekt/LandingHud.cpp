@@ -25,9 +25,17 @@ LandingHud::~LandingHud()
 {
 }
 
+void LandingHud::makeGamePad(DirectX::GamePad* gamePad)
+{
+	this->gamePad = gamePad;
+}
+
 bool LandingHud::handleInputs(const float& dt)
 {
 	bool intersected = false;
+
+	this->state = gamePad->GetState(0);
+	tracker.Update(state);
 	
 	if (this->currentTime >= this->targetTime)
 	{
@@ -59,34 +67,53 @@ bool LandingHud::handleInputs(const float& dt)
 	landing1.SetPosition(DirectX::SimpleMath::Vector2(MaxVec.x, landing1.GetPosition().y + changePos.y * dt));
 	landing1.SetScale(DirectX::SimpleMath::Vector2(0.2f, landing1.GetScale().y + changeScale.y * dt));
 
-
-	//Move player sprite
-	if (Input::KeyDown(KeyCode::W) || Input::KeyDown(KeyCode::ARROW_Up))
+	if (state.IsConnected())
 	{
-		DirectX::SimpleMath::Vector2 test(rocketPos.x, rocketPos.y - dt * speed);
+		if (abs(state.thumbSticks.leftY) > 0)
+		{
+			DirectX::SimpleMath::Vector2 test(rocketPos.x, rocketPos.y - dt * speed * state.thumbSticks.leftY);
 
-		if (rocketPos.y < MaxVec.y - 25)
-		{
-			landing2.SetPosition(DirectX::SimpleMath::Vector2(MaxVec.x, rocketPos.y));
-		}
-		else
-		{
-			landing2.SetPosition(test);
+			if (rocketPos.y < MaxVec.y - 25)
+			{
+				landing2.SetPosition(DirectX::SimpleMath::Vector2(MaxVec.x, rocketPos.y));
+			}
+			else
+			{
+				landing2.SetPosition(test);
+			}
 		}
 	}
-	if (Input::KeyDown(KeyCode::S) || Input::KeyDown(KeyCode::ARROW_Down))
+	else
 	{
-		DirectX::SimpleMath::Vector2 test(rocketPos.x, rocketPos.y + dt * speed);
+		//Move player sprite
+		if (Input::KeyDown(KeyCode::W) || Input::KeyDown(KeyCode::ARROW_Up))
+		{
+			DirectX::SimpleMath::Vector2 test(rocketPos.x, rocketPos.y - dt * speed);
 
-		if (rocketPos.y > MinVec.y + 25)
-		{
-			landing2.SetPosition(DirectX::SimpleMath::Vector2(MaxVec.x, rocketPos.y));
+			if (rocketPos.y < MaxVec.y - 25)
+			{
+				landing2.SetPosition(DirectX::SimpleMath::Vector2(MaxVec.x, rocketPos.y));
+			}
+			else
+			{
+				landing2.SetPosition(test);
+			}
 		}
-		else
+		if (Input::KeyDown(KeyCode::S) || Input::KeyDown(KeyCode::ARROW_Down))
 		{
-			landing2.SetPosition(test);
+			DirectX::SimpleMath::Vector2 test(rocketPos.x, rocketPos.y + dt * speed);
+
+			if (rocketPos.y > MinVec.y + 25)
+			{
+				landing2.SetPosition(DirectX::SimpleMath::Vector2(MaxVec.x, rocketPos.y));
+			}
+			else
+			{
+				landing2.SetPosition(test);
+			}
 		}
 	}
+
 
 	//Check sprite intersection
 	if (landing1.IntersectSprite(landing2))

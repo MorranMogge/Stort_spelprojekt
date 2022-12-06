@@ -1,4 +1,3 @@
-
 enum PacketType
 {
 	ERROR1 = -1,
@@ -31,5 +30,9 @@ enum PacketType
 	DONEWITHGAME = 30,
 	BASEBALLBATSPAWN = 31,
 	POTIONSPAWN = 32,
-	ZONECOLOR = 33
-	};
+	ZONECOLOR = 33,
+	USEGRENADE = 69,
+	HITBYGRENADE = 70,
+	USEBAT = 71,
+	DONELOADING = 36
+};

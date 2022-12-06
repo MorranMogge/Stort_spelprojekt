@@ -1,17 +1,24 @@
 #pragma once
 #define NOMINMAX
-
+#include <vector>
 #include <d3d11.h>
 #include "PacketEnum.h"
 #include "PacketsDataTypes.h"
 #include "sendDataFunctions.h"
+
+
+
+#include "BaseballBat.h"
+#include "PhysicsWorld.h"
+#include "RandomizeSpawn.h"
+
 
 class KingOfTheHillMiniGame
 {
 private:
 	std::chrono::time_point<std::chrono::system_clock> timer;
 	std::chrono::time_point<std::chrono::system_clock> timerToSend;
-	std::chrono::time_point<std::chrono::system_clock> timerToSpawnItems;
+	std::chrono::time_point<std::chrono::system_clock> itemSpawnTimer;
 	float time;
 	float timerSend;
 	float timeToSpawnItems;
@@ -37,10 +44,11 @@ private:
 	unsigned int goalScore;
 public:
 	KingOfTheHillMiniGame(const short &nrOfPlayers);
-	//Bestäm position på zonen
+	//Bestï¿½m position pï¿½ zonen
 	void sendKingOfTheHillZone(serverData& data);
 	void spawnItems();
-	void update(serverData& data);
+	void update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, int& componentIdCounter);
+
 	//Check if players are inside the zone
 	//SpawnBats
 	//Check who won

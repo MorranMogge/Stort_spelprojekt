@@ -6,6 +6,8 @@ Player::Player()
 	xPos = 20.0f;
 	yPos = 30.0f;
 	zPos = 40.0f;
+	this->animID = 0;
+	this->animSpeed = 1;
 	this->dead = false;
 }
 
@@ -66,6 +68,7 @@ void Player::setMatrix(DirectX::XMFLOAT4X4 matrix)
 	this->matrix = matrix;
 	DirectX::SimpleMath::Quaternion quat;
 	quat = DirectX::XMQuaternionRotationMatrix(DirectX::XMLoadFloat4x4(&matrix));
+	this->physComp->setPosition(reactphysics3d::Vector3(matrix._14, matrix._24, matrix._34));
 	this->physComp->setRotation(reactphysics3d::Quaternion(quat.x, quat.y, quat.z, quat.w));
 }
 
@@ -101,4 +104,16 @@ void Player::updatePosViaPhysComp()
 	this->matrix._14 = xPos;
 	this->matrix._24 = yPos;
 	this->matrix._34 = zPos;
+}
+
+void Player::setAnimData(int animId, float animSpeed)
+{
+	this->animID = animId;
+	this->animSpeed = animSpeed;
+}
+
+void Player::getAnimData(int& animId, float& animSpeed)
+{
+	animId = this->animID;
+	animSpeed = this->animSpeed;
 }

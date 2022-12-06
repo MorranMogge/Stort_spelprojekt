@@ -31,12 +31,12 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	//Temp? initiation of animated mesh
 	manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
-	manager.loadMeshAndBoneData("../Meshes/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/character1_run.fbx", "../Meshes/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/character1_run_fast.fbx", "../Meshes/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/character1_throw.fbx", "../Meshes/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/character1_attack.fbx", "../Meshes/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/character1_fly.fbx", "../Meshes/character1_idle.fbx");
+	manager.loadMeshAndBoneData("../Meshes/anim/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character1_run.fbx", "../Meshes/anim/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character1_run_fast.fbx", "../Meshes/anim/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character1_throw.fbx", "../Meshes/anim/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character1_attack.fbx", "../Meshes/anim/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character1_fly.fbx", "../Meshes/anim/character1_idle.fbx");
 
 	manager.loadMeshAndBoneData("../Meshes/character2_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/character2_run.fbx", "../Meshes/character2_idle.fbx");

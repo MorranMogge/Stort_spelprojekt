@@ -18,6 +18,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
 	client = new Client();
+
 	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
 	circularBuffer = client->getCircularBuffer();
 
@@ -169,9 +170,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 Game::~Game()
 {
 	delete packetEventManager;
+
 	for (int i = 0; i < players.size(); i++)
 	{
-		delete players[i];
+		if (i != currentPlayer->getOnlineID()) delete players[i];
 	}
 	for (int i = 0; i < this->gameObjects.size(); i++)
 	{
@@ -542,7 +544,7 @@ GAMESTATE Game::updateComponentGame()
 	hitPos = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 	hitNormal = DirectX::XMFLOAT3(grav.x, grav.y, grav.z);
 	bool testingVec;
-	testingVec = this->currentPlayer->raycast(gameObjects, planetVector, hitPos, hitNormal);
+	testingVec = this->currentPlayer->raycast(spaceShips, planetVector, hitPos, hitNormal);
 	if (testingVec || currentPlayer->getHitByBat()) currentPlayer->resetVelocity();
 
 	//Player functions
@@ -643,7 +645,7 @@ GAMESTATE Game::updateComponentGame()
 			this->spaceShips[i]->flyAway(dt);
 			endTimer += dt;
 			arrow->removeArrow(); //Remove these completely by not drawing the meshes anymore
-			if (currentPlayer->getTeam() == i) this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969)); //Remove these completely by not drawing the meshes anymore
+			//if (currentPlayer->getTeam() == i) this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969)); //Remove these completely by not drawing the meshes anymore
 		}
 	}
 
@@ -878,7 +880,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	static DirectX::XMFLOAT3 hitNormal;
 	hitPos = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 	hitNormal = DirectX::XMFLOAT3(grav.x, grav.y, grav.z);
-	bool testingVec = this->currentPlayer->raycast(gameObjects, planetVector, hitPos, hitNormal);
+	bool testingVec = this->currentPlayer->raycast(spaceShips, planetVector, hitPos, hitNormal);
 	if (testingVec || currentPlayer->getHitByBat()) currentPlayer->resetVelocity();
 
 	//Player functions

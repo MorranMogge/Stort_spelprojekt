@@ -134,7 +134,7 @@ void BaseballBat::useItem(const Player* playerHoldingItem)
 	useBat.xPos = batPos.x;
 	useBat.yPos = batPos.y;
 	useBat.zPos = batPos.z;
-	//client->sendStuff<UseBat>(useBat);
+	client->sendStuff<UseBat>(useBat);
 
 
 	savedPos = this->getPosV3(); //Used to reset the baseball bats position at the end of the function

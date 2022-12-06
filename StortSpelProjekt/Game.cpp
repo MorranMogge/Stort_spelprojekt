@@ -46,6 +46,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	AnimationData team1Anim;
 	this->manager.getAnimData("../Meshes/anim/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team1Anim);
 	Mesh* team1Mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	AnimationData team2Anim;
 	this->manager.getAnimData("../Meshes/anim/character2_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team1Anim);
 	Mesh* team2Mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	
@@ -79,14 +80,15 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
 		{
 			Player* tmpPlayer = nullptr;
-			animData = team1Anim;
 			if (dude < i + 1)
 			{
 				tmpMesh = team1Mesh;
+				animData = team1Anim;
 			}
 			else
 			{
 				tmpMesh = team2Mesh;
+				animData = team2Anim;
 			}
 			tmpPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 				0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
@@ -104,8 +106,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			}
 			std::cout << "Dude: " << (int)(dude < i + 1) << "\n";
 		}
-		delete team1Mesh;
-		delete team2Mesh;
+
 		std::cout << "num players" << this->players.size() << "\n";
 
 		gamePad = new DirectX::GamePad();

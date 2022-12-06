@@ -19,6 +19,10 @@ void Player::throwItem()
 	c.componentId = this->holdingItem->getOnlineId();
 	c.packetId = PacketType::COMPONENTDROPPED;
 	c.playerId = this->onlineID;
+	c.xPos = this->holdingItem->getPosV3().x;
+	c.yPos = this->holdingItem->getPosV3().y;
+	c.zPos = this->holdingItem->getPosV3().z;
+
 	//sending data to server
 	if (client != nullptr)
 	{
@@ -107,6 +111,9 @@ void Player::handleItems()
 				c.componentId = this->holdingItem->getOnlineId();
 				c.packetId = PacketType::COMPONENTDROPPED;
 				c.playerId = this->onlineID;
+				c.xPos = this->holdingItem->getPosV3().x;
+				c.yPos = this->holdingItem->getPosV3().y;
+				c.zPos = this->holdingItem->getPosV3().z;
 				//sending data to server
 				if (this->client != nullptr)
 				{
@@ -177,6 +184,9 @@ void Player::handleItems()
 				c.componentId = this->holdingItem->getOnlineId();
 				c.packetId = PacketType::COMPONENTDROPPED;
 				c.playerId = this->onlineID;
+				c.xPos = this->holdingItem->getPosV3().x;
+				c.yPos = this->holdingItem->getPosV3().y;
+				c.zPos = this->holdingItem->getPosV3().z;
 				//sending data to server
 				if (this->client != nullptr)
 				{
@@ -238,6 +248,9 @@ void Player::handleItems()
 		c.componentId = this->holdingItem->getOnlineId();
 		c.packetId = PacketType::COMPONENTDROPPED;
 		c.playerId = this->onlineID;
+		c.xPos = this->holdingItem->getPosV3().x;
+		c.yPos = this->holdingItem->getPosV3().y;
+		c.zPos = this->holdingItem->getPosV3().z;
 		//sending data to server
 		if (this->client != nullptr)
 		{
@@ -1012,6 +1025,9 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 		cDropped.packetId = COMPONENTDROPPED;
 		cDropped.playerId = this->onlineID;
 		cDropped.componentId = this->holdingItem->getOnlineId();
+		cDropped.xPos = this->holdingItem->getPosV3().x;
+		cDropped.yPos = this->holdingItem->getPosV3().y;
+		cDropped.zPos = this->holdingItem->getPosV3().z;
 
 		client->sendStuff<ComponentDropped>(cDropped);
 		this->releaseItem();

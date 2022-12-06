@@ -153,7 +153,6 @@ public:
 	bool raycast(const std::vector<SpaceShip*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	void colliedWIthComponent(const std::vector<Component*>& components);
-	void checkSwimStatus(const std::vector<Planet*>& planets);
 	void orbiting();
 	void stateMachine(const float dt);
 	void giveItemMatrix();

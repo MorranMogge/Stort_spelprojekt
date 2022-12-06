@@ -1170,23 +1170,6 @@ void Player::colliedWIthComponent(const std::vector<Component*>& components)
 	if (collided) this->setSpeed(this->speed * 0.5f);
 }
 
-void Player::checkSwimStatus(const std::vector<Planet*>& planets)
-{
-	//Checks if the player is inside planet
-	for (int i = 0; i < planets.size(); i++)
-	{
-		planetVector = DirectX::XMVectorSet(planets[i]->getSize(), planets[i]->getSize(), planets[i]->getSize(), 0.0f);
-		playerVector = XMVectorSubtract(planets[i]->getPlanetPosition(), this->position);
-		playerVector = XMVector3Length(playerVector);
-
-		//The player is swimming
-		if (XMVector3Less(playerVector, planetVector))
-		{
-			this->position += normalVector * 3.f;
-		}
-	}
-}
-
 void Player::orbiting()
 {
 	if (!onGround)
@@ -1206,6 +1189,8 @@ void Player::orbiting()
 		}
 	}
 	else orbitTimer.resetStartTime();
+}
+
 void Player::stateMachine(const float dt)
 {
 	if (state.IsConnected())
@@ -1427,7 +1412,7 @@ void Player::update()
 			this->physComp->resetTorque();
 			this->physComp->setType(reactphysics3d::BodyType::STATIC);
 			this->resetRotationMatrix();
-			this->position = DirectX::SimpleMath::Vector3(0, 69, 0);
+			//this->position = DirectX::SimpleMath::Vector3(0, 69, 0);
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
 		}

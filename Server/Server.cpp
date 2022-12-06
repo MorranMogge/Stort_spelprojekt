@@ -692,7 +692,7 @@ int main()
 		{
 			ItemSpawn itemSpawnData;
 			DirectX::XMFLOAT3 temp = randomizeObjectPos();
-			itemSpawnData.itemType = 3;		//Spawns a random item (Baseball bat, potion or grenade)
+			itemSpawnData.itemType = 5;		//Spawns a random item (Baseball bat, potion or grenade)
 			itemSpawnData.x = temp.x;
 			itemSpawnData.y = temp.y;
 			itemSpawnData.z = temp.z;

@@ -149,7 +149,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	UwuYouSowarm.resetStartTime();
 	while (UwuYouSowarm.getTimePassed(1.0f));
 
-
+	delete team2Mesh;
 	//Init delta time
 	currentTime = std::chrono::system_clock::now();
 	lastUpdate = currentTime;

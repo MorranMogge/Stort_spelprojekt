@@ -925,6 +925,7 @@ int Player::getItemOnlineId() const
 
 bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Component*>& components)
 {
+	
 	if (this->isHoldingItem() || dedge) return false;
 	bool successfulPickup = false;
 	
@@ -976,12 +977,9 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 	}
 	//Keyboard pickup
 
-	else if (GetAsyncKeyState('E') && this->eKeyDown == false && this->keyPressTimer.getTimePassed(0.1) && this->holdingItem != nullptr)
+	else if (Input::KeyPress(KeyCode::E) /*&&*/ /*this->eKeyDown == true &&*/ /*this->holdingItem != nullptr*/)
 	{
-		this->eKeyDown = true;
-	}
-	else if (GetAsyncKeyState('E') == 0 && this->eKeyDown == true)
-	{
+		std::cout << "stuff2" << std::endl;
 		//Checking items
 		this->eKeyDown = false;
 
@@ -989,6 +987,7 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 		{
 			if (this->withinRadius(items[i], 5))
 			{
+
 				addItem(items[i]);
 				this->holdingComp = false;
 				holdingItem->getPhysComp()->getRigidBody()->resetForce();
@@ -1018,6 +1017,13 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 			}
 		}
 	}
+
+	//else if (Input::KeyPress(KeyCode::E)/* && this->eKeyDown == false*/ &&  this->keyPressTimer.getTimePassed(0.1))
+	//{
+	//	std::cout << "stuff" << std::endl;
+	//	this->eKeyDown = true;
+
+	//}
 	return successfulPickup;
 }
 

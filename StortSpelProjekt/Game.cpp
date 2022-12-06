@@ -326,8 +326,6 @@ void Game::loadObjects()
 		//Set items grenade
 		grenade->setGameObjects(gameObjects);
 	}
-	if (!IFONLINE) captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), planetGravityField, DirectX::SimpleMath::Vector3(10.f, 10.f, 10.f));
-
 }
 
 void Game::drawShadows()
@@ -557,6 +555,7 @@ GAMESTATE Game::updateComponentGame()
 	currentPlayer->setSpeed(30.f);
 
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);
+	else currentPlayer->requestingPickUpItem(onlineItems);
 
 	//Update item checks
 	for (int i = 0; i < onlineItems.size(); i++)
@@ -624,6 +623,7 @@ GAMESTATE Game::updateComponentGame()
 		players[i]->updateMatrixOnline();
 		players[i]->update();
 	}
+
 
 	//Updates gameObject physics components
 	for (int i = 0; i < gameObjects.size(); i++)
@@ -893,7 +893,8 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	currentPlayer->setSpeed(20.f);
 
 	//Check component pickup
-	currentPlayer->requestingPickUpItem(onlineItems);
+	if (!IFONLINE) currentPlayer->pickupItem(items, components);
+	else currentPlayer->requestingPickUpItem(onlineItems);
 
 	//Update item checks
 	for (int i = 0; i < items.size(); i++)
@@ -917,7 +918,6 @@ GAMESTATE Game::updateKingOfTheHillGame()
 			if (tempPotion->timerGoing()) currentPlayer->setSpeed(50.f);
 		}	break;
 		}
-		break;
 	}
 
 	//sending data to server

@@ -116,8 +116,8 @@ void Camera::moveVelocity(Player* player, const float& deltaTime)
 		else if (playerSpeed < 38.f) minFOV = 0.7f;
 		else minFOV = 0.65f;
 
-		if (fieldOfView > (minFOV + 0.01f)) fieldOfView -= deltaTime * 0.1f;
-		else if (fieldOfView < (minFOV - 0.01f))  fieldOfView += deltaTime * 0.1f;
+		if (fieldOfView > (minFOV + 0.03f)) fieldOfView -= deltaTime * 0.1f;
+		else if (fieldOfView < (minFOV - 0.03f))  fieldOfView += deltaTime * 0.1f;
 	}
 	else
 	{

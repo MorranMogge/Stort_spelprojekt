@@ -154,6 +154,10 @@ Game::~Game()
 {
 	delete packetEventManager;
 
+	for (int i = 0; i < players.size(); i++)
+	{
+		if (i != currentPlayer->getOnlineID()) delete players[i];
+	}
 	for (int i = 0; i < this->gameObjects.size(); i++)
 	{
 		if (this->gameObjects.at(i) != nullptr)
@@ -168,10 +172,6 @@ Game::~Game()
 	for (int i = 0; i < planetVector.size(); i++)
 	{
 		delete planetVector[i];
-	}
-	for (int i = 0; i < players.size(); i++)
-	{
-		if (i != currentPlayer->getOnlineID()) delete players[i];
 	}
 	if (captureZone != nullptr) delete captureZone;
 	if (gamePad != nullptr) delete gamePad;

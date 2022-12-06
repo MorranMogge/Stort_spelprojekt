@@ -55,9 +55,14 @@ struct itemPosition
 	int packetId;
 	int itemId;
 	int inUseBy;
+
 	float x;
 	float y;
 	float z;
+
+	float RotX;
+	float RotY;
+	float RotZ;
 };
 
 //enum = 7

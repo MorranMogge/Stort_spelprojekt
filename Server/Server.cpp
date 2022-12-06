@@ -501,6 +501,11 @@ int main()
 					if (onlineItems[i]->getOnlineId() == itemPos->itemId) //finding the correct item
 					{
 						//set the data
+						DirectX::SimpleMath::Quaternion ayaya = DirectX::XMQuaternionRotationRollPitchYaw(itemPos->RotX, itemPos->RotY, itemPos->RotZ);
+						reactphysics3d::Vector3 araAra = reactphysics3d::Vector3(itemPos->x, itemPos->y, itemPos->z);
+						onlineItems[i]->getPhysicsComponent()->setPosition(araAra);
+						onlineItems[i]->getPhysicsComponent()->setRotation(reactphysics3d::Quaternion(ayaya.x, ayaya.y, ayaya.z, ayaya.w));
+						onlineItems[i]->setInUseBy(itemPos->inUseBy);
 					}
 				}
 				break;
@@ -679,7 +684,7 @@ int main()
 			{
 				if (onlineItems[i]->getInUseById() == data.users[j].playerId)
 				{
-					onlineItems[i]->setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
+					//onlineItems[i]->setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
 				}
 			}
 		}

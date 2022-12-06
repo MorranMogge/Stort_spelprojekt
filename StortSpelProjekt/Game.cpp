@@ -27,9 +27,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	//Setup Lights
 	ltHandler.addLight(DirectX::XMFLOAT3(-120, 0, 0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 1);
 	ltHandler.addLight(DirectX::XMFLOAT3(16 + 7, 42 + 17, 12 + 7), DirectX::XMFLOAT3(0, 0.3f, 1.0f), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
-	ltHandler.addLight(DirectX::XMFLOAT3(-10 - 5, -45 - 17, -10 - 7), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);
-	//ltHandler.addLight(DirectX::XMFLOAT3(100, 0, 290), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(150.f, 0, 300.f), DirectX::XMFLOAT3(0, 1, 0), 1);
-	
+	ltHandler.addLight(DirectX::XMFLOAT3(-10 - 5, -45 - 17, -10 - 7), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);	
 	
 	//Temp? initiation of animated mesh
 	manager.loadMeshAndBoneData("../Meshes/anim/character1_idle.fbx");
@@ -210,8 +208,6 @@ void Game::loadObjects()
 	SpaceShip* spaceShipBlue;
 	Component* component;
 	Potion* potion;
-	//BaseballBat* baseballBat;
-	//Grenade* grenade;
 	Grenade* grenade2;
 
 
@@ -238,8 +234,6 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/saturn"));
 	meshes.push_back(new Mesh("../Meshes/N1"));
 	meshes.push_back(new Mesh("../Meshes/grenade"));
-	//meshes.push_back(new Mesh("../Meshes/kosmonaut"));
-	//meshes.push_back(new Mesh("../Meshes/astronaut"));
 
 
 	//SOLAR SYSTEM SETUP
@@ -267,7 +261,6 @@ void Game::loadObjects()
 		baseballBat = new BaseballBat(meshes[5], Vector3(0, 0, 42), Vector3(0.0f, 0.0f, 0.0f), BAT, 0, planetGravityField);
 		grenade = new Grenade(meshes[7], meshes[12], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
 		grenade2 = new Grenade(meshes[7], meshes[12], DirectX::SimpleMath::Vector3(45, 0, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), GRENADE, 0, planetGravityField);
-
 
 		//EMPLACE ITEMS
 		items.emplace_back(potion);
@@ -395,8 +388,9 @@ void Game::drawObjects(bool drawDebug)
 	//Draw light debug meshes
 	if (drawDebug)
 	{
+		ltHandler.drawDebugMesh();
 	}
-	ltHandler.drawDebugMesh();
+	
 
 	//Animated meshes
 	basicRenderer.changeToAnimation();

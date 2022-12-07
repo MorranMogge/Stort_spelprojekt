@@ -58,7 +58,11 @@ VSout main(VShaderIn input)
     //output.normal = mul(float4(output.normal, 0.0f), worldM).xyz;
     //output.normal = normalize(output.normal);
     //output.normal = -output.normal;
-    output.normal = normalize(mul(input.normal, (float3x3) worldM));
+    
+    float4x4 projectedSkinning = mul(boneTransformation , worldM);
+    
+    //output.normal = input.normal; //normalize(mul(input.normal, (float3x3) boneTransformation));
+    output.normal = normalize(mul(input.normal, (float3x3) projectedSkinning));
     output.localPosition = input.position;
     
     return output;

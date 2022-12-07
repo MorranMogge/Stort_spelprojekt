@@ -26,30 +26,24 @@ void WinMenu::drawObjects()
 	//Bind light
 	ltHandler.bindLightBuffers();
 
-	basicRenderer.changeToAnimation();
-	sexyMan->draw();
-	sexyMan2->draw();
-
-	basicRenderer.resetTopology();
-
 	//Draw with Ambient only shader
 	basicRenderer.bindAmbientShader();
 
 	//Draw light debug meshes
 	ltHandler.drawDebugMesh();
 
-	//Draw depth stencil
-	//basicRenderer.depthPrePass();
-	//ltHandler.drawShadows(0, gameObjects, &camera);
+	//Draw anim
+	basicRenderer.changeToAnimation(false);
+	sexyMan->draw();
+	sexyMan2->draw();
+
+	basicRenderer.resetTopology();
 	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
 }
 
 void WinMenu::Render()
 {
-
-    basicRenderer.setUpScene();
-
-	//Render Scene
+//Render Scene
 	basicRenderer.setUpScene(this->cam, false);
 	drawObjects();
 
@@ -65,8 +59,6 @@ void WinMenu::Render()
 	skybox.draw();
 	basicRenderer.depthUnbind();
 
-
-	basicRenderer.postProcessPass();
 	ui.Draw();
 }
 
@@ -75,13 +67,13 @@ WinMenu::WinMenu() : manager(GPU::device)
 	SoundLibrary::menuMusic.setVolume(0.5f);
 	SoundLibrary::menuMusic.play(true);
 
+
 	cam.setPosition(DirectX::XMFLOAT3(0, 0, -30));
 	cam.setCameraLookAt(DirectX::XMFLOAT3(0, 0, 0));
-	DirectX::SimpleMath::Vector3 newTemp(-40, 0, -60);
-	newTemp.Normalize();
-	ltHandler.addLight(DirectX::XMFLOAT3(15, 10, 30), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(1, 1, 1)/*planets[4]->getPlanetPosition()*/, DirectX::XMFLOAT3(0, 1, 0), 1, 0.5f, 1000.5f);
-	ltHandler.addLight(DirectX::XMFLOAT3(15, 10, -0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(50, 50, 50), DirectX::XMFLOAT3(0, 1, 0), 1, 0.5f, 1000.5f);
-	ltHandler.addLight(DirectX::XMFLOAT3(15, 10, -300), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 1, 0.5f, 1000.5f);
+
+
+	ltHandler.addLight(DirectX::XMFLOAT3(0, 0, -30), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(0, 0, -10), DirectX::XMFLOAT3(0, 1, 0), 1, 0.5f, 1000.5f);
+
 
 	//manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
 	manager.loadMeshAndBoneData("../Meshes/anim/character1_idle.fbx");

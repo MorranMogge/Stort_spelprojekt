@@ -327,11 +327,19 @@ void BasicRenderer::setUpScene()
 	immediateContext->PSSetShaderResources(4, 1, &nullRsv);
 }
 
-void BasicRenderer::changeToAnimation()
+void BasicRenderer::changeToAnimation(bool shadow)
 {
 	immediateContext->RSSetState(shadowRastirizer);
 	immediateContext->PSSetSamplers(1, 1, &shadowSampler);
-	immediateContext->PSSetShader(pShader, nullptr, 0);
+
+	if (shadow)
+	{
+		immediateContext->PSSetShader(pShader, nullptr, 0);
+	}
+	else
+	{
+		immediateContext->PSSetShader(pShader_NoShadow, nullptr, 0);
+	}
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 	immediateContext->IASetInputLayout(this->animLayout);
 	immediateContext->VSSetShader(this->vShaderAnim, nullptr, 0);

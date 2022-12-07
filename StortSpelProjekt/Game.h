@@ -8,7 +8,7 @@ struct wirefameInfo
 };
 
 const int NROFPLAYERS = 4;
-static bool IFONLINE = true;
+static bool IFONLINE = false;
 
 class Game : public State
 {

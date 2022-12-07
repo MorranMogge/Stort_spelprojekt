@@ -1,6 +1,7 @@
 #pragma once
 #include "RandomizeSpawn.h"
 #include "../DirectXTK-main/Inc/SimpleMath.h"
+#include <iostream>
 
 DirectX::XMFLOAT3 randomizeObjectPos(std::vector<Planet*> planets)
 {
@@ -18,10 +19,13 @@ DirectX::XMFLOAT3 randomizeObjectPos(std::vector<Planet*> planets)
     randomPos.z = zPos;
 
     randomPos.Normalize();
-    randomPos *= planets[planetIndex]->getSize()+ 10.f;
+    randomPos *= planets[planetIndex]->getSize() + 10.f;
 
     position.x = randomPos.x + planets[planetIndex]->getPlanetPosition().x;
     position.y = randomPos.y + planets[planetIndex]->getPlanetPosition().y;
     position.z = randomPos.z + planets[planetIndex]->getPlanetPosition().z;
+
+    std::cout << "X: " << position.x << "\nY: " << position.y << "\nZ: " << position.z << "\n";
+
     return position;
 }

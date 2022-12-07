@@ -146,7 +146,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	TimeStruct UwuYouSowarm;
 	UwuYouSowarm.resetStartTime();
-	while (UwuYouSowarm.getTimePassed(1.0f));
+	while (UwuYouSowarm.getTimePassed(3.0f));
 
 	//Set items baseball bat
 	if (!IFONLINE)

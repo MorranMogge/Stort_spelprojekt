@@ -102,5 +102,8 @@ SpawnComponent SpawnOneComponent(std::vector<Item*>& itemObj, std::vector<Direct
 	dataValue.x = randomPos.x;
 	dataValue.y = randomPos.y;
 	dataValue.z = randomPos.z;
+
+	std::cout << "X: " << dataValue.x << "\nY: " << dataValue.y << "\nZ: " << dataValue.z << "\n";
+
 	return dataValue;
 }

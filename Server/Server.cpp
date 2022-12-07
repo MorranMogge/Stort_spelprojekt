@@ -238,8 +238,8 @@ int main()
 	start = std::chrono::system_clock::now();
 
 	float timerLength = 1.f / 60.0f;
-	float timerComponentLength = 10.0f;
-	float itemSpawnTimerLength = 20.0f;
+	float timerComponentLength = 15.0f;
+	float itemSpawnTimerLength = 10.0f;
 
 	setupTcp(data);
 	acceptPlayers(data);
@@ -480,6 +480,7 @@ int main()
 							sendConfirmComponentData.playerPickUpId = requestingCmpPickedUp->playerId;
 							sendConfirmComponentData.componentId = requestingCmpPickedUp->componentId;
 							sendConfirmComponentData.packetId = PacketType::COMPONENTCONFIRMEDPICKUP;
+							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 							sendBinaryDataAllPlayers<ConfirmComponentPickedUp>(sendConfirmComponentData, data);
 							onlineItems[i]->setInUseBy(requestingCmpPickedUp->playerId);
 						}
@@ -504,10 +505,7 @@ int main()
 					if (onlineItems[i]->getOnlineId() == itemPos->itemId) //finding the correct item
 					{
 						//set the data
-						onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 						DirectX::SimpleMath::Quaternion ayaya = DirectX::XMQuaternionRotationRollPitchYaw(itemPos->RotX, itemPos->RotY, itemPos->RotZ);
-						reactphysics3d::Vector3 araAra = reactphysics3d::Vector3(itemPos->x, itemPos->y, itemPos->z);
-						onlineItems[i]->getPhysicsComponent()->setPosition(araAra);
 						onlineItems[i]->setPosition(itemPos->x, itemPos->y, itemPos->z);
 
 						onlineItems[i]->getPhysicsComponent()->setRotation(reactphysics3d::Quaternion(ayaya.x, ayaya.y, ayaya.z, ayaya.w));
@@ -525,9 +523,9 @@ int main()
 				onlineItems[grenadeData->itemId]->use(nullptr);
 				onlineItems[grenadeData->itemId]->getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
 				onlineItems[grenadeData->itemId]->getPhysicsComponent()->setPosition(reactphysics3d::Vector3(
-					onlineItems[grenadeData->itemId]->getPhysicsComponent()->getPosV3().x + grenadeData->xForce * 0.0025f,
-					onlineItems[grenadeData->itemId]->getPhysicsComponent()->getPosV3().y + grenadeData->yForce * 0.0025f,
-					onlineItems[grenadeData->itemId]->getPhysicsComponent()->getPosV3().z + grenadeData->zForce * 0.0025f));
+					onlineItems[grenadeData->itemId]->getPhysicsComponent()->getPosV3().x + grenadeData->xForce * 0.025f,
+					onlineItems[grenadeData->itemId]->getPhysicsComponent()->getPosV3().y + grenadeData->yForce * 0.025f,
+					onlineItems[grenadeData->itemId]->getPhysicsComponent()->getPosV3().z + grenadeData->zForce * 0.025f));
 				onlineItems[grenadeData->itemId]->getPhysicsComponent()->applyForceToCenter(reactphysics3d::Vector3(grenadeData->xForce, grenadeData->yForce, grenadeData->zForce));
 				sendBinaryDataAllPlayers<UseGrenade>(*grenadeData, data);
 				std::cout << "Player used grenade OwO\n";

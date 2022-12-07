@@ -31,7 +31,7 @@ GAMESTATE WinUI::GetGameState()
 
 WinUI::WinUI()
 {
-	winText = GUISprite(1264.0f / 2.0f, 300);
+	winText = GUISprite((1264.0f / 2.0f), 300 - 100);
 	winText.Load(L"../Sprites/victoryText.png");
 
 	backText = GUISprite(75 + 70, 600);

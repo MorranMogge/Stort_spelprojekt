@@ -443,9 +443,9 @@ int main()
 					{
 						onlineItems[i]->setInUseBy(-1);
 						onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
-						std::cout << std::to_string(onlineItems[i]->getPosXMFLOAT3().x) << ", y: " << std::to_string(onlineItems[i]->getPosXMFLOAT3().y) <<
-							", z" << std::to_string(onlineItems[i]->getPosXMFLOAT3().z) << std::endl;
-						onlineItems[i]->setPosition(cmpDropped->xPos, cmpDropped->yPos, cmpDropped->zPos);
+						std::cout << "Is Item: " << cmpDropped->isItem << "\n";
+						if (cmpDropped->isItem == 0) onlineItems[i]->setPosition(cmpDropped->xPos, cmpDropped->yPos, cmpDropped->zPos);
+						else onlineItems[i]->setPosition(randomizeObjectPos(planetVector).x, randomizeObjectPos(planetVector).y, randomizeObjectPos(planetVector).z);
 						for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
 						{
 							//skicka att en spelare har droppat en component till alla spelare förutom spelaren som droppat componenten eftersom den redan är droppad
@@ -716,7 +716,7 @@ int main()
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
 		{
 			ItemSpawn itemSpawnData;
-			DirectX::XMFLOAT3 temp = randomizeObjectPos();
+			DirectX::XMFLOAT3 temp = randomizeObjectPos(planetVector);
 			if (!grenadeCount) itemSpawnData.itemType = (rand() % 3) + 3;		//Spawns a random item (Baseball bat, potion or grenade)
 			else itemSpawnData.itemType = (rand() % 2) + 3;
 			itemSpawnData.x = temp.x;
@@ -908,6 +908,8 @@ int main()
 							}
 						}
 						grenade->resetExplosion();
+						DirectX::XMFLOAT3 newItemPos = randomizeObjectPos(planetVector);
+						grenade->setPosition(newItemPos.x, newItemPos.y, newItemPos.z);
 					}
 				}
 			}

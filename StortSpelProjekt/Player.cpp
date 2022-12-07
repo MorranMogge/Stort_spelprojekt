@@ -19,6 +19,7 @@ void Player::throwItem()
 	c.componentId = this->holdingItem->getOnlineId();
 	c.packetId = PacketType::COMPONENTDROPPED;
 	c.playerId = this->onlineID;
+	c.isItem = 0;
 	c.xPos = this->holdingItem->getPosV3().x;
 	c.yPos = this->holdingItem->getPosV3().y;
 	c.zPos = this->holdingItem->getPosV3().z;
@@ -111,6 +112,8 @@ void Player::handleItems()
 				c.componentId = this->holdingItem->getOnlineId();
 				c.packetId = PacketType::COMPONENTDROPPED;
 				c.playerId = this->onlineID;
+				c.isItem = 1;
+				if (holdingItem->getId() == GRENADE || holdingItem->getId() == COMPONENT) c.isItem = 0;
 				c.xPos = this->holdingItem->getPosV3().x;
 				c.yPos = this->holdingItem->getPosV3().y;
 				c.zPos = this->holdingItem->getPosV3().z;
@@ -184,6 +187,8 @@ void Player::handleItems()
 				c.componentId = this->holdingItem->getOnlineId();
 				c.packetId = PacketType::COMPONENTDROPPED;
 				c.playerId = this->onlineID;
+				c.isItem = 1;
+				if (holdingItem->getId() == GRENADE || holdingItem->getId() == COMPONENT) c.isItem = 0;
 				c.xPos = this->holdingItem->getPosV3().x;
 				c.yPos = this->holdingItem->getPosV3().y;
 				c.zPos = this->holdingItem->getPosV3().z;
@@ -248,6 +253,7 @@ void Player::handleItems()
 		c.componentId = this->holdingItem->getOnlineId();
 		c.packetId = PacketType::COMPONENTDROPPED;
 		c.playerId = this->onlineID;
+		c.isItem = 1;
 		c.xPos = this->holdingItem->getPosV3().x;
 		c.yPos = this->holdingItem->getPosV3().y;
 		c.zPos = this->holdingItem->getPosV3().z;
@@ -1022,6 +1028,7 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 		ComponentDropped cDropped;
 		cDropped.packetId = COMPONENTDROPPED;
 		cDropped.playerId = this->onlineID;
+		cDropped.isItem = 0;
 		cDropped.componentId = this->holdingItem->getOnlineId();
 		cDropped.xPos = this->holdingItem->getPosV3().x;
 		cDropped.yPos = this->holdingItem->getPosV3().y;

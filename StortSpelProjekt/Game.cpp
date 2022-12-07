@@ -138,6 +138,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->setGravityField(planetGravityField);
+		players[i]->setScale(0.7f);
 	}
 
 	//check the handle id for data ex(Planets, SpaceShips)

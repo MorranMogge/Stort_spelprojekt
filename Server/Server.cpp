@@ -327,6 +327,11 @@ int main()
 				circBuffer->readData<PositionRotation>();
 				std::cout << "prRotation while Loading\n";
 			}
+			else
+			{
+				std::cout << "clearing buffer\n";
+				circBuffer->clearBuffer();
+			}
 		}
 	}
 

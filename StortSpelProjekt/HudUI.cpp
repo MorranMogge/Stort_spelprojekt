@@ -26,31 +26,7 @@ void setScaleOverTime(bool& changed, GUISprite &sprite, float time = 0.3)
 void HudUI::SpritePass()
 {
 
-	if (handle)
-	{
-		blackBackground.Draw();
-	}
-	if (Bready)
-	{
-		ready.Draw();
-	}
-	else if (Bset)
-	{
-		set.Draw();
-	}
-	else if (Bgo)
-	{
-		go.Draw();
-		exclamation.Draw();
-	}
-	if (Bdot1)
-	{
-		dot1.Draw();
-	}
-	if (Bdot2)
-	{
-		dot2.Draw();
-	}
+
 
 	static bool red1 = true;
 	static bool red2 = true;
@@ -451,8 +427,39 @@ void HudUI::DrawFade()
 {
 	GUI::Begin();
 	fade.Draw();
+
+	if (handle)
+	{
+		blackBackground.Draw();
+	}
+	if (Bready)
+	{
+		ready.Draw();
+	}
+	else if (Bset)
+	{
+		set.Draw();
+	}
+	else if (Bgo)
+	{
+		go.Draw();
+		exclamation.Draw();
+	}
+	if (Bdot1)
+	{
+		dot1.Draw();
+	}
+	if (Bdot2)
+	{
+		dot2.Draw();
+	}
 	GUI::End();
 
+}
+
+void HudUI::resetReadySetGo()
+{
+	Bdot2 = Bdot1 = Bgo = Bset = Bready = handle = false;
 }
 
 void HudUI::Draw()

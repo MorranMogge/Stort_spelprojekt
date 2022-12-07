@@ -855,6 +855,18 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
 		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState);
 
+	static bool firstFrame = false;
+	if (!firstFrame)
+	{
+		Time::Start();
+		Time::Reset();
+		firstFrame = true;
+		ui.count = 1.0f;
+		ui.setOpacity(false);
+		fadedIn = false;
+		ui.resetReadySetGo();
+	}
+	
 	if (!fadedIn)// fade in condition
 	{
 		if (!this->ui.fadeIn()) // is fading
@@ -865,6 +877,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 			fadedIn = true;
 		}
 	}
+	ui.redySetGo();
 
 	//Calculate gravity factor
 	if (planetVector.size() > 0) field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
@@ -1159,6 +1172,11 @@ GAMESTATE Game::Update()
 		currentMinigame = STARTLANDING;
 	}
 
+	if (Input::KeyPress(KeyCode::Y))
+	{
+		currentMinigame = KINGOFTHEHILL;
+	}
+
 	if (Input::KeyPress(KeyCode::P))
 	{
 		return WIN;
@@ -1217,7 +1235,15 @@ void Game::Render()
 			fadedIn = true;
 		}
 	}
-	ui.redySetGo();
+	if (!ui.redySetGo())
+	{
+		std::cout << "ready" << std::endl;
+	}
+	else
+	{
+		std::cout << "ready" << std::endl;
+	}
+	
 
 	//Render shadow maps
 	basicRenderer.lightPrePass();
@@ -1278,6 +1304,7 @@ void Game::Render()
 		break;
 
 	case KINGOFTHEHILL:
+		ui.DrawFade();
 		break;
 
 	case INTERMISSION:

@@ -435,11 +435,11 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer, std::vec
 			std::cout << "Spawned spaceship\n";
 			if (spaceShips.size() == 0)
 			{
-				newSpaceShip = new SpaceShip(meshes[10], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2), 4);
+				newSpaceShip = new SpaceShip(meshes[11], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2), 4);
 			}
 			else
 			{
-				newSpaceShip = new SpaceShip(meshes[11], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2), 4);
+				newSpaceShip = new SpaceShip(meshes[10], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2), 4);
 			}
 			spaceShips.push_back(newSpaceShip);
 			gameObjects.push_back(newSpaceShip);

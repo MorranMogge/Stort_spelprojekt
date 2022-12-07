@@ -134,11 +134,11 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
-	currentPlayer->setScale(0.7f);
+	currentPlayer->setScale(0.85f);
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->setGravityField(planetGravityField);
-		players[i]->setScale(0.7f);
+		players[i]->setScale(0.85f);
 	}
 
 	//check the handle id for data ex(Planets, SpaceShips)
@@ -552,7 +552,7 @@ GAMESTATE Game::updateComponentGame()
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->checkSwimStatus(planetVector);
 	currentPlayer->velocityMove(dt);
-	currentPlayer->setSpeed(30.f);
+	currentPlayer->setSpeed(25.f);
 
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);
 	else currentPlayer->requestingPickUpItem(onlineItems);
@@ -892,7 +892,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
 	currentPlayer->checkSwimStatus(planetVector);
-	currentPlayer->setSpeed(30.f);
+	currentPlayer->setSpeed(25.f);
 
 	//Check component pickup
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);

@@ -1178,18 +1178,17 @@ void Player::orbiting()
 {
 	if (!onGround)
 	{
-		if (orbitTimer.getTimePassed(10.f))
+		if (orbitTimer.getTimePassed(5.f))
 		{
 			std::cout << "SETTING BACK TO PLANET\n";
-			this->position = startPos;
 			this->physComp->resetForce();
 			this->physComp->resetTorque();
 			this->physComp->setType(reactphysics3d::BodyType::STATIC);
 			this->resetRotationMatrix();
+			this->position = startPos;
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
 			orbitTimer.resetStartTime();
-			onGround = true;
 		}
 	}
 	else orbitTimer.resetStartTime();

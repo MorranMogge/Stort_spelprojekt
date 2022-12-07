@@ -17,7 +17,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	gameMusic.play(true);
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
-	client = new Client();
+	client = new Client("192.168.43.241");
 	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
 	circularBuffer = client->getCircularBuffer();
 
@@ -820,6 +820,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	currentPlayer->velocityMove(dt);
 	currentPlayer->checkSwimStatus(planetVector);
 	currentPlayer->setSpeed(20.f);
+	currentPlayer->orbiting();
 
 	//Check component pickup
 	currentPlayer->requestingPickUpItem(onlineItems);

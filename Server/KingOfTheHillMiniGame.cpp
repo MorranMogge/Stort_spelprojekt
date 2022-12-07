@@ -56,7 +56,8 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 					team1Score += pointsToAdd;
 					std::cout << "team1 got points, total points: " << team1Score << "\n";
 				}
-				else if (playerTeam == 1)
+				
+				if (playerTeam == 1)
 				{
 					redInside = true;
 					team2Score += pointsToAdd;

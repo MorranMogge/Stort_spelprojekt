@@ -173,7 +173,7 @@ Game::~Game()
 
 	for (int i = 0; i < players.size(); i++)
 	{
-		if (i != currentPlayer->getOnlineID()) delete players[i];
+		delete players[i];
 	}
 	for (int i = 0; i < this->gameObjects.size(); i++)
 	{

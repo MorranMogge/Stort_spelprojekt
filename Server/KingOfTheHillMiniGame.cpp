@@ -2,7 +2,7 @@
 #include "ObjectId.h"
 
 KingOfTheHillMiniGame::KingOfTheHillMiniGame(const short& nrOfPlayers)
-	:kingOfTheHillOrigo(0,40,-40), radius(30), nrOfPlayers(nrOfPlayers), team1Score(0), team2Score(0), pointsToAdd(10), time(5), goalScore(100), timeToSpawnItems(5)
+	:kingOfTheHillOrigo(0,40,-40), radius(30), nrOfPlayers(nrOfPlayers), team1Score(0), team2Score(0), pointsToAdd(10), time(5), goalScore(100), redInside(false), blueInside(false), oneInside(false)
 {
 	this->timer = std::chrono::system_clock::now();
 	this->timerToSend = std::chrono::system_clock::now();
@@ -22,11 +22,16 @@ void KingOfTheHillMiniGame::sendKingOfTheHillZone(serverData& data)
 }
 
 
-void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, int& componentIdCounter, float totalTeamScores [])
+void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, std::vector<Planet*> planets, PhysicsWorld& physWorld, int& componentIdCounter, float totalTeamScores [])
 {
 	static float xPos;
 	static float yPos;
 	static float zPos;
+
+	oneInside = false;
+	blueInside = false;
+	redInside = false;
+
 	static DirectX::XMFLOAT3 playerPos;
 	for(int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
@@ -40,28 +45,48 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 			int playerTeam;
 			playerTeam = (MAXNUMBEROFPLAYERS) / 2;
 			playerTeam = (int)(playerTeam < i + 1);
+			oneInside = true;
+
 			//std::cout << "Innanf�r zonen\n";
 			if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - timer)).count() > time)
 			{
 				if (playerTeam == 0)
 				{
+					blueInside = true;
 					team1Score += pointsToAdd;
 					std::cout << "team1 got points, total points: " << team1Score << "\n";
 				}
 				else if (playerTeam == 1)
 				{
+					redInside = true;
 					team2Score += pointsToAdd;
 					std::cout << "team2 got points, total points: " << team2Score << "\n";
 				}
+
+				//Sending points to players
+				KTHPoints sendPoints;
+				sendPoints.packetId = PacketType::KTHPOINTS;
+				sendPoints.bluePoints = team1Score;
+				sendPoints.redPoints = team2Score;
+				if (blueInside && redInside) sendPoints.teamColor = 0;
+				else if (blueInside) sendPoints.teamColor = 1;
+				else if (redInside) sendPoints.teamColor = 2;
+				sendBinaryDataAllPlayers<KTHPoints>(sendPoints, data);
 				timer = std::chrono::system_clock::now();
 			}
 		}
-		else
-		{
-			//std::cout << "utanf�r zonen\n";
-		}
 	}
 
+	//Restoring color
+	if (!oneInside)
+	{
+		ZoneColor color;
+		color.packetId = PacketType::ZONECOLOR;
+		sendBinaryDataAllPlayers<ZoneColor>(color, data);
+		timer = std::chrono::system_clock::now();
+	}
+	
+	//Checks is anyone has won
 	if (team1Score >= goalScore)
 	{
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - this->timerToSend)).count() > timerSend)
@@ -168,9 +193,8 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - this->itemSpawnTimer)).count() > timeToSpawnItems && onlineItems.size() <= 10)
 	{
-
 		ItemSpawn itemSpawnData;
-		DirectX::XMFLOAT3 temp = randomizeObjectPos();
+		DirectX::XMFLOAT3 temp = randomizeObjectPos(planets);
 		itemSpawnData.x = temp.x;
 		itemSpawnData.y = temp.y;
 		itemSpawnData.z = temp.z;

@@ -28,6 +28,7 @@ private:
 	DirectX::SimpleMath::Vector3 resultVector;
 	DirectX::SimpleMath::Vector3 angleVector;
 	DirectX::SimpleMath::Vector3 velocity; //FINALLY ADDED THIS F*****G STUPID VARIABLE
+	DirectX::SimpleMath::Vector3 startPos;
 	
 	//Player rotation
 	DirectX::XMMATRIX rotationMX;
@@ -59,12 +60,14 @@ private:
 	//Other variables
 	Client* client;
 	TimeStruct timer;
+	TimeStruct orbitTimer;
 	TimeStruct keyPressTimer;
 	Item* holdingItem;
 
 	ParticleEmitter* particles;
 	BilboardObject* playerIcon;
 
+	//Moving normally
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_FORWARD = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -72,6 +75,7 @@ private:
 	DirectX::SimpleMath::Vector3 rightVector = DEFAULT_RIGHT;
 	DirectX::SimpleMath::Vector3 forwardVector = DEFAULT_FORWARD;
 
+	//Moving cross
 	const DirectX::XMVECTOR NORTH_EAST = DirectX::XMVectorSet(1.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR NORTH_WEST = DirectX::XMVectorSet(-1.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR SOUTH_EAST = DirectX::XMVectorSet(1.0f, -1.0f, 0.0f, 0.0f);
@@ -81,8 +85,9 @@ private:
 	DirectX::XMVECTOR southEastVector = SOUTH_EAST;
 	DirectX::XMVECTOR southWestVector = SOUTH_WEST;
 
-	DirectX::SimpleMath::Vector3 playerVector;
-	DirectX::SimpleMath::Vector3 planetVector;
+	//Collision vectors
+	DirectX::SimpleMath::Vector3 planetVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	DirectX::SimpleMath::Vector3 playerVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	int animIndex = 0;
 	bool eKeyDown = false;
@@ -97,6 +102,7 @@ private:
 	void handleItems();
 	bool movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 	bool moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime);
+
 public:
 	Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team,
 		ID3D11ShaderResourceView* redTeamColor, ID3D11ShaderResourceView* blueTeamColor, GravityField* field = nullptr);
@@ -116,6 +122,7 @@ public:
 	void setTeam(const int& team);
 	void setVibration(float vibration1, float vibration2);
 	void setGamePad(DirectX::GamePad* gamePad);
+	void setStartPosition(const DirectX::SimpleMath::Vector3& startPos);
 	
 	//Get Functions
 	reactphysics3d::Vector3 getRayCastPos()const;
@@ -146,7 +153,7 @@ public:
 	bool raycast(const std::vector<SpaceShip*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	void colliedWIthComponent(const std::vector<Component*>& components);
-
+	void orbiting();
 	void stateMachine(const float dt);
 	void giveItemMatrix();
 	
@@ -157,6 +164,5 @@ public:
 	void update();
 	void requestingPickUpItem(const std::vector<Item*>& items);
 	void updateController();
-	
 	void itemRecvFromServer(Item* item);
 };

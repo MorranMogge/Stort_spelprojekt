@@ -173,7 +173,6 @@ int main()
 	int shipComponentCounter[2]{ 0 };
 	bool timeToFly = false;
 	int progress[2] = { 0, 0 };
-	std::vector<int> playersSent;
 	int requests = 0;
 	int itemid = 0;
 	int componentIdCounter = 0;
@@ -274,7 +273,7 @@ int main()
 	planetVector.back()->setPlanetShape(&physWorld);
 	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(60.f, 60.f, 60.f)));
 	planetVector.back()->setPlanetShape(&physWorld);
-	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-130.f, -130.f, 130.f)));
+	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(55.f, -55.f, -55.f)));
 	planetVector.back()->setPlanetShape(&physWorld);
 	physWorld.setPlanets(planetVector);
 
@@ -519,7 +518,6 @@ int main()
 
 			case PacketType::BASEBALLBATSPAWN://ändras sonlineItemså att servern skickar och client tar emot
 				baseBallBatData = circBuffer->readData<baseballBatSpawn>();
-
 				break;
 
 			case PacketType::USEGRENADE:
@@ -576,7 +574,7 @@ int main()
 							}
 						}
 						onlineItems[useBat->itemId]->setInUseBy(-1);
-						DirectX::XMFLOAT3 newPos = randomizeObjectPos();
+						DirectX::XMFLOAT3 newPos = randomizeObjectPos(planetVector);
 						onlineItems[useBat->itemId]->setPosition(newPos.x, newPos.y, newPos.z);
 					}
 				}
@@ -603,85 +601,69 @@ int main()
 				break;
 			case PacketType::DONEWITHGAME:
 				requestStart = circBuffer->readData<DoneWithGame>();
+				requests++;
 
-				//Checking if the same player have already sent a request
-				bool alreadySent = false;
-				for (int i = 0; i < playersSent.size(); i++)
+				//Starting new minigame if everyone is done
+				if (requests == MAXNUMBEROFPLAYERS)
 				{
-					if (requestStart->playerID == playersSent[i]) alreadySent = true;
-				}
+					MinigameStart startGame;
+					startGame.packetId = PacketType::STARTMINIGAMES;
 
-				//It was not the same player
-				if (!alreadySent)
-				{
-					playersSent.emplace_back(requestStart->playerID);
-					requests++;
-
-					//Starting new minigame if everyone is done
-					if (requests == MAXNUMBEROFPLAYERS)
+					//Checks what the former game was
+					if (requestStart->formerGame == MiniGames::INTERMISSION)
 					{
-						MinigameStart startGame;
-						startGame.packetId = PacketType::STARTMINIGAMES;
+						//Sending the capturezone
+						miniGameKTH.sendKingOfTheHillZone(data);
+						std::cout << "Sent capture zone\n";
 
-						//Checks what the former game was
-						if (requestStart->formerGame == MiniGames::INTERMISSION)
+						//Sending the planets
+						planetVector[0]->setScale(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
+						planetVector[2]->setPosition(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
+						planetVector[2]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
+						planetVector[1]->setPosition(DirectX::XMFLOAT3(-60.f, -60.f, -60.f));
+						planetVector[1]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
+
+						for (int i = 0; i < planetVector.size(); i++)
 						{
-							//Sending the capturezone
-							miniGameKTH.sendKingOfTheHillZone(data);
-							std::cout << "Sent capture zone\n";
-
-							//Sending the planets
-							planetVector[0]->setScale(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
-							planetVector[2]->setPosition(DirectX::XMFLOAT3(65.f, 65.f, 65.f));
-							planetVector[2]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
-							planetVector[1]->setPosition(DirectX::XMFLOAT3(-65.f, -65.f, -65.f));
-							planetVector[1]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
-
-							for (int i = 0; i < planetVector.size(); i++)
-							{
-								SpawnPlanets planetData;
-								planetData.packetId = PacketType::SPAWNPLANETS;
-								planetData.xPos = planetVector[i]->getPlanetPosition().x;
-								planetData.yPos = planetVector[i]->getPlanetPosition().y;
-								planetData.zPos = planetVector[i]->getPlanetPosition().z;
-								planetData.size = planetVector[i]->getSize();
-								sendBinaryDataAllPlayers<SpawnPlanets>(planetData, data);
-								std::cout << "Sent a planet\n";
-							}
-
-							//Sending next minigame
-							currentMinigame = MiniGames::LANDINGSPACESHIP;
-							startGame.minigame = MiniGames::STARTLANDING;
-
+							SpawnPlanets planetData;
+							planetData.packetId = PacketType::SPAWNPLANETS;
+							planetData.xPos = planetVector[i]->getPlanetPosition().x;
+							planetData.yPos = planetVector[i]->getPlanetPosition().y;
+							planetData.zPos = planetVector[i]->getPlanetPosition().z;
+							planetData.size = planetVector[i]->getSize();
+							sendBinaryDataAllPlayers<SpawnPlanets>(planetData, data);
+							std::cout << "Sent a planet\n";
 						}
-						else if (requestStart->formerGame == MiniGames::LANDINGSPACESHIP)
-						{
-							int landPointToScore[2]{ 0 };
-							if (landingPoints[0] > landingPoints[1])
-							{
-								landPointToScore[0] = 100;
-								landPointToScore[1] = (int)((landingPoints[1] / landingPoints[0]) * 100.f);
-							}
-							else
-							{
-								landPointToScore[1] = 100;
-								landPointToScore[0] = (int)((landingPoints[0] / landingPoints[1]) * 100.f);
-							}
-							totalTeamScores[0] += landPointToScore[0];
-							totalTeamScores[1] += landPointToScore[1];
 
-							std::cout << "Red team score : " << (int)totalTeamScores[0] << "\nBlue team score: " << (int)totalTeamScores[1] << "\n";
+						//Sending next minigame
+						currentMinigame = MiniGames::LANDINGSPACESHIP;
+						startGame.minigame = MiniGames::STARTLANDING;
 
-							//Sending the next minigame
-							currentMinigame = MiniGames::KINGOFTHEHILL;
-							startGame.minigame = MiniGames::KINGOFTHEHILL;
-						}
-						sendBinaryDataAllPlayers<MinigameStart>(startGame, data);
-
-						//Resetting
-						requests = 0;
-						playersSent.clear();
 					}
+					else if (requestStart->formerGame == MiniGames::LANDINGSPACESHIP)
+					{
+						int landPointToScore[2]{ 0 };
+						if (landingPoints[0] > landingPoints[1])
+						{
+							landPointToScore[0] = 100;
+							landPointToScore[1] = (int)((landingPoints[1] / landingPoints[0]) * 100.f);
+						}
+						else
+						{
+							landPointToScore[1] = 100;
+							landPointToScore[0] = (int)((landingPoints[0] / landingPoints[1]) * 100.f);
+						}
+						totalTeamScores[0] += landPointToScore[0];
+						totalTeamScores[1] += landPointToScore[1];
+
+						std::cout << "Red team score : " << (int)totalTeamScores[0] << "\nBlue team score: " << (int)totalTeamScores[1] << "\n";
+
+						//Sending the next minigame
+						currentMinigame = MiniGames::KINGOFTHEHILL;
+						startGame.minigame = MiniGames::KINGOFTHEHILL;
+					}
+					sendBinaryDataAllPlayers<MinigameStart>(startGame, data);
+					requests = 0;
 				}
 				break;
 			}
@@ -814,7 +796,7 @@ int main()
 				break;
 
 			case MiniGames::KINGOFTHEHILL:
-				miniGameKTH.update(data, onlineItems, physWorld, componentIdCounter, totalTeamScores);
+				miniGameKTH.update(data, onlineItems, planetVector, physWorld, componentIdCounter, totalTeamScores);
 				break;
 
 				/*default:
@@ -845,7 +827,7 @@ int main()
 						if (getLength(vecToComp) <= 10.f)
 						{
 							//onlineItems[i].setInactive();
-							DirectX::XMFLOAT3 newCompPos = randomizeObjectPos();
+							DirectX::XMFLOAT3 newCompPos = randomizeObjectPos(planetVector);
 							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 							onlineItems[i]->setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
 							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);

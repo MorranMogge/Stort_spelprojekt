@@ -114,3 +114,24 @@ void ModelDataContainer::extendAnimations(std::string key, AnimationData animDat
 		this->coreAnimData.insert(std::pair<std::string, AnimationData>(key, OldData));
 	}
 }
+
+void ModelDataContainer::addAllTexturesForMesh(std::string name, std::vector<std::string>& allNames)
+{
+	std::vector<ID3D11ShaderResourceView*> tempVec;
+	for (int i = 0; i < allNames.size(); i++)
+	{
+		if (getSrv(allNames[i]) == nullptr)
+		{
+			std::cout << "Index was null\n";
+		}
+		tempVec.emplace_back(getSrv(allNames[i]));
+		std::cout << allNames[i] << " from vecName\n";
+	}
+	this->mapOfAllTexturesToAMesh.insert(std::pair(name, tempVec));
+}
+
+void ModelDataContainer::getAllTexturesForMesh(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec)
+{
+	auto it = this->mapOfAllTexturesToAMesh.find(name);
+	emptyVec = it->second;
+}

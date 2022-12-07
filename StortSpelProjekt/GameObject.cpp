@@ -415,6 +415,12 @@ void GameObject::tmpDraw(UINT stride)
 	this->mesh->draw(this->srv, stride);
 }
 
+void GameObject::tmpDraw(std::vector<ID3D11ShaderResourceView*>& allTextures,UINT stride)
+{
+	this->mesh->UpdateCB(position, rotation, scale);
+	this->mesh->draw(allTextures, stride);
+}
+
 void GameObject::setSrv(ID3D11ShaderResourceView* srv)
 {
 	this->srv = srv;

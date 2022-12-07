@@ -31,6 +31,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ltHandler.addLight(DirectX::XMFLOAT3(-10 - 5, -45 - 17, -10 - 7), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);	
 	
 	//Temp? initiation of animated mesh
+
+	//manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
+	//manager.loadMeshData("../Meshes/goblin2.fbx");
+
 	manager.loadMeshAndBoneData("../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_run.fbx", "../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_run_fast.fbx", "../Meshes/anim/character1_idle.fbx");
@@ -56,6 +60,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		tmpMesh = team1Mesh;
 		animData = team1Anim;
 	}
+
 
 	//Load game objects
 	this->loadObjects();
@@ -323,6 +328,12 @@ void Game::loadObjects()
 		ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
 		currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 			1, client->getPlayerId(), client, 0, redTeamColour, blueTeamColour, planetGravityField);
+		std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
+		this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
+		
+
+		currentPlayer->setTextures(allPlayerTextures);
+
 		//currentPlayer->addData(animData);
 		players.emplace_back(currentPlayer);
 		gamePad = new GamePad();
@@ -409,7 +420,11 @@ void Game::drawObjects(bool drawDebug)
 	basicRenderer.changeToAnimation();
 	for (int i = 0; i < players.size(); i++)
 	{
-		players[i]->draw();
+		//players[i]->draw();
+		if (i == 0)
+		{
+			players[i]->drawSubMeshesWithTexture();
+		}
 	}
 }
 

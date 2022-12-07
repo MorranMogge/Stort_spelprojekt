@@ -109,7 +109,8 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		//if(material->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		if(material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			if (this->bank.hasItem(Path.data))
+			std::cout << Path.C_Str() << std::endl;
+			if (this->bank.hasItem(Path.C_Str()))
 			{
 				this->diffuseMaps.emplace_back(this->bank.getSrv(Path.data));
 				continue;
@@ -117,15 +118,19 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 
 			ID3D11ShaderResourceView* tempSRV = {};
 			std::string FullPath = "../Textures/";
-			FullPath.append(Path.data);
+			FullPath.append(Path.C_Str());
+			std::cout << FullPath << std::endl;
+
 			//make srv
 			if (!this->makeSRV(tempSRV, FullPath))
 			{
 				continue;
 			}
 			//give to bank
-			this->bank.addSrv(Path.data, tempSRV);
+			std::cout << FullPath << "\n";
+			this->bank.addSrv(Path.C_Str(), tempSRV);
 			this->diffuseMaps.emplace_back(tempSRV);
+			this->allTextureNamesForMesh.emplace_back(Path.C_Str());
 		}
 	}
 
@@ -139,7 +144,7 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<vertex> vertexTriangle;
 	std::vector<DWORD> indexTriangle;
-
+	
 	vertex vertex;
 	if (mesh->HasTangentsAndBitangents())
 	{
@@ -438,6 +443,8 @@ bool ModelManager::AdditionalAnimation(const std::string& newAnimationFile, cons
 	Assimp::Importer importer;
 	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 	const aiScene* pScene = importer.ReadFile(newAnimationFile, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
+	/*pScene->mMeshes[0]->mMaterialIndex;
+	pScene->mNumMaterials*/
 
 	if (pScene == nullptr)
 	{
@@ -499,7 +506,7 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.CPUAccessFlags = 0;
 	bufferDesc.MiscFlags = 0;
-	bufferDesc.StructureByteStride = 0;
+	bufferDesc.StructureByteStride = sizeof(vertex);
 
 	D3D11_SUBRESOURCE_DATA data = {};
 	data.pSysMem = dataForMesh.vertexTriangle.data();
@@ -516,20 +523,21 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
-	indexBufferDesc.StructureByteStride = 0;
+	indexBufferDesc.StructureByteStride = sizeof(DWORD);
 
 	D3D11_SUBRESOURCE_DATA indexBufferData = {};
 	indexBufferData.pSysMem = dataForMesh.indexTriangle.data();
 	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
 
 	bank.addMeshBuffers(filePath, vertexBuffer, indexBuffer, submeshRanges, amountOfvertices);
-
+	
 	indexBuffer = {};
 	vertexBuffer = {};
 	this->submeshRanges.clear();
 	this->amountOfvertices.clear();
 	this->dataForMesh.indexTriangle.clear();
 	this->dataForMesh.vertexTriangle.clear();
+	
 
 	return true;
 }
@@ -550,9 +558,10 @@ ID3D11ShaderResourceView* ModelManager::getSrv(const std::string key)
 	return ret;
 }
 
-std::vector<ID3D11ShaderResourceView*> ModelManager::getTextureMaps() const
+void ModelManager::getTextureMaps(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec)
 {
-	return this->diffuseMaps;
+	this->bank.getAllTexturesForMesh(name, emptyVec);
+
 }
 
 bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
@@ -637,13 +646,16 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
 
 	bank.addAnimationData(filePath, vertexBuffer, indexBuffer, submeshRanges, amountOfvertices, this->aniData);
-
+	bank.addAllTexturesForMesh(filePath, this->allTextureNamesForMesh);
 	indexBuffer = {};
 	vertexBuffer = {};
 	this->submeshRanges.clear();
 	this->amountOfvertices.clear();
 	this->dataForMesh.indexTriangle.clear();
 	this->dataForMesh.vertexTriangle.clear();
+
+	//this->allTextureNamesForMesh.clear();
+
 
 	int bp = 2;
 	return true;

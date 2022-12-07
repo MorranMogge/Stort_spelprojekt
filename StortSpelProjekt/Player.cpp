@@ -1188,6 +1188,7 @@ void Player::orbiting()
 			this->position = startPos;
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
+			this->resetVelocity();
 			orbitTimer.resetStartTime();
 		}
 	}

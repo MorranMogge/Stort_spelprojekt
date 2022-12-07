@@ -373,7 +373,7 @@ bool HudUI::redySetGo()
 	using namespace DirectX::SimpleMath;
 	handle = true;
 
-	bool done = false;
+	done = false;
 	static float timer = 0;
 	timer += Time::DeltaTimeInSeconds();
 
@@ -425,7 +425,6 @@ bool HudUI::redySetGo()
 		done = true;
 		handle = false;
 	}
-
 	return done;
 }
 
@@ -464,4 +463,9 @@ void HudUI::Draw()
 	GUI::End();
 
 	DrawFade();
+}
+
+bool HudUI::isDone() const
+{
+	return this->done;
 }

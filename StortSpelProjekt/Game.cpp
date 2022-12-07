@@ -17,7 +17,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	gameMusic.play(true);
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
-	client = new Client();
+	client = new Client("192.168.43.244");
 
 	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
 	circularBuffer = client->getCircularBuffer();
@@ -136,11 +136,11 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
-	currentPlayer->setScale(0.7f);
+	currentPlayer->setScale(0.85f);
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->setGravityField(planetGravityField);
-		players[i]->setScale(0.7f);
+		players[i]->setScale(0.85f);
 	}
 
 	//check the handle id for data ex(Planets, SpaceShips)
@@ -555,7 +555,7 @@ GAMESTATE Game::updateComponentGame()
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->checkSwimStatus(planetVector);
 	currentPlayer->velocityMove(dt);
-	currentPlayer->setSpeed(30.f);
+	currentPlayer->setSpeed(25.f);
 
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);
 	else currentPlayer->requestingPickUpItem(onlineItems);
@@ -852,6 +852,9 @@ GAMESTATE Game::updateLandingGame()
 
 GAMESTATE Game::updateKingOfTheHillGame()
 {
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
+		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState);
+
 	if (!fadedIn)// fade in condition
 	{
 		if (!this->ui.fadeIn()) // is fading
@@ -862,7 +865,6 @@ GAMESTATE Game::updateKingOfTheHillGame()
 			fadedIn = true;
 		}
 	}
-
 
 	//Calculate gravity factor
 	if (planetVector.size() > 0) field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
@@ -893,7 +895,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
 	currentPlayer->checkSwimStatus(planetVector);
-	currentPlayer->setSpeed(30.f);
+	currentPlayer->setSpeed(25.f);
 
 	//Check component pickup
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);
@@ -945,7 +947,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	else camera.collisionCamera(currentPlayer, planetVector, dt);
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
-	//Arrow pointing to spaceship		FIX!
+	//Arrow pointing to spaceship
 	if (currentPlayer->isHoldingComp())
 	{
 		for (int i = 0; i < spaceShips.size(); i++)
@@ -963,8 +965,8 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	//Check if item icon should change to pickup icon 
 	for (int i = 0; i < items.size(); i++) this->items[i]->checkDistance((GameObject*)(currentPlayer));
 	for (int i = 0; i < components.size(); i++) this->components[i]->checkDistance((GameObject*)(currentPlayer));
+
 	return currentGameState;
-	return NOCHANGE;
 }
 
 GAMESTATE Game::startIntermission()
@@ -1092,6 +1094,8 @@ GAMESTATE Game::updateIntermission()
 
 GAMESTATE Game::Update()
 {
+	if (ui.isDone()) currentPlayer->isReady(true);
+
 	//If someone for some reason want to add physics boxes to the world, SHALL BE REMOVED
 	if (GetAsyncKeyState('C')) physWorld.addBoxToWorld();
 	currentGameState = NOCHANGE;
@@ -1196,7 +1200,6 @@ GAMESTATE Game::Update()
 	{
 		return LOSE;
 	}
-	return NOCHANGE;
 	
 	return currentGameState;
 }

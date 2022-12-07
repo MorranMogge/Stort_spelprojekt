@@ -105,15 +105,15 @@ WinMenu::WinMenu()
 	//ltHandler.addLight(DirectX::XMFLOAT3(15, 10, -0), DirectX::XMFLOAT3(1, 1, 1), DirectX::XMFLOAT3(50, 50, 50), DirectX::XMFLOAT3(0, 1, 0), 1, 0.5f, 1000.5f);
 
 	//manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
-	manager.loadMeshAndBoneData("../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Dance1.fbx", "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Dance2.fbx", "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Dance3.fbx", "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Sad1.fbx", "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Sad2.fbx", "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Sad3.fbx", "../Meshes/anim/character1_idle.fbx");
+	//manager.loadMeshAndBoneData("../Meshes/anim/character1_idle.fbx");
+	//manager.AdditionalAnimation("../Meshes/anim/character1_Dance1.fbx", "../Meshes/anim/character1_idle.fbx");
+	//manager.AdditionalAnimation("../Meshes/anim/character1_Dance2.fbx", "../Meshes/anim/character1_idle.fbx");
+	//manager.AdditionalAnimation("../Meshes/anim/character1_Dance3.fbx", "../Meshes/anim/character1_idle.fbx");
+	//manager.AdditionalAnimation("../Meshes/anim/character1_Sad1.fbx", "../Meshes/anim/character1_idle.fbx");
+	//manager.AdditionalAnimation("../Meshes/anim/character1_Sad2.fbx", "../Meshes/anim/character1_idle.fbx");
+	//manager.AdditionalAnimation("../Meshes/anim/character1_Sad3.fbx", "../Meshes/anim/character1_idle.fbx");
 
-	manager.loadMeshAndBoneData("../Meshes/character2_idle.fbx");
+	//manager.loadMeshAndBoneData("../Meshes/character2_idle.fbx");
 
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 }

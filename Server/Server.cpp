@@ -440,6 +440,7 @@ int main()
 					if (onlineItems[i]->getOnlineId() == cmpDropped->componentId)
 					{
 						onlineItems[i]->setInUseBy(-1);
+						onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
 						std::cout << std::to_string(onlineItems[i]->getPosXMFLOAT3().x) << ", y: " << std::to_string(onlineItems[i]->getPosXMFLOAT3().y) <<
 							", z" << std::to_string(onlineItems[i]->getPosXMFLOAT3().z) << std::endl;
 						onlineItems[i]->setPosition(cmpDropped->xPos, cmpDropped->yPos, cmpDropped->zPos);
@@ -501,9 +502,12 @@ int main()
 					if (onlineItems[i]->getOnlineId() == itemPos->itemId) //finding the correct item
 					{
 						//set the data
+						onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 						DirectX::SimpleMath::Quaternion ayaya = DirectX::XMQuaternionRotationRollPitchYaw(itemPos->RotX, itemPos->RotY, itemPos->RotZ);
 						reactphysics3d::Vector3 araAra = reactphysics3d::Vector3(itemPos->x, itemPos->y, itemPos->z);
 						onlineItems[i]->getPhysicsComponent()->setPosition(araAra);
+						onlineItems[i]->setPosition(itemPos->x, itemPos->y, itemPos->z);
+
 						onlineItems[i]->getPhysicsComponent()->setRotation(reactphysics3d::Quaternion(ayaya.x, ayaya.y, ayaya.z, ayaya.w));
 						onlineItems[i]->setInUseBy(itemPos->inUseBy);
 					}
@@ -926,6 +930,24 @@ int main()
 				sendBinaryDataAllPlayers(prMatrix, data);
 				sizeOfPackets += sizeof(PositionRotation);
 			}
+
+			for (int i = 0; i < onlineItems.size(); i++)
+			{
+				ComponentPosition compPosition;
+				compPosition.ComponentId = onlineItems[i]->getOnlineId();
+				compPosition.packetId = PacketType::COMPONENTPOSITIONNEW;
+				compPosition.x = onlineItems[i]->getposition('x');
+				compPosition.y = onlineItems[i]->getposition('y');
+				compPosition.z = onlineItems[i]->getposition('z');
+				compPosition.xRot = onlineItems[i]->getPhysicsComponent()->getRotation().x;
+				compPosition.yRot = onlineItems[i]->getPhysicsComponent()->getRotation().y;
+				compPosition.zRot = onlineItems[i]->getPhysicsComponent()->getRotation().z;
+				compPosition.wRot = onlineItems[i]->getPhysicsComponent()->getRotation().w;
+				//compPosition.quat = onlineItems[i].getPhysicsComponent()->getRotation();
+				sendBinaryDataAllPlayers<ComponentPosition>(compPosition, data);
+				sizeOfPackets += sizeof(ComponentPosition);
+
+			}
 			start = std::chrono::system_clock::now();
 		}
 
@@ -955,23 +977,6 @@ int main()
 			}
 		}
 
-		for (int i = 0; i < onlineItems.size(); i++)
-		{
-			ComponentPosition compPosition;
-			compPosition.ComponentId = onlineItems[i]->getOnlineId();
-			compPosition.packetId = PacketType::COMPONENTPOSITIONNEW;
-			compPosition.x = onlineItems[i]->getposition('x');
-			compPosition.y = onlineItems[i]->getposition('y');
-			compPosition.z = onlineItems[i]->getposition('z');
-			compPosition.xRot = onlineItems[i]->getPhysicsComponent()->getRotation().x;
-			compPosition.yRot = onlineItems[i]->getPhysicsComponent()->getRotation().y;
-			compPosition.zRot = onlineItems[i]->getPhysicsComponent()->getRotation().z;
-			compPosition.wRot = onlineItems[i]->getPhysicsComponent()->getRotation().w;
-			//compPosition.quat = onlineItems[i].getPhysicsComponent()->getRotation();
-			sendBinaryDataAllPlayers<ComponentPosition>(compPosition, data);
-			sizeOfPackets += sizeof(ComponentPosition);
-
-		}
 		if (DebugSizePackets.getTimePassed(1.0f))
 		{
 			std::cout << "SizeOfPackets: " << sizeOfPackets << std::endl;

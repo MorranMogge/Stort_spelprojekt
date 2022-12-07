@@ -849,7 +849,7 @@ int main()
 
 							totalTeamScores[j] += 25;
 							shipComponentCounter[j]++;
-							if (shipComponentCounter[j] == 4 && shipComponentCounter[!j] >= 4) totalTeamScores[!j] += 25;
+							if (shipComponentCounter[j] == 4 && shipComponentCounter[!j] >= 4) totalTeamScores[!j] += 15;
 
 							sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
 							sizeOfPackets += sizeof(ComponentAdded);
@@ -996,7 +996,7 @@ int main()
 		}
 		if (DebugSizePackets.getTimePassed(1.0f))
 		{
-			std::cout << "SizeOfPackets: " << sizeOfPackets << std::endl;
+			//std::cout << "SizeOfPackets: " << sizeOfPackets << std::endl;
 			sizeOfPackets = 0;
 			DebugSizePackets.resetStartTime();
 		}

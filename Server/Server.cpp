@@ -842,7 +842,7 @@ int main()
 						objPos = onlineItems[i]->getPhysicsComponent()->getPosV3();
 						subtractionXMFLOAT3(vecToComp, objPos);
 
-						if (getLength(vecToComp) <= 10.f)
+						if (getLength(vecToComp) <= 10.f && onlineItems[i]->getInUseById() != -1)
 						{
 							//onlineItems[i].setInactive();
 							DirectX::XMFLOAT3 newCompPos = randomizeObjectPos();

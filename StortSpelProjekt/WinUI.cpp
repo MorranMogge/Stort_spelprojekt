@@ -6,8 +6,9 @@
 void WinUI::HandleInputs()
 {
 	backText.IntersectMouse() ? backText.SetTint(DirectX::Colors::Green.v) : backText.SetTint(DirectX::Colors::White.v);
+	auto state = gamePad->GetState(0);
 
-	if (Input::KeyPress(KeyCode::MOUSE_L))
+	if (Input::KeyPress(KeyCode::MOUSE_L) || state.IsAPressed() || state.IsBPressed())
 	{
 		if (backText.GetTint() == DirectX::Colors::Green.v)
 		{
@@ -31,6 +32,8 @@ GAMESTATE WinUI::GetGameState()
 
 WinUI::WinUI()
 {
+	gamePad = std::make_unique<DirectX::GamePad>();
+
 	winText = GUISprite((1264.0f / 2.0f), 300 - 100);
 	winText.Load(L"../Sprites/victoryText.png");
 

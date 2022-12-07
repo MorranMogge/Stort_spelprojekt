@@ -849,6 +849,9 @@ GAMESTATE Game::updateLandingGame()
 
 GAMESTATE Game::updateKingOfTheHillGame()
 {
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
+		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState);
+
 	if (!fadedIn)// fade in condition
 	{
 		if (!this->ui.fadeIn()) // is fading
@@ -859,7 +862,6 @@ GAMESTATE Game::updateKingOfTheHillGame()
 			fadedIn = true;
 		}
 	}
-
 
 	//Calculate gravity factor
 	if (planetVector.size() > 0) field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
@@ -942,7 +944,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	else camera.collisionCamera(currentPlayer, planetVector, dt);
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
-	//Arrow pointing to spaceship		FIX!
+	//Arrow pointing to spaceship
 	if (currentPlayer->isHoldingComp())
 	{
 		for (int i = 0; i < spaceShips.size(); i++)
@@ -960,8 +962,8 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	//Check if item icon should change to pickup icon 
 	for (int i = 0; i < items.size(); i++) this->items[i]->checkDistance((GameObject*)(currentPlayer));
 	for (int i = 0; i < components.size(); i++) this->components[i]->checkDistance((GameObject*)(currentPlayer));
+
 	return currentGameState;
-	return NOCHANGE;
 }
 
 GAMESTATE Game::startIntermission()
@@ -1193,7 +1195,6 @@ GAMESTATE Game::Update()
 	{
 		return LOSE;
 	}
-	return NOCHANGE;
 	
 	return currentGameState;
 }

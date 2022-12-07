@@ -8,7 +8,7 @@ struct wirefameInfo
 };
 
 const int NROFPLAYERS = 2;
-static bool IFONLINE = false;
+static bool IFONLINE = true;
 
 class Game : public State
 {
@@ -74,7 +74,6 @@ private:
 	Player* currentPlayer;
 	Mesh* planetMeshes;
 
-
 	//Items
 	int id;
 	BaseballBat* baseballBat;
@@ -108,7 +107,6 @@ private:
 	DirectX::XMFLOAT2 offset;
 	UINT HEIGHT;
 	UINT WIDTH;
-
 
 	void loadObjects();
 	void drawShadows();

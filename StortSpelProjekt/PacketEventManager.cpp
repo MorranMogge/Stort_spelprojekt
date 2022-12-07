@@ -267,7 +267,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			}
 			else
 			{
-				planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos)));
+				planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos), (4.0f * 9.82f), meshes[1]));
 				planetVector.back()->setPlanetShape(&physWorld);
 				physWorld.setPlanets(planetVector);
 			}
@@ -422,7 +422,7 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer, std::vec
 		case PacketType::SPAWNPLANETS:
 			planetData = circularBuffer->readData<SpawnPlanets>();
 			std::cout << "Received planet\n";
-			planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos)));
+			planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos), (4.0f * 9.82f), meshes[1]));
 			planetVector.back()->setPlanetShape(&physWorld);
 			physWorld.setPlanets(planetVector);
 			UwU++;

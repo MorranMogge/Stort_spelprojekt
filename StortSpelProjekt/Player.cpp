@@ -551,6 +551,7 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime)
 {
+	if (!ready) return;
 	if (dedge || flipping) return;
 
 	if (state.IsConnected()) return;
@@ -783,6 +784,7 @@ bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float d
 
 void Player::moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime)
 {
+	if (!ready) return;
 	if (dedge || flipping) return;
 
 	if (state.IsConnected())
@@ -1471,6 +1473,11 @@ void Player::setVibration(float vibration1, float vibration2)
 void Player::setGamePad(DirectX::GamePad* gamePad)
 {
 	this->gamePad = gamePad;
+}
+
+void Player::isReady(bool ready)
+{
+	this->ready = ready;
 }
 
 void Player::requestingPickUpItem(const std::vector<Item*>& items)

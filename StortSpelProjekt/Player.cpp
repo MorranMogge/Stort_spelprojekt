@@ -1431,7 +1431,7 @@ void Player::update()
 	if (this->playerIcon != nullptr)
 	{
 		DirectX::XMFLOAT4X4 f1;
-		this->forwardKinematics("hand3:hand3:Head", f1);
+		this->forwardKinematics("Character_Head", f1);
 		DirectX::XMFLOAT3 headPos = DirectX::XMFLOAT3(f1._41, f1._42, f1._43);
 		float constant = playerIcon->getOffset();
 		DirectX::XMFLOAT3 upDir = this->getUpDirection();

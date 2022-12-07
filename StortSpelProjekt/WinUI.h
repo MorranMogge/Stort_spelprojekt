@@ -3,6 +3,7 @@
 #include "GUISprite.h"
 #include "GUIText.h"
 #include "State.h"
+#include <GamePad.h>
 
 class WinUI final
 {
@@ -11,6 +12,8 @@ class WinUI final
 	GUISprite backText;
 
 	GAMESTATE gameState;
+
+	std::unique_ptr<DirectX::GamePad> gamePad;
 
 	void HandleInputs();
 	void SpritePass();

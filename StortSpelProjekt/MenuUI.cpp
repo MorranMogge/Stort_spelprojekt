@@ -29,7 +29,6 @@ void MenuUI::SpritePass()
 
 void MenuUI::HandleInputs()
 {
-	Input::Update();
 	auto state = gamePad->GetState(0);
 
 	// any gamepad connected
@@ -378,6 +377,7 @@ MenuUI::MenuUI()
 
 void MenuUI::Draw()
 {
+	Input::Update();
 	HandleInputs();
 	GUI::Begin();
 	SpritePass();

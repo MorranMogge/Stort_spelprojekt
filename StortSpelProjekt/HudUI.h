@@ -44,6 +44,7 @@ class HudUI final
 	bool Bdot1 = false;
 	bool Bdot2 = false;
 	bool handle = false;
+	bool done = false;
 
 	inline static DirectX::GamePad* gamepad = nullptr;
 	inline static DirectX::GamePad::State state;
@@ -65,4 +66,5 @@ public:
 	static void SetGamePad(DirectX::GamePad* gamepad);
 	void DrawFade();
 	void Draw();
+	bool isDone() const;
 };

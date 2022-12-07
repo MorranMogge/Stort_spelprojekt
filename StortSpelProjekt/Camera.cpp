@@ -112,8 +112,8 @@ void Camera::moveVelocity(Player* player, const float& deltaTime)
 	//Changing FOV if player moving faster
 	if (XMVector3NotEqual(cameraPos, oldCameraPos))
 	{
-		if (playerSpeed < 31.f) minFOV = 0.76f;
-		else if (playerSpeed < 46.f) minFOV = 0.7f;
+		if (playerSpeed < 26.f) minFOV = 0.76f;
+		else if (playerSpeed < 37.5f) minFOV = 0.7f;
 		else minFOV = 0.65f;
 
 		if (fieldOfView > (minFOV + 0.01f)) fieldOfView -= deltaTime * 0.1f;
@@ -176,8 +176,8 @@ void Camera::collisionCamera(Player* player, const std::vector<Planet*>& planets
 	//Changing FOV if player moving faster
 	if (XMVector3NotEqual(cameraPos, oldCameraPos))
 	{
-		if (playerSpeed < 31.f) minFOV = 0.76f;
-		else if (playerSpeed < 46.f) minFOV = 0.7f;
+		if (playerSpeed < 26.f) minFOV = 0.76f;
+		else if (playerSpeed < 37.5f) minFOV = 0.7f;
 		else minFOV = 0.65f;
 
 		if (fieldOfView > (minFOV + 0.01f)) fieldOfView -= deltaTime * 0.1f;

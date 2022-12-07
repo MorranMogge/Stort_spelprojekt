@@ -17,7 +17,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	gameMusic.play(true);
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
-	client = new Client();
+	client = new Client("192.168.43.244");
 
 	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
 	circularBuffer = client->getCircularBuffer();
@@ -38,25 +38,22 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	manager.AdditionalAnimation("../Meshes/anim/character1_attack.fbx", "../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_fly.fbx", "../Meshes/anim/character1_idle.fbx");
 
-	manager.loadMeshAndBoneData("../Meshes/character2_idle.fbx");
-
+	manager.loadMeshAndBoneData("../Meshes/anim/character2_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character2_run.fbx", "../Meshes/anim/character2_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character2_run_fast.fbx", "../Meshes/anim/character2_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character2_throw.fbx", "../Meshes/anim/character2_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character2_attack.fbx", "../Meshes/anim/character2_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character2_fly.fbx", "../Meshes/anim/character2_idle.fbx");
 
 	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
 	ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
-	AnimationData team1Anim;
-	this->manager.getAnimData("../Meshes/anim/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team1Anim);
-	Mesh* team1Mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-	AnimationData team2Anim;
-	this->manager.getAnimData("../Meshes/anim/character2_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team1Anim);
-	Mesh* team2Mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	AnimationData doNotUseT;
+	this->manager.getAnimData("../Meshes/anim/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, doNotUseT);
+	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	AnimationData doNotUse;
+	this->manager.getAnimData("../Meshes/anim/character2_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, doNotUse);
+	otherTmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	
-	
-	if (!IFONLINE)
-	{
-		tmpMesh = team1Mesh;
-		animData = team1Anim;
-	}
-
 	//Load game objects
 	this->loadObjects();
 
@@ -76,22 +73,24 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		this->client->setClientId(playerId);
 		int offset = 10;
 		int dude = (NROFPLAYERS) / 2;
-
+		Mesh* useMeshForPlayer = nullptr;
 		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
 		{
 			Player* tmpPlayer = nullptr;
 			if (dude < i + 1)
 			{
-				tmpMesh = team1Mesh;
-				animData = team1Anim;
+				useMeshForPlayer = tmpMesh;
+				//change anim
+				tmpPlayer = new Player(useMeshForPlayer, doNotUseT, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
 			}
 			else
 			{
-				tmpMesh = team2Mesh;
-				animData = team2Anim;
+				useMeshForPlayer = otherTmpMesh;
+				tmpPlayer = new Player(useMeshForPlayer, doNotUse, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
 			}
-			tmpPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
-				0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+			
 			tmpPlayer->setOnlineID(i);
 
 			if (playerId != i)
@@ -135,10 +134,11 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 	currentPlayer->setPhysComp(physWorld.getPlayerBox());
 	currentPlayer->getPhysComp()->setParent(currentPlayer);
-	currentPlayer->setScale(0.7f);
+	currentPlayer->setScale(0.85f);
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->setGravityField(planetGravityField);
+		players[i]->setScale(0.85f);
 	}
 
 	//check the handle id for data ex(Planets, SpaceShips)
@@ -148,7 +148,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	UwuYouSowarm.resetStartTime();
 	while (UwuYouSowarm.getTimePassed(1.0f));
 
-	delete team2Mesh;
 	//Init delta time
 	currentTime = std::chrono::system_clock::now();
 	lastUpdate = currentTime;
@@ -195,6 +194,7 @@ Game::~Game()
 	if (gamePad != nullptr) delete gamePad;
 	if (client != nullptr) delete client;
 	delete tmpMesh;
+	delete otherTmpMesh;
 	delete asteroids;
 	delete arrow;
 	delete planetGravityField;
@@ -552,7 +552,7 @@ GAMESTATE Game::updateComponentGame()
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->checkSwimStatus(planetVector);
 	currentPlayer->velocityMove(dt);
-	currentPlayer->setSpeed(30.f);
+	currentPlayer->setSpeed(25.f);
 
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);
 	else currentPlayer->requestingPickUpItem(onlineItems);
@@ -849,6 +849,9 @@ GAMESTATE Game::updateLandingGame()
 
 GAMESTATE Game::updateKingOfTheHillGame()
 {
+	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
+		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState);
+
 	if (!fadedIn)// fade in condition
 	{
 		if (!this->ui.fadeIn()) // is fading
@@ -859,7 +862,6 @@ GAMESTATE Game::updateKingOfTheHillGame()
 			fadedIn = true;
 		}
 	}
-
 
 	//Calculate gravity factor
 	if (planetVector.size() > 0) field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
@@ -890,7 +892,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
 	currentPlayer->checkSwimStatus(planetVector);
-	currentPlayer->setSpeed(30.f);
+	currentPlayer->setSpeed(25.f);
 
 	//Check component pickup
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);
@@ -942,7 +944,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	else camera.collisionCamera(currentPlayer, planetVector, dt);
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
-	//Arrow pointing to spaceship		FIX!
+	//Arrow pointing to spaceship
 	if (currentPlayer->isHoldingComp())
 	{
 		for (int i = 0; i < spaceShips.size(); i++)
@@ -960,8 +962,8 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	//Check if item icon should change to pickup icon 
 	for (int i = 0; i < items.size(); i++) this->items[i]->checkDistance((GameObject*)(currentPlayer));
 	for (int i = 0; i < components.size(); i++) this->components[i]->checkDistance((GameObject*)(currentPlayer));
+
 	return currentGameState;
-	return NOCHANGE;
 }
 
 GAMESTATE Game::startIntermission()
@@ -1089,6 +1091,8 @@ GAMESTATE Game::updateIntermission()
 
 GAMESTATE Game::Update()
 {
+	if (ui.isDone()) currentPlayer->isReady(true);
+
 	//If someone for some reason want to add physics boxes to the world, SHALL BE REMOVED
 	if (GetAsyncKeyState('C')) physWorld.addBoxToWorld();
 	currentGameState = NOCHANGE;
@@ -1193,7 +1197,6 @@ GAMESTATE Game::Update()
 	{
 		return LOSE;
 	}
-	return NOCHANGE;
 	
 	return currentGameState;
 }

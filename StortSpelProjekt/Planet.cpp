@@ -207,13 +207,13 @@ void Planet::rotateAroundPoint(const DirectX::XMFLOAT3& point)
 {
 	float deg = rotDegrees * (DirectX::XM_PI / 180.f);
 	rotDegrees += this->velocity * 0.1f;
-	DirectX::SimpleMath::Vector3 factor(sin(deg), cos(deg), 1.0f);
+	DirectX::SimpleMath::Vector3 factor(sin(deg), 1.0f, cos(deg));
 	this->position = this->originPoint * factor;
 }
 
 void Planet::rotatePlanet()
 {
-	this->rotation += rotSpeed;
+	//this->rotation += rotSpeed;
 }
 
 void Planet::rotateMoon(const DirectX::XMFLOAT3& point, const float& speed)

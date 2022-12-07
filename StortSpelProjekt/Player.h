@@ -41,6 +41,7 @@ private:
 	//Status
 	int team;
 	int onlineID;
+	bool ready = false;
 	bool dedge = false;
 	bool flipping = false;
 	bool onGround = false;
@@ -119,6 +120,7 @@ public:
 	void setTeam(const int& team);
 	void setVibration(float vibration1, float vibration2);
 	void setGamePad(DirectX::GamePad* gamePad);
+	void isReady(bool ready);
 	
 	//Get Functions
 	reactphysics3d::Vector3 getRayCastPos()const;

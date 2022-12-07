@@ -29,6 +29,24 @@ void SendingDataEvent(Client*& client,  Player*& currentPlayer, std::vector<Play
 	currentPlayer->getAnimId(pr.AnimId);
 	currentPlayer->getAnimSpeed(pr.animSpeed);
 	client->sendStuff<PositionRotation>(pr);
+
+	if (currentPlayer->isHoldingItem())
+	{
+		itemPosition ip;
+		ip.packetId = PacketType::ITEMPOSITION;
+		ip.itemId = currentPlayer->getItemOnlineId();
+		ip.inUseBy = currentPlayer->getOnlineID();
+
+		ip.x = currentPlayer->getItem()->getPos().x;
+		ip.y = currentPlayer->getItem()->getPos().y;
+		ip.z = currentPlayer->getItem()->getPos().z;
+
+		ip.RotX = currentPlayer->getItem()->getRotXM().x;
+		ip.RotY = currentPlayer->getItem()->getRotXM().y;
+		ip.RotZ = currentPlayer->getItem()->getRotXM().z;
+
+		client->sendStuff<itemPosition>(ip);
+	}
 	
 	//holds a component
 	//if (currentPlayer->getItemOnlineType() == 0)

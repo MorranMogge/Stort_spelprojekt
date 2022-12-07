@@ -196,6 +196,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				//std::cout << "vector item id: " << std::to_string(componentVector[i]->getOnlineId()) << ", recv Data itemid: " << std::to_string(itemPosData->itemId) << std::endl;
 				if (onlineItems[i]->getOnlineId() == itemPosData->itemId)
 				{
+					std::cout << "zxzxzz setting data\n";
 					onlineItems[i]->setPos(DirectX::XMFLOAT3(itemPosData->x, itemPosData->y, itemPosData->z));
 					break;
 				}
@@ -299,9 +300,9 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				//std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", i = " << std::to_string(i) << std::endl;
 				if (onlineItems[i]->getOnlineId() == cmpPosition->ComponentId)
 				{
-					//std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", pos x: " << std::to_string(cmpPosition->x)
-					//	<< ", y: " << std::to_string(cmpPosition->y) << std::endl;
 					onlineItems[i]->setPos(DirectX::XMFLOAT3(cmpPosition->x, cmpPosition->y, cmpPosition->z));
+					reactphysics3d::Vector3 araAra = reactphysics3d::Vector3(cmpPosition->x, cmpPosition->y, cmpPosition->z);
+					onlineItems[i]->getPhysComp()->setPosition(araAra);
 					onlineItems[i]->getPhysComp()->setRotation(DirectX::SimpleMath::Quaternion(cmpPosition->xRot, cmpPosition->yRot, cmpPosition->zRot, cmpPosition->wRot));
 				}
 			}

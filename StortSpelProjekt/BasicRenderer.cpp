@@ -398,6 +398,8 @@ void BasicRenderer::setUpSceneNormalMap(Camera& stageCamera)
 	ID3D11RenderTargetView* nullRTV{ nullptr };
 	immediateContext->OMSetRenderTargets(1, &nullRTV, nullptr);
 
+	immediateContext->ClearRenderTargetView(rtv, clearColour);
+	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 	
 	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

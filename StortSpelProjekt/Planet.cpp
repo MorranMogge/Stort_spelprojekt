@@ -241,6 +241,16 @@ GravityField* Planet::getGravityField()
 	return this->gravField;
 }
 
+void Planet::setNormalMap(ID3D11ShaderResourceView* normalMap)
+{
+	this->normalMap = normalMap;
+}
+
+void Planet::setDiffuseMap(ID3D11ShaderResourceView* diffuseMap)
+{
+	this->diffuseMap = diffuseMap;
+}
+
 void Planet::drawPlanet(bool tesselation)
 {
 	//this->mesh->position = this->position;
@@ -248,7 +258,13 @@ void Planet::drawPlanet(bool tesselation)
 	//this->mesh->scale = scale;
 
 	this->mesh->UpdateCB(this->position, DirectX::XMMatrixRotationRollPitchYawFromVector(rotation), scale);
-	this->mesh->DrawWithMat(tesselation);
+	
+	if (this->normalMap != nullptr)
+	{
+		this->mesh->drawWithNormalMap(diffuseMap, normalMap);
+	}
+	//this->mesh->DrawWithMat(tesselation);
+
 }
 
 void Planet::drawAtmosphere()

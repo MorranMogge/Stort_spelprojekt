@@ -23,6 +23,8 @@ private:
 	Mesh* atmosphere;
 	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;	//buffer for atmosphere color
 	float atmoScale;
+	ID3D11ShaderResourceView* normalMap;
+	ID3D11ShaderResourceView* diffuseMap;
 	DirectX::SimpleMath::Vector3 position;	//Center point of the planet
 	DirectX::SimpleMath::Vector3 rotation;	//Rotating Planets
 	DirectX::SimpleMath::Vector3 scale;		//Since we may explore other shapes than spheres
@@ -71,7 +73,8 @@ public:
 	void rotateAroundPoint(const DirectX::XMFLOAT3& point);
 	void rotatePlanet();
 	void rotateMoon(const DirectX::XMFLOAT3& point, const float& speed);
-	
+	void setNormalMap(ID3D11ShaderResourceView* normalMap);
+	void setDiffuseMap(ID3D11ShaderResourceView* diffuseMap);
 	//set color of atmosphere
 	void setColor(const DirectX::SimpleMath::Vector3& color);
 	//Draws the planet using regular pipeline stages

@@ -63,6 +63,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 
 	//Load game objects
+	this->manager.loadMeshData("../Meshes/Sphere.obj");
+	this->manager.getMeshData("../Meshes/Sphere.obj", vBuff, iBuff, subMeshRanges, verticies);
+	tmpMesh2 = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	this->loadObjects();
 
 
@@ -74,6 +77,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	testCube->setNormalMap(this->manager.getSrv("Goblin_Normal.png"));
 	physWorld.addPhysComponent(testCube);
 	gameObjects.push_back(testCube);
+
+	
 	//Setup players
 	if (IFONLINE)
 	{
@@ -254,14 +259,26 @@ void Game::loadObjects()
 	meshes.push_back(new Mesh("../Meshes/N1"));
 	meshes.push_back(new Mesh("../Meshes/grenade"));
 
+	std::cout << this->manager.addTexture("p3n.png") <<"\n";
+	std::cout << this->manager.addTexture("p3.png") << "\n";
+	std::cout << this->manager.getSrv("../textures/p3.png") << "\n";
+	std::cout << this->manager.getSrv("../textures/p3n.png") << "\n";
+
+	ID3D11ShaderResourceView* SRV1 = this->manager.getSrv("p3.png");
+	ID3D11ShaderResourceView * SRV2 = this->manager.getSrv("p3n.png");
+	
 
 	//SOLAR SYSTEM SETUP
 	if (!IFONLINE)
 	{
 		float planetSize = 40.f; // SET DIFFERENT GRAV-FACTORS FOR THE PLANETS AND DIFFERENT TEXTURES!
 		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f), (4.0f * 9.82f), meshes[1]));
+		
+		planetVector[0]->setDiffuseMap(SRV1);
+		planetVector[0]->setNormalMap(SRV2);
+
 		planetVector.back()->setPlanetShape(&physWorld);
-		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(60.f, 60.f, 60.f), (4.0f * 9.82f), meshes[1]));
+		planetVector.emplace_back(new Planet(tmpMesh2, DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(60.f, 60.f, 60.f), (4.0f * 9.82f), meshes[1]));
 		planetVector.back()->setPlanetShape(&physWorld);
 		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-130.f, -130.f, 130.f), (4.0f * 9.82f), meshes[1]));
 		planetVector.back()->setPlanetShape(&physWorld);
@@ -1253,7 +1270,7 @@ void Game::Render()
 	basicRenderer.setUpSceneNormalMap(this->camera);
 	ltHandler.bindLightBuffers();
 	testCube->drawObjectWithNormalMap();
-
+	planetVector[0]->drawPlanet();
 
 	//Unbind light
 	ltHandler.unbindSrv();

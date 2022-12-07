@@ -95,7 +95,7 @@ private:
 	void recParseNodes(nodes& node, const aiNode* ainode);
 	void parseNode(const aiScene* scene);
 	void parseAnimation(const aiScene* scene);
-
+	
 
 public:
 	ModelManager();
@@ -105,7 +105,7 @@ public:
 	ID3D11ShaderResourceView* getSrv(const std::string key);
 	//std::vector<Mesh2*> getMeshes() const;
 	void getTextureMaps(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec);
-
+	bool addTexture(const std::string& filePath);
 	bool loadMeshAndBoneData(const std::string& filePath);
 	bool AdditionalAnimation(const std::string& newAnimationFile, const std::string& destination);
 	//fills the params with meshdata

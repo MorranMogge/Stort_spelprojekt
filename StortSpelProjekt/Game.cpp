@@ -838,6 +838,29 @@ GAMESTATE Game::updateKingOfTheHillGame()
 		}
 	}
 
+	for (int i = 0; i < onlineItems.size(); i++)
+	{
+		int id = onlineItems[i]->getId();
+		switch (id)
+		{
+		case ObjID::GRENADE:
+		{
+			Grenade* tempNade = (Grenade*)onlineItems[i];
+			tempNade->updateExplosionCheck();
+			if (tempNade->getExploded() == true)
+			{
+				randomizeObjectPos(tempNade);
+				tempNade->setExploded(false);
+			}
+		}	break;
+		case ObjID::POTION:
+		{
+			Potion* tempPotion = (Potion*)onlineItems[i];
+			if (tempPotion->timerGoing()) currentPlayer->setSpeed(50.f);
+		}	break;
+		}
+	}
+
 	//sending data to server
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - serverStart)).count() > serverTimerLength && client->getIfConnected())
 	{

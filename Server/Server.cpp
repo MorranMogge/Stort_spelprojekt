@@ -921,6 +921,23 @@ int main()
 				sendBinaryDataAllPlayers(prMatrix, data);
 				sizeOfPackets += sizeof(PositionRotation);
 			}
+			for (int i = 0; i < onlineItems.size(); i++)
+			{
+				ComponentPosition compPosition;
+				compPosition.ComponentId = onlineItems[i]->getOnlineId();
+				compPosition.packetId = PacketType::COMPONENTPOSITIONNEW;
+				compPosition.x = onlineItems[i]->getposition('x');
+				compPosition.y = onlineItems[i]->getposition('y');
+				compPosition.z = onlineItems[i]->getposition('z');
+				compPosition.xRot = onlineItems[i]->getPhysicsComponent()->getRotation().x;
+				compPosition.yRot = onlineItems[i]->getPhysicsComponent()->getRotation().y;
+				compPosition.zRot = onlineItems[i]->getPhysicsComponent()->getRotation().z;
+				compPosition.wRot = onlineItems[i]->getPhysicsComponent()->getRotation().w;
+				//compPosition.quat = onlineItems[i].getPhysicsComponent()->getRotation();
+				sendBinaryDataAllPlayers<ComponentPosition>(compPosition, data);
+				sizeOfPackets += sizeof(ComponentPosition);
+			}
+
 			start = std::chrono::system_clock::now();
 		}
 
@@ -950,23 +967,7 @@ int main()
 			}
 		}
 
-		for (int i = 0; i < onlineItems.size(); i++)
-		{
-			ComponentPosition compPosition;
-			compPosition.ComponentId = onlineItems[i]->getOnlineId();
-			compPosition.packetId = PacketType::COMPONENTPOSITIONNEW;
-			compPosition.x = onlineItems[i]->getposition('x');
-			compPosition.y = onlineItems[i]->getposition('y');
-			compPosition.z = onlineItems[i]->getposition('z');
-			compPosition.xRot = onlineItems[i]->getPhysicsComponent()->getRotation().x;
-			compPosition.yRot = onlineItems[i]->getPhysicsComponent()->getRotation().y;
-			compPosition.zRot = onlineItems[i]->getPhysicsComponent()->getRotation().z;
-			compPosition.wRot = onlineItems[i]->getPhysicsComponent()->getRotation().w;
-			//compPosition.quat = onlineItems[i].getPhysicsComponent()->getRotation();
-			sendBinaryDataAllPlayers<ComponentPosition>(compPosition, data);
-			sizeOfPackets += sizeof(ComponentPosition);
-
-		}
+	
 		if (DebugSizePackets.getTimePassed(1.0f))
 		{
 			std::cout << "SizeOfPackets: " << sizeOfPackets << std::endl;

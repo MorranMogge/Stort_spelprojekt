@@ -208,7 +208,7 @@ Game::~Game()
 	delete asteroids;
 	delete arrow;
 	delete planetGravityField;
-	delete gamePad;
+	
 	
 }
 

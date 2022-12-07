@@ -1091,6 +1091,8 @@ GAMESTATE Game::updateIntermission()
 
 GAMESTATE Game::Update()
 {
+	if (ui.isDone()) currentPlayer->isReady(true);
+
 	//If someone for some reason want to add physics boxes to the world, SHALL BE REMOVED
 	if (GetAsyncKeyState('C')) physWorld.addBoxToWorld();
 	currentGameState = NOCHANGE;

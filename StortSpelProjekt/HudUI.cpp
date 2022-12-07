@@ -373,7 +373,7 @@ bool HudUI::redySetGo()
 	using namespace DirectX::SimpleMath;
 	handle = true;
 
-	bool done = false;
+	done = false;
 	static float timer = 0;
 	timer += Time::DeltaTimeInSeconds();
 
@@ -382,7 +382,6 @@ bool HudUI::redySetGo()
 	if (timer >= 1)
 	{
 		this->Bready = true;
-		player->isReady(false);
 	}
 	if (timer >= 1.7f && timer <= 2.5f)
 	{
@@ -425,9 +424,7 @@ bool HudUI::redySetGo()
 		this->Bgo = false;
 		done = true;
 		handle = false;
-		player->isReady(true);
 	}
-
 	return done;
 }
 
@@ -466,4 +463,9 @@ void HudUI::Draw()
 	GUI::End();
 
 	DrawFade();
+}
+
+bool HudUI::isDone() const
+{
+	return this->done;
 }

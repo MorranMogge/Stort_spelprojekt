@@ -22,7 +22,7 @@ void KingOfTheHillMiniGame::sendKingOfTheHillZone(serverData& data)
 }
 
 
-void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, int& componentIdCounter)
+void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, const std::vector<Planet*>& planets, PhysicsWorld& physWorld, int& componentIdCounter)
 {
 	static float xPos;
 	static float yPos;
@@ -113,7 +113,7 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 	{
 
 		ItemSpawn itemSpawnData;
-		DirectX::XMFLOAT3 temp = randomizeObjectPos();
+		DirectX::XMFLOAT3 temp = randomizeObjectPos(planets);
 		itemSpawnData.x = temp.x;
 		itemSpawnData.y = temp.y;
 		itemSpawnData.z = temp.z;

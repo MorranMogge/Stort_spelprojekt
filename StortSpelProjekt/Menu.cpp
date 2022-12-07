@@ -69,9 +69,6 @@ GAMESTATE Menu::Update()
 		planets[i]->rotatePlanet();
 	}
 
-
-
-
 	return ui.GetGameState();
 }
 
@@ -125,7 +122,7 @@ void Menu::drawObjects()
 	basicRenderer.bindAmbientShader();
 
 	//Draw light debug meshes
-	ltHandler.drawDebugMesh();
+	//ltHandler.drawDebugMesh();
 
 	//Draw depth stencil
 //basicRenderer.depthPrePass();

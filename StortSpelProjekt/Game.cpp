@@ -54,6 +54,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->manager.getAnimData("../Meshes/anim/character2_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, doNotUse);
 	otherTmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	
+
+	animData = doNotUseT;
 	//Load game objects
 	this->loadObjects();
 
@@ -303,6 +305,7 @@ void Game::loadObjects()
 		spaceShips[i]->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 		gameObjects.emplace_back(spaceShips[i]);
 	}
+
 
 	//Initilize player
 	if (!currentPlayer && !IFONLINE)

@@ -1328,7 +1328,7 @@ void Player::drawParticles()
 	{
 		this->particles->BindAndDraw(0);
 	}
-	if (this->currentSpeed > 30)
+	if (this->currentSpeed > 30 || animIndex == 2)
 	{
 		particles2->setColor(DirectX::SimpleMath::Vector3(this->fresnelBuffer.getData().x, this->fresnelBuffer.getData().y, this->fresnelBuffer.getData().z));
 		particles2->BindAndDraw(4);
@@ -1595,7 +1595,7 @@ void Player::velocityMove(const float& dt)
 void Player::drawFresnel(float interval)
 {
 	//If picked up "potion"
-	if (this->currentSpeed > 30)
+	if (this->currentSpeed > 30 || animIndex == 2)
 	{
 		//Variables
 		static  XMFLOAT3 pos1(0, 0, 0);

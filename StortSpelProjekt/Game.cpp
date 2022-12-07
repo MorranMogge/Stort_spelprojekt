@@ -1270,7 +1270,7 @@ void Game::Render()
 	basicRenderer.setUpSceneNormalMap(this->camera);
 	ltHandler.bindLightBuffers();
 	testCube->drawObjectWithNormalMap();
-	planetVector[0]->drawPlanet();
+	planetVector[0]->drawPlanet(true);
 
 	//Unbind light
 	ltHandler.unbindSrv();

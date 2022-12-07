@@ -168,9 +168,9 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 
 			if (mesh->mTextureCoords[0])
 			{
-				vertex.uv.x = (float)mesh->mTextureCoords[0][i].x;
-				vertex.uv.y = (float)mesh->mTextureCoords[0][i].y;
-				vertex.uv.y = 1.0f - vertex.uv.y;
+				vertex.uv.x = mesh->mTextureCoords[0]->x;
+				vertex.uv.y = mesh->mTextureCoords[0]->y;
+				//vertex.uv.y = 1.0f - vertex.uv.y;
 			}
 
 			vertexTriangle.emplace_back(vertex);
@@ -189,10 +189,18 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 			vertex.nor.y = mesh->mNormals[i].y;
 			vertex.nor.z = mesh->mNormals[i].z;
 
+			//if (mesh->mTextureCoords[0])
+			//{
+			//	vertex.uv.x = mesh->mTextureCoords[0]->x;
+			//	vertex.uv.y = mesh->mTextureCoords[0]->y;
+			//	//vertex.uv.y = 1.0f - vertex.uv.y;
+			//}
+
 			if (mesh->mTextureCoords[0])
 			{
-				vertex.uv.x = (float)mesh->mTextureCoords[0][i].x;
-				vertex.uv.y = (float)mesh->mTextureCoords[0][i].y;
+				vertex.uv.x = mesh->mTextureCoords[0][i].x;
+				vertex.uv.y = mesh->mTextureCoords[0][i].y;
+				vertex.uv.y = 1.0f - vertex.uv.y;
 			}
 
 			vertexTriangle.emplace_back(vertex);

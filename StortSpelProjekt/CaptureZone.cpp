@@ -23,6 +23,7 @@ void CaptureZone::setColor(const DirectX::SimpleMath::Vector3 & color)
 bool CaptureZone::detectedObject(GameObject* objectToCheck) const
 {
 	bool didDetect = false;
+	
 	if (this->withinRadious(objectToCheck, this->scale.x))
 	{
 		didDetect = true;

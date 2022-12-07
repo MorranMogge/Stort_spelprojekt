@@ -283,7 +283,6 @@ Player::Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3
 	playerHitSound.load(L"../Sounds/mixkit-sick-man-sneeze-2213.wav");
 	//walkingSound.setVolume(0.25f);
 
-	this->startPos = pos;
 	this->onlineID = onlineId;
 	this->rotationMX = XMMatrixIdentity();
 	this->rotation = XMMatrixIdentity();
@@ -422,7 +421,7 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 	else if (!testingVec) normalVector = DirectX::XMVectorSet(-grav.x, -grav.y, -grav.z, 1.0f);
 	else normalVector = DirectX::XMVectorSet(grav.x, grav.y, grav.z, 1.0f);
 
-	//Player landing on another planet
+	//Player jumping to another planet
 	if (changedPlanet) flipping = true;
 	else if (onGround) flipping = false;
 
@@ -535,9 +534,12 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime)
 {
 	if (dedge || flipping) return;
-	if (state.IsConnected()) return;
-	if (!this->doneWithAnim) return;
 
+	if (state.IsConnected()) return;
+	if (!this->doneWithAnim)
+	{
+		return;
+	}
 	//Running
 	this->currentSpeed = this->speed;
 	if (Input::KeyDown(KeyCode::SHIFT))
@@ -549,8 +551,8 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
 		onGround = false;
-		this->velocity = this->normalVector * 30.f;
-		this->position += this->normalVector * 1.5f;
+		this->velocity = this->normalVector * 40.f;
+		this->position += this->normalVector * 1.8f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
 
@@ -1139,7 +1141,7 @@ bool Player::raycast(const std::vector<SpaceShip*>& gameObjects, const std::vect
 			hitNormal = DirectX::XMFLOAT3(rayInfo.worldNormal.x, rayInfo.worldNormal.y, rayInfo.worldNormal.z);
 			onGround = true;
 			DirectX::SimpleMath::Vector3 vecToHitPos = this->position - hitPos;
-			float lengthToMove = 0.5f - getLength(vecToHitPos);
+			float lengthToMove = 1.f - getLength(vecToHitPos);
 			vecToHitPos.Normalize();
 			this->position += lengthToMove * vecToHitPos;
 			return true;
@@ -1165,27 +1167,6 @@ void Player::colliedWIthComponent(const std::vector<Component*>& components)
 	bool collided = false;
 	for (int i = 0; i < components.size(); i++) collided = this->physComp->testBodiesOverlap(components[i]->getPhysComp());
 	if (collided) this->setSpeed(this->speed * 0.5f);
-}
-
-void Player::orbiting()
-{
-	if (!onGround)
-	{
-		if (orbitTimer.getTimePassed(10.f))
-		{
-			std::cout << "SETTING BACK TO PLANET\n";
-			this->position = startPos;
-			this->physComp->resetForce();
-			this->physComp->resetTorque();
-			this->physComp->setType(reactphysics3d::BodyType::STATIC);
-			this->resetRotationMatrix();
-			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
-			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
-			orbitTimer.resetStartTime();
-			onGround = true;
-		}
-	}
-	else orbitTimer.resetStartTime();
 }
 
 void Player::stateMachine(const float dt)
@@ -1409,7 +1390,7 @@ void Player::update()
 			this->physComp->resetTorque();
 			this->physComp->setType(reactphysics3d::BodyType::STATIC);
 			this->resetRotationMatrix();
-			this->position = this->startPos;
+			this->position = DirectX::SimpleMath::Vector3(0, 69, 0);
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
 		}
@@ -1457,11 +1438,6 @@ void Player::setVibration(float vibration1, float vibration2)
 void Player::setGamePad(DirectX::GamePad* gamePad)
 {
 	this->gamePad = gamePad;
-}
-
-void Player::setStartPosition(const DirectX::SimpleMath::Vector3& startPos)
-{
-	this->startPos = startPos;
 }
 
 void Player::requestingPickUpItem(const std::vector<Item*>& items)
@@ -1544,6 +1520,7 @@ void Player::updateController()
 void Player::itemRecvFromServer(Item* item)
 {
 	addItem(item);
+	
 	holdingItem->getPhysComp()->getRigidBody()->resetForce();
 	holdingItem->getPhysComp()->getRigidBody()->resetTorque();
 	holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);

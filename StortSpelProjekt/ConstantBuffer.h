@@ -43,7 +43,7 @@ public:
 		D3D11_SUBRESOURCE_DATA subData = {};
 		subData.pSysMem = structData;
 
-		GPU::device->CreateBuffer(&desc, &subData, data.GetAddressOf());
+		HRESULT hr = GPU::device->CreateBuffer(&desc, &subData, data.GetAddressOf());
 	}
 
 	void Update(const void* structData, const unsigned int structSize)

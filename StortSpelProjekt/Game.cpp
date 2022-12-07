@@ -38,25 +38,22 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	manager.AdditionalAnimation("../Meshes/anim/character1_attack.fbx", "../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_fly.fbx", "../Meshes/anim/character1_idle.fbx");
 
-	manager.loadMeshAndBoneData("../Meshes/character2_idle.fbx");
-
+	manager.loadMeshAndBoneData("../Meshes/anim/character2_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character2_run.fbx", "../Meshes/anim/character2_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character2_run_fast.fbx", "../Meshes/anim/character2_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character2_throw.fbx", "../Meshes/anim/character2_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character2_attack.fbx", "../Meshes/anim/character2_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character2_fly.fbx", "../Meshes/anim/character2_idle.fbx");
 
 	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
 	ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
-	AnimationData team1Anim;
-	this->manager.getAnimData("../Meshes/anim/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team1Anim);
-	Mesh* team1Mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-	AnimationData team2Anim;
-	this->manager.getAnimData("../Meshes/anim/character2_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team1Anim);
-	Mesh* team2Mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	AnimationData doNotUseT;
+	this->manager.getAnimData("../Meshes/anim/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, doNotUseT);
+	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	AnimationData doNotUse;
+	this->manager.getAnimData("../Meshes/anim/character2_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, doNotUse);
+	otherTmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	
-	
-	if (!IFONLINE)
-	{
-		tmpMesh = team1Mesh;
-		animData = team1Anim;
-	}
-
 	//Load game objects
 	this->loadObjects();
 
@@ -76,22 +73,24 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		this->client->setClientId(playerId);
 		int offset = 10;
 		int dude = (NROFPLAYERS) / 2;
-
+		Mesh* useMeshForPlayer = nullptr;
 		for (int i = 0; i < NROFPLAYERS; i++)//initialize players 
 		{
 			Player* tmpPlayer = nullptr;
 			if (dude < i + 1)
 			{
-				tmpMesh = team1Mesh;
-				animData = team1Anim;
+				useMeshForPlayer = tmpMesh;
+				//change anim
+				tmpPlayer = new Player(useMeshForPlayer, doNotUseT, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
 			}
 			else
 			{
-				tmpMesh = team2Mesh;
-				animData = team2Anim;
+				useMeshForPlayer = otherTmpMesh;
+				tmpPlayer = new Player(useMeshForPlayer, doNotUse, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
 			}
-			tmpPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
-				0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+			
 			tmpPlayer->setOnlineID(i);
 
 			if (playerId != i)
@@ -148,7 +147,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	UwuYouSowarm.resetStartTime();
 	while (UwuYouSowarm.getTimePassed(1.0f));
 
-	delete team2Mesh;
 	//Init delta time
 	currentTime = std::chrono::system_clock::now();
 	lastUpdate = currentTime;
@@ -195,6 +193,7 @@ Game::~Game()
 	if (gamePad != nullptr) delete gamePad;
 	if (client != nullptr) delete client;
 	delete tmpMesh;
+	delete otherTmpMesh;
 	delete asteroids;
 	delete arrow;
 	delete planetGravityField;

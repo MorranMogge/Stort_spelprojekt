@@ -323,3 +323,9 @@ struct PlayerData
 	int playerId;
 	int playerReady;
 };
+
+//enum
+struct LobbyStartGame
+{
+	int packetId;
+};

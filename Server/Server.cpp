@@ -40,28 +40,8 @@ struct threadInfo
 {
 	userData* user;
 	float pos[3];
-	bool ifUserRecv;
+	bool ifAccepted;//used for lobby System
 	CircularBuffer* circBuffer;
-};
-
-bool receiveDataUdp(sf::Packet& receivedPacket, serverData& data, unsigned short& packetIdentifier)
-{
-	//remote adress
-	sf::IpAddress remoteAddress;
-
-
-	if (data.socket.receive(receivedPacket, remoteAddress, data.port) == sf::Socket::Done)
-	{
-		std::string receivedString;
-		std::cout << "UDP received data from address: " << remoteAddress.toString() << std::endl;
-
-		return true;
-	}
-	else
-	{
-		std::cout << "UDP failure\n";
-		return false;
-	}
 };
 
 void setupTcp(serverData& data)
@@ -77,7 +57,6 @@ void acceptPlayers(serverData& data)
 
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
-
 		if (data.tcpListener.accept(data.users[i].tcpSocket) == sf::TcpListener::Done)
 		{
 			std::cout << "TCP Accepted new player ipAdress: " << data.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
@@ -86,23 +65,6 @@ void acceptPlayers(serverData& data)
 			data.users[i].playerId = i;
 		}
 
-	}
-};
-
-void sendDataAllPlayers(testPosition& posData, serverData& serverData)
-{
-	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-	{
-		std::size_t recvSize;
-		if (serverData.users[i].tcpSocket.send(&posData, sizeof(testPosition), recvSize) != sf::Socket::Done)
-		{
-			//error
-			std::cout << "Couldnt send data to currentPlayer from array slot: " << std::to_string(i) << std::endl;
-		}
-		else
-		{
-			//std::cout << "sent data to currentPlayer: " << serverData.users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
-		}
 	}
 };
 
@@ -140,6 +102,35 @@ void recvData(void* param, userData* user)//thread to recv data
 	}
 };
 
+void acceptPlayersLobbyThread(void* param)//thread for lobby system to receive players
+{
+	serverData* data = (serverData*)param;
+	std::cout << "Started lobby accept thread\n";
+	int i = 0;
+	while (1)
+	{
+		if (i == MAXNUMBEROFPLAYERS)break;
+		if (data->tcpListener.accept(data->users[i].tcpSocket) == sf::TcpListener::Done)
+		{
+			std::cout << "TCP Accepted new player ipAdress: " << data->users[i].tcpSocket.getRemoteAddress().toString() << std::endl;
+			data->users[i].ipAdress = data->users[i].tcpSocket.getRemoteAddress().toString();
+			data->users[i].userName = "fixa username " + std::to_string(i + 1);
+			data->users[i].playerId = i;
+			data->users[i].playa.setOnlineId(i);
+
+			idProtocol pId;
+			pId.packetId = PacketType::PACKETID;
+			pId.assignedPlayerId = i;
+
+			data->users[i].ifAccepted = true;
+			
+			sendBinaryDataOnePlayer<idProtocol>(pId, data->users[i]);
+			i++;
+		}
+	}
+	std::cout << "Ended lobby accept thread\n";
+};
+
 void sendIdToAllPlayers(serverData& data)
 {
 	int packetid = 10;
@@ -165,6 +156,103 @@ void sendIdToAllPlayers(serverData& data)
 	}
 };
 
+void lobby(serverData& data, CircularBuffer & circBuffer, std::thread* recvThread[],PhysicsWorld &physWorld, threadInfo threadData[])
+{
+	TimeStruct tempTime;
+	bool ifThreaded[MAXNUMBEROFPLAYERS]{ false };
+	while (1)
+	{
+
+		//kollar packet så att det tas emot och slänger packet vi inte vill ha
+		while (circBuffer.getIfPacketsLeftToRead())
+		{
+			int packetId = circBuffer.peekPacketId();
+
+			if (packetId == PacketType::PLAYERDATALOBBY)
+			{
+				PlayerData* plData = circBuffer.readData< PlayerData>();
+				std::cout << "Got Ready Status from player Id: " << plData->playerId << ", readyStatus: " << plData->playerReady << std::endl;
+				data.users[plData->playerId].playa.setReadyStatus(plData->playerReady);
+				
+			}
+			else
+			{
+				std::cout << "Clearing circle Buffer\n";
+				circBuffer.clearBuffer();
+			}
+		}
+
+		for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+		{
+			//om spelaren inte har en tråd så skapa en tråd så att vi kan ta emot data
+			//detta händer efter den blivit accepted
+			if (!ifThreaded[i] && data.users[i].ifAccepted)
+			{
+				int offset = 25; PhysicsComponent* newComp = new PhysicsComponent();
+				physWorld.addPhysComponent(newComp);
+				data.users[i].playa.setPhysicsComponent(newComp);
+				newComp->setType(reactphysics3d::BodyType::KINEMATIC);
+				threadData[i].pos[0] = 102.0f + (offset * i);
+				threadData[i].pos[1] = 12.0f;
+				threadData[i].pos[2] = -22.0f;
+				threadData[i].circBuffer = &circBuffer;
+				recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
+				
+				ifThreaded[i] = true;
+			}
+		}
+
+		bool allPlayersReadyForGame = true;
+
+		if (tempTime.getTimePassed(1.0f))
+		{
+			//checking if all the players are ready for the game
+			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+			{
+				if (data.users[i].playa.getReadyStatus() == 0)
+				{
+					allPlayersReadyForGame = false;
+					break;
+				}
+			}
+			if (allPlayersReadyForGame)
+			{
+				LobbyStartGame lbyStartGame;
+				lbyStartGame.packetId = PacketType::LOBBYSTARTGAME;
+
+
+				sendBinaryDataAllPlayers<LobbyStartGame>(lbyStartGame, data);
+			}
+
+			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+			{
+				//if it isnt -1, the player has been accepted
+				if (data.users[i].playerId != -1)
+				{
+					//send data to all the players that this player is ready
+					for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
+					{
+						//only send if the recipient is initialized
+						if (data.users[j].playerId != -1)
+						{
+							//sending data about the player to other players
+							PlayerData playerData;
+
+							playerData.packetId = PacketType::PLAYERDATALOBBY;
+							playerData.playerId = data.users[i].playa.getOnlineID();
+							playerData.playerReady = data.users[i].playa.getReadyStatus();
+
+							std::cout << " Player Data id:" << playerData.playerId << ", isReady: " << playerData.playerReady << std::endl;
+							sendBinaryDataOnePlayer<PlayerData>(playerData, data.users[j]);
+						}
+					}
+				}
+			}
+			tempTime.resetStartTime();
+		}
+	}
+};
+
 int main()
 {
 	srand((unsigned)(time(0)));
@@ -185,6 +273,10 @@ int main()
 	physWorld.addPhysComponent(planetComp, reactphysics3d::CollisionShapeName::SPHERE, DirectX::XMFLOAT3(40, 40, 40));
 	planetComp.getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 
+	CircularBuffer* circBuffer = new CircularBuffer();
+	std::thread* recvThread[MAXNUMBEROFPLAYERS];
+	threadInfo threadData[MAXNUMBEROFPLAYERS];
+
 	std::string identifier;
 	std::string s = "empty";
 	// Group the variables to send into a packet
@@ -192,6 +284,7 @@ int main()
 	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
 		landingPoints[i] = 0.f;
+		
 	}
 
 	std::vector<DirectX::XMFLOAT3> spaceShipPos;
@@ -219,6 +312,12 @@ int main()
 	data.port = 2001;
 
 	std::cout << ip.toString() << "\n" << "port: " << data.port << std::endl;
+
+	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+	{
+		data.users[i].playa.setOnlineId(-1);
+	}
+
 	//serverData* serverData;
 	//std::cout << "Starting handleReceiveData thread!\n";
 	//std::thread* serverThread = new std::thread(handleReceivedData, &serverData);
@@ -241,7 +340,12 @@ int main()
 	float itemSpawnTimerLength = 20.0f;
 
 	setupTcp(data);
-	acceptPlayers(data);
+	//acceptPlayers(data);
+
+	std::thread lobbyAcceptThread = std::thread(acceptPlayersLobbyThread, &data);
+	lobby(data, *circBuffer,recvThread,physWorld, threadData);
+	circBuffer->clearBuffer();
+
 	sendIdToAllPlayers(data);
 
 	//Wait 3 seconds since we can lose some data if we directly send information about space ships
@@ -287,23 +391,22 @@ int main()
 		sendBinaryDataAllPlayers<SpawnPlanets>(planetData, data);
 		std::cout << "Sent a planet\n";
 	}
+	
 
-	CircularBuffer* circBuffer = new CircularBuffer();
-	std::thread* recvThread[MAXNUMBEROFPLAYERS];
-	threadInfo threadData[MAXNUMBEROFPLAYERS];
-	int offset = 25;
-	for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-	{
-		PhysicsComponent* newComp = new PhysicsComponent();
-		physWorld.addPhysComponent(newComp);
-		data.users[i].playa.setPhysicsComponent(newComp);
-		newComp->setType(reactphysics3d::BodyType::KINEMATIC);
-		threadData[i].pos[0] = 102.0f + (offset * i);
-		threadData[i].pos[1] = 12.0f;
-		threadData[i].pos[2] = -22.0f;
-		threadData[i].circBuffer = circBuffer;
-		recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
-	}
+	
+	//int offset = 25;
+	//for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+	//{
+	//	PhysicsComponent* newComp = new PhysicsComponent();
+	//	physWorld.addPhysComponent(newComp);
+	//	data.users[i].playa.setPhysicsComponent(newComp);
+	//	newComp->setType(reactphysics3d::BodyType::KINEMATIC);
+	//	threadData[i].pos[0] = 102.0f + (offset * i);
+	//	threadData[i].pos[1] = 12.0f;
+	//	threadData[i].pos[2] = -22.0f;
+	//	threadData[i].circBuffer = circBuffer;
+	//	recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
+	//}
 
 	int temp = 0;
 	while (1)
@@ -452,7 +555,7 @@ int main()
 							cmpDropData.componentId = cmpDropped->componentId;
 							cmpDropData.packetId = cmpDropped->packetId;
 							cmpDropData.playerId = cmpDropped->playerId;
-							sendBinaryDataOnePlayer(cmpDropData, data.users[j]);
+							sendBinaryDataOnePlayer<ComponentDropped>(cmpDropData, data.users[j]);
 
 						}
 					}

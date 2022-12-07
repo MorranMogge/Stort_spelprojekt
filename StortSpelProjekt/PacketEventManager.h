@@ -8,6 +8,12 @@
 #include "SpaceShip.h"
 #include "State.h"
 
+struct TempPlayerLobby
+{
+	int playerId;
+	bool isReady;
+};
+
 class PacketEventManager
 {
 private:
@@ -23,6 +29,9 @@ public:
 		GravityField* field, std::vector<SpaceShip*>& spaceShips, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes, 
 		std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame, float& redTeamPoints, float& blueTeamPoints, Client*& client, const float dt, GAMESTATE& currentGameState);
 		
-			int handleId(CircularBufferClient*& circularBuffer, std::vector<Planet*>& planetVector, PhysicsWorld& physWorld, std::vector<Mesh*>& meshes,
+	int handleId(CircularBufferClient*& circularBuffer, std::vector<Planet*>& planetVector, PhysicsWorld& physWorld, std::vector<Mesh*>& meshes,
 		std::vector<SpaceShip*>& spaceShips, std::vector<GameObject*>& gameObjects, GravityField* field, int &UwU);
+
+	void TempLobbyHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, TempPlayerLobby playerLobby[], int& currentPlayerId, bool& startGame);
+
 };

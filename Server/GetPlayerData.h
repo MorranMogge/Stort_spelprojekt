@@ -3,4 +3,4 @@
 #include "Player.h"
 #include "PacketsDataTypes.h"
 
-PlayerData getPlayerData(Player player);
+PlayerData getPlayerData(const Player& player);

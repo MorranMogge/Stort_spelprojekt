@@ -1,11 +1,11 @@
 #include "GetPlayerData.h"
 #include "PacketEnum.h"
 
-PlayerData getPlayerData(Player player)
+PlayerData getPlayerData(const Player& player)
 {
     PlayerData playerData;
 
-    playerData.packetId = PacketType::PLAYERDATA;
+    playerData.packetId = PacketType::PLAYERDATALOBBY;
     playerData.playerId = player.getOnlineID();
     playerData.playerReady = player.getReadyStatus();
     

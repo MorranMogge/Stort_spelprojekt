@@ -11,7 +11,8 @@ enum GAMESTATE
 	EXIT,
 	WIN,
 	LOSE,
-	CONTROL
+	CONTROL,
+	LOBBY
 };
 
 class State

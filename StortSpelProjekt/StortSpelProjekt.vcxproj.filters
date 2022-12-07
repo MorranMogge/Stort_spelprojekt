@@ -184,6 +184,13 @@
     <ClCompile Include="ModelDataContainer.cpp" />
     <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="AnimatedMesh.cpp" />
+    <ClCompile Include="CaptureZone.cpp" />
+    <ClCompile Include="Lobby.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyUI.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -484,6 +491,15 @@
     <ClInclude Include="ControlMenu.h" />
     <ClInclude Include="ControlUI.h" />
     <ClInclude Include="LandingHud.h" />
+    <ClInclude Include="AnimatedMesh.h" />
+    <ClInclude Include="ModelDataContainer.h" />
+    <ClInclude Include="ModelManager.h" />
+    <ClInclude Include="Lobby.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyUI.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

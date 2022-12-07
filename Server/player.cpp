@@ -6,9 +6,9 @@ Player::Player()
 	xPos = 20.0f;
 	yPos = 30.0f;
 	zPos = 40.0f;
-
+	
 	readyStatus = 0;
-
+	this->onlineId = -1;
 	this->animID = 0;
 	this->animSpeed = 1;
 	this->dead = false;

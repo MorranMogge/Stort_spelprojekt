@@ -37,7 +37,7 @@ void Item::drawIcon()
 	{
 		if (withinPlayerReach)
 		{
-			this->itemIcon->bindAndDraw(1, 0);
+			this->itemIcon->bindAndDraw(2, 0);
 		}
 		else
 		{
@@ -56,9 +56,17 @@ void Item::drawParticles()
 	if (this->particles != nullptr && pickedUp)
 	{
 		if (tStruct.getDt() < 1)
-		{
+		{	
+			this->particles->setColor(1, 1, 1);
+			this->particles->setSize(3.0f);
 			this->particles->BindAndDraw(0);
 		}
+	}
+	else if (!this->pickedUp)
+	{
+		this->particles->setColor(color);
+		this->particles->setSize(1.0f);
+		this->particles->BindAndDraw(4);
 	}
 }
 
@@ -110,5 +118,18 @@ void Item::update()
 		this->particles->setPosition(this->position);
 		this->particles->setRotation(this->getUpDirection());
 		this->particles->updateBuffer();
+	}
+}
+
+void Item::drawFresnel()
+{
+	if (!this->pickedUp)
+	{
+		float constant = 0.2f;
+		GPU::immediateContext->PSSetConstantBuffers(2, 1, this->fresnelBuffer.getReferenceOf());
+		DirectX::XMFLOAT3 test = this->scale;
+		this->scale = DirectX::XMFLOAT3(test.x + constant, test.y + constant, test.z + constant);
+		this->draw();
+		this->scale = test;
 	}
 }

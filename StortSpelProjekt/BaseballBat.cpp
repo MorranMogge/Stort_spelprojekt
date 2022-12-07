@@ -6,6 +6,7 @@
 #include "Client.h"
 #include "PacketsDataTypes.h"
 #include "PacketEnum.h"
+#include "GUISprite.h"
 #include "SoundLibrary.h"
 
 using namespace DirectX;
@@ -29,16 +30,27 @@ void BaseballBat::sendForceToServer(const DirectX::SimpleMath::Vector3& hitForce
 BaseballBat::BaseballBat(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
 	:Item(useMesh, pos, rot, id, onlineId, 2, field), player(nullptr), force(0.f)
 {
+	//Sfx
 	force = FORCECONSTANT;
+	sfx.load(L"../Sounds/hitHurt.wav");
+
+	//Color
+	this->color = DirectX::Colors::Yellow.v;
+
+	//Set up Fresnel buffer
+	fresnelBuffer.Initialize(GPU::device, GPU::immediateContext);
+	fresnelBuffer.getData() = DirectX::XMFLOAT4(color.x, color.y, color.z, 1);
+	fresnelBuffer.applyData();
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
+	this->particles->setColor(color);
 
 	//Item Icon
-	float constant = 2.0f;
+	float constant = 4.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x* constant, upDir.y* constant, upDir.z* constant);
-	std::vector<std::string> tempStr{ "icon_sword.png", "icon_sword2.png" };
+	std::vector<std::string> tempStr{ "icon_sword.png", "icon_sword2.png" , "Ekey.png" };
 	this->itemIcon = new BilboardObject(tempStr, iconPos);
 	this->itemIcon->setOffset(constant);
 }
@@ -47,16 +59,27 @@ BaseballBat::BaseballBat(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const Dire
 BaseballBat::BaseballBat(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, GravityField* field)
 	:Item(objectPath, pos, rot, id, onlineId, 2, field), player(nullptr), force(0.f)
 {
+	//Sfx
 	force = FORCECONSTANT;
+	sfx.load(L"../Sounds/hitHurt.wav");
+
+	//Color
+	this->color = DirectX::Colors::Yellow.v;
+
+	//Set up Fresnel buffer
+	fresnelBuffer.Initialize(GPU::device, GPU::immediateContext);
+	fresnelBuffer.getData() = DirectX::XMFLOAT4(color.x, color.y, color.z, 1);
+	fresnelBuffer.applyData();
 
 	//Particles
 	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(2, 5), 2);
+	this->particles->setColor(color);
 
 	//Item Icon
-	float constant = 2.0f;
+	float constant = 4.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-    std::vector<std::string> tempStr{ "icon_sword.png", "icon_sword2.png" };
+	std::vector<std::string> tempStr{ "icon_sword.png", "icon_sword2.png" , "Ekey.png" };
 	this->itemIcon = new BilboardObject(tempStr, iconPos);
 	this->itemIcon->setOffset(constant);
 }
@@ -111,7 +134,10 @@ void BaseballBat::useItem(const Player* playerHoldingItem)
 	useBat.xPos = batPos.x;
 	useBat.yPos = batPos.y;
 	useBat.zPos = batPos.z;
-	//client->sendStuff<UseBat>(useBat);
+	if (client != nullptr)
+	{
+		client->sendStuff<UseBat>(useBat);
+	}
 
 
 	savedPos = this->getPosV3(); //Used to reset the baseball bats position at the end of the function

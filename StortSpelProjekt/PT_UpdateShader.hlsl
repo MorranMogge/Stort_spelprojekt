@@ -1,4 +1,3 @@
-
 RWBuffer<float> rawBuffer : register(u0);
 
 cbuffer timeValue : register(b0)
@@ -10,7 +9,7 @@ cbuffer posValue : register(b1)
     float3 offsetFromOrigin;
     float enable;
     float3 orientation;
-    float drawOnlyWhenMoving; //Determines if particles are drawn when object not moving
+    float ptSpeed; //Determines if particles are drawn when object not moving
 };
 
 cbuffer camUp : register(b2)
@@ -43,7 +42,7 @@ cbuffer camUp : register(b2)
 #define BaseOffSetY rawBuffer[DTid.x * Offset + 13]
 #define BaseOffSetZ rawBuffer[DTid.x * Offset + 14]
 
-#define Speed 0.07f
+#define Speed ptSpeed
 #define Range 100.0f
 
 // up vector from camera
@@ -81,17 +80,17 @@ void main(uint3 DTid : SV_DispatchThreadID)
     else
     {
         float3 baseOffSet2 = float3(BaseOffSetX, BaseOffSetY, BaseOffSetZ);
-        if (drawOnlyWhenMoving)
-        {
-            if (baseOffSet2.x == offsetFromOrigin.x && baseOffSet2.y == offsetFromOrigin.y && baseOffSet2.z == offsetFromOrigin.z)
-            {
-                IsActive = 0.0f;
-            }
-            else
-            {
-                IsActive = 1.0f;
-            }
-        }
+        //if (drawOnlyWhenMoving)
+        //{
+        //    if (baseOffSet2.x == offsetFromOrigin.x && baseOffSet2.y == offsetFromOrigin.y && baseOffSet2.z == offsetFromOrigin.z)
+        //    {
+        //        IsActive = 0.0f;
+        //    }
+        //    else
+        //    {
+        //        IsActive = 1.0f;
+        //    }
+        //}
         SimulateTime = SimulateTime + deltaTime;
     }
     

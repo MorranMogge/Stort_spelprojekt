@@ -92,7 +92,7 @@ SpawnComponent SpawnOneComponent(std::vector<Item*>& itemObj, std::vector<Direct
 		}
 	}
 
-	randomPos *= 100;
+	randomPos *= 50;
 
 	itemObj.push_back(temp);
 

@@ -18,6 +18,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> PT_vertexBuffer;				//Vertex buffer
 	Microsoft::WRL::ComPtr<ID3D11Buffer> emitterPosBuffer;				//Position buffer
 	Microsoft::WRL::ComPtr<ID3D11Buffer> timeBuffer;					//Time buffer, contains delta time
+	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
+	ConstantBufferNew<DirectX::XMFLOAT4> sizeBuffer;
 
 	TimeStruct tStruct;
 	std::vector<particleStruct> PT_Data;								//Particle Data (pos, delta time, lifetime)//Add speed?
@@ -27,11 +29,11 @@ private:
 	int nrOfParticles;													//Nr of points in buffer
 	bool active;														//Particle emitter state
 	bool renderPassComplete;											//Particles need to render one time after switched to inactive
-	bool drawOnlyWhenMoving;
+	float speed;
 
 public:
 
-	ParticleEmitter(const DirectX::XMFLOAT3 &Pos, const DirectX::XMFLOAT3 &Rot, const int &nrOfPT, const DirectX::XMFLOAT2 &minMaxLifetime, int randRange = 10, bool onlyDrawMoving = false);
+	ParticleEmitter(const DirectX::XMFLOAT3 &Pos, const DirectX::XMFLOAT3 &Rot, const int &nrOfPT, const DirectX::XMFLOAT2 &minMaxLifetime, int randRange = 10, float speed = 0.07f);
 	void BindAndDraw(int textureIndex);
 	void updateBuffer();												//Updates position, rotation & state (emitter on or off)
 	ID3D11Buffer* getVTXBuffer() const;
@@ -40,10 +42,16 @@ public:
 	int getNrOfParticles() const;
 	DirectX::XMFLOAT3 getPosition() const;
 	DirectX::XMFLOAT3 getRotation() const;
+	DirectX::XMFLOAT3 getColor();
+	float getSpeed() const;
+	void setSpeed(const float & speed);
 	void setPosition(const DirectX::XMFLOAT3 &Pos);
 	void setRotation(const DirectX::XMFLOAT3 &Rot);
 	void setActive(const bool &onOrOff);
 	void setPassComplete(const bool &onOrOff);
+	void setColor(const DirectX::SimpleMath::Vector3& color);
+	void setColor(const float &x, const float &y, const float &z);
+	void setSize(const float& size);
 	bool isActive();
 	bool isPassComplete();
 

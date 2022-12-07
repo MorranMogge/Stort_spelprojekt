@@ -38,7 +38,7 @@ private:
 
 	//Server related variables
 	std::chrono::time_point<std::chrono::system_clock> serverStart;
-	float serverTimerLength =  1.f / 30.0f;
+	float serverTimerLength =  1.f / 60.0f;
 	Client* client;
 
 	ModelManager manager;
@@ -70,18 +70,17 @@ private:
 	CircularBufferClient* circularBuffer;
 	Camera camera;
 	bool velocityCamera = false;
-
+	bool fadedIn = false;
 	Arrow* arrow;
 	SkyboxObj skybox;
 	Player* currentPlayer;
 	Mesh* planetMeshes;
 
+
 	//Items
 	int id;
-	Potion* potion;
 	BaseballBat* baseballBat;
 	Grenade* grenade;
-
 	//Objects
 	std::vector<Component*> components;
 	std::vector<GameObject*> gameObjects;
@@ -96,6 +95,7 @@ private:
 
 	//HUD
 	HudUI ui;
+	MiniGameUI miniGameUI;
 	LandingHud landingUi;
 
 	float landingMiniGamePoints = 0;
@@ -110,6 +110,7 @@ private:
 	DirectX::XMFLOAT2 offset;
 	UINT HEIGHT;
 	UINT WIDTH;
+
 
 	void loadObjects();
 	void drawShadows();

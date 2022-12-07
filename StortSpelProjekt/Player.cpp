@@ -11,6 +11,8 @@
 using namespace DirectX;
 using ButtonState = DirectX::GamePad::ButtonStateTracker::ButtonState;
 
+//----------------------------------------------- setUp Functions ------------------------------------------------//
+
 void Player::throwItem()
 {
 	//allocates data to be sent
@@ -19,6 +21,10 @@ void Player::throwItem()
 	c.componentId = this->holdingItem->getOnlineId();
 	c.packetId = PacketType::COMPONENTDROPPED;
 	c.playerId = this->onlineID;
+	c.xPos = this->holdingItem->getPosV3().x;
+	c.yPos = this->holdingItem->getPosV3().y;
+	c.zPos = this->holdingItem->getPosV3().z;
+
 	//sending data to server
 	if (client != nullptr)
 	{
@@ -34,7 +40,6 @@ void Player::throwItem()
 		if (this->currentSpeed == this->speed) scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.095f, temp);
 		else scalarMultiplicationXMFLOAT3(this->currentSpeed * 0.085f, temp);
 	}
-
 
 	//Set dynamic so it can be affected by forces
 	this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -60,7 +65,7 @@ void Player::handleItems()
 	if (this->gamePad == nullptr) return;
 
 	DirectX::XMFLOAT4X4 f1;
-	this->forwardKinematics("hand3:hand3:RightHand", f1);
+	this->forwardKinematics("Character_RightHand", f1);
 	DirectX::XMMATRIX mat = DirectX::XMLoadFloat4x4(&f1);
 	DirectX::XMVECTOR scale;
 	DirectX::XMVECTOR pos;
@@ -96,21 +101,25 @@ void Player::handleItems()
 			}
 			////sending data to server
 
-			std::cout << "TEST 1 nuzzle\n";
 			//allocates data to be sent
-			ComponentDropped c;
 
-			std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
-			c.componentId = this->holdingItem->getOnlineId();
-			c.packetId = PacketType::COMPONENTDROPPED;
-			//sending data to server
-			if (this->client != nullptr)
-			{
-				client->sendStuff<ComponentDropped>(c);
-			}
 			if (holdingItem->getId() != BAT)
 			{
 				itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+				ComponentDropped c;
+
+				std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
+				c.componentId = this->holdingItem->getOnlineId();
+				c.packetId = PacketType::COMPONENTDROPPED;
+				c.playerId = this->onlineID;
+				c.xPos = this->holdingItem->getPosV3().x;
+				c.yPos = this->holdingItem->getPosV3().y;
+				c.zPos = this->holdingItem->getPosV3().z;
+				//sending data to server
+				if (this->client != nullptr)
+				{
+					client->sendStuff<ComponentDropped>(c);
+				}
 			}
 			if (holdingItem->getId() == GRENADE)
 			{
@@ -157,7 +166,7 @@ void Player::handleItems()
 		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))
 		{
 			keyPressTimer.resetStartTime();
-			if (holdingItem->getId() == BAT)
+			if (holdingItem->getId() == BAT && usedItem)
 			{
 				this->usingBat = true;
 				this->usedItem = false;
@@ -166,19 +175,24 @@ void Player::handleItems()
 			////sending data to server
 
 			//allocates data to be sent
-			ComponentDropped c;
-
-			std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
-			c.componentId = this->holdingItem->getOnlineId();
-			c.packetId = PacketType::COMPONENTDROPPED;
-			//sending data to server
-			if (this->client != nullptr)
-			{
-				client->sendStuff<ComponentDropped>(c);
-			}
+			
 			if (holdingItem->getId() != BAT)
 			{
 				itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
+				ComponentDropped c;
+
+				std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
+				c.componentId = this->holdingItem->getOnlineId();
+				c.packetId = PacketType::COMPONENTDROPPED;
+				c.playerId = this->onlineID;
+				c.xPos = this->holdingItem->getPosV3().x;
+				c.yPos = this->holdingItem->getPosV3().y;
+				c.zPos = this->holdingItem->getPosV3().z;
+				//sending data to server
+				if (this->client != nullptr)
+				{
+					client->sendStuff<ComponentDropped>(c);
+				}
 			}
 			if (holdingItem->getId() == GRENADE)
 			{
@@ -218,31 +232,37 @@ void Player::handleItems()
 		this->throwingItem = false;
 		this->throwItem();
 	}
-	if (this->usingBat && this->dropTimer.getTimePassed(0.25)&& !this->usedItem)
+	if (this->usingBat && this->dropTimer.getTimePassed(0.25) && !this->usedItem)
 	{
 		holdingItem->useItem(this);
 		this->usedItem = true;
+		std::cout << "using bat\n";
 	}
 	else if (this->usingBat && this->dropTimer.getTimePassed(0.5))
 	{
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 		usingBat = false;
+		std::cout << "dropping bat\n";
+		ComponentDropped c;
+
+		std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
+		c.componentId = this->holdingItem->getOnlineId();
+		c.packetId = PacketType::COMPONENTDROPPED;
+		c.playerId = this->onlineID;
+		c.xPos = this->holdingItem->getPosV3().x;
+		c.yPos = this->holdingItem->getPosV3().y;
+		c.zPos = this->holdingItem->getPosV3().z;
+		//sending data to server
+		if (this->client != nullptr)
+		{
+			client->sendStuff<ComponentDropped>(c);
+		}
 		holdingItem->setPickedUp(false);
 		holdingItem = nullptr;
 	}
 }
 
-Player::~Player()
-{
-	if (this->playerIcon != nullptr)
-	{
-		delete playerIcon;
-	}
-	if (this->particles != nullptr)
-	{
-		delete particles;
-	}
-}
+//----------------------------------------------- Constructor ------------------------------------------------//
 
 Player::Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team,
 				ID3D11ShaderResourceView* redTeamColor,ID3D11ShaderResourceView* blueTeamColor, GravityField* field)
@@ -265,7 +285,18 @@ Player::Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3
 	this->dedge = false;
 
 	//Particles
-	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1, true);
+	this->particles = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1);
+	this->particles2 = new ParticleEmitter(pos, rot, 26, DirectX::XMFLOAT2(1, 3), 1);
+	particles2->setSize(1.0f);
+
+
+	//Color
+	DirectX::SimpleMath::Vector3 color = DirectX::Colors::White.v;
+
+	//Set up Fresnel buffer
+	fresnelBuffer.Initialize(GPU::device, GPU::immediateContext);
+	fresnelBuffer.getData() = DirectX::XMFLOAT4(color.x, color.y, color.z, 1);
+	fresnelBuffer.applyData();
 
 	//Item Icon
 	float constant = 7.0f;
@@ -284,6 +315,22 @@ Player::Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3
 		this->setSrv(blueTeamColor); break;
 	}
 }
+
+Player::~Player()
+{
+	if (this->playerIcon != nullptr)
+	{
+		delete playerIcon;
+	}
+	if (this->particles != nullptr)
+	{
+		delete particles;
+		delete particles2;
+	}
+}
+
+//----------------------------------------------- Functions ------------------------------------------------//
+
 
 bool Player::movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime)
 {
@@ -878,13 +925,14 @@ int Player::getItemOnlineId() const
 
 bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Component*>& components)
 {
-	if (this->isHoldingItem()) return false;
+	
+	if (this->isHoldingItem() || dedge) return false;
 	bool successfulPickup = false;
 	
 	//Controller pickup
 	if (state.IsConnected())
 	{
-		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1))
+		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1f) && this->holdingItem != nullptr)
 		{
 			this->eKeyDown = true;
 		}
@@ -928,12 +976,10 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 		}
 	}
 	//Keyboard pickup
-	else if (GetAsyncKeyState('E') && this->eKeyDown == false && this->keyPressTimer.getTimePassed(0.1))
+
+	else if (Input::KeyPress(KeyCode::E) /*&&*/ /*this->eKeyDown == true &&*/ /*this->holdingItem != nullptr*/)
 	{
-		this->eKeyDown = true;
-	}
-	else if (GetAsyncKeyState('E') == 0 && this->eKeyDown == true)
-	{
+		std::cout << "stuff2" << std::endl;
 		//Checking items
 		this->eKeyDown = false;
 
@@ -941,6 +987,7 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 		{
 			if (this->withinRadius(items[i], 5))
 			{
+
 				addItem(items[i]);
 				this->holdingComp = false;
 				holdingItem->getPhysComp()->getRigidBody()->resetForce();
@@ -970,6 +1017,13 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 			}
 		}
 	}
+
+	//else if (Input::KeyPress(KeyCode::E)/* && this->eKeyDown == false*/ &&  this->keyPressTimer.getTimePassed(0.1))
+	//{
+	//	std::cout << "stuff" << std::endl;
+	//	this->eKeyDown = true;
+
+	//}
 	return successfulPickup;
 }
 
@@ -996,8 +1050,12 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 		cDropped.packetId = COMPONENTDROPPED;
 		cDropped.playerId = this->onlineID;
 		cDropped.componentId = this->holdingItem->getOnlineId();
+		cDropped.xPos = this->holdingItem->getPosV3().x;
+		cDropped.yPos = this->holdingItem->getPosV3().y;
+		cDropped.zPos = this->holdingItem->getPosV3().z;
 
 		client->sendStuff<ComponentDropped>(cDropped);
+		this->releaseItem();
 	}
 }
 
@@ -1067,7 +1125,7 @@ void Player::checkSwimStatus(const std::vector<Planet*>& planets)
 	}
 }
 
-bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
+bool Player::raycast(const std::vector<SpaceShip*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal)
 {
 	if (!dedge)
 	{
@@ -1085,7 +1143,6 @@ bool Player::raycast(const std::vector<GameObject*>& gameObjects, const std::vec
 	int gameObjSize = (int)gameObjects.size();
 	for (int i = 0; i < gameObjSize; i++)
 	{
-		if (gameObjects[i]->getPhysComp()->getType() != reactphysics3d::BodyType::STATIC && gameObjects[i] == this->holdingItem) continue;
 		if (gameObjects[i]->getPhysComp()->raycast(ray, rayInfo))
 		{
 			//Maybe somehow return the index of the triangle hit to calculate new Normal
@@ -1238,7 +1295,7 @@ void Player::giveItemMatrix()
 		return;
 	}
 	DirectX::XMFLOAT4X4 f1;
-	this->forwardKinematics("hand3:hand3:RightHand", f1);
+	this->forwardKinematics("Character_RightHand", f1);
 	this->holdingItem->setMatrix(f1);
 }
 
@@ -1270,6 +1327,11 @@ void Player::drawParticles()
 	if (this->particles != nullptr/* && moveKeyPressed*/)
 	{
 		this->particles->BindAndDraw(0);
+	}
+	if (this->currentSpeed > 30)
+	{
+		particles2->setColor(DirectX::SimpleMath::Vector3(this->fresnelBuffer.getData().x, this->fresnelBuffer.getData().y, this->fresnelBuffer.getData().z));
+		particles2->BindAndDraw(4);
 	}
 }
 
@@ -1358,6 +1420,7 @@ void Player::update()
 			this->physComp->resetTorque();
 			this->physComp->setType(reactphysics3d::BodyType::STATIC);
 			this->resetRotationMatrix();
+			this->position = DirectX::SimpleMath::Vector3(0, 69, 0);
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
 		}
@@ -1374,12 +1437,15 @@ void Player::update()
 		this->playerIcon->setPosition(DirectX::XMFLOAT3(headPos.x + itemPos.x, headPos.y + itemPos.y, headPos.z + itemPos.z));
 	}
 	//Update particle movement
-	if (this->particles != nullptr && moveKeyPressed)
+	if (this->particles != nullptr)
 	{
-		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
-		this->particles->setPosition(this->position );
+		this->particles->setPosition(this->position);
 		this->particles->setRotation(this->getUpDirection());
 		this->particles->updateBuffer();
+
+		this->particles2->setPosition(this->position);
+		this->particles2->setRotation(this->getUpDirection());
+		this->particles2->updateBuffer();
 	}
 }
 
@@ -1388,13 +1454,13 @@ void Player::setTeam(const int& team)
 	this->team = team;
 
 	//Team switch
-	switch (team)
-	{
-	case 0:
-		mesh->matKey[0] = "pintoRed.png"; break;
-	case 1:
-		mesh->matKey[0] = "pintoBlue.png"; break;
-	}
+	//switch (team)
+	//{
+	//case 0:
+	//	mesh->matKey[0] = "pintoRed.png"; break;
+	//case 1:
+	//	mesh->matKey[0] = "pintoBlue.png"; break;
+	//}
 }
 
 void Player::setVibration(float vibration1, float vibration2)
@@ -1409,10 +1475,10 @@ void Player::setGamePad(DirectX::GamePad* gamePad)
 
 void Player::requestingPickUpItem(const std::vector<Item*>& items)
 {
-	if (holdingItem) return;
+	if (holdingItem || dedge) return;
 	if (state.IsConnected())
 	{
-		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1))
+		if (tracker.x == GamePad::ButtonStateTracker::PRESSED && !this->eKeyDown && this->keyPressTimer.getTimePassed(0.1f))
 		{
 			this->eKeyDown = true;
 		}
@@ -1445,7 +1511,7 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 	}
 	else
 	{
-		if (GetAsyncKeyState('E') && this->eKeyDown == false && this->keyPressTimer.getTimePassed(0.1))
+		if (GetAsyncKeyState('E') && this->eKeyDown == false && this->keyPressTimer.getTimePassed(0.1f))
 		{
 			this->eKeyDown = true;
 		}
@@ -1524,4 +1590,82 @@ void Player::resetVelocity()
 void Player::velocityMove(const float& dt)
 {
 	this->position += velocity * dt;
+}
+
+void Player::drawFresnel(float interval)
+{
+	//If picked up "potion"
+	if (this->currentSpeed > 30)
+	{
+		//Variables
+		static  XMFLOAT3 pos1(0, 0, 0);
+		static float scl2 = 1;
+		static float time = 0;
+
+		static  XMFLOAT3 pos3(0, 0, 0);
+		static float scl3 = 1;
+
+		static  XMFLOAT3 pos4(0, 0, 0);
+		static float scl4 = 1;
+
+		float constant = 0.01f;
+		DirectX::XMFLOAT3 scl = this->scale;
+		DirectX::XMFLOAT3 pos = this->position;
+
+		//Time
+		time += Time::DeltaTimeInSeconds();
+		float percent = time / interval;
+
+		//Reset if reached interval
+		if (time > interval)
+		{
+			pos1 = this->position;
+			time = 0;
+			scl2 = scl.x;
+		}
+		else if (time > (interval/2))
+		{
+			pos3 = this->position;
+			scl3 = scl.x;
+		}
+		else if (time > (interval / 4))
+		{
+			pos4 = this->position;
+			scl4 = scl.x;
+		}
+
+		//Change color
+		DirectX::SimpleMath::Color currentColor = DirectX::SimpleMath::Color::Lerp(DirectX::Colors::Cyan.v, DirectX::Colors::Green.v, percent);
+		this->fresnelBuffer.getData() = DirectX::XMFLOAT4(currentColor.x, currentColor.y, currentColor.z, 1.f);
+		this->fresnelBuffer.applyData();
+		GPU::immediateContext->PSSetConstantBuffers(2, 1, fresnelBuffer.getReferenceOf());
+
+		//Set temp scale + pos
+		this->position = pos1;
+		scl2 = scl2 - constant;
+		this->scale = DirectX::XMFLOAT3(scl2, scl2, scl2);
+
+		//draw as fresnel
+		this->draw();
+
+		//Set temp scale + pos
+		this->position = pos3;
+		scl3 = scl3 - constant;
+		this->scale = DirectX::XMFLOAT3(scl3, scl3, scl3);
+
+		//draw as fresnel
+		this->draw();
+
+		//Set temp scale + pos
+		this->position = pos4;
+		scl4 = scl4 - constant;
+		this->scale = DirectX::XMFLOAT3(scl4, scl4, scl4);
+
+		//draw as fresnel
+		this->draw();
+
+		//Reset scale& pos
+		this->scale = scl;
+		this->position = pos;
+	}
 }

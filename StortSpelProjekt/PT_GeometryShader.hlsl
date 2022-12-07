@@ -20,6 +20,11 @@ cbuffer CamUp : register(b3)
     float4 camUp;
 }
 
+cbuffer SizeBuff : register(b4)
+{
+    float4 size;
+}
+
 struct Particle
 {
     float3 pos : POSITION;
@@ -32,7 +37,7 @@ struct Particle
 void main(point Particle input[1], inout TriangleStream<Output> outputStream)
 {
 
-#define Size (3.0f * input[0].faloff)
+#define Size (size.x * input[0].faloff)
     const float4 localPosition[4] = { float4(-Size, Size, 0, 1), float4(Size, Size, 0, 1), float4(-Size, -Size, 0, 1), float4(Size, -Size, 0, 1) };
     static const float2 uv[4] = { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } };
     

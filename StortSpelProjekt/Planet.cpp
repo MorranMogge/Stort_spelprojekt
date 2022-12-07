@@ -4,10 +4,10 @@
 #include "PhysicsWorld.h"
 #include <complex>
 
-Planet::Planet(Mesh* useMesh, const DirectX::SimpleMath::Vector3& scale, const DirectX::XMFLOAT3& pos, const float& gravityFactor, Mesh* atmoMesh, const DirectX::SimpleMath::Vector3& atmoColor, const float & atmoDensity)
-	:mesh(useMesh), position(pos), rotation(DirectX::XMFLOAT3(0.f,0.f,0.f)), scale(scale), rotSpeed(DirectX::SimpleMath::Vector3(0,0,0)), gravityFactor(gravityFactor), planetCollisionBox(nullptr), rotDegrees(0)
+Planet::Planet(Mesh* useMesh, const DirectX::SimpleMath::Vector3& scale, const DirectX::XMFLOAT3& pos, const float& gravityFactor, Mesh* atmoMesh, const float& atmoScale, const DirectX::SimpleMath::Vector3& atmoColor, const float & atmoDensity)
+	:mesh(useMesh), position(pos), rotation(DirectX::XMFLOAT3(0.f,0.f,0.f)), scale(scale), rotSpeed(DirectX::SimpleMath::Vector3(0,0,0)), gravityFactor(gravityFactor), planetCollisionBox(nullptr), rotDegrees(0), atmoScale(atmoScale), velocity(0)
 {
-	this->planetShape = NONDISCLOSEDSHAPE;
+	this->planetShape = PlanetShape::NONDISCLOSEDSHAPE;
 	this->gravField = new GravityField(gravityFactor, pos, scale.x);
 	this->originPoint = pos;
 	
@@ -21,9 +21,9 @@ Planet::Planet(Mesh* useMesh, const DirectX::SimpleMath::Vector3& scale, const D
 		this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
 		this->colorBuffer.getData() = DirectX::XMFLOAT4(atmoColor.x, atmoColor.y, atmoColor.z, atmoDensity);
 		this->colorBuffer.applyData();
-	
-		//Set atmosphere properties 
-		this->atmosphere->UpdateCB(pos, DirectX::XMMatrixIdentity(), this->scale + DirectX::XMFLOAT3(10, 10, 10));
+
+		//Set atmosphere properties
+		this->atmosphere->UpdateCB(pos, DirectX::XMMatrixIdentity(), scale + DirectX::XMFLOAT3(atmoScale, atmoScale, atmoScale));
 	}
 }
 
@@ -91,6 +91,16 @@ float Planet::getFieldFactor() const
 DirectX::SimpleMath::Vector3 Planet::getPlanetPosition() const
 {
 	return this->position;
+}
+
+void Planet::setPlanetPosition(const DirectX::SimpleMath::Vector3& pos)
+{
+	position = pos;
+}
+
+void Planet::setPlanetScale(const DirectX::SimpleMath::Vector3& s)
+{
+	scale = s;
 }
 
 void Planet::movePlanet(float offset)
@@ -188,6 +198,11 @@ float Planet::getSize(int index) const
 	
 }
 
+DirectX::SimpleMath::Vector3 Planet::getRotation() const
+{
+	return this->rotation;//DirectX::SimpleMath::Quaternion::CreateFromRotationMatrix(this->mesh->rotation).ToEuler();
+}
+
 void Planet::rotateAroundPoint(const DirectX::XMFLOAT3& point)
 {
 	float deg = rotDegrees * (DirectX::XM_PI / 180.f);
@@ -226,21 +241,21 @@ GravityField* Planet::getGravityField()
 	return this->gravField;
 }
 
-void Planet::drawPlanet()
+void Planet::drawPlanet(bool tesselation)
 {
 	//this->mesh->position = this->position;
 	//this->mesh->rotation = DirectX::XMMatrixRotationRollPitchYawFromVector(rotation);
 	//this->mesh->scale = scale;
 
 	this->mesh->UpdateCB(this->position, DirectX::XMMatrixRotationRollPitchYawFromVector(rotation), scale);
-	this->mesh->DrawWithMat();
+	this->mesh->DrawWithMat(tesselation);
 }
 
 void Planet::drawAtmosphere()
 {
 	if (atmosphere != nullptr)
 	{
-		this->atmosphere->UpdateCB(this->position, DirectX::XMMatrixIdentity(), this->scale + DirectX::XMFLOAT3(10, 10, 10));
+		this->atmosphere->UpdateCB(this->position, DirectX::XMMatrixIdentity(), this->scale + DirectX::XMFLOAT3(atmoScale, atmoScale, atmoScale));
 		GPU::immediateContext->PSSetConstantBuffers(2, 1, colorBuffer.getReferenceOf());
 		atmosphere->DrawWithMat();
 	}

@@ -37,11 +37,11 @@ bool CreateBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>&  PT_vertexBuffer, Micros
 	return !FAILED(hr);
 }
 
-bool CreatePosActiveBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& posBuffer, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, bool drawOnlyWhenMoving)
+bool CreatePosActiveBuffer(Microsoft::WRL::ComPtr<ID3D11Buffer>& posBuffer, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, float speed)
 {
 	std::vector<DirectX::XMFLOAT4> data;
 	data.push_back(DirectX::XMFLOAT4(position.x, position.y, position.z, 1));
-	data.push_back(DirectX::XMFLOAT4(rotation.x, rotation.y, rotation.z, drawOnlyWhenMoving));
+	data.push_back(DirectX::XMFLOAT4(rotation.x, rotation.y, rotation.z, speed));
 
 	D3D11_BUFFER_DESC cBuffDesc = { 0 };
 	cBuffDesc.ByteWidth = (UINT)sizeof(DirectX::XMFLOAT4) * (UINT)data.size();						//size of buffer //Kolla senare funktion för att hitta närmaste multipel av 16 för int!
@@ -83,6 +83,8 @@ bool CreateShaderResource(const std::vector<std::string>& filenames, std::vector
 	int wth = 0;
 	int hth = 0;
 	int channels = 0;
+	std::vector<int>height;
+	std::vector<int>width;
 
 	for (int i = 0; i < filenames.size(); i++)
 	{
@@ -93,6 +95,8 @@ bool CreateShaderResource(const std::vector<std::string>& filenames, std::vector
 		}
 		else
 		{
+			width.push_back(wth);
+			height.push_back(hth);
 			images.push_back(img);
 		}
 	}
@@ -100,8 +104,8 @@ bool CreateShaderResource(const std::vector<std::string>& filenames, std::vector
 	for (int i = 0; i < filenames.size(); i++)
 	{
 		D3D11_TEXTURE2D_DESC textureDesc = {};
-		textureDesc.Width = wth;
-		textureDesc.Height = hth;
+		textureDesc.Width = width[i];
+		textureDesc.Height = height[i];
 		textureDesc.MipLevels = 1u;
 		textureDesc.ArraySize = 1u;
 		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -114,7 +118,7 @@ bool CreateShaderResource(const std::vector<std::string>& filenames, std::vector
 
 		D3D11_SUBRESOURCE_DATA data;
 		data.pSysMem = images[i];
-		data.SysMemPitch = wth * 4;
+		data.SysMemPitch = width[i] * 4;
 		data.SysMemSlicePitch = 0;
 
 
@@ -155,11 +159,21 @@ bool CreateShaderResource(const std::vector<std::string>& filenames, std::vector
 
 //----------------------------------------------- Constructor ------------------------------------------------//
 
-ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XMFLOAT3& Rot, const int& nrOfPT, const DirectX::XMFLOAT2& minMaxTime, int randRange, bool onlyDrawMoving)
-	:Position(Pos), Rotation(Rot), nrOfParticles(nrOfPT), active(true), renderPassComplete(true), minMaxLifetime(minMaxTime), drawOnlyWhenMoving(onlyDrawMoving)
+ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XMFLOAT3& Rot, const int& nrOfPT, const DirectX::XMFLOAT2& minMaxTime, int randRange, float speed)
+	:Position(Pos), Rotation(Rot), nrOfParticles(nrOfPT), active(true), renderPassComplete(true), minMaxLifetime(minMaxTime), speed(speed)
 {
 	//particle types
-	std::vector<std::string> textureNames{ "smoke.png", "icon_star.png" , "player3.png" , "player4.png" };
+	std::vector<std::string> textureNames{ "smoke.png", "icon_star.png" , "fire.png" , "player4.png" ,"star.png" };
+
+	//Set up color buffer
+	this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
+	this->colorBuffer.getData() = DirectX::XMFLOAT4(1, 1, 1, 0.1f);
+	this->colorBuffer.applyData();
+
+	//Set up size buffer
+	this->sizeBuffer.Initialize(GPU::device, GPU::immediateContext);
+	this->sizeBuffer.getData() = DirectX::XMFLOAT4(3.0f, 1, 1, 1);
+	this->sizeBuffer.applyData();
 
 	//Initilize timer
 	tStruct.startTime;
@@ -207,7 +221,7 @@ ParticleEmitter::ParticleEmitter(const DirectX::XMFLOAT3& Pos, const DirectX::XM
 	}
 
 	//Create position buffer
-	if (!CreatePosActiveBuffer(this->emitterPosBuffer, Pos, Rot, drawOnlyWhenMoving))
+	if (!CreatePosActiveBuffer(this->emitterPosBuffer, Pos, Rot, speed))
 	{
 		std::cerr << "error creating Emitter Pos Buffer!" << std::endl;
 	}
@@ -247,9 +261,11 @@ void ParticleEmitter::BindAndDraw(int textureIndex)
 	tempBuff.push_back(this->emitterPosBuffer.Get());
 
 	
-
+	//Bind
+	GPU::immediateContext->GSSetConstantBuffers(4, 1, this->sizeBuffer.getReferenceOf());						//Bind size buffer
 	GPU::immediateContext->IASetVertexBuffers(0, 1, this->PT_vertexBuffer.GetAddressOf(), &stride, &offset);	//Set VtxBuffer
 	GPU::immediateContext->PSSetShaderResources(0, 1, this->PT_TXView.at(textureIndex).GetAddressOf());			//Bind Resources
+	GPU::immediateContext->PSSetConstantBuffers(0, 1, this->colorBuffer.getReferenceOf());						//Bind Color buffer
 
 	//Draw
 	GPU::immediateContext->Draw(nrOfPt, 0);																		//Draw once per primitive
@@ -296,7 +312,7 @@ void ParticleEmitter::updateBuffer()
 	//Update buffer
 	std::vector<DirectX::XMFLOAT4> data;
 	data.push_back(DirectX::XMFLOAT4(this->Position.x, this->Position.y, this->Position.z, this->active));
-	data.push_back(DirectX::XMFLOAT4(this->Rotation.x, this->Rotation.y, this->Rotation.z, this->drawOnlyWhenMoving));
+	data.push_back(DirectX::XMFLOAT4(this->Rotation.x, this->Rotation.y, this->Rotation.z, this->speed));
 
 	HRESULT hr = GPU::immediateContext->Map(this->emitterPosBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &map);
 	memcpy(map.pData, data.data(), sizeof(DirectX::XMFLOAT4) * data.size());
@@ -327,6 +343,22 @@ DirectX::XMFLOAT3 ParticleEmitter::getPosition() const
 DirectX::XMFLOAT3 ParticleEmitter::getRotation() const
 {
 	return this->Rotation;
+}
+
+DirectX::XMFLOAT3 ParticleEmitter::getColor()
+{
+	return DirectX::XMFLOAT3{ colorBuffer.getData().x,colorBuffer.getData().y,colorBuffer.getData().z };		
+}
+
+float ParticleEmitter::getSpeed() const
+{
+	return this->speed;
+}
+
+void ParticleEmitter::setSpeed(const float& speed)
+{
+	this->speed = speed;
+	this->updateBuffer();
 }
 
 void ParticleEmitter::setPosition(const DirectX::XMFLOAT3 &Pos)
@@ -361,4 +393,22 @@ void ParticleEmitter::setActive(const bool &onOrOff)
 void ParticleEmitter::setPassComplete(const bool &onOrOff)
 {
 	this->renderPassComplete = onOrOff;
+}
+
+void ParticleEmitter::setColor(const DirectX::SimpleMath::Vector3& color)
+{
+	this->colorBuffer.getData() = DirectX::XMFLOAT4(color.x, color.y, color.z, 0.1f);
+	this->colorBuffer.applyData();
+}
+
+void ParticleEmitter::setColor(const float& x, const float& y, const float& z)
+{
+	this->colorBuffer.getData() = DirectX::XMFLOAT4(x, y,z, 0.1f);
+	this->colorBuffer.applyData();
+}
+
+void ParticleEmitter::setSize(const float& size)
+{
+	this->sizeBuffer.getData() = DirectX::XMFLOAT4(size, 0, 0, 0);
+	this->sizeBuffer.applyData();
 }

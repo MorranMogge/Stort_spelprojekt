@@ -17,6 +17,8 @@ protected:
 	TimeStruct tStruct;
 	BilboardObject* itemIcon;
 	ParticleEmitter* particles;
+	ConstantBufferNew<DirectX::XMFLOAT4> fresnelBuffer;	//fresnel color buffer
+	DirectX::SimpleMath::Vector3 color;
 	Sound sfx;
 	bool withinPlayerReach;
 	bool pickedUp;
@@ -35,4 +37,5 @@ public:
 	int getOnlineType()const;
 	int getOnlineId()const;
 	virtual void update() override;
+	virtual void drawFresnel();
 };

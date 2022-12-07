@@ -38,12 +38,10 @@ SpaceShip::SpaceShip(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const int& id,
 	{
 	case 0:
 		HudUI::red = this;
-		mesh->matKey[0] = "spaceshipTexture1.jpg";
 		break;
 
 	case 1:
 		HudUI::blue = this;
-		mesh->matKey[0] = "spaceshipTexture2.jpg";
 		break;
 	}
 }
@@ -79,12 +77,10 @@ SpaceShip::SpaceShip(const DirectX::XMFLOAT3& pos, const int& id, const int team
 	{
 	case 0:
 		HudUI::red = this;
-		mesh->matKey[0] = "spaceshipTexture1.jpg"; 
 		break;
 
 	case 1:
 		HudUI::blue = this;
-		mesh->matKey[0] = "spaceshipTexture2.jpg";
 		break;
 
 	}
@@ -123,7 +119,9 @@ bool SpaceShip::detectedComponent(GameObject* objectToCheck)
 	}
 	else
 	{
-		if (this->scale.y != 2.f) this->setScale(DirectX::XMFLOAT3(2, 2, 2));
+		float rad = zone->getRadius();
+		if (this->scale.y != 2.5f) this->setScale(DirectX::XMFLOAT3(2.5, 2.5, 2.5));
+		if (zone->getScale().y != rad) zone->setScale(DirectX::XMFLOAT3(rad, rad, rad));
 	}
 	return didDetect;
 }
@@ -138,7 +136,9 @@ bool SpaceShip::detectedComponent(Component* componentToCheck)
 	}
 	else
 	{
-		if (this->scale.y != 2.f) this->setScale(DirectX::XMFLOAT3(2, 2, 2));
+		float rad = zone->getRadius();
+		if (this->scale.y != 2.5f) this->setScale(DirectX::XMFLOAT3(2.5, 2.5, 2.5));
+		if (zone->getScale().y != rad) zone->setScale(DirectX::XMFLOAT3(rad, rad, rad));
 	}
 	return didDetect;
 }
@@ -177,17 +177,23 @@ void SpaceShip::drawParticles()
 	//Update particle movement
 	if (this->particles != nullptr)
 	{
-		DirectX::XMFLOAT3 rot = this->getRotOrientedToGrav();
 		this->particles->setPosition(this->position);
 		this->particles->setRotation(this->getUpDirection());
 		this->particles->updateBuffer();
 	}
 
-
+	if (this->getCompletion())
+	{
+		this->particles2->setPosition(this->position);
+		this->particles2->setRotation( DirectX::XMFLOAT3(this->particles->getRotation().x * -1, this->particles->getRotation().y * -1, this->particles->getRotation().z * -1));
+		this->particles2->BindAndDraw(2);
+		this->particles2->updateBuffer();
+	}
 	if (this->particles != nullptr)
 	{
 		this->particles->BindAndDraw(0);
 	}
+
 
 	if (animate)
 	{
@@ -220,6 +226,15 @@ bool SpaceShip::isFinished()
 	return complete;
 }
 
+void SpaceShip::completeShip()
+{
+	int diff = this->compToComplete - this->currentComponents;
+	for (int i = 0; i < diff; i++)
+	{
+		this->addComponent();
+	}
+}
+
 void SpaceShip::setSpaceShipRotationRelativePlanet(GravityField* field)
 {
 	this->setGravityField(field);
@@ -230,18 +245,19 @@ void SpaceShip::setSpaceShipRotationRelativePlanet(GravityField* field)
 void SpaceShip::draw()
 {
 	//Team switch
-	switch (this->team)
-	{
-	case 0:
-		mesh->matKey[0] = "spaceshipTexture1.jpg";
-		break;
+	this->mesh->UpdateCB(this->position, this->rotation, this->scale);
+	this->mesh->DrawWithMat(currentComponents + 1);
+	////Team switch
+	//switch (team)
+	//{
+	//case 0:
+	//	this->mesh->DrawWithMat(currentComponents + 1);
+	//	break;
 
-	case 1:
-		mesh->matKey[0] = "spaceshipTexture2.jpg";
-		break;
-	}
-	this->mesh->UpdateCB(position, rotation, scale);
-	this->mesh->DrawWithMat();
+	//case 1:
+	//	this->mesh->DrawWithMat(currentComponents + 1, true);
+	//	break;
+	//}
 }
 
 
@@ -260,15 +276,18 @@ void SpaceShip::animateOnPickup()
 
 		this->counter += this->timer.getDt();
 		auto scale = this->getScale();
+		auto zoneScale = this->zone->getScale();
 		float constant = 0.5;
 
 		if (this->counter > (animationDuration / 2))
 		{
 			this->setScale({ scale.x + (animationDuration / 2) - this->counter,scale.y + (animationDuration / 2) - this->counter,scale.z + (animationDuration / 2) - this->counter });
+			this->zone->setScale({ zoneScale.x + (animationDuration / 4) - this->counter,zoneScale.y + (animationDuration / 4) - this->counter,zoneScale.z + (animationDuration / 4) - this->counter });
 		}
 		else
 		{
 			this->setScale({ scale.x + this->counter + constant,scale.y + this->counter + constant ,scale.z + this->counter + constant });
+			this->zone->setScale({ zoneScale.x + this->counter + constant,zoneScale.y + this->counter + constant ,zoneScale.z + this->counter + constant });
 		}
 
 		this->timer.resetStartTime();

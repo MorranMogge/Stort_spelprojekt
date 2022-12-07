@@ -14,6 +14,7 @@ enum class KeyCode
 	//ImGuiKey_MouseWheelY
 
 	ENTER = ImGuiKey_Enter,
+	ENTER_KeyPad = ImGuiKey_KeypadEnter,
 	ESC = ImGuiKey_Escape,
 	SPACE = ImGuiKey_Space,
 	TAB = ImGuiKey_Tab,

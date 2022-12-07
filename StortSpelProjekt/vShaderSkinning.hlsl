@@ -26,6 +26,7 @@ struct VSout
     float3 normal : NORMAL;
     float2 uv : UV;
     float4 worldPosition : WorldPosition;
+    float3 localPosition : LocalPosition;
 };
 
 VSout main(VShaderIn input)
@@ -58,7 +59,7 @@ VSout main(VShaderIn input)
     //output.normal = normalize(output.normal);
     //output.normal = -output.normal;
     output.normal = normalize(mul(input.normal, (float3x3) worldM));
-    
+    output.localPosition = input.position;
     
     return output;
 }

@@ -84,14 +84,13 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
                 break;
         }
         
-        float shadowFactor = DoShadow(lightWorldPosition, shadowMaps, shadowSampler, i, normal, lightDir, 9);
-        //float shadowFactor = SoftShadow(lightWorldPosition, 6.0, shadowMaps, shadowSampler,samplerState, i);
+        float shadowFactor = DoShadow(lightWorldPosition, shadowMaps, shadowSampler, i, normal, lightDir, 300.0f);
         
         litResult.Diffuse += result.Diffuse * shadowFactor;
         litResult.Specular += result.Specular * shadowFactor;
     }
     float3 frescolor = { 0 * fres, 0.35 * fres, 0.65 * fres };
-    return float4(((max(mat.ambient.xyz, 0.2f) /* + litResult.Specular*/) * diffuseColor + litResult.Diffuse) + frescolor, 1.0f);
+    return float4(((max(mat.ambient.xyz, 0.2f)/* + litResult.Specular*/) * diffuseColor + litResult.Diffuse) + frescolor, 1.0f);
 
 }
 

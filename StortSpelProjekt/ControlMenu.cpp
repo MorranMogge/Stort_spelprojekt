@@ -8,6 +8,7 @@ GAMESTATE ControlMenu::Update()
 
 void ControlMenu::Render()
 {
+
     basicRenderer.setUpScene();
     ui.Draw();
 }

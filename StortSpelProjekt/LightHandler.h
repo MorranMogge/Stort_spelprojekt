@@ -7,7 +7,7 @@
 #include "GameObject.h"
 #include "Camera.h"
 #include "Player.h"
-
+#include "Planet.h"
 
 class LightHandler
 {

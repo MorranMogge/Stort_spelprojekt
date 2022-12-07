@@ -25,6 +25,7 @@
 #include "WinMenu.h"
 #include "LoseMenu.h"
 #include "ControlMenu.h"
+#include "Lobby.h"
 #include "Time.h"
 
 
@@ -123,21 +124,24 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 				delete currentState;
 				currentState = new Menu();
 				break;
+			case LOBBY:
+				delete currentState;
+				currentState = new Lobby();
+				break;
 			default:
 				break;
 			}
 		}
-		
 		currentState->Render();
-
-		GPU::swapChain->Present(0, 0);
 		Time::Update();
+		GPU::swapChain->Present(0, 0);
+
 	}
 
 	#pragma region Deallocation
 	delete currentState;
 	
-	ChangeResolution(1920, 1080);
+	//ChangeResolution(1920, 1080);
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();

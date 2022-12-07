@@ -24,19 +24,21 @@ float FresnelEffect(float3 Normal, float3 ViewDir, float Power)
 
 float3 DoDiffuse(float3 lightColor, float3 lightDir, float3 normal)
 {
-    return max(0, dot(lightDir, normal)) * lightColor;
+    //return max(0, dot(lightDir, normal)) * lightColor;
+    float NdotL = max(0, dot(normal, lightDir));
+    return lightColor * NdotL;
 }
 float3 DoSpecular(Light light, float3 ViewDir, float3 lightDir, float3 normal, float specularPower)
 {
     // Phong lighting.
     float3 R = normalize(reflect(-lightDir, normal));
-    float RdotV = max(0, dot(R, ViewDir));
+    float RdotV = max(0.0001, dot(R, ViewDir));
 
     // Blinn-Phong lighting
-    float3 H = normalize(lightDir + ViewDir);
-    float NdotH = max(0, dot(normal, H));
+    //float3 H = normalize(lightDir + ViewDir);
+    //float NdotH = max(0, dot(normal, H));
 
-    return light.color.xyz * pow(NdotH, specularPower);
+    return light.color.xyz * pow(RdotV, specularPower);
 }
 float DoAttenuation(Light light, float distance)
 {
@@ -46,8 +48,13 @@ float DoAttenuation(Light light, float distance)
     //return 1.0f / (attConst + attLin * distance + attQuad * (distance * distance));
     return saturate(1 - distance / light.range);
 }
+float DoAttenuation2(float distance, float range)
+{
+    float att = saturate(1.0f - (distance * distance / (range * range)));
+    return att * att;
+}
 
-LightResult ComputeDirectionalLight(Light L, float3 lightDir, float3 normal, float3 toEye, float3 diffuse, float3 specular, float spacularPower)
+LightResult ComputeDirectionalLight(Light L, float3 lightDir, float3 normal, float3 viewDir, float3 diffuse, float3 specular, float spacularPower)
 {
     LightResult result = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
     float diffuseFactor = dot(lightDir, normal);
@@ -55,7 +62,6 @@ LightResult ComputeDirectionalLight(Light L, float3 lightDir, float3 normal, flo
     //if (diffuseFactor < 0.25)
     //{
     //    diffuseFactor = 0;
-
     //}
     //else if (diffuseFactor > 0.25 && diffuseFactor < 0.5)
     //{
@@ -74,30 +80,42 @@ LightResult ComputeDirectionalLight(Light L, float3 lightDir, float3 normal, flo
     if (diffuseFactor > 0.0f)
     {
         const float3 v = reflect(-lightDir, normal);
-        const float specFactor = pow(max(dot(v, toEye), 0.0f), spacularPower);
+        //const float specFactor = pow(max(dot(v, viewDir), 0.0f), spacularPower);
 
         result.Diffuse = diffuseFactor * diffuse * L.color.xyz;
-        result.Specular = specFactor * specular;
+        //result.Specular = specFactor * specular;
     }
+    //result.Diffuse = DoDiffuse(L.color.xyz, lightDir, normal);
+    //result.Specular = DoSpecular(L,viewDir,lightDir,normal,spacularPower);
+ 
     return result;
 }
+
 LightResult ComputePointLight(Light L, float3 lightDir, float3 normal, float3 viewDir, float3 specular, float spacularPower)
 {
     LightResult result = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
-    const float disToL = length(lightDir);
-    lightDir /= disToL;
-    const float diffuseFactor = dot(lightDir, normal);
+    //const float disToL = length(lightDir);
+    //lightDir /= disToL;
+    //const float diffuseFactor = dot(lightDir, normal);
 
-    [flatten]
-    if (diffuseFactor > 0.0f)
-    {
-        const float3 v = reflect(-lightDir, normal);
-        const float specFactor = pow(max(dot(v, viewDir), 0.0f), spacularPower);
+    //[flatten]
+    //if (diffuseFactor > 0.0f)
+    //{
+    //    const float3 v = reflect(-lightDir, normal);
+    //    const float specFactor = pow(max(dot(v, viewDir), 0.0f), spacularPower);
 
-        const float attenuation = DoAttenuation(L, disToL);
-        result.Diffuse = diffuseFactor * L.color.xyz * attenuation;
-        result.Specular = specFactor * specular * attenuation;
-    }
+    //    const float attenuation = DoAttenuation(L, disToL);
+    //    result.Diffuse = diffuseFactor * L.color.xyz * attenuation;
+    //    result.Specular = specFactor * specular * attenuation;
+    //}
+    
+    float distance = length(lightDir);
+    lightDir /= distance;
+    float attenuation = DoAttenuation2(distance, L.range);
+    
+    result.Diffuse = DoDiffuse(L.color.xyz,lightDir,normal) * attenuation;
+    result.Specular = DoSpecular(L,viewDir,lightDir,normal,spacularPower) * attenuation;
+    
     return result;
 }
 
@@ -113,7 +131,8 @@ LightResult DoSpotLight(Light light, float3 ViewDir, float4 worldPosition, float
     const float distance = length(lightDir);
     lightDir /= distance;
 
-    const float attenuation = DoAttenuation(light, distance);
+    //const float attenuation = DoAttenuation(light, distance);
+    float attenuation = DoAttenuation2(distance, light.range);
     const float spotIntensity = DoSpotCone(light, lightDir);
     
     LightResult result = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
@@ -248,7 +267,7 @@ static const float2 poissonDisk64[64] =
 };
 
 
-float DoShadow(float4 lightWorldPosition, Texture2DArray shadowMap, SamplerComparisonState shadowMapSampler, int index, float3 normal, float3 lightDirection, int numSamples)
+float DoShadow(float4 lightWorldPosition, Texture2DArray shadowMap, SamplerComparisonState shadowMapSampler, int index, float3 normal, float3 lightDirection, float softness)
 {
     lightWorldPosition.xyz /= lightWorldPosition.w;
     const float2 smTex = float2(0.5f * lightWorldPosition.x + 0.5f, -0.5f * lightWorldPosition.y + 0.5f);
@@ -268,7 +287,7 @@ float DoShadow(float4 lightWorldPosition, Texture2DArray shadowMap, SamplerCompa
     [unroll]
     for (int i = 0; i < 32; ++i)
     {
-        percentLit += shadowMap.SampleCmpLevelZero(shadowMapSampler, float3(smTex + poissonDisk32[i] / 300.0f, index), depth).r;
+        percentLit += shadowMap.SampleCmpLevelZero(shadowMapSampler, float3(smTex + poissonDisk32[i] / softness, index), depth).r;
     }
 
     return percentLit / 32.0f;

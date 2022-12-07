@@ -43,6 +43,7 @@ public:
 	void drawParticles();
 	void drawFresnel();
 	bool isFinished();
+	void completeShip();
 	void setSpaceShipRotationRelativePlanet(GravityField* field);
 	virtual void draw() override;
 	void flyAway(const float& deltaTime);

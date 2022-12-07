@@ -2,7 +2,7 @@
 #include "Asteroid.h"
 #include "TimeStruct.h"
 
-#define MAXASTEROIDS 10
+#define MAXASTEROIDS 1
 #define TIMEBEFOREASTEROIDS 120
 
 class AsteroidHandler
@@ -22,4 +22,5 @@ public:
 	void spawnAsteroids(const Planet* planet, int nrOf = 0);
 	void updateAsteroids(const float& dt, std::vector<Planet*>& planets, std::vector<GameObject*>& objects);
 	void drawAsteroids();
+	void drawExplosions();
 };

@@ -104,7 +104,10 @@ void GameObject::movePos(const DirectX::XMFLOAT3& offset)
 void GameObject::setPos(const DirectX::XMFLOAT3& pos)
 {
 	this->position = pos;
-	this->physComp->setPosition(reactphysics3d::Vector3{ pos.x,pos.y,pos.z });
+	if (physComp != nullptr)
+	{
+		this->physComp->setPosition(reactphysics3d::Vector3{ pos.x,pos.y,pos.z });
+	}
 }
 
 void GameObject::setRot(const DirectX::XMFLOAT3& rot)
@@ -132,6 +135,12 @@ void GameObject::setScale(const DirectX::XMFLOAT3& scale)
 
 	//if (this->physComp->getTypeName() == reactphysics3d::CollisionShapeName::BOX) 
 	//this->physComp->setScale(scale);
+}
+
+void GameObject::setScale(const float& scale)
+{
+	this->mesh->scale = DirectX::XMFLOAT3(scale, scale, scale);
+	this->scale = DirectX::XMFLOAT3(scale, scale, scale);
 }
 
 DirectX::XMFLOAT3 GameObject::getPos() const

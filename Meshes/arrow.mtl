@@ -1,7 +1,14 @@
-newmtl arrow_lambert16SG
+newmtl arrow_arrow_lambert16SG
 illum 4
-Kd 0.60 0.00 0.00
+Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd arrow.png
+map_Kd yellow.png
+Ni 1.00
+newmtl outliner
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd orange.png
 Ni 1.00

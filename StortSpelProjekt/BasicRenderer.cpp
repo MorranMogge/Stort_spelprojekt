@@ -174,8 +174,28 @@ bool BasicRenderer::setUpShadowRastirizer(ID3D11Device* device)
 	return !FAILED(hr);
 }
 
+bool BasicRenderer::setUpRastirizer(ID3D11Device* device)
+{
+	//control over how polygons are rendered, do things like render in wireframe or draw both the front and back faces. 
+
+	D3D11_RASTERIZER_DESC desc = {};
+	desc.AntialiasedLineEnable = true;
+	desc.CullMode = D3D11_CULL_BACK;
+	desc.DepthBias = 0;
+	desc.DepthBiasClamp = 0.0f;
+	desc.DepthClipEnable = true;
+	desc.FillMode = D3D11_FILL_SOLID;
+	desc.FrontCounterClockwise = false;
+	desc.MultisampleEnable = true;
+	desc.ScissorEnable = false;
+	desc.SlopeScaledDepthBias = 0.0f;
+
+	HRESULT hr = GPU::device->CreateRasterizerState(&desc, &Rastirizer);
+	return !FAILED(hr);
+}
+
 BasicRenderer::BasicRenderer()
-	:clearColour{ 0.0f, 0.0f, 0.0f, 0.0f }
+	:clearColour{ 0.0f, 0.0f, 0.0f, 0.0f }, halveraFps(false)
 {
 }
 
@@ -193,6 +213,7 @@ BasicRenderer::~BasicRenderer()
 	inputLayout->Release();
 	vShader->Release();
 	pShader->Release();
+	pShader_NoShadow->Release();
 	ApShader->Release();
 	vs_Skybox->Release();
 	ps_Skybox->Release();
@@ -221,6 +242,15 @@ BasicRenderer::~BasicRenderer()
 	inputLayout_NormalMap->Release();
 	ps_normalMap->Release();
 	vs_normalMap->Release();
+	pt_UpdatePlayer->Release();
+	hullShader->Release();
+	domainShader->Release();
+	basic_VertexShader->Release();
+	postProcess->Release();
+	backBufferUAV->Release();
+	rtv2->Release();
+	srv2->Release();
+	//Rastirizer->Release();
 }
 
 void BasicRenderer::lightPrePass()
@@ -229,7 +259,6 @@ void BasicRenderer::lightPrePass()
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	immediateContext->IASetInputLayout(this->inputLayout);
 	immediateContext->RSSetViewports(1, &shadowViewport);
-	
 	immediateContext->VSSetShader(vShader, nullptr, 0);
 	immediateContext->PSSetShader(nullShader, nullptr, 0);
 }
@@ -244,14 +273,18 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 
 	if (this->immediateContext == nullptr)													return false;
 	if (!CreateRenderTargetView(device, swapChain, rtv))									return false;
+	if (!CreateNewRenderTargetView(device, rtv2, srv2))										return false;
+	if (!CreateUnorderedView(device, swapChain, backBufferUAV, srvTest))					return false;
 	if (!CreateDepthStencil(device, WIDTH, HEIGHT, dsTexture, dsView))						return false;
 	if (!CreateDSState(dsState))															return false;
 	if (!CreateDepthStencilAndSrv(device, WIDTH, HEIGHT, dsTexture2, dsView2, depthSrv))	return false;
 	if (!LoadVertexShader(device, vShader, vShaderByteCode, "VertexShader"))				return false;
+	if (!LoadVertexShader(device, basic_VertexShader, vShaderByteCode, "basic_VertexShader"))		return false;
 	if (!LoadVertexShader(device, this->vShaderAnim, vShaderByteCodeForAnim, "vShaderSkinning"))	return false;
 	if (!setUpInputLayoutAnim(device, vShaderByteCodeForAnim, this->animLayout))			return false;
 	if (!setUpInputLayout(device, vShaderByteCode, this->inputLayout))						return false;
 	if (!LoadPixelShader(device, pShader, "PixelShader"))									return false;
+	if (!LoadPixelShader(device, pShader_NoShadow, "PixelShader_NoShadow"))					return false;
 	if (!LoadPixelShader(device, ApShader, "AmbientPixelShader"))							return false;
 	if (!LoadVertexShader(device, pt_vShader, vShaderByteCode, "PT_VertexShader"))			return false;
 	if (!setUp_PT_InputLayout(device, vShaderByteCode))										return false;
@@ -281,6 +314,11 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadPixelShader(device, ps_normalMap, "NormalMap_PS"))								return false;
 
 	
+	if (!LoadComputeShader(device, pt_UpdatePlayer, "PT_UpdatePlayer"))						return false;
+	if (!LoadHullShader(device, hullShader, "HullShader"))									return false;
+	if (!LoadDomainShader(device, domainShader, "DomainShader"))							return false;
+	if (!LoadComputeShader(device, postProcess, "PostProcess"))								return false;
+
 	SetViewport(viewport, GPU::windowWidth, GPU::windowHeight);
 	SetViewport(shadowViewport, WidthAndHeight, WidthAndHeight);
 	
@@ -291,9 +329,17 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 void BasicRenderer::setUpScene()
 {
 
+	if (halveraFps)
+	{
+		immediateContext->ClearRenderTargetView(rtv2, clearColour);
+		immediateContext->OMSetRenderTargets(1, &rtv2, dsView);
+	}
+	else
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+	}
 	immediateContext->ClearRenderTargetView(rtv, clearColour);
 	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	immediateContext->IASetInputLayout(inputLayout);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
@@ -302,7 +348,7 @@ void BasicRenderer::setUpScene()
 	immediateContext->PSSetSamplers(1, 1 ,&shadowSampler);
 	immediateContext->PSSetShader(pShader, nullptr, 0);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
-
+	
 	//Unbind shadowmap & structuredBuffer srv
 	ID3D11ShaderResourceView* nullRsv{ nullptr };
 	immediateContext->PSSetShaderResources(3, 1, &nullRsv);
@@ -318,18 +364,27 @@ void BasicRenderer::changeToAnimation()
 	immediateContext->IASetInputLayout(this->animLayout);
 	immediateContext->VSSetShader(this->vShaderAnim, nullptr, 0);
 }
-void BasicRenderer::setUpScene(Camera& stageCamera)
+void BasicRenderer::setUpScene(Camera& stageCamera, const bool& shadow)
 {				
+	if (halveraFps)
+	{
+		immediateContext->ClearRenderTargetView(rtv2, clearColour);
+		immediateContext->OMSetRenderTargets(1, &rtv2, dsView);
+	}
+	else
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+	}
 	immediateContext->ClearRenderTargetView(rtv, clearColour);
 	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	immediateContext->IASetInputLayout(inputLayout);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
 	immediateContext->RSSetViewports(1, &viewport);
-	immediateContext->PSSetShader(pShader, nullptr, 0);
+	shadow ? immediateContext->PSSetShader(pShader, nullptr, 0) : immediateContext->PSSetShader(pShader_NoShadow, nullptr, 0);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 	immediateContext->PSSetShaderResources(5, 1, &depthSrv);
+	immediateContext->PSSetSamplers(1, 1, &shadowSampler);
 	stageCamera.PSbindPositionBuffer(1);
 	stageCamera.VSbindViewBuffer(1);
 }
@@ -377,14 +432,33 @@ void BasicRenderer::geometryPass(Camera& stageCamera)
 	stageCamera.GSbindPositionBuffer(1);												//Set camera pos for 
 	stageCamera.CSbindUpBuffer(2);
 	stageCamera.GSbindUpBuffer(3);
-	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
+	if (halveraFps)
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv2, dsView);								//SetRtv
+	}
+	else
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
+	}
+}
+
+void BasicRenderer::playerParticlePass()
+{
+	immediateContext->CSSetShader(pt_UpdatePlayer, nullptr, 0);							//Set ComputeShader
 }
 
 void BasicRenderer::depthPrePass()
 {
 	ID3D11RenderTargetView* nullRtv{ nullptr };
 	immediateContext->ClearDepthStencilView(dsView2, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-	immediateContext->OMSetRenderTargets(1, &rtv, dsView2);
+	if (halveraFps)
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv2, dsView2);
+	}
+	else
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv, dsView2);
+	}
 }
 
 void BasicRenderer::depthUnbind()
@@ -398,8 +472,17 @@ void BasicRenderer::depthUnbind()
 void BasicRenderer::skyboxPrePass()
 {
 	immediateContext->OMSetDepthStencilState(dsState, 0);
-	immediateContext->IASetInputLayout(inputLayout_Skybox);									
-	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+	immediateContext->IASetInputLayout(inputLayout_Skybox);		
+
+	if (halveraFps)
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv2, dsView);
+	}
+	else
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+	}
+
 	immediateContext->VSSetShader(vs_Skybox, nullptr, 0);								//SetVTXShader
 	immediateContext->PSSetShader(ps_Skybox, nullptr, 0);								//Set PSShader
 }
@@ -417,7 +500,15 @@ void BasicRenderer::bilboardPrePass(Camera& stageCamera)
 	stageCamera.GSbindViewBuffer(1);													//Set matrix [world],[view]
 	stageCamera.GSbindPositionBuffer(2);												//Set camera pos for 
 	stageCamera.GSbindUpBuffer(3);
-	immediateContext->OMSetRenderTargets(1, &rtv, dsView);								//SetRtv
+
+	if (halveraFps)
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv2, dsView);
+	}
+	else
+	{
+		immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+	}
 }
 
 void BasicRenderer::bindAmbientShader()
@@ -431,6 +522,7 @@ void BasicRenderer::geometryUnbind()
 	ID3D11GeometryShader* nullShader{ nullptr };
 	ID3D11UnorderedAccessView* nullUav{ nullptr };
 	ID3D11BlendState* nullBlendstate{ nullptr };
+	ID3D11Buffer* nullbuffer{ nullptr };
 
 	//Unbind shader & UAV, Reset Topology
 	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
@@ -438,6 +530,7 @@ void BasicRenderer::geometryUnbind()
 	GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);						//Reset Topology
 	GPU::immediateContext->CSSetUnorderedAccessViews(0, 1, &nullUav, nullptr);									//Unbind UAV
 	GPU::immediateContext->OMSetBlendState(nullBlendstate, nullptr, 0xffffffffu);								//Unbind blendstate
+	GPU::immediateContext->PSSetConstantBuffers(0, 1, &nullbuffer);
 }
 
 void BasicRenderer::fresnelPrePass(Camera& stageCamera)
@@ -453,4 +546,67 @@ void BasicRenderer::fresnelPrePass(Camera& stageCamera)
 void BasicRenderer::invFresnelPrePass()
 {
 	immediateContext->PSSetShader(InvFresnel_PS, nullptr, 0);
+}
+
+void BasicRenderer::bindAnimVs()
+{
+	immediateContext->IASetInputLayout(this->animLayout);
+	immediateContext->VSSetShader(this->vShaderAnim, nullptr, 0);
+}
+
+void BasicRenderer::fresnelAnimPrePass(Camera& stageCamera)
+{
+	immediateContext->IASetInputLayout(this->animLayout);
+	immediateContext->VSSetShader(this->vShaderAnim, nullptr, 0);
+	immediateContext->OMSetBlendState(fresnelBlendState, nullptr, 0xffffffffu);
+	immediateContext->OMSetDepthStencilState(PT_dsState, 0);
+	immediateContext->PSSetShader(Fresnel_PS, nullptr, 0);
+	stageCamera.PSbindPositionBuffer(1);
+}
+
+void BasicRenderer::tesselationPrePass(Camera& stageCamera)
+{
+	immediateContext->VSSetShader(basic_VertexShader, nullptr, 0);
+	immediateContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+	immediateContext->HSSetShader(hullShader, nullptr, 0);
+	immediateContext->DSSetShader(domainShader, nullptr, 0);
+	stageCamera.DSbindViewBuffer(1);
+}
+
+void BasicRenderer::resetTopology()
+{
+	ID3D11HullShader* nullShader{ nullptr };
+	ID3D11DomainShader* nullShader1{ nullptr };
+
+	immediateContext->VSSetShader(vShader, nullptr, 0);
+	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	immediateContext->HSSetShader(nullShader, nullptr, 0);
+	immediateContext->DSSetShader(nullShader1, nullptr, 0);
+}
+
+void BasicRenderer::postProcessPass()
+{
+	if (halveraFps)
+	{
+		ID3D11RenderTargetView* nullRtv{ nullptr };
+		ID3D11UnorderedAccessView* nullUav{ nullptr };
+		ID3D11ShaderResourceView* nullSrv{ nullptr };
+
+		immediateContext->OMSetRenderTargets(1, &nullRtv, nullptr);
+
+		immediateContext->CSSetShader(postProcess, nullptr, 0);
+
+		immediateContext->CSSetShaderResources(0, 1, &srv2);
+		immediateContext->CSSetUnorderedAccessViews(0, 1, &backBufferUAV, nullptr);
+		//immediateContext->CSSetSamplers(0, 1, &sampler);
+		immediateContext->Dispatch(GPU::windowWidth, GPU::windowHeight, 1);
+		immediateContext->CSSetUnorderedAccessViews(0, 1, &nullUav, nullptr);
+		immediateContext->CSSetShaderResources(0, 1, &nullSrv);
+		immediateContext->OMSetRenderTargets(1, &rtv, nullptr);
+	}
+	else
+	{
+		//std::cout << "Post process not run, FXAA turned off" << std::endl;
+	}
+
 }

@@ -9,7 +9,7 @@
 #include "Client.h"
 #include "AnimatedMesh.h"
 #include "Planet.h"
-
+#include "Time.h"
 #include <GamePad.h>
 #include <iostream>
 #define FORCE 2500
@@ -63,7 +63,10 @@ private:
 	Item* holdingItem;
 
 	ParticleEmitter* particles;
+	ParticleEmitter* particles2;
 	BilboardObject* playerIcon;
+	ConstantBufferNew<DirectX::XMFLOAT4> fresnelBuffer;	//fresnel color buffer
+
 
 	const DirectX::XMVECTOR DEFAULT_UP = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const DirectX::XMVECTOR DEFAULT_RIGHT = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
@@ -80,10 +83,8 @@ private:
 	DirectX::XMVECTOR northWestVector = NORTH_WEST;
 	DirectX::XMVECTOR southEastVector = SOUTH_EAST;
 	DirectX::XMVECTOR southWestVector = SOUTH_WEST;
-
 	DirectX::SimpleMath::Vector3 playerVector;
 	DirectX::SimpleMath::Vector3 planetVector;
-
 	int animIndex = 0;
 	bool eKeyDown = false;
 	float animSpeed = 1;
@@ -92,11 +93,13 @@ private:
 	bool usedItem = true;
 	bool throwingItem = false;
 
+private:
 	void throwItem();
 	void resetRotationMatrix();
 	void handleItems();
 	bool movingCross(const DirectX::XMVECTOR& cameraForward, float deltaTime);
 	bool moveCrossController(const DirectX::XMVECTOR& cameraForward, float deltaTime);
+
 public:
 	Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, Client* client, const int& team,
 		ID3D11ShaderResourceView* redTeamColor, ID3D11ShaderResourceView* blueTeamColor, GravityField* field = nullptr);
@@ -143,7 +146,7 @@ public:
 	void hitByBat(const reactphysics3d::Vector3& force);
 	bool checkForStaticCollision(const std::vector<Planet*>& gameObjects, const std::vector<SpaceShip*>& spaceShips);
 	void checkSwimStatus(const std::vector<Planet*>& planets);
-	bool raycast(const std::vector<GameObject*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
+	bool raycast(const std::vector<SpaceShip*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	void colliedWIthComponent(const std::vector<Component*>& components);
 
@@ -153,6 +156,7 @@ public:
 	//Updating and rendering
 	void drawIcon();
 	void drawParticles();
+	void drawFresnel(float interval = 0.2);
 	//virtual void draw() override;
 	void update();
 	void requestingPickUpItem(const std::vector<Item*>& items);

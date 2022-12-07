@@ -38,6 +38,7 @@
 
 //ui
 #include "HudUI.h"
+#include "MiniGameUI.h"
 #include "LandingHud.h"
 
 //Other

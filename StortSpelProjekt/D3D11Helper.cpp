@@ -57,6 +57,69 @@ bool CreateRenderTargetView(ID3D11Device* device, IDXGISwapChain* swapChain, ID3
 	return !FAILED(hr);
 }
 
+bool CreateNewRenderTargetView(ID3D11Device* device, ID3D11RenderTargetView*& rtv, ID3D11ShaderResourceView*& srv)
+{
+	ID3D11Texture2D* texture = nullptr;
+	
+
+	D3D11_TEXTURE2D_DESC textureDesc;
+	textureDesc.Width = GPU::windowWidth;
+	textureDesc.Height = GPU::windowHeight;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_RENDER_TARGET | D3D11_BIND_FLAG::D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = 0;
+
+	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
+	rtvDesc.Format = textureDesc.Format;
+	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	rtvDesc.Texture2D.MipSlice = 0;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	srvDesc.Format = textureDesc.Format;
+	srvDesc.ViewDimension = D3D_SRV_DIMENSION::D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = 1;
+	
+
+	if (FAILED(device->CreateTexture2D(&textureDesc, nullptr, &texture)))
+	{
+		std::cerr << "Failed to create texture!" << std::endl;
+		return false;
+	}
+
+	if (FAILED(device->CreateShaderResourceView(texture, &srvDesc, &srv)))
+	{
+		std::cerr << "Failed to create texture!" << std::endl;
+		return false;
+	}
+	
+	HRESULT hr = device->CreateRenderTargetView(texture, nullptr, &rtv);
+	texture->Release();
+	return !FAILED(hr);
+
+}
+
+bool CreateUnorderedView(ID3D11Device* device, IDXGISwapChain* swapChain, ID3D11UnorderedAccessView*& uav, ID3D11ShaderResourceView*& bufferSrv)
+{
+	ID3D11Texture2D* backBuffer = nullptr;
+
+	if (FAILED(swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer))))
+	{
+		std::cerr << "Failed to get back buffer!" << std::endl;
+		return false;
+	}
+
+	HRESULT hr = device->CreateUnorderedAccessView(backBuffer,nullptr, &uav);
+	backBuffer->Release();
+	return !FAILED(hr);
+}
+
 bool CreateDepthStencil(ID3D11Device* device, const UINT &width,const  UINT &height, ID3D11Texture2D*& dsTexture, ID3D11DepthStencilView*& dsView)
 {
 	D3D11_TEXTURE2D_DESC textureDesc;

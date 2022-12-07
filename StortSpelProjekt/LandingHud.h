@@ -16,6 +16,9 @@ private:
 	GUISprite landing1;
 	GUISprite landing2;
 
+	GUISprite wheel_L, arrow, arrow2;
+	GUISprite Skey, Wkey;
+
 	DirectX::GamePad* gamePad;
 	DirectX::GamePad::ButtonStateTracker tracker;
 	DirectX::GamePad::State state;
@@ -25,6 +28,8 @@ private:
 	float targetTime;
 	float currentTime;
 	float factor;
+
+	bool show_gamepad = false;
 
 	DirectX::SimpleMath::Vector2 changePos;
 	DirectX::SimpleMath::Vector2 changeScale;

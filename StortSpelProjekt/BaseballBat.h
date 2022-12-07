@@ -11,10 +11,12 @@ class BaseballBat : public Item
 private:
 	Player* player;
 	Client* client;
+
 	std::vector<Player *> objects;
 
 	//For offline UwU
 	std::vector<GameObject*> GameObjects;
+
 
 	DirectX::SimpleMath::Vector3 batPos;
 	DirectX::SimpleMath::Vector3 savedPos;

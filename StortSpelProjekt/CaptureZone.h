@@ -6,6 +6,7 @@ class CaptureZone: public GameObject
 {
 private:
 	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;
+	float radius;
 	DirectX::SimpleMath::Vector3 position;
 
 public:
@@ -15,5 +16,8 @@ public:
 	void setColor(const DirectX::SimpleMath::Vector3 & color);
 	bool detectedObject(GameObject* objectToCheck) const;
 	void drawFresnel();
+	float getRadius() const;
+	void setRadius(const float& radius);
 	DirectX::SimpleMath::Vector3 getPosition()const;
+
 };

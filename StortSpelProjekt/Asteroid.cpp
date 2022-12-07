@@ -4,6 +4,10 @@
 
 void Asteroid::explode(std::vector<Planet*>& planets, std::vector<GameObject*>& objects)
 {
+	explodePosition = this->position;
+	this->explosionMesh->scale = DirectX::XMFLOAT3(27, 27, 27);
+	currentTime = 0.5f;
+
 	for (int j = 0; j < objects.size(); j++)
 	{
 		DirectX::XMFLOAT3 vecToObject = this->position;
@@ -38,13 +42,19 @@ void Asteroid::explode(std::vector<Planet*>& planets, std::vector<GameObject*>& 
 }
 
 Asteroid::Asteroid(Mesh* mesh)
+	:currentTime(0.5)
 {
 	this->asteroidMesh = mesh;
-	this->scale = DirectX::XMFLOAT3(10, 10, 10);
+	this->scale = DirectX::XMFLOAT3(8, 8, 8);
 	this->inactive = false;
 	this->direction = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
 	this->position = DirectX::XMFLOAT3(6969.f, 6969.f, 6969.f);
 	this->speed = 0.f;
+	this->explosionMesh = mesh;
+	//Set up color buffer
+	this->colorBuffer.Initialize(GPU::device, GPU::immediateContext);
+	this->colorBuffer.getData() = DirectX::XMFLOAT4(1, 0.25, 0, 0.5);
+	this->colorBuffer.applyData();
 }
 
 Asteroid::~Asteroid()
@@ -89,4 +99,29 @@ void Asteroid::draw()
 
 	this->asteroidMesh->UpdateCB(this->position, DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f)), this->scale);
 	this->asteroidMesh->DrawWithMat();
+}
+
+void Asteroid::drawFresnel()
+{
+	float maxtime = 0.5f;
+	if (inactive)
+	{
+
+		if (explosionMesh->scale.x > 1)
+		{
+			currentTime -= Time::DeltaTimeInSeconds();
+
+			if (currentTime < 0.0f)
+			{
+				currentTime = maxtime;
+			}
+			float timeScale = currentTime / maxtime;
+			float meshScale = 27 * timeScale;
+
+			this->explosionMesh->scale = DirectX::XMFLOAT3(meshScale, meshScale, meshScale);
+			this->explosionMesh->UpdateCB(explodePosition, DirectX::XMMatrixIdentity(), this->explosionMesh->scale);
+			GPU::immediateContext->PSSetConstantBuffers(2, 1, this->colorBuffer.getReferenceOf());
+			this->explosionMesh->DrawWithMat();
+		}
+	}
 }

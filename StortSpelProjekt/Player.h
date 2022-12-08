@@ -62,7 +62,7 @@ private:
 	TimeStruct timer;
 	TimeStruct keyPressTimer;
 	Item* holdingItem;
-	std::vector<ID3D11ShaderResourceView*> playerTextures;
+	
 
 	ParticleEmitter* particles;
 	ParticleEmitter* particles2;
@@ -114,7 +114,7 @@ public:
 	void updateVelocity(const DirectX::SimpleMath::Vector3& gravityVec);
 	void resetVelocity();
 	void velocityMove(const float& dt);
-	void setTextures(std::vector<ID3D11ShaderResourceView*>& textures);
+	
 	//Set Functions
 	void setSpeed(float speed);
 	void setOnlineID(const int& id);
@@ -165,6 +165,6 @@ public:
 	void requestingPickUpItem(const std::vector<Item*>& items);
 	void updateController();
 	
-	void drawSubMeshesWithTexture();
+	
 	void itemRecvFromServer(Item* item);
 };

@@ -437,3 +437,13 @@ void AnimatedMesh::getAnimId(int& id)
 {
 	id = this->currentAnimId;
 }
+
+void AnimatedMesh::setTextures(std::vector<ID3D11ShaderResourceView*>& textures)
+{
+	this->textures = textures;
+}
+
+void AnimatedMesh::drawSubMeshesWithTexture()
+{
+	draw(this->textures);
+}

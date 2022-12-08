@@ -332,6 +332,13 @@ void Game::drawShadows()
 		ltHandler.drawShadows(i, gameObjects);
 	}
 
+	//For animated meshes
+	basicRenderer.bindAnimVs();
+	for (int i = 0; i < ltHandler.getNrOfLights(); i++)
+	{
+		ltHandler.drawShadows(i, players);
+	}
+
 	basicRenderer.depthPrePass();
 	ltHandler.drawShadows(0, gameObjects, &camera);
 	//basicRenderer.changeToAnimation();

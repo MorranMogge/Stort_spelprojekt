@@ -62,6 +62,12 @@ void WinMenu::Render()
 	ui.Draw();
 }
 
+ID3D11ShaderResourceView* WinMenu::loadTexture(const std::string& fileName)
+{
+	manager.addTexture(fileName);
+	return manager.getSrv(fileName);
+}
+
 WinMenu::WinMenu() : manager(GPU::device)
 {
 	SoundLibrary::menuMusic.setVolume(0.5f);

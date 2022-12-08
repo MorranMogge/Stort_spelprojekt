@@ -11,7 +11,7 @@ private:
 	BasicRenderer basicRenderer;
 	PacketEventManager packetEventManager;
 	Client* client;
-	TempPlayerLobby playersLobby[2];
+	TempPlayerLobby playersLobby[4];
 	int currentPlayerOnlineId;
 	int currentPlayerIsReady;
 	bool ifConnected;

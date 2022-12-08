@@ -2,11 +2,11 @@
 #include "LobbyUI.h"
 #include "Lobby.h"
 #include "Client.h"
-#include "ErrorLog.h"
+//#include "ErrorLog.h"
 
 Lobby::Lobby(Client*& client)
 {
-	ErrorLog::Log("UWU");
+	//ErrorLog::Log("UWU");
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 	startGame = false;
 	client = new Client();
@@ -38,8 +38,8 @@ GAMESTATE Lobby::Update()
 	{
 		currentPlayerIsReady = -1;
 	}
-
-	if (sendTimer.getTimePassed(2.0f))
+	
+	if (sendTimer.getTimePassed(0.5f))
 	{
 		PlayerData plData;
 
@@ -52,6 +52,11 @@ GAMESTATE Lobby::Update()
 
 		sendTimer.resetStartTime();
 	}
+
+	ui.p1 = playersLobby[0].isReady;
+	ui.p2 = playersLobby[1].isReady;
+	ui.p3 = playersLobby[2].isReady;
+	ui.p3 = playersLobby[3].isReady;
 
 	this->client->setClientId(currentPlayerOnlineId);
 

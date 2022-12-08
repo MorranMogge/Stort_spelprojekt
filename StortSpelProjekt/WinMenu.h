@@ -35,6 +35,7 @@ class WinMenu : public State
 	AnimatedMesh* sexyMan;
 	AnimatedMesh* sexyMan2;
 
+	ID3D11ShaderResourceView* loadTexture(const std::string& fileName);
 	void drawFresnel();
 	void drawObjects();
 public:

@@ -75,6 +75,8 @@ private:
 	Mesh* planetMeshes;
 
 	Mesh* tmpMesh2;
+	Mesh* tmpMesh3;
+	Mesh* tmpMesh4;
 	GameObject* testCube;
 
 	//Items

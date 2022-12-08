@@ -51,6 +51,7 @@ public:
 	void setPlanetPosition(const DirectX::SimpleMath::Vector3& pos);
 	void setPlanetScale(const DirectX::SimpleMath::Vector3& s);
 	
+	void setMesh(Mesh* mesh) { this->mesh = mesh; }
 	void movePlanet(float offset);
 	//Returns the gravity field of the planet
 	GravityField* getGravityField();

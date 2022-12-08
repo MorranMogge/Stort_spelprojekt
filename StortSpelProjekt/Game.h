@@ -118,6 +118,8 @@ private:
 	void drawObjects(bool drawDebug);
 	void drawParticles();
 	void drawNormalObjects();
+	ID3D11ShaderResourceView* loadTexture(const std::string& fileName);
+
 	GAMESTATE updateComponentGame();
 	GAMESTATE startLanding();
 	GAMESTATE updateLandingGame();

@@ -63,6 +63,17 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 					std::cout << "team2 got points, total points: " << team2Score << "\n";
 				}
 
+				//Sending points to players
+				KTHPoints sendPoints;
+				sendPoints.packetId = PacketType::KTHPOINTS;
+				sendPoints.bluePoints = team1Score;
+				sendPoints.redPoints = team2Score;
+				if (blueInside && redInside) {
+					sendPoints.teamColor = 0; std::cout << "BOTH INSIDE\n";
+				}
+				else if (blueInside) sendPoints.teamColor = 1;
+				else if (redInside) sendPoints.teamColor = 2;
+				sendBinaryDataAllPlayers<KTHPoints>(sendPoints, data);
 				
 				timer = std::chrono::system_clock::now();
 			}
@@ -73,17 +84,6 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 		}
 	}
 
-	//Sending points to players
-	KTHPoints sendPoints;
-	sendPoints.packetId = PacketType::KTHPOINTS;
-	sendPoints.bluePoints = team1Score;
-	sendPoints.redPoints = team2Score;
-	if (blueInside && redInside) {
-		sendPoints.teamColor = 0; std::cout << "BOTH INSIDE\n";
-	}
-	else if (blueInside) sendPoints.teamColor = 1;
-	else if (redInside) sendPoints.teamColor = 2;
-	sendBinaryDataAllPlayers<KTHPoints>(sendPoints, data);
 
 	//Restoring color
 	if (!oneInside)

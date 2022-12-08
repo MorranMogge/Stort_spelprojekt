@@ -181,6 +181,17 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->window = &window;
 	HudUI::SetGamePad(gamePad);
 
+	//Set gamepad for item
+	for (int i = 0; i < items.size(); i++)
+	{
+		items[i]->setGamepad(this->gamePad);
+	}
+	for (int i = 0; i < components.size(); i++)
+	{
+		components[i]->setGamepad(this->gamePad);
+	}
+	
+
 	//Setup fade in and delta time
 	ui.count = 1.0f;
 	ui.setOpacity(false);
@@ -516,10 +527,30 @@ void Game::drawParticles()
 	}
 }
 
+
 ID3D11ShaderResourceView* Game::loadTexture(const std::string& fileName)
 {
 	manager.addTexture(fileName);
 	return manager.getSrv(fileName);
+}
+void Game::drawNormalObjects()
+{
+	//Draw normal mapped objects here
+
+	//
+	// 	basicRenderer.setUpSceneNormalMap(this->camera);
+
+	//Animated meshes
+	//basicRenderer.changeToAnimation();
+	//for (int i = 0; i < players.size(); i++)
+	//{
+	//	//players[i]->draw();
+	//	if (i == 0)
+	//	{
+	//		players[i]->drawSubMeshesWithTexture();
+	//	}
+	//}
+
 }
 
 void Game::drawFresnel()
@@ -1362,8 +1393,9 @@ void Game::Render()
 		break;
 
 	case KINGOFTHEHILL:
-		if (!ui.readySetGo()){ currentPlayer->isReady(false);}
+		if (!ui.readySetGo()) { currentPlayer->isReady(false);  }
 		else { currentPlayer->isReady(true); }
+		ui.setKTH(true);
 		ui.DrawFade();
 		break;
 

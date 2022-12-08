@@ -2,16 +2,16 @@
 #include "Item.h"
 
 
-Item::Item(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, const int& onlineType, GravityField* field)
-	:GameObject(useMesh, pos, rot, id, field), pickedUp(false), itemIcon(nullptr), particles(nullptr), withinPlayerReach(false), onlineId(onlineId),onlineType(onlineType)
+Item::Item(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, const int& onlineType, GravityField* field, DirectX::GamePad* gamePad)
+	:GameObject(useMesh, pos, rot, id, field), pickedUp(false), itemIcon(nullptr), particles(nullptr), withinPlayerReach(false), onlineId(onlineId),onlineType(onlineType), gamePad(gamePad)
 {
 	//Initilize timer
 	tStruct.startTime;
 }
 
 
-Item::Item(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, const int& onlineType, GravityField* field)
-	:GameObject(objectPath, pos, rot, id, field), pickedUp(false), itemIcon(nullptr), particles(nullptr), withinPlayerReach(false), onlineId(onlineId), onlineType(onlineType)
+Item::Item(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, const int& onlineType, GravityField* field, DirectX::GamePad* gamePad)
+	:GameObject(objectPath, pos, rot, id, field), pickedUp(false), itemIcon(nullptr), particles(nullptr), withinPlayerReach(false), onlineId(onlineId), onlineType(onlineType),gamePad(gamePad)
 {
 	//Initilize timer
 	tStruct.startTime;
@@ -35,9 +35,21 @@ void Item::drawIcon()
 {
 	if (this->itemIcon != nullptr && !pickedUp)
 	{
-		if (withinPlayerReach)
+		if (withinPlayerReach && this->gamePad == nullptr)
 		{
 			this->itemIcon->bindAndDraw(2, 0);
+		}
+		else if (this->gamePad != nullptr && withinPlayerReach)
+		{
+			auto state = this->gamePad->GetState(0);
+			if ( state.IsConnected())
+			{
+				this->itemIcon->bindAndDraw(3, 0);
+			}
+			else
+			{
+				this->itemIcon->bindAndDraw(2, 0);
+			}
 		}
 		else
 		{
@@ -84,6 +96,11 @@ void Item::checkDistance(GameObject* playerToCheck)
 
 void Item::throwItem()
 {
+}
+
+void Item::setGamepad(DirectX::GamePad*& gamePad)
+{
+	this->gamePad = gamePad;
 }
 
 int Item::getOnlineType() const

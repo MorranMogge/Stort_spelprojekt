@@ -114,5 +114,5 @@ public:
 	bool getAnimData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces, AnimationData& AnimData);
 	std::vector<ID3D11Buffer*> getBuff() const;
 	void setDevice(ID3D11Device* device);
-	
+	bool addTexture(const std::string& fileName);
 };

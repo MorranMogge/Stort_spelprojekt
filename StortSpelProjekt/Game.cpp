@@ -39,6 +39,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->manager.getMeshData("../Meshes/goblin2.fbx", vBuff, iBuff, subMeshRanges, verticies);
 	manager.loadMeshData("../Meshes/Sphere_with_normal.fbx");
 	manager.getMeshData("../Meshes/Sphere_with_normal.fbx", vBuff, iBuff, subMeshRanges, verticies);
+	manager.addTexture("p6n.png");
+
 	tmpMesh2 = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	testCube = new GameObject(tmpMesh2, DirectX::XMFLOAT3(0, 69, 0), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), 5, nullptr, DirectX::XMFLOAT3(5.0f, 5.0f, 5.0f));
 	testCube->setSrv(this->manager.getSrv("p6.png"));

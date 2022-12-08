@@ -672,3 +672,17 @@ bool ModelManager::getAnimData(const std::string& filePath, ID3D11Buffer*& verte
 	AnimData = aniData;
 	return	true;
 }
+
+bool ModelManager::addTexture(const std::string& fileName)
+{
+	std::string filePath = "../Textures/";
+	filePath.append(fileName);
+	if (bank.hasItem(fileName) == false)
+	{
+		ID3D11ShaderResourceView* tempSRV = {};
+		this->makeSRV(tempSRV, filePath);
+		this->bank.addSrv(fileName, tempSRV);
+		return true;
+	}
+	return false;
+}

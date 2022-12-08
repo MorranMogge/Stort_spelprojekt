@@ -27,12 +27,20 @@ void LobbyUI::SpritePass()
 	p3 ? player3_checkbox_true.Draw() : player3_checkbox_false.Draw();
 	p4 ? player4_checkbox_true.Draw() : player4_checkbox_false.Draw();
 
+	p1_connect ? player1_checkbox_true_r.Draw() : player1_checkbox_false_r.Draw();
+	p2_connect ? player2_checkbox_true_r.Draw() : player2_checkbox_false_r.Draw();
+	p3_connect ? player3_checkbox_true_r.Draw() : player3_checkbox_false_r.Draw();
+	p4_connect ? player4_checkbox_true_r.Draw() : player4_checkbox_false_r.Draw();
+
 	player1.Draw();
 	player2.Draw();
 	player3.Draw();
 	player4.Draw();
 
-
+	readyText1.Draw();
+	readyText2.Draw();
+	readyText3.Draw();
+	readyText4.Draw();
 	//connectedPlayersText.Draw();
 
 //	std::string number = std::to_string(connectedPlayers);
@@ -119,6 +127,7 @@ LobbyUI::LobbyUI()
 #define centerX 632
 #define centerY 340
 #define scale 0.3f,0.3f
+#define scale2 0.5f,0.5f
 	Loading = GUISprite(centerX, centerY);
 	Loading.Load(GPU::device, L"../Sprites/Loding.png");
 	Loading.SetScale(1, 1);
@@ -143,6 +152,23 @@ LobbyUI::LobbyUI()
 	ready2_r.Load(GPU::device, L"../Sprites/Menu/ready2_r.png");
 	ready2_r.SetScale(scale);
 
+	readyText1 = GUISprite(centerX + 100, centerY - 200);
+	readyText1.Load(GPU::device, L"../Sprites/Lobby/readyText.png");
+	readyText1.SetScale(scale2);
+
+	readyText2 = GUISprite(centerX + 100, centerY - 150);
+	readyText2.Load(GPU::device, L"../Sprites/Lobby/readyText.png");
+	readyText2.SetScale(scale2);
+
+	readyText3 = GUISprite(centerX + 100, centerY - 100);
+	readyText3.Load(GPU::device, L"../Sprites/Lobby/readyText.png");
+	readyText3.SetScale(scale2);
+
+	readyText4 = GUISprite(centerX + 100, centerY - 50);
+	readyText4.Load(GPU::device, L"../Sprites/Lobby/readyText.png");
+	readyText4.SetScale(scale2);
+	
+
 	checkbox_false = GUISprite(centerX - 150, centerY + 200);
 	checkbox_false.Load(GPU::device, L"../Sprites/box_unchecked2.png");
 	checkbox_false.SetScale(0.75f, 0.75f);
@@ -163,6 +189,22 @@ LobbyUI::LobbyUI()
 	player4_checkbox_false.Load(GPU::device, L"../Sprites/box_unchecked2.png");
 	player4_checkbox_false.SetScale(0.75f, 0.75f);
 
+	player1_checkbox_false_r = GUISprite(centerX + 250, centerY - 200);
+	player1_checkbox_false_r.Load(GPU::device, L"../Sprites/box_unchecked2.png");
+	player1_checkbox_false_r.SetScale(0.75f, 0.75f);
+
+	player2_checkbox_false_r = GUISprite(centerX + 250, centerY - 150);
+	player2_checkbox_false_r.Load(GPU::device, L"../Sprites/box_unchecked2.png");
+	player2_checkbox_false_r.SetScale(0.75f, 0.75f);
+
+	player3_checkbox_false_r = GUISprite(centerX + 250, centerY - 100);
+	player3_checkbox_false_r.Load(GPU::device, L"../Sprites/box_unchecked2.png");
+	player3_checkbox_false_r.SetScale(0.75f, 0.75f);
+
+	player4_checkbox_false_r = GUISprite(centerX + 250, centerY - 50);
+	player4_checkbox_false_r.Load(GPU::device, L"../Sprites/box_unchecked2.png");
+	player4_checkbox_false_r.SetScale(0.75f, 0.75f);
+
 	checkbox_true = GUISprite(centerX - 150, centerY + 200);
 	checkbox_true.Load(GPU::device, L"../Sprites/box_checked2.png");
 	checkbox_true.SetScale(0.75f, 0.75f);
@@ -182,6 +224,22 @@ LobbyUI::LobbyUI()
 	player4_checkbox_true = GUISprite(centerX - 50, centerY - 50);
 	player4_checkbox_true.Load(GPU::device, L"../Sprites/box_checked2.png");
 	player4_checkbox_true.SetScale(0.75f, 0.75f);
+
+	player1_checkbox_true_r = GUISprite(centerX + 250, centerY - 200);
+	player1_checkbox_true_r.Load(GPU::device, L"../Sprites/box_checked2.png");
+	player1_checkbox_true_r.SetScale(0.75f, 0.75f);
+
+	player2_checkbox_true_r = GUISprite(centerX + 250, centerY - 150);
+	player2_checkbox_true_r.Load(GPU::device, L"../Sprites/box_checked2.png");
+	player2_checkbox_true_r.SetScale(0.75f, 0.75f);
+
+	player3_checkbox_true_r = GUISprite(centerX + 250, centerY - 100);
+	player3_checkbox_true_r.Load(GPU::device, L"../Sprites/box_checked2.png");
+	player3_checkbox_true_r.SetScale(0.75f, 0.75f);
+
+	player4_checkbox_true_r = GUISprite(centerX + 250, centerY - 50);
+	player4_checkbox_true_r.Load(GPU::device, L"../Sprites/box_checked2.png");
+	player4_checkbox_true_r.SetScale(0.75f, 0.75f);
 
 	player1 = GUISprite(centerX - 200, centerY - 200);
 	player1.Load(GPU::device, L"../Sprites/Lobby/Player1.png");

@@ -52,11 +52,16 @@ GAMESTATE Lobby::Update()
 
 		sendTimer.resetStartTime();
 	}
+	
+	ui.p1_connect = playersLobby[0].isReady;
+	ui.p2_connect = playersLobby[1].isReady;
+	ui.p3_connect = playersLobby[2].isReady;
+	ui.p4_connect = playersLobby[3].isReady;
 
-	ui.p1 = playersLobby[0].isReady;
-	ui.p2 = playersLobby[1].isReady;
-	ui.p3 = playersLobby[2].isReady;
-	ui.p4 = playersLobby[3].isReady;
+	ui.p1 = playersLobby[0].isConnected;
+	ui.p2 = playersLobby[1].isConnected;
+	ui.p3 = playersLobby[2].isConnected;
+	ui.p4 = playersLobby[3].isConnected;
 
 	this->client->setClientId(currentPlayerOnlineId);
 

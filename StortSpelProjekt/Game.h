@@ -7,7 +7,6 @@ struct wirefameInfo
 	float padding;
 };
 
-
 static bool IFONLINE = true;
 
 class Game : public State

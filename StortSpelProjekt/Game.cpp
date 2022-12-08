@@ -1180,6 +1180,10 @@ GAMESTATE Game::Update()
 	{
 		return WIN;
 	}
+	if (Input::KeyPress(KeyCode::O))
+	{
+		return LOSE;
+	}
 
 	//Simulate the current minigame on client side
 	switch (currentMinigame)

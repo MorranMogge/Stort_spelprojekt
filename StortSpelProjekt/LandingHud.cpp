@@ -17,26 +17,77 @@ LandingHud::LandingHud()
 	landing2.Load(L"../Sprites/ship.png");
 	landing2.SetScale(0.2f, 0.2f);
 
-	wheel_L = GUISprite(325, 320);
+	wheel_L = GUISprite(225, 320);
 	wheel_L.Load(L"../Sprites/control/L_wheel.png");
 	wheel_L.SetScale(0.4f, 0.4f);
 
-	arrow = GUISprite(325, 430);
+	arrow = GUISprite(225, 430);
 	arrow.Load(L"../Sprites/arrow_g.png");
 	arrow.SetScale(0.4f, 0.4f);
 	arrow.SetRotation(3.1415926f);
 
-	arrow2 = GUISprite(325, 210);
+	arrow2 = GUISprite(225, 210);
 	arrow2.Load(L"../Sprites/arrow_o.png");
 	arrow2.SetScale(0.4f, 0.4f);
 
-	Skey = GUISprite(325, 360);
+	Skey = GUISprite(225, 360);
 	Skey.Load(L"../Sprites/Skey.png");
 	Skey.SetScale(0.4f, 0.4f);
 
-	Wkey = GUISprite(325, 280);
+	Wkey = GUISprite(225, 280);
 	Wkey.Load(L"../Sprites/Wkey.png");
 	Wkey.SetScale(0.4f, 0.4f);
+
+#define nrScale 0.8f
+	n0 = GUISprite(0, 340 - 0);
+	n0.Load(L"../Sprites/Numbers/0.png");
+	n0.SetScale(nrScale, nrScale);
+	n0.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+	n1 = GUISprite(0, 340 - 0);
+	n1.Load(L"../Sprites/Numbers/1.png");
+	n1.SetScale(nrScale, nrScale);
+	n1.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+	n2 = GUISprite(0, 340 - 0);
+	n2.Load(L"../Sprites/Numbers/2.png");
+	n2.SetScale(nrScale, nrScale);
+	n2.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+	n3 = GUISprite(0, 340 - 0);
+	n3.Load(L"../Sprites/Numbers/3.png");
+	n3.SetScale(nrScale, nrScale);
+	n3.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+	n4 = GUISprite(0, 340 - 0);
+	n4.Load(L"../Sprites/Numbers/4.png");
+	n4.SetScale(nrScale, nrScale);
+	n4.SetTint(DirectX::SimpleMath::Color(0,1,0));
+
+	n5 = GUISprite(0, 340 - 0);
+	n5.Load(L"../Sprites/Numbers/5.png");
+	n5.SetScale(nrScale, nrScale);
+	n5.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+	n6 = GUISprite(0, 340 - 0);
+	n6.Load(L"../Sprites/Numbers/6.png");
+	n6.SetScale(nrScale, nrScale);
+	n6.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+	n7 = GUISprite(0, 340 - 0);
+	n7.Load(L"../Sprites/Numbers/7.png");
+	n7.SetScale(nrScale, nrScale);
+	n7.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+	n8 = GUISprite(0, 340 - 0);
+	n8.Load(L"../Sprites/Numbers/8.png");
+	n8.SetScale(nrScale, nrScale);
+	n8.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+	n9 = GUISprite(0, 340 - 0);
+	n9.Load(L"../Sprites/Numbers/9.png");
+	n9.SetScale(nrScale, nrScale);
+	n9.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
 
 	this->targetTime = 0;
 	this->currentTime = 0;
@@ -44,6 +95,12 @@ LandingHud::LandingHud()
 
 LandingHud::~LandingHud()
 {
+}
+
+void LandingHud::setLandingScore(int score)
+{
+	setScore = true;
+	this->ggop = score;
 }
 
 void LandingHud::makeGamePad(DirectX::GamePad* gamePad)
@@ -167,6 +224,108 @@ void LandingHud::draw()
 		Wkey.Draw();
 		arrow.Draw();
 		arrow2.Draw();
+	}
+
+	std::string number = std::to_string(ggop++);
+	for (int i = 0; i < number.size(); i++)
+	{
+		static float textSpace = 22.0f;
+#define posY1 100
+#define posX1 210 + (i * textSpace)
+		if (ggop % 100 == 0 && setScore)
+		{
+			textSpace++;
+			n0.SetScale(n0.GetScale().x + 0.15f, n0.GetScale().y + 0.15f);
+			n1.SetScale(n1.GetScale().x + 0.15f, n1.GetScale().y + 0.15f);
+			n2.SetScale(n2.GetScale().x + 0.15f, n2.GetScale().y + 0.15f);
+			n3.SetScale(n3.GetScale().x + 0.15f, n3.GetScale().y + 0.15f);
+			n4.SetScale(n4.GetScale().x + 0.15f, n4.GetScale().y + 0.15f);
+			n5.SetScale(n5.GetScale().x + 0.15f, n5.GetScale().y + 0.15f);
+			n6.SetScale(n6.GetScale().x + 0.15f, n6.GetScale().y + 0.15f);
+			n7.SetScale(n7.GetScale().x + 0.15f, n7.GetScale().y + 0.15f);
+			n8.SetScale(n8.GetScale().x + 0.15f, n8.GetScale().y + 0.15f);
+			n9.SetScale(n9.GetScale().x + 0.15f, n9.GetScale().y + 0.15f);
+		}
+		if (ggop % 110 == 0 && setScore)
+		{
+			n0.SetScale(n0.GetScale().x - 0.1f, n0.GetScale().y - 0.1f);
+			n1.SetScale(n1.GetScale().x - 0.1f, n1.GetScale().y - 0.1f);
+			n2.SetScale(n2.GetScale().x - 0.1f, n2.GetScale().y - 0.1f);
+			n3.SetScale(n3.GetScale().x - 0.1f, n3.GetScale().y - 0.1f);
+			n4.SetScale(n4.GetScale().x - 0.1f, n4.GetScale().y - 0.1f);
+			n5.SetScale(n5.GetScale().x - 0.1f, n5.GetScale().y - 0.1f);
+			n6.SetScale(n6.GetScale().x - 0.1f, n6.GetScale().y - 0.1f);
+			n7.SetScale(n7.GetScale().x - 0.1f, n7.GetScale().y - 0.1f);
+			n8.SetScale(n8.GetScale().x - 0.1f, n8.GetScale().y - 0.1f);
+			n9.SetScale(n9.GetScale().x - 0.1f, n9.GetScale().y - 0.1f);
+			setScore = false;
+		}
+		switch (number.at(i))
+		{
+
+		case '0':
+		{
+			n0.SetPosition({ posX1, posY1 });
+			n0.Draw();
+
+		}break;
+
+		case '1':
+		{
+			n1.SetPosition({ posX1, posY1 });
+			n1.Draw();
+		}break;
+
+		case '2':
+		{
+			n2.SetPosition({ posX1, posY1 });
+			n2.Draw();
+		}break;
+
+		case '3':
+		{
+			n3.SetPosition({ posX1, posY1 });
+			n3.Draw();
+		}break;
+
+		case '4':
+		{
+			n4.SetPosition({ posX1, posY1 });
+			n4.Draw();
+		}break;
+
+		case '5':
+		{
+			n5.SetPosition({ posX1, posY1 });
+			n5.Draw();
+		}break;
+
+		case '6':
+		{
+			n6.SetPosition({ posX1, posY1 });
+			n6.Draw();
+		}break;
+
+		case '7':
+		{
+			n7.SetPosition({ posX1, posY1 });
+			n7.Draw();
+		}break;
+
+		case '8':
+		{
+			n8.SetPosition({ posX1, posY1 });
+			n8.Draw();
+		}break;
+
+		case '9':
+		{
+			n9.SetPosition({ posX1, posY1 });
+			n9.Draw();
+		}break;
+
+		}
+
 	}
 
 

@@ -149,8 +149,6 @@
     <ClCompile Include="LoseMenu.cpp">
       <Filter>Game-States</Filter>
     </ClCompile>
-    <ClCompile Include="Asteroid.cpp" />
-    <ClCompile Include="AsteroidHandler.cpp" />
     <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="PlanetGenerator.cpp" />
     <ClCompile Include="Planet.cpp" />
@@ -195,6 +193,12 @@
     </ClCompile>
     <ClCompile Include="LobbyUI.cpp">
       <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Asteroid.cpp">
+      <Filter>Astroid</Filter>
+    </ClCompile>
+    <ClCompile Include="AsteroidHandler.cpp">
+      <Filter>Astroid</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -483,8 +487,6 @@
     <ClInclude Include="PacketEnum.h">
       <Filter>Online</Filter>
     </ClInclude>
-    <ClInclude Include="Asteroid.h" />
-    <ClInclude Include="AsteroidHandler.h" />
     <ClInclude Include="Arrow.h" />
     <ClInclude Include="Credits.h" />
     <ClInclude Include="Planet.h" />
@@ -510,6 +512,12 @@
     </ClInclude>
     <ClInclude Include="LobbyUI.h">
       <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Asteroid.h">
+      <Filter>Astroid</Filter>
+    </ClInclude>
+    <ClInclude Include="AsteroidHandler.h">
+      <Filter>Astroid</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -566,6 +574,9 @@
     </Filter>
     <Filter Include="Online">
       <UniqueIdentifier>{8dc99f62-6498-4f24-915a-6c0d232cf63d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Astroid">
+      <UniqueIdentifier>{4a8c334f-f285-4d6e-ad83-9a6e8cbb40fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

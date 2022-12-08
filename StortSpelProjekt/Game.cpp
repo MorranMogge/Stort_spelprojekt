@@ -1176,6 +1176,7 @@ GAMESTATE Game::Update()
 		currentMinigame = KINGOFTHEHILL;
 	}
 
+
 	if (Input::KeyPress(KeyCode::P))
 	{
 		return WIN;

@@ -561,7 +561,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
 		this->velocity = this->normalVector * 35.f;
-		this->position += this->normalVector * 1.6f;
+		this->position += this->normalVector * 1.5f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
 
@@ -792,7 +792,7 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		if (onGround && state.IsAPressed())
 		{
 			this->velocity = this->normalVector * 35.f;
-			this->position += this->normalVector * 1.6f;
+			this->position += this->normalVector * 1.5f;
 			if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 		}
 

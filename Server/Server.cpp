@@ -448,6 +448,7 @@ int main()
 							", z" << std::to_string(onlineItems[i]->getPosXMFLOAT3().z) << std::endl;
 						if (cmpDropped->randomizePos == 0) onlineItems[i]->setPosition(cmpDropped->xPos, cmpDropped->yPos, cmpDropped->zPos);
 						else if (cmpDropped->randomizePos == 1) onlineItems[i]->setPosition(newRandomPos.x, newRandomPos.y, newRandomPos.z);
+						onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
 						for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
 						{
 							//skicka att en spelare har droppat en component till alla spelare förutom spelaren som droppat componenten eftersom den redan är droppad
@@ -484,6 +485,7 @@ int main()
 							sendConfirmComponentData.packetId = PacketType::COMPONENTCONFIRMEDPICKUP;
 							sendBinaryDataAllPlayers<ConfirmComponentPickedUp>(sendConfirmComponentData, data);
 							onlineItems[i]->setInUseBy(requestingCmpPickedUp->playerId);
+							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 						}
 						else
 						{

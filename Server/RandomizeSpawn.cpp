@@ -18,9 +18,9 @@ DirectX::XMFLOAT3 randomizeObjectPos()
     randomPos.Normalize();
     randomPos *= 50;
 
-    position.x = randomPos.x;
-    position.y = randomPos.y;
-    position.z = randomPos.z;
+    position.x = 0;//randomPos.x;
+    position.y = 75;//randomPos.y;
+    position.z = 0;//randomPos.z;
 
     return position;
 }

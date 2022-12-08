@@ -28,10 +28,15 @@ GAMESTATE Lobby::Update()
 
 	this->packetEventManager.TempLobbyHandleEvents(this->client->getCircularBuffer(), tmp, this->playersLobby, currentPlayerOnlineId, startGame);
 
-	if (Input::KeyPress(KeyCode::R))
+	if (ui.ready)
 	{
 		currentPlayerIsReady = 0;
 	}
+	else
+	{
+		currentPlayerIsReady = -1;
+	}
+
 	if (sendTimer.getTimePassed(2.0f))
 	{
 		PlayerData plData;
@@ -49,7 +54,12 @@ GAMESTATE Lobby::Update()
 	this->client->setClientId(currentPlayerOnlineId);
 
 
-	if (startGame) return GAME;
+	if (startGame)
+	{
+		ui.isLoading = true;// display loading screen
+		return GAME;
+	}
+
 
 	return NOCHANGE;
 }

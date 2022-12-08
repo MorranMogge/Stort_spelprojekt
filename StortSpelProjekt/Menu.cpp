@@ -7,7 +7,7 @@
 #include "SoundLibrary.h"
 
 Menu::Menu()
-	:cam(Camera())
+	:cam(Camera()), manager(GPU::device)
 {
 	SoundLibrary::menuMusic.setVolume(0.5f);
 	SoundLibrary::menuMusic.play(true);
@@ -16,6 +16,9 @@ Menu::Menu()
 	meshes.push_back(new Mesh("../Meshes/astroid"));
 	meshes.push_back(new Mesh("../Meshes/N1"));
 
+	manager.loadMeshData("../Meshes/Sphere_with_normal.fbx");
+	manager.getMeshData("../Meshes/Sphere_with_normal.fbx", vBuff, iBuff, subMeshRanges, verticies);
+	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -29,7 +32,8 @@ Menu::Menu()
 		planets[i]->setRotationSpeed(DirectX::SimpleMath::Vector3(0.000f * i, 0.002f * (4-i), 0.000f * i));
 	}
 	planets.push_back(new Planet(meshes[0], DirectX::XMFLOAT3(40, 40, 40), DirectX::XMFLOAT3(-130, -30.f, 0.f), (4.0f * 9.82f), meshes[1]));
-	
+	//planets.back()->setSrv
+
 	planets.back()->setPlanetPosition({0 ,0,-0});
 	//planets.back()->setPlanetScale({ 1, 1, 1 });
 	cam.setPosition(DirectX::XMFLOAT3(0, 0, -140));
@@ -51,6 +55,7 @@ Menu::~Menu()
 	{
 		delete meshes[i];
 	}
+	delete tmpMesh;
 }
 
 GAMESTATE Menu::Update()

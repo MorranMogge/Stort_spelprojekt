@@ -42,6 +42,7 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 		subtractionXMFLOAT3(playerPos, kingOfTheHillOrigo);
 		if (getLength(playerPos) <= radius)
 		{
+			oneInside = true;
 			int playerTeam;
 			playerTeam = (MAXNUMBEROFPLAYERS) / 2;
 			playerTeam = (int)(playerTeam < i + 1);

@@ -28,6 +28,7 @@ private:
 	DirectX::SimpleMath::Vector3 resultVector;
 	DirectX::SimpleMath::Vector3 angleVector;
 	DirectX::SimpleMath::Vector3 velocity; //FINALLY ADDED THIS F*****G STUPID VARIABLE
+	DirectX::SimpleMath::Vector3 startPosition;
 	
 	//Player rotation
 	DirectX::XMMATRIX rotationMX;
@@ -62,8 +63,8 @@ private:
 	TimeStruct timer;
 	TimeStruct keyPressTimer;
 	Item* holdingItem;
-	
 
+	TimeStruct orbitTimer;
 	ParticleEmitter* particles;
 	ParticleEmitter* particles2;
 	BilboardObject* playerIcon;
@@ -94,6 +95,7 @@ private:
 	TimeStruct dropTimer;
 	bool usedItem = true;
 	bool throwingItem = false;
+	bool n1 = true;
 
 private:
 	void throwItem();
@@ -121,8 +123,10 @@ public:
 	void setTeam(const int& team);
 	void setVibration(float vibration1, float vibration2);
 	void setGamePad(DirectX::GamePad* gamePad);
+
 	void isReady(bool ready);
-	
+	void setStartPosition(DirectX::SimpleMath::Vector3 startPosition);
+
 	//Get Functions
 	reactphysics3d::Vector3 getRayCastPos()const;
 	DirectX::XMVECTOR getUpVector() const;
@@ -152,6 +156,7 @@ public:
 	bool raycast(const std::vector<SpaceShip*>& gameObjects, const std::vector<Planet*>& planets, DirectX::XMFLOAT3& hitPos, DirectX::XMFLOAT3& hitNormal);
 	bool withinRadius(Item* itemToLookWithinRadius, const float& radius) const;
 	void colliedWIthComponent(const std::vector<Component*>& components);
+	void orbiting();
 
 	void stateMachine(const float dt);
 	void giveItemMatrix();

@@ -44,8 +44,8 @@ public:
 
 	void setClientId(int nr);
 
-	void connectToServer(std::string ipAddress, int port);
-	void connectToServer();
+	bool connectToServer(std::string ipAddress, int port);
+	bool connectToServer();
 	void joinThread();
 	void setIpAndPort(std::string ipAddress, int port);
 	void setIdentifier(std::string id);

@@ -21,6 +21,7 @@ void Player::throwItem()
 	c.componentId = this->holdingItem->getOnlineId();
 	c.packetId = PacketType::COMPONENTDROPPED;
 	c.playerId = this->onlineID;
+	c.randomizePos = 0;
 	c.xPos = this->holdingItem->getPosV3().x;
 	c.yPos = this->holdingItem->getPosV3().y;
 	c.zPos = this->holdingItem->getPosV3().z;
@@ -90,11 +91,12 @@ void Player::handleItems()
 			this->throwingItem = true;
 		}
 		//Use item
-		else if (this->holdingItem != nullptr && tracker.x == ButtonState::PRESSED)
+		else if (keyPressTimer.getTimePassed(0.1f) && tracker.x == ButtonState::PRESSED && n1)
 		{
 			keyPressTimer.resetStartTime();
 			if (holdingItem->getId() == BAT)
 			{
+				n1 = false;
 				this->usingBat = true;
 				this->usedItem = false;
 				this->dropTimer.resetStartTime();
@@ -112,6 +114,8 @@ void Player::handleItems()
 				c.componentId = this->holdingItem->getOnlineId();
 				c.packetId = PacketType::COMPONENTDROPPED;
 				c.playerId = this->onlineID;
+				if (holdingItem->getId() == GRENADE || holdingItem->getId() == COMPONENT) c.randomizePos = 0;
+				else c.randomizePos = 1;
 				c.xPos = this->holdingItem->getPosV3().x;
 				c.yPos = this->holdingItem->getPosV3().y;
 				c.zPos = this->holdingItem->getPosV3().z;
@@ -138,7 +142,7 @@ void Player::handleItems()
 				useGrenade.yForce = temp.y * FORCE;
 				useGrenade.zForce = temp.z * FORCE;
 
-				//client->sendStuff<UseGrenade>(useGrenade);
+				client->sendStuff<UseGrenade>(useGrenade);
 
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -163,11 +167,12 @@ void Player::handleItems()
 			this->throwingItem = true;
 		}
 		//Use the Item
-		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))
+		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E) && n1)
 		{
 			keyPressTimer.resetStartTime();
 			if (holdingItem->getId() == BAT && usedItem)
 			{
+				n1 = false;
 				this->usingBat = true;
 				this->usedItem = false;
 				this->dropTimer.resetStartTime();
@@ -185,6 +190,8 @@ void Player::handleItems()
 				c.componentId = this->holdingItem->getOnlineId();
 				c.packetId = PacketType::COMPONENTDROPPED;
 				c.playerId = this->onlineID;
+				if (holdingItem->getId() == GRENADE || holdingItem->getId() == COMPONENT) c.randomizePos = 0;
+				else c.randomizePos = 1;
 				c.xPos = this->holdingItem->getPosV3().x;
 				c.yPos = this->holdingItem->getPosV3().y;
 				c.zPos = this->holdingItem->getPosV3().z;
@@ -212,7 +219,7 @@ void Player::handleItems()
 				useGrenade.yForce = temp.y * FORCE;
 				useGrenade.zForce = temp.z * FORCE;
 
-				//client->sendStuff<UseGrenade>(useGrenade);
+				client->sendStuff<UseGrenade>(useGrenade);
 
 				//Set dynamic so it can be affected by forces
 				this->holdingItem->getPhysComp()->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -249,6 +256,7 @@ void Player::handleItems()
 		c.componentId = this->holdingItem->getOnlineId();
 		c.packetId = PacketType::COMPONENTDROPPED;
 		c.playerId = this->onlineID;
+		c.randomizePos = 1;
 		c.xPos = this->holdingItem->getPosV3().x;
 		c.yPos = this->holdingItem->getPosV3().y;
 		c.zPos = this->holdingItem->getPosV3().z;
@@ -259,6 +267,7 @@ void Player::handleItems()
 		}
 		holdingItem->setPickedUp(false);
 		holdingItem = nullptr;
+		n1 = true;
 	}
 }
 
@@ -274,6 +283,7 @@ Player::Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3
 	playerHitSound.load(L"../Sounds/mixkit-sick-man-sneeze-2213.wav");
 	//walkingSound.setVolume(0.25f);
 
+	this->startPosition = pos;
 	this->onlineID = onlineId;
 	this->rotationMX = XMMatrixIdentity();
 	this->rotation = XMMatrixIdentity();
@@ -569,9 +579,8 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Jumping
 	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
-		onGround = false;
-		this->velocity = this->normalVector * 40.f;
-		this->position += this->normalVector * 1.8f;
+		this->velocity = this->normalVector * 35.f;
+		this->position += this->normalVector * 1.5f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
 
@@ -802,9 +811,8 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		//Jumping
 		if (onGround && state.IsAPressed())
 		{
-			onGround = false;
-			this->velocity = this->normalVector * 40.f;
-			this->position += this->normalVector * 1.8f;
+			this->velocity = this->normalVector * 35.f;
+			this->position += this->normalVector * 1.5f;
 			if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 		}
 
@@ -1041,7 +1049,7 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 
 	this->physComp->setType(reactphysics3d::BodyType::DYNAMIC);
 	this->dedge = true;
-	if (state.IsConnected()) this->gamePad->SetVibration(0, 0.1f, 0.1f, 0.f, 0.f);
+	if (state.IsConnected()) this->gamePad->SetVibration(0, 0.5f, 0.5f, 0.f, 0.f);
 	this->physComp->applyForceToCenter(force);
 	this->physComp->applyWorldTorque(force);
 	timer.resetStartTime();
@@ -1052,6 +1060,7 @@ void Player::hitByBat(const reactphysics3d::Vector3& force)
 		cDropped.packetId = COMPONENTDROPPED;
 		cDropped.playerId = this->onlineID;
 		cDropped.componentId = this->holdingItem->getOnlineId();
+		cDropped.randomizePos = 0;
 		cDropped.xPos = this->holdingItem->getPosV3().x;
 		cDropped.yPos = this->holdingItem->getPosV3().y;
 		cDropped.zPos = this->holdingItem->getPosV3().z;
@@ -1194,6 +1203,28 @@ void Player::colliedWIthComponent(const std::vector<Component*>& components)
 	bool collided = false;
 	for (int i = 0; i < components.size(); i++) collided = this->physComp->testBodiesOverlap(components[i]->getPhysComp());
 	if (collided) this->setSpeed(this->speed * 0.5f);
+}
+
+void Player::orbiting()
+{
+	if (!onGround)
+	{
+		if (orbitTimer.getTimePassed(10.f))
+		{
+			std::cout << "SETTING BACK TO PLANET\n";
+			this->physComp->resetForce();
+			this->physComp->resetTorque();
+			this->physComp->setType(reactphysics3d::BodyType::STATIC);
+			this->resetRotationMatrix();
+			this->position = startPosition;
+			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
+			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
+			this->resetVelocity();
+			orbitTimer.resetStartTime();
+			onGround = true;
+		}
+	}
+	else orbitTimer.resetStartTime();
 }
 
 void Player::stateMachine(const float dt)
@@ -1422,7 +1453,7 @@ void Player::update()
 			this->physComp->resetTorque();
 			this->physComp->setType(reactphysics3d::BodyType::STATIC);
 			this->resetRotationMatrix();
-			this->position = DirectX::SimpleMath::Vector3(0, 69, 0);
+			this->position = startPosition;
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
 		}
@@ -1475,9 +1506,16 @@ void Player::setGamePad(DirectX::GamePad* gamePad)
 	this->gamePad = gamePad;
 }
 
+
 void Player::isReady(bool ready)
 {
 	this->ready = ready;
+}
+
+void Player::setStartPosition(DirectX::SimpleMath::Vector3 startPosition)
+{
+	this->startPosition = startPosition;
+
 }
 
 void Player::requestingPickUpItem(const std::vector<Item*>& items)

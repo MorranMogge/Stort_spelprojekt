@@ -20,6 +20,7 @@
     <ClCompile Include="Potion.cpp" />
     <ClCompile Include="KingOfTheHillMiniGame.cpp" />
     <ClCompile Include="BaseballBat.cpp" />
+    <ClCompile Include="GetPlayerData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseBallBat.h" />
@@ -43,5 +44,8 @@
     <ClInclude Include="TimeStruct.h" />
     <ClInclude Include="Grenade.h" />
     <ClInclude Include="Potion.h" />
+    <ClInclude Include="KingOfTheHillMiniGame.h" />
+    <ClInclude Include="sendDataFunctions.h" />
+    <ClInclude Include="GetPlayerData.h" />
   </ItemGroup>
 </Project>

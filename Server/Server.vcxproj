@@ -146,6 +146,7 @@
     <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
+    <ClCompile Include="GetPlayerData.cpp" />
     <ClCompile Include="Grenade.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="KingOfTheHillMiniGame.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="GameObject.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="GetPlayerData.h" />
     <ClInclude Include="Grenade.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="KingOfTheHillMiniGame.h" />

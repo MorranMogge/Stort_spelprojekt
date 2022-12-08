@@ -41,6 +41,7 @@ Grenade::Grenade(Mesh* useMesh, Mesh* expMesh, const DirectX::XMFLOAT3& pos, con
 	this->colorBuffer.getData() = DirectX::XMFLOAT4(1 ,0.25 ,0 , 0.5);
 	this->colorBuffer.applyData();
 
+
 	//Set meshes & materials
 	this->redMesh->matKey[0] = "Red.png";
 	this->mesh->matKey[0] = "olive.jpg";

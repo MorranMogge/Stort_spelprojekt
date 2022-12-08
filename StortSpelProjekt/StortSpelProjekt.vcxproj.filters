@@ -149,6 +149,8 @@
     <ClCompile Include="LoseMenu.cpp">
       <Filter>Game-States</Filter>
     </ClCompile>
+    <ClCompile Include="Asteroid.cpp" />
+    <ClCompile Include="AsteroidHandler.cpp" />
     <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="PlanetGenerator.cpp" />
     <ClCompile Include="Planet.cpp" />
@@ -175,6 +177,7 @@
     </ClCompile>
     <ClCompile Include="ControlMenu.cpp" />
     <ClCompile Include="ControlUI.cpp" />
+    <ClCompile Include="LandingHud.cpp" />
     <ClCompile Include="PacketEventManager.cpp">
       <Filter>Online</Filter>
     </ClCompile>
@@ -182,23 +185,11 @@
     <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="AnimatedMesh.cpp" />
     <ClCompile Include="CaptureZone.cpp" />
-    <ClCompile Include="LandingHud.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="MiniGameUI.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
     <ClCompile Include="Lobby.cpp">
       <Filter>Game-States</Filter>
     </ClCompile>
     <ClCompile Include="LobbyUI.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Asteroid.cpp">
-      <Filter>Astroid</Filter>
-    </ClCompile>
-    <ClCompile Include="AsteroidHandler.cpp">
-      <Filter>Astroid</Filter>
+      <Filter>Game-States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -487,6 +478,8 @@
     <ClInclude Include="PacketEnum.h">
       <Filter>Online</Filter>
     </ClInclude>
+    <ClInclude Include="Asteroid.h" />
+    <ClInclude Include="AsteroidHandler.h" />
     <ClInclude Include="Arrow.h" />
     <ClInclude Include="Credits.h" />
     <ClInclude Include="Planet.h" />
@@ -497,27 +490,15 @@
     <ClInclude Include="SoundLibrary.h" />
     <ClInclude Include="ControlMenu.h" />
     <ClInclude Include="ControlUI.h" />
+    <ClInclude Include="LandingHud.h" />
     <ClInclude Include="AnimatedMesh.h" />
     <ClInclude Include="ModelDataContainer.h" />
     <ClInclude Include="ModelManager.h" />
-    <ClInclude Include="Time.h" />
-    <ClInclude Include="LandingHud.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="MiniGameUI.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
     <ClInclude Include="Lobby.h">
       <Filter>Game-States</Filter>
     </ClInclude>
     <ClInclude Include="LobbyUI.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Asteroid.h">
-      <Filter>Astroid</Filter>
-    </ClInclude>
-    <ClInclude Include="AsteroidHandler.h">
-      <Filter>Astroid</Filter>
+      <Filter>Game-States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -574,9 +555,6 @@
     </Filter>
     <Filter Include="Online">
       <UniqueIdentifier>{8dc99f62-6498-4f24-915a-6c0d232cf63d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Astroid">
-      <UniqueIdentifier>{4a8c334f-f285-4d6e-ad83-9a6e8cbb40fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -636,28 +614,6 @@
     <FxCompile Include="vShaderSkinning.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="NormalMap_VS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="NormalMap_PS.hlsl">
-    <FxCompile Include="basic_VertexShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="DomainShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="HullShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PixelShader_NoShadow.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PT_UpdatePlayer.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PostProcess.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico">
@@ -669,7 +625,7 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Math.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Game-States</Filter>
     </None>
   </ItemGroup>
 </Project>

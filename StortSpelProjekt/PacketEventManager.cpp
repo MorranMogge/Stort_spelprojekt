@@ -47,7 +47,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	Loser* lose = nullptr;
 	ComponentDropped* cmpDropped = nullptr;
 	HitByGrenade* hitByGrenade = nullptr;
-	
+	UseGrenade* grenadeData = nullptr;
+	KTHPoints* kthPoints = nullptr;
 
 	for (int i = 0; i < players.size(); i++)
 	{
@@ -307,8 +308,36 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				{
 					//std::cout << "comp Id: " << std::to_string(cmpPosition->ComponentId) << ", pos x: " << std::to_string(cmpPosition->x)
 					//	<< ", y: " << std::to_string(cmpPosition->y) << std::endl;
-					onlineItems[i]->setPos(DirectX::XMFLOAT3(cmpPosition->x, cmpPosition->y, cmpPosition->z));
-					onlineItems[i]->getPhysComp()->setRotation(DirectX::SimpleMath::Quaternion(cmpPosition->xRot, cmpPosition->yRot, cmpPosition->zRot, cmpPosition->wRot));
+					if (cmpPosition->playerOnlineId == -1)
+					{
+						onlineItems[i]->setPos(DirectX::XMFLOAT3(cmpPosition->x, cmpPosition->y, cmpPosition->z));
+						onlineItems[i]->getPhysComp()->setRotation(DirectX::SimpleMath::Quaternion(cmpPosition->xRot, cmpPosition->yRot, cmpPosition->zRot, cmpPosition->wRot));
+					}
+					else
+					{
+						for (int j = 0; j < players.size(); j++)
+						{
+							if (players[j]->getOnlineID() == cmpPosition->playerOnlineId)
+							{
+								DirectX::XMFLOAT4X4 f4;
+								players[j]->forwardKinematics("hand3:hand3:RightHand", f4);
+								DirectX::XMMATRIX mat = DirectX::XMLoadFloat4x4(&f4);
+								DirectX::XMVECTOR scale;
+								DirectX::XMVECTOR pos;
+								DirectX::XMVECTOR rot;
+								DirectX::XMMatrixDecompose(&scale, &rot, &pos, mat);
+								DirectX::SimpleMath::Vector3 newPos = pos;
+
+								//newPos += 4 * forwardVector;
+
+								PhysicsComponent* itemPhysComp = onlineItems[i]->getPhysComp();
+								onlineItems[i]->setPos(newPos);
+								onlineItems[i]->setRot(rot);
+								itemPhysComp->setRotation(rot);
+								itemPhysComp->setPosition(reactphysics3d::Vector3({ newPos.x, newPos.y, newPos.z }));
+							}
+						}
+					}
 				}
 			}
 			//std::cout << "packetHandleEvents, componentData: " << std::to_string(compData->ComponentId) << std::endl;
@@ -357,6 +386,26 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			hitByGrenade = circularBuffer->readData<HitByGrenade>();
 			players[playerId]->hitByBat(reactphysics3d::Vector3(hitByGrenade->xForce, hitByGrenade->yForce, hitByGrenade->zForce));
 
+			break;
+		case PacketType::USEGRENADE:
+			grenadeData = circularBuffer->readData<UseGrenade>();
+			for (int i = 0; i < onlineItems.size(); i++)
+			{
+				if (onlineItems[i]->getOnlineId() == grenadeData->itemId)
+				{
+					onlineItems[i]->useItem(players[playerId]);
+				}
+			}
+			break;
+
+		case PacketType::KTHPOINTS:
+			kthPoints = circularBuffer->readData<KTHPoints>();
+
+			//Seeing what color the capture zone should be
+			if (kthPoints->teamColor == 0) captureZone->setColor(DirectX::SimpleMath::Vector3(1.f, 0.f, 1.f));
+			else if (kthPoints->teamColor == 1) captureZone->setColor(DirectX::SimpleMath::Vector3(0.f, 0.f, 1.f));
+			else if (kthPoints->teamColor == 2) captureZone->setColor(DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f));
+			else if (kthPoints->teamColor == 3) captureZone->setColor(DirectX::SimpleMath::Vector3(1.f, 1.f, 1.f));
 			break;
 
 		}
@@ -452,4 +501,50 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer, std::vec
 		}
 	}
 	return -1;
+}
+
+void PacketEventManager::TempLobbyHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, TempPlayerLobby playerLobby[], int& currentPlayerId, bool& startGame)
+{
+
+	while (circularBuffer->getIfPacketsLeftToRead())
+	{
+		int packetId = circularBuffer->peekPacketId(); 
+
+		
+
+		if (packetId == PacketType::PLAYERDATALOBBY)
+		{
+			PlayerData* playerData = circularBuffer->readData<PlayerData>();
+
+			playerLobby[playerData->playerId].playerId = playerData->playerId;
+			if (playerData->playerReady == 0)playerLobby[playerData->playerId].isReady = true;
+			else playerLobby[playerData->playerId].isReady = false;
+
+			playerLobby[playerData->playerId].isConnected = true;
+
+			std::cout << "LOBBY recv playerData: " << playerData->playerId << std::endl;
+		}
+		else if (packetId == PacketType::PACKETID)
+		{
+			idProtocol* protocol = circularBuffer->readData<idProtocol>();
+			std::cout << "LOBBY received player id: " << std::to_string(protocol->assignedPlayerId) << std::endl;
+			currentPlayerId = protocol->assignedPlayerId;
+			
+
+		}
+		else if (packetId == PacketType::LOBBYSTARTGAME)
+		{
+			LobbyStartGame* lbyStart = circularBuffer->readData<LobbyStartGame>();
+			startGame = true;
+
+			std::cout << "Recv start lobby start game\n";
+		}
+		else
+		{
+			//clear buffern ifall man får ett paket som inte var menat
+			std::cout << "Clear Circlebuffer in Lobby\n";
+			circularBuffer->clearBuffer();
+		}
+		
+	}
 }

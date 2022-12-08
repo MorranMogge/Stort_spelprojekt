@@ -22,66 +22,112 @@ void KingOfTheHillMiniGame::sendKingOfTheHillZone(serverData& data)
 }
 
 
-void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, const std::vector<Planet*>& planets, PhysicsWorld& physWorld, int& componentIdCounter)
+void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, std::vector<Planet*> planets, int& componentIdCounter, float totalTeamScores [])
 {
 	static float xPos;
 	static float yPos;
 	static float zPos;
+
+	redInside = false;
+	blueInside = false;
+
 	static DirectX::XMFLOAT3 playerPos;
-	for(int i = 0; i < this->nrOfPlayers; i++)
+	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - timer)).count() > time)
 	{
-		xPos = data.users[i].playa.getposition('x');
-		yPos = data.users[i].playa.getposition('y');
-		zPos = data.users[i].playa.getposition('z');
-		playerPos = DirectX::XMFLOAT3(xPos, yPos, zPos);
-		subtractionXMFLOAT3(playerPos, kingOfTheHillOrigo);
-		if (getLength(playerPos) <= radius)
+		for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 		{
-			//std::cout << "Innanf�r zonen\n";
-			if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - timer)).count() > time)
+			xPos = data.users[i].playa.getposition('x');
+			yPos = data.users[i].playa.getposition('y');
+			zPos = data.users[i].playa.getposition('z');
+			playerPos = DirectX::XMFLOAT3(xPos, yPos, zPos);
+			subtractionXMFLOAT3(playerPos, kingOfTheHillOrigo);
+			if (getLength(playerPos) <= radius)
 			{
-				if (i == 0 || i == 1)
+				int playerTeam;
+				playerTeam = (MAXNUMBEROFPLAYERS) / 2;
+				playerTeam = (int)(playerTeam < i + 1);
+				//std::cout << "Innanf�r zonen\n";
+
+				if (playerTeam == 0)
 				{
+					redInside = true;
 					team1Score += pointsToAdd;
 					std::cout << "team1 got points, total points: " << team1Score << "\n";
 				}
-				else if (i == 2 || i == 3)
+				
+				if (playerTeam == 1)
 				{
+					blueInside = true;
 					team2Score += pointsToAdd;
 					std::cout << "team2 got points, total points: " << team2Score << "\n";
 				}
-				timer = std::chrono::system_clock::now();
+			}
+			else
+			{
+				//std::cout << "utanf�r zonen\n";
 			}
 		}
-		else
-		{
-			//std::cout << "utanf�r zonen\n";
-		}
+
+		KTHPoints sendPoints;
+		sendPoints.packetId = PacketType::KTHPOINTS;
+		sendPoints.redPoints = team1Score;
+		sendPoints.bluePoints = team2Score;
+		if (blueInside && redInside) sendPoints.teamColor = 0;
+		else if (blueInside) sendPoints.teamColor = 1;
+		else if (redInside) sendPoints.teamColor = 2;
+		else sendPoints.teamColor = 3;
+		sendBinaryDataAllPlayers<KTHPoints>(sendPoints, data);
+		timer = std::chrono::system_clock::now();
 	}
 
 	if (team1Score >= goalScore)
 	{
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - this->timerToSend)).count() > timerSend)
 		{
-			for (int i = 0; i < this->nrOfPlayers; i++)
+			int catchUp = 0;
+			if (totalTeamScores[0] < (totalTeamScores[1] + 50)) catchUp = 25;
+			totalTeamScores[0] += 100 + catchUp;
+			totalTeamScores[1] += (int)(((float)team2Score / (float)team1Score) * 100.f);
+			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{
-				if (i == 0 || i == 1)
+				int playerTeam;
+				playerTeam = (MAXNUMBEROFPLAYERS) / 2;
+				playerTeam = (int)(playerTeam < i + 1);
+
+				if (playerTeam == 0)
 				{
-					winner win;
-					win.packetId = PacketType::WINNER;
-					sendBinaryDataOnePlayer<winner>(win, data.users[i]);
-					//sendBinaryDataAllPlayers(win, data);
-					//this->timerToSend = std::chrono::system_clock::now();
+					if (totalTeamScores[0] < totalTeamScores[1])
+					{
+						Loser lose;
+						lose.packetId = PacketType::LOSER;
+						sendBinaryDataOnePlayer<Loser>(lose, data.users[i]);
+					}
+					else
+					{
+						winner win;
+						win.packetId = PacketType::WINNER;
+						sendBinaryDataOnePlayer<winner>(win, data.users[i]);
+					}
+
 				}
-				else if (i == 2 || i == 3)
+				else if (playerTeam == 1)
 				{
-					Loser lose;
-					lose.packetId = PacketType::LOSER;
-					sendBinaryDataOnePlayer<Loser>(lose, data.users[i]);
-					//this->timerToSend = std::chrono::system_clock::now();
+					if (totalTeamScores[0] < totalTeamScores[1])
+					{
+						winner win;
+						win.packetId = PacketType::WINNER;
+						sendBinaryDataOnePlayer<winner>(win, data.users[i]);
+					}
+					else
+					{
+						Loser lose;
+						lose.packetId = PacketType::LOSER;
+						sendBinaryDataOnePlayer<Loser>(lose, data.users[i]);
+					}
 				}
 			}
 			this->timerToSend = std::chrono::system_clock::now();
+			std::cout << "Red team score : " << (int)totalTeamScores[0] << "\nBlue team score: " << (int)totalTeamScores[1] << "\n";
 		}
 	}
 
@@ -89,23 +135,52 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 	{
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - this->timerToSend)).count() > timerSend)
 		{
-			for (int i = 0; i < this->nrOfPlayers; i++)
+			int catchUp = 0;
+			if (totalTeamScores[1] < (totalTeamScores[0] + 50)) catchUp = 25;
+			totalTeamScores[1] += 100 + catchUp;
+			totalTeamScores[0] += (int)(((float)team1Score / (float)team2Score) * 100.f);
+
+			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{
-				if (i == 0 || i == 1)
+				int playerTeam;
+				playerTeam = (MAXNUMBEROFPLAYERS) / 2;
+				playerTeam = (int)(playerTeam < i + 1);
+
+				if (playerTeam == 0)
 				{
-					Loser lose;
-					lose.packetId = PacketType::LOSER;
-					sendBinaryDataOnePlayer<Loser>(lose, data.users[i]);
+					if (totalTeamScores[0] > totalTeamScores[1])
+					{
+						winner win;
+						win.packetId = PacketType::WINNER;
+						sendBinaryDataOnePlayer<winner>(win, data.users[i]);
+					}
+					else
+					{
+						
+						Loser lose;
+						lose.packetId = PacketType::LOSER;
+						sendBinaryDataOnePlayer<Loser>(lose, data.users[i]);
+					}
 					
 				}
-				else if (i == 2 || i == 3)
+				else if (playerTeam == 1)
 				{
-					winner win;
-					win.packetId = PacketType::WINNER;
-					sendBinaryDataOnePlayer<winner>(win, data.users[i]);
+					if (totalTeamScores[0] > totalTeamScores[1])
+					{
+						Loser lose;
+						lose.packetId = PacketType::LOSER;
+						sendBinaryDataOnePlayer<Loser>(lose, data.users[i]);
+					}
+					else
+					{
+						winner win;
+						win.packetId = PacketType::WINNER;
+						sendBinaryDataOnePlayer<winner>(win, data.users[i]);
+					}
 				}
 			}
 			this->timerToSend = std::chrono::system_clock::now();
+			std::cout << "Red team score : " << (int)totalTeamScores[0] << "\nBlue team score: " << (int)totalTeamScores[1] << "\n";
 		}
 	}
 

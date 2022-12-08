@@ -9,7 +9,7 @@ struct userData
 	std::string userName;
 	sf::TcpSocket tcpSocket;
 	int playerId = -1;
-
+	bool ifAccepted = false;
 	Player playa;
 };
 

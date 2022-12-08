@@ -6,6 +6,9 @@ Player::Player()
 	xPos = 20.0f;
 	yPos = 30.0f;
 	zPos = 40.0f;
+	
+	readyStatus = -1;
+	this->onlineId = -1;
 	this->animID = 0;
 	this->animSpeed = 1;
 	this->dead = false;
@@ -70,6 +73,26 @@ void Player::setMatrix(DirectX::XMFLOAT4X4 matrix)
 	quat = DirectX::XMQuaternionRotationMatrix(DirectX::XMLoadFloat4x4(&matrix));
 	this->physComp->setPosition(reactphysics3d::Vector3(matrix._14, matrix._24, matrix._34));
 	this->physComp->setRotation(reactphysics3d::Quaternion(quat.x, quat.y, quat.z, quat.w));
+}
+
+void Player::setOnlineId(int nr)
+{
+	onlineId = nr;
+}
+
+void Player::setReadyStatus(int status)
+{
+	readyStatus = status;
+}
+
+int Player::getReadyStatus()const
+{
+	return readyStatus;
+}
+
+int Player::getOnlineID()const
+{
+	return onlineId;
 }
 
 DirectX::XMFLOAT4X4 Player::getMatrix() const

@@ -24,9 +24,11 @@
 #include "CreditsMenu.h"
 #include "WinMenu.h"
 #include "LoseMenu.h"
+#include "Lobby.h"
 #include "ControlMenu.h"
 #include "Time.h"
 
+const int NROFPLAYERS = 4;
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace, _In_ LPWSTR lpCmdLine, _In_ int nCmdShhow)
 {
@@ -69,6 +71,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGui_ImplDX11_Init(device, immediateContext);
 
 
+	Client* client = nullptr;
+
 
 	State* currentState = new Menu();
 	GAMESTATE stateInfo = NOCHANGE;
@@ -97,7 +101,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			{
 			case GAME:
 				delete currentState;
-				currentState = new Game(immediateContext, device, GPU::swapChain, window, WIDTH, HEIGHT);
+				currentState = new Game(immediateContext, device, GPU::swapChain, window, WIDTH, HEIGHT, NROFPLAYERS, client);
 				break;
 			case SETTINGS:
 				delete currentState;
@@ -123,6 +127,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 				delete currentState;
 				currentState = new Menu();
 				break;
+			case LOBBY:
+				delete currentState;
+				currentState = new Lobby(client);
 			default:
 				break;
 			}

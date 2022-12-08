@@ -488,3 +488,49 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer, std::vec
 	}
 	return -1;
 }
+
+void PacketEventManager::TempLobbyHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, TempPlayerLobby playerLobby[], int& currentPlayerId, bool& startGame)
+{
+
+	while (circularBuffer->getIfPacketsLeftToRead())
+	{
+		int packetId = circularBuffer->peekPacketId(); 
+
+		
+
+		if (packetId == PacketType::PLAYERDATALOBBY)
+		{
+			PlayerData* playerData = circularBuffer->readData<PlayerData>();
+
+			playerLobby[playerData->playerId].playerId = playerData->playerId;
+			if (playerData->playerReady == 0)playerLobby[playerData->playerId].isReady = true;
+			else playerLobby[playerData->playerId].isReady = false;
+
+			playerLobby[playerData->playerId].isConnected = true;
+
+			std::cout << "LOBBY recv playerData: " << playerData->playerId << std::endl;
+		}
+		else if (packetId == PacketType::PACKETID)
+		{
+			idProtocol* protocol = circularBuffer->readData<idProtocol>();
+			std::cout << "LOBBY received player id: " << std::to_string(protocol->assignedPlayerId) << std::endl;
+			currentPlayerId = protocol->assignedPlayerId;
+			
+
+		}
+		else if (packetId == PacketType::LOBBYSTARTGAME)
+		{
+			LobbyStartGame* lbyStart = circularBuffer->readData<LobbyStartGame>();
+			startGame = true;
+
+			std::cout << "Recv start lobby start game\n";
+		}
+		else
+		{
+			//clear buffern ifall man får ett paket som inte var menat
+			std::cout << "Clear Circlebuffer in Lobby\n";
+			circularBuffer->clearBuffer();
+		}
+		
+	}
+}

@@ -192,6 +192,8 @@
     <ClInclude Include="GravityField.h" />
     <ClInclude Include="Grenade.h" />
     <ClInclude Include="LandingHud.h" />
+    <ClInclude Include="Lobby.h" />
+    <ClInclude Include="LobbyUI.h" />
     <ClInclude Include="MenuUI.h" />
     <ClInclude Include="GUIObject.h" />
     <ClInclude Include="GUISprite.h" />
@@ -303,6 +305,8 @@
     <ClCompile Include="GravityField.cpp" />
     <ClCompile Include="Grenade.cpp" />
     <ClCompile Include="LandingHud.cpp" />
+    <ClCompile Include="Lobby.cpp" />
+    <ClCompile Include="LobbyUI.cpp" />
     <ClCompile Include="MenuUI.cpp" />
     <ClCompile Include="GUISprite.cpp" />
     <ClCompile Include="GUIText.cpp" />

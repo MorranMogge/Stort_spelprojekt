@@ -5,8 +5,8 @@
 #include "MemoryLeackChecker.h"
 #include "SoundCollection.h"
 
-Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), manager(ModelManager(device)), currentMinigame(MiniGames::COMPONENTCOLLECTION)
+Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT, const int NROFPLAYERS, Client* client)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), manager(ModelManager(device)), currentMinigame(MiniGames::COMPONENTCOLLECTION), NROFPLAYERS(NROFPLAYERS)
 {
 	srand(time(0));
 
@@ -16,8 +16,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	gameMusic.load(L"../Sounds/Gold Rush Final.wav");
 	gameMusic.play(true);
 	gameMusic.setVolume(0.75f);
+	this->client = client;
 	//m�ste raderas******************
-	client = new Client("192.168.43.241");
+	//client = new Client("192.168.43.251");
 	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
 	circularBuffer = client->getCircularBuffer();
 
@@ -47,14 +48,14 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	//Setup players
 	if (IFONLINE)
 	{
-		int UwU = 0;
-		client->connectToServer();
-		int playerId = -1;
-		while (playerId <= -1 || playerId >= 9)
-		{
-			playerId = packetEventManager->handleId(client->getCircularBuffer(), this->planetVector, physWorld, meshes, spaceShips, gameObjects,this->field, UwU);
+		int thingstoLoad = 0;
+		//client->connectToServer();
+		int playerId = client->getPlayerId();
+		/*while (playerId <= -1 || playerId >= 9)
+		{*/
+			//playerId = packetEventManager->handleId(client->getCircularBuffer(), this->planetVector, physWorld, meshes, spaceShips, gameObjects,this->field, thingstoLoad);
 			//std::cout << "Game.cpp, playerId: " << std::to_string(playerId) << std::endl;
-		}
+		//}
 		//int playerid = client->initTEMPPLAYERS();
 		std::cout << "The recv player id from client: " << std::to_string(playerId) << std::endl;
 		this->client->setClientId(playerId);
@@ -110,11 +111,12 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 		gamePad = new DirectX::GamePad();
 		currentPlayer->setGamePad(gamePad);
-		
-		while (UwU != 5)
+		std::cout << "clear buffer before waiting for data from server\n";
+		circularBuffer->clearBuffer();
+		while (thingstoLoad != 5)
 		{
-			std::cout << "UwU: " << UwU << std::endl;
-			packetEventManager->handleId(client->getCircularBuffer(), this->planetVector, physWorld, meshes, spaceShips, gameObjects, field, UwU);
+			std::cout << "thingstoLoad: " << thingstoLoad << std::endl;
+			packetEventManager->handleId(client->getCircularBuffer(), this->planetVector, physWorld, meshes, spaceShips, gameObjects, field, thingstoLoad);
 		}
 		for (int i = 0; i < spaceShips.size(); i++)
 		{

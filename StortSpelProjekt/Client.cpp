@@ -69,8 +69,11 @@ void Client::setClientId(int nr)
 	this->data.playerId = nr;
 }
 
-void Client::connectToServer(std::string ipAddress, int port)
+bool Client::connectToServer(std::string ipAddress, int port)
 {
+	bool connected = false;
+	this->ip = ipAddress;
+	this->port = port;
 	std::cout << "Tries to connect to server ip adress: " << ipAddress << std::endl;
 	if (tcpSocket.connect(ipAddress, port) != sf::Socket::Done)
 	{
@@ -78,9 +81,12 @@ void Client::connectToServer(std::string ipAddress, int port)
 	}
 	else
 	{
+		connected = true;
 		std::cout << "Was able to connect\n";
 	}
 
+	//if it doesnt connect returns false
+	if (!connected) return connected;
 	
 	this->ip = ipAddress;
 	this->port = port;
@@ -88,10 +94,13 @@ void Client::connectToServer(std::string ipAddress, int port)
 	this->setupThread();
 	this->isConnected = true;
 
+	//returns true if connected
+	return connected;
 }
 
-void Client::connectToServer()
+bool Client::connectToServer()
 {
+	bool connected = false;
 	std::cout << "Tries to connect to server ip adress: " << this->ip << std::endl;
 
 	if (data.socket.connect(this->ip, this->port) != sf::Socket::Done)
@@ -100,14 +109,18 @@ void Client::connectToServer()
 	}
 	else
 	{
+		connected = true;
 		std::cout << "Was able to connect\n";
 	}
-
+	//if it doesnt connect returns false
+	if (!connected) return connected;
 
 	data.endThread = false;
 	this->setupThread();
 	this->isConnected = true;
 
+	//returns true if connected
+	return connected;
 	//this->joinThread();
 	//data.socket.setBlocking(false);
 }

@@ -3,6 +3,7 @@
 #include "BaseballBat.h"
 #include "Grenade.h"
 
+
 PacketEventManager::PacketEventManager()
 {
 	for (int i = 0; i < 16; i++)
@@ -18,7 +19,7 @@ PacketEventManager::~PacketEventManager()
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects,
 	GravityField* field, std::vector<SpaceShip*>& spaceShips, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes,
-	std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame, float& redTeamPoints, float& blueTeamPoints, Client*& client, const float dt, GAMESTATE& currentGameState, DirectX::GamePad* gamePad)
+	std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame, float& redTeamPoints, float& blueTeamPoints, Client*& client, const float dt, GAMESTATE& currentGameState, DirectX::GamePad* gamePad, Mesh* planet1, Mesh* planet2, Mesh* planet3, std::vector<ID3D11ShaderResourceView*> srvArr)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -178,7 +179,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			}
 			else if (itemSpawn->itemType == ObjID::GRENADE)
 			{
-				grenade = new Grenade(meshes[7], meshes[0], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
+				grenade = new Grenade(meshes[7], meshes[12], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
 					DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), ObjID::GRENADE, itemSpawn->itemId, field);
 				//grenade->setClient(client);
 				grenade->setGameObjects(gameObjects);
@@ -272,7 +273,9 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			}
 			else
 			{
-				planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos), (4.0f * 9.82f), meshes[1]));
+				//std::vector<ID3D11ShaderResourceView*> srvArr
+				//planet1, Mesh* planet2, Mesh* planet3,
+				planetVector.emplace_back(new Planet(planet1/*meshes[0]*/, DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos), (4.0f * 9.82f), meshes[1]));
 				planetVector.back()->setPlanetShape(&physWorld);
 				physWorld.setPlanets(planetVector);
 			}
@@ -324,7 +327,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 							if (players[j]->getOnlineID() == cmpPosition->playerOnlineId)
 							{
 								DirectX::XMFLOAT4X4 f4;
-								players[j]->forwardKinematics("hand3:hand3:RightHand", f4);
+								players[j]->forwardKinematics("Character_RightHand", f4);
 								DirectX::XMMATRIX mat = DirectX::XMLoadFloat4x4(&f4);
 								DirectX::XMVECTOR scale;
 								DirectX::XMVECTOR pos;

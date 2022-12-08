@@ -113,21 +113,21 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			Player* tmpPlayer = nullptr;
 			if (dude < i + 1)
 			{
-				useMeshForPlayer = otherTmpMesh;
+				useMeshForPlayer = tmpMesh;
 				//change anim
-				tmpPlayer = new Player(useMeshForPlayer, doNotUse, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+				tmpPlayer = new Player(useMeshForPlayer, doNotUseT, DirectX::SimpleMath::Vector3(-4, -42, -10), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
 				std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
-				this->manager.getTextureMaps("../Meshes/anim/character2_idle.fbx", allPlayerTextures);
+				this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
 				tmpPlayer->setTextures(allPlayerTextures);
 			}
 			else
 			{
-				useMeshForPlayer = tmpMesh;
-				tmpPlayer = new Player(useMeshForPlayer, doNotUseT, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+				useMeshForPlayer = otherTmpMesh;
+				tmpPlayer = new Player(useMeshForPlayer, doNotUse, DirectX::SimpleMath::Vector3(7, 42, 12), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
 				std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
-				this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
+				this->manager.getTextureMaps("../Meshes/anim/character2_idle.fbx", allPlayerTextures);
 				tmpPlayer->setTextures(allPlayerTextures);
 			}
 			
@@ -141,23 +141,24 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			else
 			{
 				std::cout << "Player online id: " << std::to_string(i) << " \n";
+				currentPlayer = tmpPlayer;
 
-				if (i == 0 || i == 1)
+				/*if (i == 0 || i == 1)
 				{
-					currentPlayer = new Player(tmpMesh, doNotUseT, DirectX::SimpleMath::Vector3(-4, -42, -10), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
-						1, playerId, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
-					std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
-					this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
-					currentPlayer->setTextures(allPlayerTextures);
-				}
-				else
-				{
-					currentPlayer = new Player(otherTmpMesh, doNotUse, DirectX::SimpleMath::Vector3(7, 42, 12), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+					currentPlayer = new Player(otherTmpMesh, doNotUse, DirectX::SimpleMath::Vector3(-4, -42, -10), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 						1, playerId, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
 					std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
 					this->manager.getTextureMaps("../Meshes/anim/character2_idle.fbx", allPlayerTextures);
 					currentPlayer->setTextures(allPlayerTextures);
 				}
+				else
+				{
+					currentPlayer = new Player(tmpMesh, doNotUseT, DirectX::SimpleMath::Vector3(7, 42, 12), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+						1, playerId, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+					std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
+					this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
+					currentPlayer->setTextures(allPlayerTextures);
+				}*/
 
 				//currentPlayer->addData(animData);
 				currentPlayer->setOnlineID(i);

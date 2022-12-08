@@ -251,6 +251,15 @@ struct MinigameStart
 	float pointsRed;
 };
 
+//enum 29
+struct KTHPoints
+{
+	int packetId;
+	float redPoints;
+	float bluePoints;
+	int teamColor;
+};
+
 //enum = 30
 struct DoneWithGame
 {

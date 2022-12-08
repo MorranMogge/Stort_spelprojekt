@@ -16,6 +16,9 @@
 class KingOfTheHillMiniGame
 {
 private:
+	bool redInside = false; 
+	bool blueInside = false;
+
 	std::chrono::time_point<std::chrono::system_clock> timer;
 	std::chrono::time_point<std::chrono::system_clock> timerToSend;
 	std::chrono::time_point<std::chrono::system_clock> itemSpawnTimer;

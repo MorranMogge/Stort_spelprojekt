@@ -48,7 +48,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	ComponentDropped* cmpDropped = nullptr;
 	HitByGrenade* hitByGrenade = nullptr;
 	UseGrenade* grenadeData = nullptr;
-	
+	KTHPoints* kthPoints = nullptr;
 
 	for (int i = 0; i < players.size(); i++)
 	{
@@ -389,6 +389,16 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					onlineItems[i]->useItem(players[playerId]);
 				}
 			}
+			break;
+
+		case PacketType::KTHPOINTS:
+			kthPoints = circularBuffer->readData<KTHPoints>();
+
+			//Seeing what color the capture zone should be
+			if (kthPoints->teamColor == 0) captureZone->setColor(DirectX::SimpleMath::Vector3(1.f, 0.f, 1.f));
+			else if (kthPoints->teamColor == 1) captureZone->setColor(DirectX::SimpleMath::Vector3(0.f, 0.f, 1.f));
+			else if (kthPoints->teamColor == 2) captureZone->setColor(DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f));
+			else if (kthPoints->teamColor == 3) captureZone->setColor(DirectX::SimpleMath::Vector3(1.f, 1.f, 1.f));
 			break;
 
 		}

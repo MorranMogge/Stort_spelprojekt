@@ -27,39 +27,57 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 	static float xPos;
 	static float yPos;
 	static float zPos;
+
+	redInside = false;
+	blueInside = false;
+
 	static DirectX::XMFLOAT3 playerPos;
-	for(int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - timer)).count() > time)
 	{
-		xPos = data.users[i].playa.getposition('x');
-		yPos = data.users[i].playa.getposition('y');
-		zPos = data.users[i].playa.getposition('z');
-		playerPos = DirectX::XMFLOAT3(xPos, yPos, zPos);
-		subtractionXMFLOAT3(playerPos, kingOfTheHillOrigo);
-		if (getLength(playerPos) <= radius)
+		for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 		{
-			int playerTeam;
-			playerTeam = (MAXNUMBEROFPLAYERS) / 2;
-			playerTeam = (int)(playerTeam < i + 1);
-			//std::cout << "Innanf�r zonen\n";
-			if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - timer)).count() > time)
+			xPos = data.users[i].playa.getposition('x');
+			yPos = data.users[i].playa.getposition('y');
+			zPos = data.users[i].playa.getposition('z');
+			playerPos = DirectX::XMFLOAT3(xPos, yPos, zPos);
+			subtractionXMFLOAT3(playerPos, kingOfTheHillOrigo);
+			if (getLength(playerPos) <= radius)
 			{
+				int playerTeam;
+				playerTeam = (MAXNUMBEROFPLAYERS) / 2;
+				playerTeam = (int)(playerTeam < i + 1);
+				//std::cout << "Innanf�r zonen\n";
+
 				if (playerTeam == 0)
 				{
+					redInside = true;
 					team1Score += pointsToAdd;
 					std::cout << "team1 got points, total points: " << team1Score << "\n";
 				}
-				else if (playerTeam == 1)
+				
+				if (playerTeam == 1)
 				{
+					blueInside = true;
 					team2Score += pointsToAdd;
 					std::cout << "team2 got points, total points: " << team2Score << "\n";
 				}
-				timer = std::chrono::system_clock::now();
+			}
+			else
+			{
+				//std::cout << "utanf�r zonen\n";
 			}
 		}
-		else
-		{
-			//std::cout << "utanf�r zonen\n";
-		}
+
+		KTHPoints sendPoints;
+		sendPoints.packetId = PacketType::KTHPOINTS;
+		sendPoints.redPoints = team1Score;
+		sendPoints.bluePoints = team2Score;
+		if (blueInside && redInside) sendPoints.teamColor = 0;
+		else if (blueInside) sendPoints.teamColor = 1;
+		else if (redInside) sendPoints.teamColor = 2;
+		else sendPoints.teamColor = 3;
+		sendBinaryDataAllPlayers<KTHPoints>(sendPoints, data);
+		timer = std::chrono::system_clock::now();
 	}
 
 	if (team1Score >= goalScore)

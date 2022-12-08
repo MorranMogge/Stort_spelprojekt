@@ -5,7 +5,7 @@
 #include "MemoryLeackChecker.h"
 #include "SoundCollection.h"
 
-Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT, const int NROFPLAYERS)
+Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT, const int NROFPLAYERS, Client* client)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), manager(ModelManager(device)), currentMinigame(MiniGames::COMPONENTCOLLECTION), NROFPLAYERS(NROFPLAYERS)
 {
 	srand(time(0));
@@ -16,8 +16,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	gameMusic.load(L"../Sounds/Gold Rush Final.wav");
 	gameMusic.play(true);
 	gameMusic.setVolume(0.75f);
+	this->client = client;
 	//m�ste raderas******************
-	client = new Client("192.168.43.251");
+	//client = new Client("192.168.43.251");
 	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
 	circularBuffer = client->getCircularBuffer();
 

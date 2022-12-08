@@ -468,8 +468,9 @@ void PacketEventManager::TempLobbyHandleEvents(CircularBufferClient*& circularBu
 		else if (packetId == PacketType::LOBBYSTARTGAME)
 		{
 			LobbyStartGame* lbyStart = circularBuffer->readData<LobbyStartGame>();
+			startGame = true;
 
-
+			std::cout << "Recv start lobby start game\n";
 		}
 		else
 		{

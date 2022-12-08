@@ -8,7 +8,7 @@ struct wirefameInfo
 };
 
 
-static bool IFONLINE = false;
+static bool IFONLINE = true;
 
 class Game : public State
 {
@@ -125,7 +125,7 @@ private:
 	void randomizeObjectPos(GameObject* item);
 
 public:
-	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT, const int NROFPLAYERS);
+	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT, const int NROFPLAYERS, Client* client);
 	virtual ~Game() override;
 
 	// Inherited via State

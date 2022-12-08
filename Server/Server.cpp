@@ -117,6 +117,7 @@ void acceptPlayersLobbyThread(void* param)//thread for lobby system to receive p
 			data->users[i].userName = "fixa username " + std::to_string(i + 1);
 			data->users[i].playerId = i;
 			data->users[i].playa.setOnlineId(i);
+			data->users[i].playa.setReadyStatus(-1);
 
 			idProtocol pId;
 			pId.packetId = PacketType::PACKETID;
@@ -206,10 +207,12 @@ void lobby(serverData& data, CircularBuffer & circBuffer, std::thread* recvThrea
 
 		if (tempTime.getTimePassed(1.0f))
 		{
+			//******************************************************************SKICKAR AV NÅGON KONSTIG ANLEDNING
 			//checking if all the players are ready for the game
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 			{
-				if (data.users[i].playa.getReadyStatus() == 0)
+				std::cout << "readystatus: " << data.users[i].playa.getReadyStatus() << std::endl;
+				if (ifThreaded[i] && data.users[i].playa.getReadyStatus() == 0)
 				{
 					allPlayersReadyForGame = false;
 					break;
@@ -220,7 +223,7 @@ void lobby(serverData& data, CircularBuffer & circBuffer, std::thread* recvThrea
 				LobbyStartGame lbyStartGame;
 				lbyStartGame.packetId = PacketType::LOBBYSTARTGAME;
 
-
+				std::cout << "Sending Ready to start game\n";
 				sendBinaryDataAllPlayers<LobbyStartGame>(lbyStartGame, data);
 			}
 

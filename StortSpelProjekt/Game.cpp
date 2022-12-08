@@ -350,6 +350,22 @@ void Game::loadObjects()
 			
 		}
 	}
+	else
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			int randomPlanetIndex = rand() % 11; //range 0 to 12
+
+			const std::string path_c = std::string("p") + std::to_string(randomPlanetIndex) + std::string(".png");
+			const std::string path_n = std::string("p") + std::to_string(randomPlanetIndex) + std::string("n.png");
+
+			std::cout << path_c << std::endl;
+			std::cout << path_n << std::endl;
+			planetSRV_online.push_back(loadTexture(path_c));
+			planetSRV_online.push_back(loadTexture(path_n));
+
+		}
+	}
 
 	asteroids = new AsteroidHandler(meshes[0]);
 	planetGravityField = new GravityField(4.f * 9.82f, DirectX::XMFLOAT3(0.f, 0.f, 0.f), 40.f);

@@ -74,6 +74,9 @@ private:
 	Player* currentPlayer;
 	Mesh* planetMeshes;
 
+	Mesh* tmpMesh2;
+	GameObject* testCube;
+
 	//Items
 	int id;
 	BaseballBat* baseballBat;

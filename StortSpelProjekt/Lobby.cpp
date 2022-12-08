@@ -53,6 +53,8 @@ GAMESTATE Lobby::Update()
 
 	this->client->setClientId(currentPlayerOnlineId);
 
+	//nr of connected players
+	ui.connectedPlayers = 69;
 
 	if (startGame)
 	{

@@ -17,7 +17,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	gameMusic.play(true);
 	gameMusic.setVolume(0.75f);
 	//m�ste raderas******************
-	client = new Client("192.168.43.241");
+	client = new Client("192.168.43.244");
 	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
 	circularBuffer = client->getCircularBuffer();
 
@@ -67,8 +67,17 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 			if (playerId != i)
 			{
-				tmpPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
-					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+				if (i == 0 || i == 1)
+				{
+					tmpPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(-4 + (float)(offset * i), -42, -10), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+						0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+				}
+				else
+				{
+					tmpPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(7 + (float)(offset * i), 42, 12), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+						0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+				}
+
 				//tmpPlayer->addData(animData);
 				tmpPlayer->setOnlineID(i);
 				physWorld.addPhysComponent(tmpPlayer, reactphysics3d::CollisionShapeName::BOX);
@@ -77,8 +86,18 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			else
 			{
 				std::cout << "Player online id: " << std::to_string(i) << " \n";
-				currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(0, 42, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
-					1, playerId, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+
+				if (i == 0 || i == 1)
+				{
+					currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(-4, -42, -10), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+						1, playerId, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+				}
+				else
+				{
+					currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(7, 42, 12), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
+						1, playerId, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+				}
+
 				//currentPlayer->addData(animData);
 				currentPlayer->setOnlineID(i);
 				players.push_back(currentPlayer);
@@ -223,7 +242,7 @@ void Game::loadObjects()
 		planetVector.back()->setPlanetShape(&physWorld);
 		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(60.f, 60.f, 60.f)));
 		planetVector.back()->setPlanetShape(&physWorld);
-		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-130.f, -130.f, 130.f)));
+		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(55.f, -55.f, -55.f)));
 		planetVector.back()->setPlanetShape(&physWorld);
 		physWorld.setPlanets(planetVector);
 	}
@@ -499,6 +518,7 @@ GAMESTATE Game::updateComponentGame()
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->checkSwimStatus(planetVector);
+	currentPlayer->orbiting();
 	currentPlayer->velocityMove(dt);
 	currentPlayer->setSpeed(20.f);
 
@@ -615,8 +635,19 @@ GAMESTATE Game::updateComponentGame()
 		}
 	}
 	//Arrow pointing to component
-	else if (onlineItems.size() > 0)  this->arrow->showDirection(onlineItems[0]->getPosV3(), currentPlayer->getPosV3(), grav);
+	else if (onlineItems.size() > 0)
+	{
+		for (int i = 0; i < onlineItems.size(); i++)
+		{
+			if (onlineItems[i]->getId() == ObjID::COMPONENT)
+			{
+				this->arrow->showDirection(onlineItems[i]->getPosV3(), currentPlayer->getPosV3(), grav);
+				break;
+			}
+		}
+	}
 	else if (components.size() > 0) this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
+	else arrow->removeArrow();
 	currentPlayer->colliedWIthComponent(components);
 
 	if (!IFONLINE)
@@ -758,6 +789,12 @@ GAMESTATE Game::updateLandingGame()
 			reactphysics3d::Quaternion reactQuaternion = reactphysics3d::Quaternion(dx11Quaternion.x, dx11Quaternion.y, dx11Quaternion.z, dx11Quaternion.w);
 			spaceShips[i]->getPhysComp()->setPosition(reactphysics3d::Vector3(spaceShips[i]->getPosV3().x, spaceShips[i]->getPosV3().y, spaceShips[i]->getPosV3().z));
 			spaceShips[i]->getPhysComp()->setRotation(reactQuaternion);
+
+			if (currentPlayer->getTeam() == i)
+			{
+				currentPlayer->setPos(DirectX::XMFLOAT3(spaceShips[i]->getPos().x - 10.f, spaceShips[i]->getPos().y, spaceShips[i]->getPos().z));
+				currentPlayer->setStartPosition(DirectX::XMFLOAT3(spaceShips[i]->getPos().x - 10.f, spaceShips[i]->getPos().y, spaceShips[i]->getPos().z));
+			}
 		}
 		std::cout << "\nLANDING MINIGAME OVER!\nTOTAL SCORE:\nTeam score: " << teamScoreLandingMiniGame << "\nEnemy Team score: " << enemyTeamScoreLandingMiniGame << "\n";
 
@@ -809,6 +846,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
 	currentPlayer->checkSwimStatus(planetVector);
+	currentPlayer->orbiting();
 	currentPlayer->setSpeed(20.f);
 
 	//Check component pickup

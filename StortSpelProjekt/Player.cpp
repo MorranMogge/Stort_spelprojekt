@@ -289,6 +289,7 @@ Player::Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3
 	playerHitSound.load(L"../Sounds/mixkit-sick-man-sneeze-2213.wav");
 	//walkingSound.setVolume(0.25f);
 
+	this->startPosition = pos;
 	this->onlineID = onlineId;
 	this->rotationMX = XMMatrixIdentity();
 	this->rotation = XMMatrixIdentity();
@@ -556,9 +557,8 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Jumping
 	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
-		onGround = false;
-		this->velocity = this->normalVector * 40.f;
-		this->position += this->normalVector * 1.8f;
+		this->velocity = this->normalVector * 30.f;
+		this->position += this->normalVector * 1.5f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
 
@@ -788,9 +788,8 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		//Jumping
 		if (onGround && state.IsAPressed())
 		{
-			onGround = false;
-			this->velocity = this->normalVector * 40.f;
-			this->position += this->normalVector * 1.8f;
+			this->velocity = this->normalVector * 30.f;
+			this->position += this->normalVector * 1.5f;
 			if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 		}
 
@@ -1176,6 +1175,28 @@ void Player::colliedWIthComponent(const std::vector<Component*>& components)
 	if (collided) this->setSpeed(this->speed * 0.5f);
 }
 
+void Player::orbiting()
+{
+	if (!onGround)
+	{
+		if (orbitTimer.getTimePassed(10.f))
+		{
+			std::cout << "SETTING BACK TO PLANET\n";
+			this->physComp->resetForce();
+			this->physComp->resetTorque();
+			this->physComp->setType(reactphysics3d::BodyType::STATIC);
+			this->resetRotationMatrix();
+			this->position = startPosition;
+			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
+			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
+			this->resetVelocity();
+			orbitTimer.resetStartTime();
+			onGround = true;
+		}
+	}
+	else orbitTimer.resetStartTime();
+}
+
 void Player::stateMachine(const float dt)
 {
 	if (state.IsConnected())
@@ -1397,7 +1418,7 @@ void Player::update()
 			this->physComp->resetTorque();
 			this->physComp->setType(reactphysics3d::BodyType::STATIC);
 			this->resetRotationMatrix();
-			this->position = DirectX::SimpleMath::Vector3(0, 69, 0);
+			this->position = startPosition;
 			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
 			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
 		}
@@ -1445,6 +1466,11 @@ void Player::setVibration(float vibration1, float vibration2)
 void Player::setGamePad(DirectX::GamePad* gamePad)
 {
 	this->gamePad = gamePad;
+}
+
+void Player::setStartPosition(DirectX::SimpleMath::Vector3 startPosition)
+{
+	this->startPosition = startPosition;
 }
 
 void Player::requestingPickUpItem(const std::vector<Item*>& items)

@@ -274,7 +274,7 @@ int main()
 	planetVector.back()->setPlanetShape(&physWorld);
 	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(60.f, 60.f, 60.f)));
 	planetVector.back()->setPlanetShape(&physWorld);
-	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-130.f, -130.f, 130.f)));
+	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(55.f, -55.f, -55.f)));
 	planetVector.back()->setPlanetShape(&physWorld);
 	physWorld.setPlanets(planetVector);
 
@@ -625,9 +625,9 @@ int main()
 
 							//Sending the planets
 							planetVector[0]->setScale(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
-							planetVector[2]->setPosition(DirectX::XMFLOAT3(65.f, 65.f, 65.f));
+							planetVector[2]->setPosition(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
 							planetVector[2]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
-							planetVector[1]->setPosition(DirectX::XMFLOAT3(-65.f, -65.f, -65.f));
+							planetVector[1]->setPosition(DirectX::XMFLOAT3(-60.f, -60.f, -60.f));
 							planetVector[1]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
 
 							for (int i = 0; i < planetVector.size(); i++)

@@ -438,6 +438,16 @@ void Game::drawObjects(bool drawDebug)
 		onlineItems[i]->draw();
 	}
 
+	/*
+		basicRenderer.setUpSceneNormalMap(this->camera);
+	ltHandler.bindLightBuffers();
+	//testCube->drawObjectWithNormalMap();
+	planetVector[0]->drawObjectWithNormalMap();
+	*/
+
+	basicRenderer.normaltasseletion(this->camera);
+	planetVector[0]->drawObjectWithNormalMap();
+
 	//Draw planets
 	basicRenderer.tesselationPrePass(camera);
 	for (int i = 0; i < planetVector.size(); i++)
@@ -1336,10 +1346,7 @@ void Game::Render()
 	if (objectDraw) drawObjects(drawDebug);
 	
 
-	basicRenderer.setUpSceneNormalMap(this->camera);
-	ltHandler.bindLightBuffers();
-	//testCube->drawObjectWithNormalMap();
-	planetVector[0]->drawObjectWithNormalMap();
+
 
 	//Unbind light
 	ltHandler.unbindSrv();

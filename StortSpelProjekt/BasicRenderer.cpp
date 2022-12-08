@@ -251,6 +251,10 @@ BasicRenderer::~BasicRenderer()
 	rtv2->Release();
 	srv2->Release();
 	//Rastirizer->Release();
+
+	domainShader2->Release();
+	hullShader2->Release();
+	vs_normalMap2->Release();
 }
 
 void BasicRenderer::lightPrePass()
@@ -305,6 +309,8 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadPixelShader(device, Fresnel_PS, "Fresnel_PS"))									return false;
 	if (!LoadPixelShader(device, InvFresnel_PS, "InvFresnel_PS"))							return false;
 	if (!setUpFresnelBlendState())															return false;
+
+
 	
 
 	//Normal map layout
@@ -313,11 +319,15 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 
 	if (!LoadPixelShader(device, ps_normalMap, "NormalMap_PS"))								return false;
 
-	
+	if (!LoadVertexShader(device, vs_normalMap2, vShaderByteCode, "NormalMap_VS2"))			return false;
+
 	if (!LoadComputeShader(device, pt_UpdatePlayer, "PT_UpdatePlayer"))						return false;
 	if (!LoadHullShader(device, hullShader, "HullShader"))									return false;
 	if (!LoadDomainShader(device, domainShader, "DomainShader"))							return false;
 	if (!LoadComputeShader(device, postProcess, "PostProcess"))								return false;
+	if (!LoadDomainShader(device, domainShader2, "DomainShader2"))							return false;
+	if (!LoadHullShader(device, hullShader2, "Hullshader2"))								return false;
+
 
 	SetViewport(viewport, GPU::windowWidth, GPU::windowHeight);
 	SetViewport(shadowViewport, WidthAndHeight, WidthAndHeight);
@@ -397,6 +407,8 @@ void BasicRenderer::setUpScene(Camera& stageCamera, const bool& shadow)
 	stageCamera.VSbindViewBuffer(1);
 }
 
+
+
 void BasicRenderer::setUpSceneNormalMap(Camera& stageCamera)
 {
 
@@ -411,6 +423,7 @@ void BasicRenderer::setUpSceneNormalMap(Camera& stageCamera)
 	immediateContext->IASetInputLayout(inputLayout_NormalMap);
 	immediateContext->VSSetShader(vs_normalMap, nullptr, 0);
 	immediateContext->PSSetShader(ps_normalMap, nullptr, 0);
+
 
 	//immediateContext->RSSetViewports(1, &viewport);
 	//immediateContext->RSSetState(shadowRastirizer);
@@ -639,4 +652,15 @@ void BasicRenderer::postProcessPass()
 		//std::cout << "Post process not run, FXAA turned off" << std::endl;
 	}
 
+}
+
+void BasicRenderer::normaltasseletion(Camera& stageCamera, bool shadow)
+{
+	immediateContext->IASetInputLayout(inputLayout_NormalMap);
+	immediateContext->VSSetShader(vs_normalMap2, nullptr, 0);
+	immediateContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+	immediateContext->HSSetShader(hullShader2, nullptr, 0);
+	immediateContext->DSSetShader(domainShader2, nullptr, 0);
+	immediateContext->PSSetShader(ps_normalMap, nullptr, 0);
+	stageCamera.DSbindViewBuffer(1);
 }

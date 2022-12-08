@@ -56,6 +56,11 @@ private:
 	ID3D11HullShader* hullShader;
 	ID3D11VertexShader* basic_VertexShader;
 
+
+	ID3D11DomainShader* domainShader2;
+	ID3D11HullShader* hullShader2;
+
+
 	ID3D11InputLayout* animLayout;
 	ID3D11VertexShader* vShaderAnim;
 	ID3D11PixelShader* InvFresnel_PS;
@@ -65,6 +70,8 @@ private:
 
 	//normal map
 	ID3D11VertexShader* vs_normalMap;
+	ID3D11VertexShader* vs_normalMap2;
+
 	ID3D11PixelShader* ps_normalMap;
 	ID3D11InputLayout* inputLayout_NormalMap;
 
@@ -109,4 +116,5 @@ public:
 	void tesselationPrePass(Camera& stageCamera);
 	void resetTopology(); //sets triangle list
 	void postProcessPass();
+	void normaltasseletion(Camera& stageCamera, bool shadow = true);
 };

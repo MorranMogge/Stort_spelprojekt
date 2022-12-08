@@ -72,6 +72,8 @@ void Client::setClientId(int nr)
 bool Client::connectToServer(std::string ipAddress, int port)
 {
 	bool connected = false;
+	this->ip = ipAddress;
+	this->port = port;
 	std::cout << "Tries to connect to server ip adress: " << ipAddress << std::endl;
 	if (tcpSocket.connect(ipAddress, port) != sf::Socket::Done)
 	{

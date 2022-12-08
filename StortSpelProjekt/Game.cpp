@@ -316,13 +316,14 @@ void Game::loadObjects()
 	//Initilize player
 	if (!currentPlayer && !IFONLINE)
 	{
-		ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K2SG_Diffuse.png");
-		ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
+		ID3D11ShaderResourceView* blueTeamColour = nullptr;
+		ID3D11ShaderResourceView* redTeamColour = nullptr;
 		currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 			1, client->getPlayerId(), client, 0, redTeamColour, blueTeamColour, planetGravityField);
 		std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
 		this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
 		
+		allPlayerTextures.size();
 
 		currentPlayer->setTextures(allPlayerTextures);
 

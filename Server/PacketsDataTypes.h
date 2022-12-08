@@ -167,6 +167,7 @@ struct ConfirmComponentPickedUp
 struct ComponentPosition
 {
 	int packetId;
+	int playerOnlineId;
 	int ComponentId;
 	float x;
 	float y;

@@ -487,11 +487,7 @@ void Game::drawObjects(bool drawDebug)
 	basicRenderer.changeToAnimation();
 	for (int i = 0; i < players.size(); i++)
 	{
-		//players[i]->draw();
-		if (i == 0)
-		{
 			players[i]->drawSubMeshesWithTexture();
-		}
 	}
 }
 

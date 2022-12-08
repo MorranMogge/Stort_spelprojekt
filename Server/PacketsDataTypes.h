@@ -77,6 +77,7 @@ struct ComponentDropped
 	int packetId;
 	int componentId;
 	int playerId;
+	int randomizePos;
 	float xPos;
 	float yPos;
 	float zPos;

@@ -442,10 +442,12 @@ int main()
 				{
 					if (onlineItems[i]->getOnlineId() == cmpDropped->componentId)
 					{
+						DirectX::XMFLOAT3 newRandomPos = randomizeObjectPos();
 						onlineItems[i]->setInUseBy(-1);
 						std::cout << std::to_string(onlineItems[i]->getPosXMFLOAT3().x) << ", y: " << std::to_string(onlineItems[i]->getPosXMFLOAT3().y) <<
 							", z" << std::to_string(onlineItems[i]->getPosXMFLOAT3().z) << std::endl;
-						onlineItems[i]->setPosition(cmpDropped->xPos, cmpDropped->yPos, cmpDropped->zPos);
+						if (cmpDropped->randomizePos == 0) onlineItems[i]->setPosition(cmpDropped->xPos, cmpDropped->yPos, cmpDropped->zPos);
+						else if (cmpDropped->randomizePos == 1) onlineItems[i]->setPosition(newRandomPos.x, newRandomPos.y, newRandomPos.z);
 						for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
 						{
 							//skicka att en spelare har droppat en component till alla spelare förutom spelaren som droppat componenten eftersom den redan är droppad

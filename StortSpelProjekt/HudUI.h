@@ -48,7 +48,7 @@ class HudUI final
 
 	inline static DirectX::GamePad* gamepad = nullptr;
 	inline static DirectX::GamePad::State state;
-
+	float readyTimer = 0.0f;
 public:
 	float count = 1.0f;
 	inline static SpaceShip* red = nullptr;
@@ -61,7 +61,7 @@ public:
 	bool fadeIn();
 	void fadeOut();
 	void moveSprite();
-	bool redySetGo();
+	bool readySetGo();
 	void setOpacity(bool onOff);
 	static void SetGamePad(DirectX::GamePad* gamepad);
 	void DrawFade();

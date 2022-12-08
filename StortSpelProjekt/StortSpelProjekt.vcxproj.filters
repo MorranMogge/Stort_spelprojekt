@@ -636,6 +636,10 @@
     <FxCompile Include="vShaderSkinning.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="NormalMap_VS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="NormalMap_PS.hlsl">
     <FxCompile Include="basic_VertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>

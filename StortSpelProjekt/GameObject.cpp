@@ -85,10 +85,10 @@ GameObject::GameObject()
 
 GameObject::~GameObject()
 {
-	//if (this->mesh != nullptr)
-	//{
-	//	delete this->mesh;
-	//}
+	/*if (this->mesh != nullptr)
+	{
+		delete this->mesh;
+	}*/
 	//this->mesh = nullptr;
 	//this->activeField = nullptr;
 	//this->physComp = nullptr;
@@ -415,8 +415,33 @@ void GameObject::tmpDraw(UINT stride)
 	this->mesh->draw(this->srv, stride);
 }
 
+void GameObject::tmpDraw(std::vector<ID3D11ShaderResourceView*>& allTextures,UINT stride)
+{
+	this->mesh->UpdateCB(position, rotation, scale);
+	this->mesh->draw(allTextures, stride);
+}
+
 void GameObject::setSrv(ID3D11ShaderResourceView* srv)
 {
 	this->srv = srv;
 	//this->updateRotation();
+}
+
+void GameObject::setNormalMap(ID3D11ShaderResourceView* srv)
+{
+	this->normalMap = srv;
+}
+
+void GameObject::drawObjectWithNormalMap()
+{
+	/*if (this->materialBuffer != nullptr)
+	{
+		this->materialBuffer->BindToPS(0u);
+	}*/
+	this->mesh->drawWithNormalMap(this->srv, this->normalMap);
+}
+
+void GameObject::drawObjectWithDiffuse()
+{
+	this->mesh->draw(this->srv);
 }

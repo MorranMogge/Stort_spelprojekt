@@ -62,6 +62,7 @@ private:
 	TimeStruct timer;
 	TimeStruct keyPressTimer;
 	Item* holdingItem;
+	
 
 	ParticleEmitter* particles;
 	ParticleEmitter* particles2;
@@ -163,6 +164,7 @@ public:
 	void update();
 	void requestingPickUpItem(const std::vector<Item*>& items);
 	void updateController();
+	
 	
 	void itemRecvFromServer(Item* item);
 };

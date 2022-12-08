@@ -15,7 +15,7 @@
 //#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "AnimatedMesh.h"
-#include "mesh2.h"
+//#include "mesh2.h"
 #include <assimp/cimport.h>
 //#include "../DirectXTK-main/Src/SDKMesh.h"
 
@@ -40,6 +40,22 @@ struct AnimatedVertex
 		DirectX::XMFLOAT4& weight) : pos(pos), uv(uv), nor(nor), boneId(boneId), weights(weight) {};
 };
 
+struct vertex
+{
+	DirectX::XMFLOAT3 pos; // Position
+	DirectX::XMFLOAT3 nor; // Normal
+	DirectX::XMFLOAT2 uv; // UV coordination
+	DirectX::XMFLOAT3 tangent; // Normal
+
+	vertex() {
+		pos = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };
+		uv = DirectX::XMFLOAT2{ 0.0f,0.0f };
+		nor = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };
+		tangent = DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f };
+	};
+	vertex(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT2& uv, DirectX::XMFLOAT3& nor, DirectX::XMFLOAT3& tangent) : pos(pos), uv(uv), nor(nor), tangent(tangent) {};
+};
+
 
 class ModelManager
 {
@@ -58,9 +74,9 @@ private:
 	bool makeSRV(ID3D11ShaderResourceView*& srv, std::string finalFilePath);
 	void processNodes(aiNode* node, const aiScene* scene, const std::string& filePath, bool wantToBone = false);
 	void readNodes(aiMesh* mesh, const aiScene* scene);
-	std::vector<Mesh2*> meshes;
+	//std::vector<Mesh2*> meshes;
 	std::vector<ID3D11ShaderResourceView*> diffuseMaps;
-
+	std::vector<std::string> allTextureNamesForMesh;
 
 	ModelDataContainer bank;
 	ID3D11Device* device;
@@ -88,7 +104,7 @@ public:
 	bool loadMeshData(const std::string& filePath);
 	ID3D11ShaderResourceView* getSrv(const std::string key);
 	//std::vector<Mesh2*> getMeshes() const;
-	std::vector<ID3D11ShaderResourceView*> getTextureMaps() const;
+	void getTextureMaps(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec);
 
 	bool loadMeshAndBoneData(const std::string& filePath);
 	bool AdditionalAnimation(const std::string& newAnimationFile, const std::string& destination);
@@ -97,4 +113,5 @@ public:
 	bool getAnimData(const std::string& filePath, ID3D11Buffer*& vertexBuffer, ID3D11Buffer*& indexBuffer, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertces, AnimationData& AnimData);
 	std::vector<ID3D11Buffer*> getBuff() const;
 	void setDevice(ID3D11Device* device);
+	
 };

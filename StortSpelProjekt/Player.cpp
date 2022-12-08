@@ -1676,3 +1676,4 @@ void Player::drawFresnel(float interval)
 		this->position = pos;
 	}
 }
+

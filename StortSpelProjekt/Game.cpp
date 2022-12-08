@@ -31,6 +31,10 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ltHandler.addLight(DirectX::XMFLOAT3(-10 - 5, -45 - 17, -10 - 7), DirectX::XMFLOAT3(1, 0, 0), DirectX::XMFLOAT3(0, 0, 0), DirectX::XMFLOAT3(0, 1, 0), 2);	
 	
 	//Temp? initiation of animated mesh
+
+	//manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
+	//manager.loadMeshData("../Meshes/goblin2.fbx");
+
 	manager.loadMeshAndBoneData("../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_run.fbx", "../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_run_fast.fbx", "../Meshes/anim/character1_idle.fbx");
@@ -200,6 +204,8 @@ Game::~Game()
 	delete asteroids;
 	delete arrow;
 	delete planetGravityField;
+	
+	
 }
 
 void Game::loadObjects()
@@ -215,7 +221,7 @@ void Game::loadObjects()
 	Grenade* grenade2;
 
 
-	//Load extra textures
+	//Load extra textures	
 	MaterialLibrary::LoadDefault();
 	MaterialLibrary::LoadMaterial("spaceshipTexture1.jpg");
 	MaterialLibrary::LoadMaterial("spaceshipTexture2.jpg");
@@ -314,6 +320,12 @@ void Game::loadObjects()
 		ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
 		currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 			1, client->getPlayerId(), client, 0, redTeamColour, blueTeamColour, planetGravityField);
+		std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
+		this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
+		
+
+		currentPlayer->setTextures(allPlayerTextures);
+
 		//currentPlayer->addData(animData);
 		players.emplace_back(currentPlayer);
 		gamePad = new GamePad();
@@ -323,6 +335,7 @@ void Game::loadObjects()
 	//Set items baseball bat
 	if (!IFONLINE)
 	{
+		captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), planetGravityField, DirectX::SimpleMath::Vector3(10.f, 10.f, 10.f));
 		baseballBat->setPlayer(currentPlayer);
 		baseballBat->setGameObjects(gameObjects);
 
@@ -383,7 +396,7 @@ void Game::drawObjects(bool drawDebug)
 	}
 	basicRenderer.resetTopology();
 	asteroids->drawAsteroids();
-
+	//testCube->draw();
 	//Draw with Ambient only shader
 	basicRenderer.bindAmbientShader();
 	arrow->draw();
@@ -399,7 +412,11 @@ void Game::drawObjects(bool drawDebug)
 	basicRenderer.changeToAnimation();
 	for (int i = 0; i < players.size(); i++)
 	{
-		players[i]->draw();
+		//players[i]->draw();
+		if (i == 0)
+		{
+			players[i]->drawSubMeshesWithTexture();
+		}
 	}
 }
 
@@ -1241,6 +1258,11 @@ void Game::Render()
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
+	
+
+	basicRenderer.setUpSceneNormalMap(this->camera);
+	ltHandler.bindLightBuffers();
+	
 
 
 	//Unbind light

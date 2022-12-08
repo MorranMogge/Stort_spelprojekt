@@ -11,7 +11,7 @@
 #include "GameObject.h"
 #include "StructuredBuffer.h"
 #include "GPU.h"
-
+#include <d3d11.h>
 
 struct boneInfo
 {
@@ -135,7 +135,7 @@ private:
 
 	//for server
 	int currentAnimId = 0;
-
+	std::vector<ID3D11ShaderResourceView*> textures;
 protected:
 
 	bool doneWithAnim;
@@ -146,10 +146,12 @@ public:
 	//AnimatedMesh(ID3D11Buffer* vertexBuff, ID3D11Buffer* indexBuff, std::vector<int>& submeshRanges, std::vector<int>& amountOfVertices);
 	//AnimatedMesh();
 	~AnimatedMesh();
-
+	void setTextures(std::vector<ID3D11ShaderResourceView*>& textures);
 	void forwardKinematics(const std::string& nodeName, DirectX::XMFLOAT4X4& outMatrix);
 	void addData(const AnimationData& data);
 	void updateAnim(const float& dt, int animIndex, float animationSpeed = 1.0f);
 	void draw();
+	void draw(std::vector<ID3D11ShaderResourceView*>& allTextures);
 	void getAnimId(int& id);
+	void drawSubMeshesWithTexture();
 };

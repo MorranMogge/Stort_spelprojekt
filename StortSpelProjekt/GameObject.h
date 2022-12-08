@@ -25,6 +25,7 @@ private:
 	reactphysics3d::Quaternion reactQuaternion;
 	DirectX::SimpleMath::Quaternion dx11Quaternion;
 	ID3D11ShaderResourceView* srv;
+	ID3D11ShaderResourceView* normalMap;
 	GravityField* activeField;
 
 protected:
@@ -73,5 +74,9 @@ public:
 	void updateRotation();
 	virtual void update(); //This updates the hitboxes
 	void tmpDraw(UINT stride = 32U);
+	void tmpDraw(std::vector<ID3D11ShaderResourceView*>& allTextures, UINT stride = 32U);
 	void setSrv(ID3D11ShaderResourceView* srv);
+	void setNormalMap(ID3D11ShaderResourceView* normalMap);
+	void drawObjectWithNormalMap();
+	void drawObjectWithDiffuse();
 };

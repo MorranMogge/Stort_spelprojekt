@@ -15,6 +15,21 @@ bool BasicRenderer::setUpInputLayout(ID3D11Device* device, const std::string& vS
 	return !FAILED(hr);
 }
 
+bool BasicRenderer::setUp_NormalMap_InputLayout(ID3D11Device* device, const std::string& vShaderByteCode)
+{
+	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+
+	HRESULT hr = device->CreateInputLayout(inputDesc, (UINT)std::size(inputDesc), vShaderByteCode.c_str(), vShaderByteCode.length(), &inputLayout_NormalMap);
+
+	return !FAILED(hr);
+}
+
 bool BasicRenderer::setUpInputLayoutAnim(ID3D11Device* device, const std::string& vShaderByteCode, ID3D11InputLayout*& iLayout)
 {
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
@@ -223,6 +238,10 @@ BasicRenderer::~BasicRenderer()
 	Fresnel_PS->Release();
 	fresnelBlendState->Release();
 	InvFresnel_PS->Release();
+
+	inputLayout_NormalMap->Release();
+	ps_normalMap->Release();
+	vs_normalMap->Release();
 	pt_UpdatePlayer->Release();
 	hullShader->Release();
 	domainShader->Release();
@@ -286,6 +305,15 @@ bool BasicRenderer::initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D
 	if (!LoadPixelShader(device, Fresnel_PS, "Fresnel_PS"))									return false;
 	if (!LoadPixelShader(device, InvFresnel_PS, "InvFresnel_PS"))							return false;
 	if (!setUpFresnelBlendState())															return false;
+	
+
+	//Normal map layout
+	if (!LoadVertexShader(device, vs_normalMap, vShaderByteCode, "NormalMap_VS"))			return false;
+	if (!setUp_NormalMap_InputLayout(device, vShaderByteCode))								return false;
+
+	if (!LoadPixelShader(device, ps_normalMap, "NormalMap_PS"))								return false;
+
+	
 	if (!LoadComputeShader(device, pt_UpdatePlayer, "PT_UpdatePlayer"))						return false;
 	if (!LoadHullShader(device, hullShader, "HullShader"))									return false;
 	if (!LoadDomainShader(device, domainShader, "DomainShader"))							return false;
@@ -367,6 +395,32 @@ void BasicRenderer::setUpScene(Camera& stageCamera, const bool& shadow)
 	immediateContext->PSSetSamplers(1, 1, &shadowSampler);
 	stageCamera.PSbindPositionBuffer(1);
 	stageCamera.VSbindViewBuffer(1);
+}
+
+void BasicRenderer::setUpSceneNormalMap(Camera& stageCamera)
+{
+
+	immediateContext->IASetInputLayout(nullptr);
+	immediateContext->VSSetShader(nullptr, nullptr, 0);
+	immediateContext->PSSetShader(nullptr, nullptr, 0);
+	ID3D11RenderTargetView* nullRTV{ nullptr };
+	immediateContext->OMSetRenderTargets(1, &nullRTV, nullptr);
+
+	
+	immediateContext->OMSetRenderTargets(1, &rtv, dsView);
+	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	immediateContext->IASetInputLayout(inputLayout_NormalMap);
+	immediateContext->VSSetShader(vs_normalMap, nullptr, 0);
+
+	immediateContext->RSSetViewports(1, &viewport);
+	immediateContext->RSSetState(shadowRastirizer);
+	immediateContext->PSSetShader(ps_normalMap, nullptr, 0);
+	immediateContext->PSSetSamplers(0, 1, &sampler);
+
+	//Unbind shadowmap & structuredBuffer srv
+	//ID3D11ShaderResourceView* nullSRV{ nullptr };
+	//immediateContext->PSSetShaderResources(3, 1, &nullSRV);
+	//immediateContext->PSSetShaderResources(4, 1, &nullSRV);
 }
 
 void BasicRenderer::geometryPass(Camera& stageCamera)

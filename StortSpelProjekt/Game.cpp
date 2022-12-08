@@ -116,12 +116,18 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 				//change anim
 				tmpPlayer = new Player(useMeshForPlayer, doNotUseT, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+				std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
+				this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
+				tmpPlayer->setTextures(allPlayerTextures);
 			}
 			else
 			{
 				useMeshForPlayer = otherTmpMesh;
 				tmpPlayer = new Player(useMeshForPlayer, doNotUse, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+				std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
+				this->manager.getTextureMaps("../Meshes/anim/character2_idle.fbx", allPlayerTextures);
+				tmpPlayer->setTextures(allPlayerTextures);
 			}
 			
 			tmpPlayer->setOnlineID(i);

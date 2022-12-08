@@ -196,7 +196,11 @@ Game::~Game()
 	}
 	if (captureZone != nullptr) delete captureZone;
 	if (gamePad != nullptr) delete gamePad;
-	if (client != nullptr) delete client;
+	if (client != nullptr)
+	{
+		std::cout << "Deleted clients\n";
+		delete client;
+	}
 	delete tmpMesh;
 	delete asteroids;
 	delete arrow;

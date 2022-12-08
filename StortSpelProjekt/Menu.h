@@ -34,6 +34,7 @@ private:
 	std::vector<int> verticies;
 	std::vector<int> verticies2;
 
+	ID3D11ShaderResourceView* loadTexture(const std::string& fileName);
 public:
 	Menu();
 	virtual ~Menu() override;

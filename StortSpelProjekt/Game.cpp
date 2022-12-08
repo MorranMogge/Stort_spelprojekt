@@ -44,6 +44,14 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	manager.addTexture("p6n.png");
 
 	this->tmpMesh2 = new Mesh(vBuff, iBuff,subMeshRanges, verticies);
+
+	manager.loadMeshData("../Meshes/Sphere_with_normal2.fbx");
+	manager.getMeshData("../Meshes/Sphere_with_normal2.fbx", vBuff, iBuff, subMeshRanges, verticies);
+	this->tmpMesh3 = new Mesh(vBuff, iBuff,subMeshRanges, verticies);
+
+	manager.loadMeshData("../Meshes/Sphere_with_normal3.fbx");
+	manager.getMeshData("../Meshes/Sphere_with_normal3.fbx", vBuff, iBuff, subMeshRanges, verticies);
+	this->tmpMesh4 = new Mesh(vBuff, iBuff,subMeshRanges, verticies);
 	
 
 	manager.loadMeshAndBoneData("../Meshes/anim/character1_idle.fbx");
@@ -254,10 +262,6 @@ void Game::loadObjects()
 	MaterialLibrary::LoadMaterial("Red.png");
 	MaterialLibrary::LoadMaterial("olive.jpg");
 
-	manager.getMeshData("../Meshes/Sphere_with_normal.fbx", vBuff, iBuff, subMeshRanges, verticies);
-	manager.getMeshData("../Meshes/Shpere_no_normal.fbx", vBuff, iBuff, subMeshRanges, verticies);
-	auto planetMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-
 	//Meshes vector contents
 	meshes.push_back(new Mesh("../Meshes/Sphere"));
 	meshes.push_back(new Mesh("../Meshes/reverseSphere"));
@@ -279,33 +283,29 @@ void Game::loadObjects()
 	{
 		float planetSize = 40.f; // SET DIFFERENT GRAV-FACTORS FOR THE PLANETS AND DIFFERENT TEXTURES!
 		planetVector.emplace_back(new Planet(tmpMesh2, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f), (4.0f * 9.82f), meshes[1]));
+		planetVector.back()->setPlanetShape(&physWorld);
+		planetVector.emplace_back(new Planet(tmpMesh3, DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(60.f, 60.f, 60.f), (4.0f * 9.82f), meshes[1]));
+		planetVector.back()->setPlanetShape(&physWorld);
 		planetVector.back()->setSrv(this->manager.getSrv("p6.png"));
 		planetVector.back()->setNormalMap(this->manager.getSrv("p6n.png"));
-		planetVector.back()->setPlanetShape(&physWorld);
-		planetVector.emplace_back(new Planet(planetMesh, DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(60.f, 60.f, 60.f), (4.0f * 9.82f), meshes[1]));
-		planetVector.back()->setPlanetShape(&physWorld);
-		planetVector.emplace_back(new Planet(planetMesh, DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-130.f, -130.f, 130.f), (4.0f * 9.82f), meshes[1]));
+		planetVector.emplace_back(new Planet(tmpMesh4, DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-130.f, -130.f, 130.f), (4.0f * 9.82f), meshes[1]));
 		planetVector.back()->setPlanetShape(&physWorld);
 		physWorld.setPlanets(planetVector);
 
 		for (auto& planet :planetVector)
 		{
-			int randomPlanetIndex = rand() % 13; //range 0 to 12
+			int randomPlanetIndex = rand() % 11; //range 0 to 12
 
-			const std::string path_c = std::string("PlanetTextures/") + std::to_string(randomPlanetIndex) + std::string("/c.png");
-			const std::string path_n = std::string("PlanetTextures/") + std::to_string(randomPlanetIndex) + std::string("/n.png");
+			const std::string path_c = std::string("p") + std::to_string(randomPlanetIndex) + std::string(".png");
+			const std::string path_n = std::string("p") + std::to_string(randomPlanetIndex) + std::string("n.png");
 
+			std::cout << path_c << std::endl;
+			std::cout << path_n << std::endl;
 			auto colorSRV = loadTexture(path_c);
 			planet->setSrv(colorSRV);
 
-			if (std::filesystem::exists(path_n))
-			{
-				auto normalSRV = loadTexture(path_n);
-				planet->setSrv(normalSRV);
-				auto planetMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-				planet->setMesh(planetMesh);
-			}
-
+			auto normalSRV = loadTexture(path_n);
+			planet->setNormalMap(normalSRV);
 			
 		}
 	}
@@ -1339,7 +1339,12 @@ void Game::Render()
 	basicRenderer.setUpSceneNormalMap(this->camera);
 	ltHandler.bindLightBuffers();
 	//testCube->drawObjectWithNormalMap();
+	
 	planetVector[0]->drawObjectWithNormalMap();
+	planetVector[1]->drawObjectWithNormalMap();
+	planetVector[2]->drawObjectWithNormalMap();
+
+	
 
 	//Unbind light
 	ltHandler.unbindSrv();

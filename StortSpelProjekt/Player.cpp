@@ -284,6 +284,7 @@ Player::Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3
 	//walkingSound.setVolume(0.25f);
 
 	this->onlineID = onlineId;
+	this->startPosition = pos;
 	this->rotationMX = XMMatrixIdentity();
 	this->rotation = XMMatrixIdentity();
 	resultVector = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -550,9 +551,8 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	//Jumping
 	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
-		onGround = false;
-		this->velocity = this->normalVector * 40.f;
-		this->position += this->normalVector * 1.8f;
+		this->velocity = this->normalVector * 30.f;
+		this->position += this->normalVector * 1.5f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
 
@@ -782,9 +782,8 @@ void Player::moveController(const DirectX::XMVECTOR& cameraForward, const Direct
 		//Jumping
 		if (onGround && state.IsAPressed())
 		{
-			onGround = false;
-			this->velocity = this->normalVector * 40.f;
-			this->position += this->normalVector * 1.8f;
+			this->velocity = this->normalVector * 30.f;
+			this->position += this->normalVector * 1.5f;
 			if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 		}
 
@@ -1159,6 +1158,27 @@ bool Player::withinRadius(Item* itemToLookWithinRadius, const float& radius) con
 	float lengthToVec = getLength(objPos);
 	if (lengthToVec <= radius) inRange = true;
 	return inRange;
+}
+
+void Player::orbiting()
+{
+	if (!onGround)
+	{
+		if (orbitTimer.getTimePassed(10.f))
+		{
+			std::cout << "SETTING BACK TO PLANET\n";
+			this->position = startPosition;
+			this->physComp->resetForce();
+			this->physComp->resetTorque();
+			this->physComp->setType(reactphysics3d::BodyType::STATIC);
+			this->resetRotationMatrix();
+			this->physComp->setPosition(reactphysics3d::Vector3({ this->position.x, this->position.y, this->position.z }));
+			this->physComp->setType(reactphysics3d::BodyType::KINEMATIC);
+			orbitTimer.resetStartTime();
+			onGround = true;
+		}
+	}
+	else orbitTimer.resetStartTime();
 }
 
 void Player::colliedWIthComponent(const std::vector<Component*>& components)

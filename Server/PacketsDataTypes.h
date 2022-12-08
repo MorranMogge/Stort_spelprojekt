@@ -77,6 +77,7 @@ struct ComponentDropped
 	int packetId;
 	int componentId;
 	int playerId;
+	int randomizePos;
 	float xPos;
 	float yPos;
 	float zPos;
@@ -167,6 +168,7 @@ struct ConfirmComponentPickedUp
 struct ComponentPosition
 {
 	int packetId;
+	int playerOnlineId;
 	int ComponentId;
 	float x;
 	float y;
@@ -247,6 +249,15 @@ struct MinigameStart
 	MiniGames minigame;
 	float pointsBlue;
 	float pointsRed;
+};
+
+//enum 29
+struct KTHPoints
+{
+	int packetId;
+	float redPoints;
+	float bluePoints;
+	int teamColor;
 };
 
 //enum = 30

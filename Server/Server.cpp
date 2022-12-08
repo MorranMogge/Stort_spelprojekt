@@ -169,6 +169,8 @@ int main()
 	srand((unsigned)(time(0)));
 	float flyTime = 0.f;
 	float landingPoints[MAXNUMBEROFPLAYERS]{ 0.f };
+	float totalTeamScores[2]{ 0.f };
+	int shipComponentCounter[2]{ 0 };
 	bool timeToFly = false;
 	int progress[2] = { 0, 0 };
 	std::vector<int> playersSent;
@@ -177,6 +179,7 @@ int main()
 	int componentIdCounter = 0;
 	bool once = false;
 	int itemLimit = 10;
+	int grenadeCount = 0;
 	TimeStruct physicsTimer;
 	PhysicsWorld physWorld;
 	Component planetComp;
@@ -271,7 +274,7 @@ int main()
 	planetVector.back()->setPlanetShape(&physWorld);
 	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(60.f, 60.f, 60.f)));
 	planetVector.back()->setPlanetShape(&physWorld);
-	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-130.f, -130.f, 130.f)));
+	planetVector.emplace_back(new Planet(DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(55.f, -55.f, -55.f)));
 	planetVector.back()->setPlanetShape(&physWorld);
 	physWorld.setPlanets(planetVector);
 
@@ -439,10 +442,13 @@ int main()
 				{
 					if (onlineItems[i]->getOnlineId() == cmpDropped->componentId)
 					{
+						DirectX::XMFLOAT3 newRandomPos = randomizeObjectPos(planetVector);
 						onlineItems[i]->setInUseBy(-1);
 						std::cout << std::to_string(onlineItems[i]->getPosXMFLOAT3().x) << ", y: " << std::to_string(onlineItems[i]->getPosXMFLOAT3().y) <<
 							", z" << std::to_string(onlineItems[i]->getPosXMFLOAT3().z) << std::endl;
-						onlineItems[i]->setPosition(cmpDropped->xPos, cmpDropped->yPos, cmpDropped->zPos);
+						if (cmpDropped->randomizePos == 0) onlineItems[i]->setPosition(cmpDropped->xPos, cmpDropped->yPos, cmpDropped->zPos);
+						else if (cmpDropped->randomizePos == 1) onlineItems[i]->setPosition(newRandomPos.x, newRandomPos.y, newRandomPos.z);
+						onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
 						for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
 						{
 							//skicka att en spelare har droppat en component till alla spelare förutom spelaren som droppat componenten eftersom den redan är droppad
@@ -479,6 +485,7 @@ int main()
 							sendConfirmComponentData.packetId = PacketType::COMPONENTCONFIRMEDPICKUP;
 							sendBinaryDataAllPlayers<ConfirmComponentPickedUp>(sendConfirmComponentData, data);
 							onlineItems[i]->setInUseBy(requestingCmpPickedUp->playerId);
+							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 						}
 						else
 						{
@@ -519,6 +526,7 @@ int main()
 					onlineItems[grenadeData->itemId]->getPhysicsComponent()->getPosV3().y + grenadeData->yForce * 0.0025f,
 					onlineItems[grenadeData->itemId]->getPhysicsComponent()->getPosV3().z + grenadeData->zForce * 0.0025f));
 				onlineItems[grenadeData->itemId]->getPhysicsComponent()->applyForceToCenter(reactphysics3d::Vector3(grenadeData->xForce, grenadeData->yForce, grenadeData->zForce));
+				sendBinaryDataAllPlayers<UseGrenade>(*grenadeData, data);
 				std::cout << "Player used grenade OwO\n";
 				break;
 
@@ -563,7 +571,7 @@ int main()
 							}
 						}
 						onlineItems[useBat->itemId]->setInUseBy(-1);
-						DirectX::XMFLOAT3 newPos = randomizeObjectPos();
+						DirectX::XMFLOAT3 newPos = randomizeObjectPos(planetVector);
 						onlineItems[useBat->itemId]->setPosition(newPos.x, newPos.y, newPos.z);
 					}
 				}
@@ -619,9 +627,9 @@ int main()
 
 							//Sending the planets
 							planetVector[0]->setScale(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
-							planetVector[2]->setPosition(DirectX::XMFLOAT3(65.f, 65.f, 65.f));
+							planetVector[2]->setPosition(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
 							planetVector[2]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
-							planetVector[1]->setPosition(DirectX::XMFLOAT3(-65.f, -65.f, -65.f));
+							planetVector[1]->setPosition(DirectX::XMFLOAT3(-60.f, -60.f, -60.f));
 							planetVector[1]->setScale(DirectX::XMFLOAT3(25.f, 25.f, 25.f));
 
 							for (int i = 0; i < planetVector.size(); i++)
@@ -643,6 +651,22 @@ int main()
 						}
 						else if (requestStart->formerGame == MiniGames::LANDINGSPACESHIP)
 						{
+							int landPointToScore[2]{ 0 };
+							if (landingPoints[0] > landingPoints[1])
+							{
+								landPointToScore[0] = 100;
+								landPointToScore[1] = (int)((landingPoints[1] / landingPoints[0]) * 100.f);
+							}
+							else
+							{
+								landPointToScore[1] = 100;
+								landPointToScore[0] = (int)((landingPoints[0] / landingPoints[1]) * 100.f);
+							}
+							totalTeamScores[0] += landPointToScore[0];
+							totalTeamScores[1] += landPointToScore[1];
+
+							std::cout << "Red team score : " << (int)totalTeamScores[0] << "\nBlue team score: " << (int)totalTeamScores[1] << "\n";
+
 							//Sending the next minigame
 							currentMinigame = MiniGames::KINGOFTHEHILL;
 							startGame.minigame = MiniGames::KINGOFTHEHILL;
@@ -705,8 +729,9 @@ int main()
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
 		{
 			ItemSpawn itemSpawnData;
-			DirectX::XMFLOAT3 temp = randomizeObjectPos();
-			itemSpawnData.itemType = 3;		//Spawns a random item (Baseball bat, potion or grenade)
+			DirectX::XMFLOAT3 temp = randomizeObjectPos(planetVector);
+			if (!grenadeCount) itemSpawnData.itemType = (rand() % 3) + 3;		//Spawns a random item (Baseball bat, potion or grenade)
+			else itemSpawnData.itemType = (rand() % 2) + 3;
 			itemSpawnData.x = temp.x;
 			itemSpawnData.y = temp.y;
 			itemSpawnData.z = temp.z;
@@ -716,7 +741,7 @@ int main()
 			
 			if (itemSpawnData.itemType == ObjID::BAT) onlineItems.push_back(new BaseballBat(componentIdCounter));//ändra
 			else if (itemSpawnData.itemType == ObjID::POTION) onlineItems.push_back(new Grenade(componentIdCounter));//ändra
-			else if (itemSpawnData.itemType == ObjID::GRENADE) onlineItems.push_back(new Grenade(componentIdCounter));//ändra
+			else if (itemSpawnData.itemType == ObjID::GRENADE) { onlineItems.push_back(new Grenade(componentIdCounter)); grenadeCount++; }
 			physWorld.addPhysComponent(*onlineItems[onlineItems.size() - 1]);
 			onlineItems[onlineItems.size() - 1]->setPosition(temp.x, temp.y, temp.z);
 			onlineItems[onlineItems.size() - 1]->setInUseBy(-1);
@@ -784,7 +809,7 @@ int main()
 				break;
 
 			case MiniGames::KINGOFTHEHILL:
-				miniGameKTH.update(data, onlineItems, physWorld, componentIdCounter);
+				miniGameKTH.update(data, onlineItems, physWorld, planetVector, componentIdCounter, totalTeamScores);
 				break;
 
 				/*default:
@@ -812,11 +837,10 @@ int main()
 						objPos = onlineItems[i]->getPhysicsComponent()->getPosV3();
 						subtractionXMFLOAT3(vecToComp, objPos);
 
-						if (getLength(vecToComp) <= 10.f)
+						if (getLength(vecToComp) <= 10.f && onlineItems[i]->getInUseById() != -1)
 						{
 							//onlineItems[i].setInactive();
-							std::cout << "getLength() <= 10.f\n";
-							DirectX::XMFLOAT3 newCompPos = randomizeObjectPos();
+							DirectX::XMFLOAT3 newCompPos = randomizeObjectPos(planetVector);
 							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 							onlineItems[i]->setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
 							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -826,6 +850,11 @@ int main()
 							compAdded.spaceShipTeam = j;
 							compAdded.componentID = i;
 							onlineItems[i]->setInUseBy(-1);
+
+							totalTeamScores[j] += 25;
+							shipComponentCounter[j]++;
+							if (shipComponentCounter[j] == 4 && shipComponentCounter[!j] >= 4) totalTeamScores[!j] += 15;
+
 							sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
 							sizeOfPackets += sizeof(ComponentAdded);
 
@@ -838,6 +867,8 @@ int main()
 								timeToFly = true;
 								startFly = std::chrono::system_clock::now();
 							}
+
+							std::cout << "Red team score : " << (int)totalTeamScores[0] << "\nBlue team score: " << (int)totalTeamScores[1] << "\n";
 						}
 					}
 				}
@@ -890,6 +921,8 @@ int main()
 							}
 						}
 						grenade->resetExplosion();
+						DirectX::XMFLOAT3 newGrenadePos = randomizeObjectPos(planetVector);
+						grenade->setPosition(newGrenadePos.x, newGrenadePos.y, newGrenadePos.z);
 					}
 				}
 			}
@@ -921,6 +954,24 @@ int main()
 				sendBinaryDataAllPlayers(prMatrix, data);
 				sizeOfPackets += sizeof(PositionRotation);
 			}
+			for (int i = 0; i < onlineItems.size(); i++)
+			{
+				ComponentPosition compPosition;
+				compPosition.ComponentId = onlineItems[i]->getOnlineId();
+				compPosition.packetId = PacketType::COMPONENTPOSITIONNEW;
+				compPosition.x = onlineItems[i]->getposition('x');
+				compPosition.y = onlineItems[i]->getposition('y');
+				compPosition.z = onlineItems[i]->getposition('z');
+				compPosition.xRot = onlineItems[i]->getPhysicsComponent()->getRotation().x;
+				compPosition.yRot = onlineItems[i]->getPhysicsComponent()->getRotation().y;
+				compPosition.zRot = onlineItems[i]->getPhysicsComponent()->getRotation().z;
+				compPosition.wRot = onlineItems[i]->getPhysicsComponent()->getRotation().w;
+				compPosition.playerOnlineId = onlineItems[i]->getInUseById();
+				//compPosition.quat = onlineItems[i].getPhysicsComponent()->getRotation();
+				sendBinaryDataAllPlayers<ComponentPosition>(compPosition, data);
+				sizeOfPackets += sizeof(ComponentPosition);
+
+			}
 			start = std::chrono::system_clock::now();
 		}
 
@@ -950,32 +1001,14 @@ int main()
 			}
 		}
 
-		for (int i = 0; i < onlineItems.size(); i++)
-		{
-			ComponentPosition compPosition;
-			compPosition.ComponentId = onlineItems[i]->getOnlineId();
-			compPosition.packetId = PacketType::COMPONENTPOSITIONNEW;
-			compPosition.x = onlineItems[i]->getposition('x');
-			compPosition.y = onlineItems[i]->getposition('y');
-			compPosition.z = onlineItems[i]->getposition('z');
-			compPosition.xRot = onlineItems[i]->getPhysicsComponent()->getRotation().x;
-			compPosition.yRot = onlineItems[i]->getPhysicsComponent()->getRotation().y;
-			compPosition.zRot = onlineItems[i]->getPhysicsComponent()->getRotation().z;
-			compPosition.wRot = onlineItems[i]->getPhysicsComponent()->getRotation().w;
-			//compPosition.quat = onlineItems[i].getPhysicsComponent()->getRotation();
-			sendBinaryDataAllPlayers<ComponentPosition>(compPosition, data);
-			sizeOfPackets += sizeof(ComponentPosition);
-
-		}
 		if (DebugSizePackets.getTimePassed(1.0f))
 		{
-			std::cout << "SizeOfPackets: " << sizeOfPackets << std::endl;
+			//std::cout << "SizeOfPackets: " << sizeOfPackets << std::endl;
 			sizeOfPackets = 0;
 			DebugSizePackets.resetStartTime();
 		}
 
 	}
-
 
 	for (int i = 0; i < planetVector.size(); i++)
 	{

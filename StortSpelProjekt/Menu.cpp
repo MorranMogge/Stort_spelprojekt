@@ -25,6 +25,14 @@ Menu::Menu()
 	manager.getMeshData("../Meshes/Sphere_with_normal.fbx", vBuff, iBuff, subMeshRanges, verticies);
 	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 
+	int randomPlanetIndex = rand() % 11; //range 0 to 12
+	const std::string path_c = std::string("p") + std::to_string(randomPlanetIndex) + std::string(".png");
+	const std::string path_n = std::string("p") + std::to_string(randomPlanetIndex) + std::string("n.png");
+
+	auto colorSRV = loadTexture(path_c);
+	auto normalSRV = loadTexture(path_n);
+
+
 	for (int i = 0; i < 5; i++)
 	{
 		if (i < 4) { planets.push_back(new Planet(meshes[2], DirectX::XMFLOAT3(i + 1.5f, i + 1.5f, i + 1.5f), DirectX::XMFLOAT3(-130 + i * 10, 5 - i * 0.5, -120 - i * 10), (4.0f * 9.82f))); }
@@ -36,7 +44,12 @@ Menu::Menu()
 		planets[i]->setRotation(DirectX::SimpleMath::Vector3(1.2f * i, 0.2f * i, 0.7f * i));
 		planets[i]->setRotationSpeed(DirectX::SimpleMath::Vector3(0.000f * i, 0.002f * (4-i), 0.000f * i));
 	}
-	planets.push_back(new Planet(meshes[0], DirectX::XMFLOAT3(40, 40, 40), DirectX::XMFLOAT3(-130, -30.f, 0.f), (4.0f * 9.82f), meshes[1]));
+	planets.push_back(new Planet(tmpMesh, DirectX::XMFLOAT3(40, 40, 40), DirectX::XMFLOAT3(-130, -30.f, 0.f), (4.0f * 9.82f), meshes[1]));
+	planets.back()->setNormalMap(normalSRV);
+	planets.back()->setSrv(colorSRV);
+	
+	std::cout << planets.size();
+	
 	//planets.back()->setSrv
 
 	planets.back()->setPlanetPosition({0 ,0,-0});
@@ -134,6 +147,8 @@ void Menu::drawObjects()
 	//Draw light debug meshes
 	//ltHandler.drawDebugMesh();
 
+	
+
 	//Draw depth stencil
 //basicRenderer.depthPrePass();
 //ltHandler.drawShadows(0, gameObjects, &camera);
@@ -151,6 +166,10 @@ void Menu::Render()
 	//Render Scene
 	basicRenderer.setUpScene(this->cam, false);
 	drawObjects();
+
+	basicRenderer.setUpSceneNormalMap(cam);
+	basicRenderer.bindAmbientShader();
+	planets.back()->drawObjectWithNormalMap();
 
 	//Unbind light
 	ltHandler.unbindSrv();

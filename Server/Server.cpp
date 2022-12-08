@@ -277,7 +277,6 @@ int main()
 
 	srand((unsigned)(time(0)));
 
-	//bool FUCKTHISSHIT = false;
 
 	while (1)
 	{
@@ -459,7 +458,7 @@ int main()
 		//	threadData[i].circBuffer = circBuffer;
 		//	recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
 		//}
-		//FUCKTHISSHIT = true;
+
 		int temp = 0;
 		while (1)
 		{

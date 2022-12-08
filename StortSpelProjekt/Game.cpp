@@ -877,7 +877,6 @@ GAMESTATE Game::updateKingOfTheHillGame()
 			fadedIn = true;
 		}
 	}
-	ui.redySetGo();
 
 	//Calculate gravity factor
 	if (planetVector.size() > 0) field = planetVector[0]->getClosestField(planetVector, currentPlayer->getPosV3());
@@ -1230,24 +1229,9 @@ void Game::Render()
 {
 	if (!fadedIn)// fade in condition
 	{
-		if (!this->ui.fadeIn()) // is fading
-		{
-
-		}
-		else // fade in complete
-		{
-			fadedIn = true;
-		}
+		if (!this->ui.fadeIn()) {}	// is fading
+		else {fadedIn = true;}		// fade in complete
 	}
-	if (!ui.redySetGo())
-	{
-		std::cout << "ready" << std::endl;
-	}
-	else
-	{
-		std::cout << "ready" << std::endl;
-	}
-	
 
 	//Render shadow maps
 	basicRenderer.lightPrePass();
@@ -1299,6 +1283,7 @@ void Game::Render()
 	{
 
 	case COMPONENTCOLLECTION:
+		if (!ui.readySetGo()){}
 		ui.Draw();
 		break;
 
@@ -1308,6 +1293,8 @@ void Game::Render()
 		break;
 
 	case KINGOFTHEHILL:
+		if (!ui.readySetGo()){ currentPlayer->isReady(false);}
+		else { currentPlayer->isReady(true); }
 		ui.DrawFade();
 		break;
 

@@ -33,8 +33,22 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	//Temp? initiation of animated mesh
 
 	//manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
-	//manager.loadMeshData("../Meshes/goblin2.fbx");
+	manager.loadMeshData("../Meshes/goblin2.fbx");
+	
+	this->manager.loadMeshData("../Meshes/goblin2.fbx");
+	this->manager.getMeshData("../Meshes/goblin2.fbx", vBuff, iBuff, subMeshRanges, verticies);
+	manager.loadMeshData("../Meshes/Sphere_with_normal.fbx");
+	manager.getMeshData("../Meshes/Sphere_with_normal.fbx", vBuff, iBuff, subMeshRanges, verticies);
+	manager.addTexture("p6n.png");
 
+	tmpMesh2 = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	testCube = new GameObject(tmpMesh2, DirectX::XMFLOAT3(0, 69, 0), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), 5, nullptr, DirectX::XMFLOAT3(5.0f, 5.0f, 5.0f));
+	testCube->setSrv(this->manager.getSrv("p6.png"));
+	testCube->setNormalMap(this->manager.getSrv("p6n.png"));
+	physWorld.addPhysComponent(testCube);
+	gameObjects.push_back(testCube);
+
+	
 	manager.loadMeshAndBoneData("../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_run.fbx", "../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_run_fast.fbx", "../Meshes/anim/character1_idle.fbx");
@@ -327,14 +341,14 @@ void Game::loadObjects()
 	//Initilize player
 	if (!currentPlayer && !IFONLINE)
 	{
-		ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K2SG_Diffuse.png");
-		ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
+		ID3D11ShaderResourceView* blueTeamColour = nullptr;
+		ID3D11ShaderResourceView* redTeamColour = nullptr;
 		currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 			1, client->getPlayerId(), client, 0, redTeamColour, blueTeamColour, planetGravityField);
 		std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
 		this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
 		
-
+		allPlayerTextures.size();
 		currentPlayer->setTextures(allPlayerTextures);
 
 		//currentPlayer->addData(animData);
@@ -346,6 +360,7 @@ void Game::loadObjects()
 	//Set items baseball bat
 	if (!IFONLINE)
 	{
+		captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), planetGravityField, DirectX::SimpleMath::Vector3(10.f, 10.f, 10.f));
 		baseballBat->setPlayer(currentPlayer);
 		baseballBat->setGameObjects(gameObjects);
 
@@ -1223,7 +1238,6 @@ GAMESTATE Game::Update()
 		currentMinigame = KINGOFTHEHILL;
 	}
 
-
 	if (Input::KeyPress(KeyCode::P))
 	{
 		return WIN;
@@ -1291,8 +1305,9 @@ void Game::Render()
 	
 
 	basicRenderer.setUpSceneNormalMap(this->camera);
-	drawNormalObjects();
-	
+	ltHandler.bindLightBuffers();
+	testCube->drawObjectWithNormalMap();
+
 
 	//Unbind light
 	ltHandler.unbindSrv();

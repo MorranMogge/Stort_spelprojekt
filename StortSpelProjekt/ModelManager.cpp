@@ -78,38 +78,36 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		}
 
 		aiString diffuseName;
-		material->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0), diffuseName);
+		material->Get(AI_MATKEY_TEXTURE(aiTextureType_NORMALS, 0), diffuseName);
 		
 		aiString Path;
 		if (material->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			if (this->bank.hasItem(Path.data))
+			if (this->bank.hasItem(Path.C_Str()))
 			{
-				this->diffuseMaps.emplace_back(this->bank.getSrv(Path.data));
+				this->diffuseMaps.emplace_back(this->bank.getSrv(Path.C_Str()));
 				continue;
 			};
 
-			std::cout << Path.C_Str() << "\n";
+			
 			ID3D11ShaderResourceView* tempSRV = {};
 			std::string FullPath = "../Textures/";
-			FullPath.append(Path.data);
+			FullPath.append(Path.C_Str());
 			//make srv
 			if (!this->makeSRV(tempSRV, FullPath))
 			{
 				continue;
 			}
 			//give to bank
-			this->bank.addSrv(Path.data, tempSRV);
+			this->bank.addSrv(Path.C_Str(), tempSRV);
 			this->diffuseMaps.emplace_back(tempSRV);
-
-
+			this->allNormalTextureNamesForMesh.emplace_back(Path.C_Str());
 		}
 
-		std::cout << diffuseName.C_Str() << "\n";
+		
 		//if(material->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		if(material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::cout << Path.C_Str() << std::endl;
 			if (this->bank.hasItem(Path.C_Str()))
 			{
 				this->diffuseMaps.emplace_back(this->bank.getSrv(Path.data));
@@ -119,18 +117,15 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 			ID3D11ShaderResourceView* tempSRV = {};
 			std::string FullPath = "../Textures/";
 			FullPath.append(Path.C_Str());
-			std::cout << FullPath << std::endl;
-
 			//make srv
 			if (!this->makeSRV(tempSRV, FullPath))
 			{
 				continue;
 			}
 			//give to bank
-			std::cout << FullPath << "\n";
 			this->bank.addSrv(Path.C_Str(), tempSRV);
 			this->diffuseMaps.emplace_back(tempSRV);
-			this->allTextureNamesForMesh.emplace_back(Path.C_Str());
+			this->allDiffuseTextureNamesForMesh.emplace_back(Path.C_Str());
 		}
 	}
 
@@ -162,8 +157,8 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 			//vertex.tangent.y = mesh->mBitangents[i].y;
 			//vertex.tangent.y = mesh->mBitangents[i].y;
 			//vertex.tangent.z = mesh->mBitangents[i].z;
-			vertex.tangent.z = mesh->mTangents[i].z;
-			vertex.tangent.z = mesh->mTangents[i].z;
+			vertex.tangent.x = mesh->mTangents[i].x;
+			vertex.tangent.y = mesh->mTangents[i].y;
 			vertex.tangent.z = mesh->mTangents[i].z;
 
 			if (mesh->mTextureCoords[0])
@@ -539,6 +534,9 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	this->dataForMesh.indexTriangle.clear();
 	this->dataForMesh.vertexTriangle.clear();
 	
+	allDiffuseTextureNamesForMesh.clear();
+	allNormalTextureNamesForMesh.clear();
+
 
 	return true;
 }
@@ -561,7 +559,7 @@ ID3D11ShaderResourceView* ModelManager::getSrv(const std::string key)
 
 void ModelManager::getTextureMaps(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec)
 {
-	this->bank.getAllTexturesForMesh(name, emptyVec);
+	this->bank.getAllDiffuseTexturesForMesh(name, emptyVec);
 
 }
 
@@ -647,15 +645,16 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
 
 	bank.addAnimationData(filePath, vertexBuffer, indexBuffer, submeshRanges, amountOfvertices, this->aniData);
-	bank.addAllTexturesForMesh(filePath, this->allTextureNamesForMesh);
+	bank.addAllDiffuseTexturesForMesh(filePath, this->allDiffuseTextureNamesForMesh);
+	bank.addAllNormalTexturesForMesh(filePath, this->allNormalTextureNamesForMesh);
 	indexBuffer = {};
 	vertexBuffer = {};
 	this->submeshRanges.clear();
 	this->amountOfvertices.clear();
 	this->dataForMesh.indexTriangle.clear();
 	this->dataForMesh.vertexTriangle.clear();
-
-	//this->allTextureNamesForMesh.clear();
+	this->allDiffuseTextureNamesForMesh.clear();
+	this->allNormalTextureNamesForMesh.clear();
 
 
 	int bp = 2;
@@ -672,4 +671,18 @@ bool ModelManager::getAnimData(const std::string& filePath, ID3D11Buffer*& verte
 	this->bank.getAnimData(filePath, indexBuffer, vertexBuffer, submeshRanges, amountOfVertces, aniData);
 	AnimData = aniData;
 	return	true;
+}
+
+bool ModelManager::addTexture(const std::string& fileName)
+{
+	std::string filePath = "../Textures/";
+	filePath.append(fileName);
+	if (bank.hasItem(fileName) == false)
+	{
+		ID3D11ShaderResourceView* tempSRV = {};
+		this->makeSRV(tempSRV, filePath);
+		this->bank.addSrv(fileName, tempSRV);
+		return true;
+	}
+	return false;
 }

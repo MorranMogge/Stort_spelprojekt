@@ -115,23 +115,40 @@ void ModelDataContainer::extendAnimations(std::string key, AnimationData animDat
 	}
 }
 
-void ModelDataContainer::addAllTexturesForMesh(std::string name, std::vector<std::string>& allNames)
+void ModelDataContainer::addAllDiffuseTexturesForMesh(std::string name, std::vector<std::string>& allNames)
 {
 	std::vector<ID3D11ShaderResourceView*> tempVec;
 	for (int i = 0; i < allNames.size(); i++)
 	{
-		if (getSrv(allNames[i]) == nullptr)
+		if (getSrv(allNames[i]) != nullptr)
 		{
-			std::cout << "Index was null\n";
+			tempVec.emplace_back(getSrv(allNames[i]));
 		}
-		tempVec.emplace_back(getSrv(allNames[i]));
-		std::cout << allNames[i] << " from vecName\n";
 	}
-	this->mapOfAllTexturesToAMesh.insert(std::pair(name, tempVec));
+	this->mapOfAllDiffuseTexturesToAMesh.insert(std::pair(name, tempVec));
 }
 
-void ModelDataContainer::getAllTexturesForMesh(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec)
+void ModelDataContainer::getAllDiffuseTexturesForMesh(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec)
 {
-	auto it = this->mapOfAllTexturesToAMesh.find(name);
+	auto it = this->mapOfAllDiffuseTexturesToAMesh.find(name);
+	emptyVec = it->second;
+}
+
+void ModelDataContainer::addAllNormalTexturesForMesh(std::string name, std::vector<std::string>& allNames)
+{
+	std::vector<ID3D11ShaderResourceView*> tempVec;
+	for (int i = 0; i < allNames.size(); i++)
+	{
+		if (getSrv(allNames[i]) != nullptr)
+		{
+			tempVec.emplace_back(getSrv(allNames[i]));
+		}
+	}
+	this->mapOfAllNormalTexturesToAMesh.insert(std::pair(name, tempVec));
+}
+
+void ModelDataContainer::getAllNormalTexturesForMesh(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec)
+{
+	auto it = this->mapOfAllNormalTexturesToAMesh.find(name);
 	emptyVec = it->second;
 }

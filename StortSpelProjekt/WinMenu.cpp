@@ -107,8 +107,6 @@ WinMenu::WinMenu() : manager(GPU::device)
 	this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
 	sexyMan->setTextures(allPlayerTextures);
 
-
-
 	tmpMesh2 = team2Mesh;
 	sexyMan2 = new AnimatedMesh(tmpMesh2, team2Anim, { 0,0,-10 }, { 0,0,0 }, 0);
 	sexyMan2->setSrv(blueTeamColour);

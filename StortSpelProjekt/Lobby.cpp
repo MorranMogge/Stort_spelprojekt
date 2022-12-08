@@ -2,9 +2,11 @@
 #include "LobbyUI.h"
 #include "Lobby.h"
 #include "Client.h"
+#include "ErrorLog.h"
 
 Lobby::Lobby(Client*& client)
 {
+	ErrorLog::Log("UWU");
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 	startGame = false;
 	client = new Client();
@@ -58,6 +60,7 @@ GAMESTATE Lobby::Update()
 
 	if (startGame)
 	{
+		
 		ui.isLoading = true;// display loading screen
 		return GAME;
 	}

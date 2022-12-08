@@ -161,7 +161,8 @@ void lobby(serverData& data, CircularBuffer & circBuffer, std::thread* recvThrea
 {
 	TimeStruct tempTime;
 	bool ifThreaded[MAXNUMBEROFPLAYERS]{ false };
-	while (1)
+	bool loop = true;
+	while (loop)
 	{
 
 		//kollar packet så att det tas emot och slänger packet vi inte vill ha
@@ -214,6 +215,11 @@ void lobby(serverData& data, CircularBuffer & circBuffer, std::thread* recvThrea
 				std::cout << "readystatus: " << data.users[i].playa.getReadyStatus() << std::endl;
 				if (ifThreaded[i] && data.users[i].playa.getReadyStatus() == 0)
 				{
+					allPlayersReadyForGame = true;
+					
+				}
+				else
+				{
 					allPlayersReadyForGame = false;
 					break;
 				}
@@ -225,6 +231,7 @@ void lobby(serverData& data, CircularBuffer & circBuffer, std::thread* recvThrea
 
 				std::cout << "Sending Ready to start game\n";
 				sendBinaryDataAllPlayers<LobbyStartGame>(lbyStartGame, data);
+				loop = false;
 			}
 
 			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
@@ -236,6 +243,7 @@ void lobby(serverData& data, CircularBuffer & circBuffer, std::thread* recvThrea
 					for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
 					{
 						//only send if the recipient is initialized
+
 						if (data.users[j].playerId != -1)
 						{
 							//sending data about the player to other players
@@ -349,7 +357,9 @@ int main()
 	lobby(data, *circBuffer,recvThread,physWorld, threadData);
 	circBuffer->clearBuffer();
 
-	sendIdToAllPlayers(data);
+	physicsTimer.resetStartTime();
+	while (!physicsTimer.getTimePassed(2.0f)) continue;
+	//sendIdToAllPlayers(data);
 
 	//Wait 3 seconds since we can lose some data if we directly send information about space ships
 	physicsTimer.resetStartTime();

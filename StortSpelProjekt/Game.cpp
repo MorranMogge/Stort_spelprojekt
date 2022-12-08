@@ -49,13 +49,13 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	if (IFONLINE)
 	{
 		int thingstoLoad = 0;
-		client->connectToServer();
-		int playerId = -1;
-		while (playerId <= -1 || playerId >= 9)
-		{
-			playerId = packetEventManager->handleId(client->getCircularBuffer(), this->planetVector, physWorld, meshes, spaceShips, gameObjects,this->field, thingstoLoad);
+		//client->connectToServer();
+		int playerId = client->getPlayerId();
+		/*while (playerId <= -1 || playerId >= 9)
+		{*/
+			//playerId = packetEventManager->handleId(client->getCircularBuffer(), this->planetVector, physWorld, meshes, spaceShips, gameObjects,this->field, thingstoLoad);
 			//std::cout << "Game.cpp, playerId: " << std::to_string(playerId) << std::endl;
-		}
+		//}
 		//int playerid = client->initTEMPPLAYERS();
 		std::cout << "The recv player id from client: " << std::to_string(playerId) << std::endl;
 		this->client->setClientId(playerId);
@@ -92,7 +92,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 
 		gamePad = new DirectX::GamePad();
 		currentPlayer->setGamePad(gamePad);
-		
+		std::cout << "clear buffer before waiting for data from server\n";
+		circularBuffer->clearBuffer();
 		while (thingstoLoad != 5)
 		{
 			std::cout << "thingstoLoad: " << thingstoLoad << std::endl;

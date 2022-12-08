@@ -91,6 +91,7 @@ private:
 	TimeStruct dropTimer;
 	bool usedItem = true;
 	bool throwingItem = false;
+	bool n1 = true;
 
 	void throwItem();
 	void resetRotationMatrix();

@@ -90,11 +90,12 @@ void Player::handleItems()
 			this->throwingItem = true;
 		}
 		//Use item
-		else if (this->holdingItem != nullptr && tracker.x == ButtonState::PRESSED)
+		else if (keyPressTimer.getTimePassed(0.1f) && tracker.x == ButtonState::PRESSED && n1)
 		{
 			keyPressTimer.resetStartTime();
 			if (holdingItem->getId() == BAT)
 			{
+				n1 = false;
 				this->usingBat = true;
 				this->usedItem = false;
 				this->dropTimer.resetStartTime();
@@ -165,11 +166,12 @@ void Player::handleItems()
 			this->throwingItem = true;
 		}
 		//Use the Item
-		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E))
+		else if (keyPressTimer.getTimePassed(0.1f) && Input::KeyPress(KeyCode::E) && n1)
 		{
 			keyPressTimer.resetStartTime();
 			if (holdingItem->getId() == BAT && usedItem)
 			{
+				n1 = false;
 				this->usingBat = true;
 				this->usedItem = false;
 				this->dropTimer.resetStartTime();
@@ -264,6 +266,7 @@ void Player::handleItems()
 		}
 		holdingItem->setPickedUp(false);
 		holdingItem = nullptr;
+		n1 = true;
 	}
 }
 

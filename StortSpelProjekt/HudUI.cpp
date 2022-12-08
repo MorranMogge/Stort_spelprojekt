@@ -228,6 +228,10 @@ HudUI::HudUI()
 	objective.Load(L"../Sprites/Objective.png");
 	objective.SetScale(0.75f * scaleFactor, 0.75f * scaleFactor);
 
+	kthObjective = GUISprite(632, 100 + upp);
+	kthObjective.Load(L"../Sprites/ObjectiveKTH.png");
+	kthObjective.SetScale(0.75f , 0.75f );
+
 	blackBackground = GUISprite(310 + left, 300 + upp);
 	blackBackground.Load(L"../Sprites/BackHudTransparent.png");
 	blackBackground.SetScale(1.0f, 1.0f);
@@ -319,6 +323,7 @@ void HudUI::displayObjective()
 		GUI::Begin();
 		blackBackground2.Draw();
 		objective2.Draw();
+
 		GUI::End();
 	}
 }
@@ -426,6 +431,7 @@ void HudUI::SetGamePad(DirectX::GamePad* g)
 
 void HudUI::DrawFade()
 {
+	handleInputs();
 	GUI::Begin();
 	fade.Draw();
 
@@ -454,8 +460,32 @@ void HudUI::DrawFade()
 	{
 		dot2.Draw();
 	}
-	GUI::End();
 
+	if (!done && kth)
+	{
+		blackBackground2.Draw();
+		kthObjective.Draw();
+	}
+
+	if (Input::KeyDown(KeyCode::TAB) || state.IsStartPressed())
+	{
+		blackBackground.Draw();
+		if (state.IsConnected())
+		{
+			control2.Draw();
+		}
+		else
+		{
+			control.Draw();
+			useText.Draw();
+			throwText.Draw();
+			pickText.Draw();
+		}
+		objective.Draw();
+	}
+	state.IsConnected() ? controls2.Draw() : controls.Draw();
+
+	GUI::End();
 }
 
 void HudUI::resetReadySetGo()
@@ -472,6 +502,11 @@ void HudUI::Draw()
 	GUI::End();
 	DrawFade();
 	displayObjective();
+}
+
+void HudUI::setKTH(bool stuff)
+{
+	kth = stuff;
 }
 
 bool HudUI::isDone() const

@@ -32,7 +32,7 @@ Grenade::Grenade(Mesh* useMesh, Mesh* expMesh, const DirectX::XMFLOAT3& pos, con
 	float constant = 4.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-	std::vector<std::string> tempStr{ "icon_boom.png", "icon_boom2.png" , "Ekey.png" };
+	std::vector<std::string> tempStr{ "icon_boom.png", "icon_boom2.png" , "Ekey.png" , "x.png" };
 	this->itemIcon = new BilboardObject(tempStr, iconPos);
 	this->itemIcon->setOffset(constant);
 
@@ -76,7 +76,7 @@ Grenade::Grenade(const std::string& objectPath, const DirectX::XMFLOAT3& pos, co
 	float constant = 4.0f;
 	DirectX::XMFLOAT3 upDir = this->getUpDirection();
 	DirectX::XMFLOAT3 iconPos(upDir.x * constant, upDir.y * constant, upDir.z * constant);
-	std::vector<std::string> tempStr{ "icon_boom.png", "icon_boom2.png" , "Ekey.png" };
+	std::vector<std::string> tempStr{ "icon_boom.png", "icon_boom2.png" , "Ekey.png" , "x.png" };
 	this->itemIcon = new BilboardObject(tempStr, iconPos);
 	this->itemIcon->setOffset(constant);
 
@@ -156,9 +156,21 @@ void Grenade::drawIcon()
 	{
 		if (this->itemIcon != nullptr && !pickedUp)
 		{
-			if (withinPlayerReach)
+			if (withinPlayerReach && this->gamePad == nullptr)
 			{
 				this->itemIcon->bindAndDraw(2, 0);
+			}
+			else if (this->gamePad != nullptr && withinPlayerReach)
+			{
+				auto state = this->gamePad->GetState(0);
+				if (state.IsConnected())
+				{
+					this->itemIcon->bindAndDraw(3, 0);
+				}
+				else
+				{
+					this->itemIcon->bindAndDraw(2, 0);
+				}
 			}
 			else
 			{

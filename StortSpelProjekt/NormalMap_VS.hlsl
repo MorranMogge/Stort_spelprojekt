@@ -2,6 +2,7 @@ cbuffer WorldCB : register(b0)
 {
     float4x4 worldM;
 }
+
 cbuffer CamCB : register(b1)
 {
     float4x4 camViewProjM;

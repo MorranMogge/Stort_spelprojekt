@@ -5,6 +5,7 @@
 #include "MemoryLeackChecker.h"
 #include "SoundCollection.h"
 #include <filesystem>
+#include "ErrorLog.h"
 
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT, const int NROFPLAYERS, Client* client)
@@ -79,7 +80,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
 	ID3D11ShaderResourceView* redTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
 	AnimationData doNotUseT;
-	this->manager.getAnimData("../Meshes/anim/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, doNotUseT);
+	this->manager.getAnimData("../Meshes/anim/character2_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, doNotUseT);
 	tmpMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 	AnimationData doNotUse;
 	this->manager.getAnimData("../Meshes/anim/character2_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, doNotUse);
@@ -117,7 +118,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 				tmpPlayer = new Player(useMeshForPlayer, doNotUseT, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
 				std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
-				this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
+				this->manager.getTextureMaps("../Meshes/anim/character2_idle.fbx", allPlayerTextures);
 				tmpPlayer->setTextures(allPlayerTextures);
 			}
 			else
@@ -126,7 +127,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 				tmpPlayer = new Player(useMeshForPlayer, doNotUse, DirectX::SimpleMath::Vector3(35.f + (float)(offset * i), 12, -22), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 					0, i, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
 				std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
-				this->manager.getTextureMaps("../Meshes/anim/character2_idle.fbx", allPlayerTextures);
+				this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
 				tmpPlayer->setTextures(allPlayerTextures);
 			}
 			
@@ -145,11 +146,17 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 				{
 					currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(-4, -42, -10), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 						1, playerId, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+					std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
+					this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
+					currentPlayer->setTextures(allPlayerTextures);
 				}
 				else
 				{
 					currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(7, 42, 12), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 						1, playerId, client, (int)(dude < i + 1), redTeamColour, blueTeamColour, planetGravityField);
+					std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
+					this->manager.getTextureMaps("../Meshes/anim/character2_idle.fbx", allPlayerTextures);
+					currentPlayer->setTextures(allPlayerTextures);
 				}
 
 				//currentPlayer->addData(animData);
@@ -170,19 +177,22 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 			std::cout << "thingstoLoad: " << thingstoLoad << std::endl;
 			packetEventManager->handleId(client->getCircularBuffer(), this->planetVector, physWorld, meshes, spaceShips, gameObjects, field, thingstoLoad);
 		}
+		
 		for (int i = 0; i < spaceShips.size(); i++)
 		{
 			spaceShips[i]->setSpaceShipRotationRelativePlanet(planetVector[0]->getGravityField());
 			
 		}
+		
 		for (int i = 0; i < players.size(); i++)
 		{
 			players[i]->setGravityField(planetVector[0]->getGravityField());
 		}
+		
 		DoneLoading sendingConfirm;
 		sendingConfirm.packetId = PacketType::DONELOADING;
 		client->sendStuff<DoneLoading>(sendingConfirm);
-
+		
 	}
 	landingUi.makeGamePad(gamePad);
 
@@ -194,7 +204,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		players[i]->setGravityField(planetGravityField);
 		players[i]->setScale(0.85f);
 	}
-
+	
 	//check the handle id for data ex(Planets, SpaceShips)
 	field = nullptr;
 	oldField = field;
@@ -212,7 +222,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	serverStart = std::chrono::system_clock::now();
 	this->window = &window;
 	HudUI::SetGamePad(gamePad);
-
+	
 	//Set gamepad for item
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -223,7 +233,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		components[i]->setGamepad(this->gamePad);
 	}
 	
-
+	
 	//Setup fade in and delta time
 	ui.count = 1.0f;
 	ui.setOpacity(false);
@@ -402,7 +412,7 @@ void Game::loadObjects()
 		currentPlayer = new Player(tmpMesh, animData, DirectX::SimpleMath::Vector3(0, 48, 0), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 			1, client->getPlayerId(), client, 0, redTeamColour, blueTeamColour, planetGravityField);
 		std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
-		this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
+		this->manager.getTextureMaps("../Meshes/anim/character2_idle.fbx", allPlayerTextures);
 		
 		allPlayerTextures.size();
 		currentPlayer->setTextures(allPlayerTextures);
@@ -455,19 +465,19 @@ void Game::drawObjects(bool drawDebug)
 {
 	//Bind light
 	ltHandler.bindLightBuffers();
-
+	
 	//Draw Game objects
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects[i]->draw();
 	}
-	
+
 	//Nödvändig??????????
 	for (int i = 0; i < onlineItems.size(); i++)
 	{
 		onlineItems[i]->draw();
 	}
-
+	
 	//Draw planets
 	basicRenderer.tesselationPrePass(camera);
 	for (int i = 0; i < planetVector.size(); i++)
@@ -475,6 +485,7 @@ void Game::drawObjects(bool drawDebug)
 		if (i == camera.getCollidedWith()) continue;
 		planetVector[i]->drawPlanet(true);
 	}
+	
 	basicRenderer.resetTopology();
 	asteroids->drawAsteroids();
 	//testCube->draw();
@@ -488,13 +499,15 @@ void Game::drawObjects(bool drawDebug)
 		ltHandler.drawDebugMesh();
 	}
 	
-
+	
 	//Animated meshes
 	basicRenderer.changeToAnimation();
+	
 	for (int i = 0; i < players.size(); i++)
 	{
 			players[i]->drawSubMeshesWithTexture();
 	}
+	
 }
 
 void Game::drawIcons()
@@ -993,7 +1006,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	if (IFONLINE)
 	{
 		packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
-			teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState);
+			teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState, gamePad);
 	}
 
 	static bool firstFrame = false;
@@ -1271,6 +1284,7 @@ GAMESTATE Game::updateIntermission()
 
 GAMESTATE Game::Update()
 {
+	
 	if (ui.isDone()) currentPlayer->isReady(true);
 
 	//If someone for some reason want to add physics boxes to the world, SHALL BE REMOVED
@@ -1281,7 +1295,7 @@ GAMESTATE Game::Update()
 	{
 		//read the packets received from the server
 		packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
-			teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState);
+			teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState, gamePad);
 	}
 
 
@@ -1391,27 +1405,28 @@ GAMESTATE Game::Update()
 	{
 		return LOSE;
 	}
-	
+
 	return currentGameState;
 }
 
 void Game::Render()
 {
+	
 	if (!fadedIn)// fade in condition
 	{
 		if (!this->ui.fadeIn()) {}	// is fading
 		else {fadedIn = true;}		// fade in complete
 	}
-
+	
 	//Render shadow maps
 	basicRenderer.lightPrePass();
 	drawShadows();
-
+	
 	//Render Scene
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
 	
-
+	
 	basicRenderer.setUpSceneNormalMap(this->camera);
 	ltHandler.bindLightBuffers();
 	//testCube->drawObjectWithNormalMap();
@@ -1429,14 +1444,12 @@ void Game::Render()
 	basicRenderer.fresnelPrePass(this->camera);
 	this->drawFresnel();
 
-
 	//Animated meshes
 	basicRenderer.fresnelAnimPrePass(this->camera);
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i]->drawFresnel();
 	}
-
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();
@@ -1446,7 +1459,7 @@ void Game::Render()
 	//Render imgui & wireframe
 	imGui.react3D(wireframe, objectDraw, landingMinigame, dt, velocityCamera, currentPlayer);
 	if (wireframe) { physWorld.renderReact3D(); playerVecRenderer.drawLines(); }
-
+	
 	//render billboard objects
 	basicRenderer.bilboardPrePass(this->camera);
 	drawIcons();
@@ -1455,7 +1468,7 @@ void Game::Render()
 	basicRenderer.geometryPass(this->camera);
 	drawParticles();
 	basicRenderer.geometryUnbind();
-
+	
 	basicRenderer.postProcessPass();
 
 	//Render UI (needs to render last)
@@ -1487,4 +1500,5 @@ void Game::Render()
 	default:
 		break;
 	}
+	
 }

@@ -18,7 +18,7 @@ PacketEventManager::~PacketEventManager()
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects,
 	GravityField* field, std::vector<SpaceShip*>& spaceShips, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes,
-	std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame, float& redTeamPoints, float& blueTeamPoints, Client*& client, const float dt, GAMESTATE& currentGameState)
+	std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame, float& redTeamPoints, float& blueTeamPoints, Client*& client, const float dt, GAMESTATE& currentGameState, DirectX::GamePad* gamePad)
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -113,6 +113,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			//std::cout << "Comp ID: " << spawnComp->ComponentId << "\n";
 			newComponent = new Component(meshes[6], DirectX::SimpleMath::Vector3(spawnComp->x, spawnComp->y, spawnComp->z), DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f),
 				COMPONENT, spawnComp->ComponentId, field);
+			newComponent->setGamepad(gamePad);
 			physWorld.addPhysComponent(newComponent);
 			onlineItems.push_back(newComponent);
 			gameObjects.push_back(newComponent);
@@ -159,6 +160,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), ObjID::BAT, itemSpawn->itemId, field);
 				baseballbat->setClient(client);
 				baseballbat->setGameObjects(players);
+				baseballbat->setGamepad(gamePad);
 				physWorld.addPhysComponent(baseballbat);
 				onlineItems.push_back(baseballbat);
 				gameObjects.push_back(baseballbat);
@@ -169,6 +171,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				potion = new Potion(meshes[3], DirectX::SimpleMath::Vector3(itemSpawn->x, itemSpawn->y, itemSpawn->z),
 					DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), ObjID::POTION, itemSpawn->itemId, field);
 				//grenade->setClient(client);
+				potion->setGamepad(gamePad);
 				physWorld.addPhysComponent(potion);
 				onlineItems.push_back(potion);
 				gameObjects.push_back(potion);
@@ -179,6 +182,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f), ObjID::GRENADE, itemSpawn->itemId, field);
 				//grenade->setClient(client);
 				grenade->setGameObjects(gameObjects);
+				grenade->setGamepad(gamePad);
 				physWorld.addPhysComponent(grenade);
 				onlineItems.push_back(grenade);
 				gameObjects.push_back(grenade);

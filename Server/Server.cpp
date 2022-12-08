@@ -563,7 +563,7 @@ int main()
 							}
 						}
 						onlineItems[useBat->itemId]->setInUseBy(-1);
-						DirectX::XMFLOAT3 newPos = randomizeObjectPos();
+						DirectX::XMFLOAT3 newPos = randomizeObjectPos(planetVector);
 						onlineItems[useBat->itemId]->setPosition(newPos.x, newPos.y, newPos.z);
 					}
 				}
@@ -705,7 +705,7 @@ int main()
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
 		{
 			ItemSpawn itemSpawnData;
-			DirectX::XMFLOAT3 temp = randomizeObjectPos();
+			DirectX::XMFLOAT3 temp = randomizeObjectPos(planetVector);
 			itemSpawnData.itemType = 3;		//Spawns a random item (Baseball bat, potion or grenade)
 			itemSpawnData.x = temp.x;
 			itemSpawnData.y = temp.y;
@@ -784,7 +784,7 @@ int main()
 				break;
 
 			case MiniGames::KINGOFTHEHILL:
-				miniGameKTH.update(data, onlineItems, physWorld, componentIdCounter);
+				miniGameKTH.update(data, onlineItems, planetVector, physWorld, componentIdCounter);
 				break;
 
 				/*default:
@@ -816,7 +816,7 @@ int main()
 						{
 							//onlineItems[i].setInactive();
 							std::cout << "getLength() <= 10.f\n";
-							DirectX::XMFLOAT3 newCompPos = randomizeObjectPos();
+							DirectX::XMFLOAT3 newCompPos = randomizeObjectPos(planetVector);
 							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 							onlineItems[i]->setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
 							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
@@ -921,6 +921,23 @@ int main()
 				sendBinaryDataAllPlayers(prMatrix, data);
 				sizeOfPackets += sizeof(PositionRotation);
 			}
+			for (int i = 0; i < onlineItems.size(); i++)
+			{
+				ComponentPosition compPosition;
+				compPosition.ComponentId = onlineItems[i]->getOnlineId();
+				compPosition.packetId = PacketType::COMPONENTPOSITIONNEW;
+				compPosition.x = onlineItems[i]->getposition('x');
+				compPosition.y = onlineItems[i]->getposition('y');
+				compPosition.z = onlineItems[i]->getposition('z');
+				compPosition.xRot = onlineItems[i]->getPhysicsComponent()->getRotation().x;
+				compPosition.yRot = onlineItems[i]->getPhysicsComponent()->getRotation().y;
+				compPosition.zRot = onlineItems[i]->getPhysicsComponent()->getRotation().z;
+				compPosition.wRot = onlineItems[i]->getPhysicsComponent()->getRotation().w;
+				//compPosition.quat = onlineItems[i].getPhysicsComponent()->getRotation();
+				sendBinaryDataAllPlayers<ComponentPosition>(compPosition, data);
+				sizeOfPackets += sizeof(ComponentPosition);
+			}
+
 			start = std::chrono::system_clock::now();
 		}
 
@@ -950,23 +967,7 @@ int main()
 			}
 		}
 
-		for (int i = 0; i < onlineItems.size(); i++)
-		{
-			ComponentPosition compPosition;
-			compPosition.ComponentId = onlineItems[i]->getOnlineId();
-			compPosition.packetId = PacketType::COMPONENTPOSITIONNEW;
-			compPosition.x = onlineItems[i]->getposition('x');
-			compPosition.y = onlineItems[i]->getposition('y');
-			compPosition.z = onlineItems[i]->getposition('z');
-			compPosition.xRot = onlineItems[i]->getPhysicsComponent()->getRotation().x;
-			compPosition.yRot = onlineItems[i]->getPhysicsComponent()->getRotation().y;
-			compPosition.zRot = onlineItems[i]->getPhysicsComponent()->getRotation().z;
-			compPosition.wRot = onlineItems[i]->getPhysicsComponent()->getRotation().w;
-			//compPosition.quat = onlineItems[i].getPhysicsComponent()->getRotation();
-			sendBinaryDataAllPlayers<ComponentPosition>(compPosition, data);
-			sizeOfPackets += sizeof(ComponentPosition);
-
-		}
+	
 		if (DebugSizePackets.getTimePassed(1.0f))
 		{
 			std::cout << "SizeOfPackets: " << sizeOfPackets << std::endl;

@@ -214,7 +214,14 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			spaceShipPos = circularBuffer->readData<SpaceShipPosition>();
 			//Create correct spaceship depending on team
 			std::cout << "Spawned spaceship\n";
-			newSpaceShip = new SpaceShip(meshes[4], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2), 4);
+			if (spaceShips.size() == 0)
+			{
+				newSpaceShip = new SpaceShip(meshes[10], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2), 4);
+			}
+			else
+			{
+				newSpaceShip = new SpaceShip(meshes[11], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2), 4);
+			}
 			spaceShips.push_back(newSpaceShip);
 			gameObjects.push_back(newSpaceShip);
 			physWorld.addPhysComponent(newSpaceShip, reactphysics3d::CollisionShapeName::BOX, DirectX::XMFLOAT3(0.75f, 3 * 0.75f, 0.75f));
@@ -260,7 +267,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			}
 			else
 			{
-				planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos)));
+				planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos), (4.0f * 9.82f), meshes[1]));
 				planetVector.back()->setPlanetShape(&physWorld);
 				physWorld.setPlanets(planetVector);
 			}
@@ -415,7 +422,7 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer, std::vec
 		case PacketType::SPAWNPLANETS:
 			planetData = circularBuffer->readData<SpawnPlanets>();
 			std::cout << "Received planet\n";
-			planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos)));
+			planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos), (4.0f * 9.82f), meshes[1]));
 			planetVector.back()->setPlanetShape(&physWorld);
 			physWorld.setPlanets(planetVector);
 			UwU++;
@@ -428,11 +435,11 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer, std::vec
 			std::cout << "Spawned spaceship\n";
 			if (spaceShips.size() == 0)
 			{
-				newSpaceShip = new SpaceShip(meshes[10], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2), 4);
+				newSpaceShip = new SpaceShip(meshes[11], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2), 4);
 			}
 			else
 			{
-				newSpaceShip = new SpaceShip(meshes[11], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2), 4);
+				newSpaceShip = new SpaceShip(meshes[10], DirectX::SimpleMath::Vector3(spaceShipPos->x, spaceShipPos->y, spaceShipPos->z), 3, spaceShipPos->spaceShipTeam, field, meshes[9], DirectX::SimpleMath::Vector3(2, 2, 2), 4);
 			}
 			spaceShips.push_back(newSpaceShip);
 			gameObjects.push_back(newSpaceShip);

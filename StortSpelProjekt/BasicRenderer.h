@@ -92,7 +92,7 @@ public:
 	bool initiateRenderer(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, UINT WIDTH, UINT HEIGHT);
 	void setUpScene();
 	void setUpScene(Camera& stageCamera, const bool& shadow = true);
-	void changeToAnimation();
+	void changeToAnimation(bool shadow = true);
 	void geometryPass(Camera & stageCamera);
 	void playerParticlePass();
 	void depthPrePass();

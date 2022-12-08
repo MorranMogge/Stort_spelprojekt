@@ -7,7 +7,7 @@ struct wirefameInfo
 	float padding;
 };
 
-const int NROFPLAYERS = 1;
+const int NROFPLAYERS = 4;
 static bool IFONLINE = false;
 
 class Game : public State
@@ -45,9 +45,7 @@ private:
 	ID3D11Buffer* vBuff;
 	ID3D11Buffer* iBuff;
 	Mesh* tmpMesh;
-	Mesh* tmpMesh2;
-
-	GameObject* testCube;
+	Mesh* otherTmpMesh;
 	std::vector<int> subMeshRanges;
 	std::vector<int> verticies;
 	ID3D11ShaderResourceView* tempSRV;
@@ -75,7 +73,6 @@ private:
 	SkyboxObj skybox;
 	Player* currentPlayer;
 	Mesh* planetMeshes;
-
 
 	//Items
 	int id;
@@ -110,7 +107,6 @@ private:
 	DirectX::XMFLOAT2 offset;
 	UINT HEIGHT;
 	UINT WIDTH;
-
 
 	void loadObjects();
 	void drawShadows();

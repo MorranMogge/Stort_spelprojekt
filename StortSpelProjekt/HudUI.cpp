@@ -26,31 +26,7 @@ void setScaleOverTime(bool& changed, GUISprite &sprite, float time = 0.3)
 void HudUI::SpritePass()
 {
 
-	if (handle)
-	{
-		blackBackground.Draw();
-	}
-	if (Bready)
-	{
-		ready.Draw();
-	}
-	else if (Bset)
-	{
-		set.Draw();
-	}
-	else if (Bgo)
-	{
-		go.Draw();
-		exclamation.Draw();
-	}
-	if (Bdot1)
-	{
-		dot1.Draw();
-	}
-	if (Bdot2)
-	{
-		dot2.Draw();
-	}
+
 
 	static bool red1 = true;
 	static bool red2 = true;
@@ -368,32 +344,31 @@ void HudUI::moveSprite()
 	}
 }
 
-bool HudUI::redySetGo()
+bool HudUI::readySetGo()
 {
 	using namespace DirectX::SimpleMath;
 	handle = true;
 
-	bool done = false;
-	static float timer = 0;
-	timer += Time::DeltaTimeInSeconds();
+	done = false;
+	readyTimer += Time::DeltaTimeInSeconds();
 
 	blackBackground.SetScale(4.0f, 4.0f);
 
-	if (timer >= 1)
+	if (readyTimer >= 1)
 	{
 		this->Bready = true;
 	}
-	if (timer >= 1.7f && timer <= 2.5f)
+	if (readyTimer >= 1.7f && readyTimer <= 2.5f)
 	{
 		//draw dot 1
 		Bdot1 = true;
 	}
-	if (timer >= 2.1f && timer <= 2.5f)
+	if (readyTimer >= 2.1f && readyTimer <= 2.5f)
 	{
 		//draw dot 2
 		Bdot2 = true;
 	}
-	if (timer >= 2.5f)
+	if (readyTimer >= 2.5f)
 	{
 		Bdot1 = false;
 		Bdot2 = false;
@@ -402,30 +377,29 @@ bool HudUI::redySetGo()
 		this->dot1.SetPosition(Vector2(310 + left + 90, 300 + upp + 15));
 		this->dot2.SetPosition(Vector2(310 + left + 130, 300 + upp + 15));
 	}
-	if (timer >= 2.7f && timer <= 3.5f)
+	if (readyTimer >= 2.7f && readyTimer <= 3.5f)
 	{
 		//draw dot 1
 		Bdot1 = true;
 	}
-	if (timer >= 3.1f && timer <= 3.5f)
+	if (readyTimer >= 3.1f && readyTimer <= 3.5f)
 	{
 		//draw dot 2
 		Bdot2 = true;
 	}
-	if (timer >= 3.5f)
+	if (readyTimer >= 3.5f)
 	{
 		Bdot1 = false;
 		Bdot2 = false;
 		this->Bset = false;
 		this->Bgo = true;
 	}
-	if (timer >= 4.5f)
+	if (readyTimer >= 4.5f)
 	{
 		this->Bgo = false;
 		done = true;
 		handle = false;
 	}
-
 	return done;
 }
 
@@ -452,8 +426,40 @@ void HudUI::DrawFade()
 {
 	GUI::Begin();
 	fade.Draw();
+
+	if (handle)
+	{
+		blackBackground.Draw();
+	}
+	if (Bready)
+	{
+		ready.Draw();
+	}
+	else if (Bset)
+	{
+		set.Draw();
+	}
+	else if (Bgo)
+	{
+		go.Draw();
+		exclamation.Draw();
+	}
+	if (Bdot1)
+	{
+		dot1.Draw();
+	}
+	if (Bdot2)
+	{
+		dot2.Draw();
+	}
 	GUI::End();
 
+}
+
+void HudUI::resetReadySetGo()
+{
+	readyTimer = 0;
+	done = Bdot2 = Bdot1 = Bgo = Bset = Bready = handle = false;
 }
 
 void HudUI::Draw()
@@ -464,4 +470,9 @@ void HudUI::Draw()
 	GUI::End();
 
 	DrawFade();
+}
+
+bool HudUI::isDone() const
+{
+	return this->done;
 }

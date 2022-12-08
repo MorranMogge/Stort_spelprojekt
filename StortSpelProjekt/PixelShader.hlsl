@@ -90,7 +90,7 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
         litResult.Specular += result.Specular * shadowFactor;
     }
     float3 frescolor = { 0 * fres, 0.35 * fres, 0.65 * fres };
-    return float4(((max(mat.ambient.xyz, 0.2f)/* + litResult.Specular*/) * diffuseColor + litResult.Diffuse) + frescolor, 1.0f);
+    return float4(((max(mat.ambient.xyz, 0.2f)/* + litResult.Specular*/) * diffuseColor + litResult.Diffuse) /*+ frescolor*/, 1.0f);
 
 }
 

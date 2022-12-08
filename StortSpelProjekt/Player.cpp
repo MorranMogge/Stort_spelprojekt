@@ -551,6 +551,7 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 
 void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime)
 {
+	if (!ready) return;
 	if (dedge || flipping) return;
 
 	if (state.IsConnected()) return;
@@ -783,6 +784,7 @@ bool Player::moveCrossController(const DirectX::XMVECTOR& cameraForward, float d
 
 void Player::moveController(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTOR& cameraRight, const float& deltaTime)
 {
+	if (!ready) return;
 	if (dedge || flipping) return;
 
 	if (state.IsConnected())
@@ -1328,7 +1330,7 @@ void Player::drawParticles()
 	{
 		this->particles->BindAndDraw(0);
 	}
-	if (this->currentSpeed > 30)
+	if (this->currentSpeed > 30 || animIndex == 2)
 	{
 		particles2->setColor(DirectX::SimpleMath::Vector3(this->fresnelBuffer.getData().x, this->fresnelBuffer.getData().y, this->fresnelBuffer.getData().z));
 		particles2->BindAndDraw(4);
@@ -1429,7 +1431,7 @@ void Player::update()
 	if (this->playerIcon != nullptr)
 	{
 		DirectX::XMFLOAT4X4 f1;
-		this->forwardKinematics("hand3:hand3:Head", f1);
+		this->forwardKinematics("Character_Head", f1);
 		DirectX::XMFLOAT3 headPos = DirectX::XMFLOAT3(f1._41, f1._42, f1._43);
 		float constant = playerIcon->getOffset();
 		DirectX::XMFLOAT3 upDir = this->getUpDirection();
@@ -1471,6 +1473,11 @@ void Player::setVibration(float vibration1, float vibration2)
 void Player::setGamePad(DirectX::GamePad* gamePad)
 {
 	this->gamePad = gamePad;
+}
+
+void Player::isReady(bool ready)
+{
+	this->ready = ready;
 }
 
 void Player::requestingPickUpItem(const std::vector<Item*>& items)
@@ -1595,7 +1602,7 @@ void Player::velocityMove(const float& dt)
 void Player::drawFresnel(float interval)
 {
 	//If picked up "potion"
-	if (this->currentSpeed > 30)
+	if (this->currentSpeed > 30 || animIndex == 2)
 	{
 		//Variables
 		static  XMFLOAT3 pos1(0, 0, 0);

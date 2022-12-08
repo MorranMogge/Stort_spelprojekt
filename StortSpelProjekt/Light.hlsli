@@ -111,7 +111,8 @@ LightResult ComputePointLight(Light L, float3 lightDir, float3 normal, float3 vi
     
     float distance = length(lightDir);
     lightDir /= distance;
-    float attenuation = DoAttenuation2(distance, L.range);
+    //float attenuation = DoAttenuation2(distance, L.range);
+    float attenuation = DoAttenuation(L, distance);
     
     result.Diffuse = DoDiffuse(L.color.xyz,lightDir,normal) * attenuation;
     result.Specular = DoSpecular(L,viewDir,lightDir,normal,spacularPower) * attenuation;

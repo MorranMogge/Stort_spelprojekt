@@ -33,7 +33,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	//Temp? initiation of animated mesh
 
 	//manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
-	//manager.loadMeshData("../Meshes/goblin2.fbx");
+	manager.loadMeshData("../Meshes/goblin2.fbx");
 
 	manager.loadMeshAndBoneData("../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_run.fbx", "../Meshes/anim/character1_idle.fbx");

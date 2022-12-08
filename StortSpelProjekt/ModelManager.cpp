@@ -83,26 +83,25 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 		aiString Path;
 		if (material->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			if (this->bank.hasItem(Path.data))
+			if (this->bank.hasItem(Path.C_Str()))
 			{
-				this->diffuseMaps.emplace_back(this->bank.getSrv(Path.data));
+				this->diffuseMaps.emplace_back(this->bank.getSrv(Path.C_Str()));
 				continue;
 			};
 
 			
 			ID3D11ShaderResourceView* tempSRV = {};
 			std::string FullPath = "../Textures/";
-			FullPath.append(Path.data);
+			FullPath.append(Path.C_Str());
 			//make srv
 			if (!this->makeSRV(tempSRV, FullPath))
 			{
 				continue;
 			}
 			//give to bank
-			this->bank.addSrv(Path.data, tempSRV);
+			this->bank.addSrv(Path.C_Str(), tempSRV);
 			this->diffuseMaps.emplace_back(tempSRV);
-			this->allNormalMapTextureNamesForMesh.emplace_back(Path.C_Str());
-
+			this->allNormalTextureNamesForMesh.emplace_back(Path.C_Str());
 		}
 
 		
@@ -158,8 +157,8 @@ void ModelManager::readNodes(aiMesh* mesh, const aiScene* scene)
 			//vertex.tangent.y = mesh->mBitangents[i].y;
 			//vertex.tangent.y = mesh->mBitangents[i].y;
 			//vertex.tangent.z = mesh->mBitangents[i].z;
-			vertex.tangent.z = mesh->mTangents[i].z;
-			vertex.tangent.z = mesh->mTangents[i].z;
+			vertex.tangent.x = mesh->mTangents[i].x;
+			vertex.tangent.y = mesh->mTangents[i].y;
 			vertex.tangent.z = mesh->mTangents[i].z;
 
 			if (mesh->mTextureCoords[0])
@@ -535,6 +534,9 @@ bool ModelManager::loadMeshData(const std::string& filePath)
 	this->dataForMesh.indexTriangle.clear();
 	this->dataForMesh.vertexTriangle.clear();
 	
+	allDiffuseTextureNamesForMesh.clear();
+	allNormalTextureNamesForMesh.clear();
+
 
 	return true;
 }
@@ -644,6 +646,7 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 
 	bank.addAnimationData(filePath, vertexBuffer, indexBuffer, submeshRanges, amountOfvertices, this->aniData);
 	bank.addAllDiffuseTexturesForMesh(filePath, this->allDiffuseTextureNamesForMesh);
+	bank.addAllNormalTexturesForMesh(filePath, this->allNormalTextureNamesForMesh);
 	indexBuffer = {};
 	vertexBuffer = {};
 	this->submeshRanges.clear();
@@ -651,6 +654,7 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 	this->dataForMesh.indexTriangle.clear();
 	this->dataForMesh.vertexTriangle.clear();
 	this->allDiffuseTextureNamesForMesh.clear();
+	this->allNormalTextureNamesForMesh.clear();
 
 
 	int bp = 2;

@@ -25,6 +25,9 @@ public:
 	void extendAnimations(std::string key, AnimationData animData);
 	void addAllDiffuseTexturesForMesh(std::string name, std::vector<std::string>& allNames);
 	void getAllDiffuseTexturesForMesh(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec);
+	
+	void addAllNormalTexturesForMesh(std::string name, std::vector<std::string>& allNames);
+	void getAllNormalTexturesForMesh(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec);
 private:
 
 	enum tupelOrder
@@ -34,7 +37,8 @@ private:
 		SUBMESHRANGES,
 		VERTICESRANGES
 	};
-	std::unordered_map<std::string, std::vector< ID3D11ShaderResourceView*>> mapOfAllTexturesToAMesh;
+	std::unordered_map<std::string, std::vector< ID3D11ShaderResourceView*>> mapOfAllDiffuseTexturesToAMesh;
+	std::unordered_map<std::string, std::vector< ID3D11ShaderResourceView*>> mapOfAllNormalTexturesToAMesh;
 	std::unordered_map<std::string, ID3D11ShaderResourceView*> srvMap;
 	std::unordered_map<std::string, ID3D11ShaderResourceView*>::iterator srvIt;
 

@@ -77,7 +77,7 @@ private:
 	//std::vector<Mesh2*> meshes;
 	std::vector<ID3D11ShaderResourceView*> diffuseMaps;
 	std::vector<std::string> allDiffuseTextureNamesForMesh;
-	std::vector<std::string> allNormalMapTextureNamesForMesh;
+	std::vector<std::string> allNormalTextureNamesForMesh;
 
 	ModelDataContainer bank;
 	ID3D11Device* device;

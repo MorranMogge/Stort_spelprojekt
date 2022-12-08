@@ -21,10 +21,16 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->client = client;
 	//m�ste raderas******************
 
-	//client = new Client("192.168.43.251");
+	if (IFONLINE)
+	{
+		std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
+		circularBuffer = client->getCircularBuffer();
+	}
+	else
+	{
+		this->client = new Client("192.168.43.251");
+	}
 
-	std::cout << "Game is setup for " << std::to_string(NROFPLAYERS) << std::endl;
-	circularBuffer = client->getCircularBuffer();
 
 	//Setup rendering
 	basicRenderer.initiateRenderer(immediateContext, device, swapChain, GPU::windowWidth, GPU::windowHeight);
@@ -982,8 +988,11 @@ GAMESTATE Game::updateLandingGame()
 
 GAMESTATE Game::updateKingOfTheHillGame()
 {
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
-		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState);
+	if (IFONLINE)
+	{
+		packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
+			teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState);
+	}
 
 	static bool firstFrame = false;
 	if (!firstFrame)
@@ -1266,9 +1275,14 @@ GAMESTATE Game::Update()
 	if (GetAsyncKeyState('C')) physWorld.addBoxToWorld();
 	currentGameState = NOCHANGE;
 
-	//read the packets received from the server
-	packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
-		teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState);
+	if (IFONLINE)
+	{
+		//read the packets received from the server
+		packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
+			teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState);
+	}
+
+
 
 	lastUpdate = currentTime;
 	this->currentPlayer->updateController();

@@ -101,7 +101,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 			//give to bank
 			this->bank.addSrv(Path.data, tempSRV);
 			this->diffuseMaps.emplace_back(tempSRV);
-
+			this->allNormalMapTextureNamesForMesh.emplace_back(Path.C_Str());
 
 		}
 
@@ -126,7 +126,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 			//give to bank
 			this->bank.addSrv(Path.C_Str(), tempSRV);
 			this->diffuseMaps.emplace_back(tempSRV);
-			this->allTextureNamesForMesh.emplace_back(Path.C_Str());
+			this->allDiffuseTextureNamesForMesh.emplace_back(Path.C_Str());
 		}
 	}
 
@@ -557,7 +557,7 @@ ID3D11ShaderResourceView* ModelManager::getSrv(const std::string key)
 
 void ModelManager::getTextureMaps(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec)
 {
-	this->bank.getAllTexturesForMesh(name, emptyVec);
+	this->bank.getAllDiffuseTexturesForMesh(name, emptyVec);
 
 }
 
@@ -643,14 +643,14 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 	device->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
 
 	bank.addAnimationData(filePath, vertexBuffer, indexBuffer, submeshRanges, amountOfvertices, this->aniData);
-	bank.addAllTexturesForMesh(filePath, this->allTextureNamesForMesh);
+	bank.addAllDiffuseTexturesForMesh(filePath, this->allDiffuseTextureNamesForMesh);
 	indexBuffer = {};
 	vertexBuffer = {};
 	this->submeshRanges.clear();
 	this->amountOfvertices.clear();
 	this->dataForMesh.indexTriangle.clear();
 	this->dataForMesh.vertexTriangle.clear();
-	this->allTextureNamesForMesh.clear();
+	this->allDiffuseTextureNamesForMesh.clear();
 
 
 	int bp = 2;

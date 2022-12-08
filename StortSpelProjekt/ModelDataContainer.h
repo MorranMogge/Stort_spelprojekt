@@ -23,8 +23,8 @@ public:
 	void addMeshBuffers(std::string key, ID3D11Buffer* vertexBuf, ID3D11Buffer* indexBuf, std::vector<int>& subMeshRanges, std::vector<int>& amountOfVertces);
 	void addAnimationData(std::string key, ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuf, std::vector<int>& subMeshRanges, std::vector<int>& amountOfVertces, AnimationData animData);
 	void extendAnimations(std::string key, AnimationData animData);
-	void addAllTexturesForMesh(std::string name, std::vector<std::string>& allNames);
-	void getAllTexturesForMesh(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec);
+	void addAllDiffuseTexturesForMesh(std::string name, std::vector<std::string>& allNames);
+	void getAllDiffuseTexturesForMesh(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec);
 private:
 
 	enum tupelOrder

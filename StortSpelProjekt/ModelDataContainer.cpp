@@ -115,7 +115,7 @@ void ModelDataContainer::extendAnimations(std::string key, AnimationData animDat
 	}
 }
 
-void ModelDataContainer::addAllTexturesForMesh(std::string name, std::vector<std::string>& allNames)
+void ModelDataContainer::addAllDiffuseTexturesForMesh(std::string name, std::vector<std::string>& allNames)
 {
 	std::vector<ID3D11ShaderResourceView*> tempVec;
 	for (int i = 0; i < allNames.size(); i++)
@@ -128,7 +128,7 @@ void ModelDataContainer::addAllTexturesForMesh(std::string name, std::vector<std
 	this->mapOfAllTexturesToAMesh.insert(std::pair(name, tempVec));
 }
 
-void ModelDataContainer::getAllTexturesForMesh(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec)
+void ModelDataContainer::getAllDiffuseTexturesForMesh(std::string name, std::vector<ID3D11ShaderResourceView*>& emptyVec)
 {
 	auto it = this->mapOfAllTexturesToAMesh.find(name);
 	emptyVec = it->second;

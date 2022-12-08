@@ -76,7 +76,8 @@ private:
 	void readNodes(aiMesh* mesh, const aiScene* scene);
 	//std::vector<Mesh2*> meshes;
 	std::vector<ID3D11ShaderResourceView*> diffuseMaps;
-	std::vector<std::string> allTextureNamesForMesh;
+	std::vector<std::string> allDiffuseTextureNamesForMesh;
+	std::vector<std::string> allNormalMapTextureNamesForMesh;
 
 	ModelDataContainer bank;
 	ID3D11Device* device;

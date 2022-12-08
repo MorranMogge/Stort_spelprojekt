@@ -792,6 +792,12 @@ GAMESTATE Game::updateLandingGame()
 			reactphysics3d::Quaternion reactQuaternion = reactphysics3d::Quaternion(dx11Quaternion.x, dx11Quaternion.y, dx11Quaternion.z, dx11Quaternion.w);
 			spaceShips[i]->getPhysComp()->setPosition(reactphysics3d::Vector3(spaceShips[i]->getPosV3().x, spaceShips[i]->getPosV3().y, spaceShips[i]->getPosV3().z));
 			spaceShips[i]->getPhysComp()->setRotation(reactQuaternion);
+
+			if (currentPlayer->getTeam() == i)
+			{
+				currentPlayer->setPos(DirectX::XMFLOAT3(spaceShips[i]->getPos().x - 10.f, spaceShips[i]->getPos().y, spaceShips[i]->getPos().z));
+				currentPlayer->setStartPosition(DirectX::XMFLOAT3(spaceShips[i]->getPos().x - 10.f, spaceShips[i]->getPos().y, spaceShips[i]->getPos().z));
+			}
 		}
 		std::cout << "\nLANDING MINIGAME OVER!\nTOTAL SCORE:\nTeam score: " << teamScoreLandingMiniGame << "\nEnemy Team score: " << enemyTeamScoreLandingMiniGame << "\n";
 

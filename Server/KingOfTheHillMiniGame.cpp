@@ -22,7 +22,7 @@ void KingOfTheHillMiniGame::sendKingOfTheHillZone(serverData& data)
 }
 
 
-void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, int& componentIdCounter, float totalTeamScores [])
+void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, std::vector<Planet*> planets, PhysicsWorld& physWorld, int& componentIdCounter, float totalTeamScores [])
 {
 	static float xPos;
 	static float yPos;
@@ -51,27 +51,19 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 			{
 				if (playerTeam == 0)
 				{
-					blueInside = true;
+					redInside = true;
 					team1Score += pointsToAdd;
 					std::cout << "team1 got points, total points: " << team1Score << "\n";
 				}
 				
 				if (playerTeam == 1)
 				{
-					redInside = true;
+					blueInside = true;
 					team2Score += pointsToAdd;
 					std::cout << "team2 got points, total points: " << team2Score << "\n";
 				}
 
-				//Sending points to players
-				KTHPoints sendPoints;
-				sendPoints.packetId = PacketType::KTHPOINTS;
-				sendPoints.bluePoints = team1Score;
-				sendPoints.redPoints = team2Score;
-				if (blueInside && redInside) sendPoints.teamColor = 0;
-				else if (blueInside) sendPoints.teamColor = 1;
-				else if (redInside) sendPoints.teamColor = 2;
-				sendBinaryDataAllPlayers<KTHPoints>(sendPoints, data);
+				
 				timer = std::chrono::system_clock::now();
 			}
 		}
@@ -80,6 +72,18 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 			//std::cout << "utanf�r zonen\n";
 		}
 	}
+
+	//Sending points to players
+	KTHPoints sendPoints;
+	sendPoints.packetId = PacketType::KTHPOINTS;
+	sendPoints.bluePoints = team1Score;
+	sendPoints.redPoints = team2Score;
+	if (blueInside && redInside) {
+		sendPoints.teamColor = 0; std::cout << "BOTH INSIDE\n";
+	}
+	else if (blueInside) sendPoints.teamColor = 1;
+	else if (redInside) sendPoints.teamColor = 2;
+	sendBinaryDataAllPlayers<KTHPoints>(sendPoints, data);
 
 	//Restoring color
 	if (!oneInside)
@@ -198,7 +202,7 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 	{
 
 		ItemSpawn itemSpawnData;
-		DirectX::XMFLOAT3 temp = randomizeObjectPos();
+		DirectX::XMFLOAT3 temp = randomizeObjectPos(planets);
 		itemSpawnData.x = temp.x;
 		itemSpawnData.y = temp.y;
 		itemSpawnData.z = temp.z;

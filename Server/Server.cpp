@@ -567,7 +567,7 @@ int main()
 							}
 						}
 						onlineItems[useBat->itemId]->setInUseBy(-1);
-						DirectX::XMFLOAT3 newPos = randomizeObjectPos();
+						DirectX::XMFLOAT3 newPos = randomizeObjectPos(planetVector);
 						onlineItems[useBat->itemId]->setPosition(newPos.x, newPos.y, newPos.z);
 					}
 				}
@@ -725,7 +725,7 @@ int main()
 		if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
 		{
 			ItemSpawn itemSpawnData;
-			DirectX::XMFLOAT3 temp = randomizeObjectPos();
+			DirectX::XMFLOAT3 temp = randomizeObjectPos(planetVector);
 			if (!grenadeCount) itemSpawnData.itemType = (rand() % 3) + 3;		//Spawns a random item (Baseball bat, potion or grenade)
 			else itemSpawnData.itemType = (rand() % 2) + 3;
 			itemSpawnData.x = temp.x;
@@ -805,7 +805,7 @@ int main()
 				break;
 
 			case MiniGames::KINGOFTHEHILL:
-				miniGameKTH.update(data, onlineItems, physWorld, componentIdCounter, totalTeamScores);
+				miniGameKTH.update(data, onlineItems, planetVector, physWorld, componentIdCounter, totalTeamScores);
 				break;
 
 				/*default:
@@ -836,7 +836,7 @@ int main()
 						if (getLength(vecToComp) <= 10.f && onlineItems[i]->getInUseById() != -1)
 						{
 							//onlineItems[i].setInactive();
-							DirectX::XMFLOAT3 newCompPos = randomizeObjectPos();
+							DirectX::XMFLOAT3 newCompPos = randomizeObjectPos(planetVector);
 							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 							onlineItems[i]->setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
 							onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);

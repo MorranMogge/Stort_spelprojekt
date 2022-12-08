@@ -20,6 +20,7 @@ private:
 	SkyboxObj skybox;
 	LightHandler ltHandler;
 
+	ID3D11ShaderResourceView* loadTexture(const std::string& fileName);
 public:
 	Menu();
 	virtual ~Menu() override;

@@ -401,3 +401,10 @@ void BasicRenderer::invFresnelPrePass()
 {
 	immediateContext->PSSetShader(InvFresnel_PS, nullptr, 0);
 }
+
+
+void BasicRenderer::bindAnimVs()
+{
+	immediateContext->IASetInputLayout(this->animLayout);
+	immediateContext->VSSetShader(this->vShaderAnim, nullptr, 0);
+}

@@ -8,7 +8,6 @@ struct wirefameInfo
 };
 
 
-const int NROFPLAYERS = 4;
 static bool IFONLINE = false;
 
 

@@ -18,6 +18,8 @@ private:
 
 	GUISprite wheel_L, arrow, arrow2;
 	GUISprite Skey, Wkey;
+	GUISprite scoreText, scoreText2;
+	GUISprite n0, n1, n2, n3, n4, n5, n6, n7, n8, n9;
 
 	DirectX::GamePad* gamePad;
 	DirectX::GamePad::ButtonStateTracker tracker;
@@ -28,8 +30,11 @@ private:
 	float targetTime;
 	float currentTime;
 	float factor;
+	float setScore = false;
 
 	bool show_gamepad = false;
+
+	int ggop = 69;
 
 	DirectX::SimpleMath::Vector2 changePos;
 	DirectX::SimpleMath::Vector2 changeScale;
@@ -37,7 +42,7 @@ private:
 public:
 	LandingHud();
 	~LandingHud();
-
+	void setLandingScore(int score);
 	void makeGamePad(DirectX::GamePad* gamePad);
 	bool handleInputs(const float& dt);
 	void draw();

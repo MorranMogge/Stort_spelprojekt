@@ -336,7 +336,6 @@ void Game::loadObjects()
 	//Set items baseball bat
 	if (!IFONLINE)
 	{
-		captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), planetGravityField, DirectX::SimpleMath::Vector3(10.f, 10.f, 10.f));
 		baseballBat->setPlayer(currentPlayer);
 		baseballBat->setGameObjects(gameObjects);
 
@@ -474,6 +473,12 @@ void Game::drawParticles()
 	{
 		players[i]->drawParticles();
 	}
+}
+
+void Game::drawNormalObjects()
+{
+	//Draw normal mapped objects here
+
 }
 
 void Game::drawFresnel()
@@ -1194,6 +1199,7 @@ GAMESTATE Game::Update()
 		currentMinigame = KINGOFTHEHILL;
 	}
 
+
 	if (Input::KeyPress(KeyCode::P))
 	{
 		return WIN;
@@ -1261,9 +1267,8 @@ void Game::Render()
 	
 
 	basicRenderer.setUpSceneNormalMap(this->camera);
-	ltHandler.bindLightBuffers();
+	drawNormalObjects();
 	
-
 
 	//Unbind light
 	ltHandler.unbindSrv();

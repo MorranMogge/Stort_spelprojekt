@@ -108,16 +108,7 @@ void HudUI::SpritePass()
 		objective.Draw();
 	}
 
-	if (objectiveDisplayTime > 0)
-	{
-		objectiveDisplayTime -= Time::DeltaTimeInSeconds();
-		blackBackground2.Draw();
-		objective2.Draw();
-	}
-
-
 	state.IsConnected() ? controls2.Draw() : controls.Draw();
-
 }
 
 
@@ -321,6 +312,17 @@ bool HudUI::fadeIn()
 	return done;
 }
 
+void HudUI::displayObjective()
+{
+	if (!done)
+	{
+		GUI::Begin();
+		blackBackground2.Draw();
+		objective2.Draw();
+		GUI::End();
+	}
+}
+
 void HudUI::fadeOut()
 {
 	DirectX::SimpleMath::Color gg = fade.GetTint();
@@ -468,8 +470,8 @@ void HudUI::Draw()
 	GUI::Begin();
 	SpritePass();
 	GUI::End();
-
 	DrawFade();
+	displayObjective();
 }
 
 bool HudUI::isDone() const

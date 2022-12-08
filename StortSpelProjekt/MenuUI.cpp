@@ -44,7 +44,7 @@ void MenuUI::HandleInputs()
 			SoundLibrary::menuMusic.stop();
 			SoundLibrary::clickSfx.stop();
 			SoundLibrary::clickSfx.play();
-			gameState = GAME;
+			gameState = LOBBY;
 			isLoading = true;
 		}
 		else if (hit_setting)

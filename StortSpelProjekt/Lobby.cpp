@@ -11,7 +11,7 @@ Lobby::Lobby(Client*& client)
 	startGame = false;
 	client = new Client();
 	this->client = client;
-	ifConnected = client->connectToServer();
+	ifConnected = client->connectToServer("192.168.43.251",2001);
 	int currentPlayerOnlineId = -1;
 	currentPlayerIsReady = -1;
 }

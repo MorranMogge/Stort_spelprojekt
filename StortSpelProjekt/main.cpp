@@ -74,7 +74,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	Client* client = nullptr;
 
 
-	State* currentState = new Lobby(client);
+	State* currentState = new Menu();
 	GAMESTATE stateInfo = NOCHANGE;
 
 	MSG msg = {};

@@ -22,7 +22,7 @@ void KingOfTheHillMiniGame::sendKingOfTheHillZone(serverData& data)
 }
 
 
-void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, std::vector<Planet*> planets, int& componentIdCounter, float totalTeamScores [])
+bool KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, std::vector<Planet*> planets, int& componentIdCounter, float totalTeamScores [])
 {
 	static float xPos;
 	static float yPos;
@@ -126,6 +126,7 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 					}
 				}
 			}
+			return true; //ends the while loop in server.cpp 
 			this->timerToSend = std::chrono::system_clock::now();
 			std::cout << "Red team score : " << (int)totalTeamScores[0] << "\nBlue team score: " << (int)totalTeamScores[1] << "\n";
 		}
@@ -179,6 +180,7 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 					}
 				}
 			}
+			return true; //ends the while loop in server.cpp 
 			this->timerToSend = std::chrono::system_clock::now();
 			std::cout << "Red team score : " << (int)totalTeamScores[0] << "\nBlue team score: " << (int)totalTeamScores[1] << "\n";
 		}
@@ -207,5 +209,5 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 	}
 
 	//fixa f�r team 2
-
+	return false;
 }

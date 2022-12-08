@@ -6,12 +6,14 @@
 
 Lobby::Lobby(Client*& client)
 {
+
+	this->client->getCircularBuffer()->clearBuffer();
 	//ErrorLog::Log("UWU");
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 	startGame = false;
-	client = new Client("192.168.43.251");
 	this->client = client;
-	ifConnected = client->connectToServer();
+	//ifConnected = client->connectToServer();
+	ifConnected = true;
 	int currentPlayerOnlineId = -1;
 	currentPlayerIsReady = -1;
 }

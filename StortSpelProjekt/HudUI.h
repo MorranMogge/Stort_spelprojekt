@@ -59,6 +59,7 @@ public:
 	~HudUI();
 	void handleInputs();
 	bool fadeIn();
+	void displayObjective();
 	void fadeOut();
 	void moveSprite();
 	bool readySetGo();

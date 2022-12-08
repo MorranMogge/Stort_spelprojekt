@@ -120,12 +120,10 @@ void ModelDataContainer::addAllTexturesForMesh(std::string name, std::vector<std
 	std::vector<ID3D11ShaderResourceView*> tempVec;
 	for (int i = 0; i < allNames.size(); i++)
 	{
-		if (getSrv(allNames[i]) == nullptr)
+		if (getSrv(allNames[i]) != nullptr)
 		{
-			std::cout << "Index was null\n";
+			tempVec.emplace_back(getSrv(allNames[i]));
 		}
-		tempVec.emplace_back(getSrv(allNames[i]));
-		std::cout << allNames[i] << " from vecName\n";
 	}
 	this->mapOfAllTexturesToAMesh.insert(std::pair(name, tempVec));
 }

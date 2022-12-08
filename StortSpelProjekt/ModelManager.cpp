@@ -89,7 +89,7 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 				continue;
 			};
 
-			std::cout << Path.C_Str() << "\n";
+			
 			ID3D11ShaderResourceView* tempSRV = {};
 			std::string FullPath = "../Textures/";
 			FullPath.append(Path.data);
@@ -105,11 +105,10 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 
 		}
 
-		std::cout << diffuseName.C_Str() << "\n";
+		
 		//if(material->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		if(material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 		{
-			std::cout << Path.C_Str() << std::endl;
 			if (this->bank.hasItem(Path.C_Str()))
 			{
 				this->diffuseMaps.emplace_back(this->bank.getSrv(Path.data));
@@ -119,15 +118,12 @@ void ModelManager::processNodes(aiNode* node, const aiScene* scene, const std::s
 			ID3D11ShaderResourceView* tempSRV = {};
 			std::string FullPath = "../Textures/";
 			FullPath.append(Path.C_Str());
-			std::cout << FullPath << std::endl;
-
 			//make srv
 			if (!this->makeSRV(tempSRV, FullPath))
 			{
 				continue;
 			}
 			//give to bank
-			std::cout << FullPath << "\n";
 			this->bank.addSrv(Path.C_Str(), tempSRV);
 			this->diffuseMaps.emplace_back(tempSRV);
 			this->allTextureNamesForMesh.emplace_back(Path.C_Str());
@@ -654,8 +650,7 @@ bool ModelManager::loadMeshAndBoneData(const std::string& filePath)
 	this->amountOfvertices.clear();
 	this->dataForMesh.indexTriangle.clear();
 	this->dataForMesh.vertexTriangle.clear();
-
-	//this->allTextureNamesForMesh.clear();
+	this->allTextureNamesForMesh.clear();
 
 
 	int bp = 2;

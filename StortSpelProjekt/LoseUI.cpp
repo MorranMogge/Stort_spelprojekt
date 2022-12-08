@@ -33,7 +33,7 @@ GAMESTATE LoseUI::GetGameState()
 LoseUI::LoseUI()
 {
 	gamePad = std::make_unique<DirectX::GamePad>();
-	loseText = GUISprite(1264.0f / 2.0f, 300);
+	loseText = GUISprite((1264.0f / 2.0f), 300 - 100);
 	loseText.Load(L"../Sprites/loseText2.png");
 
 	backText = GUISprite(75 + 70, 600);

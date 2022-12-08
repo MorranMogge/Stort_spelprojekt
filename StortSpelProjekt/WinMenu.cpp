@@ -80,17 +80,11 @@ WinMenu::WinMenu() : manager(GPU::device)
 	manager.AdditionalAnimation("../Meshes/anim/character1_Dance1.fbx", "../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_Dance2.fbx", "../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_Dance3.fbx", "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Sad1.fbx",   "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Sad2.fbx",   "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Sad3.fbx",   "../Meshes/anim/character1_idle.fbx");
 
 	manager.loadMeshAndBoneData("../Meshes/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_Dance1.fbx", "../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_Dance2.fbx", "../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_Dance3.fbx", "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Sad1.fbx",   "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Sad2.fbx",   "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Sad3.fbx",   "../Meshes/anim/character1_idle.fbx");
 
 	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
 

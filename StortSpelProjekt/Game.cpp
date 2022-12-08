@@ -921,16 +921,12 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	else camera.collisionCamera(currentPlayer, planetVector, dt);
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
-	//Arrow pointing to spaceship		FIX!
-	if (currentPlayer->isHoldingComp())
+	//Arrow pointing to capture zone or is removed
+	if (captureZone)
 	{
-		for (int i = 0; i < spaceShips.size(); i++)
-		{
-			if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
-		}
+		if (captureZone->detectedObject(currentPlayer)) this->arrow->removeArrow();
+		else this->arrow->showDirection(captureZone->getPosition(), currentPlayer->getPosV3(), grav);
 	}
-	//Arrow pointing to component
-	if (captureZone) this->arrow->showDirection(captureZone->getPosition(), currentPlayer->getPosV3(), grav);
 	currentPlayer->colliedWIthComponent(components);
 
 	//Play pickup animation
@@ -940,7 +936,6 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	for (int i = 0; i < items.size(); i++) this->items[i]->checkDistance((GameObject*)(currentPlayer));
 	for (int i = 0; i < components.size(); i++) this->components[i]->checkDistance((GameObject*)(currentPlayer));
 	return currentGameState;
-	return NOCHANGE;
 }
 
 GAMESTATE Game::startIntermission()

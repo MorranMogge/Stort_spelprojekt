@@ -1,10 +1,11 @@
 #pragma once
 #include "RandomizeSpawn.h"
 #include "../DirectXTK-main/Inc/SimpleMath.h"
+#include <iostream>
 
-DirectX::XMFLOAT3 randomizeObjectPos()
+DirectX::XMFLOAT3 randomizeObjectPos(std::vector<Planet*> planets)
 {
-    DirectX::XMFLOAT3 position(0.f, 0.0f, 0.0f);
+    DirectX::SimpleMath::Vector3 position(0.f, 0.0f, 0.0f);
     DirectX::SimpleMath::Vector3 randomPos = {};
 
     float xPos = (float)(rand() % 201 - 100);
@@ -16,11 +17,18 @@ DirectX::XMFLOAT3 randomizeObjectPos()
     randomPos.z = zPos;
 
     randomPos.Normalize();
-    randomPos *= 50;
+    
+    int planetIndex = rand() % (int)(planets.size());
+    randomPos *= (planets[planetIndex]->getSize() + 10.f);
 
-    position.x = 0;//randomPos.x;
-    position.y = 75;//randomPos.y;
-    position.z = 0;//randomPos.z;
+    position = randomPos + planets[planetIndex]->getPlanetPosition();
+   
+    DirectX::SimpleMath::Vector3 testingIfBad;
+    for (int i = 0; i < planets.size(); i++)
+    {
+        testingIfBad = position - planets[i]->getPlanetPosition();
+        if (testingIfBad.Length() <= planets[i]->getSize()) std::cout << "React is gonna cry\n";
+    }
 
     return position;
 }

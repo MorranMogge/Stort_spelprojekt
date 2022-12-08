@@ -27,6 +27,11 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 	static float xPos;
 	static float yPos;
 	static float zPos;
+
+	oneInside = false;
+	blueInside = false;
+	redInside = false;
+
 	static DirectX::XMFLOAT3 playerPos;
 	for(int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 	{
@@ -45,14 +50,27 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 			{
 				if (playerTeam == 0)
 				{
+					blueInside = true;
 					team1Score += pointsToAdd;
 					std::cout << "team1 got points, total points: " << team1Score << "\n";
 				}
-				else if (playerTeam == 1)
+				
+				if (playerTeam == 1)
 				{
+					redInside = true;
 					team2Score += pointsToAdd;
 					std::cout << "team2 got points, total points: " << team2Score << "\n";
 				}
+
+				//Sending points to players
+				KTHPoints sendPoints;
+				sendPoints.packetId = PacketType::KTHPOINTS;
+				sendPoints.bluePoints = team1Score;
+				sendPoints.redPoints = team2Score;
+				if (blueInside && redInside) sendPoints.teamColor = 0;
+				else if (blueInside) sendPoints.teamColor = 1;
+				else if (redInside) sendPoints.teamColor = 2;
+				sendBinaryDataAllPlayers<KTHPoints>(sendPoints, data);
 				timer = std::chrono::system_clock::now();
 			}
 		}
@@ -60,6 +78,15 @@ void KingOfTheHillMiniGame::update(serverData& data, std::vector<Item*>& onlineI
 		{
 			//std::cout << "utanf�r zonen\n";
 		}
+	}
+
+	//Restoring color
+	if (!oneInside)
+	{
+		ZoneColor color;
+		color.packetId = PacketType::ZONECOLOR;
+		sendBinaryDataAllPlayers<ZoneColor>(color, data);
+		timer = std::chrono::system_clock::now();
 	}
 
 	if (team1Score >= goalScore)

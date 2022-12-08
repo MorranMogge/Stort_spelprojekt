@@ -22,6 +22,11 @@ private:
 	float time;
 	float timerSend;
 	float timeToSpawnItems;
+
+	bool oneInside = false;
+	bool blueInside = false;
+	bool redInside = false;
+
 	//3D punkt
 	DirectX::XMFLOAT3 kingOfTheHillOrigo;
 	float radius;
@@ -40,6 +45,8 @@ private:
 	unsigned int team1Score;
 	unsigned int team2Score;
 	unsigned int goalScore;
+
+
 public:
 	KingOfTheHillMiniGame(const short &nrOfPlayers);
 	//Best�m position p� zonen

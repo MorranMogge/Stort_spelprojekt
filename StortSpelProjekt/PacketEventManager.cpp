@@ -48,7 +48,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 	ComponentDropped* cmpDropped = nullptr;
 	HitByGrenade* hitByGrenade = nullptr;
 	UseGrenade* grenadeData = nullptr;
-	
+	ZoneColor* color = nullptr;
+	KTHPoints* kthPoints = nullptr;
 
 	for (int i = 0; i < players.size(); i++)
 	{
@@ -378,8 +379,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::HITBYGRENADE:
 			hitByGrenade = circularBuffer->readData<HitByGrenade>();
 			players[playerId]->hitByBat(reactphysics3d::Vector3(hitByGrenade->xForce, hitByGrenade->yForce, hitByGrenade->zForce));
-
 			break;
+
 		case PacketType::USEGRENADE:
 			grenadeData = circularBuffer->readData<UseGrenade>();
 			for (int i = 0; i < onlineItems.size(); i++)
@@ -389,6 +390,20 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					onlineItems[i]->useItem(players[playerId]);
 				}
 			}
+			break;
+
+		case PacketType::ZONECOLOR:
+			color = circularBuffer->readData<ZoneColor>();
+			captureZone->setColor(DirectX::SimpleMath::Vector3(1.f, 1.f, 1.f));
+			break;
+
+		case PacketType::KTHPOINTS:
+			kthPoints = circularBuffer->readData<KTHPoints>();
+
+			//Seeing what color the capture zone should be
+			if (kthPoints->teamColor == 0) captureZone->setColor(DirectX::SimpleMath::Vector3(1.f, 0.f, 1.f));
+			else if (kthPoints->teamColor == 1) captureZone->setColor(DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f));
+			else if (kthPoints->teamColor == 2) captureZone->setColor(DirectX::SimpleMath::Vector3(0.f, 0.f, 1.f));
 			break;
 
 		}

@@ -41,14 +41,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	manager.getMeshData("../Meshes/Sphere_with_normal.fbx", vBuff, iBuff, subMeshRanges, verticies);
 	manager.addTexture("p6n.png");
 
-	tmpMesh2 = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
-	testCube = new GameObject(tmpMesh2, DirectX::XMFLOAT3(0, 69, 0), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), 5, nullptr, DirectX::XMFLOAT3(5.0f, 5.0f, 5.0f));
-	testCube->setSrv(this->manager.getSrv("p6.png"));
-	testCube->setNormalMap(this->manager.getSrv("p6n.png"));
-	physWorld.addPhysComponent(testCube);
-	gameObjects.push_back(testCube);
-
+	this->tmpMesh2 = new Mesh(vBuff, iBuff,subMeshRanges, verticies);
 	
+
 	manager.loadMeshAndBoneData("../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_run.fbx", "../Meshes/anim/character1_idle.fbx");
 	manager.AdditionalAnimation("../Meshes/anim/character1_run_fast.fbx", "../Meshes/anim/character1_idle.fbx");
@@ -190,6 +185,8 @@ Game::~Game()
 {
 	delete packetEventManager;
 
+	delete this->tmpMesh2;
+
 	for (int i = 0; i < players.size(); i++)
 	{
 		delete players[i];
@@ -264,7 +261,9 @@ void Game::loadObjects()
 	if (!IFONLINE)
 	{
 		float planetSize = 40.f; // SET DIFFERENT GRAV-FACTORS FOR THE PLANETS AND DIFFERENT TEXTURES!
-		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f), (4.0f * 9.82f), meshes[1]));
+		planetVector.emplace_back(new Planet(tmpMesh2, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f), (4.0f * 9.82f), meshes[1]));
+		planetVector.back()->setSrv(this->manager.getSrv("p6.png"));
+		planetVector.back()->setNormalMap(this->manager.getSrv("p6n.png"));
 		planetVector.back()->setPlanetShape(&physWorld);
 		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(60.f, 60.f, 60.f), (4.0f * 9.82f), meshes[1]));
 		planetVector.back()->setPlanetShape(&physWorld);
@@ -1275,8 +1274,8 @@ void Game::Render()
 
 	basicRenderer.setUpSceneNormalMap(this->camera);
 	ltHandler.bindLightBuffers();
-	testCube->drawObjectWithNormalMap();
-
+	//testCube->drawObjectWithNormalMap();
+	planetVector[0]->drawObjectWithNormalMap();
 
 	//Unbind light
 	ltHandler.unbindSrv();

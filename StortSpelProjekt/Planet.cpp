@@ -10,7 +10,8 @@ Planet::Planet(Mesh* useMesh, const DirectX::SimpleMath::Vector3& scale, const D
 	this->planetShape = PlanetShape::NONDISCLOSEDSHAPE;
 	this->gravField = new GravityField(gravityFactor, pos, scale.x);
 	this->originPoint = pos;
-	
+	this->srv = nullptr;
+	this->normalMap = nullptr;
 	//Set atmosphere mesh
 	this->atmosphere = atmoMesh;
 
@@ -272,4 +273,19 @@ void Planet::setScale(const DirectX::SimpleMath::Vector3& scale)
 {
 	this->scale = scale;
 	if (this->planetCollisionBox) this->planetCollisionBox->setScale(scale);
+}
+
+void Planet::drawObjectWithNormalMap()
+{
+	this->mesh->drawWithNormalMap(this->srv, this->normalMap);
+}
+
+void Planet::setSrv(ID3D11ShaderResourceView* srv)
+{
+	this->srv = srv;
+}
+
+void Planet::setNormalMap(ID3D11ShaderResourceView* normalMap)
+{
+	this->normalMap = normalMap;
 }

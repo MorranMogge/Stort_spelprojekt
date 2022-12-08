@@ -19,6 +19,10 @@ class Planet
 {
 private:
 	Mesh* mesh;
+
+	ID3D11ShaderResourceView* srv;
+	ID3D11ShaderResourceView* normalMap;
+
 	GravityField* gravField;
 	Mesh* atmosphere;
 	ConstantBufferNew<DirectX::XMFLOAT4> colorBuffer;	//buffer for atmosphere color
@@ -81,4 +85,7 @@ public:
 
 	void setPosition(const DirectX::SimpleMath::Vector3& position);
 	void setScale(const DirectX::SimpleMath::Vector3& position);
+	void setSrv(ID3D11ShaderResourceView* srv);
+	void setNormalMap(ID3D11ShaderResourceView* normalMap);
+	void drawObjectWithNormalMap();
 };

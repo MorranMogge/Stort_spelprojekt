@@ -307,13 +307,13 @@ Player::Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3
 	this->playerIcon->setOffset(constant);
 
 	//Team switch
-	switch (team)
-	{
-	case 0:
-		this->setSrv(redTeamColor); break;
-	case 1:
-		this->setSrv(blueTeamColor); break;
-	}
+	//switch (team)
+	//{
+	//case 0:
+	//	//this->setSrv(redTeamColor); break;
+	//case 1:
+	//	//this->setSrv(blueTeamColor); break;
+	//}
 }
 
 Player::~Player()

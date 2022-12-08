@@ -95,7 +95,7 @@ LoseMenu::LoseMenu() : manager(GPU::device)
 
     tmpMesh = team1Mesh;
     sexyMan = new AnimatedMesh(tmpMesh, team1Anim, { 0,0,-10 }, { 0,0,0 }, 0);
-    sexyMan->setSrv(blueTeamColour);
+    //sexyMan->setSrv(blueTeamColour);
     sexyMan->setPos(DirectX::XMFLOAT3(2, -2, -20));
     sexyMan->setScale(0.3f);
     sexyMan->setRot(DirectX::XMFLOAT3{ 0, 3.1415926f, 0 });
@@ -105,7 +105,7 @@ LoseMenu::LoseMenu() : manager(GPU::device)
 
     tmpMesh2 = team2Mesh;
     sexyMan2 = new AnimatedMesh(tmpMesh2, team2Anim, { 0,0,-10 }, { 0,0,0 }, 0);
-    sexyMan2->setSrv(blueTeamColour);
+    //sexyMan2->setSrv(blueTeamColour);
     sexyMan2->setPos(DirectX::XMFLOAT3(-2, -2, -20));
     sexyMan2->setScale(0.3f);
     sexyMan2->setRot(DirectX::XMFLOAT3{ 0, 3.1415926f, 0 });

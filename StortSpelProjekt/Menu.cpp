@@ -6,11 +6,11 @@
 #include "GPU.h"
 #include "SoundLibrary.h"
 
-ID3D11ShaderResourceView* Menu::loadTexture(const std::string& fileName)
-{
-	manager.addTexture(fileName);
-	return manager.getSrv(fileName);
-}
+//ID3D11ShaderResourceView* Menu::loadTexture(const std::string& fileName)
+//{
+//	manager.addTexture(fileName);
+//	return manager.getSrv(fileName);
+//}
 Menu::Menu()
 	:cam(Camera())
 {

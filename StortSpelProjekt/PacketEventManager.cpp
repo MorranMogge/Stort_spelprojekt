@@ -456,6 +456,9 @@ void PacketEventManager::TempLobbyHandleEvents(CircularBufferClient*& circularBu
 			playerLobby[playerData->playerId].playerId = playerData->playerId;
 			if (playerData->playerReady == 0)playerLobby[playerData->playerId].isReady = true;
 			else playerLobby[playerData->playerId].isReady = false;
+
+			playerLobby[playerData->playerId].isConnected = true;
+
 			std::cout << "LOBBY recv playerData: " << playerData->playerId << std::endl;
 		}
 		else if (packetId == PacketType::PACKETID)

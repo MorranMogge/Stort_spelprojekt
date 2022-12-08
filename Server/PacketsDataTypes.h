@@ -321,6 +321,7 @@ struct PlayerData
 {
 	int packetId;
 	int playerId;
+	int playerIsConnected;
 	int playerReady;
 };
 

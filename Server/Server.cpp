@@ -252,6 +252,7 @@ void lobby(serverData& data, CircularBuffer & circBuffer, std::thread* recvThrea
 							playerData.packetId = PacketType::PLAYERDATALOBBY;
 							playerData.playerId = data.users[i].playa.getOnlineID();
 							playerData.playerReady = data.users[i].playa.getReadyStatus();
+							playerData.playerIsConnected = ifThreaded[i];
 
 							std::cout << " Player Data id:" << playerData.playerId << ", isReady: " << playerData.playerReady << std::endl;
 							sendBinaryDataOnePlayer<PlayerData>(playerData, data.users[j]);

@@ -56,7 +56,7 @@ GAMESTATE Lobby::Update()
 	ui.p1 = playersLobby[0].isReady;
 	ui.p2 = playersLobby[1].isReady;
 	ui.p3 = playersLobby[2].isReady;
-	ui.p3 = playersLobby[3].isReady;
+	ui.p4 = playersLobby[3].isReady;
 
 	this->client->setClientId(currentPlayerOnlineId);
 

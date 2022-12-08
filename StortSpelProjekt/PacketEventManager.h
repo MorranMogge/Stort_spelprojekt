@@ -11,6 +11,7 @@
 struct TempPlayerLobby
 {
 	int playerId;
+	bool isConnected = false;
 	bool isReady;
 };
 

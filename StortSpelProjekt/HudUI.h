@@ -23,7 +23,7 @@ class HudUI final
 	GUISprite pickText;
 	GUISprite objective;
 	GUISprite blackBackground;
-
+	GUISprite kthObjective;
 	GUISprite objective2;
 	GUISprite blackBackground2;
 	float objectiveDisplayTime = 5.0f;
@@ -50,6 +50,7 @@ class HudUI final
 	inline static DirectX::GamePad::State state;
 	float readyTimer = 0.0f;
 public:
+	bool kth = false;
 	float count = 1.0f;
 	inline static SpaceShip* red = nullptr;
 	inline static SpaceShip* blue = nullptr;
@@ -68,5 +69,7 @@ public:
 	void DrawFade();
 	void resetReadySetGo();
 	void Draw();
+	void setKTH(bool stuff);
 	bool isDone() const;
+
 };

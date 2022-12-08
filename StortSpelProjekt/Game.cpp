@@ -4,6 +4,8 @@
 #include "SendingDataEvent.h"
 #include "MemoryLeackChecker.h"
 #include "SoundCollection.h"
+#include <filesystem>
+
 
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), manager(ModelManager(device)), currentMinigame(MiniGames::COMPONENTCOLLECTION)
@@ -174,6 +176,17 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	this->window = &window;
 	HudUI::SetGamePad(gamePad);
 
+	//Set gamepad for item
+	for (int i = 0; i < items.size(); i++)
+	{
+		items[i]->setGamepad(this->gamePad);
+	}
+	for (int i = 0; i < components.size(); i++)
+	{
+		components[i]->setGamepad(this->gamePad);
+	}
+	
+
 	//Setup fade in and delta time
 	ui.count = 1.0f;
 	ui.setOpacity(false);
@@ -241,6 +254,10 @@ void Game::loadObjects()
 	MaterialLibrary::LoadMaterial("Red.png");
 	MaterialLibrary::LoadMaterial("olive.jpg");
 
+	manager.getMeshData("../Meshes/Sphere_with_normal.fbx", vBuff, iBuff, subMeshRanges, verticies);
+	manager.getMeshData("../Meshes/Shpere_no_normal.fbx", vBuff, iBuff, subMeshRanges, verticies);
+	auto planetMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+
 	//Meshes vector contents
 	meshes.push_back(new Mesh("../Meshes/Sphere"));
 	meshes.push_back(new Mesh("../Meshes/reverseSphere"));
@@ -265,11 +282,32 @@ void Game::loadObjects()
 		planetVector.back()->setSrv(this->manager.getSrv("p6.png"));
 		planetVector.back()->setNormalMap(this->manager.getSrv("p6n.png"));
 		planetVector.back()->setPlanetShape(&physWorld);
-		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(60.f, 60.f, 60.f), (4.0f * 9.82f), meshes[1]));
+		planetVector.emplace_back(new Planet(planetMesh, DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(60.f, 60.f, 60.f), (4.0f * 9.82f), meshes[1]));
 		planetVector.back()->setPlanetShape(&physWorld);
-		planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-130.f, -130.f, 130.f), (4.0f * 9.82f), meshes[1]));
+		planetVector.emplace_back(new Planet(planetMesh, DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-130.f, -130.f, 130.f), (4.0f * 9.82f), meshes[1]));
 		planetVector.back()->setPlanetShape(&physWorld);
 		physWorld.setPlanets(planetVector);
+
+		for (auto& planet :planetVector)
+		{
+			int randomPlanetIndex = rand() % 13; //range 0 to 12
+
+			const std::string path_c = std::string("PlanetTextures/") + std::to_string(randomPlanetIndex) + std::string("/c.png");
+			const std::string path_n = std::string("PlanetTextures/") + std::to_string(randomPlanetIndex) + std::string("/n.png");
+
+			auto colorSRV = loadTexture(path_c);
+			planet->setSrv(colorSRV);
+
+			if (std::filesystem::exists(path_n))
+			{
+				auto normalSRV = loadTexture(path_n);
+				planet->setSrv(normalSRV);
+				auto planetMesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+				planet->setMesh(planetMesh);
+			}
+
+			
+		}
 	}
 
 	asteroids = new AsteroidHandler(meshes[0]);
@@ -486,6 +524,32 @@ void Game::drawParticles()
 	{
 		players[i]->drawParticles();
 	}
+}
+
+
+ID3D11ShaderResourceView* Game::loadTexture(const std::string& fileName)
+{
+	manager.addTexture(fileName);
+	return manager.getSrv(fileName);
+}
+void Game::drawNormalObjects()
+{
+	//Draw normal mapped objects here
+
+	//
+	// 	basicRenderer.setUpSceneNormalMap(this->camera);
+
+	//Animated meshes
+	//basicRenderer.changeToAnimation();
+	//for (int i = 0; i < players.size(); i++)
+	//{
+	//	//players[i]->draw();
+	//	if (i == 0)
+	//	{
+	//		players[i]->drawSubMeshesWithTexture();
+	//	}
+	//}
+
 }
 
 void Game::drawFresnel()
@@ -1328,8 +1392,9 @@ void Game::Render()
 		break;
 
 	case KINGOFTHEHILL:
-		if (!ui.readySetGo()){ currentPlayer->isReady(false);}
+		if (!ui.readySetGo()) { currentPlayer->isReady(false);  }
 		else { currentPlayer->isReady(true); }
+		ui.setKTH(true);
 		ui.DrawFade();
 		break;
 

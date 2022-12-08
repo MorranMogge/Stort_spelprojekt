@@ -4,6 +4,7 @@
 #include "BilboardObject.h"
 #include "TimeStruct.h"
 #include "Sound.h"
+#include <GamePad.h>
 
 class Player;
 
@@ -22,10 +23,11 @@ protected:
 	Sound sfx;
 	bool withinPlayerReach;
 	bool pickedUp;
+	DirectX::GamePad* gamePad = nullptr;
 
 public:
-	Item(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, const int& onlineType, GravityField* field = nullptr);
-	Item(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, const int& onlineType, GravityField* field = nullptr);
+	Item(Mesh* useMesh, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, const int& onlineType, GravityField* field = nullptr, DirectX::GamePad* gamePad = nullptr);
+	Item(const std::string& objectPath, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int& id, const int& onlineId, const int& onlineType, GravityField* field = nullptr, DirectX::GamePad * gamePad = nullptr);
 	virtual ~Item();
 	virtual void useItem(const Player* playerHoldingItem) = 0;
 	virtual void drawIcon();
@@ -34,6 +36,7 @@ public:
 	void checkDistance(GameObject* playerTocheck);
 	//virtual void useItem();
 	void throwItem();
+	void setGamepad(DirectX::GamePad*& gamePad);
 	int getOnlineType()const;
 	int getOnlineId()const;
 	virtual void update() override;

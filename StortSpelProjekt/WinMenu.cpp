@@ -34,8 +34,8 @@ void WinMenu::drawObjects()
 
 	//Draw anim
 	basicRenderer.changeToAnimation(false);
-	sexyMan->draw();
-	sexyMan2->draw();
+	sexyMan->drawSubMeshesWithTexture();
+	sexyMan2->drawSubMeshesWithTexture();
 
 	basicRenderer.resetTopology();
 	GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
@@ -103,6 +103,10 @@ WinMenu::WinMenu() : manager(GPU::device)
 	sexyMan->setPos(DirectX::XMFLOAT3(2, -2, -20));
 	sexyMan->setScale(0.3f);
 	sexyMan->setRot(DirectX::XMFLOAT3{ 0, 3.1415926f, 0 });
+	std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
+	this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
+	sexyMan->setTextures(allPlayerTextures);
+
 
 
 	tmpMesh2 = team2Mesh;
@@ -111,6 +115,7 @@ WinMenu::WinMenu() : manager(GPU::device)
 	sexyMan2->setPos(DirectX::XMFLOAT3(-2, -2, -20));
 	sexyMan2->setScale(0.3f);
 	sexyMan2->setRot(DirectX::XMFLOAT3{ 0, 3.1415926f, 0 });
+	sexyMan2->setTextures(allPlayerTextures);
 
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 }

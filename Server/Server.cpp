@@ -159,7 +159,7 @@ void sendIdToAllPlayers(serverData& data)
 	}
 };
 
-void lobby(serverData& data, CircularBuffer & circBuffer, std::thread* recvThread[],PhysicsWorld &physWorld, threadInfo threadData[], bool& FUCKTHISSHIT)
+void lobby(serverData& data, CircularBuffer & circBuffer, std::thread* recvThread[],PhysicsWorld &physWorld, threadInfo threadData[])
 {
 	TimeStruct tempTime;
 	bool ifThreaded[MAXNUMBEROFPLAYERS]{ false };
@@ -186,30 +186,29 @@ void lobby(serverData& data, CircularBuffer & circBuffer, std::thread* recvThrea
 			}
 		}
 
-		if (!FUCKTHISSHIT)
+		
+		for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 		{
-			for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+			//om spelaren inte har en tråd så skapa en tråd så att vi kan ta emot data
+			//detta händer efter den blivit accepted
+			if (!ifThreaded[i] && data.users[i].ifAccepted)
 			{
-				//om spelaren inte har en tråd så skapa en tråd så att vi kan ta emot data
-				//detta händer efter den blivit accepted
-				if (!ifThreaded[i] && data.users[i].ifAccepted)
-				{
-					int offset = 25; PhysicsComponent* newComp = new PhysicsComponent();
-					physWorld.addPhysComponent(newComp);
-					data.users[i].playa.setPhysicsComponent(newComp);
-					newComp->setType(reactphysics3d::BodyType::KINEMATIC);
-					threadData[i].pos[0] = 102.0f + (offset * i);
-					threadData[i].pos[1] = 12.0f;
-					threadData[i].pos[2] = -22.0f;
-					threadData[i].circBuffer = &circBuffer;
-					recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
+				int offset = 25; PhysicsComponent* newComp = new PhysicsComponent();
+				physWorld.addPhysComponent(newComp);
+				data.users[i].playa.setPhysicsComponent(newComp);
+				newComp->setType(reactphysics3d::BodyType::KINEMATIC);
+				threadData[i].pos[0] = 102.0f + (offset * i);
+				threadData[i].pos[1] = 12.0f;
+				threadData[i].pos[2] = -22.0f;
+				threadData[i].circBuffer = &circBuffer;
+				std::thread(recvData, &threadData[i], &data.users[i]).detach();
 
-					std::cout << "startade thread : " << i << std::endl;
+				std::cout << "startade thread : " << i << std::endl;
 
-					ifThreaded[i] = true;
-				}
+				ifThreaded[i] = true;
 			}
 		}
+		
 		bool allPlayersReadyForGame = true;
 
 		if (tempTime.getTimePassed(1.0f))
@@ -278,7 +277,7 @@ int main()
 
 	srand((unsigned)(time(0)));
 
-	bool FUCKTHISSHIT = false;
+	//bool FUCKTHISSHIT = false;
 
 	while (1)
 	{
@@ -392,12 +391,9 @@ int main()
 
 		std::cout << "UWU 6\n";
 		circBuffer->clearBuffer();
-		std::thread* lobbyAcceptThread = new std::thread(acceptPlayersLobbyThread, &data);
+		std::thread(acceptPlayersLobbyThread, &data).detach();
 		lobby(data, *circBuffer, recvThread, physWorld, threadData);
 		circBuffer->clearBuffer();
-
-		lobbyAcceptThread->join();
-		delete lobbyAcceptThread;
 
 		std::cout << "UWU 7\n";
 
@@ -463,7 +459,7 @@ int main()
 		//	threadData[i].circBuffer = circBuffer;
 		//	recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
 		//}
-		FUCKTHISSHIT = true;
+		//FUCKTHISSHIT = true;
 		int temp = 0;
 		while (1)
 		{
@@ -1205,12 +1201,12 @@ int main()
 		onlineItems.clear();
 
 		std::cout << "UwU 2\n";
-		for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-		{
-			mutex.unlock();
-			recvThread[i]->join();
-			delete recvThread[i];
-		}
+		//for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
+		//{
+		//	mutex.unlock();
+		//	recvThread[i]->join();
+		//	delete recvThread[i];
+		//}
 
 		data.tcpListener.close();
 		

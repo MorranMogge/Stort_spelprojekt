@@ -72,8 +72,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 
 	
 	Client* client = nullptr;
-	client = new Client("192.168.43.251");
-	client->connectToServer();
+	
 
 	State* currentState = new Menu();
 	GAMESTATE stateInfo = NOCHANGE;

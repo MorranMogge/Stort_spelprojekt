@@ -9,7 +9,7 @@ Lobby::Lobby(Client*& client)
 	//ErrorLog::Log("UWU");
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 	startGame = false;
-	client = new Client("192.168.43.225");
+	client = new Client("192.168.1.236"); //"192.168.43.225" Liye, 
 	this->client = client;
 	ifConnected = client->connectToServer();
 	int currentPlayerOnlineId = -1;

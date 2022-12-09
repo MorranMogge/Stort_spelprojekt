@@ -361,8 +361,8 @@ void Game::loadObjects()
 
 			std::cout << path_c << std::endl;
 			std::cout << path_n << std::endl;
-			planetSRV_online.push_back(loadTexture(path_c));
-			planetSRV_online.push_back(loadTexture(path_n));
+			planetSRV_online.emplace_back(loadTexture(path_c));
+			planetSRV_online.emplace_back(loadTexture(path_n));
 
 		}
 	}
@@ -496,12 +496,12 @@ void Game::drawObjects(bool drawDebug)
 	}
 	
 	//Draw planets
-	basicRenderer.tesselationPrePass(camera);
-	for (int i = 0; i < planetVector.size(); i++)
-	{
-		if (i == camera.getCollidedWith()) continue;
-		planetVector[i]->drawPlanet(true);
-	}
+	//basicRenderer.tesselationPrePass(camera);
+	//for (int i = 0; i < planetVector.size(); i++)
+	//{
+	//	if (i == camera.getCollidedWith()) continue;
+	//	planetVector[i]->drawPlanet(true);
+	//}
 	
 	basicRenderer.resetTopology();
 	asteroids->drawAsteroids();
@@ -1447,9 +1447,20 @@ void Game::Render()
 	basicRenderer.setUpSceneNormalMap(this->camera);
 	ltHandler.bindLightBuffers();
 	//testCube->drawObjectWithNormalMap();
-	
+
+	planetVector[0]->setMesh(tmpMesh4);
+	planetVector[0]->setSrv(planetSRV_online[0]);
+	planetVector[0]->setNormalMap(planetSRV_online[1]);
 	planetVector[0]->drawObjectWithNormalMap();
+
+	planetVector[1]->setMesh(tmpMesh3);
+	planetVector[1]->setSrv(planetSRV_online[2]);
+	planetVector[1]->setNormalMap(planetSRV_online[3]);
 	planetVector[1]->drawObjectWithNormalMap();
+
+	planetVector[2]->setMesh(tmpMesh2);
+	planetVector[2]->setSrv(planetSRV_online[4]);
+	planetVector[2]->setNormalMap(planetSRV_online[5]);
 	planetVector[2]->drawObjectWithNormalMap();
 
 	

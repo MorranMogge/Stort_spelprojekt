@@ -275,7 +275,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			{
 				//std::vector<ID3D11ShaderResourceView*> srvArr
 				//planet1, Mesh* planet2, Mesh* planet3,
-				planetVector.emplace_back(new Planet(planet1/*meshes[0]*/, DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos), (4.0f * 9.82f), meshes[1]));
+				planetVector.emplace_back(new Planet(planet2/*meshes[0]*/, DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos), (4.0f * 9.82f), meshes[1]));
 				planetVector.back()->setPlanetShape(&physWorld);
 				planetVector.back()->setSrv(srvArr[0]);
 				planetVector.back()->setNormalMap(srvArr[1]);

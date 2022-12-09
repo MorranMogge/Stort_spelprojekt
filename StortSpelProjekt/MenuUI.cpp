@@ -275,8 +275,8 @@ void MenuUI::HandleInputs()
 					SoundLibrary::clickSfx.stop();
 					SoundLibrary::clickSfx.play();
 
-					gameState = GAME;
-					//gameState = LOBBY;
+					//gameState = GAME;
+					gameState = LOBBY;
 
 					isLoading = true;
 				}
@@ -315,8 +315,8 @@ void MenuUI::HandleInputs()
 				SoundLibrary::clickSfx.stop();
 				SoundLibrary::clickSfx.play();
 
-				gameState = GAME;
-				//gameState = LOBBY;
+				//gameState = GAME;
+				gameState = LOBBY;
 
 				isLoading = true;
 			}

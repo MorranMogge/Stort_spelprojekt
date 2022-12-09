@@ -1182,7 +1182,7 @@ void Player::orbiting()
 {
 	if (!onGround)
 	{
-		if (orbitTimer.getTimePassed(10.f))
+		if (orbitTimer.getTimePassed(5.f))
 		{
 			std::cout << "SETTING BACK TO PLANET\n";
 			this->physComp->resetForce();

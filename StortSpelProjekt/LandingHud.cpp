@@ -232,7 +232,7 @@ void LandingHud::draw()
 		static float textSpace = 22.0f;
 #define posY1 100
 #define posX1 210 + (i * textSpace)
-		if (ggop % 100 == 0 && setScore)
+		/*if (ggop % 100 == 0 && setScore)
 		{
 			textSpace++;
 			n0.SetScale(n0.GetScale().x + 0.15f, n0.GetScale().y + 0.15f);
@@ -259,7 +259,7 @@ void LandingHud::draw()
 			n8.SetScale(n8.GetScale().x - 0.1f, n8.GetScale().y - 0.1f);
 			n9.SetScale(n9.GetScale().x - 0.1f, n9.GetScale().y - 0.1f);
 			setScore = false;
-		}
+		}*/
 		switch (number.at(i))
 		{
 

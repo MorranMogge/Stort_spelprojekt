@@ -10,7 +10,7 @@ Lobby::Lobby(Client*& client)
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 	startGame = false;
 
-	client = new Client();
+	client = new Client("192.168.43.225");
 
 	this->client = client;
 	ifConnected = client->connectToServer();

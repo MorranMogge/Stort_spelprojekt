@@ -65,7 +65,7 @@ bool LandingHud::handleInputs(const float& dt)
 	
 	//Move "safezone" sprite
 	landing1.SetPosition(DirectX::SimpleMath::Vector2(MaxVec.x, landing1.GetPosition().y + changePos.y * dt));
-	landing1.SetScale(DirectX::SimpleMath::Vector2(0.2f, landing1.GetScale().y + changeScale.y * dt));
+	//landing1.SetScale(DirectX::SimpleMath::Vector2(0.2f, landing1.GetScale().y + changeScale.y * dt));
 
 	if (state.IsConnected())
 	{

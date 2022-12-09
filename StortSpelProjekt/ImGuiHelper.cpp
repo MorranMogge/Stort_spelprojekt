@@ -78,17 +78,17 @@ void ImGuiHelper::react3D(bool& wireframe, bool &drawObjects, bool& landingMinig
 			ImGui::Text(tmpStr.c_str());
 
 			ImVec4 col(0.0f, 0.8f, 0.0f, 1.0f);
-			ImGui::TextColored(col, ("Vram: " + std::to_string(getVramUsage())).c_str());
-			ImGui::TextColored(col, ("Ram: " + std::to_string(getRamUsage())).c_str());
+			//ImGui::TextColored(col, ("Vram: " + std::to_string(getVramUsage())).c_str());
+			//ImGui::TextColored(col, ("Ram: " + std::to_string(getRamUsage())).c_str());
 
 
 			ImGui::Checkbox("Draw collision boxes", &wireframe);
 			ImGui::Checkbox("Draw objects", &drawObjects);
 
-			if (ImGui::Button("vram Usage"))
+			/*if (ImGui::Button("vram Usage"))
 			{
 				std::cout << std::to_string(getVramUsage());
-			}
+			}*/
 			std::string tmpStrX = "xPos: "+std::to_string(currentPlayer->getPos().x);
 			std::string tmpStrY = "yPos: " + std::to_string(currentPlayer->getPos().y);
 			std::string tmpStrZ = "zPos: " + std::to_string(currentPlayer->getPos().z);

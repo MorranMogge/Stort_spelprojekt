@@ -956,6 +956,8 @@ GAMESTATE Game::updateLandingGame()
 		}
 	}
 
+	landingUi.setLandingScore(landingMiniGamePoints);
+
 	//Here yo type the function below but replace testObject with your space ship
 	camera.landingMinigameScene(planetVector[currentPlayer->getTeam() + 1], spaceShips[currentPlayer->getTeam()]->getPosV3(), spaceShips[currentPlayer->getTeam()]->getRot());
 	
@@ -1178,6 +1180,12 @@ GAMESTATE Game::updateKingOfTheHillGame()
 
 GAMESTATE Game::startIntermission()
 {
+	//Complete both ships
+	for (int j = 0; j < spaceShips.size(); j++)
+	{
+		spaceShips[j]->completeShip();
+	}
+
 	//Cam
 	this->camera.setPosition(DirectX::XMFLOAT3(100.f, 0.f, 300.f));
 	this->camera.setRotToStart();

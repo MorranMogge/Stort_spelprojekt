@@ -8,7 +8,7 @@ struct wirefameInfo
 };
 
 
-static bool IFONLINE = true;
+static bool IFONLINE = false;
 
 
 class Game : public State

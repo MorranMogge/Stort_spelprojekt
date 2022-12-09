@@ -130,7 +130,7 @@ bool LandingHud::handleInputs(const float& dt)
 		targetScale.y = abs(sin(realTemp)) * 0.15f + 0.1f;
 
 		this->changePos = (targetPos - this->landing1.GetPosition())/this->targetTime;
-		this->changeScale = (targetScale - this->landing1.GetScale()) / this->targetTime;
+		//this->changeScale = (targetScale - this->landing1.GetScale()) / this->targetTime;
 
 	}
 
@@ -226,7 +226,7 @@ void LandingHud::draw()
 		arrow2.Draw();
 	}
 
-	std::string number = std::to_string(ggop++);
+	std::string number = std::to_string(ggop);
 	for (int i = 0; i < number.size(); i++)
 	{
 		static float textSpace = 22.0f;

@@ -34,7 +34,7 @@ private:
 
 	bool show_gamepad = false;
 
-	int ggop = 69;
+	int ggop = 0;
 
 	DirectX::SimpleMath::Vector2 changePos;
 	DirectX::SimpleMath::Vector2 changeScale;

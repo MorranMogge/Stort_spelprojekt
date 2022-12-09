@@ -1521,7 +1521,7 @@ void Game::Render()
 		break;
 
 	case INTERMISSION:
-		miniGameUI.Draw();
+		//miniGameUI.Draw();
 		ui.DrawFade();
 		break;
 

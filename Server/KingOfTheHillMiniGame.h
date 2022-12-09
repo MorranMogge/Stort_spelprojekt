@@ -48,7 +48,7 @@ public:
 	//Best�m position p� zonen
 	void sendKingOfTheHillZone(serverData& data);
 	void spawnItems();
-	void update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, std::vector<Planet*> planets, int& componentIdCounter, float totalTeamScores[]);
+	bool update(serverData& data, std::vector<Item*>& onlineItems, PhysicsWorld& physWorld, std::vector<Planet*> planets, int& componentIdCounter, float totalTeamScores[]);
 
 	//Check if players are inside the zone
 	//SpawnBats

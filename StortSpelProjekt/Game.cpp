@@ -496,14 +496,14 @@ void Game::drawObjects(bool drawDebug)
 	}
 	
 	//Draw planets
-	basicRenderer.tesselationPrePass(camera);
-	for (int i = 0; i < planetVector.size(); i++)
-	{
-		if (i == camera.getCollidedWith()) continue;
-		planetVector[i]->drawPlanet(true);
-	}
-	
-	basicRenderer.resetTopology();
+	//basicRenderer.tesselationPrePass(camera);
+	//for (int i = 0; i < planetVector.size(); i++)
+	//{
+	//	if (i == camera.getCollidedWith()) continue;
+	//	planetVector[i]->drawPlanet(true);
+	//}
+	//
+	//basicRenderer.resetTopology();
 	asteroids->drawAsteroids();
 	//testCube->draw();
 	//Draw with Ambient only shader

@@ -82,7 +82,10 @@ const DirectX::SimpleMath::Vector2& GUISprite::GetOrigin() const
 
 const DirectX::SimpleMath::Vector2& GUISprite::GetScale() const
 {
-    return m_Scale;
+    auto s = m_Scale;
+    s.x /= BaseWidth;
+    s.y /= BaseHeight;
+    return s;
 }
 
 const DirectX::SimpleMath::Color& GUISprite::GetTint() const

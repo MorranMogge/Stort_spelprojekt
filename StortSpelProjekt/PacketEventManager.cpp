@@ -480,6 +480,12 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer, std::vec
 		case PacketType::SPAWNPLANETS:
 			planetData = circularBuffer->readData<SpawnPlanets>();
 			std::cout << "Received planet\n";
+
+				//			planetVector.emplace_back(new Planet(planet1/*meshes[0]*/, DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos), (4.0f * 9.82f), meshes[1]));
+				//			Mesh* planet1, Mesh* planet2, Mesh* planet3, std::vector<ID3D11ShaderResourceView*> srvArr
+				//planetVector.back()->setSrv(srvArr[0]);
+				//planetVector.back()->setNormalMap(srvArr[1]);
+
 			planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos), (4.0f * 9.82f), meshes[1]));
 			planetVector.back()->setPlanetShape(&physWorld);
 			physWorld.setPlanets(planetVector);

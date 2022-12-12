@@ -9,7 +9,7 @@ class CircularBufferClient
 {
 private:
 	void* data;
-	char* ringBuffer[SIZEOFBUFFER];
+	//char* ringBuffer[SIZEOFBUFFER];
 	char* startOfBuffer;
 	char* endOfBuffer;
 	char* read;

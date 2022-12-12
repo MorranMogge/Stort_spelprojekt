@@ -42,7 +42,7 @@ SpawnComponent SpawnOneComponent(std::vector<Component>& components, std::vector
 		}
 	}
 
-	randomPos *= 100;
+	randomPos *= 50;
 
 	components.push_back(temp);
 	temp.setOnlineType(ObjID::COMPONENT);

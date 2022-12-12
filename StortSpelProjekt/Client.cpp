@@ -41,6 +41,7 @@ Client::Client()
 	this->isConnected = false;
 	this->data.circularBuffer = new CircularBufferClient();
 	this->data.playerId = 0;
+	
 }
 
 Client::Client(std::string ipAddress, int port)
@@ -51,6 +52,7 @@ Client::Client(std::string ipAddress, int port)
 	this->port = 2001;
 	this->isConnected = false;
 	this->data.circularBuffer = new CircularBufferClient();
+	
 }
 
 Client::~Client()
@@ -71,6 +73,9 @@ void Client::setClientId(int nr)
 
 bool Client::connectToServer(std::string ipAddress, int port)
 {
+	std::cout << "Test\n";
+	std::cout << "CB: " << sizeof(data.circularBuffer) << "\nUdpSocket: " << sizeof(sf::UdpSocket) << "\nTcpSocket: " << sizeof(sf::TcpSocket)
+		<< "\nSocket selector: " << sizeof(sf::SocketSelector) << "\nPacket: " << sizeof(sf::Packet) << "\nThread: " << sizeof(std::thread) << "\n";
 	bool connected = false;
 	this->ip = ipAddress;
 	this->port = port;
@@ -100,6 +105,9 @@ bool Client::connectToServer(std::string ipAddress, int port)
 
 bool Client::connectToServer()
 {
+	std::cout << "Test\n";
+	std::cout << "CB: " << sizeof(data.circularBuffer) << "\nUdpSocket: " << sizeof(sf::UdpSocket) << "\nTcpSocket: " << sizeof(sf::TcpSocket)
+		<< "\nSocket selector: " << sizeof(sf::SocketSelector) << "\nPacket: " << sizeof(sf::Packet) << "\nThread: " << sizeof(std::thread) << "\n";
 	bool connected = false;
 	std::cout << "Tries to connect to server ip adress: " << this->ip << std::endl;
 

@@ -10,8 +10,9 @@ Lobby::Lobby(Client*& client)
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 	startGame = false;
 
-	client = new Client("192.168.43.225");
-
+	client = new Client("192.168.110.78");
+	std::cout << "CB: " << sizeof(CircularBufferClient) << "\nUdpSocket: " << sizeof(sf::UdpSocket) << "\nTcpSocket: " << sizeof(sf::TcpSocket)
+		<< "\nSocket selector: " << sizeof(sf::SocketSelector) << "\nPacket: " << sizeof(sf::Packet) << "\nThread: " << sizeof(std::thread) << "\n";
 	this->client = client;
 	ifConnected = client->connectToServer();
 	int currentPlayerOnlineId = -1;

@@ -292,22 +292,36 @@ void Game::loadObjects()
 		planetVector.back()->setPlanetShape(&physWorld);
 		physWorld.setPlanets(planetVector);
 
-		for (auto& planet :planetVector)
-		{
-			int randomPlanetIndex = rand() % 11; //range 0 to 12
+		//for (auto& planet :planetVector)
+		//{
+		//	int randomPlanetIndex = rand() % 11; //range 0 to 12
 
-			const std::string path_c = std::string("p") + std::to_string(randomPlanetIndex) + std::string(".png");
-			const std::string path_n = std::string("p") + std::to_string(randomPlanetIndex) + std::string("n.png");
+		//	const std::string path_c = std::string("p") + std::to_string(randomPlanetIndex) + std::string(".png");
+		//	const std::string path_n = std::string("p") + std::to_string(randomPlanetIndex) + std::string("n.png");
 
-			std::cout << path_c << std::endl;
-			std::cout << path_n << std::endl;
-			auto colorSRV = loadTexture(path_c);
-			planet->setSrv(colorSRV);
+		//	std::cout << path_c << std::endl;
+		//	std::cout << path_n << std::endl;
+		//	auto colorSRV = loadTexture(path_c);
+		//	planet->setSrv(colorSRV);
 
-			auto normalSRV = loadTexture(path_n);
-			planet->setNormalMap(normalSRV);
-			
-		}
+		//	auto normalSRV = loadTexture(path_n);
+		//	planet->setNormalMap(normalSRV);
+		//	
+		//}
+	}
+
+	for (int i = 0; i < 3; i++)
+	{
+		int randomPlanetIndex = rand() % 11; //range 0 to 12
+
+		const std::string path_c = std::string("p") + std::to_string(randomPlanetIndex) + std::string(".png");
+		const std::string path_n = std::string("p") + std::to_string(randomPlanetIndex) + std::string("n.png");
+
+		std::cout << path_c << std::endl;
+		std::cout << path_n << std::endl;
+		planetSRV_online.emplace_back(loadTexture(path_c));
+		planetSRV_online.emplace_back(loadTexture(path_n));
+
 	}
 
 	asteroids = new AsteroidHandler(meshes[0]);
@@ -445,18 +459,57 @@ void Game::drawObjects(bool drawDebug)
 	planetVector[0]->drawObjectWithNormalMap();
 	*/
 
+	planetVector[0]->setMesh(tmpMesh4);
+	planetVector[0]->setSrv(planetSRV_online[0]);
+	planetVector[0]->setNormalMap(planetSRV_online[1]);
+
+	planetVector[1]->setMesh(tmpMesh3);
+	planetVector[1]->setSrv(planetSRV_online[2]);
+	planetVector[1]->setNormalMap(planetSRV_online[3]);
+
+	planetVector[2]->setMesh(tmpMesh2);
+	planetVector[2]->setSrv(planetSRV_online[4]);
+	planetVector[2]->setNormalMap(planetSRV_online[5]);
+
 	basicRenderer.normaltasseletion(this->camera);
 	planetVector[0]->drawObjectWithNormalMap();
 	planetVector[1]->drawObjectWithNormalMap();
 	planetVector[2]->drawObjectWithNormalMap();
+	
+	std::cout << "p0: "
+		<< " "
+		<< std::to_string(planetVector[0]->getPlanetPosition().x)
+		<< " "
+		<< std::to_string(planetVector[0]->getPlanetPosition().y)
+		<< " "
+		<< std::to_string(planetVector[0]->getPlanetPosition().z)
+		<< std::endl;
+
+	std::cout << "p1: "
+		<< " "
+		<< std::to_string(planetVector[1]->getPlanetPosition().x)
+		<< " "
+		<< std::to_string(planetVector[1]->getPlanetPosition().y)
+		<< " "
+		<< std::to_string(planetVector[1]->getPlanetPosition().z)
+		<< std::endl;
+
+	std::cout << "p2: "
+		<< " "
+		<< std::to_string(planetVector[2]->getPlanetPosition().x)
+		<< " "
+		<< std::to_string(planetVector[2]->getPlanetPosition().y)
+		<< " "
+		<< std::to_string(planetVector[2]->getPlanetPosition().z)
+		<< std::endl;
 
 	//Draw planets
-	basicRenderer.tesselationPrePass(camera);
-	for (int i = 0; i < planetVector.size(); i++)
-	{
-		if (i == camera.getCollidedWith()) continue;
-		planetVector[i]->drawPlanet(true);
-	}
+	//basicRenderer.tesselationPrePass(camera);
+	//for (int i = 0; i < planetVector.size(); i++)
+	//{
+	//	if (i == camera.getCollidedWith()) continue;
+	//	planetVector[i]->drawPlanet(true);
+	//}
 	basicRenderer.resetTopology();
 	asteroids->drawAsteroids();
 	//testCube->draw();

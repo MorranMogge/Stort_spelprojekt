@@ -277,6 +277,7 @@ void Planet::setScale(const DirectX::SimpleMath::Vector3& scale)
 
 void Planet::drawObjectWithNormalMap()
 {
+	this->mesh->UpdateCB(this->position, DirectX::XMMatrixRotationRollPitchYawFromVector(rotation), scale);
 	this->mesh->drawWithNormalMap(this->srv, this->normalMap);
 }
 

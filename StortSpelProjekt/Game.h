@@ -77,6 +77,7 @@ private:
 	Mesh* tmpMesh2;
 	Mesh* tmpMesh3;
 	Mesh* tmpMesh4;
+	std::vector<ID3D11ShaderResourceView*> planetSRV_online;
 	GameObject* testCube;
 
 	//Items

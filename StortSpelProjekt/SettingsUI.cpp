@@ -563,10 +563,14 @@ void SettingsUI::HandleInputs()
 				dropdown2 = false;
 
 				if (std::filesystem::exists("dxgi.dll"))
+				{
 					std::filesystem::rename("dxgi.dll", "dxgi.dllb");
+				}
 
 				if (std::filesystem::exists("d3d11.dll"))
+				{
 					std::filesystem::rename("d3d11.dll", "d3d11.dllb");
+				}
 
 				system("start StortSpelProjekt.exe");
 
@@ -579,10 +583,64 @@ void SettingsUI::HandleInputs()
 				dropdown2 = false;
 
 				if (std::filesystem::exists("dxgi.dllb"))
+				{
 					std::filesystem::rename("dxgi.dllb", "dxgi.dll");
+				}
+				else
+				{
+					if (std::filesystem::exists("..//x64"))
+					{
+						if (std::filesystem::exists("..//x64//Release"))
+						{
+							std::filesystem::copy_file("..//Meshes//dxgi.dllb", "..//x64//Release//dxgi.dllb");
+							std::filesystem::rename("..//x64//Release//dxgi.dllb", "..//x64//Release//dxgi.dll");
+						}
+						if (std::filesystem::exists("..//x64//Debug"))
+						{
+							std::filesystem::copy_file("..//Meshes//dxgi.dllb", "..//x64//Debug//dxgi.dllb");
+							std::filesystem::rename("..//x64//Debug//dxgi.dllb", "..//x64//Debug//dxgi.dll");
+						}
+					}
+					else
+					{
+						if (std::filesystem::exists("..//Meshes//dxgi.dllb"))
+						{
+							std::filesystem::copy_file("..//Meshes//dxgi.dllb", "dxgi.dllb");
+							std::filesystem::rename("dxgi.dllb", "dxgi.dll");
+						}
+					}
+
+				}
+
 
 				if (std::filesystem::exists("d3d11.dllb"))
+				{
 					std::filesystem::rename("d3d11.dllb", "d3d11.dll");
+				}
+				else
+				{
+					if (std::filesystem::exists("..//x64"))
+					{
+						if (std::filesystem::exists("..//x64//Release"))
+						{
+							std::filesystem::copy_file("..//Meshes//d3d11.dllb", "..//x64//Release//d3d11.dllb");
+							std::filesystem::rename("..//x64//Release//d3d11.dllb", "..//x64//Release//d3d11.dll");
+						}
+						if (std::filesystem::exists("..//x64//Debug"))
+						{
+							std::filesystem::copy_file("..//Meshes//d3d11.dllb", "..//x64//Debug//d3d11.dllb");
+							std::filesystem::rename("..//x64//Debug//d3d11.dllb", "..//x64//Debug//d3d11.dll");
+						}
+					}
+					else
+					{
+						if (std::filesystem::exists("..//Meshes//d3d11.dllb"))
+						{
+							std::filesystem::copy_file("..//Meshes//d3d11.dllb", "d3d11.dllb");
+							std::filesystem::rename("d3d11.dllb", "d3d11.dll");
+						}
+					}
+				}
 
 				system("start StortSpelProjekt.exe");
 

@@ -119,6 +119,7 @@ void Arrow::showDirection(const DirectX::XMVECTOR& goalPosition, const DirectX::
 	rightVector = DirectX::XMVector3Normalize(rightVector);
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
+	//Checking if rotation is wrong
 	resultVector = DirectX::XMVector3AngleBetweenNormals(arrowVector, forwardVector);
 	if (resultVector.x > 0.1f) rotation *= DirectX::XMMatrixRotationAxis(rightVector, -resultVector.x);
 }

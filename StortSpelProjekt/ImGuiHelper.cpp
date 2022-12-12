@@ -99,11 +99,16 @@ void ImGuiHelper::planetEditor(PlanetImGuiInfo& planetImGuiStruct)
 		bool begun = ImGui::Begin("Planet Editor");
 		if (begun)
 		{
-			ImGui::SliderInt("Subdivisions", &planetImGuiStruct.currentSubdivisions, 0, 5);
-			ImGui::SliderInt("Random Factor", &planetImGuiStruct.randomizedFactor, 0, 100);
+			ImGui::TextColored(ImVec4(0, 1, 0, 1), "Rendering");
 			ImGui::Checkbox("Render Triangles", &planetImGuiStruct.renderTriangles);
 			ImGui::Checkbox("Render Lines", &planetImGuiStruct.renderLines);
-
+			ImGui::Text("");
+			ImGui::TextColored(ImVec4(1, 0, 1, 1), "Mesh Creator");
+			if (ImGui::Button("Recreate Original Sphere")) planetImGuiStruct.recreateOriginalSphere = true;
+			ImGui::SliderInt("Subdivisions", &planetImGuiStruct.currentSubdivisions, 1, 4);
+			ImGui::SliderInt("Elevation Factor", &planetImGuiStruct.randomizedFactor, 0, 500);
+			ImGui::Checkbox("Normalized", &planetImGuiStruct.normalised);
+			if (ImGui::Button("Recreate Mesh with selected settings")) planetImGuiStruct.recreateMesh = true;
 		}
 
 		ImGui::End();

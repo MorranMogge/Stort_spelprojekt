@@ -4,12 +4,17 @@
 #include "BasicRenderer.h"
 #include "ImGuiHelper.h"
 
+#define MAXITERATIONS 4
+
 struct PlanetImGuiInfo
 {
-	int currentSubdivisions = 0;
+	int currentSubdivisions = 1;
 	int randomizedFactor = 0;
 	bool renderTriangles = true;
 	bool renderLines = true;
+	bool normalised = false;
+	bool recreateOriginalSphere = false;
+	bool recreateMesh = false;
 };
 
 enum PlanetType
@@ -37,9 +42,9 @@ class PlanetGenerator : public State
 private:
 	//D3D11 stuff
 	ID3D11Buffer* worldMatrixBuffer;
-	ID3D11Buffer* triangleBuffer;
-	ID3D11Buffer* lineBuffer;
-	ID3D11Buffer* indexBuffer;
+	ID3D11Buffer* triangleBuffer[MAXITERATIONS];
+	ID3D11Buffer* lineBuffer[MAXITERATIONS];
+	ID3D11Buffer* indexBuffer[MAXITERATIONS];
 	ID3D11PixelShader* pShader;
 	ID3D11VertexShader* vShader;
 	DirectX::XMFLOAT4X4 worldMatrix;
@@ -47,10 +52,12 @@ private:
 	PlanetImGuiInfo planetImGuiStruct;
 
 	//Used for sphere generation
-	std::vector<Vertex> vertices;
-	std::vector<Vertex> lines;
+
+	std::vector<Vertex> vertices[MAXITERATIONS];
+	std::vector<Vertex> baseVertices[MAXITERATIONS];
+	std::vector<Vertex> lines[MAXITERATIONS];
 	std::vector<Vertex*> newVertices;
-	std::vector<DWORD> indices;
+	std::vector<DWORD> indices[MAXITERATIONS];
 	PlanetType typeOfSphere;
 	int lastSubdivisions;
 	int horizontal;
@@ -69,6 +76,8 @@ private:
 
 	std::vector<Mesh*> meshes;
 
+	void recreateMesh();
+	bool updateVertexBuffer();
 	bool setVertexBuffers();
 	bool setWorldMatrix();
 	bool setIndexBuffer();

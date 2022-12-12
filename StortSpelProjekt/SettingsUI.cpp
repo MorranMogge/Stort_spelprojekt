@@ -87,10 +87,10 @@ void SettingsUI::DoFullScreen()
 		{
 			GPU::windowWidth = 1280;
 			GPU::windowHeight = 720;
-			ChangeResolution2(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
+			ChangeResolution2(nativeWidth, nativeHeight);
 
 			SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
-			SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+			SetWindowPos(GUI::hWnd, GW_HWNDFIRST, (nativeWidth - 1280) / 2 , (nativeHeight - 720) / 2, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
 
 			// get window client size
 			if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
@@ -109,10 +109,10 @@ void SettingsUI::DoFullScreen()
 		{
 			GPU::windowWidth = 1920;
 			GPU::windowHeight = 1080;
-			ChangeResolution2(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
+			ChangeResolution2(nativeWidth, nativeHeight);
 
 			SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
-			SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+			SetWindowPos(GUI::hWnd, GW_HWNDFIRST, (nativeWidth - 1920) / 2, (nativeHeight - 1080) / 2, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
 
 			// get window client size
 			if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
@@ -266,7 +266,7 @@ void SettingsUI::HandleInputs()
 							{
 								SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
 							}
-							SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+							SetWindowPos(GUI::hWnd, GW_HWNDFIRST, (nativeWidth - 1280) / 2, (nativeHeight - 720) / 2, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
 							// get window client size
 							if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
 							{
@@ -301,7 +301,7 @@ void SettingsUI::HandleInputs()
 							{
 								SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
 							}
-							SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+							SetWindowPos(GUI::hWnd, GW_HWNDFIRST, (nativeWidth - 1920) / 2, (nativeHeight - 1080) / 2, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
 
 							// get window client size
 							if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
@@ -492,7 +492,7 @@ void SettingsUI::HandleInputs()
 				{
 					SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
 				}
-				SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+				SetWindowPos(GUI::hWnd, GW_HWNDFIRST, (nativeWidth - 1280) / 2, (nativeHeight - 720) / 2, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
 				// get window client size
 				if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
 				{
@@ -525,7 +525,7 @@ void SettingsUI::HandleInputs()
 				{
 					SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
 				}
-				SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
+				SetWindowPos(GUI::hWnd, GW_HWNDFIRST, (nativeWidth - 1920) / 2, (nativeHeight - 1080) / 2, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
 
 				// get window client size
 				if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))

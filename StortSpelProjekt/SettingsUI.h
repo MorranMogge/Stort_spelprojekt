@@ -48,6 +48,9 @@ class SettingsUI final
 
 public:
 
+	inline static UINT nativeWidth = 0;
+	inline static UINT nativeHeight = 0;
+
 	inline static bool fullscreen = false;
 	inline static bool dropdown1 = false;
 	inline static bool dropdown2 = false;

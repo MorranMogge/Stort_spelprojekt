@@ -2,6 +2,7 @@
 #include "WindowHelper.h"
 #include "GPU.h"
 #include "GUIObject.h"
+#include "SettingsUI.h"
 #include "resource.h"
 #include "imGUI\imconfig.h"
 #include "imGUI\imgui.h"
@@ -78,6 +79,8 @@ bool SetupWindow(HINSTANCE instance, UINT& width, UINT& height, int nCmdShow, HW
 
 	GUI::hWnd = window;
 	
+	SettingsUI::nativeWidth = GetSystemMetrics(SM_CXSCREEN);
+	SettingsUI::nativeHeight = GetSystemMetrics(SM_CYSCREEN);
 	WINDOWINFO info{};
 	if (GetWindowInfo(window, &info))
 	{

@@ -13,7 +13,7 @@ void ChangeResolution2(const unsigned int width, const unsigned int height)
 	devmode.dmSize = sizeof(DEVMODE);
 	ChangeDisplaySettingsW(&devmode, 0);
 }
-void ReInitSwapChain()
+void ReInitSwapChain(const unsigned int width = 0, const unsigned int height = 0)
 {
 	GPU::swapChain->Release();
 
@@ -26,8 +26,8 @@ void ReInitSwapChain()
 
 	DXGI_SWAP_CHAIN_DESC sd = {};
 
-	sd.BufferDesc.Width = 0;
-	sd.BufferDesc.Height = 0;
+	sd.BufferDesc.Width = width;
+	sd.BufferDesc.Height = height;
 	sd.BufferDesc.RefreshRate.Numerator = 0;
 	sd.BufferDesc.RefreshRate.Denominator = 1;
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -54,21 +54,14 @@ void SettingsUI::DoFullScreen()
 		{
 			GPU::windowWidth = 1280;
 			GPU::windowHeight = 720;
-			ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+			ChangeResolution2(1280, 720);
 
 			SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 			SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW);
 			GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
 			GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
 
-			// get window client size
-			if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
-			{
-				GPU::windowWidth = info.rcClient.right - info.rcClient.left;
-				GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
-			}
-
-			ReInitSwapChain();
+			ReInitSwapChain(1280, 720);
 			gameState = SETTINGS;
 		}
 		else
@@ -82,14 +75,7 @@ void SettingsUI::DoFullScreen()
 			GUISprite::BaseWidth = (float)GPU::windowWidth / 1264.0f;
 			GUISprite::BaseHeight = (float)GPU::windowHeight / 681.0f;
 
-			// get window client size
-			if (WINDOWINFO info{}; GetWindowInfo(GUI::hWnd, &info))
-			{
-				GPU::windowWidth = info.rcClient.right - info.rcClient.left;
-				GPU::windowHeight = info.rcClient.bottom - info.rcClient.top;
-			}
-
-			ReInitSwapChain();
+			ReInitSwapChain(1920, 1080);
 			gameState = SETTINGS;
 
 		}
@@ -101,7 +87,7 @@ void SettingsUI::DoFullScreen()
 		{
 			GPU::windowWidth = 1280;
 			GPU::windowHeight = 720;
-			ChangeResolution2(1920, 1080);
+			ChangeResolution2(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
 
 			SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
 			SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
@@ -123,7 +109,7 @@ void SettingsUI::DoFullScreen()
 		{
 			GPU::windowWidth = 1920;
 			GPU::windowHeight = 1080;
-			ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+			ChangeResolution2(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
 
 			SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU);
 			SetWindowPos(GUI::hWnd, GW_HWNDFIRST, 0, 0, GPU::windowWidth, GPU::windowHeight, SWP_SHOWWINDOW); //HWND_TOPMOST
@@ -273,7 +259,7 @@ void SettingsUI::HandleInputs()
 							GPU::windowHeight = 720;
 							if (fullscreen)
 							{
-								ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+								ChangeResolution2(1280, 720);
 								SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 							}
 							else
@@ -499,7 +485,7 @@ void SettingsUI::HandleInputs()
 				GPU::windowHeight = 720;
 				if (fullscreen)
 				{
-					ChangeResolution2(GPU::windowWidth, GPU::windowHeight);
+					ChangeResolution2(1280, 720);
 					SetWindowLongW(GUI::hWnd, GWL_STYLE, WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 				}
 				else

@@ -11,6 +11,23 @@
 #include "ShaderLoader.h"
 #include "DirectXMathHelper.h"
 
+void PlanetGenerator::updateColours()
+{
+    int index = planetImGuiStruct.currentSubdivisions - 1;
+    float length = 0;
+    for (int i = 0; i < vertices[index].size(); i++)
+    {
+        length = vertices[index][i].position.Length();
+        if (planetImGuiStruct.useColours > 0 && length >= 0.95 && length <= 1.1) vertices[index][i].normal = planetImGuiStruct.colourSelection[0];
+        if (planetImGuiStruct.useColours > 1 && length < 0.95)  vertices[index][i].normal = planetImGuiStruct.colourSelection[1];
+        else if (planetImGuiStruct.useColours > 2 && length > 1.1) vertices[index][i].normal = planetImGuiStruct.colourSelection[2];
+        else if (planetImGuiStruct.useColours > 3 && length < 0.85) vertices[index][i].normal = planetImGuiStruct.colourSelection[3];
+        else if (planetImGuiStruct.useColours > 4 && length > 1.2) vertices[index][i].normal = planetImGuiStruct.colourSelection[4];
+    }
+
+    this->updateVertexBuffer();
+}
+
 void PlanetGenerator::recreateMesh()
 {
     int index = planetImGuiStruct.currentSubdivisions-1;
@@ -48,6 +65,20 @@ void PlanetGenerator::recreateMesh()
         lines[index][lineIndex++].position = vertices[index][indices[index][i + 0]].position;
 
     }
+    if (planetImGuiStruct.geoColours)
+    {
+        float length = 0;
+        for (int i = 0; i < vertices[index].size(); i++)
+        {
+            length = vertices[index][i].position.Length();
+            if (planetImGuiStruct.useColours > 0 && length < 0.8)  vertices[index][i].normal = planetImGuiStruct.colourSelection[0];
+            else if (planetImGuiStruct.useColours > 1 && length < 1.0) vertices[index][i].normal = planetImGuiStruct.colourSelection[1];
+            else if (planetImGuiStruct.useColours > 2 && length > 1.2) vertices[index][i].normal = planetImGuiStruct.colourSelection[2];
+            else if (planetImGuiStruct.useColours > 3 && length > 1.4) vertices[index][i].normal = planetImGuiStruct.colourSelection[3];
+            else if (planetImGuiStruct.useColours > 4) vertices[index][i].normal = planetImGuiStruct.colourSelection[4];
+        }
+    }
+    
     /*for (int i = 0; i < lines[a].size(); i++)
     {
         lines[a][i].position.Normalize();
@@ -573,13 +604,13 @@ PlanetGenerator::~PlanetGenerator()
 GAMESTATE PlanetGenerator::Update()
 {
     if (planetImGuiStruct.recreateMesh || planetImGuiStruct.recreateOriginalSphere) this->recreateMesh();
+    if (planetImGuiStruct.updateColours) this->updateColours();
     if (GetAsyncKeyState('I')) this->cameraPosition.y += 0.01f;
     if (GetAsyncKeyState('J')) this->cameraPosition.y -= 0.01f;
     if (GetAsyncKeyState('A')) this->cameraPosition.x -= 0.01f;
     if (GetAsyncKeyState('D')) this->cameraPosition.x += 0.01f;
     if (GetAsyncKeyState('W')) this->cameraPosition.z += 0.01f;
     if (GetAsyncKeyState('S')) this->cameraPosition.z -= 0.01f;
-
     if (planetImGuiStruct.currentSubdivisions != lastSubdivisions) this->recreateVertexBuffers();
    
     this->camera.setPosition(cameraPosition);

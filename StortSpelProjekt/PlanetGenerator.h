@@ -5,16 +5,21 @@
 #include "ImGuiHelper.h"
 
 #define MAXITERATIONS 4
+#define MAXCOLOURS 5
 
 struct PlanetImGuiInfo
 {
-	int currentSubdivisions = 1;
-	int randomizedFactor = 0;
+	int currentSubdivisions = 3;
+	int randomizedFactor = 200;
 	bool renderTriangles = true;
 	bool renderLines = true;
 	bool normalised = false;
+	bool geoColours = false;
 	bool recreateOriginalSphere = false;
 	bool recreateMesh = false;
+	bool updateColours = false;
+	DirectX::SimpleMath::Vector3 colourSelection[MAXCOLOURS]{DirectX::SimpleMath::Vector3(0,0,0)};
+	int useColours = MAXCOLOURS;
 };
 
 enum PlanetType
@@ -76,6 +81,7 @@ private:
 
 	std::vector<Mesh*> meshes;
 
+	void updateColours();
 	void recreateMesh();
 	bool updateVertexBuffer();
 	bool setVertexBuffers();

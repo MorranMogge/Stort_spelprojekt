@@ -47,7 +47,7 @@ private:
 	PlanetImGuiInfo planetImGuiStruct;
 
 	//Used for sphere generation
-	std::vector<Vertex*> vertices;
+	std::vector<Vertex> vertices;
 	std::vector<Vertex> lines;
 	std::vector<Vertex*> newVertices;
 	std::vector<DWORD> indices;

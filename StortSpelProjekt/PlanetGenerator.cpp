@@ -20,10 +20,10 @@ bool PlanetGenerator::setVertexBuffers()
     bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     bufferDesc.MiscFlags = 0;
-    bufferDesc.StructureByteStride = 0;
+    bufferDesc.StructureByteStride = sizeof(Vertex);
 
     D3D11_SUBRESOURCE_DATA data = {};
-    data.pSysMem = *vertices.data();
+    data.pSysMem = vertices.data();
     data.SysMemPitch = 0;
     data.SysMemSlicePitch = 0;
 
@@ -67,7 +67,7 @@ bool PlanetGenerator::setIndexBuffer()
     indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
     indexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;;
     indexBufferDesc.MiscFlags = 0;
-    indexBufferDesc.StructureByteStride = 0;
+    indexBufferDesc.StructureByteStride = sizeof(DWORD);
 
     D3D11_SUBRESOURCE_DATA indexBufferData;
     indexBufferData.pSysMem = indices.data();
@@ -99,18 +99,18 @@ void PlanetGenerator::recreateVertexBuffers()
         for (int j = 0; j < 3; j++)
         {
             newVertice = true;
-            Vertex* vertex = &sphereMeshes[currentSubdivisions][i].vertices[j];
-            vertex->position.Normalize();
-            vertex->normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
-            vertex->uv = DirectX::SimpleMath::Vector2(1.f);
+            Vertex vertex = sphereMeshes[currentSubdivisions][i].vertices[j];
+            vertex.position.Normalize();
+            vertex.normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
+            vertex.uv = DirectX::SimpleMath::Vector2(1.f);
             int loops = vertices.size();
             for (int k = 0; k < loops; k++)
             {
-                if (*vertices[k] == *vertex)
+                if (vertices[k] == vertex)
                 {
-                    std::cout << "X: " << vertices[k]->position.x << " VS " << vertex->position.x << "\n";
-                    std::cout << "Y: " << vertices[k]->position.y << " VS " << vertex->position.y << "\n";
-                    std::cout << "Z: " << vertices[k]->position.z << " VS " << vertex->position.z << "\n\n";
+                    std::cout << "X: " << vertices[k].position.x << " VS " << vertex.position.x << "\n";
+                    std::cout << "Y: " << vertices[k].position.y << " VS " << vertex.position.y << "\n";
+                    std::cout << "Z: " << vertices[k].position.z << " VS " << vertex.position.z << "\n\n";
 
                     vertices.push_back(vertices[k]);
                     newVertice = false;
@@ -147,10 +147,10 @@ void PlanetGenerator::recreateVertexBuffers()
     //vertices[0]->position.z -= 1.0f;
     for (int i = 0; i < vertices.size(); i++)
     {
-        (*vertices[i]).position.x += 0.1f * 0.01f * (rand() % 101);
-        (*vertices[i]).position.y += 0.1f * 0.01f * (rand() % 101);
-        (*vertices[i]).position.z += 0.1f * 0.01f * (rand() % 101);
-        (*vertices[i]).position.Normalize();
+        (vertices[i]).position.x += 0.1f * 0.01f * (rand() % 101);
+        (vertices[i]).position.y += 0.1f * 0.01f * (rand() % 101);
+        (vertices[i]).position.z += 0.1f * 0.01f * (rand() % 101);
+        (vertices[i]).position.Normalize();
     }
 
     //lines.clear();
@@ -165,14 +165,14 @@ void PlanetGenerator::recreateVertexBuffers()
     {
         for (int i = nr-12; i < nr; i++)//vertices.size(); i++)
         {
-            plsWork.emplace_back(*vertices[i]);
+            plsWork.emplace_back(vertices[i]);
         }
     }
     else
     {
         for (int i = 0; i < 3; i++)//vertices.size(); i++)
         {
-            plsWork.emplace_back(*vertices[i]);
+            plsWork.emplace_back(vertices[i]);
         }
     }
 
@@ -420,31 +420,33 @@ void PlanetGenerator::createIcoSphere()
     }*/
     bool newVertice = true;
     int indexSphere = 0;
-    Vertex* vertex;
+    Vertex vertex;
     int loops;
+    int count = 0;
 
     for (int i = 0; i < sphereMeshes[indexSphere].size(); i++)
     {
         for (int j = 0; j < 3; j++)
         {
             newVertice = true;
-            vertex = &sphereMeshes[indexSphere][i].vertices[j];
-            //vertex->position.Normalize();
-            vertex->normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
-            vertex->uv = DirectX::SimpleMath::Vector2(1.f);
+            vertex = sphereMeshes[indexSphere][i].vertices[j];
+            vertex.position.Normalize();
+            vertex.normal = DirectX::SimpleMath::Vector3(36.f / 255.f, 36.f / 255.f, 36.f / 255.f);
+            vertex.uv = DirectX::SimpleMath::Vector2(1.f);
             loops = vertices.size();
             for (int k = 0; k < loops; k++)
             {
-                if ((*vertices[k]) == (*vertex))/*(*vertices[k]).position.x == (*vertex).position.x &&
+                if ((vertices[k]) == (vertex))/*(*vertices[k]).position.x == (*vertex).position.x &&
                     (*vertices[k]).position.y == (*vertex).position.y &&
                     (*vertices[k]).position.z == (*vertex).position.z)*/
                 {
-                    if (k == 0)
+                    count++;
+                    /*if (k == 0)
                     {
                         std::cout << "X: " << vertices[k]->position.x << " \tVS " << vertex->position.x << "\n";
                         std::cout << "Y: " << vertices[k]->position.y << " \tVS " << vertex->position.y << "\n";
                         std::cout << "Z: " << vertices[k]->position.z << " \tVS " << vertex->position.z << "\n\n";
-                    }
+                    }*/
                     
 
                     indices.push_back(k);
@@ -456,6 +458,7 @@ void PlanetGenerator::createIcoSphere()
             }
             if (newVertice) 
             { 
+                std::cout << i << " " << j << "\n";
                 vertices.push_back(vertex); 
                 indices.push_back(vertices.size()-1); 
             }
@@ -484,6 +487,7 @@ void PlanetGenerator::createIcoSphere()
         lines.back().normal = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
     }
 
+    std::cout << "Count: " << count << "\n";
     //bool newVertice = true;
     //for (int i = 0; i < vertices.size(); i++)
     //{
@@ -518,7 +522,7 @@ void PlanetGenerator::createIcoSphere()
     for (int i = 0; i < lines.size(); i++)
     {
         //if (getLength(vertices[i].position) != 1.f) std::cout << "LENGTH: " << getLength(vertices[i].position) << "\n";
-        //lines[i].position.Normalize();
+        lines[i].position.Normalize();
     }
  /*   vertices[indices[599]]->position.x -= 1.0f;
     vertices[indices[600]]->position.x -= 1.0f;
@@ -541,10 +545,10 @@ void PlanetGenerator::createIcoSphere()
 
     for (int i = 0; i < vertices.size(); i++)
     {
-        //(*vertices[i]).position.x += 0.1f * 0.1f * (rand() % 101);
-        //(*vertices[i]).position.y += 0.1f * 0.1f * (rand() % 101);
-        //(*vertices[i]).position.z += 0.1f * 0.1f * (rand() % 101);
-        (*vertices[i]).position.Normalize();
+        vertices[i].position.x += 0.1f * 0.1f * (rand() % 101);
+        vertices[i].position.y += 0.1f * 0.1f * (rand() % 101);
+        vertices[i].position.z += 0.1f * 0.1f * (rand() % 101);
+        vertices[i].position.Normalize();
     }
 
 }
@@ -606,9 +610,10 @@ void PlanetGenerator::Render()
     GPU::immediateContext->VSSetConstantBuffers(0, 1, &worldMatrixBuffer);
     if (planetImGuiStruct.renderTriangles)
     {
+        //GPU::immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
         GPU::immediateContext->IASetVertexBuffers(0, 1, &triangleBuffer, &stride, &offset);
         GPU::immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
-        GPU::immediateContext->Draw(this->indices.size(), 0);
+        GPU::immediateContext->DrawIndexed(this->indices.size(), 0, 0);
     }
     if (planetImGuiStruct.renderLines)
     {

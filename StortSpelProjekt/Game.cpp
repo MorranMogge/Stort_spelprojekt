@@ -246,8 +246,6 @@ Game::~Game()
 {
 	delete packetEventManager;
 
-	delete this->tmpMesh2;
-
 	for (int i = 0; i < players.size(); i++)
 	{
 		delete players[i];
@@ -276,6 +274,9 @@ Game::~Game()
 		delete client;
 	}
 	delete tmpMesh;
+	delete tmpMesh2;
+	delete tmpMesh3;
+	delete tmpMesh4;
 	delete otherTmpMesh;
 	delete asteroids;
 	delete arrow;
@@ -1032,7 +1033,6 @@ GAMESTATE Game::updateKingOfTheHillGame()
 			teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState, gamePad, tmpMesh2, tmpMesh3, tmpMesh4, planetSRV_online);
 	}
 
-	static bool firstFrame = false;
 	if (!firstFrame)
 	{
 		Time::Start();
@@ -1460,19 +1460,23 @@ void Game::Render()
 	ltHandler.bindLightBuffers();
 	//testCube->drawObjectWithNormalMap();
 
-	planetVector[0]->setMesh(tmpMesh4);
-	planetVector[0]->setSrv(planetSRV_online[0]);
-	planetVector[0]->setNormalMap(planetSRV_online[1]);
+	if (IFONLINE)
+	{
+		planetVector[0]->setMesh(tmpMesh4);
+		planetVector[0]->setSrv(planetSRV_online[0]);
+		planetVector[0]->setNormalMap(planetSRV_online[1]);
+
+		planetVector[1]->setMesh(tmpMesh3);
+		planetVector[1]->setSrv(planetSRV_online[2]);
+		planetVector[1]->setNormalMap(planetSRV_online[3]);
+
+		planetVector[2]->setMesh(tmpMesh2);
+		planetVector[2]->setSrv(planetSRV_online[4]);
+		planetVector[2]->setNormalMap(planetSRV_online[5]);
+	}
+
 	planetVector[0]->drawObjectWithNormalMap();
-
-	planetVector[1]->setMesh(tmpMesh3);
-	planetVector[1]->setSrv(planetSRV_online[2]);
-	planetVector[1]->setNormalMap(planetSRV_online[3]);
 	planetVector[1]->drawObjectWithNormalMap();
-
-	planetVector[2]->setMesh(tmpMesh2);
-	planetVector[2]->setSrv(planetSRV_online[4]);
-	planetVector[2]->setNormalMap(planetSRV_online[5]);
 	planetVector[2]->drawObjectWithNormalMap();
 
 	

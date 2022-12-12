@@ -6,6 +6,7 @@
 #include "Credits.h"
 #include "SoundLibrary.h"
 #include "Time.h"
+#include "Game.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -275,8 +276,8 @@ void MenuUI::HandleInputs()
 					SoundLibrary::clickSfx.stop();
 					SoundLibrary::clickSfx.play();
 
-					//gameState = GAME;
-					gameState = LOBBY;
+					Game::IFONLINE ? gameState = LOBBY : gameState = GAME;
+					
 
 					isLoading = true;
 				}
@@ -315,8 +316,7 @@ void MenuUI::HandleInputs()
 				SoundLibrary::clickSfx.stop();
 				SoundLibrary::clickSfx.play();
 
-				//gameState = GAME;
-				gameState = LOBBY;
+				Game::IFONLINE ? gameState = LOBBY : gameState = GAME;
 
 				isLoading = true;
 			}

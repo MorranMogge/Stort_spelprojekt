@@ -8,11 +8,10 @@ struct wirefameInfo
 };
 
 
-static bool IFONLINE = true;
-
-
 class Game : public State
 {
+public:
+	inline static bool IFONLINE = false;
 private:
 	ID3D11DeviceContext* immediateContext;
 	HWND* window;
@@ -116,6 +115,7 @@ private:
 	DirectX::XMFLOAT2 offset;
 	UINT HEIGHT;
 	UINT WIDTH;
+	bool firstFrame = false;
 
 	void loadObjects();
 	void drawShadows();

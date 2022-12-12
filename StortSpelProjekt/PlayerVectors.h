@@ -1,7 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include "Player.h"
-#include "Camera.h"
+#include "Arrow.h"
 
 #define NROFVERTICES 10
 
@@ -9,7 +9,7 @@ class PlayerVectors
 {
 private:
 	Player* player;
-	Camera* camera;
+	Arrow* arrow;
 
 	ID3D11Buffer* vBuffer;
 	ID3D11VertexShader* vShader;
@@ -25,6 +25,6 @@ private:
 public:
 	PlayerVectors();
 	~PlayerVectors();
-	void setPlayer(Player* player, Camera camera);
+	void setPlayer(Player* player, Arrow* arrow);
 	void drawLines();
 };

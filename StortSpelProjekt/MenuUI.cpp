@@ -22,7 +22,8 @@ void MenuUI::SpritePass()
 	
 
 	time += Time::DeltaTimeInSeconds();
-	if (time > 10)
+	//16
+	if (time > 30)
 	{
 
 		DirectX::SimpleMath::Color gg = title.GetTint();

@@ -117,4 +117,5 @@ public:
 	void resetTopology(); //sets triangle list
 	void postProcessPass();
 	void normaltasseletion(Camera& stageCamera, bool shadow = true);
+
 };

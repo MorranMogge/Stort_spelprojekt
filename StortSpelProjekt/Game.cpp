@@ -207,6 +207,9 @@ Game::~Game()
 	delete packetEventManager;
 
 	delete this->tmpMesh2;
+	delete this->tmpMesh3;
+	delete this->tmpMesh4;
+
 
 	for (int i = 0; i < players.size(); i++)
 	{

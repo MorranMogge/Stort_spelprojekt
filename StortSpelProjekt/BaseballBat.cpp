@@ -124,7 +124,7 @@ void BaseballBat::useItem(const Player* playerHoldingItem)
 
 	std::cout << "Used bat!\n";
 	batPos = playerHoldingItem->getPos();
-	batPos += playerHoldingItem->getForwardVector() * 10;
+	batPos += playerHoldingItem->getForwardVector() * 5;
 
 	UseBat useBat;
 	useBat.packetId = USEBAT;

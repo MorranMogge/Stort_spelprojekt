@@ -1159,7 +1159,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	for (int i = 0; i < gameObjects.size(); i++) gameObjects[i]->update();
 
 	//Setting the camera at position
-	if (!velocityCamera) camera.moveVelocity(currentPlayer, dt);
+	if (velocityCamera) camera.moveVelocity(currentPlayer, dt);
 	else camera.collisionCamera(currentPlayer, planetVector, dt);
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 

@@ -69,7 +69,7 @@ private:
 	//variables to handle packets
 	CircularBufferClient* circularBuffer;
 	Camera camera;
-	bool velocityCamera = false;
+	bool velocityCamera = true;
 	bool fadedIn = false;
 	Arrow* arrow;
 	SkyboxObj skybox;

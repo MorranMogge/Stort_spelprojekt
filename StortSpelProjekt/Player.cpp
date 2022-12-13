@@ -1533,7 +1533,7 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 			std::cout << "items.size = " << std::to_string(items.size()) << std::endl;
 			for (int i = 0; i < items.size(); i++)
 			{
-				if (this->withinRadius(items[i], 5))
+				if (this->withinRadius(items[i], 8))
 				{
 					//addItem(items[i]);
 
@@ -1567,7 +1567,7 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 			std::cout << "items.size = " << std::to_string(items.size()) << std::endl;
 			for (int i = 0; i < items.size(); i++)
 			{
-				if (this->withinRadius(items[i], 5))
+				if (this->withinRadius(items[i], 8))
 				{
 					//addItem(items[i]);
 

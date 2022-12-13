@@ -328,6 +328,7 @@ AnimatedMesh::AnimatedMesh(Mesh* useMesh, const AnimationData& data, const Direc
 	this->hitStart = this->MySimp.animation[4].duration / 4;
 	this->hitStart /= this->MySimp.animation[4].ticksPerSecond;
 	this->MySimp.animation[4].duration /= 1.5;
+	this->MySimp.animation[2].duration -= 1;
 
 	throwStart = this->MySimp.animation[3].duration * 0.25;
 	this->throwStart /= this->MySimp.animation[3].ticksPerSecond;

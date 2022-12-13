@@ -18,7 +18,10 @@ DirectX::XMFLOAT3 randomizeObjectPos(std::vector<Planet*> planets)
 
     randomPos.Normalize();
     
-    int planetIndex = rand() % (int)(planets.size());
+    int planetIndex = rand() % 5;
+    if (planetIndex < 3) planetIndex = 0;
+    else if (planetIndex == 3) planetIndex = 1;
+    else planetIndex = 2;
     randomPos *= (planets[planetIndex]->getSize() + 10.f);
 
     position = randomPos + planets[planetIndex]->getPlanetPosition();

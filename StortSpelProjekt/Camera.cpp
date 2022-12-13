@@ -136,34 +136,37 @@ void Camera::collisionCamera(Player* player, const std::vector<Planet*>& planets
 	this->playerSpeed = player->getSpeed();
 
 	//Actual camera
-	logicalUp = XMVector3TransformCoord(DEFAULT_UP, playerRotationMX); // DO NOT NEED TO CHECK THE PLANET IM STANDING ON
+	logicalUp = XMVector3TransformCoord(DEFAULT_UP, playerRotationMX);
 	rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotationMX);
 	forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotationMX);
 	lookAtPos = playerPosition;
 	logicalPos = playerPosition + logicalUp * 50.f - forwardVector * 70.f;
 	index = -1;
 
-	//Checking collision with planets
-	for (int i = 0; i < planets.size(); i++)
+	if (!haveWon)
 	{
-		//Measuring distances with an offset
-		planetVector = DirectX::XMVectorSet(planets[i]->getSize(), planets[i]->getSize(), planets[i]->getSize(), 0.0f);
-		cameraVector = XMVectorSubtract(planets[i]->getPlanetPosition(), logicalPos);
-		cameraVector = XMVector3Length(cameraVector);
-
-		//It collided with planet, it goes away
-		cameraVector *= 0.6f;
-		if  (XMVector3LessOrEqual(cameraVector, planetVector))
+		//Checking collision with planets
+		for (int i = 0; i < planets.size(); i++)
 		{
-			index = i;
-		}
+			//Measuring distances with an offset
+			planetVector = DirectX::XMVectorSet(planets[i]->getSize(), planets[i]->getSize(), planets[i]->getSize(), 0.0f);
+			cameraVector = XMVectorSubtract(planets[i]->getPlanetPosition(), logicalPos);
+			cameraVector = XMVector3Length(cameraVector);
 
-		//It collided with planet, it ducks down
-		cameraVector *= 0.9f;
-		if (XMVector3LessOrEqual(cameraVector, planetVector))
-		{
-			logicalPos -= logicalUp * 20.f;
-			logicalPos += forwardVector * 10.f;
+			//It collided with planet, it goes away
+			cameraVector *= 0.6f;
+			if (XMVector3LessOrEqual(cameraVector, planetVector))
+			{
+				index = i;
+			}
+
+			//It collided with planet, it ducks down
+			cameraVector *= 0.9f;
+			if (XMVector3LessOrEqual(cameraVector, planetVector))
+			{
+				logicalPos -= logicalUp * 20.f;
+				logicalPos += forwardVector * 10.f;
+			}
 		}
 	}
 
@@ -189,6 +192,7 @@ void Camera::collisionCamera(Player* player, const std::vector<Planet*>& planets
 		if (fieldOfView < maxFOV) fieldOfView += deltaTime * 1.8f;
 	}
 
+	//Updating camera
 	oldCameraPos = cameraPos;
 	updateCamera();
 }
@@ -267,6 +271,11 @@ void Camera::setRotToStart()
 	rightVector = DEFAULT_RIGHT;
 	forwardVector = DEFAULT_FORWARD;
 	upVector = DEFAULT_UP;
+}
+
+void Camera::setHaveWon(bool haveWon)
+{
+	this->haveWon = haveWon;
 }
 
 void Camera::VSbindPositionBuffer(const int& slot)

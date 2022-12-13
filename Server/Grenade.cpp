@@ -14,7 +14,7 @@ Grenade::~Grenade()
 
 bool Grenade::explode()
 {
-	return (this->destructionIsImmenent && this->timer.getTimePassed(5.f));
+	return (this->destructionIsImmenent && this->timer.getTimePassed(2.f));
 }
 
 void Grenade::resetExplosion()

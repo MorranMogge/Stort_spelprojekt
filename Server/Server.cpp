@@ -383,7 +383,7 @@ int main()
 
 		float timerLength = 1.f / 60.0f;
 		float timerComponentLength = 10.0f;
-		float itemSpawnTimerLength = 20.0f;
+		float itemSpawnTimerLength = 5.0f;
 
 		setupTcp(data);
 		//acceptPlayers(data);
@@ -824,6 +824,8 @@ int main()
 								currentMinigame = MiniGames::KINGOFTHEHILL;
 								startGame.minigame = MiniGames::KINGOFTHEHILL;
 							}
+							startGame.pointsRed = totalTeamScores[0];
+							startGame.pointsBlue = totalTeamScores[1];
 							sendBinaryDataAllPlayers<MinigameStart>(startGame, data);
 
 							//Resetting
@@ -879,11 +881,12 @@ int main()
 
 
 			//Spawns a baseBallBat
-			if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength)
+			if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - itemSpawnTimer)).count() > itemSpawnTimerLength && onlineItems.size() <= 10)
 			{
 				ItemSpawn itemSpawnData;
 				DirectX::XMFLOAT3 temp = randomizeObjectPos(planetVector);
-				if (!grenadeCount) itemSpawnData.itemType = (rand() % 3) + 3;		//Spawns a random item (Baseball bat, potion or grenade)
+				if (onlineItems.size() == 0) itemSpawnData.itemType = ObjID::BAT;
+				else if (!grenadeCount) itemSpawnData.itemType = (rand() % 3) + 3;		//Spawns a random item (Baseball bat, potion or grenade)
 				else itemSpawnData.itemType = (rand() % 2) + 3;
 				itemSpawnData.x = temp.x;
 				itemSpawnData.y = temp.y;
@@ -1156,6 +1159,8 @@ int main()
 						startMinigame.pointsRed = 100.f;
 						startMinigame.pointsBlue = 0.f;
 					}
+					startMinigame.pointsRed = totalTeamScores[0];
+					startMinigame.pointsBlue = totalTeamScores[1];
 					sendBinaryDataAllPlayers<MinigameStart>(startMinigame, data);
 					timeToFly = false;
 				}

@@ -124,7 +124,7 @@ void BaseballBat::useItem(const Player* playerHoldingItem)
 
 	std::cout << "Used bat!\n";
 	batPos = playerHoldingItem->getPos();
-	batPos += playerHoldingItem->getForwardVector() * 10;
+	batPos += playerHoldingItem->getForwardVector() * 5;
 
 	UseBat useBat;
 	useBat.packetId = USEBAT;
@@ -145,7 +145,7 @@ void BaseballBat::useItem(const Player* playerHoldingItem)
 	PhysicsComponent* batComp = this->getPhysComp();
 	PhysicsComponent* physComp;
 	batComp->setPosition(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
-	batComp->setScale(DirectX::XMFLOAT3(2 * 4.0f, 2 * 4.0f, 2 * 4.0f));
+	batComp->setScale(DirectX::XMFLOAT3(1 * 4.0f, 1 * 4.0f, 1 * 4.0f));
 	bool collided = false;
 
 	//Is offline

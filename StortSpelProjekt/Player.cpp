@@ -471,7 +471,7 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 		//Changing planet, rotating slow
 		if (flipping)
 		{
-			angle = resultVector.x * 0.02f;
+			angle = resultVector.x * 0.03f;
 			rotation *= DirectX::XMMatrixRotationAxis(rightVector, -angle);
 			rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, -angle);
 		}
@@ -491,7 +491,7 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 		//Changing planet, rotating slow
 		if (flipping)
 		{
-			angle = resultVector.x * 0.02f;
+			angle = resultVector.x * 0.03f;
 			rotation *= DirectX::XMMatrixRotationAxis(rightVector, angle);
 			rotationMX *= DirectX::XMMatrixRotationAxis(rightVector, angle);
 		}
@@ -520,7 +520,7 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 		//Changing planet, rotating slow
 		if (flipping)
 		{
-			angle = resultVector.x * 0.02f;
+			angle = resultVector.x * 0.03f;
 			rotation *= DirectX::XMMatrixRotationAxis(forwardVector, angle);
 			rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, angle);
 		}
@@ -540,7 +540,7 @@ void Player::rotate(const DirectX::XMFLOAT3& grav, const bool& testingVec, const
 		//Changing planet, rotating slow
 		if (flipping)
 		{
-			angle = resultVector.x * 0.02f;
+			angle = resultVector.x * 0.03f;
 			rotation *= DirectX::XMMatrixRotationAxis(forwardVector, -angle);
 			rotationMX *= DirectX::XMMatrixRotationAxis(forwardVector, -angle);
 		}
@@ -580,7 +580,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
 		this->velocity = this->normalVector * 35.f;
-		this->position += this->normalVector * 1.5f;
+		this->position += this->normalVector * 1.7f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
 
@@ -1209,7 +1209,7 @@ void Player::orbiting()
 {
 	if (!onGround)
 	{
-		if (orbitTimer.getTimePassed(10.f))
+		if (orbitTimer.getTimePassed(5.f))
 		{
 			std::cout << "SETTING BACK TO PLANET\n";
 			this->physComp->resetForce();
@@ -1533,7 +1533,7 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 			std::cout << "items.size = " << std::to_string(items.size()) << std::endl;
 			for (int i = 0; i < items.size(); i++)
 			{
-				if (this->withinRadius(items[i], 5))
+				if (this->withinRadius(items[i], 8))
 				{
 					//addItem(items[i]);
 
@@ -1545,6 +1545,7 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 					rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;
 					rqstCmpPickUp.playerId = this->getOnlineID();
 					if (items[i]->getId() == ObjID::COMPONENT) this->holdingComp = true;
+					else this->holdingComp = false;
 					std::cout << "requesting pickup componentId: " << std::to_string(rqstCmpPickUp.componentId) << std::endl;
 					//skickar en f�rfr�gan att plocka upp item
 					keyPressTimer.resetStartTime();
@@ -1566,7 +1567,7 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 			std::cout << "items.size = " << std::to_string(items.size()) << std::endl;
 			for (int i = 0; i < items.size(); i++)
 			{
-				if (this->withinRadius(items[i], 5))
+				if (this->withinRadius(items[i], 8))
 				{
 					//addItem(items[i]);
 
@@ -1578,6 +1579,7 @@ void Player::requestingPickUpItem(const std::vector<Item*>& items)
 					rqstCmpPickUp.packetId = PacketType::COMPONENTREQUESTINGPICKUP;
 					rqstCmpPickUp.playerId = this->getOnlineID();
 					if (items[i]->getId() == ObjID::COMPONENT) this->holdingComp = true;
+					else this->holdingComp = false;
 					std::cout << "requesting pickup componentId: " << std::to_string(rqstCmpPickUp.componentId) << std::endl;
 					//skickar en f�rfr�gan att plocka upp item
 					keyPressTimer.resetStartTime();

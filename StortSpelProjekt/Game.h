@@ -11,7 +11,7 @@ struct wirefameInfo
 class Game : public State
 {
 public:
-	inline static bool IFONLINE = false;
+	inline static bool IFONLINE = true;
 private:
 	ID3D11DeviceContext* immediateContext;
 	HWND* window;
@@ -69,7 +69,7 @@ private:
 	//variables to handle packets
 	CircularBufferClient* circularBuffer;
 	Camera camera;
-	bool velocityCamera = false;
+	bool velocityCamera = true;
 	bool fadedIn = false;
 	Arrow* arrow;
 	SkyboxObj skybox;
@@ -103,6 +103,7 @@ private:
 	MiniGameUI miniGameUI;
 	LandingHud landingUi;
 
+	int teamScores[2]{ 0, 0 };
 	float landingMiniGamePoints = 0;
 	float teamScoreLandingMiniGame = 0;
 	float enemyTeamScoreLandingMiniGame = 0;

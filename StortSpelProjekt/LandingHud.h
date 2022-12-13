@@ -46,4 +46,5 @@ public:
 	void makeGamePad(DirectX::GamePad* gamePad);
 	bool handleInputs(const float& dt);
 	void draw();
+	void drawPointsForOtherGameModes(const int scores[]);
 };

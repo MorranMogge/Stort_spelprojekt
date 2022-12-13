@@ -221,7 +221,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	currentTime = std::chrono::system_clock::now();
 	lastUpdate = currentTime;
 	//gamePad = std::make_unique<DirectX::GamePad>();
-	playerVecRenderer.setPlayer(currentPlayer, camera);
+	playerVecRenderer.setPlayer(currentPlayer, arrow);
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 	serverStart = std::chrono::system_clock::now();
@@ -407,7 +407,7 @@ void Game::loadObjects()
 		items.emplace_back(grenade);
 		items.emplace_back(grenade2);
 	}
-	arrow = new Arrow(meshes[8], DirectX::SimpleMath::Vector3(0, 42, 0));
+	arrow = new Arrow(meshes[8], DirectX::SimpleMath::Vector3(6969.f, 6969.f, 6969.f));
 
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -809,18 +809,18 @@ GAMESTATE Game::updateComponentGame()
 	//Setting the camera at position
 	if (!velocityCamera) camera.moveVelocity(currentPlayer, dt);
 	else camera.collisionCamera(currentPlayer, planetVector, dt);
-	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
 	//Check Components online
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
 		if (spaceShips[i]->getCompletion())
 		{
-			if (currentPlayer->getTeam() == i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot()); currentPlayer->setVibration(0.1f, 0.1f);
+			if (currentPlayer->getTeam() == i) { camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot()); currentPlayer->setVibration(0.1f, 0.1f); }
 			this->spaceShips[i]->flyAway(dt);
 			endTimer += dt;
-			arrow->removeArrow(); //Remove these completely by not drawing the meshes anymore
-			//if (currentPlayer->getTeam() == i) this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969)); //Remove these completely by not drawing the meshes anymore
+			camera.setHaveWon(true);
+			arrow->removeArrow();
+			if (currentPlayer->getTeam() == i) this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969));
 		}
 	}
 
@@ -829,7 +829,11 @@ GAMESTATE Game::updateComponentGame()
 	{
 		for (int i = 0; i < spaceShips.size(); i++)
 		{
-			if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
+			if (currentPlayer->getTeam() == i)
+			{
+				arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
+				this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
+			}
 		}
 	}
 	//Arrow pointing to component
@@ -839,13 +843,17 @@ GAMESTATE Game::updateComponentGame()
 		{
 			if (onlineItems[i]->getId() == ObjID::COMPONENT)
 			{
+				arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 				this->arrow->showDirection(onlineItems[i]->getPosV3(), currentPlayer->getPosV3(), grav);
 				break;
 			}
 		}
 	}
-	else if (components.size() > 0) this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
-	else arrow->removeArrow();
+	else if (components.size() > 0)
+	{
+		arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
+		this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
+	}
 	currentPlayer->colliedWIthComponent(components);
 
 	if (!IFONLINE)
@@ -1002,9 +1010,6 @@ GAMESTATE Game::updateLandingGame()
 
 	DirectX::SimpleMath::Vector3 vecToPlanet = spaceShips[currentPlayer->getTeam()]->getPosV3() - planetVector[currentPlayer->getTeam() + 1]->getPlanetPosition();
 
-
-
-
 	if (getLength(vecToPlanet) <= planetVector[currentPlayer->getTeam() + 1]->getSize())
 	{
 		ui.count = 1.0f;
@@ -1033,6 +1038,7 @@ GAMESTATE Game::updateLandingGame()
 		requestStart.formerGame = MiniGames::LANDINGSPACESHIP;
 		client->sendStuff<DoneWithGame>(requestStart);
 		currentMinigame = MiniGames::DEFAULT;
+		camera.setHaveWon(false);
 		if (!IFONLINE)
 		{
 			currentGameState = this->updateKingOfTheHillGame();
@@ -1046,7 +1052,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	if (IFONLINE)
 	{
 		packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
-			teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState, gamePad, tmpMesh2, tmpMesh3, tmpMesh4, planetSRV_online);
+			teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState, gamePad, tmpMesh2, tmpMesh3, tmpMesh4, planetSRV_online, teamScores);
 	}
 
 	if (!firstFrame)
@@ -1069,6 +1075,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 		{
 			fadedIn = true;
 		}
+		landingUi.drawPointsForOtherGameModes(teamScores);
 	}
 
 	//Calculate gravity factor
@@ -1100,10 +1107,8 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
 	currentPlayer->checkSwimStatus(planetVector);
-
 	currentPlayer->orbiting();
-	currentPlayer->setSpeed(20.f);
-
+	currentPlayer->setSpeed(25.f);
 
 	//Check component pickup
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);
@@ -1340,7 +1345,7 @@ GAMESTATE Game::Update()
 	{
 		//read the packets received from the server
 		packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
-			teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState, gamePad, tmpMesh2, tmpMesh3, tmpMesh4, planetSRV_online);
+			teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState, gamePad, tmpMesh2, tmpMesh3, tmpMesh4, planetSRV_online, teamScores);
 	}
 
 
@@ -1492,7 +1497,6 @@ void Game::Render()
 	}
 
 
-
 	//Unbind light
 	ltHandler.unbindSrv();
 
@@ -1550,6 +1554,7 @@ void Game::Render()
 
 	case INTERMISSION:
 		//miniGameUI.Draw();
+		landingUi.drawPointsForOtherGameModes(teamScores);
 		ui.DrawFade();
 		break;
 

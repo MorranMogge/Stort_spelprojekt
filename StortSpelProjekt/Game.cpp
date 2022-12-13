@@ -292,22 +292,36 @@ void Game::loadObjects()
 		planetVector.back()->setPlanetShape(&physWorld);
 		physWorld.setPlanets(planetVector);
 
-		for (auto& planet :planetVector)
-		{
-			int randomPlanetIndex = rand() % 11; //range 0 to 12
+		//for (auto& planet :planetVector)
+		//{
+		//	int randomPlanetIndex = rand() % 11; //range 0 to 12
 
-			const std::string path_c = std::string("p") + std::to_string(randomPlanetIndex) + std::string(".png");
-			const std::string path_n = std::string("p") + std::to_string(randomPlanetIndex) + std::string("n.png");
+		//	const std::string path_c = std::string("p") + std::to_string(randomPlanetIndex) + std::string(".png");
+		//	const std::string path_n = std::string("p") + std::to_string(randomPlanetIndex) + std::string("n.png");
 
-			std::cout << path_c << std::endl;
-			std::cout << path_n << std::endl;
-			auto colorSRV = loadTexture(path_c);
-			planet->setSrv(colorSRV);
+		//	std::cout << path_c << std::endl;
+		//	std::cout << path_n << std::endl;
+		//	auto colorSRV = loadTexture(path_c);
+		//	planet->setSrv(colorSRV);
 
-			auto normalSRV = loadTexture(path_n);
-			planet->setNormalMap(normalSRV);
-			
-		}
+		//	auto normalSRV = loadTexture(path_n);
+		//	planet->setNormalMap(normalSRV);
+		//	
+		//}
+	}
+
+	for (int i = 0; i < 3; i++)
+	{
+		int randomPlanetIndex = rand() % 11; //range 0 to 12
+
+		const std::string path_c = std::string("p") + std::to_string(randomPlanetIndex) + std::string(".png");
+		const std::string path_n = std::string("p") + std::to_string(randomPlanetIndex) + std::string("n.png");
+
+		std::cout << path_c << std::endl;
+		std::cout << path_n << std::endl;
+		planetSRV_online.emplace_back(loadTexture(path_c));
+		planetSRV_online.emplace_back(loadTexture(path_n));
+
 	}
 
 	asteroids = new AsteroidHandler(meshes[0]);

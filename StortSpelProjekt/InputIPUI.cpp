@@ -85,6 +85,16 @@ void InputIPUI::HandleInputs()
 		gameState = LOBBY;
 	}
 
+	backText.IntersectMouse() ? backText.SetTint(DirectX::Colors::Green.v) : backText.SetTint(DirectX::Colors::White.v);
+
+	if (Input::KeyPress(KeyCode::MOUSE_L))
+	{
+		if (backText.GetTint() == DirectX::Colors::Green.v)
+		{
+			gameState = MENU;
+		}
+	}
+
 }
 
 void InputIPUI::SpritePass()
@@ -175,6 +185,7 @@ void InputIPUI::SpritePass()
 
 	ipText.Draw();
 	hit_start ? start2.Draw() : start.Draw();
+	backText.Draw();
 }
 
 GAMESTATE InputIPUI::GetGameState()
@@ -243,6 +254,9 @@ InputIPUI::InputIPUI()
 	ipText = GUISprite(centerX - 75, centerY - 50);
 	ipText.Load(L"../Sprites/ipText.png");
 	ipText.SetScale(0.7f, 0.7f);
+
+	backText = GUISprite(75 + 70, 600);
+	backText.Load(L"../Sprites/backText.png");
 
 }
 

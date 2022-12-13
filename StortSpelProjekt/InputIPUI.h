@@ -7,8 +7,6 @@
 class InputIPUI final
 {
 
-	GUISprite backText;
-
 	GUISprite n0, n1, n2, n3, n4, n5, n6, n7, n8, n9;
 	GUISprite punkt;
 
@@ -16,6 +14,7 @@ class InputIPUI final
 	GUISprite start2;
 
 	GUISprite ipText;
+	GUISprite backText;
 
 	bool hit_start = false;
 

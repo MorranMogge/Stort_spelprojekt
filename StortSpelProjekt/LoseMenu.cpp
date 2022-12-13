@@ -62,7 +62,7 @@ void LoseMenu::drawObjects()
     GPU::immediateContext->OMSetDepthStencilState(nullptr, 0);
 }
 
-LoseMenu::LoseMenu() : manager(GPU::device)
+LoseMenu::LoseMenu(int& currentTeam) : manager(GPU::device)
 {
     SoundLibrary::menuMusic.setVolume(0.5f);
     SoundLibrary::menuMusic.play(true);
@@ -79,18 +79,32 @@ LoseMenu::LoseMenu() : manager(GPU::device)
     manager.AdditionalAnimation("../Meshes/anim/character1_Sad3.fbx", "../Meshes/anim/character1_idle.fbx");
 
     manager.loadMeshAndBoneData("../Meshes/character1_idle.fbx");
-    manager.AdditionalAnimation("../Meshes/anim/character1_Sad1.fbx", "../Meshes/anim/character1_idle.fbx");
-    manager.AdditionalAnimation("../Meshes/anim/character1_Sad2.fbx", "../Meshes/anim/character1_idle.fbx");
-    manager.AdditionalAnimation("../Meshes/anim/character1_Sad3.fbx", "../Meshes/anim/character1_idle.fbx");
+    manager.AdditionalAnimation("../Meshes/anim/character2_Sad1.fbx", "../Meshes/anim/character1_idle.fbx");
+    manager.AdditionalAnimation("../Meshes/anim/character2_Sad2.fbx", "../Meshes/anim/character1_idle.fbx");
+    manager.AdditionalAnimation("../Meshes/anim/character2_Sad3.fbx", "../Meshes/anim/character1_idle.fbx");
 
     ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
 
     AnimationData team1Anim;
-    manager.getAnimData("../Meshes/anim/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team1Anim);
+    if (currentTeam == 0)
+    {
+        manager.getAnimData("../Meshes/anim/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team1Anim);
+    }
+    else //Blue
+    {
+        manager.getAnimData("../Meshes/anim/character2_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team1Anim);
+    }
     Mesh* team1Mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
 
     AnimationData team2Anim;
-    manager.getAnimData("../Meshes/anim/character1_idle.fbx", vBuff2, iBuff2, subMeshRanges2, verticies2, team2Anim);
+    if (currentTeam == 0)
+    {
+        manager.getAnimData("../Meshes/anim/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team2Anim);
+    }
+    else //Blue
+    {
+        manager.getAnimData("../Meshes/anim/character2_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team2Anim);
+    }
     Mesh* team2Mesh = new Mesh(vBuff2, iBuff2, subMeshRanges2, verticies2);
 
     tmpMesh = team1Mesh;

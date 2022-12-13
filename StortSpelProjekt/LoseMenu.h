@@ -40,7 +40,7 @@ class LoseMenu : public State
 
 public:
 
-	LoseMenu();
+	LoseMenu(int& currentTeam);
 	virtual ~LoseMenu() override;
 
 	// Inherited via State

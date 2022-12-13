@@ -68,7 +68,7 @@ ID3D11ShaderResourceView* WinMenu::loadTexture(const std::string& fileName)
 	return manager.getSrv(fileName);
 }
 
-WinMenu::WinMenu() : manager(GPU::device)
+WinMenu::WinMenu(int& currentTeam) : manager(GPU::device)
 {
 	SoundLibrary::menuMusic.setVolume(0.5f);
 	SoundLibrary::menuMusic.play(true);
@@ -88,9 +88,9 @@ WinMenu::WinMenu() : manager(GPU::device)
 	manager.AdditionalAnimation("../Meshes/anim/character1_Dance3.fbx", "../Meshes/anim/character1_idle.fbx");
 
 	manager.loadMeshAndBoneData("../Meshes/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Dance1.fbx", "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Dance2.fbx", "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Dance3.fbx", "../Meshes/anim/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character2_Dance1.fbx", "../Meshes/anim/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character2_Dance2.fbx", "../Meshes/anim/character1_idle.fbx");
+	manager.AdditionalAnimation("../Meshes/anim/character2_Dance3.fbx", "../Meshes/anim/character1_idle.fbx");
 
 	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
 

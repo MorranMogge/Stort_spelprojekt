@@ -69,7 +69,7 @@ private:
 	//variables to handle packets
 	CircularBufferClient* circularBuffer;
 	Camera camera;
-	bool velocityCamera = false;
+	bool velocityCamera = true;
 	bool fadedIn = false;
 	Arrow* arrow;
 	SkyboxObj skybox;
@@ -103,6 +103,7 @@ private:
 	MiniGameUI miniGameUI;
 	LandingHud landingUi;
 
+	int teamScores[2]{ 0, 0 };
 	float landingMiniGamePoints = 0;
 	float teamScoreLandingMiniGame = 0;
 	float enemyTeamScoreLandingMiniGame = 0;
@@ -135,7 +136,8 @@ private:
 	void randomizeObjectPos(GameObject* item);
 
 public:
-	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT, const int NROFPLAYERS, Client* client);
+	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT,
+		const int NROFPLAYERS, Client* client, int& currentTeam);
 	virtual ~Game() override;
 
 	// Inherited via State

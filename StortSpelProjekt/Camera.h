@@ -15,7 +15,7 @@ private:
 	DirectX::XMVECTOR playerPosition = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	bool collided = false;
-
+	bool haveWon = false;
 	float fieldOfView = 0.76f;
 	float maxFOV = 0.8f;
 	float minFOV = 0.6f;
@@ -67,6 +67,7 @@ public:
 	void setPosition(const DirectX::XMFLOAT3& position);
 	void setCameraLookAt(const DirectX::XMFLOAT3& position);
 	void setRotToStart();
+	void setHaveWon(bool haveWon);
 
 	void VSbindPositionBuffer(const int &slot);
 	void VSbindViewBuffer(const int& slot);

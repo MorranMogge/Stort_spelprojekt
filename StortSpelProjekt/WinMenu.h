@@ -40,7 +40,7 @@ class WinMenu : public State
 	void drawObjects();
 public:
 
-	WinMenu();
+	WinMenu(int& currentTeam);
 	virtual ~WinMenu() override;
 
 	// Inherited via State

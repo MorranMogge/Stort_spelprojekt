@@ -412,7 +412,7 @@ void GameObject::update()
 void GameObject::tmpDraw(UINT stride)
 {
 	this->mesh->UpdateCB(position, rotation, scale);
-	//this->mesh->draw(this->srv, stride);
+	this->mesh->draw(nullptr, stride);
 }
 
 void GameObject::tmpDraw(std::vector<ID3D11ShaderResourceView*>& allTextures,UINT stride)

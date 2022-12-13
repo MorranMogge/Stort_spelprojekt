@@ -19,7 +19,7 @@ PacketEventManager::~PacketEventManager()
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects,
 	GravityField* field, std::vector<SpaceShip*>& spaceShips, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes,
-	std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame, float& redTeamPoints, float& blueTeamPoints, Client*& client, const float dt, GAMESTATE& currentGameState, DirectX::GamePad* gamePad, Mesh* planet1, Mesh* planet2, Mesh* planet3, std::vector<ID3D11ShaderResourceView*> srvArr)
+	std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame, float& redTeamPoints, float& blueTeamPoints, Client*& client, const float dt, GAMESTATE& currentGameState, DirectX::GamePad* gamePad, Mesh* planet1, Mesh* planet2, Mesh* planet3, std::vector<ID3D11ShaderResourceView*> srvArr, int teamScores[])
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -374,6 +374,9 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 		case PacketType::STARTMINIGAMES:
 			startMinigame = circularBuffer->readData<MinigameStart>();
 			currentMinigame = startMinigame->minigame;
+			teamScores[0] = startMinigame->pointsRed;
+			teamScores[1] = startMinigame->pointsBlue;
+			std::cout << "Recieved: " << startMinigame->pointsBlue << "\n";
 			std::cout << "RECEIVED START OF MINIGAME\n";
 			break;
 

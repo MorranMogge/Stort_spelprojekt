@@ -284,11 +284,11 @@ void Game::loadObjects()
 		float planetSize = 40.f; // SET DIFFERENT GRAV-FACTORS FOR THE PLANETS AND DIFFERENT TEXTURES!
 		planetVector.emplace_back(new Planet(tmpMesh2, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f), (4.0f * 9.82f), meshes[1]));
 		planetVector.back()->setPlanetShape(&physWorld);
-		planetVector.emplace_back(new Planet(tmpMesh3, DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(60.f, 60.f, 60.f), (4.0f * 9.82f), meshes[1]));
+		planetVector.emplace_back(new Planet(tmpMesh3, DirectX::XMFLOAT3(planetSize , planetSize , planetSize ), DirectX::XMFLOAT3(60.f, 60.f, 60.f), (4.0f * 9.82f), meshes[1]));
 		planetVector.back()->setPlanetShape(&physWorld);
 		planetVector.back()->setSrv(this->manager.getSrv("p6.png"));
 		planetVector.back()->setNormalMap(this->manager.getSrv("p6n.png"));
-		planetVector.emplace_back(new Planet(tmpMesh4, DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-130.f, -130.f, 130.f), (4.0f * 9.82f), meshes[1]));
+		planetVector.emplace_back(new Planet(tmpMesh4, DirectX::XMFLOAT3(planetSize , planetSize , planetSize ), DirectX::XMFLOAT3(-130.f, -130.f, 130.f), (4.0f * 9.82f), meshes[1]));
 		planetVector.back()->setPlanetShape(&physWorld);
 		physWorld.setPlanets(planetVector);
 
@@ -438,25 +438,14 @@ void Game::drawObjects(bool drawDebug)
 		onlineItems[i]->draw();
 	}
 
-	/*
-		basicRenderer.setUpSceneNormalMap(this->camera);
-	ltHandler.bindLightBuffers();
-	//testCube->drawObjectWithNormalMap();
-	planetVector[0]->drawObjectWithNormalMap();
-	*/
-
-	basicRenderer.normaltasseletion(this->camera);
-	planetVector[0]->drawObjectWithNormalMap();
-	planetVector[1]->drawObjectWithNormalMap();
-	planetVector[2]->drawObjectWithNormalMap();
-
 	//Draw planets
-	//basicRenderer.tesselationPrePass(camera);
-	//for (int i = 0; i < planetVector.size(); i++)
-	//{
-	//	if (i == camera.getCollidedWith()) continue;
-	//	planetVector[i]->drawPlanet(true);
-	//}
+	basicRenderer.normaltasseletion(camera);
+	for (int i = 0; i < planetVector.size(); i++)
+	{
+		if (i == camera.getCollidedWith()) continue;
+		planetVector[i]->drawObjectWithNormalMap();
+		//std::cout << "planet: " << i << " pos x: " << planetVector[i]->getPlanetPosition().x << " y: " << planetVector[i]->getPlanetPosition().y << " z: " << planetVector[i]->getPlanetPosition().z << std::endl;
+	}
 	basicRenderer.resetTopology();
 	asteroids->drawAsteroids();
 	//testCube->draw();

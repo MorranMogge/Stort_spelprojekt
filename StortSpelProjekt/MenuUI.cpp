@@ -10,6 +10,8 @@
 
 using namespace DirectX::SimpleMath;
 
+static float count;
+
 void MenuUI::SpritePass()
 {
 	if (isLoading)
@@ -18,15 +20,33 @@ void MenuUI::SpritePass()
 		return;
 	}
 	
-	hit_start ? start2.Draw() : start.Draw();
-	hit_setting? settings2.Draw() :settings.Draw();
-	hit_credits ? credits2.Draw() : credits.Draw();
-	hit_exit ? exit2.Draw() : exit.Draw();
-	hit_control ? control2.Draw() : control.Draw();
+	
+	DirectX::SimpleMath::Color gg = title.GetTint();
+	count -= Time::DeltaTimeInSeconds() + 0.007f;
+	gg.w = count;
+	if (gg.w <= 0)
+	{
+		
+	}
+	else
+	{
+		title.SetTint(gg);
+	}
+	
+
+	//hit_start ? start2.Draw() : start.Draw();
+	//hit_setting? settings2.Draw() :settings.Draw();
+	//hit_credits ? credits2.Draw() : credits.Draw();
+	//hit_exit ? exit2.Draw() : exit.Draw();
+	//hit_control ? control2.Draw() : control.Draw();
+
+
 
 	title.Draw();
 
 }
+
+
 
 void MenuUI::HandleInputs()
 {
@@ -367,6 +387,9 @@ MenuUI::MenuUI()
 #define scale 0.3f,0.3f
 #define scale2 0.35f,0.35f
 
+
+	
+
 	gamePad = std::make_unique<DirectX::GamePad>();
 	start = GUISprite(centerX, 300);
 	start.Load(L"../Sprites/Menu/start.png");
@@ -415,6 +438,11 @@ MenuUI::MenuUI()
 	title = GUISprite(centerX, 340-200);
 	title.Load(L"../Sprites/title2.png");
 	title.SetScale(0.6f, 0.6f);
+
+	DirectX::SimpleMath::Color opacity = title.GetTint();
+	opacity.w = 0.0f;
+	
+	title.SetTint(opacity);
 
 }
 

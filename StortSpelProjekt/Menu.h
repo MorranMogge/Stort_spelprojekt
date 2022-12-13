@@ -19,7 +19,8 @@ private:
 	Camera cam;
 	SkyboxObj skybox;
 	LightHandler ltHandler;
-
+	std::chrono::time_point<std::chrono::system_clock> timer;
+	float time;
 	ID3D11ShaderResourceView* loadTexture(const std::string& fileName);
 public:
 	Menu();

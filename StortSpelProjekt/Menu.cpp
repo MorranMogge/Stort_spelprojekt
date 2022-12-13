@@ -21,6 +21,8 @@ Menu::Menu()
 	meshes.push_back(new Mesh("../Meshes/astroid"));
 	meshes.push_back(new Mesh("../Meshes/N1"));
 
+	this->timer = std::chrono::system_clock::now();
+	this->time = 11;
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -168,5 +170,9 @@ void Menu::Render()
 	//basicRenderer.geometryUnbind();
 
 	//Ui
-	ui.Draw();
+	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - timer)).count() > time)
+	{
+		ui.Draw();
+		
+	}
 }

@@ -12,7 +12,8 @@ enum GAMESTATE
 	WIN,
 	LOSE,
 	CONTROL,
-	LOBBY
+	LOBBY,
+	INPUTIP
 };
 
 class State

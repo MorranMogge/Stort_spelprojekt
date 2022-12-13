@@ -2,6 +2,7 @@
 #include "LobbyUI.h"
 #include "Lobby.h"
 #include "Client.h"
+#include "InputIPUI.h"
 //#include "ErrorLog.h"
 
 Lobby::Lobby(Client*& client)
@@ -10,7 +11,7 @@ Lobby::Lobby(Client*& client)
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 	startGame = false;
 
-	client = new Client("192.168.43.241");
+	client = new Client(InputIPUI::ip);
 	std::cout << "CB: " << sizeof(CircularBufferClient) << "\nUdpSocket: " << sizeof(sf::UdpSocket) << "\nTcpSocket: " << sizeof(sf::TcpSocket)
 		<< "\nSocket selector: " << sizeof(sf::SocketSelector) << "\nPacket: " << sizeof(sf::Packet) << "\nThread: " << sizeof(std::thread) << "\n";
 	this->client = client;

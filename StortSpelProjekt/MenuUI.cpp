@@ -276,7 +276,7 @@ void MenuUI::HandleInputs()
 					SoundLibrary::clickSfx.stop();
 					SoundLibrary::clickSfx.play();
 
-					Game::IFONLINE ? gameState = LOBBY : gameState = GAME;
+					Game::IFONLINE ? gameState = INPUTIP : gameState = GAME;
 					
 
 					isLoading = true;
@@ -316,7 +316,7 @@ void MenuUI::HandleInputs()
 				SoundLibrary::clickSfx.stop();
 				SoundLibrary::clickSfx.play();
 
-				Game::IFONLINE ? gameState = LOBBY : gameState = GAME;
+				Game::IFONLINE ? gameState = INPUTIP : gameState = GAME;
 
 				isLoading = true;
 			}

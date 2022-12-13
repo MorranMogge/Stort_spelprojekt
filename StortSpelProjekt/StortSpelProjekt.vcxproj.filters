@@ -191,6 +191,13 @@
     <ClCompile Include="LobbyUI.cpp">
       <Filter>Game-States</Filter>
     </ClCompile>
+    <ClCompile Include="MiniGameUI.cpp" />
+    <ClCompile Include="InputIP.cpp">
+      <Filter>Game-States</Filter>
+    </ClCompile>
+    <ClCompile Include="InputIPUI.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -500,6 +507,14 @@
     <ClInclude Include="LobbyUI.h">
       <Filter>Game-States</Filter>
     </ClInclude>
+    <ClInclude Include="MiniGameUI.h" />
+    <ClInclude Include="Time.h" />
+    <ClInclude Include="InputIP.h">
+      <Filter>Game-States</Filter>
+    </ClInclude>
+    <ClInclude Include="InputIPUI.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />
@@ -614,6 +629,14 @@
     <FxCompile Include="vShaderSkinning.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="basic_VertexShader.hlsl" />
+    <FxCompile Include="DomainShader.hlsl" />
+    <FxCompile Include="HullShader.hlsl" />
+    <FxCompile Include="NormalMap_PS.hlsl" />
+    <FxCompile Include="NormalMap_VS.hlsl" />
+    <FxCompile Include="PixelShader_NoShadow.hlsl" />
+    <FxCompile Include="PostProcess.hlsl" />
+    <FxCompile Include="PT_UpdatePlayer.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico">

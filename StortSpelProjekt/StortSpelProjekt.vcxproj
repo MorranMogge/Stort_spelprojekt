@@ -194,6 +194,8 @@
     <ClInclude Include="GPU.h" />
     <ClInclude Include="GravityField.h" />
     <ClInclude Include="Grenade.h" />
+    <ClInclude Include="InputIP.h" />
+    <ClInclude Include="InputIPUI.h" />
     <ClInclude Include="LandingHud.h" />
     <ClInclude Include="Lobby.h" />
     <ClInclude Include="LobbyUI.h" />
@@ -309,6 +311,8 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GravityField.cpp" />
     <ClCompile Include="Grenade.cpp" />
+    <ClCompile Include="InputIP.cpp" />
+    <ClCompile Include="InputIPUI.cpp" />
     <ClCompile Include="LandingHud.cpp" />
     <ClCompile Include="Lobby.cpp" />
     <ClCompile Include="LobbyUI.cpp" />

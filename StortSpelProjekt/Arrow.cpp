@@ -102,20 +102,16 @@ void Arrow::showDirection(const DirectX::XMVECTOR& goalPosition, const DirectX::
 		resultVector = DirectX::XMVector3AngleBetweenNormals(arrowVector, forwardVector);
 		if (resultVector.x > XM_PIDIV2) rotation *= DirectX::XMMatrixRotationAxis(normalVector, resultVector.x);
 	}
-
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
 	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-	normalVector = DirectX::XMVector3Normalize(normalVector);
 	rightVector = DirectX::XMVector3Normalize(rightVector);
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 
 	//X-Rotation
 	resultVector = DirectX::XMVector3AngleBetweenNormals(arrowVector, forwardVector);
 	rotation *= DirectX::XMMatrixRotationAxis(rightVector, resultVector.x);
-
 	rightVector = DirectX::XMVector3TransformCoord(DEFAULT_RIGHT, rotation);
 	forwardVector = DirectX::XMVector3TransformCoord(DEFAULT_FORWARD, rotation);
-	normalVector = DirectX::XMVector3Normalize(normalVector);
 	rightVector = DirectX::XMVector3Normalize(rightVector);
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 

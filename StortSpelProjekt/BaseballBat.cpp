@@ -145,7 +145,7 @@ void BaseballBat::useItem(const Player* playerHoldingItem)
 	PhysicsComponent* batComp = this->getPhysComp();
 	PhysicsComponent* physComp;
 	batComp->setPosition(reactphysics3d::Vector3(batPos.x, batPos.y, batPos.z));
-	batComp->setScale(DirectX::XMFLOAT3(2 * 4.0f, 2 * 4.0f, 2 * 4.0f));
+	batComp->setScale(DirectX::XMFLOAT3(1 * 4.0f, 1 * 4.0f, 1 * 4.0f));
 	bool collided = false;
 
 	//Is offline

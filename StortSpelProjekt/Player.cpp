@@ -580,7 +580,7 @@ void Player::move(const DirectX::XMVECTOR& cameraForward, const DirectX::XMVECTO
 	if (onGround && Input::KeyDown(KeyCode::SPACE))
 	{
 		this->velocity = this->normalVector * 35.f;
-		this->position += this->normalVector * 1.5f;
+		this->position += this->normalVector * 1.7f;
 		if (this->moveKeyPressed) this->velocity += this->forwardVector * this->currentSpeed * 0.3f;
 	}
 
@@ -1209,7 +1209,7 @@ void Player::orbiting()
 {
 	if (!onGround)
 	{
-		if (orbitTimer.getTimePassed(10.f))
+		if (orbitTimer.getTimePassed(5.f))
 		{
 			std::cout << "SETTING BACK TO PLANET\n";
 			this->physComp->resetForce();

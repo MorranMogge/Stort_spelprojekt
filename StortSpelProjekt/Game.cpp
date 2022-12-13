@@ -391,7 +391,7 @@ void Game::loadObjects()
 		items.emplace_back(grenade);
 		items.emplace_back(grenade2);
 	}
-	arrow = new Arrow(meshes[8], DirectX::SimpleMath::Vector3(0, 42, 0));
+	arrow = new Arrow(meshes[8], DirectX::SimpleMath::Vector3(6969.f, 6969.f, 6969.f));
 
 	for (int i = 0; i < items.size(); i++)
 	{
@@ -793,18 +793,18 @@ GAMESTATE Game::updateComponentGame()
 	//Setting the camera at position
 	if (!velocityCamera) camera.moveVelocity(currentPlayer, dt);
 	else camera.collisionCamera(currentPlayer, planetVector, dt);
-	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
 	//Check Components online
 	for (int i = 0; i < spaceShips.size(); i++)
 	{
 		if (spaceShips[i]->getCompletion())
 		{
-			if (currentPlayer->getTeam() == i) camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot()); currentPlayer->setVibration(0.1f, 0.1f);
+			if (currentPlayer->getTeam() == i) { camera.winScene(spaceShips[i]->getPosV3(), spaceShips[i]->getRot()); currentPlayer->setVibration(0.1f, 0.1f); }
 			this->spaceShips[i]->flyAway(dt);
 			endTimer += dt;
-			arrow->removeArrow(); //Remove these completely by not drawing the meshes anymore
-			//if (currentPlayer->getTeam() == i) this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969)); //Remove these completely by not drawing the meshes anymore
+			camera.setHaveWon(true);
+			arrow->removeArrow();
+			if (currentPlayer->getTeam() == i) this->currentPlayer->setPos(DirectX::XMFLOAT3(6969, 6969, 6969));
 		}
 	}
 
@@ -813,7 +813,11 @@ GAMESTATE Game::updateComponentGame()
 	{
 		for (int i = 0; i < spaceShips.size(); i++)
 		{
-			if (currentPlayer->getTeam() == i) this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
+			if (currentPlayer->getTeam() == i)
+			{
+				arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
+				this->arrow->showDirection(spaceShips[i]->getPosV3(), currentPlayer->getPosV3(), planetGravityField->calcGravFactor(arrow->getPosition()));
+			}
 		}
 	}
 	//Arrow pointing to component
@@ -823,13 +827,17 @@ GAMESTATE Game::updateComponentGame()
 		{
 			if (onlineItems[i]->getId() == ObjID::COMPONENT)
 			{
+				arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 				this->arrow->showDirection(onlineItems[i]->getPosV3(), currentPlayer->getPosV3(), grav);
 				break;
 			}
 		}
 	}
-	else if (components.size() > 0) this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
-	else arrow->removeArrow();
+	else if (components.size() > 0)
+	{
+		arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
+		this->arrow->showDirection(components[0]->getPosV3(), currentPlayer->getPosV3(), grav);
+	}
 	currentPlayer->colliedWIthComponent(components);
 
 	if (!IFONLINE)
@@ -986,9 +994,6 @@ GAMESTATE Game::updateLandingGame()
 
 	DirectX::SimpleMath::Vector3 vecToPlanet = spaceShips[currentPlayer->getTeam()]->getPosV3() - planetVector[currentPlayer->getTeam() + 1]->getPlanetPosition();
 
-
-
-
 	if (getLength(vecToPlanet) <= planetVector[currentPlayer->getTeam() + 1]->getSize())
 	{
 		ui.count = 1.0f;
@@ -1017,6 +1022,7 @@ GAMESTATE Game::updateLandingGame()
 		requestStart.formerGame = MiniGames::LANDINGSPACESHIP;
 		client->sendStuff<DoneWithGame>(requestStart);
 		currentMinigame = MiniGames::DEFAULT;
+		camera.setHaveWon(false);
 		if (!IFONLINE)
 		{
 			currentGameState = this->updateKingOfTheHillGame();
@@ -1085,10 +1091,8 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->velocityMove(dt);
 	currentPlayer->checkSwimStatus(planetVector);
-
 	currentPlayer->orbiting();
-	currentPlayer->setSpeed(20.f);
-
+	currentPlayer->setSpeed(25.f);
 
 	//Check component pickup
 	if (!IFONLINE) currentPlayer->pickupItem(items, components);
@@ -1160,7 +1164,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	for (int i = 0; i < gameObjects.size(); i++) gameObjects[i]->update();
 
 	//Setting the camera at position
-	if (velocityCamera) camera.moveVelocity(currentPlayer, dt);
+	if (!velocityCamera) camera.moveVelocity(currentPlayer, dt);
 	else camera.collisionCamera(currentPlayer, planetVector, dt);
 	arrow->moveWithCamera(currentPlayer->getPosV3(), DirectX::XMVector3Normalize(camera.getForwardVector()), currentPlayer->getUpVector(), currentPlayer->getRotationMX());
 
@@ -1476,11 +1480,9 @@ void Game::Render()
 		planetVector[2]->setNormalMap(planetSRV_online[5]);
 	}
 
-	planetVector[0]->drawObjectWithNormalMap();
-	planetVector[1]->drawObjectWithNormalMap();
-	planetVector[2]->drawObjectWithNormalMap();
-
-	
+	if (camera.getCollidedWith() != 0) planetVector[0]->drawObjectWithNormalMap();
+	if (camera.getCollidedWith() != 1) planetVector[1]->drawObjectWithNormalMap();
+	if (camera.getCollidedWith() != 2) planetVector[2]->drawObjectWithNormalMap();
 
 	//Unbind light
 	ltHandler.unbindSrv();

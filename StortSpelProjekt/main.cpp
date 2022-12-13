@@ -29,7 +29,7 @@
 #include "Lobby.h"
 #include "Time.h"
 
-const int NROFPLAYERS = 2;
+const int NROFPLAYERS = 4;
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace, _In_ LPWSTR lpCmdLine, _In_ int nCmdShhow)
 {

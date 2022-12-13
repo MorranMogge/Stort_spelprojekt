@@ -135,7 +135,8 @@ private:
 	void randomizeObjectPos(GameObject* item);
 
 public:
-	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT, const int NROFPLAYERS, Client* client);
+	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT,
+		const int NROFPLAYERS, Client* client, int& currentTeam);
 	virtual ~Game() override;
 
 	// Inherited via State

@@ -8,8 +8,10 @@
 #include "ErrorLog.h"
 
 
-Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT, const int NROFPLAYERS, Client* client)
-	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), manager(ModelManager(device)), currentMinigame(MiniGames::COMPONENTCOLLECTION), NROFPLAYERS(NROFPLAYERS)
+Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT,
+	const int NROFPLAYERS, Client* client, int& currentTeam)
+	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), manager(ModelManager(device)),
+	currentMinigame(MiniGames::COMPONENTCOLLECTION), NROFPLAYERS(NROFPLAYERS)
 {
 	srand((UINT)time(0));
 
@@ -194,6 +196,8 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 		sendingConfirm.packetId = PacketType::DONELOADING;
 		client->sendStuff<DoneLoading>(sendingConfirm);
 		
+		currentTeam = currentPlayer->getTeam();
+
 	}
 	landingUi.makeGamePad(gamePad);
 

@@ -47,6 +47,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui::GetIO().IniFilename = nullptr;
 
+	int currentTeam;
+
 	UINT WIDTH = 1280;
 	UINT HEIGHT = 720;
 
@@ -101,7 +103,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 			{
 			case GAME:
 				delete currentState;
-				currentState = new Game(immediateContext, device, GPU::swapChain, window, WIDTH, HEIGHT, NROFPLAYERS, client);
+				currentState = new Game(immediateContext, device, GPU::swapChain, window, WIDTH, HEIGHT, NROFPLAYERS, client, currentTeam);
 				break;
 			case SETTINGS:
 				delete currentState;
@@ -113,11 +115,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 				break;
 			case WIN:
 				delete currentState;
-				currentState = new WinMenu();
+				currentState = new WinMenu(currentTeam);
 				break;
 			case LOSE:
 				delete currentState;
-				currentState = new LoseMenu();
+				currentState = new LoseMenu(currentTeam);
 				break;
 			case CONTROL:
 				delete currentState;

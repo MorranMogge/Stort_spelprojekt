@@ -85,7 +85,7 @@ WinMenu::WinMenu(int& currentTeam) : manager(GPU::device)
 
 
 	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
-
+	currentTeam = 0;
 
 	AnimationData Anim;
 	Mesh* mesh;
@@ -97,6 +97,20 @@ WinMenu::WinMenu(int& currentTeam) : manager(GPU::device)
 		manager.AdditionalAnimation("../Meshes/anim/character1_Dance3.fbx", "../Meshes/anim/character1_idle.fbx");
 		manager.getAnimData("../Meshes/anim/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, Anim);
 		mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+
+		sexyMan = new AnimatedMesh(mesh, Anim, { 0,0,-10 }, { 0,0,0 }, 0, nullptr, false);
+		sexyMan->setPos(DirectX::XMFLOAT3(2, -2, -20));
+		sexyMan->setScale(0.3f);
+		sexyMan->setRot(DirectX::XMFLOAT3{ 0, 3.1415926f, 0 });
+		std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
+		this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
+		sexyMan->setTextures(allPlayerTextures);
+
+		sexyMan2 = new AnimatedMesh(mesh, Anim, { 0,0,-10 }, { 0,0,0 }, 0, nullptr, false);
+		sexyMan2->setPos(DirectX::XMFLOAT3(-2, -2, -20));
+		sexyMan2->setScale(0.3f);
+		sexyMan2->setRot(DirectX::XMFLOAT3{ 0, 3.1415926f, 0 });
+		sexyMan2->setTextures(allPlayerTextures);
 	}
 	else //Blue
 	{
@@ -106,24 +120,23 @@ WinMenu::WinMenu(int& currentTeam) : manager(GPU::device)
 		manager.AdditionalAnimation("../Meshes/anim/character2_Dance3.fbx", "../Meshes/anim/character2_idle.fbx");
 		manager.getAnimData("../Meshes/anim/character2_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, Anim);
 		mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+
+		sexyMan = new AnimatedMesh(mesh, Anim, { 0,0,-10 }, { 0,0,0 }, 0, nullptr, false);
+		sexyMan->setPos(DirectX::XMFLOAT3(2, -2, -20));
+		sexyMan->setScale(0.3f);
+		sexyMan->setRot(DirectX::XMFLOAT3{ 0, 3.1415926f, 0 });
+		std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
+		this->manager.getTextureMaps("../Meshes/anim/character2_idle.fbx", allPlayerTextures);
+		sexyMan->setTextures(allPlayerTextures);
+
+		sexyMan2 = new AnimatedMesh(mesh, Anim, { 0,0,-10 }, { 0,0,0 }, 0, nullptr, false);
+		sexyMan2->setPos(DirectX::XMFLOAT3(-2, -2, -20));
+		sexyMan2->setScale(0.3f);
+		sexyMan2->setRot(DirectX::XMFLOAT3{ 0, 3.1415926f, 0 });
+		sexyMan2->setTextures(allPlayerTextures);
 	}	
 
-	sexyMan = new AnimatedMesh(mesh, Anim, { 0,0,-10 }, { 0,0,0 }, 0, nullptr, false);
-	//sexyMan->setSrv(blueTeamColour);
-	sexyMan->setPos(DirectX::XMFLOAT3(2, -2, -20));
-	sexyMan->setScale(0.3f);
-	sexyMan->setRot(DirectX::XMFLOAT3{ 0, 3.1415926f, 0 });
-	std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
-	this->manager.getTextureMaps("../Meshes/anim/character2_idle.fbx", allPlayerTextures);
-	allPlayerTextures.size();
-	sexyMan->setTextures(allPlayerTextures);
-
-	sexyMan2 = new AnimatedMesh(mesh, Anim, { 0,0,-10 }, { 0,0,0 }, 0, nullptr, false);
-	//sexyMan2->setSrv(blueTeamColour);
-	sexyMan2->setPos(DirectX::XMFLOAT3(-2, -2, -20));
-	sexyMan2->setScale(0.3f);
-	sexyMan2->setRot(DirectX::XMFLOAT3{ 0, 3.1415926f, 0 });
-	sexyMan2->setTextures(allPlayerTextures);
+	
 
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 }

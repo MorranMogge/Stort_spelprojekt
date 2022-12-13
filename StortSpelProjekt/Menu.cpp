@@ -170,9 +170,12 @@ void Menu::Render()
 	//basicRenderer.geometryUnbind();
 
 	//Ui
+	ui.Draw();
+	std::chrono::time_point<std::chrono::system_clock> timer;
+
 	if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - timer)).count() > time)
 	{
-		ui.Draw();
+		
 		
 	}
 }

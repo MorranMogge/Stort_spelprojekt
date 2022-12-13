@@ -20,18 +20,29 @@ void MenuUI::SpritePass()
 		return;
 	}
 	
+
+	time += Time::DeltaTimeInSeconds();
+	if (time > 10)
+	{
+
+		DirectX::SimpleMath::Color gg = title.GetTint();
+		count += Time::DeltaTimeInSeconds() -0.0004 ;
+		gg.w = count;
+		if (gg.w <= 0)
+		{
+
+		}
+		else
+		{
+			// limit alpha opasity
+			gg.w = gg.w >= 1.0f ? 1.0f : gg.w;
+
+			title.SetTint(gg);
+		}
+
+	}
 	
-	DirectX::SimpleMath::Color gg = title.GetTint();
-	count -= Time::DeltaTimeInSeconds() + 0.007f;
-	gg.w = count;
-	if (gg.w <= 0)
-	{
-		
-	}
-	else
-	{
-		title.SetTint(gg);
-	}
+
 	
 
 	//hit_start ? start2.Draw() : start.Draw();
@@ -378,7 +389,8 @@ GAMESTATE MenuUI::GetGameState()
 MenuUI::MenuUI()
 {
 	GUI::Init();
-
+	Time::Start();
+	Time::Reset();
 #define upp 60
 #define left 80
 
@@ -386,7 +398,6 @@ MenuUI::MenuUI()
 #define centerY 340
 #define scale 0.3f,0.3f
 #define scale2 0.35f,0.35f
-
 
 	
 

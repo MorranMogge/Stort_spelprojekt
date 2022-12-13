@@ -13,12 +13,14 @@ class MenuUI final
 	GUISprite settings;
 	GUISprite credits;
 	GUISprite exit;
-
+	std::chrono::time_point<std::chrono::system_clock> timer;
 	GUISprite start2;
 	GUISprite control2;
 	GUISprite settings2;
 	GUISprite credits2;
 	GUISprite exit2;
+	float time = 0;
+
 
 	bool hit_start, hit_setting, hit_credits, hit_exit, hit_control;
 

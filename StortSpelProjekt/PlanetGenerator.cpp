@@ -18,11 +18,14 @@ void PlanetGenerator::updateColours()
     for (int i = 0; i < vertices[index].size(); i++)
     {
         length = vertices[index][i].position.Length();
-        if (planetImGuiStruct.useColours > 0 && length >= 0.95 && length <= 1.1) vertices[index][i].normal = planetImGuiStruct.colourSelection[0];
-        if (planetImGuiStruct.useColours > 1 && length < 0.95)  vertices[index][i].normal = planetImGuiStruct.colourSelection[1];
-        else if (planetImGuiStruct.useColours > 2 && length > 1.1) vertices[index][i].normal = planetImGuiStruct.colourSelection[2];
-        else if (planetImGuiStruct.useColours > 3 && length < 0.85) vertices[index][i].normal = planetImGuiStruct.colourSelection[3];
-        else if (planetImGuiStruct.useColours > 4 && length > 1.2) vertices[index][i].normal = planetImGuiStruct.colourSelection[4];
+        if (planetImGuiStruct.useColours > 0 && length >= 0.95 * planetImGuiStruct.colourFactor[0].x 
+            && length <= 1.1 * planetImGuiStruct.colourFactor[0].y) vertices[index][i].normal = planetImGuiStruct.colourSelection[0];
+        else if (planetImGuiStruct.useColours > 1 && length < 0.95 * planetImGuiStruct.colourFactor[1].y 
+            && length >= 0.85 * planetImGuiStruct.colourFactor[0].x)  vertices[index][i].normal = planetImGuiStruct.colourSelection[1];
+        else if (planetImGuiStruct.useColours > 2 && length > 1.1 * planetImGuiStruct.colourFactor[2].x
+            && length <= 1.2 * planetImGuiStruct.colourFactor[2].y) vertices[index][i].normal = planetImGuiStruct.colourSelection[2];
+        else if (planetImGuiStruct.useColours > 3 && length < 0.85 * planetImGuiStruct.colourFactor[3].x) vertices[index][i].normal = planetImGuiStruct.colourSelection[3];
+        else if (planetImGuiStruct.useColours > 4 && length > 1.2 * planetImGuiStruct.colourFactor[4].y && length >= 0.85) vertices[index][i].normal = planetImGuiStruct.colourSelection[4];
     }
 
     this->updateVertexBuffer();

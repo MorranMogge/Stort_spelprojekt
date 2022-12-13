@@ -93,11 +93,16 @@ void ImGuiHelper::planetEditor(PlanetImGuiInfo& planetImGuiStruct)
 	ImGui_ImplWin32_NewFrame();
 
 	float colours[5][3];
+	float colourFactor[5][2];
+
 	for (int i = 0; i < 5; i++)
 	{
 		colours[i][0] = planetImGuiStruct.colourSelection[i].x;
 		colours[i][1] = planetImGuiStruct.colourSelection[i].y;
 		colours[i][2] = planetImGuiStruct.colourSelection[i].z;
+
+		colourFactor[i][0] = planetImGuiStruct.colourFactor[i].x;
+		colourFactor[i][1] = planetImGuiStruct.colourFactor[i].y;
 	}
 
 	ImGui::NewFrame();
@@ -132,6 +137,21 @@ void ImGuiHelper::planetEditor(PlanetImGuiInfo& planetImGuiStruct)
 			ImGui::ColorEdit3("Hill", colours[2]);
 			ImGui::ColorEdit3("Deep Sea", colours[3]);
 			ImGui::ColorEdit3("Mountain", colours[4]);
+			ImGui::Text("Colour height factor");
+			ImGui::SliderFloat2("Ground", colourFactor[0], 0, 2);
+			ImGui::SliderFloat2("Sea", colourFactor[1], 0, 2);
+			ImGui::SliderFloat2("Hill", colourFactor[2], 0, 2);
+			ImGui::SliderFloat2("Deep", colourFactor[3], 0, 2);
+			ImGui::SliderFloat2("Mountain", colourFactor[4], 0, 2);
+			if (ImGui::Button("Reset Factors"))
+			{
+				for (int i = 0; i < 5; i++)
+				{
+					colourFactor[i][0] = 1.0f;
+					colourFactor[i][1] = 1.0f;
+				}
+			}
+
 			ImGui::Checkbox("Update Colours", &planetImGuiStruct.updateColours);
 			//if (ImGui::Button("Update Colours")) planetImGuiStruct.updateColours = true;
 
@@ -146,6 +166,11 @@ void ImGuiHelper::planetEditor(PlanetImGuiInfo& planetImGuiStruct)
 		planetImGuiStruct.colourSelection[i].x = colours[i][0];
 		planetImGuiStruct.colourSelection[i].y = colours[i][1];
 		planetImGuiStruct.colourSelection[i].z = colours[i][2];
+
+		if (colourFactor[i][1] < colourFactor[i][0]) colourFactor[i][1] = colourFactor[i][0];
+		planetImGuiStruct.colourFactor[i].x = colourFactor[i][0];
+		planetImGuiStruct.colourFactor[i].y = colourFactor[i][1];
+
 	}
 
 	ImGui::EndFrame();

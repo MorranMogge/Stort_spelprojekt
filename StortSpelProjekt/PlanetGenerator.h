@@ -19,6 +19,7 @@ struct PlanetImGuiInfo
 	bool recreateMesh = false;
 	bool updateColours = false;
 	DirectX::SimpleMath::Vector3 colourSelection[MAXCOLOURS]{DirectX::SimpleMath::Vector3(0,0,0)};
+	DirectX::SimpleMath::Vector2 colourFactor[MAXCOLOURS]{ DirectX::SimpleMath::Vector2(1,1)};
 	int useColours = MAXCOLOURS;
 };
 

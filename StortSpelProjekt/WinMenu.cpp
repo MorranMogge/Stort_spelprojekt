@@ -82,39 +82,43 @@ WinMenu::WinMenu(int& currentTeam) : manager(GPU::device)
 
 
 	//manager.loadMeshAndBoneData("../Meshes/pinto_Run.fbx");
-	manager.loadMeshAndBoneData("../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Dance1.fbx", "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Dance2.fbx", "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character1_Dance3.fbx", "../Meshes/anim/character1_idle.fbx");
 
-	manager.loadMeshAndBoneData("../Meshes/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character2_Dance1.fbx", "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character2_Dance2.fbx", "../Meshes/anim/character1_idle.fbx");
-	manager.AdditionalAnimation("../Meshes/anim/character2_Dance3.fbx", "../Meshes/anim/character1_idle.fbx");
 
 	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
 
 
-	AnimationData team1Anim;
-	manager.getAnimData("../Meshes/anim/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, team1Anim);
-	Mesh* team1Mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	AnimationData Anim;
+	Mesh* mesh;
+	if (currentTeam == 0)
+	{
+		manager.loadMeshAndBoneData("../Meshes/anim/character1_idle.fbx");
+		manager.AdditionalAnimation("../Meshes/anim/character1_Dance1.fbx", "../Meshes/anim/character1_idle.fbx");
+		manager.AdditionalAnimation("../Meshes/anim/character1_Dance2.fbx", "../Meshes/anim/character1_idle.fbx");
+		manager.AdditionalAnimation("../Meshes/anim/character1_Dance3.fbx", "../Meshes/anim/character1_idle.fbx");
+		manager.getAnimData("../Meshes/anim/character1_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, Anim);
+		mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	}
+	else //Blue
+	{
+		manager.loadMeshAndBoneData("../Meshes/anim/character2_idle.fbx");
+		manager.AdditionalAnimation("../Meshes/anim/character2_Dance1.fbx", "../Meshes/anim/character2_idle.fbx");
+		manager.AdditionalAnimation("../Meshes/anim/character2_Dance2.fbx", "../Meshes/anim/character2_idle.fbx");
+		manager.AdditionalAnimation("../Meshes/anim/character2_Dance3.fbx", "../Meshes/anim/character2_idle.fbx");
+		manager.getAnimData("../Meshes/anim/character2_idle.fbx", vBuff, iBuff, subMeshRanges, verticies, Anim);
+		mesh = new Mesh(vBuff, iBuff, subMeshRanges, verticies);
+	}	
 
-	AnimationData team2Anim;
-	manager.getAnimData("../Meshes/anim/character1_idle.fbx", vBuff2, iBuff2, subMeshRanges2, verticies2, team2Anim);
-	Mesh* team2Mesh = new Mesh(vBuff2, iBuff2, subMeshRanges2, verticies2);
-
-	tmpMesh = team1Mesh;
-	sexyMan = new AnimatedMesh(tmpMesh, team1Anim, { 0,0,-10 }, { 0,0,0 }, 0);
+	sexyMan = new AnimatedMesh(mesh, Anim, { 0,0,-10 }, { 0,0,0 }, 0, nullptr, false);
 	//sexyMan->setSrv(blueTeamColour);
 	sexyMan->setPos(DirectX::XMFLOAT3(2, -2, -20));
 	sexyMan->setScale(0.3f);
 	sexyMan->setRot(DirectX::XMFLOAT3{ 0, 3.1415926f, 0 });
 	std::vector<ID3D11ShaderResourceView*> allPlayerTextures;
-	this->manager.getTextureMaps("../Meshes/anim/character1_idle.fbx", allPlayerTextures);
+	this->manager.getTextureMaps("../Meshes/anim/character2_idle.fbx", allPlayerTextures);
+	allPlayerTextures.size();
 	sexyMan->setTextures(allPlayerTextures);
 
-	tmpMesh2 = team2Mesh;
-	sexyMan2 = new AnimatedMesh(tmpMesh2, team2Anim, { 0,0,-10 }, { 0,0,0 }, 0);
+	sexyMan2 = new AnimatedMesh(mesh, Anim, { 0,0,-10 }, { 0,0,0 }, 0, nullptr, false);
 	//sexyMan2->setSrv(blueTeamColour);
 	sexyMan2->setPos(DirectX::XMFLOAT3(-2, -2, -20));
 	sexyMan2->setScale(0.3f);

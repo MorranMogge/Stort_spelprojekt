@@ -310,7 +310,7 @@ void AnimatedMesh::forwardKinematics(const std::string& nodeName, DirectX::XMFLO
 	}
 }
 
-AnimatedMesh::AnimatedMesh(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int id, GravityField* field)
+AnimatedMesh::AnimatedMesh(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& rot, const int id, GravityField* field, const bool fixStandardAnims)
 	:GameObject(useMesh, pos, rot, id, field)
 {
 	this->currentAnimId = 1;
@@ -323,16 +323,19 @@ AnimatedMesh::AnimatedMesh(Mesh* useMesh, const AnimationData& data, const Direc
 	this->updateBuffer();
 
 	this->MySimp = data;
-	this->MySimp.animation[2].duration -= 1;
+	if (fixStandardAnims)
+	{
+		this->MySimp.animation[2].duration -= 1;
 
-	this->hitStart = this->MySimp.animation[4].duration / 4;
-	this->hitStart /= this->MySimp.animation[4].ticksPerSecond;
-	this->MySimp.animation[4].duration /= 1.5;
-	this->MySimp.animation[2].duration -= 1;
+		this->hitStart = this->MySimp.animation[4].duration / 4;
+		this->hitStart /= this->MySimp.animation[4].ticksPerSecond;
+		this->MySimp.animation[4].duration /= 1.5;
+		this->MySimp.animation[2].duration -= 1;
 
-	throwStart = this->MySimp.animation[3].duration * 0.25;
-	this->throwStart /= this->MySimp.animation[3].ticksPerSecond;
-	this->MySimp.animation[3].duration *= 0.66;
+		throwStart = this->MySimp.animation[3].duration * 0.25;
+		this->throwStart /= this->MySimp.animation[3].ticksPerSecond;
+		this->MySimp.animation[3].duration *= 0.66;
+	}
 
 	std::vector<DirectX::XMFLOAT4X4> tempfloatvec;
 	tempfloatvec.reserve(data.boneVector.size());

@@ -229,7 +229,7 @@ public:
 	void drawWithNormalMap(ID3D11ShaderResourceView* diffuseMap, ID3D11ShaderResourceView* normalMap)
 	{
 
-		worldCB.BindToVS(0u);
+		worldCB.BindToDS(0u);
 
 		UINT stride = sizeof(vertex);
 		UINT offset = 0;

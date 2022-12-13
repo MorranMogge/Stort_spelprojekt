@@ -245,7 +245,6 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 Game::~Game()
 {
 	delete packetEventManager;
-
 	for (int i = 0; i < players.size(); i++)
 	{
 		delete players[i];
@@ -329,12 +328,11 @@ void Game::loadObjects()
 		float planetSize = 40.f; // SET DIFFERENT GRAV-FACTORS FOR THE PLANETS AND DIFFERENT TEXTURES!
 		planetVector.emplace_back(new Planet(tmpMesh2, DirectX::XMFLOAT3(planetSize, planetSize, planetSize), DirectX::XMFLOAT3(0.f, 0.f, 0.f), (4.0f * 9.82f), meshes[1]));
 		planetVector.back()->setPlanetShape(&physWorld);
-		planetVector.emplace_back(new Planet(tmpMesh3, DirectX::XMFLOAT3(planetSize * 0.8f, planetSize * 0.8f, planetSize * 0.8f), DirectX::XMFLOAT3(60.f, 60.f, 60.f), (4.0f * 9.82f), meshes[1]));
+		planetVector.emplace_back(new Planet(tmpMesh3, DirectX::XMFLOAT3(planetSize , planetSize , planetSize ), DirectX::XMFLOAT3(60.f, 60.f, 60.f), (4.0f * 9.82f), meshes[1]));
 		planetVector.back()->setPlanetShape(&physWorld);
 		planetVector.back()->setSrv(this->manager.getSrv("p6.png"));
 		planetVector.back()->setNormalMap(this->manager.getSrv("p6n.png"));
 		planetVector.emplace_back(new Planet(tmpMesh4, DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-130.f, -130.f, 130.f), (4.0f * 9.82f), meshes[1]));
-
 		planetVector.back()->setPlanetShape(&physWorld);
 		physWorld.setPlanets(planetVector);
 
@@ -370,6 +368,20 @@ void Game::loadObjects()
 			planetSRV_online.emplace_back(loadTexture(path_n));
 
 		}
+	}
+
+	for (int i = 0; i < 3; i++)
+	{
+		int randomPlanetIndex = rand() % 11; //range 0 to 12
+
+		const std::string path_c = std::string("p") + std::to_string(randomPlanetIndex) + std::string(".png");
+		const std::string path_n = std::string("p") + std::to_string(randomPlanetIndex) + std::string("n.png");
+
+		std::cout << path_c << std::endl;
+		std::cout << path_n << std::endl;
+		planetSRV_online.emplace_back(loadTexture(path_c));
+		planetSRV_online.emplace_back(loadTexture(path_n));
+
 	}
 
 	asteroids = new AsteroidHandler(meshes[0]);
@@ -448,7 +460,6 @@ void Game::loadObjects()
 	//Set items baseball bat
 	if (!IFONLINE)
 	{
-		captureZone = new CaptureZone(meshes[9], DirectX::SimpleMath::Vector3(42, 0, 0), DirectX::SimpleMath::Vector3(0.f, 0.f, 0.f), planetGravityField, DirectX::SimpleMath::Vector3(10.f, 10.f, 10.f));
 		baseballBat->setPlayer(currentPlayer);
 		baseballBat->setGameObjects(gameObjects);
 
@@ -501,13 +512,13 @@ void Game::drawObjects(bool drawDebug)
 	}
 	
 	//Draw planets
-	//basicRenderer.tesselationPrePass(camera);
-	//for (int i = 0; i < planetVector.size(); i++)
-	//{
-	//	if (i == camera.getCollidedWith()) continue;
-	//	planetVector[i]->drawPlanet(true);
-	//}
-	
+	basicRenderer.normaltasseletion(camera);
+	for (int i = 0; i < planetVector.size(); i++)
+	{
+		if (i == camera.getCollidedWith()) continue;
+		planetVector[i]->drawObjectWithNormalMap();
+	}
+
 	basicRenderer.resetTopology();
 	asteroids->drawAsteroids();
 	//testCube->draw();
@@ -593,6 +604,7 @@ ID3D11ShaderResourceView* Game::loadTexture(const std::string& fileName)
 	manager.addTexture(fileName);
 	return manager.getSrv(fileName);
 }
+
 void Game::drawNormalObjects()
 {
 	//Draw normal mapped objects here
@@ -1455,7 +1467,7 @@ void Game::Render()
 	basicRenderer.setUpScene(this->camera);
 	if (objectDraw) drawObjects(drawDebug);
 	
-	
+
 	basicRenderer.setUpSceneNormalMap(this->camera);
 	ltHandler.bindLightBuffers();
 	//testCube->drawObjectWithNormalMap();
@@ -1475,11 +1487,7 @@ void Game::Render()
 		planetVector[2]->setNormalMap(planetSRV_online[5]);
 	}
 
-	planetVector[0]->drawObjectWithNormalMap();
-	planetVector[1]->drawObjectWithNormalMap();
-	planetVector[2]->drawObjectWithNormalMap();
 
-	
 
 	//Unbind light
 	ltHandler.unbindSrv();

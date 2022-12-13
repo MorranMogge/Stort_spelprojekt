@@ -93,16 +93,12 @@ void ImGuiHelper::planetEditor(PlanetImGuiInfo& planetImGuiStruct)
 	ImGui_ImplWin32_NewFrame();
 
 	float colours[5][3];
-	float colourFactor[5][2];
 
 	for (int i = 0; i < 5; i++)
 	{
 		colours[i][0] = planetImGuiStruct.colourSelection[i].x;
 		colours[i][1] = planetImGuiStruct.colourSelection[i].y;
 		colours[i][2] = planetImGuiStruct.colourSelection[i].z;
-
-		colourFactor[i][0] = planetImGuiStruct.colourFactor[i].x;
-		colourFactor[i][1] = planetImGuiStruct.colourFactor[i].y;
 	}
 
 	ImGui::NewFrame();
@@ -117,7 +113,7 @@ void ImGuiHelper::planetEditor(PlanetImGuiInfo& planetImGuiStruct)
 			ImGui::TextColored(ImVec4(1, 0, 1, 1), "Mesh Creator");
 			if (ImGui::Button("Recreate Original Sphere")) planetImGuiStruct.recreateOriginalSphere = true;
 			ImGui::Checkbox("Normalized", &planetImGuiStruct.normalised);
-			ImGui::SliderInt("Subdivisions", &planetImGuiStruct.currentSubdivisions, 1, 4);
+			ImGui::SliderInt("Subdivisions", &planetImGuiStruct.currentSubdivisions, 1, 6);
 			ImGui::SliderInt("Elevation Factor", &planetImGuiStruct.randomizedFactor, 0, 500);
 
 			ImGui::Checkbox("Geo colours", &planetImGuiStruct.geoColours);
@@ -138,19 +134,36 @@ void ImGuiHelper::planetEditor(PlanetImGuiInfo& planetImGuiStruct)
 			ImGui::ColorEdit3("Deep Sea", colours[3]);
 			ImGui::ColorEdit3("Mountain", colours[4]);
 			ImGui::Text("Colour height factor");
-			ImGui::SliderFloat2("Ground", colourFactor[0], 0, 2);
-			ImGui::SliderFloat2("Sea", colourFactor[1], 0, 2);
-			ImGui::SliderFloat2("Hill", colourFactor[2], 0, 2);
-			ImGui::SliderFloat2("Deep", colourFactor[3], 0, 2);
-			ImGui::SliderFloat2("Mountain", colourFactor[4], 0, 2);
+			ImGui::SliderFloat("Ground", &planetImGuiStruct.colourFactor[0], 0.5, 1.5);
+			ImGui::SliderFloat("Sea", &planetImGuiStruct.colourFactor[1], 0.5, 1.5);
+			ImGui::SliderFloat("Hill", &planetImGuiStruct.colourFactor[2], 0.5, 1.5);
+			ImGui::SliderFloat("Deep Sea", &planetImGuiStruct.colourFactor[3], 0.5, 1.5);
+			ImGui::SliderFloat("Mountain", &planetImGuiStruct.colourFactor[4], 0.5, 1.5);
+			std::string l;
+			l = "Min length: " + std::to_string(planetImGuiStruct.minLength);
+			ImGui::Text(l.c_str());
+			l = "Max length: " + std::to_string(planetImGuiStruct.maxLength);
+			ImGui::Text(l.c_str());
+
+			if (ImGui::Button("Base Factors of vertice height"))
+			{
+				planetImGuiStruct.colourFactor[3] = planetImGuiStruct.minLength;
+				planetImGuiStruct.colourFactor[4] = planetImGuiStruct.maxLength;
+				planetImGuiStruct.colourFactor[2] = planetImGuiStruct.maxLength * 1.1 / 1.2;
+				planetImGuiStruct.colourFactor[1] = planetImGuiStruct.minLength * 0.95 / 0.85;
+				planetImGuiStruct.colourFactor[0] = (planetImGuiStruct.minLength + planetImGuiStruct.maxLength)/2.f;
+
+			}
+			
 			if (ImGui::Button("Reset Factors"))
 			{
-				for (int i = 0; i < 5; i++)
-				{
-					colourFactor[i][0] = 1.0f;
-					colourFactor[i][1] = 1.0f;
-				}
+				planetImGuiStruct.colourFactor[0] = 1.0f;
+				planetImGuiStruct.colourFactor[1] = 0.95f;
+				planetImGuiStruct.colourFactor[2] = 1.1f;
+				planetImGuiStruct.colourFactor[3] = 0.85f;
+				planetImGuiStruct.colourFactor[4] = 1.2f;
 			}
+			
 
 			ImGui::Checkbox("Update Colours", &planetImGuiStruct.updateColours);
 			//if (ImGui::Button("Update Colours")) planetImGuiStruct.updateColours = true;
@@ -167,11 +180,12 @@ void ImGuiHelper::planetEditor(PlanetImGuiInfo& planetImGuiStruct)
 		planetImGuiStruct.colourSelection[i].y = colours[i][1];
 		planetImGuiStruct.colourSelection[i].z = colours[i][2];
 
-		if (colourFactor[i][1] < colourFactor[i][0]) colourFactor[i][1] = colourFactor[i][0];
-		planetImGuiStruct.colourFactor[i].x = colourFactor[i][0];
-		planetImGuiStruct.colourFactor[i].y = colourFactor[i][1];
-
 	}
+	if (planetImGuiStruct.useColours > 1 && planetImGuiStruct.colourFactor[1] > planetImGuiStruct.colourFactor[0]) planetImGuiStruct.colourFactor[1] = planetImGuiStruct.colourFactor[0];
+	if (planetImGuiStruct.useColours > 2 && planetImGuiStruct.colourFactor[2] < planetImGuiStruct.colourFactor[0]) planetImGuiStruct.colourFactor[2] = planetImGuiStruct.colourFactor[0];
+	if (planetImGuiStruct.useColours > 3 && planetImGuiStruct.colourFactor[3] > planetImGuiStruct.colourFactor[1]) planetImGuiStruct.colourFactor[3] = planetImGuiStruct.colourFactor[1];
+	if (planetImGuiStruct.useColours > 4 && planetImGuiStruct.colourFactor[4] < planetImGuiStruct.colourFactor[2]) planetImGuiStruct.colourFactor[4] = planetImGuiStruct.colourFactor[2];
+
 
 	ImGui::EndFrame();
 	ImGui::Render();

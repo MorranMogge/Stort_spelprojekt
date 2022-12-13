@@ -4,7 +4,7 @@
 #include "BasicRenderer.h"
 #include "ImGuiHelper.h"
 
-#define MAXITERATIONS 4
+#define MAXITERATIONS 6
 #define MAXCOLOURS 5
 
 struct PlanetImGuiInfo
@@ -18,8 +18,10 @@ struct PlanetImGuiInfo
 	bool recreateOriginalSphere = false;
 	bool recreateMesh = false;
 	bool updateColours = false;
+	float minLength = 10;
+	float maxLength = 0;
 	DirectX::SimpleMath::Vector3 colourSelection[MAXCOLOURS]{DirectX::SimpleMath::Vector3(0,0,0)};
-	DirectX::SimpleMath::Vector2 colourFactor[MAXCOLOURS]{ DirectX::SimpleMath::Vector2(1,1)};
+	float colourFactor[MAXCOLOURS];
 	int useColours = MAXCOLOURS;
 };
 

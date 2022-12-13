@@ -15,17 +15,39 @@ void PlanetGenerator::updateColours()
 {
     int index = planetImGuiStruct.currentSubdivisions - 1;
     float length = 0;
-    for (int i = 0; i < vertices[index].size(); i++)
+    int loops = vertices[index].size();
+
+    planetImGuiStruct.minLength = 10;
+    planetImGuiStruct.maxLength = 0;
+
+    for (int i = 0; i < loops; i++)
     {
         length = vertices[index][i].position.Length();
-        if (planetImGuiStruct.useColours > 0 && length >= 0.95 * planetImGuiStruct.colourFactor[0].x 
-            && length <= 1.1 * planetImGuiStruct.colourFactor[0].y) vertices[index][i].normal = planetImGuiStruct.colourSelection[0];
-        else if (planetImGuiStruct.useColours > 1 && length < 0.95 * planetImGuiStruct.colourFactor[1].y 
-            && length >= 0.85 * planetImGuiStruct.colourFactor[0].x)  vertices[index][i].normal = planetImGuiStruct.colourSelection[1];
-        else if (planetImGuiStruct.useColours > 2 && length > 1.1 * planetImGuiStruct.colourFactor[2].x
-            && length <= 1.2 * planetImGuiStruct.colourFactor[2].y) vertices[index][i].normal = planetImGuiStruct.colourSelection[2];
-        else if (planetImGuiStruct.useColours > 3 && length < 0.85 * planetImGuiStruct.colourFactor[3].x) vertices[index][i].normal = planetImGuiStruct.colourSelection[3];
-        else if (planetImGuiStruct.useColours > 4 && length > 1.2 * planetImGuiStruct.colourFactor[4].y && length >= 0.85) vertices[index][i].normal = planetImGuiStruct.colourSelection[4];
+        if (length < planetImGuiStruct.minLength) planetImGuiStruct.minLength = length;
+        if (length > planetImGuiStruct.maxLength) planetImGuiStruct.maxLength = length;
+    }
+
+    bool ground = true;
+    for (int i = 0; i < loops; i++)
+    {
+        ground = true;
+        length = vertices[index][i].position.Length();
+        //if (planetImGuiStruct.useColours > 0 && length >= 0.95 * planetImGuiStruct.colourFactor[0].x 
+        //    && length <= 1.1 * planetImGuiStruct.colourFactor[0].y) vertices[index][i].normal = planetImGuiStruct.colourSelection[0];
+        //else if (planetImGuiStruct.useColours > 1 && length < 0.95 * planetImGuiStruct.colourFactor[1].y 
+        //    && length >= 0.85 * planetImGuiStruct.colourFactor[0].x)  vertices[index][i].normal = planetImGuiStruct.colourSelection[1];
+        //else if (planetImGuiStruct.useColours > 2 && length > 1.1 * planetImGuiStruct.colourFactor[2].x
+        //    && length <= 1.2 * planetImGuiStruct.colourFactor[2].y) vertices[index][i].normal = planetImGuiStruct.colourSelection[2];
+        //else if (planetImGuiStruct.useColours > 3 && length < 0.85 * planetImGuiStruct.colourFactor[3].x) vertices[index][i].normal = planetImGuiStruct.colourSelection[3];
+        //else if (planetImGuiStruct.useColours > 4 && length > 1.2 * planetImGuiStruct.colourFactor[4].y && length >= 0.85) vertices[index][i].normal = planetImGuiStruct.colourSelection[4];
+        if (planetImGuiStruct.useColours > 1 && length < planetImGuiStruct.colourFactor[1]) { vertices[index][i].normal = planetImGuiStruct.colourSelection[1]; ground = false; }
+        if (planetImGuiStruct.useColours > 2 && length > planetImGuiStruct.colourFactor[2]) { vertices[index][i].normal = planetImGuiStruct.colourSelection[2]; ground = false; }
+        if (planetImGuiStruct.useColours > 3 && length < planetImGuiStruct.colourFactor[3]) { vertices[index][i].normal = planetImGuiStruct.colourSelection[3]; ground = false; }
+        if (planetImGuiStruct.useColours > 4 && length > planetImGuiStruct.colourFactor[4]) { vertices[index][i].normal = planetImGuiStruct.colourSelection[4]; ground = false; }
+        if (ground) vertices[index][i].normal = planetImGuiStruct.colourSelection[0];
+
+
+
     }
 
     this->updateVertexBuffer();
@@ -590,6 +612,19 @@ PlanetGenerator::PlanetGenerator()
     camera.setPosition(DirectX::XMFLOAT3(0.f, 0.f, -10.f));
     LoadVertexShader(GPU::device, vShader, "playerVectorVertex");
     LoadPixelShader(GPU::device, pShader, "plaverVectorPixel");
+    planetImGuiStruct.colourFactor[0] = 1.0f;
+    planetImGuiStruct.colourFactor[1] = 0.95f;
+    planetImGuiStruct.colourFactor[2] = 1.1f;
+    planetImGuiStruct.colourFactor[3] = 0.85f;
+    planetImGuiStruct.colourFactor[4] = 1.2f;
+
+    for (int i = 0; i < 5; i++)
+    {
+        planetImGuiStruct.colourSelection[i].x = (rand() % 256) / 256.f;
+        planetImGuiStruct.colourSelection[i].y = (rand() % 256) / 256.f;
+        planetImGuiStruct.colourSelection[i].z = (rand() % 256) / 256.f;
+    }
+
 }
 
 PlanetGenerator::~PlanetGenerator()

@@ -84,6 +84,32 @@ enum class KeyCode
 	Y = ImGuiKey_Y,
 	Z = ImGuiKey_Z,
 
+	_0 = ImGuiKey_0,
+	_1 = ImGuiKey_1,
+	_2 = ImGuiKey_2,
+	_3 = ImGuiKey_3,
+	_4 = ImGuiKey_4,
+	_5 = ImGuiKey_5,
+	_6 = ImGuiKey_6,
+	_7 = ImGuiKey_7,
+	_8 = ImGuiKey_8,
+	_9 = ImGuiKey_9,
+
+	Keypad0 = ImGuiKey_Keypad0,
+	Keypad1 = ImGuiKey_Keypad1,
+	Keypad2 = ImGuiKey_Keypad2,
+	Keypad3 = ImGuiKey_Keypad3,
+	Keypad4 = ImGuiKey_Keypad4,
+	Keypad5 = ImGuiKey_Keypad5,
+	Keypad6 = ImGuiKey_Keypad6,
+	Keypad7 = ImGuiKey_Keypad7,
+	Keypad8 = ImGuiKey_Keypad8,
+	Keypad9 = ImGuiKey_Keypad9,
+
+	KeypadDecimal = ImGuiKey_KeypadDecimal,
+	Backspace = ImGuiKey_Backspace,
+	Comma = ImGuiKey_Comma,
+
 };
 
 class Input final

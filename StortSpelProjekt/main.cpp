@@ -27,6 +27,7 @@
 #include "Lobby.h"
 #include "ControlMenu.h"
 #include "Lobby.h"
+#include "InputIP.h"
 #include "Time.h"
 
 const int NROFPLAYERS = 4;
@@ -129,8 +130,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 				break;
 			case LOBBY:
 				delete currentState;
-
 				currentState = new Lobby(client);
+				break;
+			case INPUTIP:
+				delete currentState;
+				currentState = new InputIP();
 				break;
 
 			default:

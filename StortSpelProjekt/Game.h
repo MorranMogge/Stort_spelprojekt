@@ -103,6 +103,7 @@ private:
 	MiniGameUI miniGameUI;
 	LandingHud landingUi;
 
+	int teamScores[2]{ 0, 0 };
 	float landingMiniGamePoints = 0;
 	float teamScoreLandingMiniGame = 0;
 	float enemyTeamScoreLandingMiniGame = 0;

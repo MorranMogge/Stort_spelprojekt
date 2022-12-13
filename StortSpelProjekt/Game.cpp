@@ -1030,7 +1030,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 	if (IFONLINE)
 	{
 		packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
-			teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState, gamePad, tmpMesh2, tmpMesh3, tmpMesh4, planetSRV_online);
+			teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState, gamePad, tmpMesh2, tmpMesh3, tmpMesh4, planetSRV_online, teamScores);
 	}
 
 	if (!firstFrame)
@@ -1053,6 +1053,7 @@ GAMESTATE Game::updateKingOfTheHillGame()
 		{
 			fadedIn = true;
 		}
+		landingUi.drawPointsForOtherGameModes(teamScores);
 	}
 
 	//Calculate gravity factor
@@ -1324,7 +1325,7 @@ GAMESTATE Game::Update()
 	{
 		//read the packets received from the server
 		packetEventManager->PacketHandleEvents(circularBuffer, NROFPLAYERS, players, client->getPlayerId(), components, physWorld, gameObjects, planetGravityField, spaceShips, onlineItems, meshes, planetVector, captureZone, currentMinigame,
-			teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState, gamePad, tmpMesh2, tmpMesh3, tmpMesh4, planetSRV_online);
+			teamScoreLandingMiniGame, enemyTeamScoreLandingMiniGame, client, dt, currentGameState, gamePad, tmpMesh2, tmpMesh3, tmpMesh4, planetSRV_online, teamScores);
 	}
 
 
@@ -1538,6 +1539,7 @@ void Game::Render()
 
 	case INTERMISSION:
 		//miniGameUI.Draw();
+		landingUi.drawPointsForOtherGameModes(teamScores);
 		ui.DrawFade();
 		break;
 

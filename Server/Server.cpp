@@ -824,6 +824,8 @@ int main()
 								currentMinigame = MiniGames::KINGOFTHEHILL;
 								startGame.minigame = MiniGames::KINGOFTHEHILL;
 							}
+							startGame.pointsRed = totalTeamScores[0];
+							startGame.pointsBlue = totalTeamScores[1];
 							sendBinaryDataAllPlayers<MinigameStart>(startGame, data);
 
 							//Resetting
@@ -1157,6 +1159,8 @@ int main()
 						startMinigame.pointsRed = 100.f;
 						startMinigame.pointsBlue = 0.f;
 					}
+					startMinigame.pointsRed = totalTeamScores[0];
+					startMinigame.pointsBlue = totalTeamScores[1];
 					sendBinaryDataAllPlayers<MinigameStart>(startMinigame, data);
 					timeToFly = false;
 				}

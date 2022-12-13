@@ -331,3 +331,129 @@ void LandingHud::draw()
 
 	GUI::End();
 }
+
+void LandingHud::drawPointsForOtherGameModes(const int scores[])
+{
+	
+	GUI::Begin();
+
+	for (int s = 0; s < 2; s++)
+	{
+
+		std::string number = std::to_string(scores[s]);
+		std::cout << "Blue team score: " << scores[s] << "\n";
+		for (int i = 0; i < number.size(); i++)
+		{
+			static float textSpace = 22.0f;
+			float posY;
+			if (s == 0) posY = 100;
+			else posY = 150;
+			float posX = 50 + (i * textSpace);
+			switch (number.at(i))
+			{
+
+			case '0':
+			{
+				n0.SetPosition({ posX, posY });
+				if (s == 1) n0.SetTint(DirectX::SimpleMath::Color(0, 0, 1));
+				else n0.SetTint(DirectX::SimpleMath::Color(1, 69.f/255.f, 0));
+				n0.Draw();
+				n0.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+
+			}break;
+
+			case '1':
+			{
+				n1.SetPosition({ posX, posY });
+				if (s == 1) n1.SetTint(DirectX::SimpleMath::Color(0, 0, 1));
+				else n1.SetTint(DirectX::SimpleMath::Color(1, 69.f / 255.f, 0));
+				n1.Draw();
+				n1.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+			}break;
+
+			case '2':
+			{
+				n2.SetPosition({ posX, posY });
+				if (s == 1) n2.SetTint(DirectX::SimpleMath::Color(0, 0, 1));
+				else n2.SetTint(DirectX::SimpleMath::Color(1, 69.f / 255.f, 0));
+				n2.Draw();
+				n2.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+			}break;
+
+			case '3':
+			{
+				n3.SetPosition({ posX, posY });
+				if (s == 1) n3.SetTint(DirectX::SimpleMath::Color(0, 0, 1));
+				else n3.SetTint(DirectX::SimpleMath::Color(1, 69.f / 255.f, 0));
+				n3.Draw();
+				n3.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+			}break;
+
+			case '4':
+			{
+				n4.SetPosition({ posX, posY });
+				if (s == 1) n4.SetTint(DirectX::SimpleMath::Color(0, 0, 1));
+				else n4.SetTint(DirectX::SimpleMath::Color(1, 69.f / 255.f, 0));
+				n4.Draw();
+				n4.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+			}break;
+
+			case '5':
+			{
+				n5.SetPosition({ posX, posY });
+				if (s == 1) n5.SetTint(DirectX::SimpleMath::Color(0, 0, 1));
+				else n5.SetTint(DirectX::SimpleMath::Color(1, 69.f / 255.f, 0));
+				n5.Draw();
+				n5.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+			}break;
+
+			case '6':
+			{
+				n6.SetPosition({ posX, posY });
+				if (s == 1) n6.SetTint(DirectX::SimpleMath::Color(0, 0, 1));
+				else n6.SetTint(DirectX::SimpleMath::Color(1, 69.f / 255.f, 0));
+				n6.Draw();
+				n6.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+			}break;
+
+			case '7':
+			{
+				n7.SetPosition({ posX, posY });
+				if (s == 1) n7.SetTint(DirectX::SimpleMath::Color(0, 0, 1));
+				else n7.SetTint(DirectX::SimpleMath::Color(1, 69.f / 255.f, 0));
+				n7.Draw();
+				n7.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+
+			}break;
+
+			case '8':
+			{
+				n8.SetPosition({ posX, posY });
+				if (s == 1) n8.SetTint(DirectX::SimpleMath::Color(0, 0, 1));
+				else n8.SetTint(DirectX::SimpleMath::Color(1, 69.f / 255.f, 0));
+				n8.Draw();
+				n8.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+			}break;
+
+			case '9':
+			{
+				n9.SetPosition({ posX, posY });
+				if (s == 1) n9.SetTint(DirectX::SimpleMath::Color(0, 0, 1));
+				else n9.SetTint(DirectX::SimpleMath::Color(1, 69.f / 255.f, 0));
+				n9.Draw();
+				n9.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
+			}break;
+
+			}
+		}
+	}
+
+	GUI::End();
+}

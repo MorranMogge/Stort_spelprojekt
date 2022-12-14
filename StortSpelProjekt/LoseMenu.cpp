@@ -87,7 +87,7 @@ LoseMenu::LoseMenu(int& currentTeam) : manager(GPU::device)
    
     AnimationData Anim;
     Mesh* mesh;
-    currentTeam = 1;
+    
     if (currentTeam == 0)
     {
         manager.loadMeshAndBoneData("../Meshes/anim/character1_idle.fbx");

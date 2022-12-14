@@ -464,11 +464,22 @@ void HudUI::SetGamePad(DirectX::GamePad* g)
 	gamepad = g;
 }
 
+void HudUI::setPointRed(const float point)
+{
+	pointRed = point;
+}
+
+void HudUI::setPointBlue(const float point)
+{
+	pointBlue = point;
+}
+
+
 void HudUI::DrawFade()
 {
 #define barvalue 53.0f
-	bar_p.SetScale((sin(Time::CurrentTime()) * 0.5f + 0.5f) * barvalue, 0.3f);
-	bar_p2.SetScale((sin(Time::CurrentTime()) * 0.5f + 0.5f) * barvalue, 0.3f);
+	bar_p.SetScale((float)pointRed / 100.0f * barvalue, scale);
+	bar_p2.SetScale((float)pointBlue / 100.0f * barvalue, scale);
 
 	handleInputs();
 	GUI::Begin();

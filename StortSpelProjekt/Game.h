@@ -11,7 +11,7 @@ struct wirefameInfo
 class Game : public State
 {
 public:
-	inline static bool IFONLINE = true;
+	inline static bool IFONLINE = false;
 private:
 	ID3D11DeviceContext* immediateContext;
 	HWND* window;

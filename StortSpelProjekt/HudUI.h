@@ -46,6 +46,7 @@ class HudUI final
 	bool Bdot2 = false;
 	bool handle = false;
 	bool done = false;
+	float pointRed = 0, pointBlue = 0;
 
 	inline static DirectX::GamePad* gamepad = nullptr;
 	inline static DirectX::GamePad::State state;
@@ -72,5 +73,6 @@ public:
 	void Draw();
 	void setKTH(bool stuff);
 	bool isDone() const;
-
+	void setPointRed(const float point);
+	void setPointBlue(const float point);
 };

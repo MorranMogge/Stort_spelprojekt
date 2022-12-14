@@ -413,8 +413,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 		case PacketType::KTHPOINTS:
 			kthPoints = circularBuffer->readData<KTHPoints>();
-			blueTeamPoints += kthPoints->bluePoints;
-			redTeamPoints += kthPoints->redPoints;
+			blueTeamPoints = kthPoints->bluePoints;
+			redTeamPoints = kthPoints->redPoints;
 
 			//Seeing what color the capture zone should be
 			if (kthPoints->teamColor == 0) captureZone->setColor(DirectX::SimpleMath::Vector3(1.f, 0.f, 1.f));

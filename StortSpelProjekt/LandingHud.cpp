@@ -225,28 +225,30 @@ void LandingHud::draw()
 		arrow.Draw();
 		arrow2.Draw();
 	}
-
+	static bool changed = false;
 	std::string number = std::to_string(ggop);
 	for (int i = 0; i < number.size(); i++)
 	{
 		static float textSpace = 22.0f;
 #define posY1 100
 #define posX1 210 + (i * textSpace)
-		/*if (ggop % 100 == 0 && setScore)
+		float constant = 0.10f;
+		if (ggop % 10 == 0 && setScore && ggop != 0 && !changed)
 		{
 			textSpace++;
-			n0.SetScale(n0.GetScale().x + 0.15f, n0.GetScale().y + 0.15f);
-			n1.SetScale(n1.GetScale().x + 0.15f, n1.GetScale().y + 0.15f);
-			n2.SetScale(n2.GetScale().x + 0.15f, n2.GetScale().y + 0.15f);
-			n3.SetScale(n3.GetScale().x + 0.15f, n3.GetScale().y + 0.15f);
-			n4.SetScale(n4.GetScale().x + 0.15f, n4.GetScale().y + 0.15f);
-			n5.SetScale(n5.GetScale().x + 0.15f, n5.GetScale().y + 0.15f);
-			n6.SetScale(n6.GetScale().x + 0.15f, n6.GetScale().y + 0.15f);
-			n7.SetScale(n7.GetScale().x + 0.15f, n7.GetScale().y + 0.15f);
-			n8.SetScale(n8.GetScale().x + 0.15f, n8.GetScale().y + 0.15f);
-			n9.SetScale(n9.GetScale().x + 0.15f, n9.GetScale().y + 0.15f);
+			n0.SetScale(n0.GetScale().x + constant, n0.GetScale().y + constant);
+			n1.SetScale(n1.GetScale().x + constant, n1.GetScale().y + constant);
+			n2.SetScale(n2.GetScale().x + constant, n2.GetScale().y + constant);
+			n3.SetScale(n3.GetScale().x + constant, n3.GetScale().y + constant);
+			n4.SetScale(n4.GetScale().x + constant, n4.GetScale().y + constant);
+			n5.SetScale(n5.GetScale().x + constant, n5.GetScale().y + constant);
+			n6.SetScale(n6.GetScale().x + constant, n6.GetScale().y + constant);
+			n7.SetScale(n7.GetScale().x + constant, n7.GetScale().y + constant);
+			n8.SetScale(n8.GetScale().x + constant, n8.GetScale().y + constant);
+			n9.SetScale(n9.GetScale().x + constant, n9.GetScale().y + constant);
+			changed = true;
 		}
-		if (ggop % 110 == 0 && setScore)
+		if (ggop % 11 == 0 && setScore && changed)
 		{
 			n0.SetScale(n0.GetScale().x - 0.1f, n0.GetScale().y - 0.1f);
 			n1.SetScale(n1.GetScale().x - 0.1f, n1.GetScale().y - 0.1f);
@@ -259,7 +261,8 @@ void LandingHud::draw()
 			n8.SetScale(n8.GetScale().x - 0.1f, n8.GetScale().y - 0.1f);
 			n9.SetScale(n9.GetScale().x - 0.1f, n9.GetScale().y - 0.1f);
 			setScore = false;
-		}*/
+			changed = false;
+		}
 		switch (number.at(i))
 		{
 
@@ -349,7 +352,7 @@ void LandingHud::drawPointsForOtherGameModes(const int scores[])
 			if (s == 0) posY = 100;
 			else posY = 150;
 			float posX = 50 + (i * textSpace);
-			switch (number.at(i))
+			/*switch (number.at(i))
 			{
 
 			case '0':
@@ -451,7 +454,7 @@ void LandingHud::drawPointsForOtherGameModes(const int scores[])
 				n9.SetTint(DirectX::SimpleMath::Color(0, 1, 0));
 			}break;
 
-			}
+			}*/
 		}
 	}
 

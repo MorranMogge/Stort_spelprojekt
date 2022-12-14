@@ -19,7 +19,8 @@ PacketEventManager::~PacketEventManager()
 void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, std::vector<Player*>& players, const int& playerId,
 	std::vector<Component*>& componentVector, PhysicsWorld& physWorld, std::vector<GameObject*>& gameObjects,
 	GravityField* field, std::vector<SpaceShip*>& spaceShips, std::vector<Item*>& onlineItems, std::vector<Mesh*>& meshes,
-	std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame, float& redTeamPoints, float& blueTeamPoints, Client*& client, const float dt, GAMESTATE& currentGameState, DirectX::GamePad* gamePad, Mesh* planet1, Mesh* planet2, Mesh* planet3, std::vector<ID3D11ShaderResourceView*> srvArr, int teamScores[])
+	std::vector<Planet*>& planetVector, CaptureZone*& captureZone, MiniGames& currentMinigame, float& redTeamPoints, float& blueTeamPoints, Client*& client, const float dt, GAMESTATE& currentGameState, DirectX::GamePad* gamePad,
+	Mesh* planet1, Mesh* planet2, Mesh* planet3, std::vector<ID3D11ShaderResourceView*> srvArr, int teamScores[])
 {
 	//handles the online events
 	idProtocol* protocol = nullptr;
@@ -412,6 +413,8 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 
 		case PacketType::KTHPOINTS:
 			kthPoints = circularBuffer->readData<KTHPoints>();
+			blueTeamPoints += kthPoints->bluePoints;
+			redTeamPoints += kthPoints->redPoints;
 
 			//Seeing what color the capture zone should be
 			if (kthPoints->teamColor == 0) captureZone->setColor(DirectX::SimpleMath::Vector3(1.f, 0.f, 1.f));

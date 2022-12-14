@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "SoundLibrary.h"
 #include "Time.h"
+#include "Game.h"
 
 
 MiniGameUI::MiniGameUI()
@@ -115,9 +116,9 @@ void MiniGameUI::setPointBlue(const float point)
 void MiniGameUI::HandleInputs()
 {
 
-#define barvalue 53.0f
-	bar_p.SetScale((sin(Time::CurrentTime()) * 0.5f + 0.5f) * barvalue, scale);
-	bar_p2.SetScale((sin(Time::CurrentTime()) * 0.5f + 0.5f) * barvalue, scale);
+	#define barvalue 53.0f
+	bar_p.SetScale((float)Game::teamScores[0] / 115.0f * barvalue, scale);
+	bar_p2.SetScale((float)Game::teamScores[1] / 115.0f * barvalue, scale);
 
 }
 
@@ -134,7 +135,7 @@ void MiniGameUI::SpritePass()
 	//scoreText.Draw();
 	//scoreText2.Draw();
 
-	std::string number = std::to_string((int)pointRed);
+	std::string number = std::to_string((int)Game::teamScores[0]);
 	for (int i = 0; i < number.size(); i++)
 	{
 #define textSpace 12.0f
@@ -208,7 +209,7 @@ void MiniGameUI::SpritePass()
 
 	}
 
-	std::string number2 = std::to_string((int)pointBlue);
+	std::string number2 = std::to_string((int)Game::teamScores[1]);
 	for (int i = 0; i < number2.size(); i++)
 	{
 #define textSpace 12.0f

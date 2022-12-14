@@ -11,7 +11,7 @@ struct wirefameInfo
 class Game : public State
 {
 public:
-	inline static bool IFONLINE = false;
+	inline static bool IFONLINE = true;
 private:
 	ID3D11DeviceContext* immediateContext;
 	HWND* window;
@@ -103,7 +103,7 @@ private:
 	MiniGameUI miniGameUI;
 	LandingHud landingUi;
 
-	int teamScores[2]{ 0, 0 };
+	
 	float landingMiniGamePoints = 0;
 	float teamScoreLandingMiniGame = 0;
 	float enemyTeamScoreLandingMiniGame = 0;
@@ -136,6 +136,7 @@ private:
 	void randomizeObjectPos(GameObject* item);
 
 public:
+	inline static int teamScores[2]{ 0, 0 };
 	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT,
 		const int NROFPLAYERS, Client* client, int& currentTeam);
 	virtual ~Game() override;

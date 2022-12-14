@@ -85,7 +85,7 @@ WinMenu::WinMenu(int& currentTeam) : manager(GPU::device)
 
 
 	ID3D11ShaderResourceView* blueTeamColour = this->manager.getSrv("../Textures/Kosmonaut_K1SG_Diffuse.png");
-	currentTeam = 0;
+	
 
 	AnimationData Anim;
 	Mesh* mesh;

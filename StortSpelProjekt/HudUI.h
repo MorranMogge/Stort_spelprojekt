@@ -10,7 +10,8 @@ class HudUI final
 	GUISprite fade;
 
 	GUISprite redTeam0, redTeam1, redTeam2, redTeam3, redTeam4;
-
+	GUISprite bar_b, bar_e, bar_p;
+	GUISprite bar_b2, bar_e2, bar_p2;
 	GUISprite blueTeam0,blueTeam1,blueTeam2,blueTeam3,blueTeam4;
 
 	GUISprite ready, set, go; 

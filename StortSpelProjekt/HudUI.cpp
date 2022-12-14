@@ -264,7 +264,7 @@ HudUI::HudUI()
 	objective.SetScale(0.75f * scaleFactor, 0.75f * scaleFactor);
 
 	kthObjective = GUISprite(632, 100 + upp);
-	kthObjective.Load(L"../Sprites/ObjectiveKTH.png");
+	kthObjective.Load(L"../Sprites/ObjectiveKTH2.png");
 	kthObjective.SetScale(0.75f , 0.75f );
 
 	blackBackground = GUISprite(310 + left, 300 + upp);
@@ -293,7 +293,7 @@ HudUI::HudUI()
 	useControls2.SetScale(0.45f * scaleFactor, 0.45f * scaleFactor);
 
 	objective2 = GUISprite(632, 100 + upp);
-	objective2.Load(L"../Sprites/Objective.png");
+	objective2.Load(L"../Sprites/Objective2.png");
 	objective2.SetScale(0.75f, 0.75f);
 
 	blackBackground2 = GUISprite(632, 100 + upp);
@@ -356,7 +356,7 @@ void HudUI::displayObjective()
 	if (!done)
 	{
 		GUI::Begin();
-		blackBackground2.Draw();
+		//blackBackground2.Draw();
 		objective2.Draw();
 
 		GUI::End();

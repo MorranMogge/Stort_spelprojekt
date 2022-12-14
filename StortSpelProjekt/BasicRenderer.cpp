@@ -661,6 +661,9 @@ void BasicRenderer::normaltasseletion(Camera& stageCamera, bool shadow)
 	immediateContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	immediateContext->HSSetShader(hullShader2, nullptr, 0);
 	immediateContext->DSSetShader(domainShader2, nullptr, 0);
-	immediateContext->PSSetShader(ps_normalMap, nullptr, 0);
+	if (!shadow)
+	{
+		immediateContext->PSSetShader(ps_normalMap, nullptr, 0);
+	}
 	stageCamera.DSbindViewBuffer(1);
 }

@@ -116,6 +116,6 @@ public:
 	void tesselationPrePass(Camera& stageCamera);
 	void resetTopology(); //sets triangle list
 	void postProcessPass();
-	void normaltasseletion(Camera& stageCamera, bool shadow = true);
+	void normaltasseletion(Camera& stageCamera, bool shadow = false);
 
 };

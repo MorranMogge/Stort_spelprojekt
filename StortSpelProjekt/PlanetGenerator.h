@@ -18,6 +18,8 @@ struct PlanetImGuiInfo
 	bool recreateOriginalSphere = false;
 	bool recreateMesh = false;
 	bool updateColours = false;
+	std::string fileName = "";
+	bool saveObj = false;
 	float minLength = 10;
 	float maxLength = 0;
 	DirectX::SimpleMath::Vector3 colourSelection[MAXCOLOURS]{DirectX::SimpleMath::Vector3(0,0,0)};

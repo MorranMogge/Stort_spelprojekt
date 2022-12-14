@@ -93,6 +93,7 @@ void ImGuiHelper::planetEditor(PlanetImGuiInfo& planetImGuiStruct)
 	ImGui_ImplWin32_NewFrame();
 
 	float colours[5][3];
+	char buffer[256];// = planetImGuiStruct.fileName.c_str();
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -147,11 +148,11 @@ void ImGuiHelper::planetEditor(PlanetImGuiInfo& planetImGuiStruct)
 
 			if (ImGui::Button("Base Factors of vertice height"))
 			{
-				planetImGuiStruct.colourFactor[3] = planetImGuiStruct.minLength;
-				planetImGuiStruct.colourFactor[4] = planetImGuiStruct.maxLength;
-				planetImGuiStruct.colourFactor[2] = planetImGuiStruct.maxLength * 1.1 / 1.2;
-				planetImGuiStruct.colourFactor[1] = planetImGuiStruct.minLength * 0.95 / 0.85;
+				planetImGuiStruct.colourFactor[3] = planetImGuiStruct.minLength + 0.05f;
+				planetImGuiStruct.colourFactor[4] = planetImGuiStruct.maxLength - 0.05f;;
 				planetImGuiStruct.colourFactor[0] = (planetImGuiStruct.minLength + planetImGuiStruct.maxLength)/2.f;
+				planetImGuiStruct.colourFactor[2] = (planetImGuiStruct.colourFactor[4] + planetImGuiStruct.colourFactor[0]) / 2.f;
+				planetImGuiStruct.colourFactor[1] = (planetImGuiStruct.colourFactor[3] + planetImGuiStruct.colourFactor[0]) / 2.f;
 
 			}
 			
@@ -169,6 +170,10 @@ void ImGuiHelper::planetEditor(PlanetImGuiInfo& planetImGuiStruct)
 			//if (ImGui::Button("Update Colours")) planetImGuiStruct.updateColours = true;
 
 			if (ImGui::Button("Recreate Mesh with selected settings")) planetImGuiStruct.recreateMesh = true;
+			ImGui::Text("");
+			if (ImGui::InputText("File Name", buffer, sizeof(buffer))) planetImGuiStruct.fileName = buffer;
+			if (ImGui::Button("Save as Obj")) planetImGuiStruct.saveObj = true;
+
 		}
 
 		ImGui::End();

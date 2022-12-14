@@ -164,6 +164,7 @@
     <ClCompile Include="Credits.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="ObjSaver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imgui.h">
@@ -453,6 +454,7 @@
     <ClInclude Include="Credits.h">
       <Filter>GUI</Filter>
     </ClInclude>
+    <ClInclude Include="ObjSaver.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="StortSpelProjekt.rc" />

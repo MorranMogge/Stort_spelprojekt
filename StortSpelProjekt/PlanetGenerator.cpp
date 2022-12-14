@@ -649,7 +649,7 @@ GAMESTATE PlanetGenerator::Update()
     if (GetAsyncKeyState('D')) this->cameraPosition.x += 0.01f;
     if (GetAsyncKeyState('W')) this->cameraPosition.z += 0.01f;
     if (GetAsyncKeyState('S')) this->cameraPosition.z -= 0.01f;
-    if (planetImGuiStruct.saveObj) { saveObj(planetImGuiStruct.fileName, vertices[planetImGuiStruct.currentSubdivisions], indices[planetImGuiStruct.currentSubdivisions]); planetImGuiStruct.saveObj = false; }
+    if (planetImGuiStruct.saveObj) { saveObj(planetImGuiStruct.fileName, vertices[planetImGuiStruct.currentSubdivisions-1], indices[planetImGuiStruct.currentSubdivisions-1]); planetImGuiStruct.saveObj = false; }
     if (planetImGuiStruct.currentSubdivisions != lastSubdivisions) this->recreateVertexBuffers();
    
     this->camera.setPosition(cameraPosition);

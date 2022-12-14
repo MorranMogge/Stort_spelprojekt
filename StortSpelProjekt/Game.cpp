@@ -13,7 +13,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	MaterialLibrary::LoadMaterial("pintoBlue.png");
 	MaterialLibrary::LoadMaterial("Red.png");
 
-	meshes.push_back(new Mesh("../Meshes/Sphere"));
+	meshes.push_back(new Mesh("../Meshes/yolo"));
 	meshes.push_back(new Mesh("../Meshes/pinto"));
 
 	this->packetEventManager = new PacketEventManager();

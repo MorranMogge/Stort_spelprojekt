@@ -49,7 +49,10 @@ void saveObj(const std::string& fileName, const std::vector<Vertex>& vertices, c
 	for (int i = 0; i < loops; i++)
 	{
 		inVertex = vertices[i];
-		inStr = "f " + std::to_string(indices[i]) + "/" + std::to_string(indices[i]) + "/" + std::to_string(indices[i]) + "\n";
+		if (i % 3 == 0) inStr = "f ";
+		else inStr = " ";
+		inStr += std::to_string(indices[i] + 1) + "/" + std::to_string(indices[i] + 1) + "/" + std::to_string(indices[i] + 1);
+		if ((i+1)%3 == 0) inStr += "\n";
 		createdFile << inStr;
 	}
 

@@ -129,6 +129,41 @@ HudUI::HudUI()
     #define RDOT2 Vector2(310 + left +170, 300 + upp +15)
 	#define SDOT1 Vector2(310 + left + 90, 300 + upp +15)
 	#define SDOT2 Vector2(310 + left + 130 , 300 + upp + 15)
+#define centerX 632
+#define centerY 340
+#define offsetY 250 
+#define offsetX 50
+#define scale 0.3f
+
+	//KTH BARs
+	bar_b = GUISprite(centerX, 320 - offsetY);
+	bar_b.Load(L"../Sprites/bar/background.png");
+	bar_b.SetScale(scale, scale);
+
+	bar_e = GUISprite(centerX, 320 - offsetY);
+	bar_e.Load(L"../Sprites/bar/edge.png");
+	bar_e.SetScale(scale, scale);
+
+	bar_p = GUISprite(centerX - 105, 320 - offsetY - 12);
+	bar_p.Load(L"../Sprites/bar/progress.png");
+	bar_p.SetScale(50, scale);
+	bar_p.SetOrigin({ 0,bar_p.GetHeight() * 0.5f });
+	bar_p.SetTint(DirectX::Colors::Red.v);
+
+
+	bar_b2 = GUISprite(centerX, 280 - offsetY);
+	bar_b2.Load(L"../Sprites/bar/background.png");
+	bar_b2.SetScale(scale, scale);
+
+	bar_e2 = GUISprite(centerX, 280 - offsetY);
+	bar_e2.Load(L"../Sprites/bar/edge.png");
+	bar_e2.SetScale(scale, scale);
+
+	bar_p2 = GUISprite(centerX - 105, 280 - offsetY - 12);
+	bar_p2.Load(L"../Sprites/bar/progress.png");
+	bar_p2.SetScale(50, scale);
+	bar_p2.SetOrigin({ 0, bar_p2.GetHeight() * 0.5f });
+	bar_p2.SetTint(DirectX::Colors::Blue.v);
 
 
 	//ready set go
@@ -429,11 +464,38 @@ void HudUI::SetGamePad(DirectX::GamePad* g)
 	gamepad = g;
 }
 
+void HudUI::setPointRed(const float point)
+{
+	pointRed = point;
+}
+
+void HudUI::setPointBlue(const float point)
+{
+	pointBlue = point;
+}
+
+
 void HudUI::DrawFade()
 {
+#define barvalue 53.0f
+	bar_p.SetScale((float)pointRed / 100.0f * barvalue, scale);
+	bar_p2.SetScale((float)pointBlue / 100.0f * barvalue, scale);
+
 	handleInputs();
 	GUI::Begin();
 	fade.Draw();
+
+	if (kth)
+	{
+		bar_b.Draw();
+		bar_p.Draw();
+		bar_e.Draw();
+		bar_b2.Draw();
+		bar_p2.Draw();
+		bar_e2.Draw();
+	}
+
+
 
 	if (handle)
 	{

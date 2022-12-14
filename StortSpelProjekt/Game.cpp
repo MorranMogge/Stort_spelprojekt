@@ -1031,8 +1031,8 @@ GAMESTATE Game::updateLandingGame()
 			}
 		}
 		std::cout << "\nLANDING MINIGAME OVER!\nTOTAL SCORE:\nTeam score: " << teamScoreLandingMiniGame << "\nEnemy Team score: " << enemyTeamScoreLandingMiniGame << "\n";
-
-
+		enemyTeamScoreLandingMiniGame = 0;
+		teamScoreLandingMiniGame = 0;
 		//Send data to server
 		DoneWithGame requestStart;
 		requestStart.packetId = PacketType::DONEWITHGAME;

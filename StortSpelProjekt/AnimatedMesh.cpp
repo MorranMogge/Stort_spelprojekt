@@ -335,6 +335,8 @@ AnimatedMesh::AnimatedMesh(Mesh* useMesh, const AnimationData& data, const Direc
 		throwStart = this->MySimp.animation[3].duration * 0.25;
 		this->throwStart /= this->MySimp.animation[3].ticksPerSecond;
 		this->MySimp.animation[3].duration *= 0.66;
+
+		this->MySimp.animation[1].duration -= 1;
 	}
 
 	std::vector<DirectX::XMFLOAT4X4> tempfloatvec;

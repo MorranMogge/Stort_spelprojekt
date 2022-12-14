@@ -10,7 +10,8 @@ class HudUI final
 	GUISprite fade;
 
 	GUISprite redTeam0, redTeam1, redTeam2, redTeam3, redTeam4;
-
+	GUISprite bar_b, bar_e, bar_p;
+	GUISprite bar_b2, bar_e2, bar_p2;
 	GUISprite blueTeam0,blueTeam1,blueTeam2,blueTeam3,blueTeam4;
 
 	GUISprite ready, set, go; 
@@ -45,6 +46,7 @@ class HudUI final
 	bool Bdot2 = false;
 	bool handle = false;
 	bool done = false;
+	float pointRed = 0, pointBlue = 0;
 
 	inline static DirectX::GamePad* gamepad = nullptr;
 	inline static DirectX::GamePad::State state;
@@ -71,5 +73,6 @@ public:
 	void Draw();
 	void setKTH(bool stuff);
 	bool isDone() const;
-
+	void setPointRed(const float point);
+	void setPointBlue(const float point);
 };

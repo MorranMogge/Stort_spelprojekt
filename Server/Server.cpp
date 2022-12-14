@@ -778,6 +778,16 @@ int main()
 								miniGameKTH.sendKingOfTheHillZone(data);
 								std::cout << "Sent capture zone\n";
 
+								for (int i = 0; i < onlineItems.size(); i++)
+								{
+									if (onlineItems[i]->getOnlineType() == ObjID::COMPONENT)
+									{
+										onlineItems[i]->setPosition(420.0f, 420.0f, 420.0f);
+										onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
+									}
+								}
+								
+
 								//Sending the planets
 								planetVector[0]->setScale(DirectX::XMFLOAT3(60.f, 60.f, 60.f));
 								planetVector[2]->setPosition(DirectX::XMFLOAT3(60.f, 60.f, 60.f));

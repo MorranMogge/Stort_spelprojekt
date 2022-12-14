@@ -13,6 +13,12 @@ void saveObj(const std::string& fileName, const std::vector<Vertex>& vertices, c
 	int loops = vertices.size();
 	std::string inStr;
 	Vertex inVertex = {};
+	
+	inStr = "mtllib " + fileName + ".mtl\n";
+	createdFile << inStr;
+	inStr = "g default\n";
+	createdFile << inStr;
+
 	for (int i = 0; i < loops; i++)
 	{
 		inVertex = vertices[i];
@@ -34,6 +40,11 @@ void saveObj(const std::string& fileName, const std::vector<Vertex>& vertices, c
 		createdFile << inStr;
 	}
 
+	inStr = "g " + fileName + "\n";
+	createdFile << inStr;
+	inStr = "usemtl default\n";
+	createdFile << inStr;
+
 	loops = indices.size();
 	for (int i = 0; i < loops; i++)
 	{
@@ -43,4 +54,12 @@ void saveObj(const std::string& fileName, const std::vector<Vertex>& vertices, c
 	}
 
 	createdFile.close();
+
+	std::ofstream mtlFile;
+	mtlFile.open("../Meshes/" + fileName + ".mtl");
+	if (!mtlFile.is_open()) return;
+
+	inStr = "newmtl default";
+	mtlFile << inStr;
+	mtlFile.close();
 }

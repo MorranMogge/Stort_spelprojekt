@@ -481,7 +481,7 @@ void Game::drawShadows()
 		ltHandler.drawShadows(i, gameObjects);
 	}
 	//Draw planet shadow
-	basicRenderer.normaltasseletion(camera);
+	basicRenderer.normaltasseletion(camera, true);
 	for (int i = 0; i < nrofLights; i++)
 	{
 		ltHandler.drawShadows(i, planetVector);

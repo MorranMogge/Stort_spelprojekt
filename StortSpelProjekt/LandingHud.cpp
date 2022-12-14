@@ -130,7 +130,7 @@ bool LandingHud::handleInputs(const float& dt)
 		targetScale.y = abs(sin(realTemp)) * 0.15f + 0.1f;
 
 		this->changePos = (targetPos - this->landing1.GetPosition())/this->targetTime;
-		this->changeScale = (targetScale - this->landing1.GetScale()) / this->targetTime;
+		//this->changeScale = (targetScale - this->landing1.GetScale()) / this->targetTime;
 
 	}
 

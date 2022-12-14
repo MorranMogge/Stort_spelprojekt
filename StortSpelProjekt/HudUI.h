@@ -68,7 +68,7 @@ public:
 	bool readySetGo();
 	void setOpacity(bool onOff);
 	static void SetGamePad(DirectX::GamePad* gamepad);
-	void DrawFade();
+	void DrawFade(float teamScoreLandingMiniGame = 0, float enemyTeamScoreLandingMiniGame = 0);
 	void resetReadySetGo();
 	void Draw();
 	void setKTH(bool stuff);

@@ -8,6 +8,7 @@
 #include "ErrorLog.h"
 
 
+
 Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT,
 	const int NROFPLAYERS, Client* client, int& currentTeam)
 	:camera(Camera()), immediateContext(immediateContext), velocity(DirectX::XMFLOAT3(0, 0, 0)), manager(ModelManager(device)),
@@ -963,7 +964,13 @@ GAMESTATE Game::startLanding()
 		spaceShips[team]->setRot(spaceShips[team]->getRotOrientedToGrav());
 	}
 
-	ltHandler.setPosition(DirectX::XMFLOAT3(120, 0, 0), 0);
+	
+	DirectX::SimpleMath::Vector3 lightDir = -DirectX::SimpleMath::Vector3(-80, -83, -89);
+	lightDir.Normalize();
+
+
+	ltHandler.setPosition(DirectX::XMFLOAT3(-80, -83, -89), 0);
+	ltHandler.setDirection({lightDir}, 0);
 	ltHandler.updateBuffers();
 
 	ui.count = 1.0f;
@@ -1045,6 +1052,8 @@ GAMESTATE Game::updateLandingGame()
 		{
 			currentGameState = this->updateKingOfTheHillGame();
 		}
+		ltHandler.setPosition({ -200,0,0 }, 0);
+		ltHandler.updateBuffers();
 	}
 	return NOCHANGE;
 }
@@ -1551,7 +1560,7 @@ void Game::Render()
 		if (!ui.readySetGo()) { currentPlayer->isReady(false);  }
 		else { currentPlayer->isReady(true); }
 		ui.setKTH(true);
-		ui.DrawFade();
+		ui.DrawFade(this->teamScoreLandingMiniGame, this->enemyTeamScoreLandingMiniGame);
 		break;
 
 	case INTERMISSION:

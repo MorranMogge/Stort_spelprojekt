@@ -1,5 +1,6 @@
 #pragma once
 #include "GameInclude.h"
+#include "HudUI.h"
 
 struct wirefameInfo
 {
@@ -11,7 +12,7 @@ struct wirefameInfo
 class Game : public State
 {
 public:
-	inline static bool IFONLINE = false;
+	inline static bool IFONLINE = true;
 private:
 	ID3D11DeviceContext* immediateContext;
 	HWND* window;
@@ -98,6 +99,7 @@ private:
 	std::vector<ParticleEmitter> ptEmitters;
 	CaptureZone* captureZone;
 
+	
 	//HUD
 	HudUI ui;
 	MiniGameUI miniGameUI;
@@ -105,8 +107,7 @@ private:
 
 	
 	float landingMiniGamePoints = 0;
-	float teamScoreLandingMiniGame = 0;
-	float enemyTeamScoreLandingMiniGame = 0;
+
 
 	//InterMissionVariables
 	int Stage = 0;
@@ -137,6 +138,8 @@ private:
 
 public:
 	inline static int teamScores[2]{ 0, 0 };
+	inline static float teamScoreLandingMiniGame = 0;
+	inline static float enemyTeamScoreLandingMiniGame = 0;
 	Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwapChain* swapChain, HWND& window, UINT WIDTH, UINT HEIGHT,
 		const int NROFPLAYERS, Client* client, int& currentTeam);
 	virtual ~Game() override;

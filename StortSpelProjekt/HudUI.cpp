@@ -475,11 +475,11 @@ void HudUI::setPointBlue(const float point)
 }
 
 
-void HudUI::DrawFade()
+void HudUI::DrawFade(float teamScoreLandingMiniGame, float enemyTeamScoreLandingMiniGame)
 {
 #define barvalue 53.0f
-	bar_p.SetScale((float)pointRed / 100.0f * barvalue, scale);
-	bar_p2.SetScale((float)pointBlue / 100.0f * barvalue, scale);
+	bar_p.SetScale((float)teamScoreLandingMiniGame / 100.0f * barvalue, scale);
+	bar_p2.SetScale((float)enemyTeamScoreLandingMiniGame / 100.0f * barvalue, scale);
 
 	handleInputs();
 	GUI::Begin();

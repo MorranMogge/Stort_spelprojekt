@@ -108,7 +108,7 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
         litResult.Specular += result.Specular * shadowFactor;
     }
 
-    float fres = FresnelEffect(normal, viewDir, 5);
+    float fres = FresnelEffect(normal, viewDir, 5.5);
     float3 frescolor = { 0 * fres, 0.75 * fres, 1 * fres };
 
     //return float4(diffuseColor, 0);

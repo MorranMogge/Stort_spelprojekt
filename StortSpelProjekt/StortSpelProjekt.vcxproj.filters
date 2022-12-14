@@ -629,14 +629,39 @@
     <FxCompile Include="vShaderSkinning.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="basic_VertexShader.hlsl" />
-    <FxCompile Include="DomainShader.hlsl" />
-    <FxCompile Include="HullShader.hlsl" />
-    <FxCompile Include="NormalMap_PS.hlsl" />
-    <FxCompile Include="NormalMap_VS.hlsl" />
-    <FxCompile Include="PixelShader_NoShadow.hlsl" />
-    <FxCompile Include="PostProcess.hlsl" />
-    <FxCompile Include="PT_UpdatePlayer.hlsl" />
+    <FxCompile Include="PixelShader_NoShadow.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="NormalMap_PS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="NormalMap_VS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="NormalMap_VS2.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="HullShader2.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="HullShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="DomainShader2.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="DomainShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PostProcess.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PT_UpdatePlayer.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="basic_VertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico">

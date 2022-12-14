@@ -1555,7 +1555,7 @@ void Game::Render()
 		break;
 
 	case INTERMISSION:
-		//miniGameUI.Draw();
+		miniGameUI.Draw();
 		landingUi.drawPointsForOtherGameModes(teamScores);
 		ui.DrawFade();
 		break;

@@ -272,7 +272,7 @@ float DoShadow(float4 lightWorldPosition, Texture2DArray shadowMap, SamplerCompa
 {
     lightWorldPosition.xyz /= lightWorldPosition.w;
     const float2 smTex = float2(0.5f * lightWorldPosition.x + 0.5f, -0.5f * lightWorldPosition.y + 0.5f);
-    const float bias = max(0.0006f * (1.0 - dot(normal, normalize(lightDirection))), 0.00006f); // 0.000003f
+    const float bias = 0.00006f/*max(0.0006f * (1.0 - dot(normal, normalize(lightDirection))), 0.00006f)*/; // 0.000003f
     const float depth = lightWorldPosition.z - bias;
 
     //const float dx = 1.0f / 2048.0f;

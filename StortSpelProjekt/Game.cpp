@@ -481,10 +481,12 @@ void Game::drawShadows()
 		ltHandler.drawShadows(i, gameObjects);
 	}
 	//Draw planet shadow
+	basicRenderer.normaltasseletion(camera);
 	for (int i = 0; i < nrofLights; i++)
 	{
 		ltHandler.drawShadows(i, planetVector);
 	}
+	basicRenderer.resetTopology();
 	//For animated meshes
 	basicRenderer.bindAnimVs();
 	for (int i = 0; i < nrofLights; i++)
@@ -522,10 +524,10 @@ void Game::drawObjects(bool drawDebug)
 		if (i == camera.getCollidedWith()) continue;
 		planetVector[i]->drawObjectWithNormalMap();
 	}
-
 	basicRenderer.resetTopology();
 	asteroids->drawAsteroids();
-	//testCube->draw();
+
+
 	//Draw with Ambient only shader
 	basicRenderer.bindAmbientShader();
 	arrow->draw();

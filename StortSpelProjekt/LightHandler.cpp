@@ -438,21 +438,22 @@ void LightHandler::drawShadows(const int& lightIndex, const std::vector<Planet*>
 	if (stageCamera != nullptr)
 	{
 		//Set view buffer
-		stageCamera->VSbindViewBuffer(1);
+		stageCamera->DSbindViewBuffer(1);
 	}
 	else
 	{
 		//Set view buffer
-		GPU::immediateContext->VSSetConstantBuffers(1, 1, this->viewBuffers.at(lightIndex).GetAddressOf());
+		GPU::immediateContext->DSSetConstantBuffers(1, 1, this->viewBuffers.at(lightIndex).GetAddressOf());
 
 		//Set render targets
 		GPU::immediateContext->OMSetRenderTargets(1, &nullRtv, this->depthViews.at(lightIndex).Get());
 	}
 
+
 	//Draw Objects
 	for (int i = 0; i < planets.size(); i++)
 	{
-		planets[i]->drawPlanet();
+		planets[i]->drawObjectWithNormalMap();
 	}
 }
 

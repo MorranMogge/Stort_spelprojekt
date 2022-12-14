@@ -101,7 +101,7 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
                 break;
         }
 
-        float shadowFactor = DoShadow(lightWorldPosition, shadowMaps, shadowSampler, i, bumpedNormalW, lightDir, 9);
+        float shadowFactor = DoShadow(lightWorldPosition, shadowMaps, shadowSampler, i, bumpedNormalW, lightDir, 300);
         //float shadowFactor = SoftShadow(lightWorldPosition, 6.0, shadowMaps, shadowSampler,samplerState, i);
 
         litResult.Diffuse += result.Diffuse * shadowFactor;

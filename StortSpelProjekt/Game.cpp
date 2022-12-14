@@ -333,7 +333,7 @@ void Game::loadObjects()
 		planetVector.back()->setPlanetShape(&physWorld);
 		planetVector.back()->setSrv(this->manager.getSrv("p6.png"));
 		planetVector.back()->setNormalMap(this->manager.getSrv("p6n.png"));
-		planetVector.emplace_back(new Planet(tmpMesh4, DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(-130.f, -130.f, 130.f), (4.0f * 9.82f), meshes[1]));
+		planetVector.emplace_back(new Planet(tmpMesh4, DirectX::XMFLOAT3(planetSize * 0.6f, planetSize * 0.6f, planetSize * 0.6f), DirectX::XMFLOAT3(55.f, -55.f, -55.f), (4.0f * 9.82f), meshes[1]));
 
 		planetVector.back()->setPlanetShape(&physWorld);
 		physWorld.setPlanets(planetVector);

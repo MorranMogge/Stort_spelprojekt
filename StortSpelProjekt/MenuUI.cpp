@@ -24,6 +24,9 @@ void MenuUI::SpritePass()
 	hit_exit ? exit2.Draw() : exit.Draw();
 	hit_control ? control2.Draw() : control.Draw();
 
+	hit_offline ? offline2.Draw() : offline.Draw();
+	Game::IFONLINE ? checkbox_false.Draw() : checkbox_true.Draw();
+
 	title.Draw();
 
 }
@@ -348,6 +351,12 @@ void MenuUI::HandleInputs()
 		}
 	}
 
+	hit_offline = offline.IntersectMouse();
+	if (hit_offline && Input::KeyPress(KeyCode::MOUSE_L))
+	{
+		Game::IFONLINE = !Game::IFONLINE;
+	}
+
 }
 
 GAMESTATE MenuUI::GetGameState()
@@ -415,6 +424,26 @@ MenuUI::MenuUI()
 	title = GUISprite(centerX, 340-200);
 	title.Load(L"../Sprites/title2.png");
 	title.SetScale(0.6f, 0.6f);
+
+	title = GUISprite(centerX, 340 - 200);
+	title.Load(L"../Sprites/title2.png");
+	title.SetScale(0.6f, 0.6f);
+
+	offline = GUISprite(centerX + 500, centerY + 300);
+	offline.Load(L"../Sprites/menu/offline.png");
+	offline.SetScale(scale);
+
+	offline2 = GUISprite(centerX + 500, centerY + 300);
+	offline2.Load(L"../Sprites/menu/offline2.png");
+	offline2.SetScale(scale);
+
+	checkbox_false = GUISprite(centerX - 150 + 500, centerY + 300);
+	checkbox_false.Load(GPU::device, L"../Sprites/box_unchecked2.png");
+	checkbox_false.SetScale(0.75f, 0.75f);
+
+	checkbox_true = GUISprite(centerX - 150 + 500, centerY + 300);
+	checkbox_true.Load(GPU::device, L"../Sprites/box_checked2.png");
+	checkbox_true.SetScale(0.75f, 0.75f);
 
 }
 

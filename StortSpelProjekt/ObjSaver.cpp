@@ -29,16 +29,17 @@ void saveObj(const std::string& fileName, const std::vector<Vertex>& vertices, c
 	for (int i = 0; i < loops; i++)
 	{
 		inVertex = vertices[i];
-		inStr = "vt " + std::to_string(inVertex.normal.x) + " " + std::to_string(inVertex.normal.y) + " " + std::to_string(inVertex.normal.z) + "\n";
+		inStr = "vt " + std::to_string(inVertex.uv.x) + " " + std::to_string(inVertex.uv.y) + "\n";
 		createdFile << inStr;
 	}
 
 	for (int i = 0; i < loops; i++)
 	{
 		inVertex = vertices[i];
-		inStr = "vn " + std::to_string(inVertex.uv.x) + " " + std::to_string(inVertex.uv.y) + "\n";
+		inStr = "vn " + std::to_string(inVertex.normal.x) + " " + std::to_string(inVertex.normal.y) + " " + std::to_string(inVertex.normal.z) + "\n";
 		createdFile << inStr;
 	}
+
 
 	inStr = "g " + fileName + "\n";
 	createdFile << inStr;

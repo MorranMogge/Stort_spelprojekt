@@ -14,10 +14,9 @@ struct PlanetImGuiInfo
 	bool renderTriangles = true;
 	bool renderLines = true;
 	bool normalised = false;
-	bool geoColours = false;
 	bool recreateOriginalSphere = false;
 	bool recreateMesh = false;
-	bool updateColours = false;
+	bool updateColours = true;
 	std::string fileName = "";
 	bool saveObj = false;
 	float minLength = 10;
@@ -92,7 +91,6 @@ private:
 	bool setVertexBuffers();
 	bool setWorldMatrix();
 	bool setIndexBuffer();
-	void recreateVertexBuffers();
 	void createInitialSphere();
 	void createQuadSphere();
 	void createUVSphere();

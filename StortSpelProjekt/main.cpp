@@ -62,8 +62,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX11_Init(device, immediateContext);
 
-	State* currentState = new Menu();
-	//State* currentState = new PlanetGenerator();
+	//State* currentState = new Menu();
+	State* currentState = new PlanetGenerator();
 
 	GAMESTATE stateInfo = NOCHANGE;
 

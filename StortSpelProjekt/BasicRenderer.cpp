@@ -656,6 +656,7 @@ void BasicRenderer::postProcessPass()
 
 void BasicRenderer::normaltasseletion(Camera& stageCamera, bool shadow)
 {
+	
 	immediateContext->IASetInputLayout(inputLayout_NormalMap);
 	immediateContext->VSSetShader(vs_normalMap2, nullptr, 0);
 	immediateContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);

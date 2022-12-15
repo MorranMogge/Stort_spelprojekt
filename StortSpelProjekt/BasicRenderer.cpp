@@ -161,7 +161,7 @@ bool BasicRenderer::setUpShadowRastirizer(ID3D11Device* device)
 	D3D11_RASTERIZER_DESC desc = {};
 	desc.AntialiasedLineEnable = false;
 	desc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
-	desc.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
+	desc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 	desc.DepthBias = 0;
 	desc.DepthBiasClamp = 0.0f;
 	desc.SlopeScaledDepthBias = 1.0f;
@@ -184,7 +184,7 @@ bool BasicRenderer::setUpRastirizer(ID3D11Device* device)
 	desc.DepthBias = 0;
 	desc.DepthBiasClamp = 0.0f;
 	desc.DepthClipEnable = true;
-	desc.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
+	desc.FillMode = D3D11_FILL_SOLID;
 	desc.FrontCounterClockwise = false;
 	desc.MultisampleEnable = true;
 	desc.ScissorEnable = false;
@@ -656,7 +656,7 @@ void BasicRenderer::postProcessPass()
 
 void BasicRenderer::normaltasseletion(Camera& stageCamera, bool shadow)
 {
-	immediateContext->RSSetState(shadowRastirizer);
+	
 	immediateContext->IASetInputLayout(inputLayout_NormalMap);
 	immediateContext->VSSetShader(vs_normalMap2, nullptr, 0);
 	immediateContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);

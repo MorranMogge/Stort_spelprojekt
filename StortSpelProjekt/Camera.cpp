@@ -197,6 +197,71 @@ void Camera::collisionCamera(Player* player, const std::vector<Planet*>& planets
 	updateCamera();
 }
 
+void Camera::controllCamera(const float& deltaTime)
+{
+	if (Input::KeyDown(KeyCode::ARROW_Up))
+	{
+		this->lookAtPos += upVector * deltaTime * 20.f;
+		this->cameraPos += upVector * deltaTime * 20.f;
+	}
+
+	if (Input::KeyDown(KeyCode::ARROW_Down))
+	{
+		this->lookAtPos -= upVector * deltaTime * 20.f;
+		this->cameraPos -= upVector * deltaTime * 20.f;
+	}
+
+	if (Input::KeyDown(KeyCode::ARROW_Right))
+	{
+		this->lookAtPos += rightVector * deltaTime * 20.f;
+		this->cameraPos += rightVector * deltaTime * 20.f;
+	}
+
+	if (Input::KeyDown(KeyCode::ARROW_Left))
+	{
+		this->lookAtPos -= rightVector * deltaTime * 20.f;
+		this->cameraPos -= rightVector * deltaTime * 20.f;
+	}
+
+	
+
+	if (Input::KeyDown(KeyCode::W))
+	{
+		this->lookAtPos += forwardVector * deltaTime * 20.f;
+		this->cameraPos += forwardVector * deltaTime * 20.f;
+	}
+
+	if (Input::KeyDown(KeyCode::S))
+	{
+		this->lookAtPos -= forwardVector * deltaTime * 20.f;
+		this->cameraPos -= forwardVector * deltaTime * 20.f;
+	}
+
+
+
+	if (Input::KeyDown(KeyCode::L))
+	{
+		yaw += 0.005f;
+		playerRotationMX = DirectX::XMMatrixRotationRollPitchYaw(0.f, yaw, 0.f);
+		rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotationMX);
+		forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotationMX);
+		upVector = XMVector3TransformCoord(DEFAULT_UP, playerRotationMX);
+		lookAtPos = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotationMX) + cameraPos;
+	}
+
+	if (Input::KeyDown(KeyCode::J))
+	{
+		yaw -= 0.005f;
+		playerRotationMX = DirectX::XMMatrixRotationRollPitchYaw(0.f, yaw, 0.f);
+		rightVector = XMVector3TransformCoord(DEFAULT_RIGHT, playerRotationMX);
+		forwardVector = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotationMX);
+		upVector = XMVector3TransformCoord(DEFAULT_UP, playerRotationMX);
+		lookAtPos = XMVector3TransformCoord(DEFAULT_FORWARD, playerRotationMX) + cameraPos;
+	}
+
+	updateCamera();
+}
+
 void Camera::winScene(const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation)
 {
 	playerRotationMX = shipRotation;

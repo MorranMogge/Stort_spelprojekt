@@ -74,8 +74,8 @@ GAMESTATE Lobby::Update()
 
 	if (startGame)
 	{
-		
-		ui.isLoading = true;// display loading screen
+		ui.DrawLoading();
+		//ui.isLoading = true;// display loading screen
 		return GAME;
 	}
 

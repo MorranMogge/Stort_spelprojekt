@@ -46,4 +46,5 @@ public:
 	~LobbyUI();
 
 	void Draw();
+	void DrawLoading();
 };

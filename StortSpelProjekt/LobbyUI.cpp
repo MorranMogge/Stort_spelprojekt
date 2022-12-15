@@ -4,11 +4,6 @@
 
 void LobbyUI::SpritePass()
 {
-	if (isLoading)
-	{
-		Loading.Draw();
-		return;
-	}
 
 	hit_ready = ready_b.IntersectMouse();
 
@@ -313,6 +308,15 @@ void LobbyUI::Draw()
 	GUI::Begin();
 
 	SpritePass();
+
+	GUI::End();
+}
+
+void LobbyUI::DrawLoading()
+{
+	GUI::Begin();
+
+	Loading.Draw();
 
 	GUI::End();
 }

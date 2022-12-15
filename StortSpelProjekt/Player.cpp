@@ -1715,5 +1715,42 @@ void Player::drawFresnel(float interval)
 		this->scale = scl;
 		this->position = pos;
 	}
+
+	if (this->isHoldingComp())
+	{
+		float constant = 0.03f;
+		DirectX::XMFLOAT3 scl = this->scale;
+		DirectX::XMFLOAT3 pos = this->position;
+
+
+
+		//Change color
+
+		DirectX::SimpleMath::Color currentColor;
+		if (team == 0)
+		{
+			currentColor = DirectX::Colors::Red.v;
+		}
+		else
+		{
+			currentColor = DirectX::Colors::Blue.v;
+		}
+
+		this->fresnelBuffer.getData() = DirectX::XMFLOAT4(currentColor.x, currentColor.y, currentColor.z, 0.1f);
+		this->fresnelBuffer.applyData();
+		GPU::immediateContext->PSSetConstantBuffers(2, 1, fresnelBuffer.getReferenceOf());
+
+		//Set temp scale + pos
+		float scl2 = scl.x + constant;
+		this->scale = DirectX::XMFLOAT3(scl2, scl2, scl2);
+
+
+
+		//draw as fresnel
+		this->draw();
+
+		//Reset scale& pos
+		this->scale = scl;
+	}
 }
 

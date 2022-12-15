@@ -8,7 +8,6 @@ struct wirefameInfo
 	float padding;
 };
 
-
 class Game : public State
 {
 public:

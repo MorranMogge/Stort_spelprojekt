@@ -996,110 +996,111 @@ int main()
 				}
 
 				//Check if any onlineItems are near after the physics update
-				for (int i = 0; i < onlineItems.size(); i++)
+
+				if (progress[0] < 4 || progress[1] < 4)
 				{
-					static DirectX::SimpleMath::Vector3 vecToComp;
-					static DirectX::SimpleMath::Vector3 objPos;
-					if (onlineItems[i]->getOnlineType() == ObjID::COMPONENT)
+					for (int i = 0; i < onlineItems.size(); i++)
 					{
-						for (int j = 0; j < spaceShipPos.size(); j++)
+						static DirectX::SimpleMath::Vector3 vecToComp;
+						static DirectX::SimpleMath::Vector3 objPos;
+						if (onlineItems[i]->getOnlineType() == ObjID::COMPONENT)
 						{
-							//if (!onlineItems[i].getActiveState()) continue;
-
-							vecToComp = spaceShipPos[j];
-							objPos = onlineItems[i]->getPhysicsComponent()->getPosV3();
-							subtractionXMFLOAT3(vecToComp, objPos);
-
-							if (getLength(vecToComp) <= 10.f && onlineItems[i]->getInUseById() != -1)
+							for (int j = 0; j < spaceShipPos.size(); j++)
 							{
-								//onlineItems[i].setInactive();
-								DirectX::XMFLOAT3 newCompPos = randomizeObjectPos(planetVector);
-								onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
-								onlineItems[i]->setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
-								onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
-								onlineItems[i]->setInUseBy(-1);
-								ComponentAdded compAdded;
-								compAdded.packetId = PacketType::COMPONENTADDED;
-								compAdded.spaceShipTeam = j;
-								compAdded.componentID = i;
-								onlineItems[i]->setInUseBy(-1);
+								//if (!onlineItems[i].getActiveState()) continue;
 
-								totalTeamScores[j] += 25;
-								shipComponentCounter[j]++;
-								if (shipComponentCounter[j] == 4 && shipComponentCounter[!j] >= 4) totalTeamScores[!j] += 15;
+								vecToComp = spaceShipPos[j];
+								objPos = onlineItems[i]->getPhysicsComponent()->getPosV3();
+								subtractionXMFLOAT3(vecToComp, objPos);
 
-								sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
-								sizeOfPackets += sizeof(ComponentAdded);
-
-								//Checking if someone has won
-								progress[j]++;
-								if (progress[j] > 3)
+								if (getLength(vecToComp) <= 10.f && onlineItems[i]->getInUseById() != -1)
 								{
-									progress[0] = 0;
-									progress[1] = 0;
-									timeToFly = true;
-									startFly = std::chrono::system_clock::now();
-								}
+									//onlineItems[i].setInactive();
+									DirectX::XMFLOAT3 newCompPos = randomizeObjectPos(planetVector);
+									onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
+									onlineItems[i]->setPosition(newCompPos.x, newCompPos.y, newCompPos.z);
+									onlineItems[i]->getPhysicsComponent()->setType(reactphysics3d::BodyType::DYNAMIC);
+									onlineItems[i]->setInUseBy(-1);
+									ComponentAdded compAdded;
+									compAdded.packetId = PacketType::COMPONENTADDED;
+									compAdded.spaceShipTeam = j;
+									compAdded.componentID = i;
+									onlineItems[i]->setInUseBy(-1);
 
-								std::cout << "Red team score : " << (int)totalTeamScores[0] << "\nBlue team score: " << (int)totalTeamScores[1] << "\n";
+									totalTeamScores[j] += 25;
+									shipComponentCounter[j]++;
+									if (shipComponentCounter[j] == 4 && shipComponentCounter[!j] >= 4) totalTeamScores[!j] += 15;
+
+									sendBinaryDataAllPlayers<ComponentAdded>(compAdded, data);
+									sizeOfPackets += sizeof(ComponentAdded);
+
+									//Checking if someone has won
+									progress[j]++;
+									if (progress[j] > 3)
+									{
+										timeToFly = true;
+										startFly = std::chrono::system_clock::now();
+									}
+
+									std::cout << "Red team score : " << (int)totalTeamScores[0] << "\nBlue team score: " << (int)totalTeamScores[1] << "\n";
+								}
 							}
 						}
-					}
-					else if (onlineItems[i]->getOnlineType() == ObjID::GRENADE)
-					{
-						Grenade* grenade = dynamic_cast<Grenade*>(onlineItems[i]);
-						if (grenade && grenade->explode())
+						else if (onlineItems[i]->getOnlineType() == ObjID::GRENADE)
 						{
-
-							for (int j = 0; j < onlineItems.size(); j++)
+							Grenade* grenade = dynamic_cast<Grenade*>(onlineItems[i]);
+							if (grenade && grenade->explode())
 							{
-								if (onlineItems[j] == onlineItems[i]) continue;
-								vecToComp = onlineItems[j]->getPhysicsComponent()->getPosV3();
-								objPos = onlineItems[i]->getPosXMFLOAT3();
-								subtractionXMFLOAT3(vecToComp, objPos);
 
-								if (getLength(vecToComp) <= 25.f)
+								for (int j = 0; j < onlineItems.size(); j++)
 								{
-									float factor = 1.f / getLength(vecToComp);
-									vecToComp *= factor;
-									onlineItems[j]->getPhysicsComponent()->applyForceToCenter(reactphysics3d::Vector3(
-										10000 * vecToComp.x, 10000 * vecToComp.y, 10000 * vecToComp.z));
+									if (onlineItems[j] == onlineItems[i]) continue;
+									vecToComp = onlineItems[j]->getPhysicsComponent()->getPosV3();
+									objPos = onlineItems[i]->getPosXMFLOAT3();
+									subtractionXMFLOAT3(vecToComp, objPos);
+
+									if (getLength(vecToComp) <= 25.f)
+									{
+										float factor = 1.f / getLength(vecToComp);
+										vecToComp *= factor;
+										onlineItems[j]->getPhysicsComponent()->applyForceToCenter(reactphysics3d::Vector3(
+											10000 * vecToComp.x, 10000 * vecToComp.y, 10000 * vecToComp.z));
+									}
 								}
-							}
-							for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
-							{
-								vecToComp.x = data.users[j].playa.getposition('x');
-								vecToComp.y = data.users[j].playa.getposition('y');
-								vecToComp.z = data.users[j].playa.getposition('z');
-
-
-								objPos = onlineItems[i]->getPosXMFLOAT3();
-								subtractionXMFLOAT3(vecToComp, objPos);
-								if (getLength(vecToComp) <= 25.f)
+								for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
 								{
-									float factor = 1.f / getLength(vecToComp);
-									vecToComp *= factor;
-									//data.users[j].playa.getPhysComp()->applyForceToCenter();
-									data.users[j].playa.playerGotHit(reactphysics3d::Vector3(
-										10000 * vecToComp.x, 10000 * vecToComp.y, 10000 * vecToComp.z));
-									HitByGrenade hitByGrenade;
-									hitByGrenade.packetId = HITBYGRENADE;
-									hitByGrenade.playerThatUsedTheItem = 0;
-									hitByGrenade.itemId = i;
-									hitByGrenade.xForce = 1000 * vecToComp.x;
-									hitByGrenade.yForce = 1000 * vecToComp.y;
-									hitByGrenade.zForce = 1000 * vecToComp.z;
-									sendBinaryDataOnePlayer<HitByGrenade>(hitByGrenade, data.users[j]);
-									sizeOfPackets += sizeof(HitByGrenade);
+									vecToComp.x = data.users[j].playa.getposition('x');
+									vecToComp.y = data.users[j].playa.getposition('y');
+									vecToComp.z = data.users[j].playa.getposition('z');
+
+
+									objPos = onlineItems[i]->getPosXMFLOAT3();
+									subtractionXMFLOAT3(vecToComp, objPos);
+									if (getLength(vecToComp) <= 25.f)
+									{
+										float factor = 1.f / getLength(vecToComp);
+										vecToComp *= factor;
+										//data.users[j].playa.getPhysComp()->applyForceToCenter();
+										data.users[j].playa.playerGotHit(reactphysics3d::Vector3(
+											10000 * vecToComp.x, 10000 * vecToComp.y, 10000 * vecToComp.z));
+										HitByGrenade hitByGrenade;
+										hitByGrenade.packetId = HITBYGRENADE;
+										hitByGrenade.playerThatUsedTheItem = 0;
+										hitByGrenade.itemId = i;
+										hitByGrenade.xForce = 1000 * vecToComp.x;
+										hitByGrenade.yForce = 1000 * vecToComp.y;
+										hitByGrenade.zForce = 1000 * vecToComp.z;
+										sendBinaryDataOnePlayer<HitByGrenade>(hitByGrenade, data.users[j]);
+										sizeOfPackets += sizeof(HitByGrenade);
+									}
 								}
+								grenade->resetExplosion();
+								DirectX::XMFLOAT3 newGrenadePos = randomizeObjectPos(planetVector);
+								grenade->setPosition(newGrenadePos.x, newGrenadePos.y, newGrenadePos.z);
 							}
-							grenade->resetExplosion();
-							DirectX::XMFLOAT3 newGrenadePos = randomizeObjectPos(planetVector);
-							grenade->setPosition(newGrenadePos.x, newGrenadePos.y, newGrenadePos.z);
 						}
 					}
 				}
-
 
 				//physWorld.update(timerLength);
 				//f�r varje spelare s� skicka deras position till alla klienter
@@ -1159,16 +1160,8 @@ int main()
 					startMinigame.minigame = MiniGames::STARTOFINTERMISSION;
 					currentMinigame = MiniGames::INTERMISSION;
 
-					if (progress[0] > 3)
-					{
-						startMinigame.pointsBlue = 100.f;
-						startMinigame.pointsRed = 0.f;
-					}
-					else
-					{
-						startMinigame.pointsRed = 100.f;
-						startMinigame.pointsBlue = 0.f;
-					}
+					progress[0] = 0;
+					progress[1] = 0;
 					startMinigame.pointsRed = totalTeamScores[0];
 					startMinigame.pointsBlue = totalTeamScores[1];
 					sendBinaryDataAllPlayers<MinigameStart>(startMinigame, data);

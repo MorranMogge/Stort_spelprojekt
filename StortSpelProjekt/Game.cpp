@@ -1235,17 +1235,17 @@ GAMESTATE Game::startIntermission()
 	this->spaceShips[0]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
 	this->spaceShips[1]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
 
+	if (teamScores[0] > teamScores[1]) this->offset = DirectX::XMFLOAT2(-15, 7);
+	else this->offset = DirectX::XMFLOAT2(15, 7);
+
 	this->centerPos = DirectX::XMFLOAT3(150, 0, 400);
-	this->offset = DirectX::XMFLOAT2(15, 7);
-	//this->spaceShips[0]->setPos(DirectX::XMFLOAT3(150, 7, 95));
-	//this->spaceShips[1]->setPos(DirectX::XMFLOAT3(150, -7, 290));
 	this->Stage = 0;
 	ui.count = 1.0f;
 	ui.setOpacity(false);
 	fadedIn = false;
 
-	miniGameUI.pointBlue = teamScoreLandingMiniGame;
-	miniGameUI.pointRed = enemyTeamScoreLandingMiniGame;
+	miniGameUI.pointBlue = teamScores[1];
+	miniGameUI.pointRed = teamScores[0];
 
 	currentMinigame = INTERMISSION;
 	return NOCHANGE;

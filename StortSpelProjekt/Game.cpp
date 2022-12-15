@@ -724,7 +724,7 @@ GAMESTATE Game::updateComponentGame()
 
 	//Player functions
 	currentPlayer->rotate(hitNormal, testingVec, changedPlanet);
-	currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
+	//currentPlayer->move(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->moveController(DirectX::XMVector3Normalize(camera.getForwardVector()), DirectX::XMVector3Normalize(camera.getRightVector()), dt);
 	currentPlayer->checkForStaticCollision(planetVector, spaceShips);
 	currentPlayer->checkSwimStatus(planetVector);
@@ -1389,22 +1389,22 @@ GAMESTATE Game::Update()
 		landingMiniGamePoints = 0.f;
 	}
 
-	if (Input::KeyPress(KeyCode::L))
-	{
-		currentMinigame = MiniGames::INTERMISSION;
-		this->camera.setPosition(DirectX::XMFLOAT3(100.f, 0.f, 300.f));
-		this->camera.setRotToStart();
-		this->camera.setCameraLookAt(DirectX::XMFLOAT3(150.f, 0, 300.f));
+	//if (Input::KeyPress(KeyCode::L))
+	//{
+	//	currentMinigame = MiniGames::INTERMISSION;
+	//	this->camera.setPosition(DirectX::XMFLOAT3(100.f, 0.f, 300.f));
+	//	this->camera.setRotToStart();
+	//	this->camera.setCameraLookAt(DirectX::XMFLOAT3(150.f, 0, 300.f));
 
-		this->spaceShips[0]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
-		this->spaceShips[1]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
+	//	this->spaceShips[0]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
+	//	this->spaceShips[1]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
 
-		this->centerPos = DirectX::XMFLOAT3(150, 0, 400);
-		this->offset = DirectX::XMFLOAT2(15, 7);
-		//this->spaceShips[0]->setPos(DirectX::XMFLOAT3(150, 7, 95));
-		//this->spaceShips[1]->setPos(DirectX::XMFLOAT3(150, -7, 290));
-		this->Stage = 0;
-	}
+	//	this->centerPos = DirectX::XMFLOAT3(150, 0, 400);
+	//	this->offset = DirectX::XMFLOAT2(15, 7);
+	//	//this->spaceShips[0]->setPos(DirectX::XMFLOAT3(150, 7, 95));
+	//	//this->spaceShips[1]->setPos(DirectX::XMFLOAT3(150, -7, 290));
+	//	this->Stage = 0;
+	//}
 
 	if (Input::KeyPress(KeyCode::MOUSE_R))
 	{
@@ -1458,14 +1458,14 @@ GAMESTATE Game::Update()
 	//animations
 	//this->currentPlayer->updateAnim(dt, 0, 1);
 
-	if (Input::KeyPress(KeyCode::L))
+	/*if (Input::KeyPress(KeyCode::L))
 	{
 		return WIN;
 	}
 	if (Input::KeyPress(KeyCode::P))
 	{
 		return LOSE;
-	}
+	}*/
 
 	return currentGameState;
 }
@@ -1512,15 +1512,15 @@ void Game::Render()
 	ltHandler.unbindSrv();
 
 	//Render fresnel objects
-	//basicRenderer.fresnelPrePass(this->camera);
-	//this->drawFresnel();
+	basicRenderer.fresnelPrePass(this->camera);
+	this->drawFresnel();
 
-	////Animated meshes
-	//basicRenderer.fresnelAnimPrePass(this->camera);
-	//for (int i = 0; i < players.size(); i++)
-	//{
-	//	players[i]->drawFresnel();
-	//}
+	//Animated meshes
+	basicRenderer.fresnelAnimPrePass(this->camera);
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->drawFresnel();
+	}
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();

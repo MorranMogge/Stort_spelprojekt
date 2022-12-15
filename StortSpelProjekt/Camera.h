@@ -11,7 +11,7 @@ class Camera
 private:
 	int index = -1;
 	float playerSpeed = 0.f;
-	DirectX::XMMATRIX playerRotationMX;
+	DirectX::XMMATRIX playerRotationMX = DirectX::XMMatrixIdentity();
 	DirectX::XMVECTOR playerPosition = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
 	bool collided = false;
@@ -19,6 +19,7 @@ private:
 	float fieldOfView = 0.76f;
 	float maxFOV = 0.8f;
 	float minFOV = 0.6f;
+	float yaw = 0.f;
 
 	DirectX::XMFLOAT3 position;
 	ConstantBufferNew<cameraStruct> cameraBuffer;
@@ -53,6 +54,7 @@ public:
 	void moveCamera(Player* player, const float& deltaTime);
 	void moveVelocity(Player* player, const float& deltaTime);
 	void collisionCamera(Player* player, const std::vector<Planet*>& planets, const float& deltaTime);
+	void controllCamera(const float& deltaTime);
 
 	void winScene(const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation);
 	void landingMinigameScene(const Planet* planet, const DirectX::XMVECTOR& shipPosition, const DirectX::XMMATRIX& shipRotation);

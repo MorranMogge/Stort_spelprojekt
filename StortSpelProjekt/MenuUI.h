@@ -20,7 +20,12 @@ class MenuUI final
 	GUISprite credits2;
 	GUISprite exit2;
 
-	bool hit_start, hit_setting, hit_credits, hit_exit, hit_control;
+	GUISprite offline;
+	GUISprite offline2;
+
+	GUISprite checkbox_false, checkbox_true;
+
+	bool hit_start, hit_setting, hit_credits, hit_exit, hit_control, hit_offline;
 
 	GUISprite title;
 

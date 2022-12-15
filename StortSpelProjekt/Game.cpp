@@ -1512,15 +1512,15 @@ void Game::Render()
 	ltHandler.unbindSrv();
 
 	//Render fresnel objects
-	//basicRenderer.fresnelPrePass(this->camera);
-	//this->drawFresnel();
+	basicRenderer.fresnelPrePass(this->camera);
+	this->drawFresnel();
 
-	////Animated meshes
-	//basicRenderer.fresnelAnimPrePass(this->camera);
-	//for (int i = 0; i < players.size(); i++)
-	//{
-	//	players[i]->drawFresnel();
-	//}
+	//Animated meshes
+	basicRenderer.fresnelAnimPrePass(this->camera);
+	for (int i = 0; i < players.size(); i++)
+	{
+		players[i]->drawFresnel();
+	}
 
 	//Render Skybox
 	basicRenderer.skyboxPrePass();

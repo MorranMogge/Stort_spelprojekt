@@ -113,6 +113,6 @@ float4 main(float4 position : SV_POSITION, float3 normal : NORMAL, float2 uv : U
 
     //return float4(diffuseColor, 0);
     //return float4(bumpedNormalW, 0);
-    return float4(((max(mat.ambient.xyz, 0.4f) /* + litResult.Specular*/) * diffuseColor + litResult.Diffuse) /* + frescolor*/, 1.0f);
+    return float4(((max(mat.ambient.xyz, 0.4f) /* + litResult.Specular*/) * diffuseColor + litResult.Diffuse) + frescolor, 1.0f);
 
 }

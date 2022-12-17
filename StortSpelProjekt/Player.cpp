@@ -280,7 +280,7 @@ Player::Player(Mesh* useMesh, const AnimationData& data, const DirectX::XMFLOAT3
 	this->animIndex = 0;
 	this->animSpeed = 1;
 	pickUpSfx.load(L"../Sounds/pickupCoin.wav");
-	playerHitSound.load(L"../Sounds/mixkit-sick-man-sneeze-2213.wav");
+	playerHitSound.load(L"../Sounds/playerHurt.wav");
 	//walkingSound.setVolume(0.25f);
 
 	this->startPosition = pos;
@@ -1028,12 +1028,6 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 		}
 	}
 
-	//else if (Input::KeyPress(KeyCode::E)/* && this->eKeyDown == false*/ &&  this->keyPressTimer.getTimePassed(0.1))
-	//{
-	//	std::cout << "stuff" << std::endl;
-	//	this->eKeyDown = true;
-
-	//}
 	return successfulPickup;
 }
 

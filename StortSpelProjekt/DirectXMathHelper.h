@@ -5,6 +5,8 @@ DirectX::XMFLOAT3 getSubtractionXMFLOAT3(DirectX::XMFLOAT3 argOne, const DirectX
 
 void subtractionXMFLOAT3(DirectX::XMFLOAT3& argOne, const DirectX::XMFLOAT3& argTwo);
 
+DirectX::XMFLOAT3 getAdditionXMFLOAT3(DirectX::XMFLOAT3 argOne, const DirectX::XMFLOAT3& argTwo);
+
 void additionXMFLOAT3(DirectX::XMFLOAT3& argOne, const DirectX::XMFLOAT3& argTwo);
 
 DirectX::XMFLOAT3 normalizeXMFLOAT3(DirectX::XMFLOAT3 argOne);

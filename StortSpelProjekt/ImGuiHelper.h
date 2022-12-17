@@ -14,6 +14,7 @@
 #include "imGUI\imgui_impl_win32.h"
 
 class Player;
+struct PlanetImGuiInfo;
 
 class ImGuiHelper
 {
@@ -32,4 +33,5 @@ public:
 	void spriteFloat(const std::string name, float& x, const float min, const float max);
 	void spriteEnd();
 	void react3D(bool& wireframe, bool& drawObjects, bool& landingMinigame, const float &dt, bool& velocityCamera, Player* currentPlayer);
+	void planetEditor(PlanetImGuiInfo& planetImGuiStruct);
 };

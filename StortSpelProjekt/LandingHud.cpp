@@ -344,7 +344,6 @@ void LandingHud::drawPointsForOtherGameModes(const int scores[])
 	{
 
 		std::string number = std::to_string(scores[s]);
-		std::cout << "Blue team score: " << scores[s] << "\n";
 		for (int i = 0; i < number.size(); i++)
 		{
 			static float textSpace = 22.0f;

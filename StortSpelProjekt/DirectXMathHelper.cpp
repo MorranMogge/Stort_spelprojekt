@@ -16,6 +16,14 @@ void subtractionXMFLOAT3(DirectX::XMFLOAT3& argOne, const DirectX::XMFLOAT3& arg
     argOne.z -= argTwo.z;
 }
 
+DirectX::XMFLOAT3 getAdditionXMFLOAT3(DirectX::XMFLOAT3 argOne, const DirectX::XMFLOAT3& argTwo)
+{
+    argOne.x += argTwo.x;
+    argOne.y += argTwo.y;
+    argOne.z += argTwo.z;
+    return argOne;
+}
+
 void additionXMFLOAT3(DirectX::XMFLOAT3& argOne, const DirectX::XMFLOAT3& argTwo)
 {
     argOne.x += argTwo.x;

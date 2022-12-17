@@ -98,14 +98,7 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	if (IFONLINE)
 	{
 		int thingstoLoad = 0;
-		//client->connectToServer();
 		int playerId = client->getPlayerId();
-		/*while (playerId <= -1 || playerId >= 9)
-		{*/
-			//playerId = packetEventManager->handleId(client->getCircularBuffer(), this->planetVector, physWorld, meshes, spaceShips, gameObjects,this->field, thingstoLoad);
-			//std::cout << "Game.cpp, playerId: " << std::to_string(playerId) << std::endl;
-		//}
-		//int playerid = client->initTEMPPLAYERS();
 		std::cout << "The recv player id from client: " << std::to_string(playerId) << std::endl;
 		this->client->setClientId(playerId);
 		int offset = 10;
@@ -1348,8 +1341,6 @@ GAMESTATE Game::Update()
 	
 	if (ui.isDone()) currentPlayer->isReady(true);
 
-	//If someone for some reason want to add physics boxes to the world, SHALL BE REMOVED
-	if (GetAsyncKeyState('C')) physWorld.addBoxToWorld();
 	currentGameState = NOCHANGE;
 
 	if (IFONLINE)
@@ -1366,69 +1357,6 @@ GAMESTATE Game::Update()
 	currentTime = std::chrono::system_clock::now();
 	dt = ((std::chrono::duration<float>)(currentTime - lastUpdate)).count();
 
-	if (Input::KeyPress(KeyCode::P)) //THIS WILL BE REMOVED WHEN SWITCHING BETWEEN STATES IS DONE
-	{ 
-		currentMinigame = MiniGames::LANDINGSPACESHIP;
-		
-		int index = currentPlayer->getTeam() + 1;
-		int team = currentPlayer->getTeam();
-
-		for (int i = 0; i < spaceShips.size(); i++)
-		{
-			if (i == currentPlayer->getTeam()) { index = currentPlayer->getTeam() + 1; team = currentPlayer->getTeam(); }
-			else { index = (int)!currentPlayer->getTeam() + 1; team = (int)!currentPlayer->getTeam(); }
-			DirectX::SimpleMath::Vector3 planetOffset = planetVector[index]->getPlanetPosition();
-			planetOffset.Normalize();
-			planetOffset *= 150.f;
-			DirectX::SimpleMath::Vector3 newPos = planetVector[index]->getPlanetPosition() + planetOffset;
-			spaceShips[team]->setPos(newPos);
-			spaceShips[team]->setGravityField(planetVector[index]->getGravityField());
-			spaceShips[team]->setRot(spaceShips[team]->getRotOrientedToGrav());
-		}
-
-		landingMiniGamePoints = 0.f;
-	}
-
-	//if (Input::KeyPress(KeyCode::L))
-	//{
-	//	currentMinigame = MiniGames::INTERMISSION;
-	//	this->camera.setPosition(DirectX::XMFLOAT3(100.f, 0.f, 300.f));
-	//	this->camera.setRotToStart();
-	//	this->camera.setCameraLookAt(DirectX::XMFLOAT3(150.f, 0, 300.f));
-
-	//	this->spaceShips[0]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
-	//	this->spaceShips[1]->setRot(DirectX::XMFLOAT3(-DirectX::XM_PI * 0.5, 0, 0));
-
-	//	this->centerPos = DirectX::XMFLOAT3(150, 0, 400);
-	//	this->offset = DirectX::XMFLOAT2(15, 7);
-	//	//this->spaceShips[0]->setPos(DirectX::XMFLOAT3(150, 7, 95));
-	//	//this->spaceShips[1]->setPos(DirectX::XMFLOAT3(150, -7, 290));
-	//	this->Stage = 0;
-	//}
-
-	if (Input::KeyPress(KeyCode::MOUSE_R))
-	{
-		currentMinigame = STARTOFINTERMISSION;
-	}
-
-	if (Input::KeyPress(KeyCode::MOUSE_M))
-	{
-		currentMinigame = STARTLANDING;
-	}
-
-	if (Input::KeyPress(KeyCode::Y))
-	{
-		currentMinigame = KINGOFTHEHILL;
-	}
-
-	if (Input::KeyPress(KeyCode::P))
-	{
-		return WIN;
-	}
-	if (Input::KeyPress(KeyCode::O))
-	{
-		return LOSE;
-	}
 
 	//Simulate the current minigame on client side
 	switch (currentMinigame)
@@ -1454,18 +1382,6 @@ GAMESTATE Game::Update()
 	default:
 		break;
 	}
-
-	//animations
-	//this->currentPlayer->updateAnim(dt, 0, 1);
-
-	/*if (Input::KeyPress(KeyCode::L))
-	{
-		return WIN;
-	}
-	if (Input::KeyPress(KeyCode::P))
-	{
-		return LOSE;
-	}*/
 
 	return currentGameState;
 }
@@ -1528,9 +1444,10 @@ void Game::Render()
 	basicRenderer.depthUnbind();
 
 	//Render imgui & wireframe
-	imGui.react3D(wireframe, objectDraw, landingMinigame, dt, velocityCamera, currentPlayer);
-	if (wireframe) { physWorld.renderReact3D(); playerVecRenderer.drawLines(); }
-	
+	//imGui.react3D(wireframe, objectDraw, landingMinigame, dt, velocityCamera, currentPlayer);
+	//if (wireframe) { physWorld.renderReact3D(); playerVecRenderer.drawLines(); }
+	Input::Update();
+
 	//render billboard objects
 	basicRenderer.bilboardPrePass(this->camera);
 	drawIcons();
@@ -1565,7 +1482,7 @@ void Game::Render()
 
 	case INTERMISSION:
 		miniGameUI.Draw();
-		landingUi.drawPointsForOtherGameModes(teamScores);
+		//landingUi.drawPointsForOtherGameModes(teamScores);
 		ui.DrawFade();
 		break;
 

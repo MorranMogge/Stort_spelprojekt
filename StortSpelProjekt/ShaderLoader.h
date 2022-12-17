@@ -6,6 +6,8 @@
 
 bool LoadVertexShader(ID3D11Device* device, ID3D11VertexShader*& vShader, std::string& vShaderByteCode, const std::string path);
 
+bool LoadVertexShader(ID3D11Device* device, ID3D11VertexShader*& vShader, const std::string path);
+
 bool LoadDomainShader(ID3D11Device* device, ID3D11DomainShader*& dShader, const std::string path);
 
 bool LoadHullShader(ID3D11Device* device, ID3D11HullShader*& hShader, const std::string path);

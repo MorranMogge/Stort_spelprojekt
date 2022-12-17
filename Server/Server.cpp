@@ -378,11 +378,11 @@ int main()
 
 
 		physicsTimer.resetStartTime();
-		while (!physicsTimer.getTimePassed(2.0f)) continue;
+		while (!physicsTimer.getTimePassed(0.4f)) continue;
 
 		//Wait 3 seconds since we can lose some data if we directly send information about space ships
 		physicsTimer.resetStartTime();
-		while (!physicsTimer.getTimePassed(7.0f)) continue;
+		while (!physicsTimer.getTimePassed(2.0f)) continue;
 
 		//Sends information about the space ships to the clients
 		for (int i = 0; i < spaceShipPos.size(); i++)
@@ -399,7 +399,7 @@ int main()
 
 		//Waiting a bit
 		physicsTimer.resetStartTime();
-		while (!physicsTimer.getTimePassed(7.0f)) continue;
+		while (!physicsTimer.getTimePassed(2.0f)) continue;
 
 		//Spawning planets
 		float planetSize = 40.f;

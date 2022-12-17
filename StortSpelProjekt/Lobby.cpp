@@ -7,13 +7,10 @@
 
 Lobby::Lobby(Client*& client)
 {
-	//ErrorLog::Log("UWU");
 	basicRenderer.initiateRenderer(GPU::immediateContext, GPU::device, GPU::swapChain, GPU::windowWidth, GPU::windowHeight);
 	startGame = false;
 
 	client = new Client(InputIPUI::ip);
-	std::cout << "CB: " << sizeof(CircularBufferClient) << "\nUdpSocket: " << sizeof(sf::UdpSocket) << "\nTcpSocket: " << sizeof(sf::TcpSocket)
-		<< "\nSocket selector: " << sizeof(sf::SocketSelector) << "\nPacket: " << sizeof(sf::Packet) << "\nThread: " << sizeof(std::thread) << "\n";
 	this->client = client;
 	ifConnected = client->connectToServer();
 	int currentPlayerOnlineId = -1;

@@ -280,7 +280,6 @@ int main()
 
 	while (1)
 	{
-		std::cout << "UwU begin 1\n";
 		GAMEONGOING = true;
 		PhysicsWorld physWorld;
 		std::thread* recvThread[MAXNUMBEROFPLAYERS];
@@ -309,13 +308,10 @@ int main()
 		bool timeToFly = false;
 		int progress[2] = { 0, 0 };
 
-		std::cout << "UwU begin 1.5\n";
 		MiniGames currentMinigame = MiniGames::COMPONENTCOLLECTION;
 		physWorld.addPhysComponent(planetComp, reactphysics3d::CollisionShapeName::SPHERE, DirectX::XMFLOAT3(40, 40, 40));
 		planetComp.getPhysicsComponent()->setType(reactphysics3d::BodyType::STATIC);
 
-		std::cout << "UwU begin 2\n";
-	
 
 		std::string identifier;
 		std::string s = "empty";
@@ -327,8 +323,6 @@ int main()
 
 		}
 
-		std::cout << "UwU begin 3\n";
-
 
 		spaceShipPos.emplace_back(DirectX::XMFLOAT3(-7.81178f, -37.8586f, -8.50119f));
 		spaceShipPos.emplace_back(DirectX::XMFLOAT3(13.5817f, 35.9383f, 9.91351f));
@@ -336,15 +330,10 @@ int main()
 		std::cout << "Nr of players for the game: " << std::to_string(MAXNUMBEROFPLAYERS) << std::endl;
 		KingOfTheHillMiniGame miniGameKTH(MAXNUMBEROFPLAYERS);
 
-		//std::vector<player> players;
-		//std::vector<Component> components;
-		//std::vector<Component> items;
-
 		//ANVÄND DENNA FLR ALLA ITEMS OCH COMPONENTS
 
 		
 
-		//sf::UdpSocket socket;
 		std::string connectionType, mode;
 
 		serverData data;
@@ -362,11 +351,6 @@ int main()
 			data.users[i].playa.setOnlineId(-1);
 		}
 
-		//serverData* serverData;
-		//std::cout << "Starting handleReceiveData thread!\n";
-		//std::thread* serverThread = new std::thread(handleReceivedData, &serverData);
-
-		std::cout << "UWU 5\n";
 
 		if (data.socket.bind(data.port) != sf::Socket::Done)
 		{
@@ -386,19 +370,15 @@ int main()
 		float itemSpawnTimerLength = 5.0f;
 
 		setupTcp(data);
-		//acceptPlayers(data);
 
-		std::cout << "UWU 6\n";
 		circBuffer->clearBuffer();
 		std::thread(acceptPlayersLobbyThread, &data).detach();
 		lobby(data, *circBuffer, recvThread, physWorld, threadData);
 		circBuffer->clearBuffer();
 
-		std::cout << "UWU 7\n";
 
 		physicsTimer.resetStartTime();
 		while (!physicsTimer.getTimePassed(2.0f)) continue;
-		//sendIdToAllPlayers(data);
 
 		//Wait 3 seconds since we can lose some data if we directly send information about space ships
 		physicsTimer.resetStartTime();
@@ -445,24 +425,9 @@ int main()
 
 
 
-		//int offset = 25;
-		//for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-		//{
-		//	PhysicsComponent* newComp = new PhysicsComponent();
-		//	physWorld.addPhysComponent(newComp);
-		//	data.users[i].playa.setPhysicsComponent(newComp);
-		//	newComp->setType(reactphysics3d::BodyType::KINEMATIC);
-		//	threadData[i].pos[0] = 102.0f + (offset * i);
-		//	threadData[i].pos[1] = 12.0f;
-		//	threadData[i].pos[2] = -22.0f;
-		//	threadData[i].circBuffer = circBuffer;
-		//	recvThread[i] = new std::thread(recvData, &threadData[i], &data.users[i]);
-		//}
-
 		int temp = 0;
 		while (1)
 		{
-			std::cout << "damn: " << circBuffer->peekPacketId() << std::endl;
 			if (circBuffer->getIfPacketsLeftToRead())
 			{
 				int packetId = circBuffer->peekPacketId();
@@ -680,7 +645,6 @@ int main()
 						onlineItems[grenadeData->itemId]->getPhysicsComponent()->getPosV3().z + grenadeData->zForce * 0.0025f));
 					onlineItems[grenadeData->itemId]->getPhysicsComponent()->applyForceToCenter(reactphysics3d::Vector3(grenadeData->xForce, grenadeData->yForce, grenadeData->zForce));
 					sendBinaryDataAllPlayers<UseGrenade>(*grenadeData, data);
-					std::cout << "Player used grenade OwO\n";
 					break;
 
 				case PacketType::LANDINGMINIGAMESENDSCORETOSERVER:
@@ -690,15 +654,6 @@ int main()
 
 				case PacketType::USEBAT:
 					useBat = circBuffer->readData<UseBat>();
-
-
-
-					//DirectX::SimpleMath::Vector3 posTwo;
-
-					/*for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-					{
-						if(data.users[i].)
-					}*/
 
 					for (int i = 0; i < onlineItems.size(); i++)
 					{
@@ -728,25 +683,6 @@ int main()
 							onlineItems[useBat->itemId]->setPosition(newPos.x, newPos.y, newPos.z);
 						}
 					}
-					//for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
-					//{
-					//	pos.x = data.users[j].playa.getposition('x');
-					//	pos.y = data.users[j].playa.getposition('y');
-					//	pos.z = data.users[j].playa.getposition('z');
-
-
-					//	objPos = onlineItems[i]->getPosXMFLOAT3();
-					//	subtractionXMFLOAT3(pos, objPos);
-					//	if (getLength(pos) <= 25.f)
-					//	{
-					//		pos.Normalize();
-					//		//data.users[j].playa.getPhysComp()->applyForceToCenter();
-					//		data.users[j].playa.playerGotHit(reactphysics3d::Vector3(
-					//			10000 * pos.x, 10000 * pos.y, 10000 * pos.z));
-					//		sendBinaryDataOnePlayer<HitByGrenade>(hitByGrenade, data.users[j]);
-					//	}
-					//}
-
 
 					break;
 				case PacketType::DONEWITHGAME:
@@ -846,21 +782,6 @@ int main()
 					break;
 				}
 			}
-
-			//checks all components player position
-			//for (int i = 0; i < components.size(); i++)
-			//{
-			//	for (int j = 0; j < MAXNUMBEROFPLAYERS; j++)
-			//	{
-			//		if (components[i].getInUseById() == data.users[j].playerId)
-			//		{
-			//			components[i].setPosition(data.users[j].playa.getposition('x'), data.users[j].playa.getposition('y'), data.users[j].playa.getposition('z'));
-			//		}
-			//	}
-			//	//std::cout << "component in useBy: " << std::to_string(components[i].getInUseById()) << std::endl;
-			//	
-			//	//std::cout << "posX: " << std::to_string(components[i].getposition('x')) << "posY: " << std::to_string(components[i].getposition('y')) << std::endl;
-			//}
 
 			for (int i = 0; i < onlineItems.size(); i++)
 			{
@@ -986,7 +907,6 @@ int main()
 				if (endGame)
 				{
 
-					std::cout << "UwU 0\n";
 					break;//breaks while
 				}
 
@@ -1181,14 +1101,12 @@ int main()
 		GAMEONGOING = false;
 		
 
-		std::cout << "UwU 1\n";
 		TimeStruct deleteThreadsTimer;
 		deleteThreadsTimer.resetStartTime();
 		while (!deleteThreadsTimer.getTimePassed(2.0f))
 		{
 			//std::cout << "timer loop\n";
 		}
-		//delete circBuffer;
 		
 		for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 		{
@@ -1207,19 +1125,10 @@ int main()
 		}
 		onlineItems.clear();
 
-		std::cout << "UwU 2\n";
-		//for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
-		//{
-		//	mutex.unlock();
-		//	recvThread[i]->join();
-		//	delete recvThread[i];
-		//}
-
 		data.tcpListener.close();
 		
 
 
-		std::cout << "UwU 3\n";
 		//delete threads
 	}
 	std::cout << "end\n";
@@ -1227,25 +1136,4 @@ int main()
 
 	return 0;
 
-	//Hidden code
-	/*if (((std::chrono::duration<float>)(std::chrono::system_clock::now() - startComponentTimer)).count() > timerComponentLength && !once)
-	{
-		SpawnComponent cData = SpawnOneComponent(components);
-		physWorld.addPhysComponent(components[components.size() - 1]);
-		components[components.size() - 1].setPosition(cData.x, cData.y, cData.z);
-		sendBinaryDataAllPlayers(cData, data);
-		startComponentTimer = std::chrono::system_clock::now();
-		once = true;
-	}*/
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging 
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

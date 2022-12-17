@@ -108,27 +108,16 @@ void BaseballBat::setGameObjects(const std::vector<GameObject*>& objects)
 	this->GameObjects = objects;
 }
 
-//void BaseballBat::setGameObjects(const std::vector<Player*>& objects)
-//{
-//	for (int i = 0; i < objects.size(); i++)
-//	{
-//		//if (objects[i] != this->player) this->objects.push_back(objects[i]);
-//		this->objects.push_back(objects[i]);
-//	}
-//}
-
 void BaseballBat::useItem(const Player* playerHoldingItem)
 {
 	SoundLibrary::baseballbatSfx.stop();
 	SoundLibrary::baseballbatSfx.play();
 
-	std::cout << "Used bat!\n";
 	batPos = playerHoldingItem->getPos();
 	batPos += playerHoldingItem->getForwardVector() * 5;
 
 	UseBat useBat;
 	useBat.packetId = USEBAT;
-	//std::cout << "Player ID: " << playerHoldingItem->getItemOnlineId() << "\n";
 	useBat.playerThatUsedTheItem = playerHoldingItem->getOnlineID();
 	useBat.itemId = this->getOnlineId();
 	useBat.xPos = batPos.x;

@@ -14,7 +14,7 @@ private:
 
 	std::vector<Player *> objects;
 
-	//For offline UwU
+	//For offline
 	std::vector<GameObject*> GameObjects;
 
 

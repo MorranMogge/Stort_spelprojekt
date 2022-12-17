@@ -37,7 +37,7 @@ Client::Client()
 {
 	this->ip = sf::IpAddress::getLocalAddress().toString();
 	this->port = 2001;
-	this->tmp = "empty String UwU";
+	this->tmp = "empty String";
 	this->isConnected = false;
 	this->data.circularBuffer = new CircularBufferClient();
 	this->data.playerId = 0;

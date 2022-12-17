@@ -189,9 +189,6 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 				onlineItems.push_back(grenade);
 				gameObjects.push_back(grenade);
 			}
-			//gameObjects.push_back(baseballbat);
-			//std::cout << "item spawned UWU: " << std::to_string(itemSpawn->itemId) << std::endl;
-			//std::cout << "SIZE ITEMS " << onlineItems.size() << "\n";
 			break;
 
 		case PacketType::ITEMPOSITION:
@@ -305,7 +302,6 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 					}
 				}
 			}
-			std::cout << "Done with it uwu\n";
 			break;
 
 		case PacketType::COMPONENTPOSITIONNEW:
@@ -388,8 +384,6 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 			{
 				if (players[i]->getOnlineID() == cmpDropped->playerId)
 				{
-					//std::cout << "playerID UWU TEst:" << cmpDropped->playerId << std::endl;
-					//std::cout << "x: " << onlineItems[cmpDropped->componentId]->getPos().x << "y: " << onlineItems[cmpDropped->componentId]->getPos().y << std::endl;
 					players[i]->releaseItem();
 				}
 			}
@@ -428,7 +422,7 @@ void PacketEventManager::PacketHandleEvents(CircularBufferClient*& circularBuffe
 }
 
 int PacketEventManager::handleId(CircularBufferClient*& circularBuffer, std::vector<Planet*>& planetVector, PhysicsWorld& physWorld, std::vector<Mesh*>& meshes,
-	std::vector<SpaceShip*>& spaceShips, std::vector<GameObject*>& gameObjects, GravityField* field, int& UwU)
+	std::vector<SpaceShip*>& spaceShips, std::vector<GameObject*>& gameObjects, GravityField* field, int& counter)
 {
 
 	SpawnPlanets* planetData = nullptr;
@@ -495,7 +489,7 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer, std::vec
 			planetVector.emplace_back(new Planet(meshes[0], DirectX::XMFLOAT3(planetData->size, planetData->size, planetData->size), DirectX::XMFLOAT3(planetData->xPos, planetData->yPos, planetData->zPos), (4.0f * 9.82f), meshes[1]));
 			planetVector.back()->setPlanetShape(&physWorld);
 			physWorld.setPlanets(planetVector);
-			UwU++;
+			counter++;
 			break;
 
 		case PacketType::SPACESHIPPOSITION:
@@ -517,7 +511,7 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer, std::vec
 			newSpaceShip->getPhysComp()->setType(reactphysics3d::BodyType::STATIC);
 			newSpaceShip->getPhysComp()->setRotation(DirectX::XMQuaternionRotationMatrix(newSpaceShip->getRot()));
 			newSpaceShip->getPhysComp()->setPosition(reactphysics3d::Vector3(newSpaceShip->getPosV3().x, newSpaceShip->getPosV3().y, newSpaceShip->getPosV3().z));
-			UwU++;
+			counter++;
 			break;
 		}
 	}

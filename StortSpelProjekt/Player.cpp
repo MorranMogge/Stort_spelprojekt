@@ -989,7 +989,6 @@ bool Player::pickupItem(const std::vector <Item*>& items, const std::vector <Com
 
 	else if (Input::KeyPress(KeyCode::E) /*&&*/ /*this->eKeyDown == true &&*/ /*this->holdingItem != nullptr*/)
 	{
-		std::cout << "stuff2" << std::endl;
 		//Checking items
 		this->eKeyDown = false;
 

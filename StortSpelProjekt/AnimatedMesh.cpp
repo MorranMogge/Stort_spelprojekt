@@ -374,7 +374,7 @@ void AnimatedMesh::updateAnim(const float& dt, int animIndex, float animationSpe
 {
 	if (this->MySimp.animation.size() <= animIndex)
 	{
-		std::cout << "i got anim id: " << animIndex << " but i onlt have: " << this->MySimp.animation.size() << " number of anims\n";
+		//std::cout << "i got anim id: " << animIndex << " but i onlt have: " << this->MySimp.animation.size() << " number of anims\n";
 		//ErrorLog::Log("Invalid Animation Id!");
 		return;
 	}

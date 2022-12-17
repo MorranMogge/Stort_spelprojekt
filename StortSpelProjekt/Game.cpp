@@ -207,9 +207,9 @@ Game::Game(ID3D11DeviceContext* immediateContext, ID3D11Device* device, IDXGISwa
 	//check the handle id for data ex(Planets, SpaceShips)
 	field = nullptr;
 	oldField = field;
-	TimeStruct UwuYouSowarm;
-	UwuYouSowarm.resetStartTime();
-	while (UwuYouSowarm.getTimePassed(1.0f));
+	TimeStruct newTimer;
+	newTimer.resetStartTime();
+	while (newTimer.getTimePassed(1.0f));
 
 	//Init delta time
 	currentTime = std::chrono::system_clock::now();

@@ -420,28 +420,3 @@ void GameObject::tmpDraw(std::vector<ID3D11ShaderResourceView*>& allTextures,UIN
 	this->mesh->UpdateCB(position, rotation, scale);
 	this->mesh->draw(allTextures, stride);
 }
-
-//void GameObject::setSrv(ID3D11ShaderResourceView* srv)
-//{
-//	this->srv = srv;
-//	//this->updateRotation();
-//}
-//
-//void GameObject::setNormalMap(ID3D11ShaderResourceView* srv)
-//{
-//	this->normalMap = srv;
-//}
-//
-//void GameObject::drawObjectWithNormalMap()
-//{
-//	/*if (this->materialBuffer != nullptr)
-//	{
-//		this->materialBuffer->BindToPS(0u);
-//	}*/
-//	this->mesh->drawWithNormalMap(this->srv, this->normalMap);
-//}
-//
-//void GameObject::drawObjectWithDiffuse()
-//{
-//	this->mesh->draw(this->srv);
-//}

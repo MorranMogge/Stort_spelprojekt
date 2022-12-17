@@ -518,7 +518,7 @@ int PacketEventManager::handleId(CircularBufferClient*& circularBuffer, std::vec
 	return -1;
 }
 
-void PacketEventManager::TempLobbyHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, TempPlayerLobby playerLobby[], int& currentPlayerId, bool& startGame)
+void PacketEventManager::TempLobbyHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, TempPlayerLobby playerLobby[], int& currentPlayerId, bool& startGame, TimeStruct& loadingTimer)
 {
 
 	while (circularBuffer->getIfPacketsLeftToRead())
@@ -551,6 +551,7 @@ void PacketEventManager::TempLobbyHandleEvents(CircularBufferClient*& circularBu
 		{
 			LobbyStartGame* lbyStart = circularBuffer->readData<LobbyStartGame>();
 			startGame = true;
+			loadingTimer.resetStartTime();
 
 			std::cout << "Recv start lobby start game\n";
 		}

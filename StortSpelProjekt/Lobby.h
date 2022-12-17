@@ -16,6 +16,7 @@ private:
 	int currentPlayerIsReady;
 	bool ifConnected;
 	TimeStruct sendTimer;
+	TimeStruct loadingTimer;
 	bool startGame;
 
 public:

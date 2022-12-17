@@ -33,6 +33,6 @@ public:
 	int handleId(CircularBufferClient*& circularBuffer, std::vector<Planet*>& planetVector, PhysicsWorld& physWorld, std::vector<Mesh*>& meshes,
 		std::vector<SpaceShip*>& spaceShips, std::vector<GameObject*>& gameObjects, GravityField* field, int &counter);
 
-	void TempLobbyHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, TempPlayerLobby playerLobby[], int& currentPlayerId, bool& startGame);
+	void TempLobbyHandleEvents(CircularBufferClient*& circularBuffer, const int& NROFPLAYERS, TempPlayerLobby playerLobby[], int& currentPlayerId, bool& startGame, TimeStruct& loadingTimer);
 
 };

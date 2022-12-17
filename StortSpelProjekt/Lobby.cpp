@@ -29,7 +29,7 @@ GAMESTATE Lobby::Update()
 
 	const int tmp = 2;
 
-	this->packetEventManager.TempLobbyHandleEvents(this->client->getCircularBuffer(), tmp, this->playersLobby, currentPlayerOnlineId, startGame);
+	this->packetEventManager.TempLobbyHandleEvents(this->client->getCircularBuffer(), tmp, this->playersLobby, currentPlayerOnlineId, startGame, loadingTimer);
 
 	if (ui.ready)
 	{
@@ -69,7 +69,7 @@ GAMESTATE Lobby::Update()
 	//nr of connected players
 	ui.connectedPlayers = 69;
 
-	if (startGame)
+	if (startGame && loadingTimer.getTimePassed(0.2f))
 	{
 		ui.DrawLoading();
 		//ui.isLoading = true;// display loading screen

@@ -57,6 +57,7 @@ private:
 	ID3D11PixelShader* pShader;
 	ID3D11VertexShader* vShader;
 	DirectX::XMFLOAT4X4 worldMatrix;
+	std::vector<ID3D11ShaderResourceView*> planetTexutes;
 
 	PlanetImGuiInfo planetImGuiStruct;
 
@@ -85,6 +86,8 @@ private:
 
 	std::vector<Mesh*> meshes;
 
+	void calculateUVValues();
+	bool addTextures();
 	void updateColours();
 	void recreateMesh();
 	bool updateVertexBuffer();

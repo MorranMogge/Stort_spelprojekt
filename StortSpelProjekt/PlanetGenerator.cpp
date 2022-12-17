@@ -10,6 +10,63 @@
 #include "Input.h"
 #include "ShaderLoader.h"
 #include "DirectXMathHelper.h"
+#include "stb_image.h"
+
+void PlanetGenerator::calculateUVValues()
+{   
+    DirectX::SimpleMath::Vector3 newVec;
+
+    for (int i = 0; i < vertices[planetImGuiStruct.currentSubdivisions-1].size(); i++)
+    {
+        newVec = vertices[planetImGuiStruct.currentSubdivisions - 1][i].position;
+        newVec.Normalize();
+        vertices[planetImGuiStruct.currentSubdivisions - 1][i].uv.x = std::atan2(newVec.x, newVec.z) / (2 * DirectX::XM_PI) + 0.5;
+        vertices[planetImGuiStruct.currentSubdivisions - 1][i].uv.y = newVec.y * 0.5 + 0.5;
+    }
+}
+
+bool PlanetGenerator::addTextures()
+{
+    int width, height, channel;
+    unsigned char* picture = stbi_load("../Textures/Red.png", &width, &height, &channel, STBI_rgb_alpha);
+
+    D3D11_TEXTURE2D_DESC textureDesc;
+    ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+    textureDesc.Width = (UINT)width;
+    textureDesc.Height = (UINT)height;
+    textureDesc.MipLevels = 1;
+    textureDesc.ArraySize = 1;
+    textureDesc.MiscFlags = 0;
+    textureDesc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+    textureDesc.SampleDesc.Count = 1;
+    textureDesc.SampleDesc.Quality = 0;
+    textureDesc.Usage = D3D11_USAGE_IMMUTABLE;
+    textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    textureDesc.CPUAccessFlags = 0;
+
+    D3D11_SUBRESOURCE_DATA subResource;
+    ZeroMemory(&subResource, sizeof(D3D11_SUBRESOURCE_DATA));
+
+    subResource.pSysMem = picture;
+    subResource.SysMemPitch = (UINT)width * 4;
+
+    ID3D11Texture2D* texture = {};
+    HRESULT hr = GPU::device->CreateTexture2D(&textureDesc, &subResource, &texture);
+    if (FAILED(hr)) { std::cout << "Could not create Texture2D!\n"; return false; }
+
+    if (texture != nullptr)
+    {
+        ID3D11ShaderResourceView* newSrv = nullptr;
+        hr = GPU::device->CreateShaderResourceView(texture, nullptr, &newSrv);
+        if (FAILED(hr)) { std::cout << "Could not create srv!\n"; return false; }
+        planetTexutes.push_back(newSrv);
+    }
+
+    stbi_image_free(picture);
+    texture->Release();
+    return !FAILED(hr);
+}
 
 void PlanetGenerator::updateColours()
 {
@@ -83,6 +140,7 @@ void PlanetGenerator::recreateMesh()
     planetImGuiStruct.recreateOriginalSphere = false;
     planetImGuiStruct.recreateMesh = false;
     this->updateVertexBuffer();
+    this->calculateUVValues();
 }
 
 bool PlanetGenerator::updateVertexBuffer()
@@ -156,7 +214,7 @@ bool PlanetGenerator::setWorldMatrix()
     DirectX::XMStoreFloat4x4(&worldMatrix, DirectX::XMMatrixIdentity());
     D3D11_BUFFER_DESC bufferDesc = {};
     bufferDesc.ByteWidth = sizeof(DirectX::XMFLOAT4X4);
-    bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    ufferDesc.Usage = D3D11_USAGE_DYNAMIC;
     bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     bufferDesc.MiscFlags = 0;
@@ -386,24 +444,9 @@ void PlanetGenerator::createIcoSphere()
             lines[a][lineIndex++].position = vertices[a][indices[a][i + 0]].position;
 
         }
-        //for (int i = 0; i < vertices[a].size(); i++)
-        //{
-        //    vertices[a][i].position.x += (1 - rand()%2) * 0.001f * (rand() % 101);
-        //    vertices[a][i].position.y += (1 - rand()%2) * 0.001f * (rand() % 101);
-        //    vertices[a][i].position.z += (1 - rand()%2) * 0.001f * (rand() % 101);
-        //    //vertices[a][i].position.Normalize();
-        //    vertices[a][i].normal.x = std::abs(vertices[a][i].position.x);
-        //    vertices[a][i].normal.y = std::abs(vertices[a][i].position.y);
-        //    vertices[a][i].normal.z = std::abs(vertices[a][i].position.z);
-        //    vertices[a][i].normal.Normalize();
-        //}
-        //for (int i = 0; i < lines[a].size(); i++)
-        //{
-        //    lines[a][i].position.Normalize();
-        //}
     }
    
-
+    if (! this->addTextures()) std::cout << "Could not load texture\n";
 }
 
 PlanetGenerator::PlanetGenerator()

@@ -41,7 +41,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstace,
 	SoundCollection::Load();
 	SoundLibrary soundLibrary;
 
-	Console::Activate(); // activate console for cout and cin, to destroy console call "Console::Destroy();" 
+	//Console::Activate(); // activate console for cout and cin, to destroy console call "Console::Destroy();" 
 	std::cout << "test print \n"; //test print
 
 	IMGUI_CHECKVERSION();

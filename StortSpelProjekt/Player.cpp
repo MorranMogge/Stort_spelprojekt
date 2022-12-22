@@ -17,7 +17,6 @@ void Player::throwItem()
 {
 	//allocates data to be sent
 	ComponentDropped c;
-	std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
 	c.componentId = this->holdingItem->getOnlineId();
 	c.packetId = PacketType::COMPONENTDROPPED;
 	c.playerId = this->onlineID;
@@ -110,7 +109,6 @@ void Player::handleItems()
 				itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 				ComponentDropped c;
 
-				std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
 				c.componentId = this->holdingItem->getOnlineId();
 				c.packetId = PacketType::COMPONENTDROPPED;
 				c.playerId = this->onlineID;
@@ -186,7 +184,6 @@ void Player::handleItems()
 				itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 				ComponentDropped c;
 
-				std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
 				c.componentId = this->holdingItem->getOnlineId();
 				c.packetId = PacketType::COMPONENTDROPPED;
 				c.playerId = this->onlineID;
@@ -243,16 +240,13 @@ void Player::handleItems()
 	{
 		holdingItem->useItem(this);
 		this->usedItem = true;
-		std::cout << "using bat\n";
 	}
 	else if (this->usingBat && this->dropTimer.getTimePassed(0.5))
 	{
 		itemPhysComp->setType(reactphysics3d::BodyType::DYNAMIC);
 		usingBat = false;
-		std::cout << "dropping bat\n";
 		ComponentDropped c;
 
-		std::cout << "Sending droppedComponent packet CompId: " << std::to_string(holdingItem->getOnlineId()) << std::endl;
 		c.componentId = this->holdingItem->getOnlineId();
 		c.packetId = PacketType::COMPONENTDROPPED;
 		c.playerId = this->onlineID;
@@ -1204,7 +1198,6 @@ void Player::orbiting()
 	{
 		if (orbitTimer.getTimePassed(5.f))
 		{
-			std::cout << "SETTING BACK TO PLANET\n";
 			this->physComp->resetForce();
 			this->physComp->resetTorque();
 			this->physComp->setType(reactphysics3d::BodyType::STATIC);

@@ -1,0 +1,12 @@
+
+1.Bygg solution/ spelprojektet och server.
+
+2. I x64 mappen ska Meshes, Shaders, Sounds, Sprites, Textures ligga. Kopiera dessa från solution mappen.
+
+3. I x64/Release eller x64/Debug, beroende på vilken version som vill testas, lägg in assimp-vc143-mt.dll (assimp-vc143-mtd.dll för debug), dessa filer finns i assimp/lib
+
+4. I /Shaders, kopiera alla sfml dll filer och lägg i mappen x64/Release eller x64/Debug 
+
+När vi startar servern så presenteras vår ipadress för servern, som man sedan kan kopiera och använda när man connectar till servern.
+Detta klistras sedan in till clienten.
+

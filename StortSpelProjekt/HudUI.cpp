@@ -317,21 +317,6 @@ void HudUI::handleInputs()
 		speed = 1.0f * counterDown;
 	}
 	counterDown -= Time::DeltaTimeInSeconds();
-
-	//std::cout << counterDown<< std::endl;
-
-	// fade
-	if (Input::KeyDown(KeyCode::G))
-	{
-		this->fadeIn();
-	}
-	// fade
-	if (Input::KeyDown(KeyCode::H))
-	{
-		this->fadeOut();
-	}
-
-
 }
 
 bool HudUI::fadeIn()

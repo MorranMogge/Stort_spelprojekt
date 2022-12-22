@@ -98,7 +98,6 @@ void Grenade::explode()
 {
 	explosion.stop();
 	explosion.play();
-	std::cout << "THE GRENADE EXPLODED\n";
 	exploded = true;
 	explodePosition = this->position;
 	currentTime = 0;
@@ -114,7 +113,6 @@ void Grenade::explode()
 			explosionRange = gameObjects[i]->getPosV3() - this->position;
 			float factor = 1.f / getLength(explosionRange);
 			float newForce;
-			//newNormalizeXMFLOAT3(explosionRange);
 			Player* hitPlayer = dynamic_cast<Player*>(gameObjects[i]);
 			if (hitPlayer != nullptr)
 			{

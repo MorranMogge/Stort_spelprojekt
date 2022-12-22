@@ -341,10 +341,13 @@ int main()
 		sf::IpAddress remoteAddress;
 
 		sf::IpAddress ip = sf::IpAddress::getLocalAddress();
+		sf::IpAddress publicIp = sf::IpAddress::getPublicAddress();
 
 		data.port = 2001;
 
-		std::cout << ip.toString() << "\n" << "port: " << data.port << std::endl;
+		std::cout << "local ip: " << ip.toString() << "\n" << "port: " << data.port << std::endl;
+		std::cout << "public ip: " << publicIp.toString() << "\n" << "port: " << data.port << std::endl;
+
 
 		for (int i = 0; i < MAXNUMBEROFPLAYERS; i++)
 		{

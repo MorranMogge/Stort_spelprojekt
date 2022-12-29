@@ -3,8 +3,6 @@
 
 #define FORCECONSTANT 40000;
 
-
-
 class BaseballBat : public Item
 {
 private:
@@ -22,10 +20,9 @@ public:
 	//void setPlayer(Player* player);
 	//void setGameObjects(const std::vector<GameObject*>& objects);
 	//void setGameObjects(const std::vector<Player*>& objects);
-	
+
 
 	//Its not implemented yet************
 	// Inherited via Item
 	virtual void use(const Player* playerHoldingItem) override;
-
 };

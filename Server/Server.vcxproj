@@ -142,7 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BaseBallBat.cpp" />
+    <ClCompile Include="BaseballBat.cpp" />
     <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DirectXMathHelper.cpp" />
@@ -165,7 +165,7 @@
     <ClCompile Include="TestObj.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseBallBat.h" />
+    <ClInclude Include="BaseballBat.h" />
     <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="DirectXMathHelper.h" />

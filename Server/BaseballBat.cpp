@@ -3,10 +3,8 @@
 
 using namespace DirectX;
 
-
-
 BaseballBat::BaseballBat(const int& onlineId)
-	:Item(onlineId,ObjID::BAT), force(0.f)
+	:Item(onlineId, ObjID::BAT), force(0.f)
 {
 	force = FORCECONSTANT;
 }
